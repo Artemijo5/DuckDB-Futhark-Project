@@ -1,7 +1,10 @@
 # DuckDB-Futhark-Project
 Study of GPU Algorithms on DuckDB Using the Futhark Programming Language
+
 by: Artemios Triantaphyllou
+
 supervised by prof. Vasileios Samoladas
+
 Technical University of Crete, Department of Electrical and Computer Engineering
 
 
