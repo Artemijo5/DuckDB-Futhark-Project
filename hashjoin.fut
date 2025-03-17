@@ -16,3 +16,7 @@ def key_index_pairs 'a (xk: []a) =
   -- produce a xk.size x yk.size matrix of all 0's
 --  xk |> map (yk |> map (0)) -- TODO does this work???
 
+--def radix_partition 'a (xp: []a) (numbuckets: i32) (bucketsize: i32) =
+  -- aaaaand I'm stuck...
+  -- gonna need some more reading to actually proceed (...)
+  -- TODO do that
