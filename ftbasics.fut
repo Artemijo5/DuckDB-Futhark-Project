@@ -11,6 +11,10 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 def gather 'a (xs: []a) (is: []i32) =
   is |> map (\i -> xs[i])
 
+-- TODO does this already exist in some futhark library?
+def count 'a (p: a -> bool) (xs: []a) =
+  i64.sum (xs |> map (p >-> i64.bool))
+
 -- SORTING FUNCTIONS
 
 -- sorts a column & couples it with the original indices
@@ -46,6 +50,13 @@ def keyBy 'a (kf: a -> i32) (xs: []a) : [](i32, a) =
   ks : []i32 = xs |> map kf
   xs |> zip ks |> sortByIndices ks
   -- might not be needed unless operating on a single column - since the intermediate kis are needed to shuffle other columns...
+
+-- return key-count pairs, for a known set of keys
+def countByKey (keyValues: []i32) (keysFromXs: []i32) : [](i32, i32) =
+  -- TODO perhaps this could be somehow done better with a function that returns an array of booleans?
+  -- so count can scan for many keys in only one pass of the keysFromX
+  keyValues |> map (\k -> keysFromXs |> count (== 0)) |> zip keyValues
+  
 
 -- MAPRED FUNCTIONS
 
