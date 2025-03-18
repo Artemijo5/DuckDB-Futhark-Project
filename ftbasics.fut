@@ -15,6 +15,13 @@ def gather 'a (xs: []a) (is: []i32) =
 def count 'a (p: a -> bool) (xs: []a) =
   i64.sum (xs |> map (p >-> i64.bool))
 
+-- TODO test if sth like this works in REPL, and consider if it's really advantageous over the 'simpler' count approach
+def multiCount i32 (vals: []i32) (ks: []i32) =
+  cxs : [][]bool = xs |> map (\x -> (vals |> map (== xs)))
+  len : i32 = length vals
+  nxs : []i32 = replicate len 0 -- neutral element for addition
+  reduce (map2 (+)) nxs cxs
+
 -- SORTING FUNCTIONS
 
 -- sorts a column & couples it with the original indices
@@ -56,6 +63,7 @@ def countByKey (keyValues: []i32) (keysFromXs: []i32) : [](i32, i32) =
   -- TODO perhaps this could be somehow done better with a function that returns an array of booleans?
   -- so count can scan for many keys in only one pass of the keysFromX
   keyValues |> map (\k -> keysFromXs |> count (== 0)) |> zip keyValues
+  --keysFromXs |> multiCount keyValues |> zip keysFromXs -- TODO ???
   
 
 -- MAPRED FUNCTIONS
