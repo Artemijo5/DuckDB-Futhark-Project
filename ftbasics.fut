@@ -24,8 +24,8 @@ def sumFor 'a (p: a -> bool) (xs: []i32) =
 -- TODO test if sth like this works in REPL, and consider if it's really advantageous over the 'simpler' count approach
 def multiCount i32 (vals: []i32) (ks: []i32) =
   let cxs : [][]bool = xs |> map (\x -> (vals |> map (== xs)))
-  in let nxs : []i32 = replicate (length vals) 0
-    in reduce (map2 (+)) nxs cxs
+  let nxs : []i32 = replicate (length vals) 0
+  in reduce (map2 (+)) nxs cxs
 
 -- SORTING FUNCTIONS
 
