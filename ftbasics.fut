@@ -10,26 +10,37 @@
 -- TODO (probably first extenstion) extend to other types, probably using module types...
 -- will probably need a specification of sort for each type (...)
 
-def gather 'a (xs: []a) (is: []i32) =
+def gather 't (xs: []t) (is: []i32) =
   is |> map (\i -> xs[i])
 
-def countFor 'a (p: a -> bool) (xs: []a) : i32 =
+def countFor 't (p: t -> bool) (xs: []t) : i32 =
   i32.sum (xs |> map (p >-> i32.bool))
 
-def sumFor 'a (p: a -> bool) (xs: []a) =
-  sum (xs |> map (\x -> x*(p >-> bool))) -- TODO does multiplication work? test...
+--def sumFor 't (p: t -> bool) (xs: []t) =
+--  reduce (+) 0 (xs |> map (\x -> x*(p >-> t.bool))) -- TODO bool most likely needs to be called by a module...
 
-def argmaxFor 'a (p: a -> bool) (xs: []a) : i32 =
-  -- TODO
-  0
+-- find greatest element that satisfies property
+-- TODO test if it works
+def argmaxFor 't (p: t -> bool) (xs: []t) : i32 =
+  let tup = 
+    reduce_comm (\(ix, vx) (iy, vy) ->
+        if (p x) && (vx > vy || (vx == vy && ix > iy))
+          then (ix, vx)
+        else if (p y) then (iy, vy)
+        else (-1, vy)
+      )
+      (t.lowest, -1)
+      (xs |> zip (indices xs))
+  in tup.1
+  
 
 -- TODO determine if this offers any advantage over countFor
-def multiCount [lk] [lx] (ks: [lk]) (xs: [lx]) : i32 =
-  let cxs : [lx][lk]i32 = xs
-    |> map (\x -> (vals |> map (== x)))
-    |> map (map i32.bool)
-  let nxs : [lk]i32 = replicate lk 0
-  in reduce (map2 (+)) nxs cxs
+--def multiCount [lk] [lx] 't (ks: [lk]t) (xs: [lx]t) : i32 =
+--  let cxs : [lx][lk]i32 = xs
+--    |> map (\x -> (vals |> map (== x)))
+--    |> map (map t.bool) -- TODO bool most likely needs to be called by a module...
+--  let nxs : [lk]i32 = replicate lk 0
+--  in reduce (map2 (+)) nxs cxs
   
 
 -- MAPRED FUNCTIONS
