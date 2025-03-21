@@ -29,7 +29,8 @@ def sortIntColOn (p : i32 -> i32) (xs : []i32) : sortTup i32 =
   let tup : ([]i32, []i32) = unzip sorted_ixs
   in {is = tup.0, xs = tup.1}
 
-entry def sortIntCol (xs : []i32) : sortTup i32 = xs |> sortIntColOn (\x -> x)
+entry def sortIntCol (xs : []i32) : sortTup i32 =
+  xs |> sortIntColOn (\x -> x)
 
 -- sort column on given indices (via a gather operation)
 entry def orderByIndices 't (is: []i32) (ys: []t) : []t =
