@@ -39,8 +39,30 @@ module type colData = {
 
   val sort: []t -> [](sortInfo t)
 }
+
+-- | Abstract type for column data that can be aggregated.
+-- Supports basic arithmetic operations, on top of colData's methods.
+module type aggrData = {
+  include colData
+
+  val + : t -> t -> t
+  val - : t -> t -> t
+  val * : t -> t -> t
+  val / : t -> t -> t
+  val % : t -> t -> t
+  val **: t -> t -> t
+
+  val zero : t -> t -> t
+  val one : t -> t -> t
+  val neg : t -> t
+
+  val sum : t -> t
+  val product : t -> t
+}
+-- TODO have intData & fltData implement aggrData, after figuring out what operations I want it to support overall
+
 -- | Type for integer column data.
--- Implements colData with an integral type.
+-- Implements aggrData with an integral type.
 module intData (T: integral) : colData with t = T.t = {
   type t = T.t
 
@@ -58,7 +80,12 @@ module intData (T: integral) : colData with t = T.t = {
     let s_ixs = blocked_radix_sort_int_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
+
+  def (+) = T.(+)
+  def (-) = T.(-)
+  def (*) = 
 }
+
 -- | Type for float column data.
 -- Implements colData with a float type.
 module fltData (T: float) : colData with t = T.t = {
