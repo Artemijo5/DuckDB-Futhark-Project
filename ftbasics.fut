@@ -6,9 +6,8 @@
 -- 5. map-reduce aggregates
 -- (read up on radix sort in futhark sorts library ++)
 
--- for now, supporting i32 only
--- TODO (probably first extenstion) extend to other types, probably using module types...
--- will probably need a specification of sort for each type (...)
+import "lib/github.com/diku-dk/sorts/radix_sort"
+
 
 def gather 't (xs: []t) (is: []i32) =
   is |> map (\i -> xs[i])
@@ -16,7 +15,64 @@ def gather 't (xs: []t) (is: []i32) =
 def countFor 't (p: t -> bool) (xs: []t) : i32 =
   i32.sum (xs |> map (p >-> i32.bool))
 
--- TODO figure out how to do the following with automatic type inferrence...
+-- | Type used for indices.
+type ind_t = i64.t -- TODO does this work?
+-- | Type used to preserve original index information when sorting.
+type sortInfo [len] 't = {is: [len]ind_t, xs: [len]t}
+
+-- | Abstract type for column data.
+-- Presumed to hold an ordered type.
+-- Supports operations for comparison and sorting.
+module type colData = {
+  -- | The type held by the column's items.
+  type t
+
+  -- | Constructing an element from a boolean.
+  val bool: bool -> t
+
+  val ==: t -> t -> bool
+  val !=: t -> t -> bool
+  val > : t -> t -> bool
+  val < : t -> t -> bool
+  val >=: t -> t -> bool
+  val <=: t -> t -> bool
+
+  val sort: []t -> [](sortInfo t)
+}
+-- | Type for integer column data.
+-- Implements colData with an integral type.
+module intData (T: integral) : colData with t = T.t = {
+  type t = T.t
+
+  def bool = T.bool
+
+  def (==) = (T.==)
+  def (!=) = (T.!=)
+  def (> ) = (T.> )
+  def (< ) = (T.< )
+  def (>=) = (T.>=)
+  def (<=) = (T.<=)
+
+  def sort = blocked_radix_sort_int 256 T.num_bits T.get_bit
+}
+-- | Type for float column data.
+-- Implements colData with a float type.
+module fltData (T: float) : colData with t = T.t = {
+  type t = T.t
+
+  def bool = T.bool
+
+  def (==) = (T.==)
+  def (!=) = (T.!=)
+  def (> ) = (T.> )
+  def (< ) = (T.< )
+  def (>=) = (T.>=)
+  def (<=) = (T.<=)
+
+  def sort = blocked_radix_sort_float 256 T.num_bits T.get_bit
+}
+-- TODO figure out how to make a type that supports aggregation...
+
 
 def untyped_sumFor 't
     (sum: []t -> t)
@@ -25,7 +81,7 @@ def untyped_sumFor 't
   sum (xs |> map (\x -> (x `mult` ((p >-> i32.bool) x)) ))
 
 -- find greatest element that satisfies property
-def untyped_argmaxFor 't
+def int_argmaxFor 't
     (lowest: t)
     (gt: t -> t -> bool)
     (eq: t -> t ->bool)
@@ -41,12 +97,7 @@ def untyped_argmaxFor 't
       (-1, lowest)
       (xs |> zip ((indices xs) |> map (i32.i64)))
   in tup.0
-
-def argmaxFor 't (p: t -> bool) (xs: []t) : t =
-  -- TODO placeholder
-  -1
   
-
 -- TODO determine if this offers any advantage over countFor
 --def multiCount [lk] [lx] 't (ks: [lk]t) (xs: [lx]t) : i32 =
 --  let cxs : [lx][lk]i32 = xs
