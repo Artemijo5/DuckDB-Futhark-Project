@@ -53,7 +53,11 @@ module intData (T: integral) : colData with t = T.t = {
   def (>=) = (T.>=)
   def (<=) = (T.<=)
 
-  def sort = blocked_radix_sort_int 256 T.num_bits T.get_bit
+  def sort (xs : [](T.t)) = 
+    let ixs = xs |> zip (indices xs)
+    let s_ixs = blocked_radix_sort_int_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
+    let tup = unzip s_ixs
+    in {is = tup.0, xs = tup.1}
 }
 -- | Type for float column data.
 -- Implements colData with a float type.
@@ -69,7 +73,11 @@ module fltData (T: float) : colData with t = T.t = {
   def (>=) = (T.>=)
   def (<=) = (T.<=)
 
-  def sort = blocked_radix_sort_float 256 T.num_bits T.get_bit
+  def sort (xs : [](T.t)) = 
+    let ixs = xs |> zip (indices xs)
+    let s_ixs = blocked_radix_sort_float_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
+    let tup = unzip s_ixs
+    in {is = tup.0, xs = tup.1}
 }
 -- TODO figure out how to make a type that supports aggregation...
 
