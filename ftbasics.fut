@@ -27,9 +27,6 @@ module type colData = {
   -- | The type held by the column's items.
   type t
 
-  -- | Constructing an element from a boolean.
-  val bool: bool -> t
-
   val ==: t -> t -> bool
   val !=: t -> t -> bool
   val > : t -> t -> bool
@@ -37,14 +34,31 @@ module type colData = {
   val >=: t -> t -> bool
   val <=: t -> t -> bool
 
-  val sort: []t -> [](sortInfo t)
+  val min : t -> t -> t
+  val max : t -> t -> t
+  val minimum [n] : [n]t -> t
+  val maximum [n] : [n]t -> t
+
+  val sort [n] : [n]t -> sortInfo [n] t
 }
 
--- | Abstract type for column data that can be aggregated.
--- Supports basic arithmetic operations, on top of colData's methods.
-module type aggrData = {
+-- | Abstract type for column data that supports arithmetic operations.
+-- Built on top of colData.
+module type numData = {
   include colData
 
+  -- It would be nice if I could get the following through from_prim...
+  -- Primitive Constructors:
+  val i8 : i8 -> t
+  val i16: i16 -> t
+  val i32: i32 -> t
+  val i64: i64 -> t
+  val f16: f16 -> t
+  val f32: f32 -> t
+  val f64: f64 -> t
+  val bool : bool -> t
+
+  -- Arithmetic Operators
   val + : t -> t -> t
   val - : t -> t -> t
   val * : t -> t -> t
@@ -59,14 +73,11 @@ module type aggrData = {
   val sum : t -> t
   val product : t -> t
 }
--- TODO have intData & fltData implement aggrData, after figuring out what operations I want it to support overall
 
 -- | Type for integer column data.
 -- Implements aggrData with an integral type.
-module intData (T: integral) : colData with t = T.t = {
+module intData (T: integral) : numData with t = T.t = {
   type t = T.t
-
-  def bool = T.bool
 
   def (==) = (T.==)
   def (!=) = (T.!=)
@@ -75,15 +86,39 @@ module intData (T: integral) : colData with t = T.t = {
   def (>=) = (T.>=)
   def (<=) = (T.<=)
 
-  def sort (xs : [](T.t)) = 
+  def min = T.min
+  def max = T.max
+  def minimum = T.minimum
+  def maximum = T.maximum
+
+  def sort (xs : [](T.t))  = 
     let ixs = xs |> zip (indices xs)
     let s_ixs = blocked_radix_sort_int_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
 
+  def i8 : T.i8
+  def i16: T.i16
+  def i32: T.i32
+  def i64: T.i64
+  def f16: T.f16
+  def f32: T.f32
+  def f64: T.f64
+  def bool : T.bool
+
   def (+) = T.(+)
   def (-) = T.(-)
-  def (*) = 
+  def (*) = T.(*)
+  def (/) = T.(/)
+  def (%) = T.(%)
+  def (**)= T.(**)
+
+  def zero: T.i64 0
+  def one : T.i64 1
+  def neg : T.neg
+
+  def sum : T.sum
+  def product : T.product
 }
 
 -- | Type for float column data.
@@ -91,8 +126,6 @@ module intData (T: integral) : colData with t = T.t = {
 module fltData (T: float) : colData with t = T.t = {
   type t = T.t
 
-  def bool = T.bool
-
   def (==) = (T.==)
   def (!=) = (T.!=)
   def (> ) = (T.> )
@@ -100,13 +133,40 @@ module fltData (T: float) : colData with t = T.t = {
   def (>=) = (T.>=)
   def (<=) = (T.<=)
 
+  def min = T.min
+  def max = T.max
+  def minimum = T.minimum
+  def maximum = T.maximum
+
   def sort (xs : [](T.t)) = 
     let ixs = xs |> zip (indices xs)
     let s_ixs = blocked_radix_sort_float_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
+
+  def i8 : T.i8
+  def i16: T.i16
+  def i32: T.i32
+  def i64: T.i64
+  def f16: T.f16
+  def f32: T.f32
+  def f64: T.f64
+  def bool : T.bool
+
+  def (+) = T.(+)
+  def (-) = T.(-)
+  def (*) = T.(*)
+  def (/) = T.(/)
+  def (%) = T.(%)
+  def (**)= T.(**)
+
+  def zero: T.i64 0
+  def one : T.i64 1
+  def neg : T.neg
+
+  def sum : T.sum
+  def product : T.product
 }
--- TODO figure out how to make a type that supports aggregation...
 
 
 def untyped_sumFor 't
