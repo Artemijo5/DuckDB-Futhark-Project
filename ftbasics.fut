@@ -166,29 +166,29 @@ module fltData (T: float) : numData with t = T.t = {
 }
 
 
-def untyped_sumFor 't
-    (sum: []t -> t)
-    (mult: t -> i32 -> t) -- this one might be a pain...
-    (p: t -> bool) (xs: []t) : t =
-  sum (xs |> map (\x -> (x `mult` ((p >-> i32.bool) x)) ))
+--def untyped_sumFor 't
+--    (sum: []t -> t)
+--    (mult: t -> i32 -> t) -- this one might be a pain...
+--    (p: t -> bool) (xs: []t) : t =
+--  sum (xs |> map (\x -> (x `mult` ((p >-> i32.bool) x)) ))
 
 -- find greatest element that satisfies property
-def int_argmaxFor 't
-    (lowest: t)
-    (gt: t -> t -> bool)
-    (eq: t -> t ->bool)
-    (p: t -> bool) (xs: []t) : i32 =
-  let tup = 
-    reduce_comm (\(ix, vx) (iy, vy) ->
-        if (p vx) && !(p vy) then (ix, vx) else
-        if !(p vx) && (p vy) then (iy, vy) else
-        if !((p vx) || (p vy)) then (-1, vx) else
-        if (vx `gt` vy) || ((vx `eq` vy) && (ix > iy)) then (ix, vx)
-        else (iy, vy)
-      )
-      (-1, lowest)
-      (xs |> zip ((indices xs) |> map (i32.i64)))
-  in tup.0
+--def int_argmaxFor 't
+--    (lowest: t)
+--    (gt: t -> t -> bool)
+--    (eq: t -> t ->bool)
+--    (p: t -> bool) (xs: []t) : i32 =
+--  let tup = 
+--    reduce_comm (\(ix, vx) (iy, vy) ->
+--        if (p vx) && !(p vy) then (ix, vx) else
+--        if !(p vx) && (p vy) then (iy, vy) else
+--        if !((p vx) || (p vy)) then (-1, vx) else
+--        if (vx `gt` vy) || ((vx `eq` vy) && (ix > iy)) then (ix, vx)
+--        else (iy, vy)
+--      )
+--      (-1, lowest)
+--      (xs |> zip ((indices xs) |> map (i32.i64)))
+--  in tup.0
   
 -- TODO determine if this offers any advantage over countFor
 --def multiCount [lk] [lx] 't (ks: [lk]t) (xs: [lx]t) : i32 =
