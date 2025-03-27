@@ -16,9 +16,9 @@ def countFor 't (p: t -> bool) (xs: []t) : i32 =
   i32.sum (xs |> map (p >-> i32.bool))
 
 -- | Integer type used for indices.
-type ind_t = #ind_t i64
+type idx_t = #idx_t i64
 -- | Type used to preserve original index information when sorting.
-type sortInfo [len] 't = {is: [len]ind_t, xs: [len]t}
+type sortInfo [len] 't = {is: [len]idx_t, xs: [len]t}
 
 -- | Abstract type for column data.
 -- Presumed to hold an ordered type.
