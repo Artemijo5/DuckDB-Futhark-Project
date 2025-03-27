@@ -46,8 +46,6 @@ module type colData = {
 -- Built on top of colData.
 module type numData = {
   include colData
-
-  -- It would be nice if I could get the following through from_prim...
   -- Primitive Constructors:
   val i8 : i8 -> t
   val i16: i16 -> t
@@ -57,7 +55,6 @@ module type numData = {
   val f32: f32 -> t
   val f64: f64 -> t
   val bool : bool -> t
-
   -- Arithmetic Operators
   val + : t -> t -> t
   val - : t -> t -> t
