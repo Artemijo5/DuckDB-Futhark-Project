@@ -16,7 +16,7 @@ def countFor 't (p: t -> bool) (xs: []t) : i32 =
   i32.sum (xs |> map (p >-> i32.bool))
 
 -- | Type used for indices.
-type ind_t = i64.t -- TODO does this work?
+type ind_t = #ind_t i64
 -- | Type used to preserve original index information when sorting.
 type sortInfo [len] 't = {is: [len]ind_t, xs: [len]t}
 
