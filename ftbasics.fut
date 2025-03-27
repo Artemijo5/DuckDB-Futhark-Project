@@ -72,7 +72,7 @@ module type numData = {
 }
 
 -- | Type for integer column data.
--- Implements aggrData with an integral type.
+-- Implements numData with an integral type.
 module intData (T: integral) : numData with t = T.t = {
   type t = T.t
 
@@ -119,8 +119,8 @@ module intData (T: integral) : numData with t = T.t = {
 }
 
 -- | Type for float column data.
--- Implements colData with a float type.
-module fltData (T: float) : colData with t = T.t = {
+-- Implements numData with a float type.
+module fltData (T: float) : numData with t = T.t = {
   type t = T.t
 
   def (==) = (T.==)
