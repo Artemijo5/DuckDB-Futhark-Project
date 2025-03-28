@@ -8,12 +8,14 @@
 
 import "lib/github.com/diku-dk/sorts/radix_sort"
 
--- | Integer type used for indices.
-module idx_t = {
-  type t = i64
-  bool = i64.bool
-  sum = i64.sum
+
+local module param_idx_t (it: integral) = {
+  type t = it.t
+  def bool = it.bool
+  def sum = it.sum
 }
+-- | Integer type used for indices.
+module idx_t = param_idx_t i64
 -- | Type used to preserve original index information when sorting.
 type sortInfo [len] 't = {is: [len](idx_t.t), xs: [len]t}
 
