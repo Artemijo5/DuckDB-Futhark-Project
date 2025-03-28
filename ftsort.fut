@@ -7,7 +7,7 @@ local module longSorter = intData i64
 local module floatSorter = fltData f32
 local module doubleSorter = fltData f64
 -- Order a payload column given the reordered indices.
-local def orderByIndices 't (is: []idx_t) (ys: []t) : []t =
+local def orderByIndices 't (is: [](idx_t.t)) (ys: []t) : []t =
   is |> gather ys
 
 -- | Sort a column of short type.
