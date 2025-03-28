@@ -1,6 +1,5 @@
 import "ftbasics"
 
-
 -- Local modules for sorting functions
 local module shortSorter = intData i16
 local module intSorter = intData i32
