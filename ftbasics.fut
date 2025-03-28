@@ -9,7 +9,7 @@
 import "lib/github.com/diku-dk/sorts/radix_sort"
 
 
-def gather 't (xs: []t) (is: []i32) =
+def gather 't (xs: []t) (is: [](idx_t.t)) =
   is |> map (\i -> xs[i])
 
 def countFor 't (p: t -> bool) (xs: []t) : i32 =
