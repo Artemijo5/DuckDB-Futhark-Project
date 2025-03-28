@@ -8,19 +8,17 @@
 
 import "lib/github.com/diku-dk/sorts/radix_sort"
 
-
-def gather 't (xs: []t) (is: [](idx_t.t)) =
-  is |> map (\i -> xs[i])
-
-def countFor 't (p: t -> bool) (xs: []t) : i32 =
-  i32.sum (xs |> map (p >-> i32.bool))
-
 -- | Integer type used for indices.
 module idx_t = {
   type t = i64
 }
 -- | Type used to preserve original index information when sorting.
 type sortInfo [len] 't = {is: [len](idx_t.t), xs: [len]t}
+
+def gather 't (xs: []t) (is: [](idx_t.t)) =
+  is |> map (\i -> xs[i])
+def countFor 't (p: t -> bool) (xs: []t) : i32 =
+  i32.sum (xs |> map (p >-> i32.bool))
 
 -- | Abstract type for column data.
 -- Presumed to hold an ordered type.
