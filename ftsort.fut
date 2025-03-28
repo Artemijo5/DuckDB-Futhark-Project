@@ -27,8 +27,6 @@ entry sortColumn_float [n] (xs: [n]f32) : sortInfo [n] f32 =
 entry sortColumn_double [n] (xs: [n]f64) : sortInfo [n] f64 =
   doubleSorter.sort xs
 
-
-
 -- | Order a payload column of type short, given the reordered indices.
 entry orderByIndices_short = orderByIndices i16
 -- | Order a payload column of type int, given the reordered indices.
