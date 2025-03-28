@@ -27,12 +27,12 @@ entry sortColumn_double [n] (xs: [n]f64) : sortInfo [n] f64 =
   doubleSorter.sort xs
 
 -- | Order a payload column of type short, given the reordered indices.
-entry orderByIndices_short = orderByIndices i16
+entry orderByIndices_short (is: [](idx_t.t)) (ys: []i16) = ys |> orderByIndices is
 -- | Order a payload column of type int, given the reordered indices.
-entry orderByIndices_int = orderByIndices i32
+entry orderByIndices_int (is: [](idx_t.t)) (ys: []i32) = ys |> orderByIndices is
 -- | Order a payload column of type long, given the reordered indices.
-entry orderByIndices_long = orderByIndices i64
+entry orderByIndices_long (is: [](idx_t.t)) (ys: []i64) = ys |> orderByIndices is
 -- | Order a payload column of type float, given the reordered indices.
-entry orderByIndices_float = orderByIndices f32
+entry orderByIndices_float (is: [](idx_t.t)) (ys: []f32) = ys |> orderByIndices is
 -- | Order a payload column of type double, given the reordered indices.
-entry orderByIndices_double = orderByIndices f64
+entry orderByIndices_double (is: [](idx_t.t)) (ys: []f64) = ys |> orderByIndices is

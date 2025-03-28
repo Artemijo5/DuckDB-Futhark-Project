@@ -13,6 +13,7 @@ local module param_idx_t (it: integral) = {
   type t = it.t
   def bool = it.bool
   def sum = it.sum
+  def indices xs = (indices xs) |> map it.i64
 }
 -- | Integer type used for indices.
 module idx_t = param_idx_t i64
@@ -69,12 +70,12 @@ module type numData = {
   val % : t -> t -> t
   val **: t -> t -> t
 
-  val zero : t -> t -> t
-  val one : t -> t -> t
+  val zero : t
+  val one : t
   val neg : t -> t
 
-  val sum : t -> t
-  val product : t -> t
+  val sum [n] : [n]t -> t
+  val product [n] : [n]t -> t
 }
 
 -- | Type for integer column data.
@@ -95,33 +96,33 @@ module intData (T: integral) : numData with t = T.t = {
   def maximum = T.maximum
 
   def sort (xs : [](T.t))  = 
-    let ixs = xs |> zip (indices xs)
+    let ixs = xs |> zip (idx_t.indices xs)
     let s_ixs = blocked_radix_sort_int_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
 
-  def i8 : T.i8
-  def i16: T.i16
-  def i32: T.i32
-  def i64: T.i64
-  def f16: T.f16
-  def f32: T.f32
-  def f64: T.f64
-  def bool : T.bool
+  def i8 = T.i8
+  def i16= T.i16
+  def i32= T.i32
+  def i64= T.i64
+  def f16= T.f16
+  def f32= T.f32
+  def f64= T.f64
+  def bool = T.bool
 
-  def (+) = T.(+)
-  def (-) = T.(-)
-  def (*) = T.(*)
-  def (/) = T.(/)
-  def (%) = T.(%)
-  def (**)= T.(**)
+  def (+) = (T.+)
+  def (-) = (T.-)
+  def (*) = (T.*)
+  def (/) = (T./)
+  def (%) = (T.%)
+  def (**)= (T.**)
 
-  def zero: T.i64 0
-  def one : T.i64 1
-  def neg : T.neg
+  def zero= T.i64 0
+  def one = T.i64 1
+  def neg = T.neg
 
-  def sum : T.sum
-  def product : T.product
+  def sum = T.sum
+  def product = T.product
 }
 
 -- | Type for float column data.
@@ -142,33 +143,33 @@ module fltData (T: float) : numData with t = T.t = {
   def maximum = T.maximum
 
   def sort (xs : [](T.t)) = 
-    let ixs = xs |> zip (indices xs)
+    let ixs = xs |> zip (idx_t.indices xs)
     let s_ixs = blocked_radix_sort_float_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
 
-  def i8 : T.i8
-  def i16: T.i16
-  def i32: T.i32
-  def i64: T.i64
-  def f16: T.f16
-  def f32: T.f32
-  def f64: T.f64
-  def bool : T.bool
+  def i8 = T.i8
+  def i16= T.i16
+  def i32= T.i32
+  def i64= T.i64
+  def f16= T.f16
+  def f32= T.f32
+  def f64= T.f64
+  def bool = T.bool
 
-  def (+) = T.(+)
-  def (-) = T.(-)
-  def (*) = T.(*)
-  def (/) = T.(/)
-  def (%) = T.(%)
-  def (**)= T.(**)
+  def (+) = (T.+)
+  def (-) = (T.-)
+  def (*) = (T.*)
+  def (/) = (T./)
+  def (%) = (T.%)
+  def (**)= (T.**)
 
-  def zero: T.i64 0
-  def one : T.i64 1
-  def neg : T.neg
+  def zero= T.i64 0
+  def one = T.i64 1
+  def neg = T.neg
 
-  def sum : T.sum
-  def product : T.product
+  def sum = T.sum
+  def product = T.product
 }
 
 
