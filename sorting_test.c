@@ -63,73 +63,69 @@ int main() {
 
     // Log pre-sorted values of x & y
     mylog(logfile, "Recording values prior to sorting:");
-    char log_x[7*row_count + 10];
-    char log_y[7*row_count + 10];
-    int len_x = sprintf(log_x, "Array x: ");
-    int len_y = sprintf(log_y, "Array y: ");
-    for (idx_t row = 0; row < row_count; row++) {
-      len_x += sprintf(log_x + len_x, "%d, ", x[row]);
-      len_y += sprintf(log_y + len_y, "%d, ", y[row]);
-    }
-    mylog(logfile, log_x);
-    mylog(logfile, log_y);
+    logarray_int(logfile, "Array x: ", x, row_count);
+    logarray_int(logfile, "Array y: ", y, row_count);
     
     mylog(logfile, "Beginning processing in the futhark core.");
     // Set up futhark core
     struct futhark_context_config *cfg = futhark_context_config_new();
   	struct futhark_context *ctx = futhark_context_new(cfg);
     mylog(logfile, "Set up futhark context & config.");
-    // Process arrays to futhark arrays
-    struct futhark_i32_1d *x_arr = futhark_new_i32_1d(ctx, x, 4);
-  	struct futhark_i32_1d *y_arr = futhark_new_i32_1d(ctx, y, 4);
-    mylog(logfile, "Processed x&y to futhark arrays.");
-    // Sort column x
-    struct futhark_opaque_sortInfo *sortpair_x;
-    futhark_entry_sortColumn_int(ctx, sortpair_x, x_arr);
-    mylog(logfile, "Sorted column x, got sortInfo.");
-    futhark_context_sync(ctx); // TODO needed?
-    mylog(logfile, "Synced ctx.");
-    // Separate the ordered indices from sorted x
-    struct futhark_i64_1d *sorted_i_arr;
-    struct futhark_i32_1d *sorted_x_arr;
-    futhark_project_opaque_sortInfo_is(ctx, &sorted_i_arr, sortpair_x);
-    futhark_project_opaque_sortInfo_xs(ctx, &sorted_x_arr, sortpair_x);
-    mylog(logfile, "Decoupled indices and values from sortInfo.");
-    futhark_context_sync(ctx); // TODO needed?
-    mylog(logfile, "Synced ctx.");
-    // unwrap from futhark
-    long sortedIndices[row_count];
-    int sorted_x[row_count];
-    futhark_values_i64_1d(ctx, sorted_i_arr, sortedIndices);
-    futhark_values_i32_1d(ctx, sorted_x_arr, sorted_x);
-    futhark_context_sync(ctx);
-
-    // log sorted x
-    mylog(logfile, "Recording sorted values of x + reordered indices:");
-    char log_sorted_x[len_x];
-    char log_ordered_idx[6*row_count + 10];
-    len_x = sprintf(log_sorted_x, "Array x: ");
-    int len_i = sprintf(log_ordered_idx, "Indices: ");
-    for (idx_t row = 0; row < row_count; row++) {
-      len_x += sprintf(log_sorted_x + len_x, "%d, ", sorted_x[row]);
-      len_i += sprintf(log_ordered_idx + len_i, "%d, ", sortedIndices[row]);
-    }
-    mylog(logfile, log_sorted_x);
-    mylog(logfile, log_ordered_idx);
-
-    // TODO sort y based on indices + log it
-
     
-    // free futhark objects
-    futhark_free_i32_1d(ctx, sorted_x_arr);
-    futhark_free_i64_1d(ctx, sorted_i_arr);
-    futhark_free_opaque_sortInfo(ctx, sortpair_x);
-    futhark_free_i32_1d(ctx, x_arr);
-    // free futhark core
+    struct futhark_i32_1d *x_ft = futhark_new_i32_1d(ctx, x, row_count);
+    struct futhark_i32_1d *y_ft = futhark_new_i32_1d(ctx, y, row_count);
+    mylog(logfile, "Wrapped x & y into a futhark arrays.");
+    //futhark_context_sync(ctx);
+    //mylog(logfile, "Synced futhark context.");
+    
+    struct futhark_opaque_sortInfo_int *sortInfo;
+    futhark_entry_sortColumn_int(ctx, &sortInfo, x_ft);
+    mylog(logfile, "Sorted x_arr.");
+    //futhark_context_sync(ctx);
+    //mylog(logfile, "Synced futhark context.");
+
+    struct futhark_i64_1d *sorted_idx_ft;
+    struct futhark_i32_1d *sorted_x_ft;
+    futhark_project_opaque_sortInfo_int_is(ctx, &sorted_idx_ft, sortInfo);
+    futhark_project_opaque_sortInfo_int_xs(ctx, &sorted_x_ft, sortInfo);
+    mylog(logfile, "Decoupled sorted values & ordered indices.");
+    //futhark_context_sync(ctx);
+    //mylog(logfile, "Synced futhark context.");
+    
+    int sorted_x[row_count];
+    long sorted_idx[row_count];
+    futhark_values_i32_1d(ctx, sorted_x_ft, sorted_x);
+    futhark_values_i64_1d(ctx, sorted_idx_ft, sorted_idx);
+    futhark_context_sync(ctx);
+    mylog(logfile, "Synced futhark context.");
+    logarray_int(logfile, "Sorted x: ", sorted_x, row_count);
+    logarray_long(logfile, "Ordered indices: ", sorted_idx, row_count);
+
+    struct futhark_i32_1d *sorted_y_ft;
+    futhark_entry_orderByIndices_int(ctx, &sorted_y_ft, sorted_idx_ft, y_ft);
+    mylog(logfile, "Ordered y (wrapped) according to ordered indices.");
+    //futhark_context_sync(ctx);
+    //mylog(logfile, "Synced futhark context.");
+
+    int sorted_y[row_count];
+    futhark_values_i32_1d(ctx, sorted_y_ft, sorted_y);
+    futhark_context_sync(ctx);
+    mylog(logfile, "Synced futhark context.");
+    logarray_int(logfile, "Sorted y: ", sorted_y, row_count);
+
+    // clean-up
+    futhark_free_i32_1d(ctx, sorted_y_ft);
+    futhark_free_i32_1d(ctx, sorted_x_ft);
+    futhark_free_i64_1d(ctx, sorted_idx_ft);
+    futhark_free_opaque_sortInfo_int(ctx, sortInfo);
+    futhark_free_i32_1d(ctx, y_ft);
+    futhark_free_i32_1d(ctx, x_ft);
+    mylog(logfile, "Freed futhark objects.");
     futhark_context_free(ctx);
     futhark_context_config_free(cfg);
-    // destroy data chunk
+    mylog(logfile, "Freed futhark core.");
     duckdb_destroy_data_chunk(&result);
+    mylog(logfile, "Destroyed datachunk.");
   }
   // clean-up
 	duckdb_destroy_result(&res);

@@ -17,8 +17,20 @@ local module param_idx_t (it: integral) = {
 }
 -- | Integer type used for indices.
 module idx_t = param_idx_t i64
+
 -- | Type used to preserve original index information when sorting.
 type sortInfo [len] 't = {is: [len](idx_t.t), xs: [len]t}
+-- | Sorting information type (short).
+type sortInfo_short [n] = sortInfo [n] i16
+-- | Sorting information type (integer).
+type sortInfo_int [n] = sortInfo [n] i32
+-- | Sorting information type (long).
+type sortInfo_long [n] = sortInfo [n] i64
+-- | Sorting information type (float).
+type sortInfo_float [n] = sortInfo [n] f32
+-- | Sorting information type (double).
+type sortInfo_double [n] = sortInfo [n] f64
+
 
 -- | Gather operation.
 def gather 't (xs: []t) (is: [](idx_t.t)) =
