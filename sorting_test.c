@@ -5,7 +5,7 @@
 #include "ftsort.h"
 
 #define LOGFILE "sorting_test.log.txt"
-#define TABLE_SIZE 128
+#define TABLE_SIZE 4096
 
 int main() {
   // Initialise logger
@@ -32,6 +32,9 @@ int main() {
   }
   duckdb_query(con, "SELECT * FROM tbl;", &res);
 
+  idx_t incr_idx = 0;
+  mylog(logfile, "Initialised increment at 0.");
+
   // iterate until result is exhausted
 	while (true) {
     mylog(logfile, "Fetching next data chunk...");
@@ -44,6 +47,12 @@ int main() {
 		// get the number of rows & columns from the data chunk
 		idx_t row_count = duckdb_data_chunk_get_size(result);
 		idx_t col_count = duckdb_data_chunk_get_column_count(result);
+
+    char msgbuffer[50];
+    int msglen = sprintf(msgbuffer, "Read ");
+    msglen += sprintf(msgbuffer + msglen, "%ld", row_count);
+    msglen += sprintf(msgbuffer + msglen, " rows.");
+    mylog(logfile, msgbuffer);
 
     // obtain the column vectors
     mylog(logfile, "Obtaining column vectors.");
@@ -62,9 +71,9 @@ int main() {
 		int* y = (int*) yp;
 
     // Log pre-sorted values of x & y
-    mylog(logfile, "Recording values prior to sorting:");
-    logarray_int(logfile, "Array x: ", x, row_count);
-    logarray_int(logfile, "Array y: ", y, row_count);
+    //mylog(logfile, "Recording values prior to sorting:");
+    //logarray_int(logfile, "Array x: ", x, row_count);
+    //logarray_int(logfile, "Array y: ", y, row_count);
     
     mylog(logfile, "Beginning processing in the futhark core.");
     // Set up futhark core
@@ -79,7 +88,7 @@ int main() {
     //mylog(logfile, "Synced futhark context.");
     
     struct futhark_opaque_sortInfo_int *sortInfo;
-    futhark_entry_sortColumn_int(ctx, &sortInfo, x_ft);
+    futhark_entry_sortColumn_int(ctx, &sortInfo, (long)incr_idx, x_ft);
     mylog(logfile, "Sorted x_arr.");
     //futhark_context_sync(ctx);
     //mylog(logfile, "Synced futhark context.");
@@ -98,11 +107,20 @@ int main() {
     futhark_values_i64_1d(ctx, sorted_idx_ft, sorted_idx);
     futhark_context_sync(ctx);
     mylog(logfile, "Synced futhark context.");
-    logarray_int(logfile, "Sorted x: ", sorted_x, row_count);
-    logarray_long(logfile, "Ordered indices: ", sorted_idx, row_count);
+    //logarray_int(logfile, "Sorted x: ", sorted_x, row_count);
+    //logarray_long(logfile, "Ordered indices: ", sorted_idx, row_count);
+    int isSorted = true;
+    int indexIsCorrect = true;
+    for(idx_t i=0; i<row_count-1; i++) {
+      isSorted =  isSorted && (sorted_x[i] <= sorted_x[i+1]);
+      indexIsCorrect = indexIsCorrect && (sorted_x[i] == x[sorted_idx[i] - incr_idx]);
+    }
+    indexIsCorrect = indexIsCorrect && (sorted_x[row_count-1] == x[sorted_idx[row_count-1] - incr_idx]);
+    logdbg(logfile, isSorted, "x was sorted correctly.", "!!!!!!!!!!!!!!! Error: x was not sorted correctly. !!!!!!!!!!!!!!!");
+    logdbg(logfile, indexIsCorrect, "Indices were ordered correctly.", "!!!!!!!!!!!!!!! Error: indices were not ordered correctly. !!!!!!!!!!!!!!!");
 
     struct futhark_i32_1d *sorted_y_ft;
-    futhark_entry_orderByIndices_int(ctx, &sorted_y_ft, sorted_idx_ft, y_ft);
+    futhark_entry_orderByIndices_int(ctx, &sorted_y_ft, (long)incr_idx, sorted_idx_ft, y_ft);
     mylog(logfile, "Ordered y (wrapped) according to ordered indices.");
     //futhark_context_sync(ctx);
     //mylog(logfile, "Synced futhark context.");
@@ -111,7 +129,16 @@ int main() {
     futhark_values_i32_1d(ctx, sorted_y_ft, sorted_y);
     futhark_context_sync(ctx);
     mylog(logfile, "Synced futhark context.");
-    logarray_int(logfile, "Sorted y: ", sorted_y, row_count);
+    //logarray_int(logfile, "Sorted y: ", sorted_y, row_count);
+    int yIsCorrect = true;
+    for (idx_t i=0; i<row_count; i++) {
+      idx_t idx_i = sorted_idx[i] - incr_idx;
+      yIsCorrect = yIsCorrect && (sorted_y[i] == y[idx_i]);
+    }
+    logdbg(logfile, yIsCorrect, "y was reordered correctly.", "!!!!!!!!!!!!!!! Error: y was not reordered correctly. !!!!!!!!!!!!!!!");
+
+    incr_idx += row_count;
+    mylog(logfile, "Updated index increment.");
 
     // clean-up
     futhark_free_i32_1d(ctx, sorted_y_ft);
@@ -131,6 +158,8 @@ int main() {
 	duckdb_destroy_result(&res);
 	duckdb_disconnect(&con);
 	duckdb_close(&db);
+
+  logclose(logfile);
   
   return 0;
 }

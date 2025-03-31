@@ -110,18 +110,16 @@ int futhark_project_opaque_sortInfo_short_xs(struct futhark_context *ctx, struct
 int futhark_new_opaque_sortInfo_short(struct futhark_context *ctx, struct futhark_opaque_sortInfo_short **out, const struct futhark_i64_1d *f_is, const struct futhark_i16_1d *f_xs);
 
 // Entry points
-int futhark_entry_orderByIndices_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const struct futhark_i64_1d *in0, const struct futhark_f64_1d *in1);
-int futhark_entry_orderByIndices_float(struct futhark_context *ctx, struct futhark_f32_1d **out0, const struct futhark_i64_1d *in0, const struct futhark_f32_1d *in1);
-int futhark_entry_orderByIndices_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const struct futhark_i64_1d *in0, const struct futhark_i32_1d *in1);
-int futhark_entry_orderByIndices_long(struct futhark_context *ctx, struct futhark_i64_1d **out0, const struct futhark_i64_1d *in0, const struct futhark_i64_1d *in1);
-int futhark_entry_orderByIndices_short(struct futhark_context *ctx, struct futhark_i16_1d **out0, const struct futhark_i64_1d *in0, const struct futhark_i16_1d *in1);
-int futhark_entry_simpleSort(struct futhark_context *ctx, struct futhark_i32_1d **out0, const struct futhark_i32_1d *in0);
-int futhark_entry_simpleSum(struct futhark_context *ctx, int32_t *out0, const struct futhark_i32_1d *in0);
-int futhark_entry_sortColumn_double(struct futhark_context *ctx, struct futhark_opaque_sortInfo_double **out0, const struct futhark_f64_1d *in0);
-int futhark_entry_sortColumn_float(struct futhark_context *ctx, struct futhark_opaque_sortInfo_float **out0, const struct futhark_f32_1d *in0);
-int futhark_entry_sortColumn_int(struct futhark_context *ctx, struct futhark_opaque_sortInfo_int **out0, const struct futhark_i32_1d *in0);
-int futhark_entry_sortColumn_long(struct futhark_context *ctx, struct futhark_opaque_sortInfo_long **out0, const struct futhark_i64_1d *in0);
-int futhark_entry_sortColumn_short(struct futhark_context *ctx, struct futhark_opaque_sortInfo_short **out0, const struct futhark_i16_1d *in0);
+int futhark_entry_orderByIndices_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f64_1d *in2);
+int futhark_entry_orderByIndices_float(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f32_1d *in2);
+int futhark_entry_orderByIndices_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i32_1d *in2);
+int futhark_entry_orderByIndices_long(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i64_1d *in2);
+int futhark_entry_orderByIndices_short(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i16_1d *in2);
+int futhark_entry_sortColumn_double(struct futhark_context *ctx, struct futhark_opaque_sortInfo_double **out0, const int64_t in0, const struct futhark_f64_1d *in1);
+int futhark_entry_sortColumn_float(struct futhark_context *ctx, struct futhark_opaque_sortInfo_float **out0, const int64_t in0, const struct futhark_f32_1d *in1);
+int futhark_entry_sortColumn_int(struct futhark_context *ctx, struct futhark_opaque_sortInfo_int **out0, const int64_t in0, const struct futhark_i32_1d *in1);
+int futhark_entry_sortColumn_long(struct futhark_context *ctx, struct futhark_opaque_sortInfo_long **out0, const int64_t in0, const struct futhark_i64_1d *in1);
+int futhark_entry_sortColumn_short(struct futhark_context *ctx, struct futhark_opaque_sortInfo_short **out0, const int64_t in0, const struct futhark_i16_1d *in1);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);

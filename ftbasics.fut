@@ -14,6 +14,9 @@ local module param_idx_t (it: integral) = {
   def bool = it.bool
   def sum = it.sum
   def indices xs = (indices xs) |> map it.i64
+  def indicesWithIncrement [n] 't (incr: i64) (xs: [n]t) : [n](it.t) =
+    let rng : [n]i64 = (incr..<(n+incr)) :> [n]i64
+    in rng |> map it.i64
 }
 -- | Integer type used for indices.
 module idx_t = param_idx_t i64
@@ -58,7 +61,7 @@ module type colData = {
   val minimum [n] : [n]t -> t
   val maximum [n] : [n]t -> t
 
-  val sort [n] : [n]t -> sortInfo [n] t
+  val sort [n] : idx_t.t -> [n]t -> sortInfo [n] t
 }
 
 -- | Abstract type for column data that supports arithmetic operations.
@@ -107,8 +110,8 @@ module intData (T: integral) : numData with t = T.t = {
   def minimum = T.minimum
   def maximum = T.maximum
 
-  def sort (xs : [](T.t))  = 
-    let ixs = xs |> zip (idx_t.indices xs)
+  def sort [n] (incr: idx_t.t) (xs : [n](T.t)) =
+    let ixs = xs |> zip (xs |> idx_t.indicesWithIncrement incr)
     let s_ixs = blocked_radix_sort_int_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
@@ -154,8 +157,8 @@ module fltData (T: float) : numData with t = T.t = {
   def minimum = T.minimum
   def maximum = T.maximum
 
-  def sort (xs : [](T.t)) = 
-    let ixs = xs |> zip (idx_t.indices xs)
+  def sort [n] (incr: idx_t.t) (xs : [n](T.t)) =
+    let ixs = xs |> zip (xs |> idx_t.indicesWithIncrement incr)
     let s_ixs = blocked_radix_sort_float_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}

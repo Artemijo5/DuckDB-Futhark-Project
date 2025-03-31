@@ -12,28 +12,38 @@ local def orderByIndices 't (is: [](idx_t.t)) (ys: []t) : []t =
   is |> gather ys
 
 -- | Sort a column of short type.
-entry sortColumn_short [n] (xs: [n]i16) : sortInfo_short [n] =
-  shortSorter.sort xs
+entry sortColumn_short [n] (incr: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
+  xs |> shortSorter.sort incr
 -- | Sort a column of integer type.
-entry sortColumn_int [n] (xs: [n]i32) : sortInfo_int [n] =
-  intSorter.sort xs
+entry sortColumn_int [n] (incr: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
+  xs |> intSorter.sort incr
 -- | Sort a column of long type.
-entry sortColumn_long [n] (xs: [n]i64) : sortInfo_long [n] =
-  longSorter.sort xs
+entry sortColumn_long [n] (incr: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
+  xs |> longSorter.sort incr
 -- | Sort a column of float type.
-entry sortColumn_float [n] (xs: [n]f32) : sortInfo_float [n] =
-  floatSorter.sort xs
+entry sortColumn_float [n] (incr: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
+  xs |> floatSorter.sort incr
 -- | Sort a column of double type.
-entry sortColumn_double [n] (xs: [n]f64) : sortInfo_double [n] =
-  doubleSorter.sort xs
+entry sortColumn_double [n] (incr: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
+  xs |> doubleSorter.sort incr
 
 -- | Order a payload column of type short, given the reordered indices.
-entry orderByIndices_short (is: [](idx_t.t)) (ys: []i16) = ys |> orderByIndices is
+entry orderByIndices_short [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i16) =
+  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+  in ys |> orderByIndices offset_is
 -- | Order a payload column of type int, given the reordered indices.
-entry orderByIndices_int (is: [](idx_t.t)) (ys: []i32) = ys |> orderByIndices is
+entry orderByIndices_int [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i32) =
+  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+  in ys |> orderByIndices offset_is
 -- | Order a payload column of type long, given the reordered indices.
-entry orderByIndices_long (is: [](idx_t.t)) (ys: []i64) = ys |> orderByIndices is
+entry orderByIndices_long [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i64) =
+  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+  in ys |> orderByIndices offset_is
 -- | Order a payload column of type float, given the reordered indices.
-entry orderByIndices_float (is: [](idx_t.t)) (ys: []f32) = ys |> orderByIndices is
+entry orderByIndices_float [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f32) =
+  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+  in ys |> orderByIndices offset_is
 -- | Order a payload column of type double, given the reordered indices.
-entry orderByIndices_double (is: [](idx_t.t)) (ys: []f64) = ys |> orderByIndices is
+entry orderByIndices_double [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f64) =
+  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+  in ys |> orderByIndices offset_is
