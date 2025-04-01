@@ -11,6 +11,7 @@ Technical University of Crete, Department of Electrical and Computer Engineering
 To use:
 - add libduckdb.so and libduckdb_static.a from duckdb's Linux C installation page to the project directory https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64
 - add futhak sorts package to the project directory https://github.com/diku-dk/sorts/tree/master (you must have futhark installed first)
+- make sure that the directory is on the load path, eg ```` export LD_LIBRARY_PATH=`pwd` ````
 - compile ftsort.fut as a library using the desired backend, and then compile ftsort.c to libftsort.so (with -fPIC -shared)
 - likewise compile mylogger.c to libmylogger.so (with -fPIC -shared)
 - compile sorting_test.c to sorting_test.o using libduckdb.so, libmylogger.so, libftsort.so
