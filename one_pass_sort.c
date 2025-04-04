@@ -152,107 +152,20 @@ int main() {
         row_count * colType_bytes(type_ids[col]));
       mylog(logfile, "Buffered column.");
 		}
-    /*
-    mylog(logfile, "Unwrapping column data...");
-		int* x = (int *) duckdb_vector_get_data(res_col[0]);
-		int* y = (int *) duckdb_vector_get_data(res_col[1]);
-    float* z = (float *) duckdb_vector_get_data(res_col[2]);
-    mylog(logfile, "Columns got.");
-
-    struct futhark_i32_1d *x_ft = futhark_new_i32_1d(ctx, x, row_count);
-    struct futhark_i32_1d *y_ft = futhark_new_i32_1d(ctx, y, row_count);
-    struct futhark_f32_1d *z_ft = futhark_new_f32_1d(ctx, z, row_count);
-    mylog(logfile, "Wrapped x & y into a futhark arrays.");
-    //futhark_context_sync(ctx);
-    //mylog(logfile, "Synced futhark context.");
     
-    struct futhark_opaque_sortInfo_int *sortInfo;
-    futhark_entry_sortColumn_int(ctx, &sortInfo, (long)incr_idx, x_ft);
-    mylog(logfile, "Sorted x_arr.");
-    //futhark_context_sync(ctx);
-    //mylog(logfile, "Synced futhark context.");
-
-    struct futhark_i64_1d *sorted_idx_ft;
-    struct futhark_i32_1d *sorted_x_ft;
-    futhark_project_opaque_sortInfo_int_is(ctx, &sorted_idx_ft, sortInfo);
-    futhark_project_opaque_sortInfo_int_xs(ctx, &sorted_x_ft, sortInfo);
-    mylog(logfile, "Decoupled sorted values & ordered indices.");
-    //futhark_context_sync(ctx);
-    //mylog(logfile, "Synced futhark context.");
-    
-    int sorted_x[row_count];
-    long sorted_idx[row_count];
-    futhark_values_i32_1d(ctx, sorted_x_ft, sorted_x);
-    futhark_values_i64_1d(ctx, sorted_idx_ft, sorted_idx);
-    futhark_context_sync(ctx);
-    mylog(logfile, "Synced futhark context.");
-    //logarray_int(logfile, "Sorted x: ", sorted_x, row_count);
-    //logarray_long(logfile, "Ordered indices: ", sorted_idx, row_count);
-    int isSorted = true;
-    int indexIsCorrect = true;
-    for(idx_t i=0; i<row_count-1; i++) {
-      isSorted =  isSorted && (sorted_x[i] <= sorted_x[i+1]);
-      indexIsCorrect = indexIsCorrect && (sorted_x[i] == x[sorted_idx[i] - incr_idx]);
-    }
-    indexIsCorrect = indexIsCorrect && (sorted_x[row_count-1] == x[sorted_idx[row_count-1] - incr_idx]);
-    logdbg(logfile, isSorted, "x was sorted correctly.", "!!!!!!!!!!!!!!! Error: x was not sorted correctly. !!!!!!!!!!!!!!!");
-    logdbg(logfile, indexIsCorrect, "Indices were ordered correctly.", "!!!!!!!!!!!!!!! Error: indices were not ordered correctly. !!!!!!!!!!!!!!!");
-
-    struct futhark_i32_1d *sorted_y_ft;
-    futhark_entry_orderByIndices_int(ctx, &sorted_y_ft, (long)incr_idx, sorted_idx_ft, y_ft);
-    mylog(logfile, "Ordered y (wrapped) according to ordered indices.");
-    //futhark_context_sync(ctx);
-    //mylog(logfile, "Synced futhark context.");
-
-    int sorted_y[row_count];
-    futhark_values_i32_1d(ctx, sorted_y_ft, sorted_y);
-    futhark_context_sync(ctx);
-    mylog(logfile, "Synced futhark context.");
-    //logarray_int(logfile, "Sorted y: ", sorted_y, row_count);
-    int yIsCorrect = true;
-    for (idx_t i=0; i<row_count; i++) {
-      idx_t idx_i = sorted_idx[i] - incr_idx;
-      yIsCorrect = yIsCorrect && (sorted_y[i] == y[idx_i]);
-    }
-    logdbg(logfile, yIsCorrect, "y was reordered correctly.", "!!!!!!!!!!!!!!! Error: y was not reordered correctly. !!!!!!!!!!!!!!!");
-
-    struct futhark_f32_1d *sorted_z_ft;
-    futhark_entry_orderByIndices_float(ctx, &sorted_z_ft, (long)incr_idx, sorted_idx_ft, z_ft);
-    mylog(logfile, "Ordered z (wrapped) according to ordered indices.");
-    //futhark_context_sync(ctx);
-    //mylog(logfile, "Synced futhark context.");
-
-    float sorted_z[row_count];
-    futhark_values_f32_1d(ctx, sorted_z_ft, sorted_z);
-    futhark_context_sync(ctx);
-    mylog(logfile, "Synced futhark context.");
-    //logarray_int(logfile, "Sorted y: ", sorted_y, row_count);
-    int zIsCorrect = true;
-    for (idx_t i=0; i<row_count; i++) {
-      idx_t idx_i = sorted_idx[i] - incr_idx;
-      zIsCorrect = zIsCorrect && (sorted_z[i] == z[idx_i]);
-    }
-    logdbg(logfile, zIsCorrect, "z was reordered correctly.", "!!!!!!!!!!!!!!! Error: z was not reordered correctly. !!!!!!!!!!!!!!!");
-
-    // clean-up
-    futhark_free_i32_1d(ctx, sorted_y_ft);
-    futhark_free_i32_1d(ctx, sorted_x_ft);
-    futhark_free_i64_1d(ctx, sorted_idx_ft);
-    futhark_free_opaque_sortInfo_int(ctx, sortInfo);
-    futhark_free_i32_1d(ctx, y_ft);
-    futhark_free_i32_1d(ctx, x_ft);
-    mylog(logfile, "Freed futhark objects.");
-    */
     incr_idx += row_count;
     mylog(logfile, "Updated index increment.");
+
     duckdb_destroy_data_chunk(&result);
     mylog(logfile, "Destroyed datachunk.");
   }
+
   char msgbuffer[50];
   int msglen = sprintf(msgbuffer, "Finished reading db table -- total of ");
   msglen += sprintf(msgbuffer + msglen, "%ld", incr_idx);
   msglen += sprintf(msgbuffer + msglen, " rows.");
   mylog(logfile, msgbuffer);
+
   // sort key column
   struct futhark_i32_1d *x_ft = futhark_new_i32_1d(ctx, (int*)Buffers[0], incr_idx);
   mylog(logfile, "Wrapped keys into a futhark array.");
@@ -279,6 +192,7 @@ int main() {
   indexIsCorrect = indexIsCorrect && (sorted_x[incr_idx-1] == ((int*)Buffers[0])[sorted_idx[incr_idx-1]]);
   logdbg(logfile, isSorted, "x was sorted correctly.", "!!!!!!!!!!!!!!! Error: x was not sorted correctly. !!!!!!!!!!!!!!!");
   logdbg(logfile, indexIsCorrect, "Indices were ordered correctly.", "!!!!!!!!!!!!!!! Error: indices were not ordered correctly. !!!!!!!!!!!!!!!");
+  
   // Next do the payload columns
   struct futhark_i32_1d *y_ft = futhark_new_i32_1d(ctx, (int*)Buffers[1], incr_idx);
   struct futhark_f32_1d *z_ft = futhark_new_f32_1d(ctx, (float*)Buffers[2], incr_idx);
