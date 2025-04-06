@@ -8,15 +8,15 @@
 #define LOGFILE "one_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define TABLE_SIZE 10000//CHUNK_SIZE*5
+#define TABLE_SIZE 64000//CHUNK_SIZE*5
 #define BUFFER_SIZE 65535
 
 /* ------------------------------------------------------------------------------------------------------------------------------
   // TODO
-  // save to chunks & new table "sortedTbl"
-  // 2-PASS
-  // (probably 2-PASS first ...)
+  // save to chunks & new table "sortedTbl" (for now via appenders...)
+  // -> 2-PASS
   // gpu runs...
+  // +++ issue with long / int64_t : BIGINT columns give segfaults or other memory-related errors ...
   */
 
 
@@ -79,7 +79,7 @@ int main() {
 
   // Create the table tbl on which the testing will be done.
   duckdb_result res;
-	duckdb_query(con, "CREATE TABLE tbl (k INTEGER, payload1 INTEGER, payload2 FLOAT);", NULL);
+	duckdb_query(con, "CREATE TABLE tbl (k DOUBLE, payload1 INTEGER, payload2 DOUBLE);", NULL);
   duckdb_query(con, "setseed(0.42);", NULL);
 
   duckdb_prepared_statement init_stmt;
@@ -173,7 +173,8 @@ int main() {
 
   // sort key column
   struct futhark_i64_1d *sorted_idx_ft;
-  int sorted_x[incr_idx];
+  void *sorted_x;
+  sorted_x = colType_malloc(type_ids[0], incr_idx);
   mylog(logfile, "Passing key column for sorting...");
   sortKeyColumn(ctx, sorted_x, type_ids[0], (idx_t)0, &sorted_idx_ft, Buffers[0], incr_idx);
   mylog(logfile, "Sorted key column and obtained reordered indices.");
@@ -184,11 +185,35 @@ int main() {
   futhark_context_sync(ctx);
   int isSorted = true;
   int indexIsCorrect = true;
+  //size_t x_bytes = colType_bytes
   for(idx_t i=0; i<incr_idx-1; i++) {
-    isSorted =  isSorted && (sorted_x[i] <= sorted_x[i+1]);
-    indexIsCorrect = indexIsCorrect && (sorted_x[i] == ((int*)Buffers[0])[sorted_idx[i]]);
+    switch(type_ids[0]) {
+      case DUCKDB_TYPE_SMALLINT:
+        isSorted =  isSorted && (((short*)sorted_x)[i] <= ((short*)sorted_x)[i+1]);
+        break;
+      case DUCKDB_TYPE_INTEGER:
+        isSorted =  isSorted && (((int*)sorted_x)[i] <= ((int*)sorted_x)[i+1]);
+        break;
+      case DUCKDB_TYPE_BIGINT:
+        isSorted =  isSorted && (((long*)sorted_x)[i] <= ((long*)sorted_x)[i+1]);
+        break;
+      case DUCKDB_TYPE_FLOAT:
+        isSorted =  isSorted && (((float*)sorted_x)[i] <= ((float*)sorted_x)[i+1]);
+        break;
+      case DUCKDB_TYPE_DOUBLE:
+        isSorted =  isSorted && (((double*)sorted_x)[i] <= ((double*)sorted_x)[i+1]);
+        break;
+      default:
+        perror("Invalid Type.");
+        return 1;
+    }
   }
-  indexIsCorrect = indexIsCorrect && (sorted_x[incr_idx-1] == ((int*)Buffers[0])[sorted_idx[incr_idx-1]]);
+  for(idx_t i=0; i<incr_idx; i++) {
+    size_t x_bytes = colType_bytes(type_ids[0]);
+    for(size_t b=0; b<x_bytes; b++) {
+      indexIsCorrect = indexIsCorrect && (((char*)sorted_x)[i*x_bytes + b] == ((char*)Buffers[0])[sorted_idx[i]*x_bytes + b]);
+    }
+  }
   logdbg(logfile,
     isSorted,
     "x was sorted correctly.",
@@ -208,25 +233,10 @@ int main() {
     // Test whether the reordering was done correctly...
     int yIsCorrect = true;
     for (idx_t i=0; i<incr_idx; i++) {
-      switch(type_ids[col]){
-        case DUCKDB_TYPE_SMALLINT:
-          yIsCorrect = yIsCorrect && (((short*)sorted_ys[col-1])[i] == ((short*)Buffers[col])[sorted_idx[i]]);
-          break;
-        case DUCKDB_TYPE_INTEGER:
-          yIsCorrect = yIsCorrect && (((int*)sorted_ys[col-1])[i] == ((int*)Buffers[col])[sorted_idx[i]]);
-          break;
-        case DUCKDB_TYPE_BIGINT:
-          yIsCorrect = yIsCorrect && (((long*)sorted_ys[col-1])[i] == ((long*)Buffers[col])[sorted_idx[i]]);
-          break;
-        case DUCKDB_TYPE_FLOAT:
-          yIsCorrect = yIsCorrect && (((float*)sorted_ys[col-1])[i] == ((float*)Buffers[col])[sorted_idx[i]]);
-          break;
-        case DUCKDB_TYPE_DOUBLE:
-          yIsCorrect = yIsCorrect && (((double*)sorted_ys[col-1])[i] == ((double*)Buffers[col])[sorted_idx[i]]);
-          break;
-        default:
-          perror("Invalid type.");
-          break;
+      size_t y_bytes = colType_bytes(type_ids[col]);
+      for(size_t b=0; b<y_bytes; b++) {
+        // Byte-wise comparison, rather than switch-case per type...
+        yIsCorrect = yIsCorrect && (((char*)sorted_ys[col-1])[i*y_bytes + b] == ((char*)Buffers[col])[sorted_idx[i]*y_bytes + b]);
       }
     }
     logdbg(logfile,
@@ -236,6 +246,7 @@ int main() {
   }
   
   // clean-up
+  free(sorted_x);
   for(idx_t col=0; col<col_count; col++) {
     free(Buffers[col]);
     if(col>0) free(sorted_ys[col-1]);
@@ -259,11 +270,11 @@ int main() {
 size_t colType_bytes(duckdb_type type) {
   switch (type){
     case DUCKDB_TYPE_SMALLINT:
-      return sizeof(short);
+      return sizeof(int16_t);
     case DUCKDB_TYPE_INTEGER:
-      return sizeof(int);
+      return sizeof(int32_t);
     case DUCKDB_TYPE_BIGINT:
-      return sizeof(long);
+      return sizeof(int64_t);
     case DUCKDB_TYPE_FLOAT:
       return sizeof(float);
     case DUCKDB_TYPE_DOUBLE:
