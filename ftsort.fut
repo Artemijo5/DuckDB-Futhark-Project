@@ -28,22 +28,56 @@ entry sortColumn_double [n] (incr: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
   xs |> doubleSorter.sort incr
 
 -- | Order a payload column of type short, given the reordered indices.
-entry orderByIndices_short [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i16) =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+entry orderByIndices_short [n] [ni] (incr: idx_t.t) (is: [ni](idx_t.t)) (ys: [n]i16) : [ni]i16 =
+  let offset_is : [ni](idx_t.t) = is |> map (\j -> j - incr)
   in ys |> orderByIndices offset_is
 -- | Order a payload column of type int, given the reordered indices.
-entry orderByIndices_int [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i32) =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+entry orderByIndices_int [n] [ni] (incr: idx_t.t) (is: [ni](idx_t.t)) (ys: [n]i32) : [ni]i32 =
+  let offset_is : [ni](idx_t.t) = is |> map (\j -> j - incr)
   in ys |> orderByIndices offset_is
 -- | Order a payload column of type long, given the reordered indices.
-entry orderByIndices_long [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i64) =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+entry orderByIndices_long [n] [ni] (incr: idx_t.t) (is: [ni](idx_t.t)) (ys: [n]i64) : [ni]i64 =
+  let offset_is : [ni](idx_t.t) = is |> map (\j -> j - incr)
   in ys |> orderByIndices offset_is
 -- | Order a payload column of type float, given the reordered indices.
-entry orderByIndices_float [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f32) =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+entry orderByIndices_float [n] [ni] (incr: idx_t.t) (is: [ni](idx_t.t)) (ys: [n]f32) : [ni]f32 =
+  let offset_is : [ni](idx_t.t) = is |> map (\j -> j - incr)
   in ys |> orderByIndices offset_is
 -- | Order a payload column of type double, given the reordered indices.
-entry orderByIndices_double [n] (incr: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f64) =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
+entry orderByIndices_double [n] [ni] (incr: idx_t.t) (is: [ni](idx_t.t)) (ys: [n]f64) : [ni]f64 =
+  let offset_is : [ni](idx_t.t) = is |> map (\j -> j - incr)
   in ys |> orderByIndices offset_is
+
+
+-- argmin - for getting chunk replacement priorities
+local def argmin [n] 't
+    (lt: t -> t -> bool)
+    (eq: t -> t -> bool)
+    (highest: t)
+    (ks: [n]t)
+    : idx_t.t = 
+  let ne = (n, highest)
+  let iks = ks
+    |> zip (idx_t.indices ks)
+  let min_ik = reduce_comm(\(ix, vx) (iy, vy) ->
+        if (vx `lt` vy) || ((vx `eq` vy) && (ix < iy))
+          then (ix, vx)
+          else (iy, vy)
+      ) ne iks
+  in min_ik.0
+
+-- | Obtain the index of the smallest element from a list of shorts.
+entry argmin_short [n] (ks: [n]i16) : idx_t.t =
+  argmin (<) (==) (i16.highest) ks
+-- | Obtain the index of the smallest element from a list of integers.
+entry argmin_int [n] (ks: [n]i32) : idx_t.t =
+  argmin (<) (==) (i32.highest) ks
+-- | Obtain the index of the smallest element from a list of longs.
+entry argmin_long [n] (ks: [n]i64) : idx_t.t =
+  argmin (<) (==) (i64.highest) ks
+-- | Obtain the index of the smallest element from a list of floats.
+entry argmin_float [n] (ks: [n]f32) : idx_t.t =
+  argmin (<) (==) (f32.highest) ks
+-- | Obtain the index of the smallest element from a list of doubles.
+entry argmin_double [n] (ks: [n]f64) : idx_t.t =
+  argmin (<) (==) (f64.highest) ks

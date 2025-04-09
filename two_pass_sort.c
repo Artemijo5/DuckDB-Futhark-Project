@@ -9,8 +9,8 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE CHUNK_SIZE*64
-#define TABLE_SIZE CHUNK_SIZE*128
+#define BUFFER_SIZE CHUNK_SIZE*128
+#define TABLE_SIZE 2*BUFFER_SIZE + 5*CHUNK_SIZE
 
 /* ------------------------------------------------------------------------------------------------------------------------------
   // TODO
@@ -90,14 +90,14 @@ int main() {
     }
     mylog(logfile, "Successfully initialised buffers.");
 
-    idx_t cur_columns = 0;
+    idx_t cur_rows = 0;
 
     // iterate until result is exhausted
-  	while (cur_columns < BUFFER_SIZE) {
+  	while (BUFFER_SIZE - cur_rows >= CHUNK_SIZE) {
   		duckdb_data_chunk result = duckdb_fetch_chunk(res);
   		if (!result) {
   			mylog(logfile, "Table has been fully processed.");
-        flag = false;
+        flag = false; // last iteration of the outer loop
   			break;
   		}
   		// get the number of rows & columns from the data chunk
@@ -109,40 +109,44 @@ int main() {
   		for (idx_t col = 0; col < col_count; col++) {
   			res_col[col] = duckdb_data_chunk_get_vector(result, col);
   			vector_data[col] = duckdb_vector_get_data(res_col[col]);
-        memcpy(Buffers[col] + cur_columns*colType_bytes(type_ids[col]),
+        memcpy(Buffers[col] + cur_rows*colType_bytes(type_ids[col]),
           vector_data[col],
           row_count * colType_bytes(type_ids[col]));
   		}
       
-      cur_columns += row_count;
+      cur_rows += row_count;
 
       duckdb_destroy_data_chunk(&result);
     }
-    if(flag==false) break; // if table exhausted, break out of outer loop as well
-
+    if(!flag && cur_rows == 0) { // if table exhausted, break out of outer loop as well
+      for(idx_t col=0; col<col_count; col++) {
+        free(Buffers[col]); // free buffers
+      }
+      break;
+    } // TODO flag is probably superfluous...
     char msgbuffer[50];
     int msglen = sprintf(msgbuffer, "Finished scanning 'page' -- total of ");
-    msglen += sprintf(msgbuffer + msglen, "%ld", cur_columns);
+    msglen += sprintf(msgbuffer + msglen, "%ld", cur_rows);
     msglen += sprintf(msgbuffer + msglen, " rows.");
     mylog(logfile, msgbuffer);
 
     // sort key column
     struct futhark_i64_1d *sorted_idx_ft;
     void *sorted_cols[col_count];
-    sorted_cols[0] = colType_malloc(type_ids[0], cur_columns);
+    sorted_cols[0] = colType_malloc(type_ids[0], cur_rows);
     void *sorted_x = sorted_cols[0];
     mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, sorted_x, type_ids[0], incr_idx, &sorted_idx_ft, Buffers[0], cur_columns);
+    sortKeyColumn(ctx, sorted_x, type_ids[0], incr_idx, &sorted_idx_ft, Buffers[0], cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
-    //logarray_int(logfile, "Sorted x: ", sorted_x, cur_columns);
+    //logarray_int(logfile, "Sorted x: ", sorted_x, cur_rows);
     // test that sorting & reordering was done correctly
-    long sorted_idx[cur_columns];
+    long sorted_idx[cur_rows];
     futhark_values_i64_1d(ctx, sorted_idx_ft, sorted_idx);
     futhark_context_sync(ctx);
     int isSorted = true;
     int indexIsCorrect = true;
     //size_t x_bytes = colType_bytes
-    for(idx_t i=0; i<cur_columns-1; i++) {
+    for(idx_t i=0; i<cur_rows-1; i++) {
       switch(type_ids[0]) {
         case DUCKDB_TYPE_SMALLINT:
           isSorted =  isSorted && (((short*)sorted_x)[i] <= ((short*)sorted_x)[i+1]);
@@ -164,7 +168,7 @@ int main() {
           return 1;
       }
     }
-    for(idx_t i=0; i<cur_columns; i++) {
+    for(idx_t i=0; i<cur_rows; i++) {
       size_t x_bytes = colType_bytes(type_ids[0]);
       for(size_t b=0; b<x_bytes; b++) {
         indexIsCorrect = indexIsCorrect && (((char*)sorted_x)[i*x_bytes + b] == ((char*)Buffers[0])[sorted_idx[i]*x_bytes + b]);
@@ -182,12 +186,12 @@ int main() {
     // Next do the payload columns
     mylog(logfile, "Reordering payload columns...");
     for(idx_t col=1; col<col_count; col++) {
-      sorted_cols[col] = colType_malloc(type_ids[col], cur_columns);
-      orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], incr_idx, sorted_idx_ft, Buffers[col], cur_columns);
+      sorted_cols[col] = colType_malloc(type_ids[col], cur_rows);
+      orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], incr_idx, sorted_idx_ft, Buffers[col], cur_rows);
       mylog(logfile, "Reordered the next payload column.");
       // Test whether the reordering was done correctly...
       int yIsCorrect = true;
-      for (idx_t i=0; i<cur_columns; i++) {
+      for (idx_t i=0; i<cur_rows; i++) {
         size_t y_bytes = colType_bytes(type_ids[col]);
         for(size_t b=0; b<y_bytes; b++) {
           // Byte-wise comparison, rather than switch-case per type...

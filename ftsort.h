@@ -110,6 +110,11 @@ int futhark_project_opaque_sortInfo_short_xs(struct futhark_context *ctx, struct
 int futhark_new_opaque_sortInfo_short(struct futhark_context *ctx, struct futhark_opaque_sortInfo_short **out, const struct futhark_i64_1d *f_is, const struct futhark_i16_1d *f_xs);
 
 // Entry points
+int futhark_entry_argmin_double(struct futhark_context *ctx, int64_t *out0, const struct futhark_f64_1d *in0);
+int futhark_entry_argmin_float(struct futhark_context *ctx, int64_t *out0, const struct futhark_f32_1d *in0);
+int futhark_entry_argmin_int(struct futhark_context *ctx, int64_t *out0, const struct futhark_i32_1d *in0);
+int futhark_entry_argmin_long(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0);
+int futhark_entry_argmin_short(struct futhark_context *ctx, int64_t *out0, const struct futhark_i16_1d *in0);
 int futhark_entry_orderByIndices_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f64_1d *in2);
 int futhark_entry_orderByIndices_float(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f32_1d *in2);
 int futhark_entry_orderByIndices_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i32_1d *in2);

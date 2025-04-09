@@ -132,6 +132,11 @@ int futhark_project_opaque_sortInfo_short_xs(struct futhark_context *ctx, struct
 int futhark_new_opaque_sortInfo_short(struct futhark_context *ctx, struct futhark_opaque_sortInfo_short **out, const struct futhark_i64_1d *f_is, const struct futhark_i16_1d *f_xs);
 
 // Entry points
+int futhark_entry_argmin_double(struct futhark_context *ctx, int64_t *out0, const struct futhark_f64_1d *in0);
+int futhark_entry_argmin_float(struct futhark_context *ctx, int64_t *out0, const struct futhark_f32_1d *in0);
+int futhark_entry_argmin_int(struct futhark_context *ctx, int64_t *out0, const struct futhark_i32_1d *in0);
+int futhark_entry_argmin_long(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0);
+int futhark_entry_argmin_short(struct futhark_context *ctx, int64_t *out0, const struct futhark_i16_1d *in0);
 int futhark_entry_orderByIndices_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f64_1d *in2);
 int futhark_entry_orderByIndices_float(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f32_1d *in2);
 int futhark_entry_orderByIndices_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i32_1d *in2);
@@ -5874,20 +5879,25 @@ GEN_LMAD_COPY(8b, uint64_t)
 
 #define FUTHARK_FUN_ATTR static
 
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_double(struct futhark_context *ctx, struct memblock *mem_out_p_41535, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34806, int64_t incr_34807);
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_float(struct futhark_context *ctx, struct memblock *mem_out_p_41536, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34653, int64_t incr_34654);
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_int(struct futhark_context *ctx, struct memblock *mem_out_p_41537, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34353, int64_t incr_34354);
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_long(struct futhark_context *ctx, struct memblock *mem_out_p_41538, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34500, int64_t incr_34501);
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_short(struct futhark_context *ctx, struct memblock *mem_out_p_41539, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34200, int64_t incr_34201);
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_double(struct futhark_context *ctx, struct memblock *mem_out_p_41540, struct memblock *mem_out_p_41541, struct memblock xs_mem_41232, int64_t n_34047, int64_t incr_34048);
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_float(struct futhark_context *ctx, struct memblock *mem_out_p_41569, struct memblock *mem_out_p_41570, struct memblock xs_mem_41232, int64_t n_31263, int64_t incr_31264);
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_int(struct futhark_context *ctx, struct memblock *mem_out_p_41598, struct memblock *mem_out_p_41599, struct memblock xs_mem_41232, int64_t n_25854, int64_t incr_25855);
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_long(struct futhark_context *ctx, struct memblock *mem_out_p_41627, struct memblock *mem_out_p_41628, struct memblock xs_mem_41232, int64_t n_28483, int64_t incr_28484);
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_short(struct futhark_context *ctx, struct memblock *mem_out_p_41656, struct memblock *mem_out_p_41657, struct memblock xs_mem_41232, int64_t n_23208, int64_t incr_23209);
-FUTHARK_FUN_ATTR int futrts_get_bit_1844(struct futhark_context *ctx, int32_t *out_prim_out_41685, int32_t bit_21026, int16_t x_21027);
-FUTHARK_FUN_ATTR int futrts_get_bit_2253(struct futhark_context *ctx, int32_t *out_prim_out_41686, int32_t bit_26301, int64_t x_26302);
-FUTHARK_FUN_ATTR int futrts_lifted_f_7152(struct futhark_context *ctx, int64_t *out_prim_out_41687, int16_t na_20550, int16_t nb_20551, int16_t nc_20552, int16_t bin_20553, int16_t a_20554, int16_t b_20555, int16_t c_20556, int16_t d_20557);
-FUTHARK_FUN_ATTR int futrts_lifted_lambda_7151(struct futhark_context *ctx, int16_t *out_prim_out_41688, int16_t *out_prim_out_41689, int16_t *out_prim_out_41690, int16_t *out_prim_out_41691, int16_t x_20493);
+FUTHARK_FUN_ATTR int futrts_entry_argmin_double(struct futhark_context *ctx, int64_t *out_prim_out_43217, struct memblock ks_mem_42914, int64_t n_36481);
+FUTHARK_FUN_ATTR int futrts_entry_argmin_float(struct futhark_context *ctx, int64_t *out_prim_out_43218, struct memblock ks_mem_42914, int64_t n_36312);
+FUTHARK_FUN_ATTR int futrts_entry_argmin_int(struct futhark_context *ctx, int64_t *out_prim_out_43219, struct memblock ks_mem_42914, int64_t n_35977);
+FUTHARK_FUN_ATTR int futrts_entry_argmin_long(struct futhark_context *ctx, int64_t *out_prim_out_43220, struct memblock ks_mem_42914, int64_t n_36143);
+FUTHARK_FUN_ATTR int futrts_entry_argmin_short(struct futhark_context *ctx, int64_t *out_prim_out_43221, struct memblock ks_mem_42914, int64_t n_35811);
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_double(struct futhark_context *ctx, struct memblock *mem_out_p_43222, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35642, int64_t n_35643, int64_t incr_35644);
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_float(struct futhark_context *ctx, struct memblock *mem_out_p_43223, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35488, int64_t n_35489, int64_t incr_35490);
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_int(struct futhark_context *ctx, struct memblock *mem_out_p_43224, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35183, int64_t n_35184, int64_t incr_35185);
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_long(struct futhark_context *ctx, struct memblock *mem_out_p_43225, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35334, int64_t n_35335, int64_t incr_35336);
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_short(struct futhark_context *ctx, struct memblock *mem_out_p_43226, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35029, int64_t n_35030, int64_t incr_35031);
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_double(struct futhark_context *ctx, struct memblock *mem_out_p_43227, struct memblock *mem_out_p_43228, struct memblock xs_mem_42914, int64_t n_34876, int64_t incr_34877);
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_float(struct futhark_context *ctx, struct memblock *mem_out_p_43256, struct memblock *mem_out_p_43257, struct memblock xs_mem_42914, int64_t n_32092, int64_t incr_32093);
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_int(struct futhark_context *ctx, struct memblock *mem_out_p_43285, struct memblock *mem_out_p_43286, struct memblock xs_mem_42914, int64_t n_26683, int64_t incr_26684);
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_long(struct futhark_context *ctx, struct memblock *mem_out_p_43314, struct memblock *mem_out_p_43315, struct memblock xs_mem_42914, int64_t n_29312, int64_t incr_29313);
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_short(struct futhark_context *ctx, struct memblock *mem_out_p_43343, struct memblock *mem_out_p_43344, struct memblock xs_mem_42914, int64_t n_24037, int64_t incr_24038);
+FUTHARK_FUN_ATTR int futrts_get_bit_1844(struct futhark_context *ctx, int32_t *out_prim_out_43372, int32_t bit_21855, int16_t x_21856);
+FUTHARK_FUN_ATTR int futrts_get_bit_2253(struct futhark_context *ctx, int32_t *out_prim_out_43373, int32_t bit_27130, int64_t x_27131);
+FUTHARK_FUN_ATTR int futrts_lifted_f_7230(struct futhark_context *ctx, int64_t *out_prim_out_43374, int16_t na_21379, int16_t nb_21380, int16_t nc_21381, int16_t bin_21382, int16_t a_21383, int16_t b_21384, int16_t c_21385, int16_t d_21386);
+FUTHARK_FUN_ATTR int futrts_lifted_lambda_7229(struct futhark_context *ctx, int16_t *out_prim_out_43375, int16_t *out_prim_out_43376, int16_t *out_prim_out_43377, int16_t *out_prim_out_43378, int16_t x_21322);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -7125,4843 +7135,5239 @@ struct futhark_opaque_sortInfo_double *futhark_restore_opaque_sortInfo_double(st
     return obj;
 }
 
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_double(struct futhark_context *ctx, struct memblock *mem_out_p_41535, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34806, int64_t incr_34807)
+FUTHARK_FUN_ATTR int futrts_entry_argmin_double(struct futhark_context *ctx, int64_t *out_prim_out_43217, struct memblock ks_mem_42914, int64_t n_36481)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock mem_41235;
+    int64_t prim_out_43175;
+    int64_t defunc_0_reduce_comm_res_42488;
+    double defunc_0_reduce_comm_res_42489;
+    int64_t redout_42751;
+    double redout_42752;
     
-    mem_41235.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t bytes_41234 = (int64_t) 8 * n_34806;
-    
-    if (memblock_alloc(ctx, &mem_41235, bytes_41234, "mem_41235")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41071 = 0; i_41071 < n_34806; i_41071++) {
-        int64_t eta_p_40807 = ((int64_t *) is_mem_41232.mem)[i_41071];
-        int64_t lifted_lambda_res_40808 = sub64(eta_p_40807, incr_34807);
-        bool x_40810 = sle64((int64_t) 0, lifted_lambda_res_40808);
-        bool y_40811 = slt64(lifted_lambda_res_40808, n_34806);
-        bool bounds_check_40812 = x_40810 && y_40811;
-        bool index_certs_40813;
+    redout_42751 = n_36481;
+    redout_42752 = INFINITY;
+    for (int64_t i_42753 = 0; i_42753 < n_36481; i_42753++) {
+        double x_36957 = ((double *) ks_mem_42914.mem)[i_42753];
+        bool defunc_0_lt_res_36962 = redout_42752 < x_36957;
+        bool defunc_0_eq_res_36964 = redout_42752 == x_36957;
+        bool cond_f_res_t_res_36965 = slt64(redout_42751, i_42753);
+        bool x_36966 = defunc_0_eq_res_36964 && cond_f_res_t_res_36965;
+        bool x_42466 = !defunc_0_lt_res_36962;
+        bool y_42467 = x_36966 && x_42466;
+        bool cond_36963 = defunc_0_lt_res_36962 || y_42467;
+        int64_t defunc_0_op_res_36967;
         
-        if (!bounds_check_40812) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_40808, "] out of bounds for array of shape [", (long long) n_34806, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:49:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:47:1-49:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        double lifted_lambda_res_40814 = ((double *) ys_mem_41233.mem)[lifted_lambda_res_40808];
-        
-        ((double *) mem_41235.mem)[i_41071] = lifted_lambda_res_40814;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41235, "mem_41235") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41535, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref(ctx, &mem_41235, "mem_41235") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_float(struct futhark_context *ctx, struct memblock *mem_out_p_41536, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34653, int64_t incr_34654)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock mem_41235;
-    
-    mem_41235.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t bytes_41234 = (int64_t) 4 * n_34653;
-    
-    if (memblock_alloc(ctx, &mem_41235, bytes_41234, "mem_41235")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41071 = 0; i_41071 < n_34653; i_41071++) {
-        int64_t eta_p_40807 = ((int64_t *) is_mem_41232.mem)[i_41071];
-        int64_t lifted_lambda_res_40808 = sub64(eta_p_40807, incr_34654);
-        bool x_40810 = sle64((int64_t) 0, lifted_lambda_res_40808);
-        bool y_40811 = slt64(lifted_lambda_res_40808, n_34653);
-        bool bounds_check_40812 = x_40810 && y_40811;
-        bool index_certs_40813;
-        
-        if (!bounds_check_40812) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_40808, "] out of bounds for array of shape [", (long long) n_34653, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:45:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:43:1-45:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        float lifted_lambda_res_40814 = ((float *) ys_mem_41233.mem)[lifted_lambda_res_40808];
-        
-        ((float *) mem_41235.mem)[i_41071] = lifted_lambda_res_40814;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41235, "mem_41235") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41536, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref(ctx, &mem_41235, "mem_41235") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_int(struct futhark_context *ctx, struct memblock *mem_out_p_41537, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34353, int64_t incr_34354)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock mem_41235;
-    
-    mem_41235.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t bytes_41234 = (int64_t) 4 * n_34353;
-    
-    if (memblock_alloc(ctx, &mem_41235, bytes_41234, "mem_41235")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41071 = 0; i_41071 < n_34353; i_41071++) {
-        int64_t eta_p_40807 = ((int64_t *) is_mem_41232.mem)[i_41071];
-        int64_t lifted_lambda_res_40808 = sub64(eta_p_40807, incr_34354);
-        bool x_40810 = sle64((int64_t) 0, lifted_lambda_res_40808);
-        bool y_40811 = slt64(lifted_lambda_res_40808, n_34353);
-        bool bounds_check_40812 = x_40810 && y_40811;
-        bool index_certs_40813;
-        
-        if (!bounds_check_40812) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_40808, "] out of bounds for array of shape [", (long long) n_34353, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:37:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:35:1-37:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int32_t lifted_lambda_res_40814 = ((int32_t *) ys_mem_41233.mem)[lifted_lambda_res_40808];
-        
-        ((int32_t *) mem_41235.mem)[i_41071] = lifted_lambda_res_40814;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41235, "mem_41235") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41537, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref(ctx, &mem_41235, "mem_41235") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_long(struct futhark_context *ctx, struct memblock *mem_out_p_41538, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34500, int64_t incr_34501)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock mem_41235;
-    
-    mem_41235.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t bytes_41234 = (int64_t) 8 * n_34500;
-    
-    if (memblock_alloc(ctx, &mem_41235, bytes_41234, "mem_41235")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41071 = 0; i_41071 < n_34500; i_41071++) {
-        int64_t eta_p_40807 = ((int64_t *) is_mem_41232.mem)[i_41071];
-        int64_t lifted_lambda_res_40808 = sub64(eta_p_40807, incr_34501);
-        bool x_40810 = sle64((int64_t) 0, lifted_lambda_res_40808);
-        bool y_40811 = slt64(lifted_lambda_res_40808, n_34500);
-        bool bounds_check_40812 = x_40810 && y_40811;
-        bool index_certs_40813;
-        
-        if (!bounds_check_40812) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_40808, "] out of bounds for array of shape [", (long long) n_34500, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:41:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:39:1-41:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int64_t lifted_lambda_res_40814 = ((int64_t *) ys_mem_41233.mem)[lifted_lambda_res_40808];
-        
-        ((int64_t *) mem_41235.mem)[i_41071] = lifted_lambda_res_40814;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41235, "mem_41235") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41538, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref(ctx, &mem_41235, "mem_41235") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_short(struct futhark_context *ctx, struct memblock *mem_out_p_41539, struct memblock is_mem_41232, struct memblock ys_mem_41233, int64_t n_34200, int64_t incr_34201)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock mem_41235;
-    
-    mem_41235.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t bytes_41234 = (int64_t) 2 * n_34200;
-    
-    if (memblock_alloc(ctx, &mem_41235, bytes_41234, "mem_41235")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41071 = 0; i_41071 < n_34200; i_41071++) {
-        int64_t eta_p_40807 = ((int64_t *) is_mem_41232.mem)[i_41071];
-        int64_t lifted_lambda_res_40808 = sub64(eta_p_40807, incr_34201);
-        bool x_40810 = sle64((int64_t) 0, lifted_lambda_res_40808);
-        bool y_40811 = slt64(lifted_lambda_res_40808, n_34200);
-        bool bounds_check_40812 = x_40810 && y_40811;
-        bool index_certs_40813;
-        
-        if (!bounds_check_40812) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_40808, "] out of bounds for array of shape [", (long long) n_34200, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:33:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:31:1-33:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int16_t lifted_lambda_res_40814 = ((int16_t *) ys_mem_41233.mem)[lifted_lambda_res_40808];
-        
-        ((int16_t *) mem_41235.mem)[i_41071] = lifted_lambda_res_40814;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41235, "mem_41235") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41539, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref(ctx, &mem_41235, "mem_41235") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_double(struct futhark_context *ctx, struct memblock *mem_out_p_41540, struct memblock *mem_out_p_41541, struct memblock xs_mem_41232, int64_t n_34047, int64_t incr_34048)
-{
-    (void) ctx;
-    
-    int err = 0;
-    int64_t mem_41234_cached_sizze_41542 = 0;
-    unsigned char *mem_41234 = NULL;
-    int64_t mem_41236_cached_sizze_41543 = 0;
-    unsigned char *mem_41236 = NULL;
-    int64_t mem_41244_cached_sizze_41544 = 0;
-    unsigned char *mem_41244 = NULL;
-    int64_t mem_41246_cached_sizze_41545 = 0;
-    unsigned char *mem_41246 = NULL;
-    int64_t mem_41248_cached_sizze_41546 = 0;
-    unsigned char *mem_41248 = NULL;
-    int64_t mem_41250_cached_sizze_41547 = 0;
-    unsigned char *mem_41250 = NULL;
-    int64_t mem_41252_cached_sizze_41548 = 0;
-    unsigned char *mem_41252 = NULL;
-    int64_t mem_41284_cached_sizze_41549 = 0;
-    unsigned char *mem_41284 = NULL;
-    int64_t mem_41286_cached_sizze_41550 = 0;
-    unsigned char *mem_41286 = NULL;
-    int64_t mem_41299_cached_sizze_41551 = 0;
-    unsigned char *mem_41299 = NULL;
-    int64_t mem_41300_cached_sizze_41552 = 0;
-    unsigned char *mem_41300 = NULL;
-    int64_t mem_41307_cached_sizze_41553 = 0;
-    unsigned char *mem_41307 = NULL;
-    int64_t mem_41310_cached_sizze_41554 = 0;
-    unsigned char *mem_41310 = NULL;
-    int64_t mem_41313_cached_sizze_41555 = 0;
-    unsigned char *mem_41313 = NULL;
-    int64_t mem_41316_cached_sizze_41556 = 0;
-    unsigned char *mem_41316 = NULL;
-    int64_t mem_41319_cached_sizze_41557 = 0;
-    unsigned char *mem_41319 = NULL;
-    int64_t mem_41336_cached_sizze_41558 = 0;
-    unsigned char *mem_41336 = NULL;
-    int64_t mem_41337_cached_sizze_41559 = 0;
-    unsigned char *mem_41337 = NULL;
-    int64_t mem_41338_cached_sizze_41560 = 0;
-    unsigned char *mem_41338 = NULL;
-    int64_t mem_41339_cached_sizze_41561 = 0;
-    unsigned char *mem_41339 = NULL;
-    int64_t mem_41340_cached_sizze_41562 = 0;
-    unsigned char *mem_41340 = NULL;
-    int64_t mem_41341_cached_sizze_41563 = 0;
-    unsigned char *mem_41341 = NULL;
-    int64_t mem_41342_cached_sizze_41564 = 0;
-    unsigned char *mem_41342 = NULL;
-    int64_t mem_41385_cached_sizze_41565 = 0;
-    unsigned char *mem_41385 = NULL;
-    int64_t mem_41386_cached_sizze_41566 = 0;
-    unsigned char *mem_41386 = NULL;
-    int64_t mem_41411_cached_sizze_41567 = 0;
-    unsigned char *mem_41411 = NULL;
-    int64_t mem_41419_cached_sizze_41568 = 0;
-    unsigned char *mem_41419 = NULL;
-    struct memblock mem_41447;
-    
-    mem_41447.references = NULL;
-    
-    struct memblock mem_41445;
-    
-    mem_41445.references = NULL;
-    
-    struct memblock mem_out_41494;
-    
-    mem_out_41494.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t rng_40440 = add64(n_34047, incr_34048);
-    bool bounds_invalid_upwards_40441 = slt64(rng_40440, incr_34048);
-    bool valid_40442 = !bounds_invalid_upwards_40441;
-    bool range_valid_c_40443;
-    
-    if (!valid_40442) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_34048, "..<", (long long) rng_40440, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:161:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:161:32-63\n   #4  ftsort.fut:28:9-26\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:28:9-31\n   #7  ftsort.fut:27:1-28:31\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool cond_40444 = n_34047 == (int64_t) 0;
-    int32_t iters_40445;
-    
-    if (cond_40444) {
-        iters_40445 = 0;
-    } else {
-        iters_40445 = 32;
-    }
-    
-    int64_t n_blocks_40446 = sdiv64(n_34047, (int64_t) 256);
-    int64_t rest_40447 = smod64(n_34047, (int64_t) 256);
-    int64_t arg_40448 = mul64((int64_t) 256, n_blocks_40446);
-    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449 = add64(rest_40447, arg_40448);
-    bool dim_match_40450 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449 == n_34047;
-    bool empty_or_match_cert_40451;
-    
-    if (!dim_match_40450) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_34047, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "](f64, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #5  ftbasics.fut:162:88-91\n   #6  ftsort.fut:28:9-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:28:9-31\n   #9  ftsort.fut:27:1-28:31\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41233 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449;
-    bool loop_nonempty_40455 = slt32(0, iters_40445);
-    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456 = add64((int64_t) 1, n_blocks_40446);
-    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456);
-    bool empty_slice_40458 = arg_40448 == (int64_t) 0;
-    int64_t m_40459 = sub64(arg_40448, (int64_t) 1);
-    bool zzero_leq_i_p_m_t_s_40460 = sle64((int64_t) 0, m_40459);
-    bool i_p_m_t_s_leq_w_40461 = slt64(m_40459, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449);
-    bool i_lte_j_40462 = sle64((int64_t) 0, arg_40448);
-    bool y_40463 = zzero_leq_i_p_m_t_s_40460 && i_p_m_t_s_leq_w_40461;
-    bool forwards_ok_40464 = i_lte_j_40462 && y_40463;
-    bool ok_or_empty_40465 = empty_slice_40458 || forwards_ok_40464;
-    bool loop_not_taken_40466 = !loop_nonempty_40455;
-    bool protect_assert_disj_40467 = ok_or_empty_40465 || loop_not_taken_40466;
-    bool index_certs_40468;
-    
-    if (!protect_assert_disj_40467) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_40448, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:28:9-26\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:28:9-31\n   #10 ftsort.fut:27:1-28:31\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool empty_slice_40469 = rest_40447 == (int64_t) 0;
-    int64_t m_40470 = sub64(rest_40447, (int64_t) 1);
-    int64_t i_p_m_t_s_40471 = add64(arg_40448, m_40470);
-    bool zzero_leq_i_p_m_t_s_40472 = sle64((int64_t) 0, i_p_m_t_s_40471);
-    bool i_p_m_t_s_leq_w_40473 = slt64(i_p_m_t_s_40471, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449);
-    bool i_lte_j_40474 = sle64(arg_40448, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449);
-    bool y_40475 = zzero_leq_i_p_m_t_s_40472 && i_p_m_t_s_leq_w_40473;
-    bool forwards_ok_40476 = i_lte_j_40474 && y_40475;
-    bool ok_or_empty_40477 = empty_slice_40469 || forwards_ok_40476;
-    bool protect_assert_disj_40478 = loop_not_taken_40466 || ok_or_empty_40477;
-    bool index_certs_40479;
-    
-    if (!protect_assert_disj_40478) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_40448, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:28:9-26\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:28:9-31\n   #10 ftsort.fut:27:1-28:31\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool binop_x_40480 = sle64((int64_t) 0, n_blocks_40446);
-    bool protect_assert_disj_40481 = loop_not_taken_40466 || binop_x_40480;
-    bool dim_ok_cert_40482;
-    
-    if (!protect_assert_disj_40481) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_40448, "] to array of shape [", (long long) n_blocks_40446, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:28:9-26\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:28:9-31\n   #10 ftsort.fut:27:1-28:31\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool y_40484 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457);
-    bool protect_assert_disj_40485 = loop_not_taken_40466 || y_40484;
-    bool index_certs_40486;
-    
-    if (!protect_assert_disj_40485) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:28:9-26\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:28:9-31\n   #11 ftsort.fut:27:1-28:31\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool x_40488 = sle64((int64_t) 0, m_40470);
-    bool y_40489 = slt64(m_40470, rest_40447);
-    bool bounds_check_40490 = x_40488 && y_40489;
-    bool protect_assert_disj_40491 = empty_slice_40469 || bounds_check_40490;
-    bool protect_assert_disj_40492 = loop_not_taken_40466 || protect_assert_disj_40491;
-    bool index_certs_40493;
-    
-    if (!protect_assert_disj_40492) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_40470, "] out of bounds for array of shape [", (long long) rest_40447, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:28:9-26\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:28:9-31\n   #10 ftsort.fut:27:1-28:31\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41243 = (int64_t) 2 * rest_40447;
-    int64_t bytes_41283 = (int64_t) 8 * rest_40447;
-    int64_t bytes_41309 = (int64_t) 2048 * n_blocks_40446;
-    int64_t bytes_41315 = (int64_t) 32 * n_blocks_40446;
-    int64_t bytes_41318 = (int64_t) 8 * n_blocks_40446;
-    int64_t bytes_41410 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456;
-    bool dim_match_40762 = n_34047 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449;
-    bool empty_or_match_cert_40763;
-    
-    if (!dim_match_40762) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "] cannot match shape of type `[", (long long) n_34047, "](f64, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:28:9-26\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:28:9-31\n   #11 ftsort.fut:27:1-28:31\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41444 = (int64_t) 8 * n_34047;
-    
-    if (mem_41234_cached_sizze_41542 < bytes_41233) {
-        err = lexical_realloc(ctx, &mem_41234, &mem_41234_cached_sizze_41542, bytes_41233);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_41234, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) xs_mem_41232.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449});
-    if (mem_41236_cached_sizze_41543 < bytes_41233) {
-        err = lexical_realloc(ctx, &mem_41236, &mem_41236_cached_sizze_41543, bytes_41233);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int64_t i_41495 = 0; i_41495 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449; i_41495++) {
-        int64_t x_41496 = (int64_t) 0 + i_41495 * (int64_t) 1;
-        
-        ((int64_t *) mem_41236)[i_41495] = x_41496;
-    }
-    if (mem_41244_cached_sizze_41544 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41244, &mem_41244_cached_sizze_41544, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41246_cached_sizze_41545 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41246, &mem_41246_cached_sizze_41545, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41248_cached_sizze_41546 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41248, &mem_41248_cached_sizze_41546, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41250_cached_sizze_41547 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41250, &mem_41250_cached_sizze_41547, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41252_cached_sizze_41548 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41252, &mem_41252_cached_sizze_41548, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41284_cached_sizze_41549 < bytes_41283) {
-        err = lexical_realloc(ctx, &mem_41284, &mem_41284_cached_sizze_41549, bytes_41283);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41286_cached_sizze_41550 < bytes_41283) {
-        err = lexical_realloc(ctx, &mem_41286, &mem_41286_cached_sizze_41550, bytes_41283);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41299_cached_sizze_41551 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41299, &mem_41299_cached_sizze_41551, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41300_cached_sizze_41552 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41300, &mem_41300_cached_sizze_41552, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41307_cached_sizze_41553 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41307, &mem_41307_cached_sizze_41553, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41310_cached_sizze_41554 < bytes_41309) {
-        err = lexical_realloc(ctx, &mem_41310, &mem_41310_cached_sizze_41554, bytes_41309);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41313_cached_sizze_41555 < bytes_41309) {
-        err = lexical_realloc(ctx, &mem_41313, &mem_41313_cached_sizze_41555, bytes_41309);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41316_cached_sizze_41556 < bytes_41315) {
-        err = lexical_realloc(ctx, &mem_41316, &mem_41316_cached_sizze_41556, bytes_41315);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41319_cached_sizze_41557 < bytes_41318) {
-        err = lexical_realloc(ctx, &mem_41319, &mem_41319_cached_sizze_41557, bytes_41318);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41336_cached_sizze_41558 < (int64_t) 2048) {
-        err = lexical_realloc(ctx, &mem_41336, &mem_41336_cached_sizze_41558, (int64_t) 2048);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41337_cached_sizze_41559 < (int64_t) 2048) {
-        err = lexical_realloc(ctx, &mem_41337, &mem_41337_cached_sizze_41559, (int64_t) 2048);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41338_cached_sizze_41560 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41338, &mem_41338_cached_sizze_41560, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41339_cached_sizze_41561 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41339, &mem_41339_cached_sizze_41561, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41340_cached_sizze_41562 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41340, &mem_41340_cached_sizze_41562, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41341_cached_sizze_41563 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41341, &mem_41341_cached_sizze_41563, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41342_cached_sizze_41564 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41342, &mem_41342_cached_sizze_41564, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41385_cached_sizze_41565 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41385, &mem_41385_cached_sizze_41565, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41386_cached_sizze_41566 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41386, &mem_41386_cached_sizze_41566, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41411_cached_sizze_41567 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41411, &mem_41411_cached_sizze_41567, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41419_cached_sizze_41568 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41419, &mem_41419_cached_sizze_41568, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int32_t i_40496 = 0; i_40496 < iters_40445; i_40496++) {
-        int32_t blocked_radix_sort_step_arg1_40499 = mul32(2, i_40496);
-        int32_t get_bit_arg0_40504 = add32(1, blocked_radix_sort_step_arg1_40499);
-        int64_t unsign_arg0_40505 = zext_i32_i64(get_bit_arg0_40504);
-        bool cond_f_res_40506 = get_bit_arg0_40504 == 63;
-        int64_t unsign_arg0_40507 = zext_i32_i64(blocked_radix_sort_step_arg1_40499);
-        bool cond_f_res_40508 = blocked_radix_sort_step_arg1_40499 == 63;
-        int16_t discard_41089;
-        int16_t discard_41090;
-        int16_t discard_41091;
-        int16_t discard_41092;
-        int16_t scanacc_41074;
-        int16_t scanacc_41075;
-        int16_t scanacc_41076;
-        int16_t scanacc_41077;
-        
-        scanacc_41074 = (int16_t) 0;
-        scanacc_41075 = (int16_t) 0;
-        scanacc_41076 = (int16_t) 0;
-        scanacc_41077 = (int16_t) 0;
-        for (int64_t i_41083 = 0; i_41083 < rest_40447; i_41083++) {
-            int64_t slice_41217 = arg_40448 + i_41083;
-            double eta_p_40890 = ((double *) mem_41234)[slice_41217];
-            int64_t i64_arg0_40891 = futrts_to_bits64(eta_p_40890);
-            int64_t unsign_arg0_40892 = ashr64(i64_arg0_40891, unsign_arg0_40505);
-            int64_t unsign_arg0_40893 = (int64_t) 1 & unsign_arg0_40892;
-            int32_t to_i32_res_40894 = zext_i64_i32(unsign_arg0_40893);
-            int64_t unsign_arg0_40895 = ashr64(i64_arg0_40891, (int64_t) 63);
-            int64_t unsign_arg0_40896 = (int64_t) 1 & unsign_arg0_40895;
-            int32_t to_i32_res_40897 = zext_i64_i32(unsign_arg0_40896);
-            bool cond_40898 = to_i32_res_40897 == 1;
-            bool x_40899 = !cond_40898;
-            bool y_40900 = cond_f_res_40506 && x_40899;
-            bool cond_40901 = cond_40898 || y_40900;
-            int32_t defunc_0_get_bit_res_40902;
-            
-            if (cond_40901) {
-                int32_t defunc_0_get_bit_res_t_res_41032 = 1 ^ to_i32_res_40894;
-                
-                defunc_0_get_bit_res_40902 = defunc_0_get_bit_res_t_res_41032;
-            } else {
-                defunc_0_get_bit_res_40902 = to_i32_res_40894;
-            }
-            
-            int32_t zp_lhs_40904 = mul32(2, defunc_0_get_bit_res_40902);
-            int64_t unsign_arg0_40905 = ashr64(i64_arg0_40891, unsign_arg0_40507);
-            int64_t unsign_arg0_40906 = (int64_t) 1 & unsign_arg0_40905;
-            int32_t to_i32_res_40907 = zext_i64_i32(unsign_arg0_40906);
-            bool y_40908 = cond_f_res_40508 && x_40899;
-            bool cond_40909 = cond_40898 || y_40908;
-            int32_t defunc_0_get_bit_res_40910;
-            
-            if (cond_40909) {
-                int32_t defunc_0_get_bit_res_t_res_41033 = 1 ^ to_i32_res_40907;
-                
-                defunc_0_get_bit_res_40910 = defunc_0_get_bit_res_t_res_41033;
-            } else {
-                defunc_0_get_bit_res_40910 = to_i32_res_40907;
-            }
-            
-            int32_t i32_arg0_40912 = add32(zp_lhs_40904, defunc_0_get_bit_res_40910);
-            int16_t i32_res_40913 = sext_i32_i16(i32_arg0_40912);
-            int16_t defunc_0_f_res_40915;
-            int16_t defunc_0_f_res_40916;
-            int16_t defunc_0_f_res_40917;
-            int16_t defunc_0_f_res_40918;
-            
-            if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40915, &defunc_0_f_res_40916, &defunc_0_f_res_40917, &defunc_0_f_res_40918, i32_res_40913) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int16_t defunc_0_op_res_40559 = add16(defunc_0_f_res_40915, scanacc_41074);
-            int16_t defunc_0_op_res_40560 = add16(defunc_0_f_res_40916, scanacc_41075);
-            int16_t defunc_0_op_res_40561 = add16(defunc_0_f_res_40917, scanacc_41076);
-            int16_t defunc_0_op_res_40562 = add16(defunc_0_f_res_40918, scanacc_41077);
-            
-            ((int16_t *) mem_41244)[i_41083] = defunc_0_op_res_40559;
-            ((int16_t *) mem_41246)[i_41083] = defunc_0_op_res_40560;
-            ((int16_t *) mem_41248)[i_41083] = defunc_0_op_res_40561;
-            ((int16_t *) mem_41250)[i_41083] = defunc_0_op_res_40562;
-            ((int16_t *) mem_41252)[i_41083] = i32_res_40913;
-            
-            int16_t scanacc_tmp_41499 = defunc_0_op_res_40559;
-            int16_t scanacc_tmp_41500 = defunc_0_op_res_40560;
-            int16_t scanacc_tmp_41501 = defunc_0_op_res_40561;
-            int16_t scanacc_tmp_41502 = defunc_0_op_res_40562;
-            
-            scanacc_41074 = scanacc_tmp_41499;
-            scanacc_41075 = scanacc_tmp_41500;
-            scanacc_41076 = scanacc_tmp_41501;
-            scanacc_41077 = scanacc_tmp_41502;
-        }
-        discard_41089 = scanacc_41074;
-        discard_41090 = scanacc_41075;
-        discard_41091 = scanacc_41076;
-        discard_41092 = scanacc_41077;
-        
-        int16_t defunc_0_radix_sort_step_i16_res_40563;
-        int16_t defunc_0_radix_sort_step_i16_res_40564;
-        int16_t defunc_0_radix_sort_step_i16_res_40565;
-        int16_t defunc_0_radix_sort_step_i16_res_40566;
-        
-        if (empty_slice_40469) {
-            defunc_0_radix_sort_step_i16_res_40563 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_40564 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_40565 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_40566 = (int16_t) 0;
+        if (cond_36963) {
+            defunc_0_op_res_36967 = redout_42751;
         } else {
-            int16_t last_res_40567 = ((int16_t *) mem_41244)[m_40470];
-            int16_t last_res_40568 = ((int16_t *) mem_41246)[m_40470];
-            int16_t last_res_40569 = ((int16_t *) mem_41248)[m_40470];
-            int16_t last_res_40570 = ((int16_t *) mem_41250)[m_40470];
-            
-            defunc_0_radix_sort_step_i16_res_40563 = last_res_40567;
-            defunc_0_radix_sort_step_i16_res_40564 = last_res_40568;
-            defunc_0_radix_sort_step_i16_res_40565 = last_res_40569;
-            defunc_0_radix_sort_step_i16_res_40566 = last_res_40570;
-        }
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_41284, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + (int64_t) 1 * arg_40448, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40447});
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_41286, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41234, (int64_t) 0 + (int64_t) 1 * arg_40448, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40447});
-        for (int64_t write_iter_41093 = 0; write_iter_41093 < rest_40447; write_iter_41093++) {
-            int16_t write_iv_41096 = ((int16_t *) mem_41252)[write_iter_41093];
-            int16_t write_iv_41097 = ((int16_t *) mem_41244)[write_iter_41093];
-            int16_t write_iv_41098 = ((int16_t *) mem_41246)[write_iter_41093];
-            int16_t write_iv_41099 = ((int16_t *) mem_41248)[write_iter_41093];
-            int16_t write_iv_41100 = ((int16_t *) mem_41250)[write_iter_41093];
-            int64_t slice_41216 = arg_40448 + write_iter_41093;
-            double write_iv_41101 = ((double *) mem_41234)[slice_41216];
-            int64_t write_iv_41102 = ((int64_t *) mem_41236)[slice_41216];
-            int64_t defunc_0_f_res_40874;
-            
-            if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40874, defunc_0_radix_sort_step_i16_res_40563, defunc_0_radix_sort_step_i16_res_40564, defunc_0_radix_sort_step_i16_res_40565, write_iv_41096, write_iv_41097, write_iv_41098, write_iv_41099, write_iv_41100) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40874) && slt64(defunc_0_f_res_40874, rest_40447)) {
-                ((double *) mem_41286)[defunc_0_f_res_40874] = write_iv_41101;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40874) && slt64(defunc_0_f_res_40874, rest_40447)) {
-                ((int64_t *) mem_41284)[defunc_0_f_res_40874] = write_iv_41102;
-            }
-        }
-        ((int16_t *) mem_41299)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_40563;
-        ((int16_t *) mem_41299)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40564;
-        ((int16_t *) mem_41299)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_40565;
-        ((int16_t *) mem_41299)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_40566;
-        for (int64_t i_41107 = 0; i_41107 < (int64_t) 4; i_41107++) {
-            int16_t eta_p_40587 = ((int16_t *) mem_41299)[i_41107];
-            int64_t i16_res_40588 = sext_i16_i64(eta_p_40587);
-            
-            ((int64_t *) mem_41300)[i_41107] = i16_res_40588;
+            defunc_0_op_res_36967 = i_42753;
         }
         
-        int16_t tmp_40589 = add16(defunc_0_radix_sort_step_i16_res_40563, defunc_0_radix_sort_step_i16_res_40564);
-        int16_t tmp_40590 = add16(defunc_0_radix_sort_step_i16_res_40565, tmp_40589);
+        double defunc_0_op_res_36968;
         
-        ((int16_t *) mem_41307)[(int64_t) 0] = (int16_t) 0;
-        ((int16_t *) mem_41307)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40563;
-        ((int16_t *) mem_41307)[(int64_t) 2] = tmp_40589;
-        ((int16_t *) mem_41307)[(int64_t) 3] = tmp_40590;
-        for (int64_t i_41157 = 0; i_41157 < n_blocks_40446; i_41157++) {
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41234, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            
-            int64_t binop_x_41230 = (int64_t) 256 * i_41157;
-            int16_t discard_41129;
-            int16_t discard_41130;
-            int16_t discard_41131;
-            int16_t discard_41132;
-            int16_t scanacc_41114;
-            int16_t scanacc_41115;
-            int16_t scanacc_41116;
-            int16_t scanacc_41117;
-            
-            scanacc_41114 = (int16_t) 0;
-            scanacc_41115 = (int16_t) 0;
-            scanacc_41116 = (int16_t) 0;
-            scanacc_41117 = (int16_t) 0;
-            for (int64_t i_41123 = 0; i_41123 < (int64_t) 256; i_41123++) {
-                int64_t new_index_41231 = i_41123 + binop_x_41230;
-                double eta_p_40949 = ((double *) mem_41234)[new_index_41231];
-                int64_t i64_arg0_40950 = futrts_to_bits64(eta_p_40949);
-                int64_t unsign_arg0_40951 = ashr64(i64_arg0_40950, unsign_arg0_40505);
-                int64_t unsign_arg0_40952 = (int64_t) 1 & unsign_arg0_40951;
-                int32_t to_i32_res_40953 = zext_i64_i32(unsign_arg0_40952);
-                int64_t unsign_arg0_40954 = ashr64(i64_arg0_40950, (int64_t) 63);
-                int64_t unsign_arg0_40955 = (int64_t) 1 & unsign_arg0_40954;
-                int32_t to_i32_res_40956 = zext_i64_i32(unsign_arg0_40955);
-                bool cond_40957 = to_i32_res_40956 == 1;
-                bool x_40958 = !cond_40957;
-                bool y_40959 = cond_f_res_40506 && x_40958;
-                bool cond_40960 = cond_40957 || y_40959;
-                int32_t defunc_0_get_bit_res_40961;
-                
-                if (cond_40960) {
-                    int32_t defunc_0_get_bit_res_t_res_41034 = 1 ^ to_i32_res_40953;
-                    
-                    defunc_0_get_bit_res_40961 = defunc_0_get_bit_res_t_res_41034;
-                } else {
-                    defunc_0_get_bit_res_40961 = to_i32_res_40953;
-                }
-                
-                int32_t zp_lhs_40963 = mul32(2, defunc_0_get_bit_res_40961);
-                int64_t unsign_arg0_40964 = ashr64(i64_arg0_40950, unsign_arg0_40507);
-                int64_t unsign_arg0_40965 = (int64_t) 1 & unsign_arg0_40964;
-                int32_t to_i32_res_40966 = zext_i64_i32(unsign_arg0_40965);
-                bool y_40967 = cond_f_res_40508 && x_40958;
-                bool cond_40968 = cond_40957 || y_40967;
-                int32_t defunc_0_get_bit_res_40969;
-                
-                if (cond_40968) {
-                    int32_t defunc_0_get_bit_res_t_res_41035 = 1 ^ to_i32_res_40966;
-                    
-                    defunc_0_get_bit_res_40969 = defunc_0_get_bit_res_t_res_41035;
-                } else {
-                    defunc_0_get_bit_res_40969 = to_i32_res_40966;
-                }
-                
-                int32_t i32_arg0_40971 = add32(zp_lhs_40963, defunc_0_get_bit_res_40969);
-                int16_t i32_res_40972 = sext_i32_i16(i32_arg0_40971);
-                int16_t defunc_0_f_res_40974;
-                int16_t defunc_0_f_res_40975;
-                int16_t defunc_0_f_res_40976;
-                int16_t defunc_0_f_res_40977;
-                
-                if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40974, &defunc_0_f_res_40975, &defunc_0_f_res_40976, &defunc_0_f_res_40977, i32_res_40972) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int16_t defunc_0_op_res_40654 = add16(defunc_0_f_res_40974, scanacc_41114);
-                int16_t defunc_0_op_res_40655 = add16(defunc_0_f_res_40975, scanacc_41115);
-                int16_t defunc_0_op_res_40656 = add16(defunc_0_f_res_40976, scanacc_41116);
-                int16_t defunc_0_op_res_40657 = add16(defunc_0_f_res_40977, scanacc_41117);
-                
-                ((int16_t *) mem_41338)[i_41123] = defunc_0_op_res_40654;
-                ((int16_t *) mem_41339)[i_41123] = defunc_0_op_res_40655;
-                ((int16_t *) mem_41340)[i_41123] = defunc_0_op_res_40656;
-                ((int16_t *) mem_41341)[i_41123] = defunc_0_op_res_40657;
-                ((int16_t *) mem_41342)[i_41123] = i32_res_40972;
-                
-                int16_t scanacc_tmp_41515 = defunc_0_op_res_40654;
-                int16_t scanacc_tmp_41516 = defunc_0_op_res_40655;
-                int16_t scanacc_tmp_41517 = defunc_0_op_res_40656;
-                int16_t scanacc_tmp_41518 = defunc_0_op_res_40657;
-                
-                scanacc_41114 = scanacc_tmp_41515;
-                scanacc_41115 = scanacc_tmp_41516;
-                scanacc_41116 = scanacc_tmp_41517;
-                scanacc_41117 = scanacc_tmp_41518;
-            }
-            discard_41129 = scanacc_41114;
-            discard_41130 = scanacc_41115;
-            discard_41131 = scanacc_41116;
-            discard_41132 = scanacc_41117;
-            
-            int16_t last_res_40658 = ((int16_t *) mem_41338)[(int64_t) 255];
-            int16_t last_res_40659 = ((int16_t *) mem_41339)[(int64_t) 255];
-            int16_t last_res_40660 = ((int16_t *) mem_41340)[(int64_t) 255];
-            int16_t last_res_40661 = ((int16_t *) mem_41341)[(int64_t) 255];
-            
-            for (int64_t write_iter_41133 = 0; write_iter_41133 < (int64_t) 256; write_iter_41133++) {
-                int16_t write_iv_41136 = ((int16_t *) mem_41342)[write_iter_41133];
-                int16_t write_iv_41137 = ((int16_t *) mem_41338)[write_iter_41133];
-                int16_t write_iv_41138 = ((int16_t *) mem_41339)[write_iter_41133];
-                int16_t write_iv_41139 = ((int16_t *) mem_41340)[write_iter_41133];
-                int16_t write_iv_41140 = ((int16_t *) mem_41341)[write_iter_41133];
-                int64_t new_index_41227 = write_iter_41133 + binop_x_41230;
-                double write_iv_41141 = ((double *) mem_41234)[new_index_41227];
-                int64_t write_iv_41142 = ((int64_t *) mem_41236)[new_index_41227];
-                int64_t defunc_0_f_res_40933;
-                
-                if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40933, last_res_40658, last_res_40659, last_res_40660, write_iv_41136, write_iv_41137, write_iv_41138, write_iv_41139, write_iv_41140) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40933) && slt64(defunc_0_f_res_40933, (int64_t) 256)) {
-                    ((double *) mem_41336)[defunc_0_f_res_40933] = write_iv_41141;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40933) && slt64(defunc_0_f_res_40933, (int64_t) 256)) {
-                    ((int64_t *) mem_41337)[defunc_0_f_res_40933] = write_iv_41142;
-                }
-            }
-            ((int16_t *) mem_41385)[(int64_t) 0] = last_res_40658;
-            ((int16_t *) mem_41385)[(int64_t) 1] = last_res_40659;
-            ((int16_t *) mem_41385)[(int64_t) 2] = last_res_40660;
-            ((int16_t *) mem_41385)[(int64_t) 3] = last_res_40661;
-            for (int64_t i_41147 = 0; i_41147 < (int64_t) 4; i_41147++) {
-                int16_t eta_p_40676 = ((int16_t *) mem_41385)[i_41147];
-                int64_t i16_res_40677 = sext_i16_i64(eta_p_40676);
-                
-                ((int64_t *) mem_41386)[i_41147] = i16_res_40677;
-            }
-            
-            int16_t tmp_40678 = add16(last_res_40658, last_res_40659);
-            int16_t tmp_40679 = add16(last_res_40660, tmp_40678);
-            
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4] = (int16_t) 0;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 1] = last_res_40658;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 2] = tmp_40678;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 3] = tmp_40679;
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41310, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41313, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41316, i_41157 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41386, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
-        }
-        
-        int64_t discard_41169;
-        int64_t scanacc_41165 = (int64_t) 0;
-        
-        for (int64_t i_41167 = 0; i_41167 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457; i_41167++) {
-            int64_t new_index_41205 = squot64(i_41167, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456);
-            int64_t binop_y_41207 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456 * new_index_41205;
-            int64_t new_index_41208 = i_41167 - binop_y_41207;
-            bool index_concat_cmp_41210 = sle64(n_blocks_40446, new_index_41208);
-            int64_t index_concat_branch_41214;
-            
-            if (index_concat_cmp_41210) {
-                int64_t index_concat_41212 = ((int64_t *) mem_41300)[new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41212;
-            } else {
-                int64_t index_concat_41213 = ((int64_t *) mem_41316)[new_index_41208 * (int64_t) 4 + new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41213;
-            }
-            
-            int64_t defunc_0_op_res_40693 = add64(scanacc_41165, index_concat_branch_41214);
-            
-            ((int64_t *) mem_41411)[i_41167] = defunc_0_op_res_40693;
-            
-            int64_t scanacc_tmp_41527 = defunc_0_op_res_40693;
-            
-            scanacc_41165 = scanacc_tmp_41527;
-        }
-        discard_41169 = scanacc_41165;
-        for (int64_t i_41172 = 0; i_41172 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457; i_41172++) {
-            int64_t zv_lhs_40696 = add64((int64_t) -1, i_41172);
-            int64_t tmp_40697 = smod64(zv_lhs_40696, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457);
-            int64_t lifted_lambda_res_40698 = ((int64_t *) mem_41411)[tmp_40697];
-            
-            ((int64_t *) mem_41419)[i_41172] = lifted_lambda_res_40698;
-        }
-        ((int64_t *) mem_41419)[(int64_t) 0] = (int64_t) 0;
-        for (int64_t write_iter_41174 = 0; write_iter_41174 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449; write_iter_41174++) {
-            bool index_concat_cmp_41196 = sle64(arg_40448, write_iter_41174);
-            double index_concat_branch_40815;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41044 = sub64(write_iter_41174, arg_40448);
-                double index_concat_41045 = ((double *) mem_41286)[index_concat_i_41044];
-                
-                index_concat_branch_40815 = index_concat_41045;
-            } else {
-                int64_t new_index_40818 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_40819 = (int64_t) 256 * new_index_40818;
-                int64_t new_index_40820 = write_iter_41174 - binop_y_40819;
-                double index_concat_40821 = ((double *) mem_41310)[new_index_40818 * (int64_t) 256 + new_index_40820];
-                
-                index_concat_branch_40815 = index_concat_40821;
-            }
-            
-            int64_t i64_arg0_40822 = futrts_to_bits64(index_concat_branch_40815);
-            int64_t unsign_arg0_40823 = ashr64(i64_arg0_40822, (int64_t) 63);
-            int64_t unsign_arg0_40824 = (int64_t) 1 & unsign_arg0_40823;
-            int32_t to_i32_res_40825 = zext_i64_i32(unsign_arg0_40824);
-            bool cond_40826 = to_i32_res_40825 == 1;
-            bool x_40827 = !cond_40826;
-            int32_t zlzb_rhs_40828;
-            int32_t acc_40830 = 0;
-            
-            for (int32_t i_40829 = 0; i_40829 < 2; i_40829++) {
-                int32_t get_bit_arg0_40831 = add32(blocked_radix_sort_step_arg1_40499, i_40829);
-                int64_t unsign_arg0_40832 = zext_i32_i64(get_bit_arg0_40831);
-                int64_t unsign_arg0_40833 = ashr64(i64_arg0_40822, unsign_arg0_40832);
-                int64_t unsign_arg0_40834 = (int64_t) 1 & unsign_arg0_40833;
-                int32_t to_i32_res_40835 = zext_i64_i32(unsign_arg0_40834);
-                bool cond_f_res_40836 = get_bit_arg0_40831 == 63;
-                bool y_40837 = x_40827 && cond_f_res_40836;
-                bool cond_40838 = cond_40826 || y_40837;
-                int32_t defunc_0_get_bit_res_40839;
-                
-                if (cond_40838) {
-                    int32_t defunc_0_get_bit_res_t_res_41046 = 1 ^ to_i32_res_40835;
-                    
-                    defunc_0_get_bit_res_40839 = defunc_0_get_bit_res_t_res_41046;
-                } else {
-                    defunc_0_get_bit_res_40839 = to_i32_res_40835;
-                }
-                
-                int32_t zp_rhs_40841 = shl32(defunc_0_get_bit_res_40839, i_40829);
-                int32_t loopres_40842 = add32(acc_40830, zp_rhs_40841);
-                int32_t acc_tmp_41532 = loopres_40842;
-                
-                acc_40830 = acc_tmp_41532;
-            }
-            zlzb_rhs_40828 = acc_40830;
-            
-            int64_t i32_res_40843 = sext_i32_i64(zlzb_rhs_40828);
-            int64_t block_idx_40844 = sdiv64(write_iter_41174, (int64_t) 256);
-            bool x_40845 = sle64((int64_t) 0, block_idx_40844);
-            bool y_40846 = slt64(block_idx_40844, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456);
-            bool bounds_check_40847 = x_40845 && y_40846;
-            bool index_certs_40848;
-            
-            if (!bounds_check_40847) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_40844, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:28:9-26\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:28:9-31\n   #11 ftsort.fut:27:1-28:31\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            bool x_40849 = sle64((int64_t) 0, i32_res_40843);
-            bool y_40850 = slt64(i32_res_40843, (int64_t) 4);
-            bool bounds_check_40851 = x_40849 && y_40850;
-            bool index_certs_40852;
-            
-            if (!bounds_check_40851) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_40843, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:28:9-26\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:28:9-31\n   #11 ftsort.fut:27:1-28:31\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            double index_concat_branch_41200;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41197 = sub64(write_iter_41174, arg_40448);
-                double index_concat_41198 = ((double *) mem_41286)[index_concat_i_41197];
-                
-                index_concat_branch_41200 = index_concat_41198;
-            } else {
-                int64_t new_index_41222 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41224 = (int64_t) 256 * new_index_41222;
-                int64_t new_index_41225 = write_iter_41174 - binop_y_41224;
-                double index_concat_41199 = ((double *) mem_41310)[new_index_41222 * (int64_t) 256 + new_index_41225];
-                
-                index_concat_branch_41200 = index_concat_41199;
-            }
-            
-            int64_t index_concat_branch_41194;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41191 = sub64(write_iter_41174, arg_40448);
-                int64_t index_concat_41192 = ((int64_t *) mem_41284)[index_concat_i_41191];
-                
-                index_concat_branch_41194 = index_concat_41192;
-            } else {
-                int64_t new_index_41218 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41220 = (int64_t) 256 * new_index_41218;
-                int64_t new_index_41221 = write_iter_41174 - binop_y_41220;
-                int64_t index_concat_41193 = ((int64_t *) mem_41313)[new_index_41218 * (int64_t) 256 + new_index_41221];
-                
-                index_concat_branch_41194 = index_concat_41193;
-            }
-            
-            int64_t binop_x_40853 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456 * i32_res_40843;
-            int64_t new_index_40854 = block_idx_40844 + binop_x_40853;
-            int64_t new_offset_40855 = ((int64_t *) mem_41419)[new_index_40854];
-            bool index_concat_cmp_40856 = sle64(n_blocks_40446, block_idx_40844);
-            int16_t index_concat_branch_40857;
-            
-            if (index_concat_cmp_40856) {
-                int16_t index_concat_41047 = ((int16_t *) mem_41307)[i32_res_40843];
-                
-                index_concat_branch_40857 = index_concat_41047;
-            } else {
-                int16_t index_concat_40859 = ((int16_t *) mem_41319)[block_idx_40844 * (int64_t) 4 + i32_res_40843];
-                
-                index_concat_branch_40857 = index_concat_40859;
-            }
-            
-            int64_t i16_res_40860 = sext_i16_i64(index_concat_branch_40857);
-            int64_t zp_lhs_40861 = mul64((int64_t) 256, block_idx_40844);
-            int64_t old_offset_40862 = add64(i16_res_40860, zp_lhs_40861);
-            int64_t zp_lhs_40863 = sub64(write_iter_41174, old_offset_40862);
-            int64_t idx_40864 = add64(new_offset_40855, zp_lhs_40863);
-            
-            if (sle64((int64_t) 0, idx_40864) && slt64(idx_40864, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449)) {
-                ((double *) mem_41234)[idx_40864] = index_concat_branch_41200;
-            }
-            if (sle64((int64_t) 0, idx_40864) && slt64(idx_40864, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449)) {
-                ((int64_t *) mem_41236)[idx_40864] = index_concat_branch_41194;
-            }
-        }
-    }
-    if (memblock_alloc(ctx, &mem_41445, bytes_41444, "mem_41445")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc(ctx, &mem_41447, bytes_41444, "mem_41447")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41186 = 0; i_41186 < n_34047; i_41186++) {
-        int64_t eta_p_40767 = ((int64_t *) mem_41236)[i_41186];
-        bool x_40768 = sle64((int64_t) 0, eta_p_40767);
-        bool y_40769 = slt64(eta_p_40767, n_34047);
-        bool bounds_check_40770 = x_40768 && y_40769;
-        bool index_certs_40771;
-        
-        if (!bounds_check_40770) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_40767, "] out of bounds for array of shape [", (long long) n_34047, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #4  ftbasics.fut:162:88-91\n   #5  ftsort.fut:28:9-26\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:28:9-31\n   #8  ftsort.fut:27:1-28:31\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int64_t index_primexp_40772 = add64(incr_34048, eta_p_40767);
-        double lifted_lambda_res_40773 = ((double *) xs_mem_41232.mem)[eta_p_40767];
-        
-        ((int64_t *) mem_41445.mem)[i_41186] = index_primexp_40772;
-        ((double *) mem_41447.mem)[i_41186] = lifted_lambda_res_40773;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41445, "mem_41445") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_41494, &mem_41447, "mem_41447") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41540, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41541, &mem_out_41494, "mem_out_41494") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        free(mem_41234);
-        free(mem_41236);
-        free(mem_41244);
-        free(mem_41246);
-        free(mem_41248);
-        free(mem_41250);
-        free(mem_41252);
-        free(mem_41284);
-        free(mem_41286);
-        free(mem_41299);
-        free(mem_41300);
-        free(mem_41307);
-        free(mem_41310);
-        free(mem_41313);
-        free(mem_41316);
-        free(mem_41319);
-        free(mem_41336);
-        free(mem_41337);
-        free(mem_41338);
-        free(mem_41339);
-        free(mem_41340);
-        free(mem_41341);
-        free(mem_41342);
-        free(mem_41385);
-        free(mem_41386);
-        free(mem_41411);
-        free(mem_41419);
-        if (memblock_unref(ctx, &mem_41447, "mem_41447") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_41445, "mem_41445") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41494, "mem_out_41494") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_float(struct futhark_context *ctx, struct memblock *mem_out_p_41569, struct memblock *mem_out_p_41570, struct memblock xs_mem_41232, int64_t n_31263, int64_t incr_31264)
-{
-    (void) ctx;
-    
-    int err = 0;
-    int64_t mem_41234_cached_sizze_41571 = 0;
-    unsigned char *mem_41234 = NULL;
-    int64_t mem_41236_cached_sizze_41572 = 0;
-    unsigned char *mem_41236 = NULL;
-    int64_t mem_41244_cached_sizze_41573 = 0;
-    unsigned char *mem_41244 = NULL;
-    int64_t mem_41246_cached_sizze_41574 = 0;
-    unsigned char *mem_41246 = NULL;
-    int64_t mem_41248_cached_sizze_41575 = 0;
-    unsigned char *mem_41248 = NULL;
-    int64_t mem_41250_cached_sizze_41576 = 0;
-    unsigned char *mem_41250 = NULL;
-    int64_t mem_41252_cached_sizze_41577 = 0;
-    unsigned char *mem_41252 = NULL;
-    int64_t mem_41284_cached_sizze_41578 = 0;
-    unsigned char *mem_41284 = NULL;
-    int64_t mem_41286_cached_sizze_41579 = 0;
-    unsigned char *mem_41286 = NULL;
-    int64_t mem_41299_cached_sizze_41580 = 0;
-    unsigned char *mem_41299 = NULL;
-    int64_t mem_41300_cached_sizze_41581 = 0;
-    unsigned char *mem_41300 = NULL;
-    int64_t mem_41307_cached_sizze_41582 = 0;
-    unsigned char *mem_41307 = NULL;
-    int64_t mem_41310_cached_sizze_41583 = 0;
-    unsigned char *mem_41310 = NULL;
-    int64_t mem_41313_cached_sizze_41584 = 0;
-    unsigned char *mem_41313 = NULL;
-    int64_t mem_41316_cached_sizze_41585 = 0;
-    unsigned char *mem_41316 = NULL;
-    int64_t mem_41319_cached_sizze_41586 = 0;
-    unsigned char *mem_41319 = NULL;
-    int64_t mem_41336_cached_sizze_41587 = 0;
-    unsigned char *mem_41336 = NULL;
-    int64_t mem_41337_cached_sizze_41588 = 0;
-    unsigned char *mem_41337 = NULL;
-    int64_t mem_41338_cached_sizze_41589 = 0;
-    unsigned char *mem_41338 = NULL;
-    int64_t mem_41339_cached_sizze_41590 = 0;
-    unsigned char *mem_41339 = NULL;
-    int64_t mem_41340_cached_sizze_41591 = 0;
-    unsigned char *mem_41340 = NULL;
-    int64_t mem_41341_cached_sizze_41592 = 0;
-    unsigned char *mem_41341 = NULL;
-    int64_t mem_41342_cached_sizze_41593 = 0;
-    unsigned char *mem_41342 = NULL;
-    int64_t mem_41385_cached_sizze_41594 = 0;
-    unsigned char *mem_41385 = NULL;
-    int64_t mem_41386_cached_sizze_41595 = 0;
-    unsigned char *mem_41386 = NULL;
-    int64_t mem_41411_cached_sizze_41596 = 0;
-    unsigned char *mem_41411 = NULL;
-    int64_t mem_41419_cached_sizze_41597 = 0;
-    unsigned char *mem_41419 = NULL;
-    struct memblock mem_41447;
-    
-    mem_41447.references = NULL;
-    
-    struct memblock mem_41445;
-    
-    mem_41445.references = NULL;
-    
-    struct memblock mem_out_41494;
-    
-    mem_out_41494.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t rng_40440 = add64(n_31263, incr_31264);
-    bool bounds_invalid_upwards_40441 = slt64(rng_40440, incr_31264);
-    bool valid_40442 = !bounds_invalid_upwards_40441;
-    bool range_valid_c_40443;
-    
-    if (!valid_40442) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_31264, "..<", (long long) rng_40440, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:161:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:161:32-63\n   #4  ftsort.fut:25:9-25\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:25:9-30\n   #7  ftsort.fut:24:1-25:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool cond_40444 = n_31263 == (int64_t) 0;
-    int32_t iters_40445;
-    
-    if (cond_40444) {
-        iters_40445 = 0;
-    } else {
-        iters_40445 = 16;
-    }
-    
-    int64_t n_blocks_40446 = sdiv64(n_31263, (int64_t) 256);
-    int64_t rest_40447 = smod64(n_31263, (int64_t) 256);
-    int64_t arg_40448 = mul64((int64_t) 256, n_blocks_40446);
-    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449 = add64(rest_40447, arg_40448);
-    bool dim_match_40450 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449 == n_31263;
-    bool empty_or_match_cert_40451;
-    
-    if (!dim_match_40450) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_31263, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "](f32, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #5  ftbasics.fut:162:88-91\n   #6  ftsort.fut:25:9-25\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:25:9-30\n   #9  ftsort.fut:24:1-25:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41233 = (int64_t) 4 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449;
-    int64_t bytes_41235 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449;
-    bool loop_nonempty_40455 = slt32(0, iters_40445);
-    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456 = add64((int64_t) 1, n_blocks_40446);
-    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456);
-    bool empty_slice_40458 = arg_40448 == (int64_t) 0;
-    int64_t m_40459 = sub64(arg_40448, (int64_t) 1);
-    bool zzero_leq_i_p_m_t_s_40460 = sle64((int64_t) 0, m_40459);
-    bool i_p_m_t_s_leq_w_40461 = slt64(m_40459, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449);
-    bool i_lte_j_40462 = sle64((int64_t) 0, arg_40448);
-    bool y_40463 = zzero_leq_i_p_m_t_s_40460 && i_p_m_t_s_leq_w_40461;
-    bool forwards_ok_40464 = i_lte_j_40462 && y_40463;
-    bool ok_or_empty_40465 = empty_slice_40458 || forwards_ok_40464;
-    bool loop_not_taken_40466 = !loop_nonempty_40455;
-    bool protect_assert_disj_40467 = ok_or_empty_40465 || loop_not_taken_40466;
-    bool index_certs_40468;
-    
-    if (!protect_assert_disj_40467) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_40448, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:25:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:25:9-30\n   #10 ftsort.fut:24:1-25:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool empty_slice_40469 = rest_40447 == (int64_t) 0;
-    int64_t m_40470 = sub64(rest_40447, (int64_t) 1);
-    int64_t i_p_m_t_s_40471 = add64(arg_40448, m_40470);
-    bool zzero_leq_i_p_m_t_s_40472 = sle64((int64_t) 0, i_p_m_t_s_40471);
-    bool i_p_m_t_s_leq_w_40473 = slt64(i_p_m_t_s_40471, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449);
-    bool i_lte_j_40474 = sle64(arg_40448, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449);
-    bool y_40475 = zzero_leq_i_p_m_t_s_40472 && i_p_m_t_s_leq_w_40473;
-    bool forwards_ok_40476 = i_lte_j_40474 && y_40475;
-    bool ok_or_empty_40477 = empty_slice_40469 || forwards_ok_40476;
-    bool protect_assert_disj_40478 = loop_not_taken_40466 || ok_or_empty_40477;
-    bool index_certs_40479;
-    
-    if (!protect_assert_disj_40478) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_40448, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:25:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:25:9-30\n   #10 ftsort.fut:24:1-25:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool binop_x_40480 = sle64((int64_t) 0, n_blocks_40446);
-    bool protect_assert_disj_40481 = loop_not_taken_40466 || binop_x_40480;
-    bool dim_ok_cert_40482;
-    
-    if (!protect_assert_disj_40481) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_40448, "] to array of shape [", (long long) n_blocks_40446, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:25:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:25:9-30\n   #10 ftsort.fut:24:1-25:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool y_40484 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457);
-    bool protect_assert_disj_40485 = loop_not_taken_40466 || y_40484;
-    bool index_certs_40486;
-    
-    if (!protect_assert_disj_40485) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:25:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:25:9-30\n   #11 ftsort.fut:24:1-25:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool x_40488 = sle64((int64_t) 0, m_40470);
-    bool y_40489 = slt64(m_40470, rest_40447);
-    bool bounds_check_40490 = x_40488 && y_40489;
-    bool protect_assert_disj_40491 = empty_slice_40469 || bounds_check_40490;
-    bool protect_assert_disj_40492 = loop_not_taken_40466 || protect_assert_disj_40491;
-    bool index_certs_40493;
-    
-    if (!protect_assert_disj_40492) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_40470, "] out of bounds for array of shape [", (long long) rest_40447, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:25:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:25:9-30\n   #10 ftsort.fut:24:1-25:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41243 = (int64_t) 2 * rest_40447;
-    int64_t bytes_41283 = (int64_t) 8 * rest_40447;
-    int64_t bytes_41285 = (int64_t) 4 * rest_40447;
-    int64_t bytes_41309 = (int64_t) 1024 * n_blocks_40446;
-    int64_t bytes_41312 = (int64_t) 2048 * n_blocks_40446;
-    int64_t bytes_41315 = (int64_t) 32 * n_blocks_40446;
-    int64_t bytes_41318 = (int64_t) 8 * n_blocks_40446;
-    int64_t bytes_41410 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456;
-    bool dim_match_40751 = n_31263 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449;
-    bool empty_or_match_cert_40752;
-    
-    if (!dim_match_40751) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449, "] cannot match shape of type `[", (long long) n_31263, "](f32, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:25:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:25:9-30\n   #11 ftsort.fut:24:1-25:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41444 = (int64_t) 8 * n_31263;
-    int64_t bytes_41446 = (int64_t) 4 * n_31263;
-    
-    if (mem_41234_cached_sizze_41571 < bytes_41233) {
-        err = lexical_realloc(ctx, &mem_41234, &mem_41234_cached_sizze_41571, bytes_41233);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    lmad_copy_4b(ctx, 1, (uint32_t *) mem_41234, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) xs_mem_41232.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449});
-    if (mem_41236_cached_sizze_41572 < bytes_41235) {
-        err = lexical_realloc(ctx, &mem_41236, &mem_41236_cached_sizze_41572, bytes_41235);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int64_t i_41495 = 0; i_41495 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449; i_41495++) {
-        int64_t x_41496 = (int64_t) 0 + i_41495 * (int64_t) 1;
-        
-        ((int64_t *) mem_41236)[i_41495] = x_41496;
-    }
-    if (mem_41244_cached_sizze_41573 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41244, &mem_41244_cached_sizze_41573, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41246_cached_sizze_41574 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41246, &mem_41246_cached_sizze_41574, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41248_cached_sizze_41575 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41248, &mem_41248_cached_sizze_41575, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41250_cached_sizze_41576 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41250, &mem_41250_cached_sizze_41576, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41252_cached_sizze_41577 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41252, &mem_41252_cached_sizze_41577, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41284_cached_sizze_41578 < bytes_41283) {
-        err = lexical_realloc(ctx, &mem_41284, &mem_41284_cached_sizze_41578, bytes_41283);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41286_cached_sizze_41579 < bytes_41285) {
-        err = lexical_realloc(ctx, &mem_41286, &mem_41286_cached_sizze_41579, bytes_41285);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41299_cached_sizze_41580 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41299, &mem_41299_cached_sizze_41580, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41300_cached_sizze_41581 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41300, &mem_41300_cached_sizze_41581, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41307_cached_sizze_41582 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41307, &mem_41307_cached_sizze_41582, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41310_cached_sizze_41583 < bytes_41309) {
-        err = lexical_realloc(ctx, &mem_41310, &mem_41310_cached_sizze_41583, bytes_41309);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41313_cached_sizze_41584 < bytes_41312) {
-        err = lexical_realloc(ctx, &mem_41313, &mem_41313_cached_sizze_41584, bytes_41312);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41316_cached_sizze_41585 < bytes_41315) {
-        err = lexical_realloc(ctx, &mem_41316, &mem_41316_cached_sizze_41585, bytes_41315);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41319_cached_sizze_41586 < bytes_41318) {
-        err = lexical_realloc(ctx, &mem_41319, &mem_41319_cached_sizze_41586, bytes_41318);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41336_cached_sizze_41587 < (int64_t) 1024) {
-        err = lexical_realloc(ctx, &mem_41336, &mem_41336_cached_sizze_41587, (int64_t) 1024);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41337_cached_sizze_41588 < (int64_t) 2048) {
-        err = lexical_realloc(ctx, &mem_41337, &mem_41337_cached_sizze_41588, (int64_t) 2048);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41338_cached_sizze_41589 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41338, &mem_41338_cached_sizze_41589, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41339_cached_sizze_41590 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41339, &mem_41339_cached_sizze_41590, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41340_cached_sizze_41591 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41340, &mem_41340_cached_sizze_41591, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41341_cached_sizze_41592 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41341, &mem_41341_cached_sizze_41592, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41342_cached_sizze_41593 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41342, &mem_41342_cached_sizze_41593, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41385_cached_sizze_41594 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41385, &mem_41385_cached_sizze_41594, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41386_cached_sizze_41595 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41386, &mem_41386_cached_sizze_41595, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41411_cached_sizze_41596 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41411, &mem_41411_cached_sizze_41596, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41419_cached_sizze_41597 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41419, &mem_41419_cached_sizze_41597, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int32_t i_40496 = 0; i_40496 < iters_40445; i_40496++) {
-        int32_t blocked_radix_sort_step_arg1_40499 = mul32(2, i_40496);
-        int32_t get_bit_arg0_40504 = add32(1, blocked_radix_sort_step_arg1_40499);
-        bool cond_f_res_40505 = get_bit_arg0_40504 == 31;
-        bool cond_f_res_40506 = blocked_radix_sort_step_arg1_40499 == 31;
-        int16_t discard_41089;
-        int16_t discard_41090;
-        int16_t discard_41091;
-        int16_t discard_41092;
-        int16_t scanacc_41074;
-        int16_t scanacc_41075;
-        int16_t scanacc_41076;
-        int16_t scanacc_41077;
-        
-        scanacc_41074 = (int16_t) 0;
-        scanacc_41075 = (int16_t) 0;
-        scanacc_41076 = (int16_t) 0;
-        scanacc_41077 = (int16_t) 0;
-        for (int64_t i_41083 = 0; i_41083 < rest_40447; i_41083++) {
-            int64_t slice_41217 = arg_40448 + i_41083;
-            float eta_p_40887 = ((float *) mem_41234)[slice_41217];
-            int32_t i32_arg0_40888 = futrts_to_bits32(eta_p_40887);
-            int32_t unsign_arg0_40889 = ashr32(i32_arg0_40888, get_bit_arg0_40504);
-            int32_t unsign_arg0_40890 = 1 & unsign_arg0_40889;
-            int32_t unsign_arg0_40891 = ashr32(i32_arg0_40888, 31);
-            int32_t unsign_arg0_40892 = 1 & unsign_arg0_40891;
-            bool cond_40893 = unsign_arg0_40892 == 1;
-            bool x_40894 = !cond_40893;
-            bool y_40895 = cond_f_res_40505 && x_40894;
-            bool cond_40896 = cond_40893 || y_40895;
-            int32_t defunc_0_get_bit_res_40897;
-            
-            if (cond_40896) {
-                int32_t defunc_0_get_bit_res_t_res_41023 = 1 ^ unsign_arg0_40890;
-                
-                defunc_0_get_bit_res_40897 = defunc_0_get_bit_res_t_res_41023;
-            } else {
-                defunc_0_get_bit_res_40897 = unsign_arg0_40890;
-            }
-            
-            int32_t zp_lhs_40899 = mul32(2, defunc_0_get_bit_res_40897);
-            int32_t unsign_arg0_40900 = ashr32(i32_arg0_40888, blocked_radix_sort_step_arg1_40499);
-            int32_t unsign_arg0_40901 = 1 & unsign_arg0_40900;
-            bool y_40902 = cond_f_res_40506 && x_40894;
-            bool cond_40903 = cond_40893 || y_40902;
-            int32_t defunc_0_get_bit_res_40904;
-            
-            if (cond_40903) {
-                int32_t defunc_0_get_bit_res_t_res_41024 = 1 ^ unsign_arg0_40901;
-                
-                defunc_0_get_bit_res_40904 = defunc_0_get_bit_res_t_res_41024;
-            } else {
-                defunc_0_get_bit_res_40904 = unsign_arg0_40901;
-            }
-            
-            int32_t i32_arg0_40906 = add32(zp_lhs_40899, defunc_0_get_bit_res_40904);
-            int16_t i32_res_40907 = sext_i32_i16(i32_arg0_40906);
-            int16_t defunc_0_f_res_40909;
-            int16_t defunc_0_f_res_40910;
-            int16_t defunc_0_f_res_40911;
-            int16_t defunc_0_f_res_40912;
-            
-            if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40909, &defunc_0_f_res_40910, &defunc_0_f_res_40911, &defunc_0_f_res_40912, i32_res_40907) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int16_t defunc_0_op_res_40554 = add16(defunc_0_f_res_40909, scanacc_41074);
-            int16_t defunc_0_op_res_40555 = add16(defunc_0_f_res_40910, scanacc_41075);
-            int16_t defunc_0_op_res_40556 = add16(defunc_0_f_res_40911, scanacc_41076);
-            int16_t defunc_0_op_res_40557 = add16(defunc_0_f_res_40912, scanacc_41077);
-            
-            ((int16_t *) mem_41244)[i_41083] = defunc_0_op_res_40554;
-            ((int16_t *) mem_41246)[i_41083] = defunc_0_op_res_40555;
-            ((int16_t *) mem_41248)[i_41083] = defunc_0_op_res_40556;
-            ((int16_t *) mem_41250)[i_41083] = defunc_0_op_res_40557;
-            ((int16_t *) mem_41252)[i_41083] = i32_res_40907;
-            
-            int16_t scanacc_tmp_41499 = defunc_0_op_res_40554;
-            int16_t scanacc_tmp_41500 = defunc_0_op_res_40555;
-            int16_t scanacc_tmp_41501 = defunc_0_op_res_40556;
-            int16_t scanacc_tmp_41502 = defunc_0_op_res_40557;
-            
-            scanacc_41074 = scanacc_tmp_41499;
-            scanacc_41075 = scanacc_tmp_41500;
-            scanacc_41076 = scanacc_tmp_41501;
-            scanacc_41077 = scanacc_tmp_41502;
-        }
-        discard_41089 = scanacc_41074;
-        discard_41090 = scanacc_41075;
-        discard_41091 = scanacc_41076;
-        discard_41092 = scanacc_41077;
-        
-        int16_t defunc_0_radix_sort_step_i16_res_40558;
-        int16_t defunc_0_radix_sort_step_i16_res_40559;
-        int16_t defunc_0_radix_sort_step_i16_res_40560;
-        int16_t defunc_0_radix_sort_step_i16_res_40561;
-        
-        if (empty_slice_40469) {
-            defunc_0_radix_sort_step_i16_res_40558 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_40559 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_40560 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_40561 = (int16_t) 0;
+        if (cond_36963) {
+            defunc_0_op_res_36968 = redout_42752;
         } else {
-            int16_t last_res_40562 = ((int16_t *) mem_41244)[m_40470];
-            int16_t last_res_40563 = ((int16_t *) mem_41246)[m_40470];
-            int16_t last_res_40564 = ((int16_t *) mem_41248)[m_40470];
-            int16_t last_res_40565 = ((int16_t *) mem_41250)[m_40470];
-            
-            defunc_0_radix_sort_step_i16_res_40558 = last_res_40562;
-            defunc_0_radix_sort_step_i16_res_40559 = last_res_40563;
-            defunc_0_radix_sort_step_i16_res_40560 = last_res_40564;
-            defunc_0_radix_sort_step_i16_res_40561 = last_res_40565;
-        }
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_41284, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + (int64_t) 1 * arg_40448, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40447});
-        lmad_copy_4b(ctx, 1, (uint32_t *) mem_41286, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_41234, (int64_t) 0 + (int64_t) 1 * arg_40448, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40447});
-        for (int64_t write_iter_41093 = 0; write_iter_41093 < rest_40447; write_iter_41093++) {
-            int16_t write_iv_41096 = ((int16_t *) mem_41252)[write_iter_41093];
-            int16_t write_iv_41097 = ((int16_t *) mem_41244)[write_iter_41093];
-            int16_t write_iv_41098 = ((int16_t *) mem_41246)[write_iter_41093];
-            int16_t write_iv_41099 = ((int16_t *) mem_41248)[write_iter_41093];
-            int16_t write_iv_41100 = ((int16_t *) mem_41250)[write_iter_41093];
-            int64_t slice_41216 = arg_40448 + write_iter_41093;
-            float write_iv_41101 = ((float *) mem_41234)[slice_41216];
-            int64_t write_iv_41102 = ((int64_t *) mem_41236)[slice_41216];
-            int64_t defunc_0_f_res_40871;
-            
-            if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40871, defunc_0_radix_sort_step_i16_res_40558, defunc_0_radix_sort_step_i16_res_40559, defunc_0_radix_sort_step_i16_res_40560, write_iv_41096, write_iv_41097, write_iv_41098, write_iv_41099, write_iv_41100) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40871) && slt64(defunc_0_f_res_40871, rest_40447)) {
-                ((float *) mem_41286)[defunc_0_f_res_40871] = write_iv_41101;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40871) && slt64(defunc_0_f_res_40871, rest_40447)) {
-                ((int64_t *) mem_41284)[defunc_0_f_res_40871] = write_iv_41102;
-            }
-        }
-        ((int16_t *) mem_41299)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_40558;
-        ((int16_t *) mem_41299)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40559;
-        ((int16_t *) mem_41299)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_40560;
-        ((int16_t *) mem_41299)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_40561;
-        for (int64_t i_41107 = 0; i_41107 < (int64_t) 4; i_41107++) {
-            int16_t eta_p_40582 = ((int16_t *) mem_41299)[i_41107];
-            int64_t i16_res_40583 = sext_i16_i64(eta_p_40582);
-            
-            ((int64_t *) mem_41300)[i_41107] = i16_res_40583;
+            defunc_0_op_res_36968 = x_36957;
         }
         
-        int16_t tmp_40584 = add16(defunc_0_radix_sort_step_i16_res_40558, defunc_0_radix_sort_step_i16_res_40559);
-        int16_t tmp_40585 = add16(defunc_0_radix_sort_step_i16_res_40560, tmp_40584);
+        int64_t redout_tmp_43176 = defunc_0_op_res_36967;
+        double redout_tmp_43177 = defunc_0_op_res_36968;
         
-        ((int16_t *) mem_41307)[(int64_t) 0] = (int16_t) 0;
-        ((int16_t *) mem_41307)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40558;
-        ((int16_t *) mem_41307)[(int64_t) 2] = tmp_40584;
-        ((int16_t *) mem_41307)[(int64_t) 3] = tmp_40585;
-        for (int64_t i_41157 = 0; i_41157 < n_blocks_40446; i_41157++) {
-            lmad_copy_4b(ctx, 1, (uint32_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_41234, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            
-            int64_t binop_x_41230 = (int64_t) 256 * i_41157;
-            int16_t discard_41129;
-            int16_t discard_41130;
-            int16_t discard_41131;
-            int16_t discard_41132;
-            int16_t scanacc_41114;
-            int16_t scanacc_41115;
-            int16_t scanacc_41116;
-            int16_t scanacc_41117;
-            
-            scanacc_41114 = (int16_t) 0;
-            scanacc_41115 = (int16_t) 0;
-            scanacc_41116 = (int16_t) 0;
-            scanacc_41117 = (int16_t) 0;
-            for (int64_t i_41123 = 0; i_41123 < (int64_t) 256; i_41123++) {
-                int64_t new_index_41231 = i_41123 + binop_x_41230;
-                float eta_p_40943 = ((float *) mem_41234)[new_index_41231];
-                int32_t i32_arg0_40944 = futrts_to_bits32(eta_p_40943);
-                int32_t unsign_arg0_40945 = ashr32(i32_arg0_40944, get_bit_arg0_40504);
-                int32_t unsign_arg0_40946 = 1 & unsign_arg0_40945;
-                int32_t unsign_arg0_40947 = ashr32(i32_arg0_40944, 31);
-                int32_t unsign_arg0_40948 = 1 & unsign_arg0_40947;
-                bool cond_40949 = unsign_arg0_40948 == 1;
-                bool x_40950 = !cond_40949;
-                bool y_40951 = cond_f_res_40505 && x_40950;
-                bool cond_40952 = cond_40949 || y_40951;
-                int32_t defunc_0_get_bit_res_40953;
-                
-                if (cond_40952) {
-                    int32_t defunc_0_get_bit_res_t_res_41025 = 1 ^ unsign_arg0_40946;
-                    
-                    defunc_0_get_bit_res_40953 = defunc_0_get_bit_res_t_res_41025;
-                } else {
-                    defunc_0_get_bit_res_40953 = unsign_arg0_40946;
-                }
-                
-                int32_t zp_lhs_40955 = mul32(2, defunc_0_get_bit_res_40953);
-                int32_t unsign_arg0_40956 = ashr32(i32_arg0_40944, blocked_radix_sort_step_arg1_40499);
-                int32_t unsign_arg0_40957 = 1 & unsign_arg0_40956;
-                bool y_40958 = cond_f_res_40506 && x_40950;
-                bool cond_40959 = cond_40949 || y_40958;
-                int32_t defunc_0_get_bit_res_40960;
-                
-                if (cond_40959) {
-                    int32_t defunc_0_get_bit_res_t_res_41026 = 1 ^ unsign_arg0_40957;
-                    
-                    defunc_0_get_bit_res_40960 = defunc_0_get_bit_res_t_res_41026;
-                } else {
-                    defunc_0_get_bit_res_40960 = unsign_arg0_40957;
-                }
-                
-                int32_t i32_arg0_40962 = add32(zp_lhs_40955, defunc_0_get_bit_res_40960);
-                int16_t i32_res_40963 = sext_i32_i16(i32_arg0_40962);
-                int16_t defunc_0_f_res_40965;
-                int16_t defunc_0_f_res_40966;
-                int16_t defunc_0_f_res_40967;
-                int16_t defunc_0_f_res_40968;
-                
-                if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40965, &defunc_0_f_res_40966, &defunc_0_f_res_40967, &defunc_0_f_res_40968, i32_res_40963) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int16_t defunc_0_op_res_40646 = add16(defunc_0_f_res_40965, scanacc_41114);
-                int16_t defunc_0_op_res_40647 = add16(defunc_0_f_res_40966, scanacc_41115);
-                int16_t defunc_0_op_res_40648 = add16(defunc_0_f_res_40967, scanacc_41116);
-                int16_t defunc_0_op_res_40649 = add16(defunc_0_f_res_40968, scanacc_41117);
-                
-                ((int16_t *) mem_41338)[i_41123] = defunc_0_op_res_40646;
-                ((int16_t *) mem_41339)[i_41123] = defunc_0_op_res_40647;
-                ((int16_t *) mem_41340)[i_41123] = defunc_0_op_res_40648;
-                ((int16_t *) mem_41341)[i_41123] = defunc_0_op_res_40649;
-                ((int16_t *) mem_41342)[i_41123] = i32_res_40963;
-                
-                int16_t scanacc_tmp_41515 = defunc_0_op_res_40646;
-                int16_t scanacc_tmp_41516 = defunc_0_op_res_40647;
-                int16_t scanacc_tmp_41517 = defunc_0_op_res_40648;
-                int16_t scanacc_tmp_41518 = defunc_0_op_res_40649;
-                
-                scanacc_41114 = scanacc_tmp_41515;
-                scanacc_41115 = scanacc_tmp_41516;
-                scanacc_41116 = scanacc_tmp_41517;
-                scanacc_41117 = scanacc_tmp_41518;
-            }
-            discard_41129 = scanacc_41114;
-            discard_41130 = scanacc_41115;
-            discard_41131 = scanacc_41116;
-            discard_41132 = scanacc_41117;
-            
-            int16_t last_res_40650 = ((int16_t *) mem_41338)[(int64_t) 255];
-            int16_t last_res_40651 = ((int16_t *) mem_41339)[(int64_t) 255];
-            int16_t last_res_40652 = ((int16_t *) mem_41340)[(int64_t) 255];
-            int16_t last_res_40653 = ((int16_t *) mem_41341)[(int64_t) 255];
-            
-            for (int64_t write_iter_41133 = 0; write_iter_41133 < (int64_t) 256; write_iter_41133++) {
-                int16_t write_iv_41136 = ((int16_t *) mem_41342)[write_iter_41133];
-                int16_t write_iv_41137 = ((int16_t *) mem_41338)[write_iter_41133];
-                int16_t write_iv_41138 = ((int16_t *) mem_41339)[write_iter_41133];
-                int16_t write_iv_41139 = ((int16_t *) mem_41340)[write_iter_41133];
-                int16_t write_iv_41140 = ((int16_t *) mem_41341)[write_iter_41133];
-                int64_t new_index_41227 = write_iter_41133 + binop_x_41230;
-                float write_iv_41141 = ((float *) mem_41234)[new_index_41227];
-                int64_t write_iv_41142 = ((int64_t *) mem_41236)[new_index_41227];
-                int64_t defunc_0_f_res_40927;
-                
-                if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40927, last_res_40650, last_res_40651, last_res_40652, write_iv_41136, write_iv_41137, write_iv_41138, write_iv_41139, write_iv_41140) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40927) && slt64(defunc_0_f_res_40927, (int64_t) 256)) {
-                    ((float *) mem_41336)[defunc_0_f_res_40927] = write_iv_41141;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40927) && slt64(defunc_0_f_res_40927, (int64_t) 256)) {
-                    ((int64_t *) mem_41337)[defunc_0_f_res_40927] = write_iv_41142;
-                }
-            }
-            ((int16_t *) mem_41385)[(int64_t) 0] = last_res_40650;
-            ((int16_t *) mem_41385)[(int64_t) 1] = last_res_40651;
-            ((int16_t *) mem_41385)[(int64_t) 2] = last_res_40652;
-            ((int16_t *) mem_41385)[(int64_t) 3] = last_res_40653;
-            for (int64_t i_41147 = 0; i_41147 < (int64_t) 4; i_41147++) {
-                int16_t eta_p_40668 = ((int16_t *) mem_41385)[i_41147];
-                int64_t i16_res_40669 = sext_i16_i64(eta_p_40668);
-                
-                ((int64_t *) mem_41386)[i_41147] = i16_res_40669;
-            }
-            
-            int16_t tmp_40670 = add16(last_res_40650, last_res_40651);
-            int16_t tmp_40671 = add16(last_res_40652, tmp_40670);
-            
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4] = (int16_t) 0;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 1] = last_res_40650;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 2] = tmp_40670;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 3] = tmp_40671;
-            lmad_copy_4b(ctx, 1, (uint32_t *) mem_41310, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41313, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41316, i_41157 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41386, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
-        }
-        
-        int64_t discard_41169;
-        int64_t scanacc_41165 = (int64_t) 0;
-        
-        for (int64_t i_41167 = 0; i_41167 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457; i_41167++) {
-            int64_t new_index_41205 = squot64(i_41167, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456);
-            int64_t binop_y_41207 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456 * new_index_41205;
-            int64_t new_index_41208 = i_41167 - binop_y_41207;
-            bool index_concat_cmp_41210 = sle64(n_blocks_40446, new_index_41208);
-            int64_t index_concat_branch_41214;
-            
-            if (index_concat_cmp_41210) {
-                int64_t index_concat_41212 = ((int64_t *) mem_41300)[new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41212;
-            } else {
-                int64_t index_concat_41213 = ((int64_t *) mem_41316)[new_index_41208 * (int64_t) 4 + new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41213;
-            }
-            
-            int64_t defunc_0_op_res_40685 = add64(scanacc_41165, index_concat_branch_41214);
-            
-            ((int64_t *) mem_41411)[i_41167] = defunc_0_op_res_40685;
-            
-            int64_t scanacc_tmp_41527 = defunc_0_op_res_40685;
-            
-            scanacc_41165 = scanacc_tmp_41527;
-        }
-        discard_41169 = scanacc_41165;
-        for (int64_t i_41172 = 0; i_41172 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457; i_41172++) {
-            int64_t zv_lhs_40688 = add64((int64_t) -1, i_41172);
-            int64_t tmp_40689 = smod64(zv_lhs_40688, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40457);
-            int64_t lifted_lambda_res_40690 = ((int64_t *) mem_41411)[tmp_40689];
-            
-            ((int64_t *) mem_41419)[i_41172] = lifted_lambda_res_40690;
-        }
-        ((int64_t *) mem_41419)[(int64_t) 0] = (int64_t) 0;
-        for (int64_t write_iter_41174 = 0; write_iter_41174 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449; write_iter_41174++) {
-            bool index_concat_cmp_41196 = sle64(arg_40448, write_iter_41174);
-            float index_concat_branch_40815;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41035 = sub64(write_iter_41174, arg_40448);
-                float index_concat_41036 = ((float *) mem_41286)[index_concat_i_41035];
-                
-                index_concat_branch_40815 = index_concat_41036;
-            } else {
-                int64_t new_index_40818 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_40819 = (int64_t) 256 * new_index_40818;
-                int64_t new_index_40820 = write_iter_41174 - binop_y_40819;
-                float index_concat_40821 = ((float *) mem_41310)[new_index_40818 * (int64_t) 256 + new_index_40820];
-                
-                index_concat_branch_40815 = index_concat_40821;
-            }
-            
-            int32_t i32_arg0_40822 = futrts_to_bits32(index_concat_branch_40815);
-            int32_t unsign_arg0_40823 = ashr32(i32_arg0_40822, 31);
-            int32_t unsign_arg0_40824 = 1 & unsign_arg0_40823;
-            bool cond_40825 = unsign_arg0_40824 == 1;
-            bool x_40826 = !cond_40825;
-            int32_t zlzb_rhs_40827;
-            int32_t acc_40829 = 0;
-            
-            for (int32_t i_40828 = 0; i_40828 < 2; i_40828++) {
-                int32_t get_bit_arg0_40830 = add32(blocked_radix_sort_step_arg1_40499, i_40828);
-                int32_t unsign_arg0_40831 = ashr32(i32_arg0_40822, get_bit_arg0_40830);
-                int32_t unsign_arg0_40832 = 1 & unsign_arg0_40831;
-                bool cond_f_res_40833 = get_bit_arg0_40830 == 31;
-                bool y_40834 = x_40826 && cond_f_res_40833;
-                bool cond_40835 = cond_40825 || y_40834;
-                int32_t defunc_0_get_bit_res_40836;
-                
-                if (cond_40835) {
-                    int32_t defunc_0_get_bit_res_t_res_41037 = 1 ^ unsign_arg0_40832;
-                    
-                    defunc_0_get_bit_res_40836 = defunc_0_get_bit_res_t_res_41037;
-                } else {
-                    defunc_0_get_bit_res_40836 = unsign_arg0_40832;
-                }
-                
-                int32_t zp_rhs_40838 = shl32(defunc_0_get_bit_res_40836, i_40828);
-                int32_t loopres_40839 = add32(acc_40829, zp_rhs_40838);
-                int32_t acc_tmp_41532 = loopres_40839;
-                
-                acc_40829 = acc_tmp_41532;
-            }
-            zlzb_rhs_40827 = acc_40829;
-            
-            int64_t i32_res_40840 = sext_i32_i64(zlzb_rhs_40827);
-            int64_t block_idx_40841 = sdiv64(write_iter_41174, (int64_t) 256);
-            bool x_40842 = sle64((int64_t) 0, block_idx_40841);
-            bool y_40843 = slt64(block_idx_40841, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456);
-            bool bounds_check_40844 = x_40842 && y_40843;
-            bool index_certs_40845;
-            
-            if (!bounds_check_40844) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_40841, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:25:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:25:9-30\n   #11 ftsort.fut:24:1-25:30\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            bool x_40846 = sle64((int64_t) 0, i32_res_40840);
-            bool y_40847 = slt64(i32_res_40840, (int64_t) 4);
-            bool bounds_check_40848 = x_40846 && y_40847;
-            bool index_certs_40849;
-            
-            if (!bounds_check_40848) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_40840, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:25:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:25:9-30\n   #11 ftsort.fut:24:1-25:30\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            float index_concat_branch_41200;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41197 = sub64(write_iter_41174, arg_40448);
-                float index_concat_41198 = ((float *) mem_41286)[index_concat_i_41197];
-                
-                index_concat_branch_41200 = index_concat_41198;
-            } else {
-                int64_t new_index_41222 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41224 = (int64_t) 256 * new_index_41222;
-                int64_t new_index_41225 = write_iter_41174 - binop_y_41224;
-                float index_concat_41199 = ((float *) mem_41310)[new_index_41222 * (int64_t) 256 + new_index_41225];
-                
-                index_concat_branch_41200 = index_concat_41199;
-            }
-            
-            int64_t index_concat_branch_41194;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41191 = sub64(write_iter_41174, arg_40448);
-                int64_t index_concat_41192 = ((int64_t *) mem_41284)[index_concat_i_41191];
-                
-                index_concat_branch_41194 = index_concat_41192;
-            } else {
-                int64_t new_index_41218 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41220 = (int64_t) 256 * new_index_41218;
-                int64_t new_index_41221 = write_iter_41174 - binop_y_41220;
-                int64_t index_concat_41193 = ((int64_t *) mem_41313)[new_index_41218 * (int64_t) 256 + new_index_41221];
-                
-                index_concat_branch_41194 = index_concat_41193;
-            }
-            
-            int64_t binop_x_40850 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40456 * i32_res_40840;
-            int64_t new_index_40851 = block_idx_40841 + binop_x_40850;
-            int64_t new_offset_40852 = ((int64_t *) mem_41419)[new_index_40851];
-            bool index_concat_cmp_40853 = sle64(n_blocks_40446, block_idx_40841);
-            int16_t index_concat_branch_40854;
-            
-            if (index_concat_cmp_40853) {
-                int16_t index_concat_41038 = ((int16_t *) mem_41307)[i32_res_40840];
-                
-                index_concat_branch_40854 = index_concat_41038;
-            } else {
-                int16_t index_concat_40856 = ((int16_t *) mem_41319)[block_idx_40841 * (int64_t) 4 + i32_res_40840];
-                
-                index_concat_branch_40854 = index_concat_40856;
-            }
-            
-            int64_t i16_res_40857 = sext_i16_i64(index_concat_branch_40854);
-            int64_t zp_lhs_40858 = mul64((int64_t) 256, block_idx_40841);
-            int64_t old_offset_40859 = add64(i16_res_40857, zp_lhs_40858);
-            int64_t zp_lhs_40860 = sub64(write_iter_41174, old_offset_40859);
-            int64_t idx_40861 = add64(new_offset_40852, zp_lhs_40860);
-            
-            if (sle64((int64_t) 0, idx_40861) && slt64(idx_40861, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449)) {
-                ((float *) mem_41234)[idx_40861] = index_concat_branch_41200;
-            }
-            if (sle64((int64_t) 0, idx_40861) && slt64(idx_40861, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40449)) {
-                ((int64_t *) mem_41236)[idx_40861] = index_concat_branch_41194;
-            }
-        }
-    }
-    if (memblock_alloc(ctx, &mem_41445, bytes_41444, "mem_41445")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc(ctx, &mem_41447, bytes_41446, "mem_41447")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41186 = 0; i_41186 < n_31263; i_41186++) {
-        int64_t eta_p_40756 = ((int64_t *) mem_41236)[i_41186];
-        bool x_40757 = sle64((int64_t) 0, eta_p_40756);
-        bool y_40758 = slt64(eta_p_40756, n_31263);
-        bool bounds_check_40759 = x_40757 && y_40758;
-        bool index_certs_40760;
-        
-        if (!bounds_check_40759) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_40756, "] out of bounds for array of shape [", (long long) n_31263, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #4  ftbasics.fut:162:88-91\n   #5  ftsort.fut:25:9-25\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:25:9-30\n   #8  ftsort.fut:24:1-25:30\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int64_t index_primexp_40761 = add64(incr_31264, eta_p_40756);
-        float lifted_lambda_res_40762 = ((float *) xs_mem_41232.mem)[eta_p_40756];
-        
-        ((int64_t *) mem_41445.mem)[i_41186] = index_primexp_40761;
-        ((float *) mem_41447.mem)[i_41186] = lifted_lambda_res_40762;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41445, "mem_41445") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_41494, &mem_41447, "mem_41447") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41569, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41570, &mem_out_41494, "mem_out_41494") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        free(mem_41234);
-        free(mem_41236);
-        free(mem_41244);
-        free(mem_41246);
-        free(mem_41248);
-        free(mem_41250);
-        free(mem_41252);
-        free(mem_41284);
-        free(mem_41286);
-        free(mem_41299);
-        free(mem_41300);
-        free(mem_41307);
-        free(mem_41310);
-        free(mem_41313);
-        free(mem_41316);
-        free(mem_41319);
-        free(mem_41336);
-        free(mem_41337);
-        free(mem_41338);
-        free(mem_41339);
-        free(mem_41340);
-        free(mem_41341);
-        free(mem_41342);
-        free(mem_41385);
-        free(mem_41386);
-        free(mem_41411);
-        free(mem_41419);
-        if (memblock_unref(ctx, &mem_41447, "mem_41447") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_41445, "mem_41445") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41494, "mem_out_41494") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_int(struct futhark_context *ctx, struct memblock *mem_out_p_41598, struct memblock *mem_out_p_41599, struct memblock xs_mem_41232, int64_t n_25854, int64_t incr_25855)
-{
-    (void) ctx;
-    
-    int err = 0;
-    int64_t mem_41234_cached_sizze_41600 = 0;
-    unsigned char *mem_41234 = NULL;
-    int64_t mem_41236_cached_sizze_41601 = 0;
-    unsigned char *mem_41236 = NULL;
-    int64_t mem_41244_cached_sizze_41602 = 0;
-    unsigned char *mem_41244 = NULL;
-    int64_t mem_41246_cached_sizze_41603 = 0;
-    unsigned char *mem_41246 = NULL;
-    int64_t mem_41248_cached_sizze_41604 = 0;
-    unsigned char *mem_41248 = NULL;
-    int64_t mem_41250_cached_sizze_41605 = 0;
-    unsigned char *mem_41250 = NULL;
-    int64_t mem_41252_cached_sizze_41606 = 0;
-    unsigned char *mem_41252 = NULL;
-    int64_t mem_41284_cached_sizze_41607 = 0;
-    unsigned char *mem_41284 = NULL;
-    int64_t mem_41286_cached_sizze_41608 = 0;
-    unsigned char *mem_41286 = NULL;
-    int64_t mem_41299_cached_sizze_41609 = 0;
-    unsigned char *mem_41299 = NULL;
-    int64_t mem_41300_cached_sizze_41610 = 0;
-    unsigned char *mem_41300 = NULL;
-    int64_t mem_41307_cached_sizze_41611 = 0;
-    unsigned char *mem_41307 = NULL;
-    int64_t mem_41310_cached_sizze_41612 = 0;
-    unsigned char *mem_41310 = NULL;
-    int64_t mem_41313_cached_sizze_41613 = 0;
-    unsigned char *mem_41313 = NULL;
-    int64_t mem_41316_cached_sizze_41614 = 0;
-    unsigned char *mem_41316 = NULL;
-    int64_t mem_41319_cached_sizze_41615 = 0;
-    unsigned char *mem_41319 = NULL;
-    int64_t mem_41336_cached_sizze_41616 = 0;
-    unsigned char *mem_41336 = NULL;
-    int64_t mem_41337_cached_sizze_41617 = 0;
-    unsigned char *mem_41337 = NULL;
-    int64_t mem_41338_cached_sizze_41618 = 0;
-    unsigned char *mem_41338 = NULL;
-    int64_t mem_41339_cached_sizze_41619 = 0;
-    unsigned char *mem_41339 = NULL;
-    int64_t mem_41340_cached_sizze_41620 = 0;
-    unsigned char *mem_41340 = NULL;
-    int64_t mem_41341_cached_sizze_41621 = 0;
-    unsigned char *mem_41341 = NULL;
-    int64_t mem_41342_cached_sizze_41622 = 0;
-    unsigned char *mem_41342 = NULL;
-    int64_t mem_41385_cached_sizze_41623 = 0;
-    unsigned char *mem_41385 = NULL;
-    int64_t mem_41386_cached_sizze_41624 = 0;
-    unsigned char *mem_41386 = NULL;
-    int64_t mem_41411_cached_sizze_41625 = 0;
-    unsigned char *mem_41411 = NULL;
-    int64_t mem_41419_cached_sizze_41626 = 0;
-    unsigned char *mem_41419 = NULL;
-    struct memblock mem_41447;
-    
-    mem_41447.references = NULL;
-    
-    struct memblock mem_41445;
-    
-    mem_41445.references = NULL;
-    
-    struct memblock mem_out_41494;
-    
-    mem_out_41494.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t rng_38984 = add64(n_25854, incr_25855);
-    bool bounds_invalid_upwards_38985 = slt64(rng_38984, incr_25855);
-    bool valid_38986 = !bounds_invalid_upwards_38985;
-    bool range_valid_c_38987;
-    
-    if (!valid_38986) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_25855, "..<", (long long) rng_38984, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:114:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:114:32-63\n   #4  ftsort.fut:19:9-23\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:19:9-28\n   #7  ftsort.fut:18:1-19:28\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool cond_38988 = n_25854 == (int64_t) 0;
-    int32_t iters_38989;
-    
-    if (cond_38988) {
-        iters_38989 = 0;
-    } else {
-        iters_38989 = 16;
-    }
-    
-    int64_t n_blocks_38990 = sdiv64(n_25854, (int64_t) 256);
-    int64_t rest_38991 = smod64(n_25854, (int64_t) 256);
-    int64_t arg_38992 = mul64((int64_t) 256, n_blocks_38990);
-    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993 = add64(rest_38991, arg_38992);
-    bool dim_match_38994 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993 == n_25854;
-    bool empty_or_match_cert_38995;
-    
-    if (!dim_match_38994) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_25854, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "](i32, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #5  ftbasics.fut:115:86-89\n   #6  ftsort.fut:19:9-23\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:19:9-28\n   #9  ftsort.fut:18:1-19:28\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41233 = (int64_t) 4 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993;
-    int64_t bytes_41235 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993;
-    bool loop_nonempty_38999 = slt32(0, iters_38989);
-    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 = add64((int64_t) 1, n_blocks_38990);
-    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-    bool empty_slice_39002 = arg_38992 == (int64_t) 0;
-    int64_t m_39003 = sub64(arg_38992, (int64_t) 1);
-    bool zzero_leq_i_p_m_t_s_39004 = sle64((int64_t) 0, m_39003);
-    bool i_p_m_t_s_leq_w_39005 = slt64(m_39003, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool i_lte_j_39006 = sle64((int64_t) 0, arg_38992);
-    bool y_39007 = zzero_leq_i_p_m_t_s_39004 && i_p_m_t_s_leq_w_39005;
-    bool forwards_ok_39008 = i_lte_j_39006 && y_39007;
-    bool ok_or_empty_39009 = empty_slice_39002 || forwards_ok_39008;
-    bool loop_not_taken_39010 = !loop_nonempty_38999;
-    bool protect_assert_disj_39011 = ok_or_empty_39009 || loop_not_taken_39010;
-    bool index_certs_39012;
-    
-    if (!protect_assert_disj_39011) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_38992, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:19:9-23\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:19:9-28\n   #10 ftsort.fut:18:1-19:28\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool empty_slice_39013 = rest_38991 == (int64_t) 0;
-    int64_t m_39014 = sub64(rest_38991, (int64_t) 1);
-    int64_t i_p_m_t_s_39015 = add64(arg_38992, m_39014);
-    bool zzero_leq_i_p_m_t_s_39016 = sle64((int64_t) 0, i_p_m_t_s_39015);
-    bool i_p_m_t_s_leq_w_39017 = slt64(i_p_m_t_s_39015, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool i_lte_j_39018 = sle64(arg_38992, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool y_39019 = zzero_leq_i_p_m_t_s_39016 && i_p_m_t_s_leq_w_39017;
-    bool forwards_ok_39020 = i_lte_j_39018 && y_39019;
-    bool ok_or_empty_39021 = empty_slice_39013 || forwards_ok_39020;
-    bool protect_assert_disj_39022 = loop_not_taken_39010 || ok_or_empty_39021;
-    bool index_certs_39023;
-    
-    if (!protect_assert_disj_39022) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_38992, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:19:9-23\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:19:9-28\n   #10 ftsort.fut:18:1-19:28\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool binop_x_39024 = sle64((int64_t) 0, n_blocks_38990);
-    bool protect_assert_disj_39025 = loop_not_taken_39010 || binop_x_39024;
-    bool dim_ok_cert_39026;
-    
-    if (!protect_assert_disj_39025) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_38992, "] to array of shape [", (long long) n_blocks_38990, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:19:9-23\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:19:9-28\n   #10 ftsort.fut:18:1-19:28\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool y_39028 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001);
-    bool protect_assert_disj_39029 = loop_not_taken_39010 || y_39028;
-    bool index_certs_39030;
-    
-    if (!protect_assert_disj_39029) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:19:9-23\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:19:9-28\n   #11 ftsort.fut:18:1-19:28\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool x_39032 = sle64((int64_t) 0, m_39014);
-    bool y_39033 = slt64(m_39014, rest_38991);
-    bool bounds_check_39034 = x_39032 && y_39033;
-    bool protect_assert_disj_39035 = empty_slice_39013 || bounds_check_39034;
-    bool protect_assert_disj_39036 = loop_not_taken_39010 || protect_assert_disj_39035;
-    bool index_certs_39037;
-    
-    if (!protect_assert_disj_39036) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_39014, "] out of bounds for array of shape [", (long long) rest_38991, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:166:41-45\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:19:9-23\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:19:9-28\n   #11 ftsort.fut:18:1-19:28\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41243 = (int64_t) 2 * rest_38991;
-    int64_t bytes_41283 = (int64_t) 8 * rest_38991;
-    int64_t bytes_41285 = (int64_t) 4 * rest_38991;
-    int64_t bytes_41309 = (int64_t) 1024 * n_blocks_38990;
-    int64_t bytes_41312 = (int64_t) 2048 * n_blocks_38990;
-    int64_t bytes_41315 = (int64_t) 32 * n_blocks_38990;
-    int64_t bytes_41318 = (int64_t) 8 * n_blocks_38990;
-    int64_t bytes_41410 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000;
-    bool dim_match_39265 = n_25854 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993;
-    bool empty_or_match_cert_39266;
-    
-    if (!dim_match_39265) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "] cannot match shape of type `[", (long long) n_25854, "](i32, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:19:9-23\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:19:9-28\n   #11 ftsort.fut:18:1-19:28\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41444 = (int64_t) 8 * n_25854;
-    int64_t bytes_41446 = (int64_t) 4 * n_25854;
-    
-    if (mem_41234_cached_sizze_41600 < bytes_41233) {
-        err = lexical_realloc(ctx, &mem_41234, &mem_41234_cached_sizze_41600, bytes_41233);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    lmad_copy_4b(ctx, 1, (uint32_t *) mem_41234, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) xs_mem_41232.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993});
-    if (mem_41236_cached_sizze_41601 < bytes_41235) {
-        err = lexical_realloc(ctx, &mem_41236, &mem_41236_cached_sizze_41601, bytes_41235);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int64_t i_41495 = 0; i_41495 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993; i_41495++) {
-        int64_t x_41496 = (int64_t) 0 + i_41495 * (int64_t) 1;
-        
-        ((int64_t *) mem_41236)[i_41495] = x_41496;
-    }
-    if (mem_41244_cached_sizze_41602 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41244, &mem_41244_cached_sizze_41602, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41246_cached_sizze_41603 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41246, &mem_41246_cached_sizze_41603, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41248_cached_sizze_41604 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41248, &mem_41248_cached_sizze_41604, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41250_cached_sizze_41605 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41250, &mem_41250_cached_sizze_41605, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41252_cached_sizze_41606 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41252, &mem_41252_cached_sizze_41606, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41284_cached_sizze_41607 < bytes_41283) {
-        err = lexical_realloc(ctx, &mem_41284, &mem_41284_cached_sizze_41607, bytes_41283);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41286_cached_sizze_41608 < bytes_41285) {
-        err = lexical_realloc(ctx, &mem_41286, &mem_41286_cached_sizze_41608, bytes_41285);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41299_cached_sizze_41609 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41299, &mem_41299_cached_sizze_41609, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41300_cached_sizze_41610 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41300, &mem_41300_cached_sizze_41610, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41307_cached_sizze_41611 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41307, &mem_41307_cached_sizze_41611, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41310_cached_sizze_41612 < bytes_41309) {
-        err = lexical_realloc(ctx, &mem_41310, &mem_41310_cached_sizze_41612, bytes_41309);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41313_cached_sizze_41613 < bytes_41312) {
-        err = lexical_realloc(ctx, &mem_41313, &mem_41313_cached_sizze_41613, bytes_41312);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41316_cached_sizze_41614 < bytes_41315) {
-        err = lexical_realloc(ctx, &mem_41316, &mem_41316_cached_sizze_41614, bytes_41315);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41319_cached_sizze_41615 < bytes_41318) {
-        err = lexical_realloc(ctx, &mem_41319, &mem_41319_cached_sizze_41615, bytes_41318);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41336_cached_sizze_41616 < (int64_t) 1024) {
-        err = lexical_realloc(ctx, &mem_41336, &mem_41336_cached_sizze_41616, (int64_t) 1024);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41337_cached_sizze_41617 < (int64_t) 2048) {
-        err = lexical_realloc(ctx, &mem_41337, &mem_41337_cached_sizze_41617, (int64_t) 2048);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41338_cached_sizze_41618 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41338, &mem_41338_cached_sizze_41618, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41339_cached_sizze_41619 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41339, &mem_41339_cached_sizze_41619, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41340_cached_sizze_41620 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41340, &mem_41340_cached_sizze_41620, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41341_cached_sizze_41621 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41341, &mem_41341_cached_sizze_41621, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41342_cached_sizze_41622 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41342, &mem_41342_cached_sizze_41622, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41385_cached_sizze_41623 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41385, &mem_41385_cached_sizze_41623, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41386_cached_sizze_41624 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41386, &mem_41386_cached_sizze_41624, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41411_cached_sizze_41625 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41411, &mem_41411_cached_sizze_41625, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41419_cached_sizze_41626 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41419, &mem_41419_cached_sizze_41626, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int32_t i_39040 = 0; i_39040 < iters_38989; i_39040++) {
-        int32_t blocked_radix_sort_step_arg1_39043 = mul32(2, i_39040);
-        int32_t get_bit_arg0_39048 = add32(1, blocked_radix_sort_step_arg1_39043);
-        bool cond_39049 = get_bit_arg0_39048 == 31;
-        bool cond_39050 = blocked_radix_sort_step_arg1_39043 == 31;
-        int16_t discard_41089;
-        int16_t discard_41090;
-        int16_t discard_41091;
-        int16_t discard_41092;
-        int16_t scanacc_41074;
-        int16_t scanacc_41075;
-        int16_t scanacc_41076;
-        int16_t scanacc_41077;
-        
-        scanacc_41074 = (int16_t) 0;
-        scanacc_41075 = (int16_t) 0;
-        scanacc_41076 = (int16_t) 0;
-        scanacc_41077 = (int16_t) 0;
-        for (int64_t i_41083 = 0; i_41083 < rest_38991; i_41083++) {
-            int64_t slice_41217 = arg_38992 + i_41083;
-            int32_t eta_p_40880 = ((int32_t *) mem_41234)[slice_41217];
-            int32_t zgzg_res_40881 = ashr32(eta_p_40880, get_bit_arg0_39048);
-            int32_t za_res_40882 = 1 & zgzg_res_40881;
-            int32_t defunc_0_get_bit_res_40883;
-            
-            if (cond_39049) {
-                int32_t defunc_0_get_bit_res_t_res_40998 = 1 ^ za_res_40882;
-                
-                defunc_0_get_bit_res_40883 = defunc_0_get_bit_res_t_res_40998;
-            } else {
-                defunc_0_get_bit_res_40883 = za_res_40882;
-            }
-            
-            int32_t zp_lhs_40885 = mul32(2, defunc_0_get_bit_res_40883);
-            int32_t zgzg_res_40886 = ashr32(eta_p_40880, blocked_radix_sort_step_arg1_39043);
-            int32_t za_res_40887 = 1 & zgzg_res_40886;
-            int32_t defunc_0_get_bit_res_40888;
-            
-            if (cond_39050) {
-                int32_t defunc_0_get_bit_res_t_res_40999 = 1 ^ za_res_40887;
-                
-                defunc_0_get_bit_res_40888 = defunc_0_get_bit_res_t_res_40999;
-            } else {
-                defunc_0_get_bit_res_40888 = za_res_40887;
-            }
-            
-            int32_t i32_arg0_40890 = add32(zp_lhs_40885, defunc_0_get_bit_res_40888);
-            int16_t i32_res_40891 = sext_i32_i16(i32_arg0_40890);
-            int16_t defunc_0_f_res_40893;
-            int16_t defunc_0_f_res_40894;
-            int16_t defunc_0_f_res_40895;
-            int16_t defunc_0_f_res_40896;
-            
-            if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40893, &defunc_0_f_res_40894, &defunc_0_f_res_40895, &defunc_0_f_res_40896, i32_res_40891) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int16_t defunc_0_op_res_39087 = add16(defunc_0_f_res_40893, scanacc_41074);
-            int16_t defunc_0_op_res_39088 = add16(defunc_0_f_res_40894, scanacc_41075);
-            int16_t defunc_0_op_res_39089 = add16(defunc_0_f_res_40895, scanacc_41076);
-            int16_t defunc_0_op_res_39090 = add16(defunc_0_f_res_40896, scanacc_41077);
-            
-            ((int16_t *) mem_41244)[i_41083] = defunc_0_op_res_39087;
-            ((int16_t *) mem_41246)[i_41083] = defunc_0_op_res_39088;
-            ((int16_t *) mem_41248)[i_41083] = defunc_0_op_res_39089;
-            ((int16_t *) mem_41250)[i_41083] = defunc_0_op_res_39090;
-            ((int16_t *) mem_41252)[i_41083] = i32_res_40891;
-            
-            int16_t scanacc_tmp_41499 = defunc_0_op_res_39087;
-            int16_t scanacc_tmp_41500 = defunc_0_op_res_39088;
-            int16_t scanacc_tmp_41501 = defunc_0_op_res_39089;
-            int16_t scanacc_tmp_41502 = defunc_0_op_res_39090;
-            
-            scanacc_41074 = scanacc_tmp_41499;
-            scanacc_41075 = scanacc_tmp_41500;
-            scanacc_41076 = scanacc_tmp_41501;
-            scanacc_41077 = scanacc_tmp_41502;
-        }
-        discard_41089 = scanacc_41074;
-        discard_41090 = scanacc_41075;
-        discard_41091 = scanacc_41076;
-        discard_41092 = scanacc_41077;
-        
-        int16_t defunc_0_radix_sort_step_i16_res_39091;
-        int16_t defunc_0_radix_sort_step_i16_res_39092;
-        int16_t defunc_0_radix_sort_step_i16_res_39093;
-        int16_t defunc_0_radix_sort_step_i16_res_39094;
-        
-        if (empty_slice_39013) {
-            defunc_0_radix_sort_step_i16_res_39091 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39092 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39093 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39094 = (int16_t) 0;
-        } else {
-            int16_t last_res_39095 = ((int16_t *) mem_41244)[m_39014];
-            int16_t last_res_39096 = ((int16_t *) mem_41246)[m_39014];
-            int16_t last_res_39097 = ((int16_t *) mem_41248)[m_39014];
-            int16_t last_res_39098 = ((int16_t *) mem_41250)[m_39014];
-            
-            defunc_0_radix_sort_step_i16_res_39091 = last_res_39095;
-            defunc_0_radix_sort_step_i16_res_39092 = last_res_39096;
-            defunc_0_radix_sort_step_i16_res_39093 = last_res_39097;
-            defunc_0_radix_sort_step_i16_res_39094 = last_res_39098;
-        }
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_41284, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + (int64_t) 1 * arg_38992, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_38991});
-        lmad_copy_4b(ctx, 1, (uint32_t *) mem_41286, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_41234, (int64_t) 0 + (int64_t) 1 * arg_38992, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_38991});
-        for (int64_t write_iter_41093 = 0; write_iter_41093 < rest_38991; write_iter_41093++) {
-            int16_t write_iv_41096 = ((int16_t *) mem_41252)[write_iter_41093];
-            int16_t write_iv_41097 = ((int16_t *) mem_41244)[write_iter_41093];
-            int16_t write_iv_41098 = ((int16_t *) mem_41246)[write_iter_41093];
-            int16_t write_iv_41099 = ((int16_t *) mem_41248)[write_iter_41093];
-            int16_t write_iv_41100 = ((int16_t *) mem_41250)[write_iter_41093];
-            int64_t slice_41216 = arg_38992 + write_iter_41093;
-            int32_t write_iv_41101 = ((int32_t *) mem_41234)[slice_41216];
-            int64_t write_iv_41102 = ((int64_t *) mem_41236)[slice_41216];
-            int64_t defunc_0_f_res_40864;
-            
-            if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40864, defunc_0_radix_sort_step_i16_res_39091, defunc_0_radix_sort_step_i16_res_39092, defunc_0_radix_sort_step_i16_res_39093, write_iv_41096, write_iv_41097, write_iv_41098, write_iv_41099, write_iv_41100) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40864) && slt64(defunc_0_f_res_40864, rest_38991)) {
-                ((int32_t *) mem_41286)[defunc_0_f_res_40864] = write_iv_41101;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40864) && slt64(defunc_0_f_res_40864, rest_38991)) {
-                ((int64_t *) mem_41284)[defunc_0_f_res_40864] = write_iv_41102;
-            }
-        }
-        ((int16_t *) mem_41299)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_39091;
-        ((int16_t *) mem_41299)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_39092;
-        ((int16_t *) mem_41299)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_39093;
-        ((int16_t *) mem_41299)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_39094;
-        for (int64_t i_41107 = 0; i_41107 < (int64_t) 4; i_41107++) {
-            int16_t eta_p_39115 = ((int16_t *) mem_41299)[i_41107];
-            int64_t i16_res_39116 = sext_i16_i64(eta_p_39115);
-            
-            ((int64_t *) mem_41300)[i_41107] = i16_res_39116;
-        }
-        
-        int16_t tmp_39117 = add16(defunc_0_radix_sort_step_i16_res_39091, defunc_0_radix_sort_step_i16_res_39092);
-        int16_t tmp_39118 = add16(defunc_0_radix_sort_step_i16_res_39093, tmp_39117);
-        
-        ((int16_t *) mem_41307)[(int64_t) 0] = (int16_t) 0;
-        ((int16_t *) mem_41307)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_39091;
-        ((int16_t *) mem_41307)[(int64_t) 2] = tmp_39117;
-        ((int16_t *) mem_41307)[(int64_t) 3] = tmp_39118;
-        for (int64_t i_41157 = 0; i_41157 < n_blocks_38990; i_41157++) {
-            lmad_copy_4b(ctx, 1, (uint32_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_41234, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            
-            int64_t binop_x_41230 = (int64_t) 256 * i_41157;
-            int16_t discard_41129;
-            int16_t discard_41130;
-            int16_t discard_41131;
-            int16_t discard_41132;
-            int16_t scanacc_41114;
-            int16_t scanacc_41115;
-            int16_t scanacc_41116;
-            int16_t scanacc_41117;
-            
-            scanacc_41114 = (int16_t) 0;
-            scanacc_41115 = (int16_t) 0;
-            scanacc_41116 = (int16_t) 0;
-            scanacc_41117 = (int16_t) 0;
-            for (int64_t i_41123 = 0; i_41123 < (int64_t) 256; i_41123++) {
-                int64_t new_index_41231 = i_41123 + binop_x_41230;
-                int32_t eta_p_40927 = ((int32_t *) mem_41234)[new_index_41231];
-                int32_t zgzg_res_40928 = ashr32(eta_p_40927, get_bit_arg0_39048);
-                int32_t za_res_40929 = 1 & zgzg_res_40928;
-                int32_t defunc_0_get_bit_res_40930;
-                
-                if (cond_39049) {
-                    int32_t defunc_0_get_bit_res_t_res_41000 = 1 ^ za_res_40929;
-                    
-                    defunc_0_get_bit_res_40930 = defunc_0_get_bit_res_t_res_41000;
-                } else {
-                    defunc_0_get_bit_res_40930 = za_res_40929;
-                }
-                
-                int32_t zp_lhs_40932 = mul32(2, defunc_0_get_bit_res_40930);
-                int32_t zgzg_res_40933 = ashr32(eta_p_40927, blocked_radix_sort_step_arg1_39043);
-                int32_t za_res_40934 = 1 & zgzg_res_40933;
-                int32_t defunc_0_get_bit_res_40935;
-                
-                if (cond_39050) {
-                    int32_t defunc_0_get_bit_res_t_res_41001 = 1 ^ za_res_40934;
-                    
-                    defunc_0_get_bit_res_40935 = defunc_0_get_bit_res_t_res_41001;
-                } else {
-                    defunc_0_get_bit_res_40935 = za_res_40934;
-                }
-                
-                int32_t i32_arg0_40937 = add32(zp_lhs_40932, defunc_0_get_bit_res_40935);
-                int16_t i32_res_40938 = sext_i32_i16(i32_arg0_40937);
-                int16_t defunc_0_f_res_40940;
-                int16_t defunc_0_f_res_40941;
-                int16_t defunc_0_f_res_40942;
-                int16_t defunc_0_f_res_40943;
-                
-                if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40940, &defunc_0_f_res_40941, &defunc_0_f_res_40942, &defunc_0_f_res_40943, i32_res_40938) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int16_t defunc_0_op_res_39168 = add16(defunc_0_f_res_40940, scanacc_41114);
-                int16_t defunc_0_op_res_39169 = add16(defunc_0_f_res_40941, scanacc_41115);
-                int16_t defunc_0_op_res_39170 = add16(defunc_0_f_res_40942, scanacc_41116);
-                int16_t defunc_0_op_res_39171 = add16(defunc_0_f_res_40943, scanacc_41117);
-                
-                ((int16_t *) mem_41338)[i_41123] = defunc_0_op_res_39168;
-                ((int16_t *) mem_41339)[i_41123] = defunc_0_op_res_39169;
-                ((int16_t *) mem_41340)[i_41123] = defunc_0_op_res_39170;
-                ((int16_t *) mem_41341)[i_41123] = defunc_0_op_res_39171;
-                ((int16_t *) mem_41342)[i_41123] = i32_res_40938;
-                
-                int16_t scanacc_tmp_41515 = defunc_0_op_res_39168;
-                int16_t scanacc_tmp_41516 = defunc_0_op_res_39169;
-                int16_t scanacc_tmp_41517 = defunc_0_op_res_39170;
-                int16_t scanacc_tmp_41518 = defunc_0_op_res_39171;
-                
-                scanacc_41114 = scanacc_tmp_41515;
-                scanacc_41115 = scanacc_tmp_41516;
-                scanacc_41116 = scanacc_tmp_41517;
-                scanacc_41117 = scanacc_tmp_41518;
-            }
-            discard_41129 = scanacc_41114;
-            discard_41130 = scanacc_41115;
-            discard_41131 = scanacc_41116;
-            discard_41132 = scanacc_41117;
-            
-            int16_t last_res_39172 = ((int16_t *) mem_41338)[(int64_t) 255];
-            int16_t last_res_39173 = ((int16_t *) mem_41339)[(int64_t) 255];
-            int16_t last_res_39174 = ((int16_t *) mem_41340)[(int64_t) 255];
-            int16_t last_res_39175 = ((int16_t *) mem_41341)[(int64_t) 255];
-            
-            for (int64_t write_iter_41133 = 0; write_iter_41133 < (int64_t) 256; write_iter_41133++) {
-                int16_t write_iv_41136 = ((int16_t *) mem_41342)[write_iter_41133];
-                int16_t write_iv_41137 = ((int16_t *) mem_41338)[write_iter_41133];
-                int16_t write_iv_41138 = ((int16_t *) mem_41339)[write_iter_41133];
-                int16_t write_iv_41139 = ((int16_t *) mem_41340)[write_iter_41133];
-                int16_t write_iv_41140 = ((int16_t *) mem_41341)[write_iter_41133];
-                int64_t new_index_41227 = write_iter_41133 + binop_x_41230;
-                int32_t write_iv_41141 = ((int32_t *) mem_41234)[new_index_41227];
-                int64_t write_iv_41142 = ((int64_t *) mem_41236)[new_index_41227];
-                int64_t defunc_0_f_res_40911;
-                
-                if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40911, last_res_39172, last_res_39173, last_res_39174, write_iv_41136, write_iv_41137, write_iv_41138, write_iv_41139, write_iv_41140) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40911) && slt64(defunc_0_f_res_40911, (int64_t) 256)) {
-                    ((int32_t *) mem_41336)[defunc_0_f_res_40911] = write_iv_41141;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40911) && slt64(defunc_0_f_res_40911, (int64_t) 256)) {
-                    ((int64_t *) mem_41337)[defunc_0_f_res_40911] = write_iv_41142;
-                }
-            }
-            ((int16_t *) mem_41385)[(int64_t) 0] = last_res_39172;
-            ((int16_t *) mem_41385)[(int64_t) 1] = last_res_39173;
-            ((int16_t *) mem_41385)[(int64_t) 2] = last_res_39174;
-            ((int16_t *) mem_41385)[(int64_t) 3] = last_res_39175;
-            for (int64_t i_41147 = 0; i_41147 < (int64_t) 4; i_41147++) {
-                int16_t eta_p_39190 = ((int16_t *) mem_41385)[i_41147];
-                int64_t i16_res_39191 = sext_i16_i64(eta_p_39190);
-                
-                ((int64_t *) mem_41386)[i_41147] = i16_res_39191;
-            }
-            
-            int16_t tmp_39192 = add16(last_res_39172, last_res_39173);
-            int16_t tmp_39193 = add16(last_res_39174, tmp_39192);
-            
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4] = (int16_t) 0;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 1] = last_res_39172;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 2] = tmp_39192;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 3] = tmp_39193;
-            lmad_copy_4b(ctx, 1, (uint32_t *) mem_41310, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41313, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41316, i_41157 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41386, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
-        }
-        
-        int64_t discard_41169;
-        int64_t scanacc_41165 = (int64_t) 0;
-        
-        for (int64_t i_41167 = 0; i_41167 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001; i_41167++) {
-            int64_t new_index_41205 = squot64(i_41167, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-            int64_t binop_y_41207 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 * new_index_41205;
-            int64_t new_index_41208 = i_41167 - binop_y_41207;
-            bool index_concat_cmp_41210 = sle64(n_blocks_38990, new_index_41208);
-            int64_t index_concat_branch_41214;
-            
-            if (index_concat_cmp_41210) {
-                int64_t index_concat_41212 = ((int64_t *) mem_41300)[new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41212;
-            } else {
-                int64_t index_concat_41213 = ((int64_t *) mem_41316)[new_index_41208 * (int64_t) 4 + new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41213;
-            }
-            
-            int64_t defunc_0_op_res_39205 = add64(scanacc_41165, index_concat_branch_41214);
-            
-            ((int64_t *) mem_41411)[i_41167] = defunc_0_op_res_39205;
-            
-            int64_t scanacc_tmp_41527 = defunc_0_op_res_39205;
-            
-            scanacc_41165 = scanacc_tmp_41527;
-        }
-        discard_41169 = scanacc_41165;
-        for (int64_t i_41172 = 0; i_41172 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001; i_41172++) {
-            int64_t zv_lhs_39208 = add64((int64_t) -1, i_41172);
-            int64_t tmp_39209 = smod64(zv_lhs_39208, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001);
-            int64_t lifted_lambda_res_39210 = ((int64_t *) mem_41411)[tmp_39209];
-            
-            ((int64_t *) mem_41419)[i_41172] = lifted_lambda_res_39210;
-        }
-        ((int64_t *) mem_41419)[(int64_t) 0] = (int64_t) 0;
-        for (int64_t write_iter_41174 = 0; write_iter_41174 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993; write_iter_41174++) {
-            bool index_concat_cmp_41196 = sle64(arg_38992, write_iter_41174);
-            int32_t index_concat_branch_40815;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41010 = sub64(write_iter_41174, arg_38992);
-                int32_t index_concat_41011 = ((int32_t *) mem_41286)[index_concat_i_41010];
-                
-                index_concat_branch_40815 = index_concat_41011;
-            } else {
-                int64_t new_index_40818 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_40819 = (int64_t) 256 * new_index_40818;
-                int64_t new_index_40820 = write_iter_41174 - binop_y_40819;
-                int32_t index_concat_40821 = ((int32_t *) mem_41310)[new_index_40818 * (int64_t) 256 + new_index_40820];
-                
-                index_concat_branch_40815 = index_concat_40821;
-            }
-            
-            int32_t zlzb_rhs_40822;
-            int32_t acc_40824 = 0;
-            
-            for (int32_t i_40823 = 0; i_40823 < 2; i_40823++) {
-                int32_t get_bit_arg0_40825 = add32(blocked_radix_sort_step_arg1_39043, i_40823);
-                int32_t zgzg_res_40826 = ashr32(index_concat_branch_40815, get_bit_arg0_40825);
-                int32_t za_res_40827 = 1 & zgzg_res_40826;
-                bool cond_40828 = get_bit_arg0_40825 == 31;
-                int32_t defunc_0_get_bit_res_40829;
-                
-                if (cond_40828) {
-                    int32_t defunc_0_get_bit_res_t_res_41012 = 1 ^ za_res_40827;
-                    
-                    defunc_0_get_bit_res_40829 = defunc_0_get_bit_res_t_res_41012;
-                } else {
-                    defunc_0_get_bit_res_40829 = za_res_40827;
-                }
-                
-                int32_t zp_rhs_40831 = shl32(defunc_0_get_bit_res_40829, i_40823);
-                int32_t loopres_40832 = add32(acc_40824, zp_rhs_40831);
-                int32_t acc_tmp_41532 = loopres_40832;
-                
-                acc_40824 = acc_tmp_41532;
-            }
-            zlzb_rhs_40822 = acc_40824;
-            
-            int64_t i32_res_40833 = sext_i32_i64(zlzb_rhs_40822);
-            int64_t block_idx_40834 = sdiv64(write_iter_41174, (int64_t) 256);
-            bool x_40835 = sle64((int64_t) 0, block_idx_40834);
-            bool y_40836 = slt64(block_idx_40834, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-            bool bounds_check_40837 = x_40835 && y_40836;
-            bool index_certs_40838;
-            
-            if (!bounds_check_40837) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_40834, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:19:9-23\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:19:9-28\n   #12 ftsort.fut:18:1-19:28\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            bool x_40839 = sle64((int64_t) 0, i32_res_40833);
-            bool y_40840 = slt64(i32_res_40833, (int64_t) 4);
-            bool bounds_check_40841 = x_40839 && y_40840;
-            bool index_certs_40842;
-            
-            if (!bounds_check_40841) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_40833, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:19:9-23\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:19:9-28\n   #12 ftsort.fut:18:1-19:28\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            int32_t index_concat_branch_41200;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41197 = sub64(write_iter_41174, arg_38992);
-                int32_t index_concat_41198 = ((int32_t *) mem_41286)[index_concat_i_41197];
-                
-                index_concat_branch_41200 = index_concat_41198;
-            } else {
-                int64_t new_index_41222 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41224 = (int64_t) 256 * new_index_41222;
-                int64_t new_index_41225 = write_iter_41174 - binop_y_41224;
-                int32_t index_concat_41199 = ((int32_t *) mem_41310)[new_index_41222 * (int64_t) 256 + new_index_41225];
-                
-                index_concat_branch_41200 = index_concat_41199;
-            }
-            
-            int64_t index_concat_branch_41194;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41191 = sub64(write_iter_41174, arg_38992);
-                int64_t index_concat_41192 = ((int64_t *) mem_41284)[index_concat_i_41191];
-                
-                index_concat_branch_41194 = index_concat_41192;
-            } else {
-                int64_t new_index_41218 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41220 = (int64_t) 256 * new_index_41218;
-                int64_t new_index_41221 = write_iter_41174 - binop_y_41220;
-                int64_t index_concat_41193 = ((int64_t *) mem_41313)[new_index_41218 * (int64_t) 256 + new_index_41221];
-                
-                index_concat_branch_41194 = index_concat_41193;
-            }
-            
-            int64_t binop_x_40843 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 * i32_res_40833;
-            int64_t new_index_40844 = block_idx_40834 + binop_x_40843;
-            int64_t new_offset_40845 = ((int64_t *) mem_41419)[new_index_40844];
-            bool index_concat_cmp_40846 = sle64(n_blocks_38990, block_idx_40834);
-            int16_t index_concat_branch_40847;
-            
-            if (index_concat_cmp_40846) {
-                int16_t index_concat_41013 = ((int16_t *) mem_41307)[i32_res_40833];
-                
-                index_concat_branch_40847 = index_concat_41013;
-            } else {
-                int16_t index_concat_40849 = ((int16_t *) mem_41319)[block_idx_40834 * (int64_t) 4 + i32_res_40833];
-                
-                index_concat_branch_40847 = index_concat_40849;
-            }
-            
-            int64_t i16_res_40850 = sext_i16_i64(index_concat_branch_40847);
-            int64_t zp_lhs_40851 = mul64((int64_t) 256, block_idx_40834);
-            int64_t old_offset_40852 = add64(i16_res_40850, zp_lhs_40851);
-            int64_t zp_lhs_40853 = sub64(write_iter_41174, old_offset_40852);
-            int64_t idx_40854 = add64(new_offset_40845, zp_lhs_40853);
-            
-            if (sle64((int64_t) 0, idx_40854) && slt64(idx_40854, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993)) {
-                ((int32_t *) mem_41234)[idx_40854] = index_concat_branch_41200;
-            }
-            if (sle64((int64_t) 0, idx_40854) && slt64(idx_40854, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993)) {
-                ((int64_t *) mem_41236)[idx_40854] = index_concat_branch_41194;
-            }
-        }
-    }
-    if (memblock_alloc(ctx, &mem_41445, bytes_41444, "mem_41445")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc(ctx, &mem_41447, bytes_41446, "mem_41447")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41186 = 0; i_41186 < n_25854; i_41186++) {
-        int64_t eta_p_39270 = ((int64_t *) mem_41236)[i_41186];
-        bool x_39271 = sle64((int64_t) 0, eta_p_39270);
-        bool y_39272 = slt64(eta_p_39270, n_25854);
-        bool bounds_check_39273 = x_39271 && y_39272;
-        bool index_certs_39274;
-        
-        if (!bounds_check_39273) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_39270, "] out of bounds for array of shape [", (long long) n_25854, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #4  ftbasics.fut:115:86-89\n   #5  ftsort.fut:19:9-23\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:19:9-28\n   #8  ftsort.fut:18:1-19:28\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int64_t index_primexp_39275 = add64(incr_25855, eta_p_39270);
-        int32_t lifted_lambda_res_39276 = ((int32_t *) xs_mem_41232.mem)[eta_p_39270];
-        
-        ((int64_t *) mem_41445.mem)[i_41186] = index_primexp_39275;
-        ((int32_t *) mem_41447.mem)[i_41186] = lifted_lambda_res_39276;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41445, "mem_41445") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_41494, &mem_41447, "mem_41447") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41598, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41599, &mem_out_41494, "mem_out_41494") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        free(mem_41234);
-        free(mem_41236);
-        free(mem_41244);
-        free(mem_41246);
-        free(mem_41248);
-        free(mem_41250);
-        free(mem_41252);
-        free(mem_41284);
-        free(mem_41286);
-        free(mem_41299);
-        free(mem_41300);
-        free(mem_41307);
-        free(mem_41310);
-        free(mem_41313);
-        free(mem_41316);
-        free(mem_41319);
-        free(mem_41336);
-        free(mem_41337);
-        free(mem_41338);
-        free(mem_41339);
-        free(mem_41340);
-        free(mem_41341);
-        free(mem_41342);
-        free(mem_41385);
-        free(mem_41386);
-        free(mem_41411);
-        free(mem_41419);
-        if (memblock_unref(ctx, &mem_41447, "mem_41447") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_41445, "mem_41445") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41494, "mem_out_41494") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_long(struct futhark_context *ctx, struct memblock *mem_out_p_41627, struct memblock *mem_out_p_41628, struct memblock xs_mem_41232, int64_t n_28483, int64_t incr_28484)
-{
-    (void) ctx;
-    
-    int err = 0;
-    int64_t mem_41234_cached_sizze_41629 = 0;
-    unsigned char *mem_41234 = NULL;
-    int64_t mem_41236_cached_sizze_41630 = 0;
-    unsigned char *mem_41236 = NULL;
-    int64_t mem_41244_cached_sizze_41631 = 0;
-    unsigned char *mem_41244 = NULL;
-    int64_t mem_41246_cached_sizze_41632 = 0;
-    unsigned char *mem_41246 = NULL;
-    int64_t mem_41248_cached_sizze_41633 = 0;
-    unsigned char *mem_41248 = NULL;
-    int64_t mem_41250_cached_sizze_41634 = 0;
-    unsigned char *mem_41250 = NULL;
-    int64_t mem_41252_cached_sizze_41635 = 0;
-    unsigned char *mem_41252 = NULL;
-    int64_t mem_41284_cached_sizze_41636 = 0;
-    unsigned char *mem_41284 = NULL;
-    int64_t mem_41286_cached_sizze_41637 = 0;
-    unsigned char *mem_41286 = NULL;
-    int64_t mem_41299_cached_sizze_41638 = 0;
-    unsigned char *mem_41299 = NULL;
-    int64_t mem_41300_cached_sizze_41639 = 0;
-    unsigned char *mem_41300 = NULL;
-    int64_t mem_41307_cached_sizze_41640 = 0;
-    unsigned char *mem_41307 = NULL;
-    int64_t mem_41310_cached_sizze_41641 = 0;
-    unsigned char *mem_41310 = NULL;
-    int64_t mem_41313_cached_sizze_41642 = 0;
-    unsigned char *mem_41313 = NULL;
-    int64_t mem_41316_cached_sizze_41643 = 0;
-    unsigned char *mem_41316 = NULL;
-    int64_t mem_41319_cached_sizze_41644 = 0;
-    unsigned char *mem_41319 = NULL;
-    int64_t mem_41336_cached_sizze_41645 = 0;
-    unsigned char *mem_41336 = NULL;
-    int64_t mem_41337_cached_sizze_41646 = 0;
-    unsigned char *mem_41337 = NULL;
-    int64_t mem_41338_cached_sizze_41647 = 0;
-    unsigned char *mem_41338 = NULL;
-    int64_t mem_41339_cached_sizze_41648 = 0;
-    unsigned char *mem_41339 = NULL;
-    int64_t mem_41340_cached_sizze_41649 = 0;
-    unsigned char *mem_41340 = NULL;
-    int64_t mem_41341_cached_sizze_41650 = 0;
-    unsigned char *mem_41341 = NULL;
-    int64_t mem_41342_cached_sizze_41651 = 0;
-    unsigned char *mem_41342 = NULL;
-    int64_t mem_41385_cached_sizze_41652 = 0;
-    unsigned char *mem_41385 = NULL;
-    int64_t mem_41386_cached_sizze_41653 = 0;
-    unsigned char *mem_41386 = NULL;
-    int64_t mem_41411_cached_sizze_41654 = 0;
-    unsigned char *mem_41411 = NULL;
-    int64_t mem_41419_cached_sizze_41655 = 0;
-    unsigned char *mem_41419 = NULL;
-    struct memblock mem_41447;
-    
-    mem_41447.references = NULL;
-    
-    struct memblock mem_41445;
-    
-    mem_41445.references = NULL;
-    
-    struct memblock mem_out_41494;
-    
-    mem_out_41494.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t rng_38984 = add64(n_28483, incr_28484);
-    bool bounds_invalid_upwards_38985 = slt64(rng_38984, incr_28484);
-    bool valid_38986 = !bounds_invalid_upwards_38985;
-    bool range_valid_c_38987;
-    
-    if (!valid_38986) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_28484, "..<", (long long) rng_38984, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:114:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:114:32-63\n   #4  ftsort.fut:22:9-24\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:22:9-29\n   #7  ftsort.fut:21:1-22:29\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool cond_38988 = n_28483 == (int64_t) 0;
-    int32_t iters_38989;
-    
-    if (cond_38988) {
-        iters_38989 = 0;
-    } else {
-        iters_38989 = 32;
-    }
-    
-    int64_t n_blocks_38990 = sdiv64(n_28483, (int64_t) 256);
-    int64_t rest_38991 = smod64(n_28483, (int64_t) 256);
-    int64_t arg_38992 = mul64((int64_t) 256, n_blocks_38990);
-    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993 = add64(rest_38991, arg_38992);
-    bool dim_match_38994 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993 == n_28483;
-    bool empty_or_match_cert_38995;
-    
-    if (!dim_match_38994) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_28483, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "](i64, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #5  ftbasics.fut:115:86-89\n   #6  ftsort.fut:22:9-24\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:22:9-29\n   #9  ftsort.fut:21:1-22:29\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41233 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993;
-    bool loop_nonempty_38999 = slt32(0, iters_38989);
-    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 = add64((int64_t) 1, n_blocks_38990);
-    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-    bool empty_slice_39002 = arg_38992 == (int64_t) 0;
-    int64_t m_39003 = sub64(arg_38992, (int64_t) 1);
-    bool zzero_leq_i_p_m_t_s_39004 = sle64((int64_t) 0, m_39003);
-    bool i_p_m_t_s_leq_w_39005 = slt64(m_39003, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool i_lte_j_39006 = sle64((int64_t) 0, arg_38992);
-    bool y_39007 = zzero_leq_i_p_m_t_s_39004 && i_p_m_t_s_leq_w_39005;
-    bool forwards_ok_39008 = i_lte_j_39006 && y_39007;
-    bool ok_or_empty_39009 = empty_slice_39002 || forwards_ok_39008;
-    bool loop_not_taken_39010 = !loop_nonempty_38999;
-    bool protect_assert_disj_39011 = ok_or_empty_39009 || loop_not_taken_39010;
-    bool index_certs_39012;
-    
-    if (!protect_assert_disj_39011) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_38992, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:22:9-24\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:22:9-29\n   #10 ftsort.fut:21:1-22:29\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool empty_slice_39013 = rest_38991 == (int64_t) 0;
-    int64_t m_39014 = sub64(rest_38991, (int64_t) 1);
-    int64_t i_p_m_t_s_39015 = add64(arg_38992, m_39014);
-    bool zzero_leq_i_p_m_t_s_39016 = sle64((int64_t) 0, i_p_m_t_s_39015);
-    bool i_p_m_t_s_leq_w_39017 = slt64(i_p_m_t_s_39015, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool i_lte_j_39018 = sle64(arg_38992, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool y_39019 = zzero_leq_i_p_m_t_s_39016 && i_p_m_t_s_leq_w_39017;
-    bool forwards_ok_39020 = i_lte_j_39018 && y_39019;
-    bool ok_or_empty_39021 = empty_slice_39013 || forwards_ok_39020;
-    bool protect_assert_disj_39022 = loop_not_taken_39010 || ok_or_empty_39021;
-    bool index_certs_39023;
-    
-    if (!protect_assert_disj_39022) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_38992, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:22:9-24\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:22:9-29\n   #10 ftsort.fut:21:1-22:29\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool binop_x_39024 = sle64((int64_t) 0, n_blocks_38990);
-    bool protect_assert_disj_39025 = loop_not_taken_39010 || binop_x_39024;
-    bool dim_ok_cert_39026;
-    
-    if (!protect_assert_disj_39025) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_38992, "] to array of shape [", (long long) n_blocks_38990, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:22:9-24\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:22:9-29\n   #10 ftsort.fut:21:1-22:29\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool y_39028 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001);
-    bool protect_assert_disj_39029 = loop_not_taken_39010 || y_39028;
-    bool index_certs_39030;
-    
-    if (!protect_assert_disj_39029) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:22:9-24\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:22:9-29\n   #11 ftsort.fut:21:1-22:29\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool x_39032 = sle64((int64_t) 0, m_39014);
-    bool y_39033 = slt64(m_39014, rest_38991);
-    bool bounds_check_39034 = x_39032 && y_39033;
-    bool protect_assert_disj_39035 = empty_slice_39013 || bounds_check_39034;
-    bool protect_assert_disj_39036 = loop_not_taken_39010 || protect_assert_disj_39035;
-    bool index_certs_39037;
-    
-    if (!protect_assert_disj_39036) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_39014, "] out of bounds for array of shape [", (long long) rest_38991, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:166:41-45\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:22:9-24\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:22:9-29\n   #11 ftsort.fut:21:1-22:29\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41243 = (int64_t) 2 * rest_38991;
-    int64_t bytes_41283 = (int64_t) 8 * rest_38991;
-    int64_t bytes_41309 = (int64_t) 2048 * n_blocks_38990;
-    int64_t bytes_41315 = (int64_t) 32 * n_blocks_38990;
-    int64_t bytes_41318 = (int64_t) 8 * n_blocks_38990;
-    int64_t bytes_41410 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000;
-    bool dim_match_39265 = n_28483 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993;
-    bool empty_or_match_cert_39266;
-    
-    if (!dim_match_39265) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "] cannot match shape of type `[", (long long) n_28483, "](i64, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:22:9-24\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:22:9-29\n   #11 ftsort.fut:21:1-22:29\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41444 = (int64_t) 8 * n_28483;
-    
-    if (mem_41234_cached_sizze_41629 < bytes_41233) {
-        err = lexical_realloc(ctx, &mem_41234, &mem_41234_cached_sizze_41629, bytes_41233);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_41234, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) xs_mem_41232.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993});
-    if (mem_41236_cached_sizze_41630 < bytes_41233) {
-        err = lexical_realloc(ctx, &mem_41236, &mem_41236_cached_sizze_41630, bytes_41233);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int64_t i_41495 = 0; i_41495 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993; i_41495++) {
-        int64_t x_41496 = (int64_t) 0 + i_41495 * (int64_t) 1;
-        
-        ((int64_t *) mem_41236)[i_41495] = x_41496;
-    }
-    if (mem_41244_cached_sizze_41631 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41244, &mem_41244_cached_sizze_41631, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41246_cached_sizze_41632 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41246, &mem_41246_cached_sizze_41632, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41248_cached_sizze_41633 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41248, &mem_41248_cached_sizze_41633, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41250_cached_sizze_41634 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41250, &mem_41250_cached_sizze_41634, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41252_cached_sizze_41635 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41252, &mem_41252_cached_sizze_41635, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41284_cached_sizze_41636 < bytes_41283) {
-        err = lexical_realloc(ctx, &mem_41284, &mem_41284_cached_sizze_41636, bytes_41283);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41286_cached_sizze_41637 < bytes_41283) {
-        err = lexical_realloc(ctx, &mem_41286, &mem_41286_cached_sizze_41637, bytes_41283);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41299_cached_sizze_41638 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41299, &mem_41299_cached_sizze_41638, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41300_cached_sizze_41639 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41300, &mem_41300_cached_sizze_41639, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41307_cached_sizze_41640 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41307, &mem_41307_cached_sizze_41640, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41310_cached_sizze_41641 < bytes_41309) {
-        err = lexical_realloc(ctx, &mem_41310, &mem_41310_cached_sizze_41641, bytes_41309);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41313_cached_sizze_41642 < bytes_41309) {
-        err = lexical_realloc(ctx, &mem_41313, &mem_41313_cached_sizze_41642, bytes_41309);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41316_cached_sizze_41643 < bytes_41315) {
-        err = lexical_realloc(ctx, &mem_41316, &mem_41316_cached_sizze_41643, bytes_41315);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41319_cached_sizze_41644 < bytes_41318) {
-        err = lexical_realloc(ctx, &mem_41319, &mem_41319_cached_sizze_41644, bytes_41318);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41336_cached_sizze_41645 < (int64_t) 2048) {
-        err = lexical_realloc(ctx, &mem_41336, &mem_41336_cached_sizze_41645, (int64_t) 2048);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41337_cached_sizze_41646 < (int64_t) 2048) {
-        err = lexical_realloc(ctx, &mem_41337, &mem_41337_cached_sizze_41646, (int64_t) 2048);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41338_cached_sizze_41647 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41338, &mem_41338_cached_sizze_41647, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41339_cached_sizze_41648 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41339, &mem_41339_cached_sizze_41648, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41340_cached_sizze_41649 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41340, &mem_41340_cached_sizze_41649, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41341_cached_sizze_41650 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41341, &mem_41341_cached_sizze_41650, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41342_cached_sizze_41651 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41342, &mem_41342_cached_sizze_41651, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41385_cached_sizze_41652 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41385, &mem_41385_cached_sizze_41652, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41386_cached_sizze_41653 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41386, &mem_41386_cached_sizze_41653, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41411_cached_sizze_41654 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41411, &mem_41411_cached_sizze_41654, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41419_cached_sizze_41655 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41419, &mem_41419_cached_sizze_41655, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int32_t i_39040 = 0; i_39040 < iters_38989; i_39040++) {
-        int32_t blocked_radix_sort_step_arg1_39043 = mul32(2, i_39040);
-        int32_t get_bit_arg0_39048 = add32(1, blocked_radix_sort_step_arg1_39043);
-        bool cond_39049 = get_bit_arg0_39048 == 63;
-        bool cond_39050 = blocked_radix_sort_step_arg1_39043 == 63;
-        int16_t discard_41089;
-        int16_t discard_41090;
-        int16_t discard_41091;
-        int16_t discard_41092;
-        int16_t scanacc_41074;
-        int16_t scanacc_41075;
-        int16_t scanacc_41076;
-        int16_t scanacc_41077;
-        
-        scanacc_41074 = (int16_t) 0;
-        scanacc_41075 = (int16_t) 0;
-        scanacc_41076 = (int16_t) 0;
-        scanacc_41077 = (int16_t) 0;
-        for (int64_t i_41083 = 0; i_41083 < rest_38991; i_41083++) {
-            int64_t slice_41217 = arg_38992 + i_41083;
-            int64_t eta_p_40879 = ((int64_t *) mem_41234)[slice_41217];
-            int32_t defunc_0_get_bit_res_40880;
-            
-            if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_40880, get_bit_arg0_39048, eta_p_40879) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int32_t defunc_0_get_bit_res_40881;
-            
-            if (cond_39049) {
-                int32_t defunc_0_get_bit_res_t_res_40993 = 1 ^ defunc_0_get_bit_res_40880;
-                
-                defunc_0_get_bit_res_40881 = defunc_0_get_bit_res_t_res_40993;
-            } else {
-                defunc_0_get_bit_res_40881 = defunc_0_get_bit_res_40880;
-            }
-            
-            int32_t zp_lhs_40883 = mul32(2, defunc_0_get_bit_res_40881);
-            int32_t defunc_0_get_bit_res_40884;
-            
-            if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_40884, blocked_radix_sort_step_arg1_39043, eta_p_40879) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int32_t defunc_0_get_bit_res_40885;
-            
-            if (cond_39050) {
-                int32_t defunc_0_get_bit_res_t_res_40994 = 1 ^ defunc_0_get_bit_res_40884;
-                
-                defunc_0_get_bit_res_40885 = defunc_0_get_bit_res_t_res_40994;
-            } else {
-                defunc_0_get_bit_res_40885 = defunc_0_get_bit_res_40884;
-            }
-            
-            int32_t i32_arg0_40887 = add32(zp_lhs_40883, defunc_0_get_bit_res_40885);
-            int16_t i32_res_40888 = sext_i32_i16(i32_arg0_40887);
-            int16_t defunc_0_f_res_40890;
-            int16_t defunc_0_f_res_40891;
-            int16_t defunc_0_f_res_40892;
-            int16_t defunc_0_f_res_40893;
-            
-            if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40890, &defunc_0_f_res_40891, &defunc_0_f_res_40892, &defunc_0_f_res_40893, i32_res_40888) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int16_t defunc_0_op_res_39087 = add16(defunc_0_f_res_40890, scanacc_41074);
-            int16_t defunc_0_op_res_39088 = add16(defunc_0_f_res_40891, scanacc_41075);
-            int16_t defunc_0_op_res_39089 = add16(defunc_0_f_res_40892, scanacc_41076);
-            int16_t defunc_0_op_res_39090 = add16(defunc_0_f_res_40893, scanacc_41077);
-            
-            ((int16_t *) mem_41244)[i_41083] = defunc_0_op_res_39087;
-            ((int16_t *) mem_41246)[i_41083] = defunc_0_op_res_39088;
-            ((int16_t *) mem_41248)[i_41083] = defunc_0_op_res_39089;
-            ((int16_t *) mem_41250)[i_41083] = defunc_0_op_res_39090;
-            ((int16_t *) mem_41252)[i_41083] = i32_res_40888;
-            
-            int16_t scanacc_tmp_41499 = defunc_0_op_res_39087;
-            int16_t scanacc_tmp_41500 = defunc_0_op_res_39088;
-            int16_t scanacc_tmp_41501 = defunc_0_op_res_39089;
-            int16_t scanacc_tmp_41502 = defunc_0_op_res_39090;
-            
-            scanacc_41074 = scanacc_tmp_41499;
-            scanacc_41075 = scanacc_tmp_41500;
-            scanacc_41076 = scanacc_tmp_41501;
-            scanacc_41077 = scanacc_tmp_41502;
-        }
-        discard_41089 = scanacc_41074;
-        discard_41090 = scanacc_41075;
-        discard_41091 = scanacc_41076;
-        discard_41092 = scanacc_41077;
-        
-        int16_t defunc_0_radix_sort_step_i16_res_39091;
-        int16_t defunc_0_radix_sort_step_i16_res_39092;
-        int16_t defunc_0_radix_sort_step_i16_res_39093;
-        int16_t defunc_0_radix_sort_step_i16_res_39094;
-        
-        if (empty_slice_39013) {
-            defunc_0_radix_sort_step_i16_res_39091 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39092 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39093 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39094 = (int16_t) 0;
-        } else {
-            int16_t last_res_39095 = ((int16_t *) mem_41244)[m_39014];
-            int16_t last_res_39096 = ((int16_t *) mem_41246)[m_39014];
-            int16_t last_res_39097 = ((int16_t *) mem_41248)[m_39014];
-            int16_t last_res_39098 = ((int16_t *) mem_41250)[m_39014];
-            
-            defunc_0_radix_sort_step_i16_res_39091 = last_res_39095;
-            defunc_0_radix_sort_step_i16_res_39092 = last_res_39096;
-            defunc_0_radix_sort_step_i16_res_39093 = last_res_39097;
-            defunc_0_radix_sort_step_i16_res_39094 = last_res_39098;
-        }
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_41284, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + (int64_t) 1 * arg_38992, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_38991});
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_41286, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41234, (int64_t) 0 + (int64_t) 1 * arg_38992, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_38991});
-        for (int64_t write_iter_41093 = 0; write_iter_41093 < rest_38991; write_iter_41093++) {
-            int16_t write_iv_41096 = ((int16_t *) mem_41252)[write_iter_41093];
-            int16_t write_iv_41097 = ((int16_t *) mem_41244)[write_iter_41093];
-            int16_t write_iv_41098 = ((int16_t *) mem_41246)[write_iter_41093];
-            int16_t write_iv_41099 = ((int16_t *) mem_41248)[write_iter_41093];
-            int16_t write_iv_41100 = ((int16_t *) mem_41250)[write_iter_41093];
-            int64_t slice_41216 = arg_38992 + write_iter_41093;
-            int64_t write_iv_41101 = ((int64_t *) mem_41234)[slice_41216];
-            int64_t write_iv_41102 = ((int64_t *) mem_41236)[slice_41216];
-            int64_t defunc_0_f_res_40863;
-            
-            if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40863, defunc_0_radix_sort_step_i16_res_39091, defunc_0_radix_sort_step_i16_res_39092, defunc_0_radix_sort_step_i16_res_39093, write_iv_41096, write_iv_41097, write_iv_41098, write_iv_41099, write_iv_41100) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40863) && slt64(defunc_0_f_res_40863, rest_38991)) {
-                ((int64_t *) mem_41286)[defunc_0_f_res_40863] = write_iv_41101;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40863) && slt64(defunc_0_f_res_40863, rest_38991)) {
-                ((int64_t *) mem_41284)[defunc_0_f_res_40863] = write_iv_41102;
-            }
-        }
-        ((int16_t *) mem_41299)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_39091;
-        ((int16_t *) mem_41299)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_39092;
-        ((int16_t *) mem_41299)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_39093;
-        ((int16_t *) mem_41299)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_39094;
-        for (int64_t i_41107 = 0; i_41107 < (int64_t) 4; i_41107++) {
-            int16_t eta_p_39115 = ((int16_t *) mem_41299)[i_41107];
-            int64_t i16_res_39116 = sext_i16_i64(eta_p_39115);
-            
-            ((int64_t *) mem_41300)[i_41107] = i16_res_39116;
-        }
-        
-        int16_t tmp_39117 = add16(defunc_0_radix_sort_step_i16_res_39091, defunc_0_radix_sort_step_i16_res_39092);
-        int16_t tmp_39118 = add16(defunc_0_radix_sort_step_i16_res_39093, tmp_39117);
-        
-        ((int16_t *) mem_41307)[(int64_t) 0] = (int16_t) 0;
-        ((int16_t *) mem_41307)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_39091;
-        ((int16_t *) mem_41307)[(int64_t) 2] = tmp_39117;
-        ((int16_t *) mem_41307)[(int64_t) 3] = tmp_39118;
-        for (int64_t i_41157 = 0; i_41157 < n_blocks_38990; i_41157++) {
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41234, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            
-            int64_t binop_x_41230 = (int64_t) 256 * i_41157;
-            int16_t discard_41129;
-            int16_t discard_41130;
-            int16_t discard_41131;
-            int16_t discard_41132;
-            int16_t scanacc_41114;
-            int16_t scanacc_41115;
-            int16_t scanacc_41116;
-            int16_t scanacc_41117;
-            
-            scanacc_41114 = (int16_t) 0;
-            scanacc_41115 = (int16_t) 0;
-            scanacc_41116 = (int16_t) 0;
-            scanacc_41117 = (int16_t) 0;
-            for (int64_t i_41123 = 0; i_41123 < (int64_t) 256; i_41123++) {
-                int64_t new_index_41231 = i_41123 + binop_x_41230;
-                int64_t eta_p_40924 = ((int64_t *) mem_41234)[new_index_41231];
-                int32_t defunc_0_get_bit_res_40925;
-                
-                if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_40925, get_bit_arg0_39048, eta_p_40924) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int32_t defunc_0_get_bit_res_40926;
-                
-                if (cond_39049) {
-                    int32_t defunc_0_get_bit_res_t_res_40995 = 1 ^ defunc_0_get_bit_res_40925;
-                    
-                    defunc_0_get_bit_res_40926 = defunc_0_get_bit_res_t_res_40995;
-                } else {
-                    defunc_0_get_bit_res_40926 = defunc_0_get_bit_res_40925;
-                }
-                
-                int32_t zp_lhs_40928 = mul32(2, defunc_0_get_bit_res_40926);
-                int32_t defunc_0_get_bit_res_40929;
-                
-                if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_40929, blocked_radix_sort_step_arg1_39043, eta_p_40924) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int32_t defunc_0_get_bit_res_40930;
-                
-                if (cond_39050) {
-                    int32_t defunc_0_get_bit_res_t_res_40996 = 1 ^ defunc_0_get_bit_res_40929;
-                    
-                    defunc_0_get_bit_res_40930 = defunc_0_get_bit_res_t_res_40996;
-                } else {
-                    defunc_0_get_bit_res_40930 = defunc_0_get_bit_res_40929;
-                }
-                
-                int32_t i32_arg0_40932 = add32(zp_lhs_40928, defunc_0_get_bit_res_40930);
-                int16_t i32_res_40933 = sext_i32_i16(i32_arg0_40932);
-                int16_t defunc_0_f_res_40935;
-                int16_t defunc_0_f_res_40936;
-                int16_t defunc_0_f_res_40937;
-                int16_t defunc_0_f_res_40938;
-                
-                if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40935, &defunc_0_f_res_40936, &defunc_0_f_res_40937, &defunc_0_f_res_40938, i32_res_40933) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int16_t defunc_0_op_res_39168 = add16(defunc_0_f_res_40935, scanacc_41114);
-                int16_t defunc_0_op_res_39169 = add16(defunc_0_f_res_40936, scanacc_41115);
-                int16_t defunc_0_op_res_39170 = add16(defunc_0_f_res_40937, scanacc_41116);
-                int16_t defunc_0_op_res_39171 = add16(defunc_0_f_res_40938, scanacc_41117);
-                
-                ((int16_t *) mem_41338)[i_41123] = defunc_0_op_res_39168;
-                ((int16_t *) mem_41339)[i_41123] = defunc_0_op_res_39169;
-                ((int16_t *) mem_41340)[i_41123] = defunc_0_op_res_39170;
-                ((int16_t *) mem_41341)[i_41123] = defunc_0_op_res_39171;
-                ((int16_t *) mem_41342)[i_41123] = i32_res_40933;
-                
-                int16_t scanacc_tmp_41515 = defunc_0_op_res_39168;
-                int16_t scanacc_tmp_41516 = defunc_0_op_res_39169;
-                int16_t scanacc_tmp_41517 = defunc_0_op_res_39170;
-                int16_t scanacc_tmp_41518 = defunc_0_op_res_39171;
-                
-                scanacc_41114 = scanacc_tmp_41515;
-                scanacc_41115 = scanacc_tmp_41516;
-                scanacc_41116 = scanacc_tmp_41517;
-                scanacc_41117 = scanacc_tmp_41518;
-            }
-            discard_41129 = scanacc_41114;
-            discard_41130 = scanacc_41115;
-            discard_41131 = scanacc_41116;
-            discard_41132 = scanacc_41117;
-            
-            int16_t last_res_39172 = ((int16_t *) mem_41338)[(int64_t) 255];
-            int16_t last_res_39173 = ((int16_t *) mem_41339)[(int64_t) 255];
-            int16_t last_res_39174 = ((int16_t *) mem_41340)[(int64_t) 255];
-            int16_t last_res_39175 = ((int16_t *) mem_41341)[(int64_t) 255];
-            
-            for (int64_t write_iter_41133 = 0; write_iter_41133 < (int64_t) 256; write_iter_41133++) {
-                int16_t write_iv_41136 = ((int16_t *) mem_41342)[write_iter_41133];
-                int16_t write_iv_41137 = ((int16_t *) mem_41338)[write_iter_41133];
-                int16_t write_iv_41138 = ((int16_t *) mem_41339)[write_iter_41133];
-                int16_t write_iv_41139 = ((int16_t *) mem_41340)[write_iter_41133];
-                int16_t write_iv_41140 = ((int16_t *) mem_41341)[write_iter_41133];
-                int64_t new_index_41227 = write_iter_41133 + binop_x_41230;
-                int64_t write_iv_41141 = ((int64_t *) mem_41234)[new_index_41227];
-                int64_t write_iv_41142 = ((int64_t *) mem_41236)[new_index_41227];
-                int64_t defunc_0_f_res_40908;
-                
-                if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40908, last_res_39172, last_res_39173, last_res_39174, write_iv_41136, write_iv_41137, write_iv_41138, write_iv_41139, write_iv_41140) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40908) && slt64(defunc_0_f_res_40908, (int64_t) 256)) {
-                    ((int64_t *) mem_41336)[defunc_0_f_res_40908] = write_iv_41141;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40908) && slt64(defunc_0_f_res_40908, (int64_t) 256)) {
-                    ((int64_t *) mem_41337)[defunc_0_f_res_40908] = write_iv_41142;
-                }
-            }
-            ((int16_t *) mem_41385)[(int64_t) 0] = last_res_39172;
-            ((int16_t *) mem_41385)[(int64_t) 1] = last_res_39173;
-            ((int16_t *) mem_41385)[(int64_t) 2] = last_res_39174;
-            ((int16_t *) mem_41385)[(int64_t) 3] = last_res_39175;
-            for (int64_t i_41147 = 0; i_41147 < (int64_t) 4; i_41147++) {
-                int16_t eta_p_39190 = ((int16_t *) mem_41385)[i_41147];
-                int64_t i16_res_39191 = sext_i16_i64(eta_p_39190);
-                
-                ((int64_t *) mem_41386)[i_41147] = i16_res_39191;
-            }
-            
-            int16_t tmp_39192 = add16(last_res_39172, last_res_39173);
-            int16_t tmp_39193 = add16(last_res_39174, tmp_39192);
-            
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4] = (int16_t) 0;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 1] = last_res_39172;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 2] = tmp_39192;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 3] = tmp_39193;
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41310, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41313, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41316, i_41157 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41386, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
-        }
-        
-        int64_t discard_41169;
-        int64_t scanacc_41165 = (int64_t) 0;
-        
-        for (int64_t i_41167 = 0; i_41167 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001; i_41167++) {
-            int64_t new_index_41205 = squot64(i_41167, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-            int64_t binop_y_41207 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 * new_index_41205;
-            int64_t new_index_41208 = i_41167 - binop_y_41207;
-            bool index_concat_cmp_41210 = sle64(n_blocks_38990, new_index_41208);
-            int64_t index_concat_branch_41214;
-            
-            if (index_concat_cmp_41210) {
-                int64_t index_concat_41212 = ((int64_t *) mem_41300)[new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41212;
-            } else {
-                int64_t index_concat_41213 = ((int64_t *) mem_41316)[new_index_41208 * (int64_t) 4 + new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41213;
-            }
-            
-            int64_t defunc_0_op_res_39205 = add64(scanacc_41165, index_concat_branch_41214);
-            
-            ((int64_t *) mem_41411)[i_41167] = defunc_0_op_res_39205;
-            
-            int64_t scanacc_tmp_41527 = defunc_0_op_res_39205;
-            
-            scanacc_41165 = scanacc_tmp_41527;
-        }
-        discard_41169 = scanacc_41165;
-        for (int64_t i_41172 = 0; i_41172 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001; i_41172++) {
-            int64_t zv_lhs_39208 = add64((int64_t) -1, i_41172);
-            int64_t tmp_39209 = smod64(zv_lhs_39208, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001);
-            int64_t lifted_lambda_res_39210 = ((int64_t *) mem_41411)[tmp_39209];
-            
-            ((int64_t *) mem_41419)[i_41172] = lifted_lambda_res_39210;
-        }
-        ((int64_t *) mem_41419)[(int64_t) 0] = (int64_t) 0;
-        for (int64_t write_iter_41174 = 0; write_iter_41174 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993; write_iter_41174++) {
-            bool index_concat_cmp_41196 = sle64(arg_38992, write_iter_41174);
-            int64_t index_concat_branch_40815;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41005 = sub64(write_iter_41174, arg_38992);
-                int64_t index_concat_41006 = ((int64_t *) mem_41286)[index_concat_i_41005];
-                
-                index_concat_branch_40815 = index_concat_41006;
-            } else {
-                int64_t new_index_40818 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_40819 = (int64_t) 256 * new_index_40818;
-                int64_t new_index_40820 = write_iter_41174 - binop_y_40819;
-                int64_t index_concat_40821 = ((int64_t *) mem_41310)[new_index_40818 * (int64_t) 256 + new_index_40820];
-                
-                index_concat_branch_40815 = index_concat_40821;
-            }
-            
-            int32_t zlzb_rhs_40822;
-            int32_t acc_40824 = 0;
-            
-            for (int32_t i_40823 = 0; i_40823 < 2; i_40823++) {
-                int32_t get_bit_arg0_40825 = add32(blocked_radix_sort_step_arg1_39043, i_40823);
-                int32_t defunc_0_get_bit_res_40826;
-                
-                if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_40826, get_bit_arg0_40825, index_concat_branch_40815) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                bool cond_40827 = get_bit_arg0_40825 == 63;
-                int32_t defunc_0_get_bit_res_40828;
-                
-                if (cond_40827) {
-                    int32_t defunc_0_get_bit_res_t_res_41007 = 1 ^ defunc_0_get_bit_res_40826;
-                    
-                    defunc_0_get_bit_res_40828 = defunc_0_get_bit_res_t_res_41007;
-                } else {
-                    defunc_0_get_bit_res_40828 = defunc_0_get_bit_res_40826;
-                }
-                
-                int32_t zp_rhs_40830 = shl32(defunc_0_get_bit_res_40828, i_40823);
-                int32_t loopres_40831 = add32(acc_40824, zp_rhs_40830);
-                int32_t acc_tmp_41532 = loopres_40831;
-                
-                acc_40824 = acc_tmp_41532;
-            }
-            zlzb_rhs_40822 = acc_40824;
-            
-            int64_t i32_res_40832 = sext_i32_i64(zlzb_rhs_40822);
-            int64_t block_idx_40833 = sdiv64(write_iter_41174, (int64_t) 256);
-            bool x_40834 = sle64((int64_t) 0, block_idx_40833);
-            bool y_40835 = slt64(block_idx_40833, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-            bool bounds_check_40836 = x_40834 && y_40835;
-            bool index_certs_40837;
-            
-            if (!bounds_check_40836) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_40833, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:22:9-24\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:22:9-29\n   #12 ftsort.fut:21:1-22:29\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            bool x_40838 = sle64((int64_t) 0, i32_res_40832);
-            bool y_40839 = slt64(i32_res_40832, (int64_t) 4);
-            bool bounds_check_40840 = x_40838 && y_40839;
-            bool index_certs_40841;
-            
-            if (!bounds_check_40840) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_40832, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:22:9-24\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:22:9-29\n   #12 ftsort.fut:21:1-22:29\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            int64_t index_concat_branch_41200;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41197 = sub64(write_iter_41174, arg_38992);
-                int64_t index_concat_41198 = ((int64_t *) mem_41286)[index_concat_i_41197];
-                
-                index_concat_branch_41200 = index_concat_41198;
-            } else {
-                int64_t new_index_41222 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41224 = (int64_t) 256 * new_index_41222;
-                int64_t new_index_41225 = write_iter_41174 - binop_y_41224;
-                int64_t index_concat_41199 = ((int64_t *) mem_41310)[new_index_41222 * (int64_t) 256 + new_index_41225];
-                
-                index_concat_branch_41200 = index_concat_41199;
-            }
-            
-            int64_t index_concat_branch_41194;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41191 = sub64(write_iter_41174, arg_38992);
-                int64_t index_concat_41192 = ((int64_t *) mem_41284)[index_concat_i_41191];
-                
-                index_concat_branch_41194 = index_concat_41192;
-            } else {
-                int64_t new_index_41218 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41220 = (int64_t) 256 * new_index_41218;
-                int64_t new_index_41221 = write_iter_41174 - binop_y_41220;
-                int64_t index_concat_41193 = ((int64_t *) mem_41313)[new_index_41218 * (int64_t) 256 + new_index_41221];
-                
-                index_concat_branch_41194 = index_concat_41193;
-            }
-            
-            int64_t binop_x_40842 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 * i32_res_40832;
-            int64_t new_index_40843 = block_idx_40833 + binop_x_40842;
-            int64_t new_offset_40844 = ((int64_t *) mem_41419)[new_index_40843];
-            bool index_concat_cmp_40845 = sle64(n_blocks_38990, block_idx_40833);
-            int16_t index_concat_branch_40846;
-            
-            if (index_concat_cmp_40845) {
-                int16_t index_concat_41008 = ((int16_t *) mem_41307)[i32_res_40832];
-                
-                index_concat_branch_40846 = index_concat_41008;
-            } else {
-                int16_t index_concat_40848 = ((int16_t *) mem_41319)[block_idx_40833 * (int64_t) 4 + i32_res_40832];
-                
-                index_concat_branch_40846 = index_concat_40848;
-            }
-            
-            int64_t i16_res_40849 = sext_i16_i64(index_concat_branch_40846);
-            int64_t zp_lhs_40850 = mul64((int64_t) 256, block_idx_40833);
-            int64_t old_offset_40851 = add64(i16_res_40849, zp_lhs_40850);
-            int64_t zp_lhs_40852 = sub64(write_iter_41174, old_offset_40851);
-            int64_t idx_40853 = add64(new_offset_40844, zp_lhs_40852);
-            
-            if (sle64((int64_t) 0, idx_40853) && slt64(idx_40853, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993)) {
-                ((int64_t *) mem_41234)[idx_40853] = index_concat_branch_41200;
-            }
-            if (sle64((int64_t) 0, idx_40853) && slt64(idx_40853, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993)) {
-                ((int64_t *) mem_41236)[idx_40853] = index_concat_branch_41194;
-            }
-        }
-    }
-    if (memblock_alloc(ctx, &mem_41445, bytes_41444, "mem_41445")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc(ctx, &mem_41447, bytes_41444, "mem_41447")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41186 = 0; i_41186 < n_28483; i_41186++) {
-        int64_t eta_p_39270 = ((int64_t *) mem_41236)[i_41186];
-        bool x_39271 = sle64((int64_t) 0, eta_p_39270);
-        bool y_39272 = slt64(eta_p_39270, n_28483);
-        bool bounds_check_39273 = x_39271 && y_39272;
-        bool index_certs_39274;
-        
-        if (!bounds_check_39273) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_39270, "] out of bounds for array of shape [", (long long) n_28483, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #4  ftbasics.fut:115:86-89\n   #5  ftsort.fut:22:9-24\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:22:9-29\n   #8  ftsort.fut:21:1-22:29\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int64_t index_primexp_39275 = add64(incr_28484, eta_p_39270);
-        int64_t lifted_lambda_res_39276 = ((int64_t *) xs_mem_41232.mem)[eta_p_39270];
-        
-        ((int64_t *) mem_41445.mem)[i_41186] = index_primexp_39275;
-        ((int64_t *) mem_41447.mem)[i_41186] = lifted_lambda_res_39276;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41445, "mem_41445") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_41494, &mem_41447, "mem_41447") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41627, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41628, &mem_out_41494, "mem_out_41494") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        free(mem_41234);
-        free(mem_41236);
-        free(mem_41244);
-        free(mem_41246);
-        free(mem_41248);
-        free(mem_41250);
-        free(mem_41252);
-        free(mem_41284);
-        free(mem_41286);
-        free(mem_41299);
-        free(mem_41300);
-        free(mem_41307);
-        free(mem_41310);
-        free(mem_41313);
-        free(mem_41316);
-        free(mem_41319);
-        free(mem_41336);
-        free(mem_41337);
-        free(mem_41338);
-        free(mem_41339);
-        free(mem_41340);
-        free(mem_41341);
-        free(mem_41342);
-        free(mem_41385);
-        free(mem_41386);
-        free(mem_41411);
-        free(mem_41419);
-        if (memblock_unref(ctx, &mem_41447, "mem_41447") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_41445, "mem_41445") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41494, "mem_out_41494") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_sortColumn_short(struct futhark_context *ctx, struct memblock *mem_out_p_41656, struct memblock *mem_out_p_41657, struct memblock xs_mem_41232, int64_t n_23208, int64_t incr_23209)
-{
-    (void) ctx;
-    
-    int err = 0;
-    int64_t mem_41234_cached_sizze_41658 = 0;
-    unsigned char *mem_41234 = NULL;
-    int64_t mem_41236_cached_sizze_41659 = 0;
-    unsigned char *mem_41236 = NULL;
-    int64_t mem_41244_cached_sizze_41660 = 0;
-    unsigned char *mem_41244 = NULL;
-    int64_t mem_41246_cached_sizze_41661 = 0;
-    unsigned char *mem_41246 = NULL;
-    int64_t mem_41248_cached_sizze_41662 = 0;
-    unsigned char *mem_41248 = NULL;
-    int64_t mem_41250_cached_sizze_41663 = 0;
-    unsigned char *mem_41250 = NULL;
-    int64_t mem_41252_cached_sizze_41664 = 0;
-    unsigned char *mem_41252 = NULL;
-    int64_t mem_41284_cached_sizze_41665 = 0;
-    unsigned char *mem_41284 = NULL;
-    int64_t mem_41286_cached_sizze_41666 = 0;
-    unsigned char *mem_41286 = NULL;
-    int64_t mem_41299_cached_sizze_41667 = 0;
-    unsigned char *mem_41299 = NULL;
-    int64_t mem_41300_cached_sizze_41668 = 0;
-    unsigned char *mem_41300 = NULL;
-    int64_t mem_41307_cached_sizze_41669 = 0;
-    unsigned char *mem_41307 = NULL;
-    int64_t mem_41310_cached_sizze_41670 = 0;
-    unsigned char *mem_41310 = NULL;
-    int64_t mem_41313_cached_sizze_41671 = 0;
-    unsigned char *mem_41313 = NULL;
-    int64_t mem_41316_cached_sizze_41672 = 0;
-    unsigned char *mem_41316 = NULL;
-    int64_t mem_41319_cached_sizze_41673 = 0;
-    unsigned char *mem_41319 = NULL;
-    int64_t mem_41336_cached_sizze_41674 = 0;
-    unsigned char *mem_41336 = NULL;
-    int64_t mem_41337_cached_sizze_41675 = 0;
-    unsigned char *mem_41337 = NULL;
-    int64_t mem_41338_cached_sizze_41676 = 0;
-    unsigned char *mem_41338 = NULL;
-    int64_t mem_41339_cached_sizze_41677 = 0;
-    unsigned char *mem_41339 = NULL;
-    int64_t mem_41340_cached_sizze_41678 = 0;
-    unsigned char *mem_41340 = NULL;
-    int64_t mem_41341_cached_sizze_41679 = 0;
-    unsigned char *mem_41341 = NULL;
-    int64_t mem_41342_cached_sizze_41680 = 0;
-    unsigned char *mem_41342 = NULL;
-    int64_t mem_41385_cached_sizze_41681 = 0;
-    unsigned char *mem_41385 = NULL;
-    int64_t mem_41386_cached_sizze_41682 = 0;
-    unsigned char *mem_41386 = NULL;
-    int64_t mem_41411_cached_sizze_41683 = 0;
-    unsigned char *mem_41411 = NULL;
-    int64_t mem_41419_cached_sizze_41684 = 0;
-    unsigned char *mem_41419 = NULL;
-    struct memblock mem_41447;
-    
-    mem_41447.references = NULL;
-    
-    struct memblock mem_41445;
-    
-    mem_41445.references = NULL;
-    
-    struct memblock mem_out_41494;
-    
-    mem_out_41494.references = NULL;
-    
-    struct memblock mem_out_41493;
-    
-    mem_out_41493.references = NULL;
-    
-    int64_t rng_38984 = add64(n_23208, incr_23209);
-    bool bounds_invalid_upwards_38985 = slt64(rng_38984, incr_23209);
-    bool valid_38986 = !bounds_invalid_upwards_38985;
-    bool range_valid_c_38987;
-    
-    if (!valid_38986) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_23209, "..<", (long long) rng_38984, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:114:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:114:32-63\n   #4  ftsort.fut:16:9-25\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:16:9-30\n   #7  ftsort.fut:15:1-16:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool cond_38988 = n_23208 == (int64_t) 0;
-    int32_t iters_38989;
-    
-    if (cond_38988) {
-        iters_38989 = 0;
-    } else {
-        iters_38989 = 8;
-    }
-    
-    int64_t n_blocks_38990 = sdiv64(n_23208, (int64_t) 256);
-    int64_t rest_38991 = smod64(n_23208, (int64_t) 256);
-    int64_t arg_38992 = mul64((int64_t) 256, n_blocks_38990);
-    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993 = add64(rest_38991, arg_38992);
-    bool dim_match_38994 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993 == n_23208;
-    bool empty_or_match_cert_38995;
-    
-    if (!dim_match_38994) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_23208, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "](i16, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #5  ftbasics.fut:115:86-89\n   #6  ftsort.fut:16:9-25\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:16:9-30\n   #9  ftsort.fut:15:1-16:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41233 = (int64_t) 2 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993;
-    int64_t bytes_41235 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993;
-    bool loop_nonempty_38999 = slt32(0, iters_38989);
-    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 = add64((int64_t) 1, n_blocks_38990);
-    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-    bool empty_slice_39002 = arg_38992 == (int64_t) 0;
-    int64_t m_39003 = sub64(arg_38992, (int64_t) 1);
-    bool zzero_leq_i_p_m_t_s_39004 = sle64((int64_t) 0, m_39003);
-    bool i_p_m_t_s_leq_w_39005 = slt64(m_39003, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool i_lte_j_39006 = sle64((int64_t) 0, arg_38992);
-    bool y_39007 = zzero_leq_i_p_m_t_s_39004 && i_p_m_t_s_leq_w_39005;
-    bool forwards_ok_39008 = i_lte_j_39006 && y_39007;
-    bool ok_or_empty_39009 = empty_slice_39002 || forwards_ok_39008;
-    bool loop_not_taken_39010 = !loop_nonempty_38999;
-    bool protect_assert_disj_39011 = ok_or_empty_39009 || loop_not_taken_39010;
-    bool index_certs_39012;
-    
-    if (!protect_assert_disj_39011) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_38992, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:16:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:16:9-30\n   #10 ftsort.fut:15:1-16:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool empty_slice_39013 = rest_38991 == (int64_t) 0;
-    int64_t m_39014 = sub64(rest_38991, (int64_t) 1);
-    int64_t i_p_m_t_s_39015 = add64(arg_38992, m_39014);
-    bool zzero_leq_i_p_m_t_s_39016 = sle64((int64_t) 0, i_p_m_t_s_39015);
-    bool i_p_m_t_s_leq_w_39017 = slt64(i_p_m_t_s_39015, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool i_lte_j_39018 = sle64(arg_38992, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993);
-    bool y_39019 = zzero_leq_i_p_m_t_s_39016 && i_p_m_t_s_leq_w_39017;
-    bool forwards_ok_39020 = i_lte_j_39018 && y_39019;
-    bool ok_or_empty_39021 = empty_slice_39013 || forwards_ok_39020;
-    bool protect_assert_disj_39022 = loop_not_taken_39010 || ok_or_empty_39021;
-    bool index_certs_39023;
-    
-    if (!protect_assert_disj_39022) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_38992, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:16:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:16:9-30\n   #10 ftsort.fut:15:1-16:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool binop_x_39024 = sle64((int64_t) 0, n_blocks_38990);
-    bool protect_assert_disj_39025 = loop_not_taken_39010 || binop_x_39024;
-    bool dim_ok_cert_39026;
-    
-    if (!protect_assert_disj_39025) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_38992, "] to array of shape [", (long long) n_blocks_38990, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:16:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:16:9-30\n   #10 ftsort.fut:15:1-16:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool y_39028 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001);
-    bool protect_assert_disj_39029 = loop_not_taken_39010 || y_39028;
-    bool index_certs_39030;
-    
-    if (!protect_assert_disj_39029) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:16:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:16:9-30\n   #11 ftsort.fut:15:1-16:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    bool x_39032 = sle64((int64_t) 0, m_39014);
-    bool y_39033 = slt64(m_39014, rest_38991);
-    bool bounds_check_39034 = x_39032 && y_39033;
-    bool protect_assert_disj_39035 = empty_slice_39013 || bounds_check_39034;
-    bool protect_assert_disj_39036 = loop_not_taken_39010 || protect_assert_disj_39035;
-    bool index_certs_39037;
-    
-    if (!protect_assert_disj_39036) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_39014, "] out of bounds for array of shape [", (long long) rest_38991, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:166:41-45\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:16:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:16:9-30\n   #11 ftsort.fut:15:1-16:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41243 = (int64_t) 2 * rest_38991;
-    int64_t bytes_41283 = (int64_t) 8 * rest_38991;
-    int64_t bytes_41309 = (int64_t) 512 * n_blocks_38990;
-    int64_t bytes_41312 = (int64_t) 2048 * n_blocks_38990;
-    int64_t bytes_41315 = (int64_t) 32 * n_blocks_38990;
-    int64_t bytes_41318 = (int64_t) 8 * n_blocks_38990;
-    int64_t bytes_41410 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000;
-    bool dim_match_39265 = n_23208 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993;
-    bool empty_or_match_cert_39266;
-    
-    if (!dim_match_39265) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993, "] cannot match shape of type `[", (long long) n_23208, "](i16, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:16:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:16:9-30\n   #11 ftsort.fut:15:1-16:30\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_41444 = (int64_t) 8 * n_23208;
-    int64_t bytes_41446 = (int64_t) 2 * n_23208;
-    
-    if (mem_41234_cached_sizze_41658 < bytes_41233) {
-        err = lexical_realloc(ctx, &mem_41234, &mem_41234_cached_sizze_41658, bytes_41233);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    lmad_copy_2b(ctx, 1, (uint16_t *) mem_41234, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint16_t *) xs_mem_41232.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993});
-    if (mem_41236_cached_sizze_41659 < bytes_41235) {
-        err = lexical_realloc(ctx, &mem_41236, &mem_41236_cached_sizze_41659, bytes_41235);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int64_t i_41495 = 0; i_41495 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993; i_41495++) {
-        int64_t x_41496 = (int64_t) 0 + i_41495 * (int64_t) 1;
-        
-        ((int64_t *) mem_41236)[i_41495] = x_41496;
-    }
-    if (mem_41244_cached_sizze_41660 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41244, &mem_41244_cached_sizze_41660, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41246_cached_sizze_41661 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41246, &mem_41246_cached_sizze_41661, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41248_cached_sizze_41662 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41248, &mem_41248_cached_sizze_41662, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41250_cached_sizze_41663 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41250, &mem_41250_cached_sizze_41663, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41252_cached_sizze_41664 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41252, &mem_41252_cached_sizze_41664, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41284_cached_sizze_41665 < bytes_41283) {
-        err = lexical_realloc(ctx, &mem_41284, &mem_41284_cached_sizze_41665, bytes_41283);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41286_cached_sizze_41666 < bytes_41243) {
-        err = lexical_realloc(ctx, &mem_41286, &mem_41286_cached_sizze_41666, bytes_41243);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41299_cached_sizze_41667 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41299, &mem_41299_cached_sizze_41667, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41300_cached_sizze_41668 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41300, &mem_41300_cached_sizze_41668, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41307_cached_sizze_41669 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41307, &mem_41307_cached_sizze_41669, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41310_cached_sizze_41670 < bytes_41309) {
-        err = lexical_realloc(ctx, &mem_41310, &mem_41310_cached_sizze_41670, bytes_41309);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41313_cached_sizze_41671 < bytes_41312) {
-        err = lexical_realloc(ctx, &mem_41313, &mem_41313_cached_sizze_41671, bytes_41312);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41316_cached_sizze_41672 < bytes_41315) {
-        err = lexical_realloc(ctx, &mem_41316, &mem_41316_cached_sizze_41672, bytes_41315);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41319_cached_sizze_41673 < bytes_41318) {
-        err = lexical_realloc(ctx, &mem_41319, &mem_41319_cached_sizze_41673, bytes_41318);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41336_cached_sizze_41674 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41336, &mem_41336_cached_sizze_41674, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41337_cached_sizze_41675 < (int64_t) 2048) {
-        err = lexical_realloc(ctx, &mem_41337, &mem_41337_cached_sizze_41675, (int64_t) 2048);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41338_cached_sizze_41676 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41338, &mem_41338_cached_sizze_41676, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41339_cached_sizze_41677 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41339, &mem_41339_cached_sizze_41677, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41340_cached_sizze_41678 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41340, &mem_41340_cached_sizze_41678, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41341_cached_sizze_41679 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41341, &mem_41341_cached_sizze_41679, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41342_cached_sizze_41680 < (int64_t) 512) {
-        err = lexical_realloc(ctx, &mem_41342, &mem_41342_cached_sizze_41680, (int64_t) 512);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41385_cached_sizze_41681 < (int64_t) 8) {
-        err = lexical_realloc(ctx, &mem_41385, &mem_41385_cached_sizze_41681, (int64_t) 8);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41386_cached_sizze_41682 < (int64_t) 32) {
-        err = lexical_realloc(ctx, &mem_41386, &mem_41386_cached_sizze_41682, (int64_t) 32);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41411_cached_sizze_41683 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41411, &mem_41411_cached_sizze_41683, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (mem_41419_cached_sizze_41684 < bytes_41410) {
-        err = lexical_realloc(ctx, &mem_41419, &mem_41419_cached_sizze_41684, bytes_41410);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    for (int32_t i_39040 = 0; i_39040 < iters_38989; i_39040++) {
-        int32_t blocked_radix_sort_step_arg1_39043 = mul32(2, i_39040);
-        int32_t get_bit_arg0_39048 = add32(1, blocked_radix_sort_step_arg1_39043);
-        bool cond_39049 = get_bit_arg0_39048 == 15;
-        bool cond_39050 = blocked_radix_sort_step_arg1_39043 == 15;
-        int16_t discard_41089;
-        int16_t discard_41090;
-        int16_t discard_41091;
-        int16_t discard_41092;
-        int16_t scanacc_41074;
-        int16_t scanacc_41075;
-        int16_t scanacc_41076;
-        int16_t scanacc_41077;
-        
-        scanacc_41074 = (int16_t) 0;
-        scanacc_41075 = (int16_t) 0;
-        scanacc_41076 = (int16_t) 0;
-        scanacc_41077 = (int16_t) 0;
-        for (int64_t i_41083 = 0; i_41083 < rest_38991; i_41083++) {
-            int64_t slice_41217 = arg_38992 + i_41083;
-            int16_t eta_p_40879 = ((int16_t *) mem_41234)[slice_41217];
-            int32_t defunc_0_get_bit_res_40880;
-            
-            if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_40880, get_bit_arg0_39048, eta_p_40879) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int32_t defunc_0_get_bit_res_40881;
-            
-            if (cond_39049) {
-                int32_t defunc_0_get_bit_res_t_res_40993 = 1 ^ defunc_0_get_bit_res_40880;
-                
-                defunc_0_get_bit_res_40881 = defunc_0_get_bit_res_t_res_40993;
-            } else {
-                defunc_0_get_bit_res_40881 = defunc_0_get_bit_res_40880;
-            }
-            
-            int32_t zp_lhs_40883 = mul32(2, defunc_0_get_bit_res_40881);
-            int32_t defunc_0_get_bit_res_40884;
-            
-            if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_40884, blocked_radix_sort_step_arg1_39043, eta_p_40879) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int32_t defunc_0_get_bit_res_40885;
-            
-            if (cond_39050) {
-                int32_t defunc_0_get_bit_res_t_res_40994 = 1 ^ defunc_0_get_bit_res_40884;
-                
-                defunc_0_get_bit_res_40885 = defunc_0_get_bit_res_t_res_40994;
-            } else {
-                defunc_0_get_bit_res_40885 = defunc_0_get_bit_res_40884;
-            }
-            
-            int32_t i32_arg0_40887 = add32(zp_lhs_40883, defunc_0_get_bit_res_40885);
-            int16_t i32_res_40888 = sext_i32_i16(i32_arg0_40887);
-            int16_t defunc_0_f_res_40890;
-            int16_t defunc_0_f_res_40891;
-            int16_t defunc_0_f_res_40892;
-            int16_t defunc_0_f_res_40893;
-            
-            if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40890, &defunc_0_f_res_40891, &defunc_0_f_res_40892, &defunc_0_f_res_40893, i32_res_40888) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            
-            int16_t defunc_0_op_res_39087 = add16(defunc_0_f_res_40890, scanacc_41074);
-            int16_t defunc_0_op_res_39088 = add16(defunc_0_f_res_40891, scanacc_41075);
-            int16_t defunc_0_op_res_39089 = add16(defunc_0_f_res_40892, scanacc_41076);
-            int16_t defunc_0_op_res_39090 = add16(defunc_0_f_res_40893, scanacc_41077);
-            
-            ((int16_t *) mem_41244)[i_41083] = defunc_0_op_res_39087;
-            ((int16_t *) mem_41246)[i_41083] = defunc_0_op_res_39088;
-            ((int16_t *) mem_41248)[i_41083] = defunc_0_op_res_39089;
-            ((int16_t *) mem_41250)[i_41083] = defunc_0_op_res_39090;
-            ((int16_t *) mem_41252)[i_41083] = i32_res_40888;
-            
-            int16_t scanacc_tmp_41499 = defunc_0_op_res_39087;
-            int16_t scanacc_tmp_41500 = defunc_0_op_res_39088;
-            int16_t scanacc_tmp_41501 = defunc_0_op_res_39089;
-            int16_t scanacc_tmp_41502 = defunc_0_op_res_39090;
-            
-            scanacc_41074 = scanacc_tmp_41499;
-            scanacc_41075 = scanacc_tmp_41500;
-            scanacc_41076 = scanacc_tmp_41501;
-            scanacc_41077 = scanacc_tmp_41502;
-        }
-        discard_41089 = scanacc_41074;
-        discard_41090 = scanacc_41075;
-        discard_41091 = scanacc_41076;
-        discard_41092 = scanacc_41077;
-        
-        int16_t defunc_0_radix_sort_step_i16_res_39091;
-        int16_t defunc_0_radix_sort_step_i16_res_39092;
-        int16_t defunc_0_radix_sort_step_i16_res_39093;
-        int16_t defunc_0_radix_sort_step_i16_res_39094;
-        
-        if (empty_slice_39013) {
-            defunc_0_radix_sort_step_i16_res_39091 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39092 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39093 = (int16_t) 0;
-            defunc_0_radix_sort_step_i16_res_39094 = (int16_t) 0;
-        } else {
-            int16_t last_res_39095 = ((int16_t *) mem_41244)[m_39014];
-            int16_t last_res_39096 = ((int16_t *) mem_41246)[m_39014];
-            int16_t last_res_39097 = ((int16_t *) mem_41248)[m_39014];
-            int16_t last_res_39098 = ((int16_t *) mem_41250)[m_39014];
-            
-            defunc_0_radix_sort_step_i16_res_39091 = last_res_39095;
-            defunc_0_radix_sort_step_i16_res_39092 = last_res_39096;
-            defunc_0_radix_sort_step_i16_res_39093 = last_res_39097;
-            defunc_0_radix_sort_step_i16_res_39094 = last_res_39098;
-        }
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_41284, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + (int64_t) 1 * arg_38992, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_38991});
-        lmad_copy_2b(ctx, 1, (uint16_t *) mem_41286, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint16_t *) mem_41234, (int64_t) 0 + (int64_t) 1 * arg_38992, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_38991});
-        for (int64_t write_iter_41093 = 0; write_iter_41093 < rest_38991; write_iter_41093++) {
-            int16_t write_iv_41096 = ((int16_t *) mem_41252)[write_iter_41093];
-            int16_t write_iv_41097 = ((int16_t *) mem_41244)[write_iter_41093];
-            int16_t write_iv_41098 = ((int16_t *) mem_41246)[write_iter_41093];
-            int16_t write_iv_41099 = ((int16_t *) mem_41248)[write_iter_41093];
-            int16_t write_iv_41100 = ((int16_t *) mem_41250)[write_iter_41093];
-            int64_t slice_41216 = arg_38992 + write_iter_41093;
-            int16_t write_iv_41101 = ((int16_t *) mem_41234)[slice_41216];
-            int64_t write_iv_41102 = ((int64_t *) mem_41236)[slice_41216];
-            int64_t defunc_0_f_res_40863;
-            
-            if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40863, defunc_0_radix_sort_step_i16_res_39091, defunc_0_radix_sort_step_i16_res_39092, defunc_0_radix_sort_step_i16_res_39093, write_iv_41096, write_iv_41097, write_iv_41098, write_iv_41099, write_iv_41100) != 0) {
-                err = 1;
-                goto cleanup;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40863) && slt64(defunc_0_f_res_40863, rest_38991)) {
-                ((int16_t *) mem_41286)[defunc_0_f_res_40863] = write_iv_41101;
-            }
-            if (sle64((int64_t) 0, defunc_0_f_res_40863) && slt64(defunc_0_f_res_40863, rest_38991)) {
-                ((int64_t *) mem_41284)[defunc_0_f_res_40863] = write_iv_41102;
-            }
-        }
-        ((int16_t *) mem_41299)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_39091;
-        ((int16_t *) mem_41299)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_39092;
-        ((int16_t *) mem_41299)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_39093;
-        ((int16_t *) mem_41299)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_39094;
-        for (int64_t i_41107 = 0; i_41107 < (int64_t) 4; i_41107++) {
-            int16_t eta_p_39115 = ((int16_t *) mem_41299)[i_41107];
-            int64_t i16_res_39116 = sext_i16_i64(eta_p_39115);
-            
-            ((int64_t *) mem_41300)[i_41107] = i16_res_39116;
-        }
-        
-        int16_t tmp_39117 = add16(defunc_0_radix_sort_step_i16_res_39091, defunc_0_radix_sort_step_i16_res_39092);
-        int16_t tmp_39118 = add16(defunc_0_radix_sort_step_i16_res_39093, tmp_39117);
-        
-        ((int16_t *) mem_41307)[(int64_t) 0] = (int16_t) 0;
-        ((int16_t *) mem_41307)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_39091;
-        ((int16_t *) mem_41307)[(int64_t) 2] = tmp_39117;
-        ((int16_t *) mem_41307)[(int64_t) 3] = tmp_39118;
-        for (int64_t i_41157 = 0; i_41157 < n_blocks_38990; i_41157++) {
-            lmad_copy_2b(ctx, 1, (uint16_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint16_t *) mem_41234, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41236, (int64_t) 0 + i_41157 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            
-            int64_t binop_x_41230 = (int64_t) 256 * i_41157;
-            int16_t discard_41129;
-            int16_t discard_41130;
-            int16_t discard_41131;
-            int16_t discard_41132;
-            int16_t scanacc_41114;
-            int16_t scanacc_41115;
-            int16_t scanacc_41116;
-            int16_t scanacc_41117;
-            
-            scanacc_41114 = (int16_t) 0;
-            scanacc_41115 = (int16_t) 0;
-            scanacc_41116 = (int16_t) 0;
-            scanacc_41117 = (int16_t) 0;
-            for (int64_t i_41123 = 0; i_41123 < (int64_t) 256; i_41123++) {
-                int64_t new_index_41231 = i_41123 + binop_x_41230;
-                int16_t eta_p_40924 = ((int16_t *) mem_41234)[new_index_41231];
-                int32_t defunc_0_get_bit_res_40925;
-                
-                if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_40925, get_bit_arg0_39048, eta_p_40924) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int32_t defunc_0_get_bit_res_40926;
-                
-                if (cond_39049) {
-                    int32_t defunc_0_get_bit_res_t_res_40995 = 1 ^ defunc_0_get_bit_res_40925;
-                    
-                    defunc_0_get_bit_res_40926 = defunc_0_get_bit_res_t_res_40995;
-                } else {
-                    defunc_0_get_bit_res_40926 = defunc_0_get_bit_res_40925;
-                }
-                
-                int32_t zp_lhs_40928 = mul32(2, defunc_0_get_bit_res_40926);
-                int32_t defunc_0_get_bit_res_40929;
-                
-                if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_40929, blocked_radix_sort_step_arg1_39043, eta_p_40924) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int32_t defunc_0_get_bit_res_40930;
-                
-                if (cond_39050) {
-                    int32_t defunc_0_get_bit_res_t_res_40996 = 1 ^ defunc_0_get_bit_res_40929;
-                    
-                    defunc_0_get_bit_res_40930 = defunc_0_get_bit_res_t_res_40996;
-                } else {
-                    defunc_0_get_bit_res_40930 = defunc_0_get_bit_res_40929;
-                }
-                
-                int32_t i32_arg0_40932 = add32(zp_lhs_40928, defunc_0_get_bit_res_40930);
-                int16_t i32_res_40933 = sext_i32_i16(i32_arg0_40932);
-                int16_t defunc_0_f_res_40935;
-                int16_t defunc_0_f_res_40936;
-                int16_t defunc_0_f_res_40937;
-                int16_t defunc_0_f_res_40938;
-                
-                if (futrts_lifted_lambda_7151(ctx, &defunc_0_f_res_40935, &defunc_0_f_res_40936, &defunc_0_f_res_40937, &defunc_0_f_res_40938, i32_res_40933) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                int16_t defunc_0_op_res_39168 = add16(defunc_0_f_res_40935, scanacc_41114);
-                int16_t defunc_0_op_res_39169 = add16(defunc_0_f_res_40936, scanacc_41115);
-                int16_t defunc_0_op_res_39170 = add16(defunc_0_f_res_40937, scanacc_41116);
-                int16_t defunc_0_op_res_39171 = add16(defunc_0_f_res_40938, scanacc_41117);
-                
-                ((int16_t *) mem_41338)[i_41123] = defunc_0_op_res_39168;
-                ((int16_t *) mem_41339)[i_41123] = defunc_0_op_res_39169;
-                ((int16_t *) mem_41340)[i_41123] = defunc_0_op_res_39170;
-                ((int16_t *) mem_41341)[i_41123] = defunc_0_op_res_39171;
-                ((int16_t *) mem_41342)[i_41123] = i32_res_40933;
-                
-                int16_t scanacc_tmp_41515 = defunc_0_op_res_39168;
-                int16_t scanacc_tmp_41516 = defunc_0_op_res_39169;
-                int16_t scanacc_tmp_41517 = defunc_0_op_res_39170;
-                int16_t scanacc_tmp_41518 = defunc_0_op_res_39171;
-                
-                scanacc_41114 = scanacc_tmp_41515;
-                scanacc_41115 = scanacc_tmp_41516;
-                scanacc_41116 = scanacc_tmp_41517;
-                scanacc_41117 = scanacc_tmp_41518;
-            }
-            discard_41129 = scanacc_41114;
-            discard_41130 = scanacc_41115;
-            discard_41131 = scanacc_41116;
-            discard_41132 = scanacc_41117;
-            
-            int16_t last_res_39172 = ((int16_t *) mem_41338)[(int64_t) 255];
-            int16_t last_res_39173 = ((int16_t *) mem_41339)[(int64_t) 255];
-            int16_t last_res_39174 = ((int16_t *) mem_41340)[(int64_t) 255];
-            int16_t last_res_39175 = ((int16_t *) mem_41341)[(int64_t) 255];
-            
-            for (int64_t write_iter_41133 = 0; write_iter_41133 < (int64_t) 256; write_iter_41133++) {
-                int16_t write_iv_41136 = ((int16_t *) mem_41342)[write_iter_41133];
-                int16_t write_iv_41137 = ((int16_t *) mem_41338)[write_iter_41133];
-                int16_t write_iv_41138 = ((int16_t *) mem_41339)[write_iter_41133];
-                int16_t write_iv_41139 = ((int16_t *) mem_41340)[write_iter_41133];
-                int16_t write_iv_41140 = ((int16_t *) mem_41341)[write_iter_41133];
-                int64_t new_index_41227 = write_iter_41133 + binop_x_41230;
-                int16_t write_iv_41141 = ((int16_t *) mem_41234)[new_index_41227];
-                int64_t write_iv_41142 = ((int64_t *) mem_41236)[new_index_41227];
-                int64_t defunc_0_f_res_40908;
-                
-                if (futrts_lifted_f_7152(ctx, &defunc_0_f_res_40908, last_res_39172, last_res_39173, last_res_39174, write_iv_41136, write_iv_41137, write_iv_41138, write_iv_41139, write_iv_41140) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40908) && slt64(defunc_0_f_res_40908, (int64_t) 256)) {
-                    ((int16_t *) mem_41336)[defunc_0_f_res_40908] = write_iv_41141;
-                }
-                if (sle64((int64_t) 0, defunc_0_f_res_40908) && slt64(defunc_0_f_res_40908, (int64_t) 256)) {
-                    ((int64_t *) mem_41337)[defunc_0_f_res_40908] = write_iv_41142;
-                }
-            }
-            ((int16_t *) mem_41385)[(int64_t) 0] = last_res_39172;
-            ((int16_t *) mem_41385)[(int64_t) 1] = last_res_39173;
-            ((int16_t *) mem_41385)[(int64_t) 2] = last_res_39174;
-            ((int16_t *) mem_41385)[(int64_t) 3] = last_res_39175;
-            for (int64_t i_41147 = 0; i_41147 < (int64_t) 4; i_41147++) {
-                int16_t eta_p_39190 = ((int16_t *) mem_41385)[i_41147];
-                int64_t i16_res_39191 = sext_i16_i64(eta_p_39190);
-                
-                ((int64_t *) mem_41386)[i_41147] = i16_res_39191;
-            }
-            
-            int16_t tmp_39192 = add16(last_res_39172, last_res_39173);
-            int16_t tmp_39193 = add16(last_res_39174, tmp_39192);
-            
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4] = (int16_t) 0;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 1] = last_res_39172;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 2] = tmp_39192;
-            ((int16_t *) mem_41319)[i_41157 * (int64_t) 4 + (int64_t) 3] = tmp_39193;
-            lmad_copy_2b(ctx, 1, (uint16_t *) mem_41310, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint16_t *) mem_41336, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41313, i_41157 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41337, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_41316, i_41157 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_41386, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
-        }
-        
-        int64_t discard_41169;
-        int64_t scanacc_41165 = (int64_t) 0;
-        
-        for (int64_t i_41167 = 0; i_41167 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001; i_41167++) {
-            int64_t new_index_41205 = squot64(i_41167, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-            int64_t binop_y_41207 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 * new_index_41205;
-            int64_t new_index_41208 = i_41167 - binop_y_41207;
-            bool index_concat_cmp_41210 = sle64(n_blocks_38990, new_index_41208);
-            int64_t index_concat_branch_41214;
-            
-            if (index_concat_cmp_41210) {
-                int64_t index_concat_41212 = ((int64_t *) mem_41300)[new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41212;
-            } else {
-                int64_t index_concat_41213 = ((int64_t *) mem_41316)[new_index_41208 * (int64_t) 4 + new_index_41205];
-                
-                index_concat_branch_41214 = index_concat_41213;
-            }
-            
-            int64_t defunc_0_op_res_39205 = add64(scanacc_41165, index_concat_branch_41214);
-            
-            ((int64_t *) mem_41411)[i_41167] = defunc_0_op_res_39205;
-            
-            int64_t scanacc_tmp_41527 = defunc_0_op_res_39205;
-            
-            scanacc_41165 = scanacc_tmp_41527;
-        }
-        discard_41169 = scanacc_41165;
-        for (int64_t i_41172 = 0; i_41172 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001; i_41172++) {
-            int64_t zv_lhs_39208 = add64((int64_t) -1, i_41172);
-            int64_t tmp_39209 = smod64(zv_lhs_39208, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_39001);
-            int64_t lifted_lambda_res_39210 = ((int64_t *) mem_41411)[tmp_39209];
-            
-            ((int64_t *) mem_41419)[i_41172] = lifted_lambda_res_39210;
-        }
-        ((int64_t *) mem_41419)[(int64_t) 0] = (int64_t) 0;
-        for (int64_t write_iter_41174 = 0; write_iter_41174 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993; write_iter_41174++) {
-            bool index_concat_cmp_41196 = sle64(arg_38992, write_iter_41174);
-            int16_t index_concat_branch_40815;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41005 = sub64(write_iter_41174, arg_38992);
-                int16_t index_concat_41006 = ((int16_t *) mem_41286)[index_concat_i_41005];
-                
-                index_concat_branch_40815 = index_concat_41006;
-            } else {
-                int64_t new_index_40818 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_40819 = (int64_t) 256 * new_index_40818;
-                int64_t new_index_40820 = write_iter_41174 - binop_y_40819;
-                int16_t index_concat_40821 = ((int16_t *) mem_41310)[new_index_40818 * (int64_t) 256 + new_index_40820];
-                
-                index_concat_branch_40815 = index_concat_40821;
-            }
-            
-            int32_t zlzb_rhs_40822;
-            int32_t acc_40824 = 0;
-            
-            for (int32_t i_40823 = 0; i_40823 < 2; i_40823++) {
-                int32_t get_bit_arg0_40825 = add32(blocked_radix_sort_step_arg1_39043, i_40823);
-                int32_t defunc_0_get_bit_res_40826;
-                
-                if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_40826, get_bit_arg0_40825, index_concat_branch_40815) != 0) {
-                    err = 1;
-                    goto cleanup;
-                }
-                
-                bool cond_40827 = get_bit_arg0_40825 == 15;
-                int32_t defunc_0_get_bit_res_40828;
-                
-                if (cond_40827) {
-                    int32_t defunc_0_get_bit_res_t_res_41007 = 1 ^ defunc_0_get_bit_res_40826;
-                    
-                    defunc_0_get_bit_res_40828 = defunc_0_get_bit_res_t_res_41007;
-                } else {
-                    defunc_0_get_bit_res_40828 = defunc_0_get_bit_res_40826;
-                }
-                
-                int32_t zp_rhs_40830 = shl32(defunc_0_get_bit_res_40828, i_40823);
-                int32_t loopres_40831 = add32(acc_40824, zp_rhs_40830);
-                int32_t acc_tmp_41532 = loopres_40831;
-                
-                acc_40824 = acc_tmp_41532;
-            }
-            zlzb_rhs_40822 = acc_40824;
-            
-            int64_t i32_res_40832 = sext_i32_i64(zlzb_rhs_40822);
-            int64_t block_idx_40833 = sdiv64(write_iter_41174, (int64_t) 256);
-            bool x_40834 = sle64((int64_t) 0, block_idx_40833);
-            bool y_40835 = slt64(block_idx_40833, dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000);
-            bool bounds_check_40836 = x_40834 && y_40835;
-            bool index_certs_40837;
-            
-            if (!bounds_check_40836) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_40833, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:16:9-25\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:16:9-30\n   #12 ftsort.fut:15:1-16:30\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            bool x_40838 = sle64((int64_t) 0, i32_res_40832);
-            bool y_40839 = slt64(i32_res_40832, (int64_t) 4);
-            bool bounds_check_40840 = x_40838 && y_40839;
-            bool index_certs_40841;
-            
-            if (!bounds_check_40840) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_40832, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:16:9-25\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:16:9-30\n   #12 ftsort.fut:15:1-16:30\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            int16_t index_concat_branch_41200;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41197 = sub64(write_iter_41174, arg_38992);
-                int16_t index_concat_41198 = ((int16_t *) mem_41286)[index_concat_i_41197];
-                
-                index_concat_branch_41200 = index_concat_41198;
-            } else {
-                int64_t new_index_41222 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41224 = (int64_t) 256 * new_index_41222;
-                int64_t new_index_41225 = write_iter_41174 - binop_y_41224;
-                int16_t index_concat_41199 = ((int16_t *) mem_41310)[new_index_41222 * (int64_t) 256 + new_index_41225];
-                
-                index_concat_branch_41200 = index_concat_41199;
-            }
-            
-            int64_t index_concat_branch_41194;
-            
-            if (index_concat_cmp_41196) {
-                int64_t index_concat_i_41191 = sub64(write_iter_41174, arg_38992);
-                int64_t index_concat_41192 = ((int64_t *) mem_41284)[index_concat_i_41191];
-                
-                index_concat_branch_41194 = index_concat_41192;
-            } else {
-                int64_t new_index_41218 = squot64(write_iter_41174, (int64_t) 256);
-                int64_t binop_y_41220 = (int64_t) 256 * new_index_41218;
-                int64_t new_index_41221 = write_iter_41174 - binop_y_41220;
-                int64_t index_concat_41193 = ((int64_t *) mem_41313)[new_index_41218 * (int64_t) 256 + new_index_41221];
-                
-                index_concat_branch_41194 = index_concat_41193;
-            }
-            
-            int64_t binop_x_40842 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_39000 * i32_res_40832;
-            int64_t new_index_40843 = block_idx_40833 + binop_x_40842;
-            int64_t new_offset_40844 = ((int64_t *) mem_41419)[new_index_40843];
-            bool index_concat_cmp_40845 = sle64(n_blocks_38990, block_idx_40833);
-            int16_t index_concat_branch_40846;
-            
-            if (index_concat_cmp_40845) {
-                int16_t index_concat_41008 = ((int16_t *) mem_41307)[i32_res_40832];
-                
-                index_concat_branch_40846 = index_concat_41008;
-            } else {
-                int16_t index_concat_40848 = ((int16_t *) mem_41319)[block_idx_40833 * (int64_t) 4 + i32_res_40832];
-                
-                index_concat_branch_40846 = index_concat_40848;
-            }
-            
-            int64_t i16_res_40849 = sext_i16_i64(index_concat_branch_40846);
-            int64_t zp_lhs_40850 = mul64((int64_t) 256, block_idx_40833);
-            int64_t old_offset_40851 = add64(i16_res_40849, zp_lhs_40850);
-            int64_t zp_lhs_40852 = sub64(write_iter_41174, old_offset_40851);
-            int64_t idx_40853 = add64(new_offset_40844, zp_lhs_40852);
-            
-            if (sle64((int64_t) 0, idx_40853) && slt64(idx_40853, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993)) {
-                ((int16_t *) mem_41234)[idx_40853] = index_concat_branch_41200;
-            }
-            if (sle64((int64_t) 0, idx_40853) && slt64(idx_40853, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_38993)) {
-                ((int64_t *) mem_41236)[idx_40853] = index_concat_branch_41194;
-            }
-        }
-    }
-    if (memblock_alloc(ctx, &mem_41445, bytes_41444, "mem_41445")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc(ctx, &mem_41447, bytes_41446, "mem_41447")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_41186 = 0; i_41186 < n_23208; i_41186++) {
-        int64_t eta_p_39270 = ((int64_t *) mem_41236)[i_41186];
-        bool x_39271 = sle64((int64_t) 0, eta_p_39270);
-        bool y_39272 = slt64(eta_p_39270, n_23208);
-        bool bounds_check_39273 = x_39271 && y_39272;
-        bool index_certs_39274;
-        
-        if (!bounds_check_39273) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_39270, "] out of bounds for array of shape [", (long long) n_23208, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #4  ftbasics.fut:115:86-89\n   #5  ftsort.fut:16:9-25\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:16:9-30\n   #8  ftsort.fut:15:1-16:30\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int64_t index_primexp_39275 = add64(incr_23209, eta_p_39270);
-        int16_t lifted_lambda_res_39276 = ((int16_t *) xs_mem_41232.mem)[eta_p_39270];
-        
-        ((int64_t *) mem_41445.mem)[i_41186] = index_primexp_39275;
-        ((int16_t *) mem_41447.mem)[i_41186] = lifted_lambda_res_39276;
-    }
-    if (memblock_set(ctx, &mem_out_41493, &mem_41445, "mem_41445") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_41494, &mem_41447, "mem_41447") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41656, &mem_out_41493, "mem_out_41493") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_41657, &mem_out_41494, "mem_out_41494") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        free(mem_41234);
-        free(mem_41236);
-        free(mem_41244);
-        free(mem_41246);
-        free(mem_41248);
-        free(mem_41250);
-        free(mem_41252);
-        free(mem_41284);
-        free(mem_41286);
-        free(mem_41299);
-        free(mem_41300);
-        free(mem_41307);
-        free(mem_41310);
-        free(mem_41313);
-        free(mem_41316);
-        free(mem_41319);
-        free(mem_41336);
-        free(mem_41337);
-        free(mem_41338);
-        free(mem_41339);
-        free(mem_41340);
-        free(mem_41341);
-        free(mem_41342);
-        free(mem_41385);
-        free(mem_41386);
-        free(mem_41411);
-        free(mem_41419);
-        if (memblock_unref(ctx, &mem_41447, "mem_41447") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_41445, "mem_41445") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41494, "mem_out_41494") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_41493, "mem_out_41493") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_get_bit_1844(struct futhark_context *ctx, int32_t *out_prim_out_41685, int32_t bit_21026, int16_t x_21027)
-{
-    (void) ctx;
-    
-    int err = 0;
-    int32_t prim_out_41493;
-    int16_t i32_res_34829 = sext_i32_i16(bit_21026);
-    int16_t zgzg_res_34832 = ashr16(x_21027, i32_res_34829);
-    int16_t za_res_34837 = (int16_t) 1 & zgzg_res_34832;
-    int32_t to_i32_res_34839 = sext_i16_i32(za_res_34837);
-    
-    prim_out_41493 = to_i32_res_34839;
-    *out_prim_out_41685 = prim_out_41493;
+        redout_42751 = redout_tmp_43176;
+        redout_42752 = redout_tmp_43177;
+    }
+    defunc_0_reduce_comm_res_42488 = redout_42751;
+    defunc_0_reduce_comm_res_42489 = redout_42752;
+    prim_out_43175 = defunc_0_reduce_comm_res_42488;
+    *out_prim_out_43217 = prim_out_43175;
     
   cleanup:
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_get_bit_2253(struct futhark_context *ctx, int32_t *out_prim_out_41686, int32_t bit_26301, int64_t x_26302)
+FUTHARK_FUN_ATTR int futrts_entry_argmin_float(struct futhark_context *ctx, int64_t *out_prim_out_43218, struct memblock ks_mem_42914, int64_t n_36312)
 {
     (void) ctx;
     
     int err = 0;
-    int32_t prim_out_41493;
-    int64_t i32_res_34829 = sext_i32_i64(bit_26301);
-    int64_t zgzg_res_34832 = ashr64(x_26302, i32_res_34829);
-    int64_t za_res_34837 = (int64_t) 1 & zgzg_res_34832;
-    int32_t to_i32_res_34839 = sext_i64_i32(za_res_34837);
+    int64_t prim_out_43175;
+    int64_t defunc_0_reduce_comm_res_42488;
+    float defunc_0_reduce_comm_res_42489;
+    int64_t redout_42751;
+    float redout_42752;
     
-    prim_out_41493 = to_i32_res_34839;
-    *out_prim_out_41686 = prim_out_41493;
+    redout_42751 = n_36312;
+    redout_42752 = INFINITY;
+    for (int64_t i_42753 = 0; i_42753 < n_36312; i_42753++) {
+        float x_36957 = ((float *) ks_mem_42914.mem)[i_42753];
+        bool defunc_0_lt_res_36962 = redout_42752 < x_36957;
+        bool defunc_0_eq_res_36964 = redout_42752 == x_36957;
+        bool cond_f_res_t_res_36965 = slt64(redout_42751, i_42753);
+        bool x_36966 = defunc_0_eq_res_36964 && cond_f_res_t_res_36965;
+        bool x_42466 = !defunc_0_lt_res_36962;
+        bool y_42467 = x_36966 && x_42466;
+        bool cond_36963 = defunc_0_lt_res_36962 || y_42467;
+        int64_t defunc_0_op_res_36967;
+        
+        if (cond_36963) {
+            defunc_0_op_res_36967 = redout_42751;
+        } else {
+            defunc_0_op_res_36967 = i_42753;
+        }
+        
+        float defunc_0_op_res_36968;
+        
+        if (cond_36963) {
+            defunc_0_op_res_36968 = redout_42752;
+        } else {
+            defunc_0_op_res_36968 = x_36957;
+        }
+        
+        int64_t redout_tmp_43176 = defunc_0_op_res_36967;
+        float redout_tmp_43177 = defunc_0_op_res_36968;
+        
+        redout_42751 = redout_tmp_43176;
+        redout_42752 = redout_tmp_43177;
+    }
+    defunc_0_reduce_comm_res_42488 = redout_42751;
+    defunc_0_reduce_comm_res_42489 = redout_42752;
+    prim_out_43175 = defunc_0_reduce_comm_res_42488;
+    *out_prim_out_43218 = prim_out_43175;
     
   cleanup:
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_lifted_f_7152(struct futhark_context *ctx, int64_t *out_prim_out_41687, int16_t na_20550, int16_t nb_20551, int16_t nc_20552, int16_t bin_20553, int16_t a_20554, int16_t b_20555, int16_t c_20556, int16_t d_20557)
+FUTHARK_FUN_ATTR int futrts_entry_argmin_int(struct futhark_context *ctx, int64_t *out_prim_out_43219, struct memblock ks_mem_42914, int64_t n_35977)
 {
     (void) ctx;
     
     int err = 0;
-    int64_t prim_out_41493;
-    bool bool_arg0_20558 = bin_20553 == (int16_t) 0;
-    int16_t bool_res_34829 = btoi_bool_i16(bool_arg0_20558);
-    int16_t zp_rhs_20562 = mul16(a_20554, bool_res_34829);
-    int16_t zp_lhs_20565 = add16((int16_t) -1, zp_rhs_20562);
-    bool bool_arg0_20567 = slt16((int16_t) 0, bin_20553);
-    int16_t bool_res_34831 = btoi_bool_i16(bool_arg0_20567);
-    int16_t zp_rhs_20571 = mul16(na_20550, bool_res_34831);
-    int16_t zp_lhs_20573 = add16(zp_lhs_20565, zp_rhs_20571);
-    bool bool_arg0_20575 = bin_20553 == (int16_t) 1;
-    int16_t bool_res_34833 = btoi_bool_i16(bool_arg0_20575);
-    int16_t zp_rhs_20579 = mul16(b_20555, bool_res_34833);
-    int16_t zp_lhs_20581 = add16(zp_lhs_20573, zp_rhs_20579);
-    bool bool_arg0_20583 = slt16((int16_t) 1, bin_20553);
-    int16_t bool_res_34835 = btoi_bool_i16(bool_arg0_20583);
-    int16_t zp_rhs_20587 = mul16(nb_20551, bool_res_34835);
-    int16_t zp_lhs_20589 = add16(zp_lhs_20581, zp_rhs_20587);
-    bool bool_arg0_20591 = bin_20553 == (int16_t) 2;
-    int16_t bool_res_34837 = btoi_bool_i16(bool_arg0_20591);
-    int16_t zp_rhs_20595 = mul16(c_20556, bool_res_34837);
-    int16_t zp_lhs_20597 = add16(zp_lhs_20589, zp_rhs_20595);
-    bool bool_arg0_20599 = slt16((int16_t) 2, bin_20553);
-    int16_t bool_res_34839 = btoi_bool_i16(bool_arg0_20599);
-    int16_t zp_rhs_20603 = mul16(nc_20552, bool_res_34839);
-    int16_t zp_lhs_20605 = add16(zp_lhs_20597, zp_rhs_20603);
-    bool bool_arg0_20607 = bin_20553 == (int16_t) 3;
-    int16_t bool_res_34841 = btoi_bool_i16(bool_arg0_20607);
-    int16_t zp_rhs_20611 = mul16(d_20557, bool_res_34841);
-    int16_t i16_arg0_20613 = add16(zp_lhs_20605, zp_rhs_20611);
-    int64_t i16_res_34843 = sext_i16_i64(i16_arg0_20613);
+    int64_t prim_out_43175;
+    int64_t defunc_0_reduce_comm_res_42488;
+    int32_t defunc_0_reduce_comm_res_42489;
+    int64_t redout_42751;
+    int32_t redout_42752;
     
-    prim_out_41493 = i16_res_34843;
-    *out_prim_out_41687 = prim_out_41493;
+    redout_42751 = n_35977;
+    redout_42752 = 2147483647;
+    for (int64_t i_42753 = 0; i_42753 < n_35977; i_42753++) {
+        int32_t x_36957 = ((int32_t *) ks_mem_42914.mem)[i_42753];
+        bool defunc_0_lt_res_36962 = slt32(redout_42752, x_36957);
+        bool defunc_0_eq_res_36964 = redout_42752 == x_36957;
+        bool cond_f_res_t_res_36965 = slt64(redout_42751, i_42753);
+        bool x_36966 = defunc_0_eq_res_36964 && cond_f_res_t_res_36965;
+        bool x_42466 = !defunc_0_lt_res_36962;
+        bool y_42467 = x_36966 && x_42466;
+        bool cond_36963 = defunc_0_lt_res_36962 || y_42467;
+        int64_t defunc_0_op_res_36967;
+        
+        if (cond_36963) {
+            defunc_0_op_res_36967 = redout_42751;
+        } else {
+            defunc_0_op_res_36967 = i_42753;
+        }
+        
+        int32_t defunc_0_op_res_36968;
+        
+        if (cond_36963) {
+            defunc_0_op_res_36968 = redout_42752;
+        } else {
+            defunc_0_op_res_36968 = x_36957;
+        }
+        
+        int64_t redout_tmp_43176 = defunc_0_op_res_36967;
+        int32_t redout_tmp_43177 = defunc_0_op_res_36968;
+        
+        redout_42751 = redout_tmp_43176;
+        redout_42752 = redout_tmp_43177;
+    }
+    defunc_0_reduce_comm_res_42488 = redout_42751;
+    defunc_0_reduce_comm_res_42489 = redout_42752;
+    prim_out_43175 = defunc_0_reduce_comm_res_42488;
+    *out_prim_out_43219 = prim_out_43175;
     
   cleanup:
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_lifted_lambda_7151(struct futhark_context *ctx, int16_t *out_prim_out_41688, int16_t *out_prim_out_41689, int16_t *out_prim_out_41690, int16_t *out_prim_out_41691, int16_t x_20493)
+FUTHARK_FUN_ATTR int futrts_entry_argmin_long(struct futhark_context *ctx, int64_t *out_prim_out_43220, struct memblock ks_mem_42914, int64_t n_36143)
 {
     (void) ctx;
     
     int err = 0;
-    int16_t prim_out_41493;
-    int16_t prim_out_41494;
-    int16_t prim_out_41495;
-    int16_t prim_out_41496;
-    bool bool_arg0_20494 = x_20493 == (int16_t) 0;
-    int16_t bool_res_34829 = btoi_bool_i16(bool_arg0_20494);
-    bool bool_arg0_20498 = x_20493 == (int16_t) 1;
-    int16_t bool_res_34831 = btoi_bool_i16(bool_arg0_20498);
-    bool bool_arg0_20502 = x_20493 == (int16_t) 2;
-    int16_t bool_res_34833 = btoi_bool_i16(bool_arg0_20502);
-    bool bool_arg0_20506 = x_20493 == (int16_t) 3;
-    int16_t bool_res_34835 = btoi_bool_i16(bool_arg0_20506);
+    int64_t prim_out_43175;
+    int64_t defunc_0_reduce_comm_res_42488;
+    int64_t defunc_0_reduce_comm_res_42489;
+    int64_t redout_42751;
+    int64_t redout_42752;
     
-    prim_out_41493 = bool_res_34829;
-    prim_out_41494 = bool_res_34831;
-    prim_out_41495 = bool_res_34833;
-    prim_out_41496 = bool_res_34835;
-    *out_prim_out_41688 = prim_out_41493;
-    *out_prim_out_41689 = prim_out_41494;
-    *out_prim_out_41690 = prim_out_41495;
-    *out_prim_out_41691 = prim_out_41496;
+    redout_42751 = n_36143;
+    redout_42752 = (int64_t) 9223372036854775807;
+    for (int64_t i_42753 = 0; i_42753 < n_36143; i_42753++) {
+        int64_t x_36957 = ((int64_t *) ks_mem_42914.mem)[i_42753];
+        bool defunc_0_lt_res_36962 = slt64(redout_42752, x_36957);
+        bool defunc_0_eq_res_36964 = redout_42752 == x_36957;
+        bool cond_f_res_t_res_36965 = slt64(redout_42751, i_42753);
+        bool x_36966 = defunc_0_eq_res_36964 && cond_f_res_t_res_36965;
+        bool x_42466 = !defunc_0_lt_res_36962;
+        bool y_42467 = x_36966 && x_42466;
+        bool cond_36963 = defunc_0_lt_res_36962 || y_42467;
+        int64_t defunc_0_op_res_36967;
+        
+        if (cond_36963) {
+            defunc_0_op_res_36967 = redout_42751;
+        } else {
+            defunc_0_op_res_36967 = i_42753;
+        }
+        
+        int64_t defunc_0_op_res_36968;
+        
+        if (cond_36963) {
+            defunc_0_op_res_36968 = redout_42752;
+        } else {
+            defunc_0_op_res_36968 = x_36957;
+        }
+        
+        int64_t redout_tmp_43176 = defunc_0_op_res_36967;
+        int64_t redout_tmp_43177 = defunc_0_op_res_36968;
+        
+        redout_42751 = redout_tmp_43176;
+        redout_42752 = redout_tmp_43177;
+    }
+    defunc_0_reduce_comm_res_42488 = redout_42751;
+    defunc_0_reduce_comm_res_42489 = redout_42752;
+    prim_out_43175 = defunc_0_reduce_comm_res_42488;
+    *out_prim_out_43220 = prim_out_43175;
+    
+  cleanup:
+    { }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_argmin_short(struct futhark_context *ctx, int64_t *out_prim_out_43221, struct memblock ks_mem_42914, int64_t n_35811)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int64_t prim_out_43175;
+    int64_t defunc_0_reduce_comm_res_42488;
+    int16_t defunc_0_reduce_comm_res_42489;
+    int64_t redout_42751;
+    int16_t redout_42752;
+    
+    redout_42751 = n_35811;
+    redout_42752 = (int16_t) 32767;
+    for (int64_t i_42753 = 0; i_42753 < n_35811; i_42753++) {
+        int16_t x_36957 = ((int16_t *) ks_mem_42914.mem)[i_42753];
+        bool defunc_0_lt_res_36962 = slt16(redout_42752, x_36957);
+        bool defunc_0_eq_res_36964 = redout_42752 == x_36957;
+        bool cond_f_res_t_res_36965 = slt64(redout_42751, i_42753);
+        bool x_36966 = defunc_0_eq_res_36964 && cond_f_res_t_res_36965;
+        bool x_42466 = !defunc_0_lt_res_36962;
+        bool y_42467 = x_36966 && x_42466;
+        bool cond_36963 = defunc_0_lt_res_36962 || y_42467;
+        int64_t defunc_0_op_res_36967;
+        
+        if (cond_36963) {
+            defunc_0_op_res_36967 = redout_42751;
+        } else {
+            defunc_0_op_res_36967 = i_42753;
+        }
+        
+        int16_t defunc_0_op_res_36968;
+        
+        if (cond_36963) {
+            defunc_0_op_res_36968 = redout_42752;
+        } else {
+            defunc_0_op_res_36968 = x_36957;
+        }
+        
+        int64_t redout_tmp_43176 = defunc_0_op_res_36967;
+        int16_t redout_tmp_43177 = defunc_0_op_res_36968;
+        
+        redout_42751 = redout_tmp_43176;
+        redout_42752 = redout_tmp_43177;
+    }
+    defunc_0_reduce_comm_res_42488 = redout_42751;
+    defunc_0_reduce_comm_res_42489 = redout_42752;
+    prim_out_43175 = defunc_0_reduce_comm_res_42488;
+    *out_prim_out_43221 = prim_out_43175;
+    
+  cleanup:
+    { }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_double(struct futhark_context *ctx, struct memblock *mem_out_p_43222, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35642, int64_t n_35643, int64_t incr_35644)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock mem_42917;
+    
+    mem_42917.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t bytes_42916 = (int64_t) 8 * ni_35642;
+    
+    if (memblock_alloc(ctx, &mem_42917, bytes_42916, "mem_42917")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42753 = 0; i_42753 < ni_35642; i_42753++) {
+        int64_t eta_p_42489 = ((int64_t *) is_mem_42914.mem)[i_42753];
+        int64_t lifted_lambda_res_42490 = sub64(eta_p_42489, incr_35644);
+        bool x_42492 = sle64((int64_t) 0, lifted_lambda_res_42490);
+        bool y_42493 = slt64(lifted_lambda_res_42490, n_35643);
+        bool bounds_check_42494 = x_42492 && y_42493;
+        bool index_certs_42495;
+        
+        if (!bounds_check_42494) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_42490, "] out of bounds for array of shape [", (long long) n_35643, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:49:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:47:1-49:36\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        double lifted_lambda_res_42496 = ((double *) ys_mem_42915.mem)[lifted_lambda_res_42490];
+        
+        ((double *) mem_42917.mem)[i_42753] = lifted_lambda_res_42496;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_42917, "mem_42917") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43222, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref(ctx, &mem_42917, "mem_42917") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_float(struct futhark_context *ctx, struct memblock *mem_out_p_43223, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35488, int64_t n_35489, int64_t incr_35490)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock mem_42917;
+    
+    mem_42917.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t bytes_42916 = (int64_t) 4 * ni_35488;
+    
+    if (memblock_alloc(ctx, &mem_42917, bytes_42916, "mem_42917")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42753 = 0; i_42753 < ni_35488; i_42753++) {
+        int64_t eta_p_42489 = ((int64_t *) is_mem_42914.mem)[i_42753];
+        int64_t lifted_lambda_res_42490 = sub64(eta_p_42489, incr_35490);
+        bool x_42492 = sle64((int64_t) 0, lifted_lambda_res_42490);
+        bool y_42493 = slt64(lifted_lambda_res_42490, n_35489);
+        bool bounds_check_42494 = x_42492 && y_42493;
+        bool index_certs_42495;
+        
+        if (!bounds_check_42494) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_42490, "] out of bounds for array of shape [", (long long) n_35489, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:45:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:43:1-45:36\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        float lifted_lambda_res_42496 = ((float *) ys_mem_42915.mem)[lifted_lambda_res_42490];
+        
+        ((float *) mem_42917.mem)[i_42753] = lifted_lambda_res_42496;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_42917, "mem_42917") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43223, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref(ctx, &mem_42917, "mem_42917") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_int(struct futhark_context *ctx, struct memblock *mem_out_p_43224, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35183, int64_t n_35184, int64_t incr_35185)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock mem_42917;
+    
+    mem_42917.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t bytes_42916 = (int64_t) 4 * ni_35183;
+    
+    if (memblock_alloc(ctx, &mem_42917, bytes_42916, "mem_42917")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42753 = 0; i_42753 < ni_35183; i_42753++) {
+        int64_t eta_p_42489 = ((int64_t *) is_mem_42914.mem)[i_42753];
+        int64_t lifted_lambda_res_42490 = sub64(eta_p_42489, incr_35185);
+        bool x_42492 = sle64((int64_t) 0, lifted_lambda_res_42490);
+        bool y_42493 = slt64(lifted_lambda_res_42490, n_35184);
+        bool bounds_check_42494 = x_42492 && y_42493;
+        bool index_certs_42495;
+        
+        if (!bounds_check_42494) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_42490, "] out of bounds for array of shape [", (long long) n_35184, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:37:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:35:1-37:36\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int32_t lifted_lambda_res_42496 = ((int32_t *) ys_mem_42915.mem)[lifted_lambda_res_42490];
+        
+        ((int32_t *) mem_42917.mem)[i_42753] = lifted_lambda_res_42496;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_42917, "mem_42917") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43224, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref(ctx, &mem_42917, "mem_42917") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_long(struct futhark_context *ctx, struct memblock *mem_out_p_43225, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35334, int64_t n_35335, int64_t incr_35336)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock mem_42917;
+    
+    mem_42917.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t bytes_42916 = (int64_t) 8 * ni_35334;
+    
+    if (memblock_alloc(ctx, &mem_42917, bytes_42916, "mem_42917")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42753 = 0; i_42753 < ni_35334; i_42753++) {
+        int64_t eta_p_42489 = ((int64_t *) is_mem_42914.mem)[i_42753];
+        int64_t lifted_lambda_res_42490 = sub64(eta_p_42489, incr_35336);
+        bool x_42492 = sle64((int64_t) 0, lifted_lambda_res_42490);
+        bool y_42493 = slt64(lifted_lambda_res_42490, n_35335);
+        bool bounds_check_42494 = x_42492 && y_42493;
+        bool index_certs_42495;
+        
+        if (!bounds_check_42494) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_42490, "] out of bounds for array of shape [", (long long) n_35335, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:41:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:39:1-41:36\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int64_t lifted_lambda_res_42496 = ((int64_t *) ys_mem_42915.mem)[lifted_lambda_res_42490];
+        
+        ((int64_t *) mem_42917.mem)[i_42753] = lifted_lambda_res_42496;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_42917, "mem_42917") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43225, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref(ctx, &mem_42917, "mem_42917") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_orderByIndices_short(struct futhark_context *ctx, struct memblock *mem_out_p_43226, struct memblock is_mem_42914, struct memblock ys_mem_42915, int64_t ni_35029, int64_t n_35030, int64_t incr_35031)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock mem_42917;
+    
+    mem_42917.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t bytes_42916 = (int64_t) 2 * ni_35029;
+    
+    if (memblock_alloc(ctx, &mem_42917, bytes_42916, "mem_42917")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42753 = 0; i_42753 < ni_35029; i_42753++) {
+        int64_t eta_p_42489 = ((int64_t *) is_mem_42914.mem)[i_42753];
+        int64_t lifted_lambda_res_42490 = sub64(eta_p_42489, incr_35031);
+        bool x_42492 = sle64((int64_t) 0, lifted_lambda_res_42490);
+        bool y_42493 = slt64(lifted_lambda_res_42490, n_35030);
+        bool bounds_check_42494 = x_42492 && y_42493;
+        bool index_certs_42495;
+        
+        if (!bounds_check_42494) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_42490, "] out of bounds for array of shape [", (long long) n_35030, "].", "-> #0  ftbasics.fut:40:20-25\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftbasics.fut:40:9-26\n   #3  ftsort.fut:12:9-15\n   #4  /prelude/functional.fut:9:44-45\n   #5  ftsort.fut:12:9-18\n   #6  ftsort.fut:33:12-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:31:1-33:36\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int16_t lifted_lambda_res_42496 = ((int16_t *) ys_mem_42915.mem)[lifted_lambda_res_42490];
+        
+        ((int16_t *) mem_42917.mem)[i_42753] = lifted_lambda_res_42496;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_42917, "mem_42917") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43226, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref(ctx, &mem_42917, "mem_42917") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_double(struct futhark_context *ctx, struct memblock *mem_out_p_43227, struct memblock *mem_out_p_43228, struct memblock xs_mem_42914, int64_t n_34876, int64_t incr_34877)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int64_t mem_42916_cached_sizze_43229 = 0;
+    unsigned char *mem_42916 = NULL;
+    int64_t mem_42918_cached_sizze_43230 = 0;
+    unsigned char *mem_42918 = NULL;
+    int64_t mem_42926_cached_sizze_43231 = 0;
+    unsigned char *mem_42926 = NULL;
+    int64_t mem_42928_cached_sizze_43232 = 0;
+    unsigned char *mem_42928 = NULL;
+    int64_t mem_42930_cached_sizze_43233 = 0;
+    unsigned char *mem_42930 = NULL;
+    int64_t mem_42932_cached_sizze_43234 = 0;
+    unsigned char *mem_42932 = NULL;
+    int64_t mem_42934_cached_sizze_43235 = 0;
+    unsigned char *mem_42934 = NULL;
+    int64_t mem_42966_cached_sizze_43236 = 0;
+    unsigned char *mem_42966 = NULL;
+    int64_t mem_42968_cached_sizze_43237 = 0;
+    unsigned char *mem_42968 = NULL;
+    int64_t mem_42981_cached_sizze_43238 = 0;
+    unsigned char *mem_42981 = NULL;
+    int64_t mem_42982_cached_sizze_43239 = 0;
+    unsigned char *mem_42982 = NULL;
+    int64_t mem_42989_cached_sizze_43240 = 0;
+    unsigned char *mem_42989 = NULL;
+    int64_t mem_42992_cached_sizze_43241 = 0;
+    unsigned char *mem_42992 = NULL;
+    int64_t mem_42995_cached_sizze_43242 = 0;
+    unsigned char *mem_42995 = NULL;
+    int64_t mem_42998_cached_sizze_43243 = 0;
+    unsigned char *mem_42998 = NULL;
+    int64_t mem_43001_cached_sizze_43244 = 0;
+    unsigned char *mem_43001 = NULL;
+    int64_t mem_43018_cached_sizze_43245 = 0;
+    unsigned char *mem_43018 = NULL;
+    int64_t mem_43019_cached_sizze_43246 = 0;
+    unsigned char *mem_43019 = NULL;
+    int64_t mem_43020_cached_sizze_43247 = 0;
+    unsigned char *mem_43020 = NULL;
+    int64_t mem_43021_cached_sizze_43248 = 0;
+    unsigned char *mem_43021 = NULL;
+    int64_t mem_43022_cached_sizze_43249 = 0;
+    unsigned char *mem_43022 = NULL;
+    int64_t mem_43023_cached_sizze_43250 = 0;
+    unsigned char *mem_43023 = NULL;
+    int64_t mem_43024_cached_sizze_43251 = 0;
+    unsigned char *mem_43024 = NULL;
+    int64_t mem_43067_cached_sizze_43252 = 0;
+    unsigned char *mem_43067 = NULL;
+    int64_t mem_43068_cached_sizze_43253 = 0;
+    unsigned char *mem_43068 = NULL;
+    int64_t mem_43093_cached_sizze_43254 = 0;
+    unsigned char *mem_43093 = NULL;
+    int64_t mem_43101_cached_sizze_43255 = 0;
+    unsigned char *mem_43101 = NULL;
+    struct memblock mem_43129;
+    
+    mem_43129.references = NULL;
+    
+    struct memblock mem_43127;
+    
+    mem_43127.references = NULL;
+    
+    struct memblock mem_out_43176;
+    
+    mem_out_43176.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t rng_42119 = add64(n_34876, incr_34877);
+    bool bounds_invalid_upwards_42120 = slt64(rng_42119, incr_34877);
+    bool valid_42121 = !bounds_invalid_upwards_42120;
+    bool range_valid_c_42122;
+    
+    if (!valid_42121) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_34877, "..<", (long long) rng_42119, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:161:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:161:32-63\n   #4  ftsort.fut:28:9-26\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:28:9-31\n   #7  ftsort.fut:27:1-28:31\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool cond_42123 = n_34876 == (int64_t) 0;
+    int32_t iters_42124;
+    
+    if (cond_42123) {
+        iters_42124 = 0;
+    } else {
+        iters_42124 = 32;
+    }
+    
+    int64_t n_blocks_42125 = sdiv64(n_34876, (int64_t) 256);
+    int64_t rest_42126 = smod64(n_34876, (int64_t) 256);
+    int64_t arg_42127 = mul64((int64_t) 256, n_blocks_42125);
+    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128 = add64(rest_42126, arg_42127);
+    bool dim_match_42129 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128 == n_34876;
+    bool empty_or_match_cert_42130;
+    
+    if (!dim_match_42129) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_34876, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "](f64, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #5  ftbasics.fut:162:88-91\n   #6  ftsort.fut:28:9-26\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:28:9-31\n   #9  ftsort.fut:27:1-28:31\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42915 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128;
+    bool loop_nonempty_42134 = slt32(0, iters_42124);
+    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135 = add64((int64_t) 1, n_blocks_42125);
+    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135);
+    bool empty_slice_42137 = arg_42127 == (int64_t) 0;
+    int64_t m_42138 = sub64(arg_42127, (int64_t) 1);
+    bool zzero_leq_i_p_m_t_s_42139 = sle64((int64_t) 0, m_42138);
+    bool i_p_m_t_s_leq_w_42140 = slt64(m_42138, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128);
+    bool i_lte_j_42141 = sle64((int64_t) 0, arg_42127);
+    bool y_42142 = zzero_leq_i_p_m_t_s_42139 && i_p_m_t_s_leq_w_42140;
+    bool forwards_ok_42143 = i_lte_j_42141 && y_42142;
+    bool ok_or_empty_42144 = empty_slice_42137 || forwards_ok_42143;
+    bool loop_not_taken_42145 = !loop_nonempty_42134;
+    bool protect_assert_disj_42146 = ok_or_empty_42144 || loop_not_taken_42145;
+    bool index_certs_42147;
+    
+    if (!protect_assert_disj_42146) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_42127, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:28:9-26\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:28:9-31\n   #10 ftsort.fut:27:1-28:31\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool empty_slice_42148 = rest_42126 == (int64_t) 0;
+    int64_t m_42149 = sub64(rest_42126, (int64_t) 1);
+    int64_t i_p_m_t_s_42150 = add64(arg_42127, m_42149);
+    bool zzero_leq_i_p_m_t_s_42151 = sle64((int64_t) 0, i_p_m_t_s_42150);
+    bool i_p_m_t_s_leq_w_42152 = slt64(i_p_m_t_s_42150, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128);
+    bool i_lte_j_42153 = sle64(arg_42127, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128);
+    bool y_42154 = zzero_leq_i_p_m_t_s_42151 && i_p_m_t_s_leq_w_42152;
+    bool forwards_ok_42155 = i_lte_j_42153 && y_42154;
+    bool ok_or_empty_42156 = empty_slice_42148 || forwards_ok_42155;
+    bool protect_assert_disj_42157 = loop_not_taken_42145 || ok_or_empty_42156;
+    bool index_certs_42158;
+    
+    if (!protect_assert_disj_42157) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_42127, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:28:9-26\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:28:9-31\n   #10 ftsort.fut:27:1-28:31\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool binop_x_42159 = sle64((int64_t) 0, n_blocks_42125);
+    bool protect_assert_disj_42160 = loop_not_taken_42145 || binop_x_42159;
+    bool dim_ok_cert_42161;
+    
+    if (!protect_assert_disj_42160) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_42127, "] to array of shape [", (long long) n_blocks_42125, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:28:9-26\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:28:9-31\n   #10 ftsort.fut:27:1-28:31\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool y_42163 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136);
+    bool protect_assert_disj_42164 = loop_not_taken_42145 || y_42163;
+    bool index_certs_42165;
+    
+    if (!protect_assert_disj_42164) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:28:9-26\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:28:9-31\n   #11 ftsort.fut:27:1-28:31\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool x_42167 = sle64((int64_t) 0, m_42149);
+    bool y_42168 = slt64(m_42149, rest_42126);
+    bool bounds_check_42169 = x_42167 && y_42168;
+    bool protect_assert_disj_42170 = empty_slice_42148 || bounds_check_42169;
+    bool protect_assert_disj_42171 = loop_not_taken_42145 || protect_assert_disj_42170;
+    bool index_certs_42172;
+    
+    if (!protect_assert_disj_42171) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_42149, "] out of bounds for array of shape [", (long long) rest_42126, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:28:9-26\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:28:9-31\n   #10 ftsort.fut:27:1-28:31\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42925 = (int64_t) 2 * rest_42126;
+    int64_t bytes_42965 = (int64_t) 8 * rest_42126;
+    int64_t bytes_42991 = (int64_t) 2048 * n_blocks_42125;
+    int64_t bytes_42997 = (int64_t) 32 * n_blocks_42125;
+    int64_t bytes_43000 = (int64_t) 8 * n_blocks_42125;
+    int64_t bytes_43092 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135;
+    bool dim_match_42441 = n_34876 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128;
+    bool empty_or_match_cert_42442;
+    
+    if (!dim_match_42441) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "] cannot match shape of type `[", (long long) n_34876, "](f64, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:28:9-26\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:28:9-31\n   #11 ftsort.fut:27:1-28:31\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_43126 = (int64_t) 8 * n_34876;
+    
+    if (mem_42916_cached_sizze_43229 < bytes_42915) {
+        err = lexical_realloc(ctx, &mem_42916, &mem_42916_cached_sizze_43229, bytes_42915);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_42916, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) xs_mem_42914.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128});
+    if (mem_42918_cached_sizze_43230 < bytes_42915) {
+        err = lexical_realloc(ctx, &mem_42918, &mem_42918_cached_sizze_43230, bytes_42915);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int64_t i_43177 = 0; i_43177 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128; i_43177++) {
+        int64_t x_43178 = (int64_t) 0 + i_43177 * (int64_t) 1;
+        
+        ((int64_t *) mem_42918)[i_43177] = x_43178;
+    }
+    if (mem_42926_cached_sizze_43231 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42926, &mem_42926_cached_sizze_43231, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42928_cached_sizze_43232 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42928, &mem_42928_cached_sizze_43232, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42930_cached_sizze_43233 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42930, &mem_42930_cached_sizze_43233, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42932_cached_sizze_43234 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42932, &mem_42932_cached_sizze_43234, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42934_cached_sizze_43235 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42934, &mem_42934_cached_sizze_43235, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42966_cached_sizze_43236 < bytes_42965) {
+        err = lexical_realloc(ctx, &mem_42966, &mem_42966_cached_sizze_43236, bytes_42965);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42968_cached_sizze_43237 < bytes_42965) {
+        err = lexical_realloc(ctx, &mem_42968, &mem_42968_cached_sizze_43237, bytes_42965);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42981_cached_sizze_43238 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42981, &mem_42981_cached_sizze_43238, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42982_cached_sizze_43239 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_42982, &mem_42982_cached_sizze_43239, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42989_cached_sizze_43240 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42989, &mem_42989_cached_sizze_43240, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42992_cached_sizze_43241 < bytes_42991) {
+        err = lexical_realloc(ctx, &mem_42992, &mem_42992_cached_sizze_43241, bytes_42991);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42995_cached_sizze_43242 < bytes_42991) {
+        err = lexical_realloc(ctx, &mem_42995, &mem_42995_cached_sizze_43242, bytes_42991);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42998_cached_sizze_43243 < bytes_42997) {
+        err = lexical_realloc(ctx, &mem_42998, &mem_42998_cached_sizze_43243, bytes_42997);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43001_cached_sizze_43244 < bytes_43000) {
+        err = lexical_realloc(ctx, &mem_43001, &mem_43001_cached_sizze_43244, bytes_43000);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43018_cached_sizze_43245 < (int64_t) 2048) {
+        err = lexical_realloc(ctx, &mem_43018, &mem_43018_cached_sizze_43245, (int64_t) 2048);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43019_cached_sizze_43246 < (int64_t) 2048) {
+        err = lexical_realloc(ctx, &mem_43019, &mem_43019_cached_sizze_43246, (int64_t) 2048);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43020_cached_sizze_43247 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43020, &mem_43020_cached_sizze_43247, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43021_cached_sizze_43248 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43021, &mem_43021_cached_sizze_43248, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43022_cached_sizze_43249 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43022, &mem_43022_cached_sizze_43249, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43023_cached_sizze_43250 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43023, &mem_43023_cached_sizze_43250, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43024_cached_sizze_43251 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43024, &mem_43024_cached_sizze_43251, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43067_cached_sizze_43252 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_43067, &mem_43067_cached_sizze_43252, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43068_cached_sizze_43253 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_43068, &mem_43068_cached_sizze_43253, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43093_cached_sizze_43254 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43093, &mem_43093_cached_sizze_43254, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43101_cached_sizze_43255 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43101, &mem_43101_cached_sizze_43255, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int32_t i_42175 = 0; i_42175 < iters_42124; i_42175++) {
+        int32_t blocked_radix_sort_step_arg1_42178 = mul32(2, i_42175);
+        int32_t get_bit_arg0_42183 = add32(1, blocked_radix_sort_step_arg1_42178);
+        int64_t unsign_arg0_42184 = zext_i32_i64(get_bit_arg0_42183);
+        bool cond_f_res_42185 = get_bit_arg0_42183 == 63;
+        int64_t unsign_arg0_42186 = zext_i32_i64(blocked_radix_sort_step_arg1_42178);
+        bool cond_f_res_42187 = blocked_radix_sort_step_arg1_42178 == 63;
+        int16_t discard_42771;
+        int16_t discard_42772;
+        int16_t discard_42773;
+        int16_t discard_42774;
+        int16_t scanacc_42756;
+        int16_t scanacc_42757;
+        int16_t scanacc_42758;
+        int16_t scanacc_42759;
+        
+        scanacc_42756 = (int16_t) 0;
+        scanacc_42757 = (int16_t) 0;
+        scanacc_42758 = (int16_t) 0;
+        scanacc_42759 = (int16_t) 0;
+        for (int64_t i_42765 = 0; i_42765 < rest_42126; i_42765++) {
+            int64_t slice_42899 = arg_42127 + i_42765;
+            double eta_p_42572 = ((double *) mem_42916)[slice_42899];
+            int64_t i64_arg0_42573 = futrts_to_bits64(eta_p_42572);
+            int64_t unsign_arg0_42574 = ashr64(i64_arg0_42573, unsign_arg0_42184);
+            int64_t unsign_arg0_42575 = (int64_t) 1 & unsign_arg0_42574;
+            int32_t to_i32_res_42576 = zext_i64_i32(unsign_arg0_42575);
+            int64_t unsign_arg0_42577 = ashr64(i64_arg0_42573, (int64_t) 63);
+            int64_t unsign_arg0_42578 = (int64_t) 1 & unsign_arg0_42577;
+            int32_t to_i32_res_42579 = zext_i64_i32(unsign_arg0_42578);
+            bool cond_42580 = to_i32_res_42579 == 1;
+            bool x_42581 = !cond_42580;
+            bool y_42582 = cond_f_res_42185 && x_42581;
+            bool cond_42583 = cond_42580 || y_42582;
+            int32_t defunc_0_get_bit_res_42584;
+            
+            if (cond_42583) {
+                int32_t defunc_0_get_bit_res_t_res_42714 = 1 ^ to_i32_res_42576;
+                
+                defunc_0_get_bit_res_42584 = defunc_0_get_bit_res_t_res_42714;
+            } else {
+                defunc_0_get_bit_res_42584 = to_i32_res_42576;
+            }
+            
+            int32_t zp_lhs_42586 = mul32(2, defunc_0_get_bit_res_42584);
+            int64_t unsign_arg0_42587 = ashr64(i64_arg0_42573, unsign_arg0_42186);
+            int64_t unsign_arg0_42588 = (int64_t) 1 & unsign_arg0_42587;
+            int32_t to_i32_res_42589 = zext_i64_i32(unsign_arg0_42588);
+            bool y_42590 = cond_f_res_42187 && x_42581;
+            bool cond_42591 = cond_42580 || y_42590;
+            int32_t defunc_0_get_bit_res_42592;
+            
+            if (cond_42591) {
+                int32_t defunc_0_get_bit_res_t_res_42715 = 1 ^ to_i32_res_42589;
+                
+                defunc_0_get_bit_res_42592 = defunc_0_get_bit_res_t_res_42715;
+            } else {
+                defunc_0_get_bit_res_42592 = to_i32_res_42589;
+            }
+            
+            int32_t i32_arg0_42594 = add32(zp_lhs_42586, defunc_0_get_bit_res_42592);
+            int16_t i32_res_42595 = sext_i32_i16(i32_arg0_42594);
+            int16_t defunc_0_f_res_42597;
+            int16_t defunc_0_f_res_42598;
+            int16_t defunc_0_f_res_42599;
+            int16_t defunc_0_f_res_42600;
+            
+            if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42597, &defunc_0_f_res_42598, &defunc_0_f_res_42599, &defunc_0_f_res_42600, i32_res_42595) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int16_t defunc_0_op_res_42238 = add16(defunc_0_f_res_42597, scanacc_42756);
+            int16_t defunc_0_op_res_42239 = add16(defunc_0_f_res_42598, scanacc_42757);
+            int16_t defunc_0_op_res_42240 = add16(defunc_0_f_res_42599, scanacc_42758);
+            int16_t defunc_0_op_res_42241 = add16(defunc_0_f_res_42600, scanacc_42759);
+            
+            ((int16_t *) mem_42926)[i_42765] = defunc_0_op_res_42238;
+            ((int16_t *) mem_42928)[i_42765] = defunc_0_op_res_42239;
+            ((int16_t *) mem_42930)[i_42765] = defunc_0_op_res_42240;
+            ((int16_t *) mem_42932)[i_42765] = defunc_0_op_res_42241;
+            ((int16_t *) mem_42934)[i_42765] = i32_res_42595;
+            
+            int16_t scanacc_tmp_43181 = defunc_0_op_res_42238;
+            int16_t scanacc_tmp_43182 = defunc_0_op_res_42239;
+            int16_t scanacc_tmp_43183 = defunc_0_op_res_42240;
+            int16_t scanacc_tmp_43184 = defunc_0_op_res_42241;
+            
+            scanacc_42756 = scanacc_tmp_43181;
+            scanacc_42757 = scanacc_tmp_43182;
+            scanacc_42758 = scanacc_tmp_43183;
+            scanacc_42759 = scanacc_tmp_43184;
+        }
+        discard_42771 = scanacc_42756;
+        discard_42772 = scanacc_42757;
+        discard_42773 = scanacc_42758;
+        discard_42774 = scanacc_42759;
+        
+        int16_t defunc_0_radix_sort_step_i16_res_42242;
+        int16_t defunc_0_radix_sort_step_i16_res_42243;
+        int16_t defunc_0_radix_sort_step_i16_res_42244;
+        int16_t defunc_0_radix_sort_step_i16_res_42245;
+        
+        if (empty_slice_42148) {
+            defunc_0_radix_sort_step_i16_res_42242 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_42243 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_42244 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_42245 = (int16_t) 0;
+        } else {
+            int16_t last_res_42246 = ((int16_t *) mem_42926)[m_42149];
+            int16_t last_res_42247 = ((int16_t *) mem_42928)[m_42149];
+            int16_t last_res_42248 = ((int16_t *) mem_42930)[m_42149];
+            int16_t last_res_42249 = ((int16_t *) mem_42932)[m_42149];
+            
+            defunc_0_radix_sort_step_i16_res_42242 = last_res_42246;
+            defunc_0_radix_sort_step_i16_res_42243 = last_res_42247;
+            defunc_0_radix_sort_step_i16_res_42244 = last_res_42248;
+            defunc_0_radix_sort_step_i16_res_42245 = last_res_42249;
+        }
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_42966, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + (int64_t) 1 * arg_42127, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_42126});
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_42968, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42916, (int64_t) 0 + (int64_t) 1 * arg_42127, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_42126});
+        for (int64_t write_iter_42775 = 0; write_iter_42775 < rest_42126; write_iter_42775++) {
+            int16_t write_iv_42778 = ((int16_t *) mem_42934)[write_iter_42775];
+            int16_t write_iv_42779 = ((int16_t *) mem_42926)[write_iter_42775];
+            int16_t write_iv_42780 = ((int16_t *) mem_42928)[write_iter_42775];
+            int16_t write_iv_42781 = ((int16_t *) mem_42930)[write_iter_42775];
+            int16_t write_iv_42782 = ((int16_t *) mem_42932)[write_iter_42775];
+            int64_t slice_42898 = arg_42127 + write_iter_42775;
+            double write_iv_42783 = ((double *) mem_42916)[slice_42898];
+            int64_t write_iv_42784 = ((int64_t *) mem_42918)[slice_42898];
+            int64_t defunc_0_f_res_42556;
+            
+            if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42556, defunc_0_radix_sort_step_i16_res_42242, defunc_0_radix_sort_step_i16_res_42243, defunc_0_radix_sort_step_i16_res_42244, write_iv_42778, write_iv_42779, write_iv_42780, write_iv_42781, write_iv_42782) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42556) && slt64(defunc_0_f_res_42556, rest_42126)) {
+                ((double *) mem_42968)[defunc_0_f_res_42556] = write_iv_42783;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42556) && slt64(defunc_0_f_res_42556, rest_42126)) {
+                ((int64_t *) mem_42966)[defunc_0_f_res_42556] = write_iv_42784;
+            }
+        }
+        ((int16_t *) mem_42981)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_42242;
+        ((int16_t *) mem_42981)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_42243;
+        ((int16_t *) mem_42981)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_42244;
+        ((int16_t *) mem_42981)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_42245;
+        for (int64_t i_42789 = 0; i_42789 < (int64_t) 4; i_42789++) {
+            int16_t eta_p_42266 = ((int16_t *) mem_42981)[i_42789];
+            int64_t i16_res_42267 = sext_i16_i64(eta_p_42266);
+            
+            ((int64_t *) mem_42982)[i_42789] = i16_res_42267;
+        }
+        
+        int16_t tmp_42268 = add16(defunc_0_radix_sort_step_i16_res_42242, defunc_0_radix_sort_step_i16_res_42243);
+        int16_t tmp_42269 = add16(defunc_0_radix_sort_step_i16_res_42244, tmp_42268);
+        
+        ((int16_t *) mem_42989)[(int64_t) 0] = (int16_t) 0;
+        ((int16_t *) mem_42989)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_42242;
+        ((int16_t *) mem_42989)[(int64_t) 2] = tmp_42268;
+        ((int16_t *) mem_42989)[(int64_t) 3] = tmp_42269;
+        for (int64_t i_42839 = 0; i_42839 < n_blocks_42125; i_42839++) {
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42916, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            
+            int64_t binop_x_42912 = (int64_t) 256 * i_42839;
+            int16_t discard_42811;
+            int16_t discard_42812;
+            int16_t discard_42813;
+            int16_t discard_42814;
+            int16_t scanacc_42796;
+            int16_t scanacc_42797;
+            int16_t scanacc_42798;
+            int16_t scanacc_42799;
+            
+            scanacc_42796 = (int16_t) 0;
+            scanacc_42797 = (int16_t) 0;
+            scanacc_42798 = (int16_t) 0;
+            scanacc_42799 = (int16_t) 0;
+            for (int64_t i_42805 = 0; i_42805 < (int64_t) 256; i_42805++) {
+                int64_t new_index_42913 = i_42805 + binop_x_42912;
+                double eta_p_42631 = ((double *) mem_42916)[new_index_42913];
+                int64_t i64_arg0_42632 = futrts_to_bits64(eta_p_42631);
+                int64_t unsign_arg0_42633 = ashr64(i64_arg0_42632, unsign_arg0_42184);
+                int64_t unsign_arg0_42634 = (int64_t) 1 & unsign_arg0_42633;
+                int32_t to_i32_res_42635 = zext_i64_i32(unsign_arg0_42634);
+                int64_t unsign_arg0_42636 = ashr64(i64_arg0_42632, (int64_t) 63);
+                int64_t unsign_arg0_42637 = (int64_t) 1 & unsign_arg0_42636;
+                int32_t to_i32_res_42638 = zext_i64_i32(unsign_arg0_42637);
+                bool cond_42639 = to_i32_res_42638 == 1;
+                bool x_42640 = !cond_42639;
+                bool y_42641 = cond_f_res_42185 && x_42640;
+                bool cond_42642 = cond_42639 || y_42641;
+                int32_t defunc_0_get_bit_res_42643;
+                
+                if (cond_42642) {
+                    int32_t defunc_0_get_bit_res_t_res_42716 = 1 ^ to_i32_res_42635;
+                    
+                    defunc_0_get_bit_res_42643 = defunc_0_get_bit_res_t_res_42716;
+                } else {
+                    defunc_0_get_bit_res_42643 = to_i32_res_42635;
+                }
+                
+                int32_t zp_lhs_42645 = mul32(2, defunc_0_get_bit_res_42643);
+                int64_t unsign_arg0_42646 = ashr64(i64_arg0_42632, unsign_arg0_42186);
+                int64_t unsign_arg0_42647 = (int64_t) 1 & unsign_arg0_42646;
+                int32_t to_i32_res_42648 = zext_i64_i32(unsign_arg0_42647);
+                bool y_42649 = cond_f_res_42187 && x_42640;
+                bool cond_42650 = cond_42639 || y_42649;
+                int32_t defunc_0_get_bit_res_42651;
+                
+                if (cond_42650) {
+                    int32_t defunc_0_get_bit_res_t_res_42717 = 1 ^ to_i32_res_42648;
+                    
+                    defunc_0_get_bit_res_42651 = defunc_0_get_bit_res_t_res_42717;
+                } else {
+                    defunc_0_get_bit_res_42651 = to_i32_res_42648;
+                }
+                
+                int32_t i32_arg0_42653 = add32(zp_lhs_42645, defunc_0_get_bit_res_42651);
+                int16_t i32_res_42654 = sext_i32_i16(i32_arg0_42653);
+                int16_t defunc_0_f_res_42656;
+                int16_t defunc_0_f_res_42657;
+                int16_t defunc_0_f_res_42658;
+                int16_t defunc_0_f_res_42659;
+                
+                if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42656, &defunc_0_f_res_42657, &defunc_0_f_res_42658, &defunc_0_f_res_42659, i32_res_42654) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int16_t defunc_0_op_res_42333 = add16(defunc_0_f_res_42656, scanacc_42796);
+                int16_t defunc_0_op_res_42334 = add16(defunc_0_f_res_42657, scanacc_42797);
+                int16_t defunc_0_op_res_42335 = add16(defunc_0_f_res_42658, scanacc_42798);
+                int16_t defunc_0_op_res_42336 = add16(defunc_0_f_res_42659, scanacc_42799);
+                
+                ((int16_t *) mem_43020)[i_42805] = defunc_0_op_res_42333;
+                ((int16_t *) mem_43021)[i_42805] = defunc_0_op_res_42334;
+                ((int16_t *) mem_43022)[i_42805] = defunc_0_op_res_42335;
+                ((int16_t *) mem_43023)[i_42805] = defunc_0_op_res_42336;
+                ((int16_t *) mem_43024)[i_42805] = i32_res_42654;
+                
+                int16_t scanacc_tmp_43197 = defunc_0_op_res_42333;
+                int16_t scanacc_tmp_43198 = defunc_0_op_res_42334;
+                int16_t scanacc_tmp_43199 = defunc_0_op_res_42335;
+                int16_t scanacc_tmp_43200 = defunc_0_op_res_42336;
+                
+                scanacc_42796 = scanacc_tmp_43197;
+                scanacc_42797 = scanacc_tmp_43198;
+                scanacc_42798 = scanacc_tmp_43199;
+                scanacc_42799 = scanacc_tmp_43200;
+            }
+            discard_42811 = scanacc_42796;
+            discard_42812 = scanacc_42797;
+            discard_42813 = scanacc_42798;
+            discard_42814 = scanacc_42799;
+            
+            int16_t last_res_42337 = ((int16_t *) mem_43020)[(int64_t) 255];
+            int16_t last_res_42338 = ((int16_t *) mem_43021)[(int64_t) 255];
+            int16_t last_res_42339 = ((int16_t *) mem_43022)[(int64_t) 255];
+            int16_t last_res_42340 = ((int16_t *) mem_43023)[(int64_t) 255];
+            
+            for (int64_t write_iter_42815 = 0; write_iter_42815 < (int64_t) 256; write_iter_42815++) {
+                int16_t write_iv_42818 = ((int16_t *) mem_43024)[write_iter_42815];
+                int16_t write_iv_42819 = ((int16_t *) mem_43020)[write_iter_42815];
+                int16_t write_iv_42820 = ((int16_t *) mem_43021)[write_iter_42815];
+                int16_t write_iv_42821 = ((int16_t *) mem_43022)[write_iter_42815];
+                int16_t write_iv_42822 = ((int16_t *) mem_43023)[write_iter_42815];
+                int64_t new_index_42909 = write_iter_42815 + binop_x_42912;
+                double write_iv_42823 = ((double *) mem_42916)[new_index_42909];
+                int64_t write_iv_42824 = ((int64_t *) mem_42918)[new_index_42909];
+                int64_t defunc_0_f_res_42615;
+                
+                if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42615, last_res_42337, last_res_42338, last_res_42339, write_iv_42818, write_iv_42819, write_iv_42820, write_iv_42821, write_iv_42822) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42615) && slt64(defunc_0_f_res_42615, (int64_t) 256)) {
+                    ((double *) mem_43018)[defunc_0_f_res_42615] = write_iv_42823;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42615) && slt64(defunc_0_f_res_42615, (int64_t) 256)) {
+                    ((int64_t *) mem_43019)[defunc_0_f_res_42615] = write_iv_42824;
+                }
+            }
+            ((int16_t *) mem_43067)[(int64_t) 0] = last_res_42337;
+            ((int16_t *) mem_43067)[(int64_t) 1] = last_res_42338;
+            ((int16_t *) mem_43067)[(int64_t) 2] = last_res_42339;
+            ((int16_t *) mem_43067)[(int64_t) 3] = last_res_42340;
+            for (int64_t i_42829 = 0; i_42829 < (int64_t) 4; i_42829++) {
+                int16_t eta_p_42355 = ((int16_t *) mem_43067)[i_42829];
+                int64_t i16_res_42356 = sext_i16_i64(eta_p_42355);
+                
+                ((int64_t *) mem_43068)[i_42829] = i16_res_42356;
+            }
+            
+            int16_t tmp_42357 = add16(last_res_42337, last_res_42338);
+            int16_t tmp_42358 = add16(last_res_42339, tmp_42357);
+            
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4] = (int16_t) 0;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 1] = last_res_42337;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 2] = tmp_42357;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 3] = tmp_42358;
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42992, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42995, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42998, i_42839 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43068, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
+        }
+        
+        int64_t discard_42851;
+        int64_t scanacc_42847 = (int64_t) 0;
+        
+        for (int64_t i_42849 = 0; i_42849 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136; i_42849++) {
+            int64_t new_index_42887 = squot64(i_42849, dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135);
+            int64_t binop_y_42889 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135 * new_index_42887;
+            int64_t new_index_42890 = i_42849 - binop_y_42889;
+            bool index_concat_cmp_42892 = sle64(n_blocks_42125, new_index_42890);
+            int64_t index_concat_branch_42896;
+            
+            if (index_concat_cmp_42892) {
+                int64_t index_concat_42894 = ((int64_t *) mem_42982)[new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42894;
+            } else {
+                int64_t index_concat_42895 = ((int64_t *) mem_42998)[new_index_42890 * (int64_t) 4 + new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42895;
+            }
+            
+            int64_t defunc_0_op_res_42372 = add64(scanacc_42847, index_concat_branch_42896);
+            
+            ((int64_t *) mem_43093)[i_42849] = defunc_0_op_res_42372;
+            
+            int64_t scanacc_tmp_43209 = defunc_0_op_res_42372;
+            
+            scanacc_42847 = scanacc_tmp_43209;
+        }
+        discard_42851 = scanacc_42847;
+        for (int64_t i_42854 = 0; i_42854 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136; i_42854++) {
+            int64_t zv_lhs_42375 = add64((int64_t) -1, i_42854);
+            int64_t tmp_42376 = smod64(zv_lhs_42375, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136);
+            int64_t lifted_lambda_res_42377 = ((int64_t *) mem_43093)[tmp_42376];
+            
+            ((int64_t *) mem_43101)[i_42854] = lifted_lambda_res_42377;
+        }
+        ((int64_t *) mem_43101)[(int64_t) 0] = (int64_t) 0;
+        for (int64_t write_iter_42856 = 0; write_iter_42856 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128; write_iter_42856++) {
+            bool index_concat_cmp_42878 = sle64(arg_42127, write_iter_42856);
+            double index_concat_branch_42497;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42726 = sub64(write_iter_42856, arg_42127);
+                double index_concat_42727 = ((double *) mem_42968)[index_concat_i_42726];
+                
+                index_concat_branch_42497 = index_concat_42727;
+            } else {
+                int64_t new_index_42500 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42501 = (int64_t) 256 * new_index_42500;
+                int64_t new_index_42502 = write_iter_42856 - binop_y_42501;
+                double index_concat_42503 = ((double *) mem_42992)[new_index_42500 * (int64_t) 256 + new_index_42502];
+                
+                index_concat_branch_42497 = index_concat_42503;
+            }
+            
+            int64_t i64_arg0_42504 = futrts_to_bits64(index_concat_branch_42497);
+            int64_t unsign_arg0_42505 = ashr64(i64_arg0_42504, (int64_t) 63);
+            int64_t unsign_arg0_42506 = (int64_t) 1 & unsign_arg0_42505;
+            int32_t to_i32_res_42507 = zext_i64_i32(unsign_arg0_42506);
+            bool cond_42508 = to_i32_res_42507 == 1;
+            bool x_42509 = !cond_42508;
+            int32_t zlzb_rhs_42510;
+            int32_t acc_42512 = 0;
+            
+            for (int32_t i_42511 = 0; i_42511 < 2; i_42511++) {
+                int32_t get_bit_arg0_42513 = add32(blocked_radix_sort_step_arg1_42178, i_42511);
+                int64_t unsign_arg0_42514 = zext_i32_i64(get_bit_arg0_42513);
+                int64_t unsign_arg0_42515 = ashr64(i64_arg0_42504, unsign_arg0_42514);
+                int64_t unsign_arg0_42516 = (int64_t) 1 & unsign_arg0_42515;
+                int32_t to_i32_res_42517 = zext_i64_i32(unsign_arg0_42516);
+                bool cond_f_res_42518 = get_bit_arg0_42513 == 63;
+                bool y_42519 = x_42509 && cond_f_res_42518;
+                bool cond_42520 = cond_42508 || y_42519;
+                int32_t defunc_0_get_bit_res_42521;
+                
+                if (cond_42520) {
+                    int32_t defunc_0_get_bit_res_t_res_42728 = 1 ^ to_i32_res_42517;
+                    
+                    defunc_0_get_bit_res_42521 = defunc_0_get_bit_res_t_res_42728;
+                } else {
+                    defunc_0_get_bit_res_42521 = to_i32_res_42517;
+                }
+                
+                int32_t zp_rhs_42523 = shl32(defunc_0_get_bit_res_42521, i_42511);
+                int32_t loopres_42524 = add32(acc_42512, zp_rhs_42523);
+                int32_t acc_tmp_43214 = loopres_42524;
+                
+                acc_42512 = acc_tmp_43214;
+            }
+            zlzb_rhs_42510 = acc_42512;
+            
+            int64_t i32_res_42525 = sext_i32_i64(zlzb_rhs_42510);
+            int64_t block_idx_42526 = sdiv64(write_iter_42856, (int64_t) 256);
+            bool x_42527 = sle64((int64_t) 0, block_idx_42526);
+            bool y_42528 = slt64(block_idx_42526, dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135);
+            bool bounds_check_42529 = x_42527 && y_42528;
+            bool index_certs_42530;
+            
+            if (!bounds_check_42529) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_42526, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:28:9-26\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:28:9-31\n   #11 ftsort.fut:27:1-28:31\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            bool x_42531 = sle64((int64_t) 0, i32_res_42525);
+            bool y_42532 = slt64(i32_res_42525, (int64_t) 4);
+            bool bounds_check_42533 = x_42531 && y_42532;
+            bool index_certs_42534;
+            
+            if (!bounds_check_42533) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_42525, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:28:9-26\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:28:9-31\n   #11 ftsort.fut:27:1-28:31\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            double index_concat_branch_42882;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42879 = sub64(write_iter_42856, arg_42127);
+                double index_concat_42880 = ((double *) mem_42968)[index_concat_i_42879];
+                
+                index_concat_branch_42882 = index_concat_42880;
+            } else {
+                int64_t new_index_42904 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42906 = (int64_t) 256 * new_index_42904;
+                int64_t new_index_42907 = write_iter_42856 - binop_y_42906;
+                double index_concat_42881 = ((double *) mem_42992)[new_index_42904 * (int64_t) 256 + new_index_42907];
+                
+                index_concat_branch_42882 = index_concat_42881;
+            }
+            
+            int64_t index_concat_branch_42876;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42873 = sub64(write_iter_42856, arg_42127);
+                int64_t index_concat_42874 = ((int64_t *) mem_42966)[index_concat_i_42873];
+                
+                index_concat_branch_42876 = index_concat_42874;
+            } else {
+                int64_t new_index_42900 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42902 = (int64_t) 256 * new_index_42900;
+                int64_t new_index_42903 = write_iter_42856 - binop_y_42902;
+                int64_t index_concat_42875 = ((int64_t *) mem_42995)[new_index_42900 * (int64_t) 256 + new_index_42903];
+                
+                index_concat_branch_42876 = index_concat_42875;
+            }
+            
+            int64_t binop_x_42535 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135 * i32_res_42525;
+            int64_t new_index_42536 = block_idx_42526 + binop_x_42535;
+            int64_t new_offset_42537 = ((int64_t *) mem_43101)[new_index_42536];
+            bool index_concat_cmp_42538 = sle64(n_blocks_42125, block_idx_42526);
+            int16_t index_concat_branch_42539;
+            
+            if (index_concat_cmp_42538) {
+                int16_t index_concat_42729 = ((int16_t *) mem_42989)[i32_res_42525];
+                
+                index_concat_branch_42539 = index_concat_42729;
+            } else {
+                int16_t index_concat_42541 = ((int16_t *) mem_43001)[block_idx_42526 * (int64_t) 4 + i32_res_42525];
+                
+                index_concat_branch_42539 = index_concat_42541;
+            }
+            
+            int64_t i16_res_42542 = sext_i16_i64(index_concat_branch_42539);
+            int64_t zp_lhs_42543 = mul64((int64_t) 256, block_idx_42526);
+            int64_t old_offset_42544 = add64(i16_res_42542, zp_lhs_42543);
+            int64_t zp_lhs_42545 = sub64(write_iter_42856, old_offset_42544);
+            int64_t idx_42546 = add64(new_offset_42537, zp_lhs_42545);
+            
+            if (sle64((int64_t) 0, idx_42546) && slt64(idx_42546, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128)) {
+                ((double *) mem_42916)[idx_42546] = index_concat_branch_42882;
+            }
+            if (sle64((int64_t) 0, idx_42546) && slt64(idx_42546, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128)) {
+                ((int64_t *) mem_42918)[idx_42546] = index_concat_branch_42876;
+            }
+        }
+    }
+    if (memblock_alloc(ctx, &mem_43127, bytes_43126, "mem_43127")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_43129, bytes_43126, "mem_43129")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42868 = 0; i_42868 < n_34876; i_42868++) {
+        int64_t eta_p_42446 = ((int64_t *) mem_42918)[i_42868];
+        bool x_42447 = sle64((int64_t) 0, eta_p_42446);
+        bool y_42448 = slt64(eta_p_42446, n_34876);
+        bool bounds_check_42449 = x_42447 && y_42448;
+        bool index_certs_42450;
+        
+        if (!bounds_check_42449) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_42446, "] out of bounds for array of shape [", (long long) n_34876, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #4  ftbasics.fut:162:88-91\n   #5  ftsort.fut:28:9-26\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:28:9-31\n   #8  ftsort.fut:27:1-28:31\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int64_t index_primexp_42451 = add64(incr_34877, eta_p_42446);
+        double lifted_lambda_res_42452 = ((double *) xs_mem_42914.mem)[eta_p_42446];
+        
+        ((int64_t *) mem_43127.mem)[i_42868] = index_primexp_42451;
+        ((double *) mem_43129.mem)[i_42868] = lifted_lambda_res_42452;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_43127, "mem_43127") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_out_43176, &mem_43129, "mem_43129") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43227, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43228, &mem_out_43176, "mem_out_43176") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        free(mem_42916);
+        free(mem_42918);
+        free(mem_42926);
+        free(mem_42928);
+        free(mem_42930);
+        free(mem_42932);
+        free(mem_42934);
+        free(mem_42966);
+        free(mem_42968);
+        free(mem_42981);
+        free(mem_42982);
+        free(mem_42989);
+        free(mem_42992);
+        free(mem_42995);
+        free(mem_42998);
+        free(mem_43001);
+        free(mem_43018);
+        free(mem_43019);
+        free(mem_43020);
+        free(mem_43021);
+        free(mem_43022);
+        free(mem_43023);
+        free(mem_43024);
+        free(mem_43067);
+        free(mem_43068);
+        free(mem_43093);
+        free(mem_43101);
+        if (memblock_unref(ctx, &mem_43129, "mem_43129") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_43127, "mem_43127") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43176, "mem_out_43176") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_float(struct futhark_context *ctx, struct memblock *mem_out_p_43256, struct memblock *mem_out_p_43257, struct memblock xs_mem_42914, int64_t n_32092, int64_t incr_32093)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int64_t mem_42916_cached_sizze_43258 = 0;
+    unsigned char *mem_42916 = NULL;
+    int64_t mem_42918_cached_sizze_43259 = 0;
+    unsigned char *mem_42918 = NULL;
+    int64_t mem_42926_cached_sizze_43260 = 0;
+    unsigned char *mem_42926 = NULL;
+    int64_t mem_42928_cached_sizze_43261 = 0;
+    unsigned char *mem_42928 = NULL;
+    int64_t mem_42930_cached_sizze_43262 = 0;
+    unsigned char *mem_42930 = NULL;
+    int64_t mem_42932_cached_sizze_43263 = 0;
+    unsigned char *mem_42932 = NULL;
+    int64_t mem_42934_cached_sizze_43264 = 0;
+    unsigned char *mem_42934 = NULL;
+    int64_t mem_42966_cached_sizze_43265 = 0;
+    unsigned char *mem_42966 = NULL;
+    int64_t mem_42968_cached_sizze_43266 = 0;
+    unsigned char *mem_42968 = NULL;
+    int64_t mem_42981_cached_sizze_43267 = 0;
+    unsigned char *mem_42981 = NULL;
+    int64_t mem_42982_cached_sizze_43268 = 0;
+    unsigned char *mem_42982 = NULL;
+    int64_t mem_42989_cached_sizze_43269 = 0;
+    unsigned char *mem_42989 = NULL;
+    int64_t mem_42992_cached_sizze_43270 = 0;
+    unsigned char *mem_42992 = NULL;
+    int64_t mem_42995_cached_sizze_43271 = 0;
+    unsigned char *mem_42995 = NULL;
+    int64_t mem_42998_cached_sizze_43272 = 0;
+    unsigned char *mem_42998 = NULL;
+    int64_t mem_43001_cached_sizze_43273 = 0;
+    unsigned char *mem_43001 = NULL;
+    int64_t mem_43018_cached_sizze_43274 = 0;
+    unsigned char *mem_43018 = NULL;
+    int64_t mem_43019_cached_sizze_43275 = 0;
+    unsigned char *mem_43019 = NULL;
+    int64_t mem_43020_cached_sizze_43276 = 0;
+    unsigned char *mem_43020 = NULL;
+    int64_t mem_43021_cached_sizze_43277 = 0;
+    unsigned char *mem_43021 = NULL;
+    int64_t mem_43022_cached_sizze_43278 = 0;
+    unsigned char *mem_43022 = NULL;
+    int64_t mem_43023_cached_sizze_43279 = 0;
+    unsigned char *mem_43023 = NULL;
+    int64_t mem_43024_cached_sizze_43280 = 0;
+    unsigned char *mem_43024 = NULL;
+    int64_t mem_43067_cached_sizze_43281 = 0;
+    unsigned char *mem_43067 = NULL;
+    int64_t mem_43068_cached_sizze_43282 = 0;
+    unsigned char *mem_43068 = NULL;
+    int64_t mem_43093_cached_sizze_43283 = 0;
+    unsigned char *mem_43093 = NULL;
+    int64_t mem_43101_cached_sizze_43284 = 0;
+    unsigned char *mem_43101 = NULL;
+    struct memblock mem_43129;
+    
+    mem_43129.references = NULL;
+    
+    struct memblock mem_43127;
+    
+    mem_43127.references = NULL;
+    
+    struct memblock mem_out_43176;
+    
+    mem_out_43176.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t rng_42119 = add64(n_32092, incr_32093);
+    bool bounds_invalid_upwards_42120 = slt64(rng_42119, incr_32093);
+    bool valid_42121 = !bounds_invalid_upwards_42120;
+    bool range_valid_c_42122;
+    
+    if (!valid_42121) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_32093, "..<", (long long) rng_42119, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:161:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:161:32-63\n   #4  ftsort.fut:25:9-25\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:25:9-30\n   #7  ftsort.fut:24:1-25:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool cond_42123 = n_32092 == (int64_t) 0;
+    int32_t iters_42124;
+    
+    if (cond_42123) {
+        iters_42124 = 0;
+    } else {
+        iters_42124 = 16;
+    }
+    
+    int64_t n_blocks_42125 = sdiv64(n_32092, (int64_t) 256);
+    int64_t rest_42126 = smod64(n_32092, (int64_t) 256);
+    int64_t arg_42127 = mul64((int64_t) 256, n_blocks_42125);
+    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128 = add64(rest_42126, arg_42127);
+    bool dim_match_42129 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128 == n_32092;
+    bool empty_or_match_cert_42130;
+    
+    if (!dim_match_42129) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_32092, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "](f32, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #5  ftbasics.fut:162:88-91\n   #6  ftsort.fut:25:9-25\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:25:9-30\n   #9  ftsort.fut:24:1-25:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42915 = (int64_t) 4 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128;
+    int64_t bytes_42917 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128;
+    bool loop_nonempty_42134 = slt32(0, iters_42124);
+    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135 = add64((int64_t) 1, n_blocks_42125);
+    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135);
+    bool empty_slice_42137 = arg_42127 == (int64_t) 0;
+    int64_t m_42138 = sub64(arg_42127, (int64_t) 1);
+    bool zzero_leq_i_p_m_t_s_42139 = sle64((int64_t) 0, m_42138);
+    bool i_p_m_t_s_leq_w_42140 = slt64(m_42138, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128);
+    bool i_lte_j_42141 = sle64((int64_t) 0, arg_42127);
+    bool y_42142 = zzero_leq_i_p_m_t_s_42139 && i_p_m_t_s_leq_w_42140;
+    bool forwards_ok_42143 = i_lte_j_42141 && y_42142;
+    bool ok_or_empty_42144 = empty_slice_42137 || forwards_ok_42143;
+    bool loop_not_taken_42145 = !loop_nonempty_42134;
+    bool protect_assert_disj_42146 = ok_or_empty_42144 || loop_not_taken_42145;
+    bool index_certs_42147;
+    
+    if (!protect_assert_disj_42146) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_42127, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:25:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:25:9-30\n   #10 ftsort.fut:24:1-25:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool empty_slice_42148 = rest_42126 == (int64_t) 0;
+    int64_t m_42149 = sub64(rest_42126, (int64_t) 1);
+    int64_t i_p_m_t_s_42150 = add64(arg_42127, m_42149);
+    bool zzero_leq_i_p_m_t_s_42151 = sle64((int64_t) 0, i_p_m_t_s_42150);
+    bool i_p_m_t_s_leq_w_42152 = slt64(i_p_m_t_s_42150, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128);
+    bool i_lte_j_42153 = sle64(arg_42127, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128);
+    bool y_42154 = zzero_leq_i_p_m_t_s_42151 && i_p_m_t_s_leq_w_42152;
+    bool forwards_ok_42155 = i_lte_j_42153 && y_42154;
+    bool ok_or_empty_42156 = empty_slice_42148 || forwards_ok_42155;
+    bool protect_assert_disj_42157 = loop_not_taken_42145 || ok_or_empty_42156;
+    bool index_certs_42158;
+    
+    if (!protect_assert_disj_42157) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_42127, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:25:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:25:9-30\n   #10 ftsort.fut:24:1-25:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool binop_x_42159 = sle64((int64_t) 0, n_blocks_42125);
+    bool protect_assert_disj_42160 = loop_not_taken_42145 || binop_x_42159;
+    bool dim_ok_cert_42161;
+    
+    if (!protect_assert_disj_42160) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_42127, "] to array of shape [", (long long) n_blocks_42125, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:25:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:25:9-30\n   #10 ftsort.fut:24:1-25:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool y_42163 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136);
+    bool protect_assert_disj_42164 = loop_not_taken_42145 || y_42163;
+    bool index_certs_42165;
+    
+    if (!protect_assert_disj_42164) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:25:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:25:9-30\n   #11 ftsort.fut:24:1-25:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool x_42167 = sle64((int64_t) 0, m_42149);
+    bool y_42168 = slt64(m_42149, rest_42126);
+    bool bounds_check_42169 = x_42167 && y_42168;
+    bool protect_assert_disj_42170 = empty_slice_42148 || bounds_check_42169;
+    bool protect_assert_disj_42171 = loop_not_taken_42145 || protect_assert_disj_42170;
+    bool index_certs_42172;
+    
+    if (!protect_assert_disj_42171) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_42149, "] out of bounds for array of shape [", (long long) rest_42126, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #6  ftbasics.fut:162:88-91\n   #7  ftsort.fut:25:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:25:9-30\n   #10 ftsort.fut:24:1-25:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42925 = (int64_t) 2 * rest_42126;
+    int64_t bytes_42965 = (int64_t) 8 * rest_42126;
+    int64_t bytes_42967 = (int64_t) 4 * rest_42126;
+    int64_t bytes_42991 = (int64_t) 1024 * n_blocks_42125;
+    int64_t bytes_42994 = (int64_t) 2048 * n_blocks_42125;
+    int64_t bytes_42997 = (int64_t) 32 * n_blocks_42125;
+    int64_t bytes_43000 = (int64_t) 8 * n_blocks_42125;
+    int64_t bytes_43092 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135;
+    bool dim_match_42430 = n_32092 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128;
+    bool empty_or_match_cert_42431;
+    
+    if (!dim_match_42430) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128, "] cannot match shape of type `[", (long long) n_32092, "](f32, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:25:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:25:9-30\n   #11 ftsort.fut:24:1-25:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_43126 = (int64_t) 8 * n_32092;
+    int64_t bytes_43128 = (int64_t) 4 * n_32092;
+    
+    if (mem_42916_cached_sizze_43258 < bytes_42915) {
+        err = lexical_realloc(ctx, &mem_42916, &mem_42916_cached_sizze_43258, bytes_42915);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    lmad_copy_4b(ctx, 1, (uint32_t *) mem_42916, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) xs_mem_42914.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128});
+    if (mem_42918_cached_sizze_43259 < bytes_42917) {
+        err = lexical_realloc(ctx, &mem_42918, &mem_42918_cached_sizze_43259, bytes_42917);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int64_t i_43177 = 0; i_43177 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128; i_43177++) {
+        int64_t x_43178 = (int64_t) 0 + i_43177 * (int64_t) 1;
+        
+        ((int64_t *) mem_42918)[i_43177] = x_43178;
+    }
+    if (mem_42926_cached_sizze_43260 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42926, &mem_42926_cached_sizze_43260, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42928_cached_sizze_43261 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42928, &mem_42928_cached_sizze_43261, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42930_cached_sizze_43262 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42930, &mem_42930_cached_sizze_43262, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42932_cached_sizze_43263 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42932, &mem_42932_cached_sizze_43263, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42934_cached_sizze_43264 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42934, &mem_42934_cached_sizze_43264, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42966_cached_sizze_43265 < bytes_42965) {
+        err = lexical_realloc(ctx, &mem_42966, &mem_42966_cached_sizze_43265, bytes_42965);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42968_cached_sizze_43266 < bytes_42967) {
+        err = lexical_realloc(ctx, &mem_42968, &mem_42968_cached_sizze_43266, bytes_42967);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42981_cached_sizze_43267 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42981, &mem_42981_cached_sizze_43267, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42982_cached_sizze_43268 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_42982, &mem_42982_cached_sizze_43268, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42989_cached_sizze_43269 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42989, &mem_42989_cached_sizze_43269, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42992_cached_sizze_43270 < bytes_42991) {
+        err = lexical_realloc(ctx, &mem_42992, &mem_42992_cached_sizze_43270, bytes_42991);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42995_cached_sizze_43271 < bytes_42994) {
+        err = lexical_realloc(ctx, &mem_42995, &mem_42995_cached_sizze_43271, bytes_42994);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42998_cached_sizze_43272 < bytes_42997) {
+        err = lexical_realloc(ctx, &mem_42998, &mem_42998_cached_sizze_43272, bytes_42997);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43001_cached_sizze_43273 < bytes_43000) {
+        err = lexical_realloc(ctx, &mem_43001, &mem_43001_cached_sizze_43273, bytes_43000);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43018_cached_sizze_43274 < (int64_t) 1024) {
+        err = lexical_realloc(ctx, &mem_43018, &mem_43018_cached_sizze_43274, (int64_t) 1024);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43019_cached_sizze_43275 < (int64_t) 2048) {
+        err = lexical_realloc(ctx, &mem_43019, &mem_43019_cached_sizze_43275, (int64_t) 2048);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43020_cached_sizze_43276 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43020, &mem_43020_cached_sizze_43276, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43021_cached_sizze_43277 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43021, &mem_43021_cached_sizze_43277, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43022_cached_sizze_43278 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43022, &mem_43022_cached_sizze_43278, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43023_cached_sizze_43279 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43023, &mem_43023_cached_sizze_43279, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43024_cached_sizze_43280 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43024, &mem_43024_cached_sizze_43280, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43067_cached_sizze_43281 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_43067, &mem_43067_cached_sizze_43281, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43068_cached_sizze_43282 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_43068, &mem_43068_cached_sizze_43282, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43093_cached_sizze_43283 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43093, &mem_43093_cached_sizze_43283, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43101_cached_sizze_43284 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43101, &mem_43101_cached_sizze_43284, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int32_t i_42175 = 0; i_42175 < iters_42124; i_42175++) {
+        int32_t blocked_radix_sort_step_arg1_42178 = mul32(2, i_42175);
+        int32_t get_bit_arg0_42183 = add32(1, blocked_radix_sort_step_arg1_42178);
+        bool cond_f_res_42184 = get_bit_arg0_42183 == 31;
+        bool cond_f_res_42185 = blocked_radix_sort_step_arg1_42178 == 31;
+        int16_t discard_42771;
+        int16_t discard_42772;
+        int16_t discard_42773;
+        int16_t discard_42774;
+        int16_t scanacc_42756;
+        int16_t scanacc_42757;
+        int16_t scanacc_42758;
+        int16_t scanacc_42759;
+        
+        scanacc_42756 = (int16_t) 0;
+        scanacc_42757 = (int16_t) 0;
+        scanacc_42758 = (int16_t) 0;
+        scanacc_42759 = (int16_t) 0;
+        for (int64_t i_42765 = 0; i_42765 < rest_42126; i_42765++) {
+            int64_t slice_42899 = arg_42127 + i_42765;
+            float eta_p_42569 = ((float *) mem_42916)[slice_42899];
+            int32_t i32_arg0_42570 = futrts_to_bits32(eta_p_42569);
+            int32_t unsign_arg0_42571 = ashr32(i32_arg0_42570, get_bit_arg0_42183);
+            int32_t unsign_arg0_42572 = 1 & unsign_arg0_42571;
+            int32_t unsign_arg0_42573 = ashr32(i32_arg0_42570, 31);
+            int32_t unsign_arg0_42574 = 1 & unsign_arg0_42573;
+            bool cond_42575 = unsign_arg0_42574 == 1;
+            bool x_42576 = !cond_42575;
+            bool y_42577 = cond_f_res_42184 && x_42576;
+            bool cond_42578 = cond_42575 || y_42577;
+            int32_t defunc_0_get_bit_res_42579;
+            
+            if (cond_42578) {
+                int32_t defunc_0_get_bit_res_t_res_42705 = 1 ^ unsign_arg0_42572;
+                
+                defunc_0_get_bit_res_42579 = defunc_0_get_bit_res_t_res_42705;
+            } else {
+                defunc_0_get_bit_res_42579 = unsign_arg0_42572;
+            }
+            
+            int32_t zp_lhs_42581 = mul32(2, defunc_0_get_bit_res_42579);
+            int32_t unsign_arg0_42582 = ashr32(i32_arg0_42570, blocked_radix_sort_step_arg1_42178);
+            int32_t unsign_arg0_42583 = 1 & unsign_arg0_42582;
+            bool y_42584 = cond_f_res_42185 && x_42576;
+            bool cond_42585 = cond_42575 || y_42584;
+            int32_t defunc_0_get_bit_res_42586;
+            
+            if (cond_42585) {
+                int32_t defunc_0_get_bit_res_t_res_42706 = 1 ^ unsign_arg0_42583;
+                
+                defunc_0_get_bit_res_42586 = defunc_0_get_bit_res_t_res_42706;
+            } else {
+                defunc_0_get_bit_res_42586 = unsign_arg0_42583;
+            }
+            
+            int32_t i32_arg0_42588 = add32(zp_lhs_42581, defunc_0_get_bit_res_42586);
+            int16_t i32_res_42589 = sext_i32_i16(i32_arg0_42588);
+            int16_t defunc_0_f_res_42591;
+            int16_t defunc_0_f_res_42592;
+            int16_t defunc_0_f_res_42593;
+            int16_t defunc_0_f_res_42594;
+            
+            if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42591, &defunc_0_f_res_42592, &defunc_0_f_res_42593, &defunc_0_f_res_42594, i32_res_42589) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int16_t defunc_0_op_res_42233 = add16(defunc_0_f_res_42591, scanacc_42756);
+            int16_t defunc_0_op_res_42234 = add16(defunc_0_f_res_42592, scanacc_42757);
+            int16_t defunc_0_op_res_42235 = add16(defunc_0_f_res_42593, scanacc_42758);
+            int16_t defunc_0_op_res_42236 = add16(defunc_0_f_res_42594, scanacc_42759);
+            
+            ((int16_t *) mem_42926)[i_42765] = defunc_0_op_res_42233;
+            ((int16_t *) mem_42928)[i_42765] = defunc_0_op_res_42234;
+            ((int16_t *) mem_42930)[i_42765] = defunc_0_op_res_42235;
+            ((int16_t *) mem_42932)[i_42765] = defunc_0_op_res_42236;
+            ((int16_t *) mem_42934)[i_42765] = i32_res_42589;
+            
+            int16_t scanacc_tmp_43181 = defunc_0_op_res_42233;
+            int16_t scanacc_tmp_43182 = defunc_0_op_res_42234;
+            int16_t scanacc_tmp_43183 = defunc_0_op_res_42235;
+            int16_t scanacc_tmp_43184 = defunc_0_op_res_42236;
+            
+            scanacc_42756 = scanacc_tmp_43181;
+            scanacc_42757 = scanacc_tmp_43182;
+            scanacc_42758 = scanacc_tmp_43183;
+            scanacc_42759 = scanacc_tmp_43184;
+        }
+        discard_42771 = scanacc_42756;
+        discard_42772 = scanacc_42757;
+        discard_42773 = scanacc_42758;
+        discard_42774 = scanacc_42759;
+        
+        int16_t defunc_0_radix_sort_step_i16_res_42237;
+        int16_t defunc_0_radix_sort_step_i16_res_42238;
+        int16_t defunc_0_radix_sort_step_i16_res_42239;
+        int16_t defunc_0_radix_sort_step_i16_res_42240;
+        
+        if (empty_slice_42148) {
+            defunc_0_radix_sort_step_i16_res_42237 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_42238 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_42239 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_42240 = (int16_t) 0;
+        } else {
+            int16_t last_res_42241 = ((int16_t *) mem_42926)[m_42149];
+            int16_t last_res_42242 = ((int16_t *) mem_42928)[m_42149];
+            int16_t last_res_42243 = ((int16_t *) mem_42930)[m_42149];
+            int16_t last_res_42244 = ((int16_t *) mem_42932)[m_42149];
+            
+            defunc_0_radix_sort_step_i16_res_42237 = last_res_42241;
+            defunc_0_radix_sort_step_i16_res_42238 = last_res_42242;
+            defunc_0_radix_sort_step_i16_res_42239 = last_res_42243;
+            defunc_0_radix_sort_step_i16_res_42240 = last_res_42244;
+        }
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_42966, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + (int64_t) 1 * arg_42127, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_42126});
+        lmad_copy_4b(ctx, 1, (uint32_t *) mem_42968, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_42916, (int64_t) 0 + (int64_t) 1 * arg_42127, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_42126});
+        for (int64_t write_iter_42775 = 0; write_iter_42775 < rest_42126; write_iter_42775++) {
+            int16_t write_iv_42778 = ((int16_t *) mem_42934)[write_iter_42775];
+            int16_t write_iv_42779 = ((int16_t *) mem_42926)[write_iter_42775];
+            int16_t write_iv_42780 = ((int16_t *) mem_42928)[write_iter_42775];
+            int16_t write_iv_42781 = ((int16_t *) mem_42930)[write_iter_42775];
+            int16_t write_iv_42782 = ((int16_t *) mem_42932)[write_iter_42775];
+            int64_t slice_42898 = arg_42127 + write_iter_42775;
+            float write_iv_42783 = ((float *) mem_42916)[slice_42898];
+            int64_t write_iv_42784 = ((int64_t *) mem_42918)[slice_42898];
+            int64_t defunc_0_f_res_42553;
+            
+            if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42553, defunc_0_radix_sort_step_i16_res_42237, defunc_0_radix_sort_step_i16_res_42238, defunc_0_radix_sort_step_i16_res_42239, write_iv_42778, write_iv_42779, write_iv_42780, write_iv_42781, write_iv_42782) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42553) && slt64(defunc_0_f_res_42553, rest_42126)) {
+                ((float *) mem_42968)[defunc_0_f_res_42553] = write_iv_42783;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42553) && slt64(defunc_0_f_res_42553, rest_42126)) {
+                ((int64_t *) mem_42966)[defunc_0_f_res_42553] = write_iv_42784;
+            }
+        }
+        ((int16_t *) mem_42981)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_42237;
+        ((int16_t *) mem_42981)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_42238;
+        ((int16_t *) mem_42981)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_42239;
+        ((int16_t *) mem_42981)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_42240;
+        for (int64_t i_42789 = 0; i_42789 < (int64_t) 4; i_42789++) {
+            int16_t eta_p_42261 = ((int16_t *) mem_42981)[i_42789];
+            int64_t i16_res_42262 = sext_i16_i64(eta_p_42261);
+            
+            ((int64_t *) mem_42982)[i_42789] = i16_res_42262;
+        }
+        
+        int16_t tmp_42263 = add16(defunc_0_radix_sort_step_i16_res_42237, defunc_0_radix_sort_step_i16_res_42238);
+        int16_t tmp_42264 = add16(defunc_0_radix_sort_step_i16_res_42239, tmp_42263);
+        
+        ((int16_t *) mem_42989)[(int64_t) 0] = (int16_t) 0;
+        ((int16_t *) mem_42989)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_42237;
+        ((int16_t *) mem_42989)[(int64_t) 2] = tmp_42263;
+        ((int16_t *) mem_42989)[(int64_t) 3] = tmp_42264;
+        for (int64_t i_42839 = 0; i_42839 < n_blocks_42125; i_42839++) {
+            lmad_copy_4b(ctx, 1, (uint32_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_42916, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            
+            int64_t binop_x_42912 = (int64_t) 256 * i_42839;
+            int16_t discard_42811;
+            int16_t discard_42812;
+            int16_t discard_42813;
+            int16_t discard_42814;
+            int16_t scanacc_42796;
+            int16_t scanacc_42797;
+            int16_t scanacc_42798;
+            int16_t scanacc_42799;
+            
+            scanacc_42796 = (int16_t) 0;
+            scanacc_42797 = (int16_t) 0;
+            scanacc_42798 = (int16_t) 0;
+            scanacc_42799 = (int16_t) 0;
+            for (int64_t i_42805 = 0; i_42805 < (int64_t) 256; i_42805++) {
+                int64_t new_index_42913 = i_42805 + binop_x_42912;
+                float eta_p_42625 = ((float *) mem_42916)[new_index_42913];
+                int32_t i32_arg0_42626 = futrts_to_bits32(eta_p_42625);
+                int32_t unsign_arg0_42627 = ashr32(i32_arg0_42626, get_bit_arg0_42183);
+                int32_t unsign_arg0_42628 = 1 & unsign_arg0_42627;
+                int32_t unsign_arg0_42629 = ashr32(i32_arg0_42626, 31);
+                int32_t unsign_arg0_42630 = 1 & unsign_arg0_42629;
+                bool cond_42631 = unsign_arg0_42630 == 1;
+                bool x_42632 = !cond_42631;
+                bool y_42633 = cond_f_res_42184 && x_42632;
+                bool cond_42634 = cond_42631 || y_42633;
+                int32_t defunc_0_get_bit_res_42635;
+                
+                if (cond_42634) {
+                    int32_t defunc_0_get_bit_res_t_res_42707 = 1 ^ unsign_arg0_42628;
+                    
+                    defunc_0_get_bit_res_42635 = defunc_0_get_bit_res_t_res_42707;
+                } else {
+                    defunc_0_get_bit_res_42635 = unsign_arg0_42628;
+                }
+                
+                int32_t zp_lhs_42637 = mul32(2, defunc_0_get_bit_res_42635);
+                int32_t unsign_arg0_42638 = ashr32(i32_arg0_42626, blocked_radix_sort_step_arg1_42178);
+                int32_t unsign_arg0_42639 = 1 & unsign_arg0_42638;
+                bool y_42640 = cond_f_res_42185 && x_42632;
+                bool cond_42641 = cond_42631 || y_42640;
+                int32_t defunc_0_get_bit_res_42642;
+                
+                if (cond_42641) {
+                    int32_t defunc_0_get_bit_res_t_res_42708 = 1 ^ unsign_arg0_42639;
+                    
+                    defunc_0_get_bit_res_42642 = defunc_0_get_bit_res_t_res_42708;
+                } else {
+                    defunc_0_get_bit_res_42642 = unsign_arg0_42639;
+                }
+                
+                int32_t i32_arg0_42644 = add32(zp_lhs_42637, defunc_0_get_bit_res_42642);
+                int16_t i32_res_42645 = sext_i32_i16(i32_arg0_42644);
+                int16_t defunc_0_f_res_42647;
+                int16_t defunc_0_f_res_42648;
+                int16_t defunc_0_f_res_42649;
+                int16_t defunc_0_f_res_42650;
+                
+                if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42647, &defunc_0_f_res_42648, &defunc_0_f_res_42649, &defunc_0_f_res_42650, i32_res_42645) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int16_t defunc_0_op_res_42325 = add16(defunc_0_f_res_42647, scanacc_42796);
+                int16_t defunc_0_op_res_42326 = add16(defunc_0_f_res_42648, scanacc_42797);
+                int16_t defunc_0_op_res_42327 = add16(defunc_0_f_res_42649, scanacc_42798);
+                int16_t defunc_0_op_res_42328 = add16(defunc_0_f_res_42650, scanacc_42799);
+                
+                ((int16_t *) mem_43020)[i_42805] = defunc_0_op_res_42325;
+                ((int16_t *) mem_43021)[i_42805] = defunc_0_op_res_42326;
+                ((int16_t *) mem_43022)[i_42805] = defunc_0_op_res_42327;
+                ((int16_t *) mem_43023)[i_42805] = defunc_0_op_res_42328;
+                ((int16_t *) mem_43024)[i_42805] = i32_res_42645;
+                
+                int16_t scanacc_tmp_43197 = defunc_0_op_res_42325;
+                int16_t scanacc_tmp_43198 = defunc_0_op_res_42326;
+                int16_t scanacc_tmp_43199 = defunc_0_op_res_42327;
+                int16_t scanacc_tmp_43200 = defunc_0_op_res_42328;
+                
+                scanacc_42796 = scanacc_tmp_43197;
+                scanacc_42797 = scanacc_tmp_43198;
+                scanacc_42798 = scanacc_tmp_43199;
+                scanacc_42799 = scanacc_tmp_43200;
+            }
+            discard_42811 = scanacc_42796;
+            discard_42812 = scanacc_42797;
+            discard_42813 = scanacc_42798;
+            discard_42814 = scanacc_42799;
+            
+            int16_t last_res_42329 = ((int16_t *) mem_43020)[(int64_t) 255];
+            int16_t last_res_42330 = ((int16_t *) mem_43021)[(int64_t) 255];
+            int16_t last_res_42331 = ((int16_t *) mem_43022)[(int64_t) 255];
+            int16_t last_res_42332 = ((int16_t *) mem_43023)[(int64_t) 255];
+            
+            for (int64_t write_iter_42815 = 0; write_iter_42815 < (int64_t) 256; write_iter_42815++) {
+                int16_t write_iv_42818 = ((int16_t *) mem_43024)[write_iter_42815];
+                int16_t write_iv_42819 = ((int16_t *) mem_43020)[write_iter_42815];
+                int16_t write_iv_42820 = ((int16_t *) mem_43021)[write_iter_42815];
+                int16_t write_iv_42821 = ((int16_t *) mem_43022)[write_iter_42815];
+                int16_t write_iv_42822 = ((int16_t *) mem_43023)[write_iter_42815];
+                int64_t new_index_42909 = write_iter_42815 + binop_x_42912;
+                float write_iv_42823 = ((float *) mem_42916)[new_index_42909];
+                int64_t write_iv_42824 = ((int64_t *) mem_42918)[new_index_42909];
+                int64_t defunc_0_f_res_42609;
+                
+                if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42609, last_res_42329, last_res_42330, last_res_42331, write_iv_42818, write_iv_42819, write_iv_42820, write_iv_42821, write_iv_42822) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42609) && slt64(defunc_0_f_res_42609, (int64_t) 256)) {
+                    ((float *) mem_43018)[defunc_0_f_res_42609] = write_iv_42823;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42609) && slt64(defunc_0_f_res_42609, (int64_t) 256)) {
+                    ((int64_t *) mem_43019)[defunc_0_f_res_42609] = write_iv_42824;
+                }
+            }
+            ((int16_t *) mem_43067)[(int64_t) 0] = last_res_42329;
+            ((int16_t *) mem_43067)[(int64_t) 1] = last_res_42330;
+            ((int16_t *) mem_43067)[(int64_t) 2] = last_res_42331;
+            ((int16_t *) mem_43067)[(int64_t) 3] = last_res_42332;
+            for (int64_t i_42829 = 0; i_42829 < (int64_t) 4; i_42829++) {
+                int16_t eta_p_42347 = ((int16_t *) mem_43067)[i_42829];
+                int64_t i16_res_42348 = sext_i16_i64(eta_p_42347);
+                
+                ((int64_t *) mem_43068)[i_42829] = i16_res_42348;
+            }
+            
+            int16_t tmp_42349 = add16(last_res_42329, last_res_42330);
+            int16_t tmp_42350 = add16(last_res_42331, tmp_42349);
+            
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4] = (int16_t) 0;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 1] = last_res_42329;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 2] = tmp_42349;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 3] = tmp_42350;
+            lmad_copy_4b(ctx, 1, (uint32_t *) mem_42992, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42995, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42998, i_42839 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43068, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
+        }
+        
+        int64_t discard_42851;
+        int64_t scanacc_42847 = (int64_t) 0;
+        
+        for (int64_t i_42849 = 0; i_42849 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136; i_42849++) {
+            int64_t new_index_42887 = squot64(i_42849, dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135);
+            int64_t binop_y_42889 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135 * new_index_42887;
+            int64_t new_index_42890 = i_42849 - binop_y_42889;
+            bool index_concat_cmp_42892 = sle64(n_blocks_42125, new_index_42890);
+            int64_t index_concat_branch_42896;
+            
+            if (index_concat_cmp_42892) {
+                int64_t index_concat_42894 = ((int64_t *) mem_42982)[new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42894;
+            } else {
+                int64_t index_concat_42895 = ((int64_t *) mem_42998)[new_index_42890 * (int64_t) 4 + new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42895;
+            }
+            
+            int64_t defunc_0_op_res_42364 = add64(scanacc_42847, index_concat_branch_42896);
+            
+            ((int64_t *) mem_43093)[i_42849] = defunc_0_op_res_42364;
+            
+            int64_t scanacc_tmp_43209 = defunc_0_op_res_42364;
+            
+            scanacc_42847 = scanacc_tmp_43209;
+        }
+        discard_42851 = scanacc_42847;
+        for (int64_t i_42854 = 0; i_42854 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136; i_42854++) {
+            int64_t zv_lhs_42367 = add64((int64_t) -1, i_42854);
+            int64_t tmp_42368 = smod64(zv_lhs_42367, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_42136);
+            int64_t lifted_lambda_res_42369 = ((int64_t *) mem_43093)[tmp_42368];
+            
+            ((int64_t *) mem_43101)[i_42854] = lifted_lambda_res_42369;
+        }
+        ((int64_t *) mem_43101)[(int64_t) 0] = (int64_t) 0;
+        for (int64_t write_iter_42856 = 0; write_iter_42856 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128; write_iter_42856++) {
+            bool index_concat_cmp_42878 = sle64(arg_42127, write_iter_42856);
+            float index_concat_branch_42497;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42717 = sub64(write_iter_42856, arg_42127);
+                float index_concat_42718 = ((float *) mem_42968)[index_concat_i_42717];
+                
+                index_concat_branch_42497 = index_concat_42718;
+            } else {
+                int64_t new_index_42500 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42501 = (int64_t) 256 * new_index_42500;
+                int64_t new_index_42502 = write_iter_42856 - binop_y_42501;
+                float index_concat_42503 = ((float *) mem_42992)[new_index_42500 * (int64_t) 256 + new_index_42502];
+                
+                index_concat_branch_42497 = index_concat_42503;
+            }
+            
+            int32_t i32_arg0_42504 = futrts_to_bits32(index_concat_branch_42497);
+            int32_t unsign_arg0_42505 = ashr32(i32_arg0_42504, 31);
+            int32_t unsign_arg0_42506 = 1 & unsign_arg0_42505;
+            bool cond_42507 = unsign_arg0_42506 == 1;
+            bool x_42508 = !cond_42507;
+            int32_t zlzb_rhs_42509;
+            int32_t acc_42511 = 0;
+            
+            for (int32_t i_42510 = 0; i_42510 < 2; i_42510++) {
+                int32_t get_bit_arg0_42512 = add32(blocked_radix_sort_step_arg1_42178, i_42510);
+                int32_t unsign_arg0_42513 = ashr32(i32_arg0_42504, get_bit_arg0_42512);
+                int32_t unsign_arg0_42514 = 1 & unsign_arg0_42513;
+                bool cond_f_res_42515 = get_bit_arg0_42512 == 31;
+                bool y_42516 = x_42508 && cond_f_res_42515;
+                bool cond_42517 = cond_42507 || y_42516;
+                int32_t defunc_0_get_bit_res_42518;
+                
+                if (cond_42517) {
+                    int32_t defunc_0_get_bit_res_t_res_42719 = 1 ^ unsign_arg0_42514;
+                    
+                    defunc_0_get_bit_res_42518 = defunc_0_get_bit_res_t_res_42719;
+                } else {
+                    defunc_0_get_bit_res_42518 = unsign_arg0_42514;
+                }
+                
+                int32_t zp_rhs_42520 = shl32(defunc_0_get_bit_res_42518, i_42510);
+                int32_t loopres_42521 = add32(acc_42511, zp_rhs_42520);
+                int32_t acc_tmp_43214 = loopres_42521;
+                
+                acc_42511 = acc_tmp_43214;
+            }
+            zlzb_rhs_42509 = acc_42511;
+            
+            int64_t i32_res_42522 = sext_i32_i64(zlzb_rhs_42509);
+            int64_t block_idx_42523 = sdiv64(write_iter_42856, (int64_t) 256);
+            bool x_42524 = sle64((int64_t) 0, block_idx_42523);
+            bool y_42525 = slt64(block_idx_42523, dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135);
+            bool bounds_check_42526 = x_42524 && y_42525;
+            bool index_certs_42527;
+            
+            if (!bounds_check_42526) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_42523, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:25:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:25:9-30\n   #11 ftsort.fut:24:1-25:30\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            bool x_42528 = sle64((int64_t) 0, i32_res_42522);
+            bool y_42529 = slt64(i32_res_42522, (int64_t) 4);
+            bool bounds_check_42530 = x_42528 && y_42529;
+            bool index_certs_42531;
+            
+            if (!bounds_check_42530) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_42522, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:270:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #7  ftbasics.fut:162:88-91\n   #8  ftsort.fut:25:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:25:9-30\n   #11 ftsort.fut:24:1-25:30\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            float index_concat_branch_42882;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42879 = sub64(write_iter_42856, arg_42127);
+                float index_concat_42880 = ((float *) mem_42968)[index_concat_i_42879];
+                
+                index_concat_branch_42882 = index_concat_42880;
+            } else {
+                int64_t new_index_42904 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42906 = (int64_t) 256 * new_index_42904;
+                int64_t new_index_42907 = write_iter_42856 - binop_y_42906;
+                float index_concat_42881 = ((float *) mem_42992)[new_index_42904 * (int64_t) 256 + new_index_42907];
+                
+                index_concat_branch_42882 = index_concat_42881;
+            }
+            
+            int64_t index_concat_branch_42876;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42873 = sub64(write_iter_42856, arg_42127);
+                int64_t index_concat_42874 = ((int64_t *) mem_42966)[index_concat_i_42873];
+                
+                index_concat_branch_42876 = index_concat_42874;
+            } else {
+                int64_t new_index_42900 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42902 = (int64_t) 256 * new_index_42900;
+                int64_t new_index_42903 = write_iter_42856 - binop_y_42902;
+                int64_t index_concat_42875 = ((int64_t *) mem_42995)[new_index_42900 * (int64_t) 256 + new_index_42903];
+                
+                index_concat_branch_42876 = index_concat_42875;
+            }
+            
+            int64_t binop_x_42532 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_42135 * i32_res_42522;
+            int64_t new_index_42533 = block_idx_42523 + binop_x_42532;
+            int64_t new_offset_42534 = ((int64_t *) mem_43101)[new_index_42533];
+            bool index_concat_cmp_42535 = sle64(n_blocks_42125, block_idx_42523);
+            int16_t index_concat_branch_42536;
+            
+            if (index_concat_cmp_42535) {
+                int16_t index_concat_42720 = ((int16_t *) mem_42989)[i32_res_42522];
+                
+                index_concat_branch_42536 = index_concat_42720;
+            } else {
+                int16_t index_concat_42538 = ((int16_t *) mem_43001)[block_idx_42523 * (int64_t) 4 + i32_res_42522];
+                
+                index_concat_branch_42536 = index_concat_42538;
+            }
+            
+            int64_t i16_res_42539 = sext_i16_i64(index_concat_branch_42536);
+            int64_t zp_lhs_42540 = mul64((int64_t) 256, block_idx_42523);
+            int64_t old_offset_42541 = add64(i16_res_42539, zp_lhs_42540);
+            int64_t zp_lhs_42542 = sub64(write_iter_42856, old_offset_42541);
+            int64_t idx_42543 = add64(new_offset_42534, zp_lhs_42542);
+            
+            if (sle64((int64_t) 0, idx_42543) && slt64(idx_42543, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128)) {
+                ((float *) mem_42916)[idx_42543] = index_concat_branch_42882;
+            }
+            if (sle64((int64_t) 0, idx_42543) && slt64(idx_42543, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_42128)) {
+                ((int64_t *) mem_42918)[idx_42543] = index_concat_branch_42876;
+            }
+        }
+    }
+    if (memblock_alloc(ctx, &mem_43127, bytes_43126, "mem_43127")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_43129, bytes_43128, "mem_43129")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42868 = 0; i_42868 < n_32092; i_42868++) {
+        int64_t eta_p_42435 = ((int64_t *) mem_42918)[i_42868];
+        bool x_42436 = sle64((int64_t) 0, eta_p_42435);
+        bool y_42437 = slt64(eta_p_42435, n_32092);
+        bool bounds_check_42438 = x_42436 && y_42437;
+        bool index_certs_42439;
+        
+        if (!bounds_check_42438) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_42435, "] out of bounds for array of shape [", (long long) n_32092, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:280:49-51\n   #4  ftbasics.fut:162:88-91\n   #5  ftsort.fut:25:9-25\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:25:9-30\n   #8  ftsort.fut:24:1-25:30\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int64_t index_primexp_42440 = add64(incr_32093, eta_p_42435);
+        float lifted_lambda_res_42441 = ((float *) xs_mem_42914.mem)[eta_p_42435];
+        
+        ((int64_t *) mem_43127.mem)[i_42868] = index_primexp_42440;
+        ((float *) mem_43129.mem)[i_42868] = lifted_lambda_res_42441;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_43127, "mem_43127") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_out_43176, &mem_43129, "mem_43129") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43256, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43257, &mem_out_43176, "mem_out_43176") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        free(mem_42916);
+        free(mem_42918);
+        free(mem_42926);
+        free(mem_42928);
+        free(mem_42930);
+        free(mem_42932);
+        free(mem_42934);
+        free(mem_42966);
+        free(mem_42968);
+        free(mem_42981);
+        free(mem_42982);
+        free(mem_42989);
+        free(mem_42992);
+        free(mem_42995);
+        free(mem_42998);
+        free(mem_43001);
+        free(mem_43018);
+        free(mem_43019);
+        free(mem_43020);
+        free(mem_43021);
+        free(mem_43022);
+        free(mem_43023);
+        free(mem_43024);
+        free(mem_43067);
+        free(mem_43068);
+        free(mem_43093);
+        free(mem_43101);
+        if (memblock_unref(ctx, &mem_43129, "mem_43129") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_43127, "mem_43127") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43176, "mem_out_43176") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_int(struct futhark_context *ctx, struct memblock *mem_out_p_43285, struct memblock *mem_out_p_43286, struct memblock xs_mem_42914, int64_t n_26683, int64_t incr_26684)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int64_t mem_42916_cached_sizze_43287 = 0;
+    unsigned char *mem_42916 = NULL;
+    int64_t mem_42918_cached_sizze_43288 = 0;
+    unsigned char *mem_42918 = NULL;
+    int64_t mem_42926_cached_sizze_43289 = 0;
+    unsigned char *mem_42926 = NULL;
+    int64_t mem_42928_cached_sizze_43290 = 0;
+    unsigned char *mem_42928 = NULL;
+    int64_t mem_42930_cached_sizze_43291 = 0;
+    unsigned char *mem_42930 = NULL;
+    int64_t mem_42932_cached_sizze_43292 = 0;
+    unsigned char *mem_42932 = NULL;
+    int64_t mem_42934_cached_sizze_43293 = 0;
+    unsigned char *mem_42934 = NULL;
+    int64_t mem_42966_cached_sizze_43294 = 0;
+    unsigned char *mem_42966 = NULL;
+    int64_t mem_42968_cached_sizze_43295 = 0;
+    unsigned char *mem_42968 = NULL;
+    int64_t mem_42981_cached_sizze_43296 = 0;
+    unsigned char *mem_42981 = NULL;
+    int64_t mem_42982_cached_sizze_43297 = 0;
+    unsigned char *mem_42982 = NULL;
+    int64_t mem_42989_cached_sizze_43298 = 0;
+    unsigned char *mem_42989 = NULL;
+    int64_t mem_42992_cached_sizze_43299 = 0;
+    unsigned char *mem_42992 = NULL;
+    int64_t mem_42995_cached_sizze_43300 = 0;
+    unsigned char *mem_42995 = NULL;
+    int64_t mem_42998_cached_sizze_43301 = 0;
+    unsigned char *mem_42998 = NULL;
+    int64_t mem_43001_cached_sizze_43302 = 0;
+    unsigned char *mem_43001 = NULL;
+    int64_t mem_43018_cached_sizze_43303 = 0;
+    unsigned char *mem_43018 = NULL;
+    int64_t mem_43019_cached_sizze_43304 = 0;
+    unsigned char *mem_43019 = NULL;
+    int64_t mem_43020_cached_sizze_43305 = 0;
+    unsigned char *mem_43020 = NULL;
+    int64_t mem_43021_cached_sizze_43306 = 0;
+    unsigned char *mem_43021 = NULL;
+    int64_t mem_43022_cached_sizze_43307 = 0;
+    unsigned char *mem_43022 = NULL;
+    int64_t mem_43023_cached_sizze_43308 = 0;
+    unsigned char *mem_43023 = NULL;
+    int64_t mem_43024_cached_sizze_43309 = 0;
+    unsigned char *mem_43024 = NULL;
+    int64_t mem_43067_cached_sizze_43310 = 0;
+    unsigned char *mem_43067 = NULL;
+    int64_t mem_43068_cached_sizze_43311 = 0;
+    unsigned char *mem_43068 = NULL;
+    int64_t mem_43093_cached_sizze_43312 = 0;
+    unsigned char *mem_43093 = NULL;
+    int64_t mem_43101_cached_sizze_43313 = 0;
+    unsigned char *mem_43101 = NULL;
+    struct memblock mem_43129;
+    
+    mem_43129.references = NULL;
+    
+    struct memblock mem_43127;
+    
+    mem_43127.references = NULL;
+    
+    struct memblock mem_out_43176;
+    
+    mem_out_43176.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t rng_40663 = add64(n_26683, incr_26684);
+    bool bounds_invalid_upwards_40664 = slt64(rng_40663, incr_26684);
+    bool valid_40665 = !bounds_invalid_upwards_40664;
+    bool range_valid_c_40666;
+    
+    if (!valid_40665) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_26684, "..<", (long long) rng_40663, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:114:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:114:32-63\n   #4  ftsort.fut:19:9-23\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:19:9-28\n   #7  ftsort.fut:18:1-19:28\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool cond_40667 = n_26683 == (int64_t) 0;
+    int32_t iters_40668;
+    
+    if (cond_40667) {
+        iters_40668 = 0;
+    } else {
+        iters_40668 = 16;
+    }
+    
+    int64_t n_blocks_40669 = sdiv64(n_26683, (int64_t) 256);
+    int64_t rest_40670 = smod64(n_26683, (int64_t) 256);
+    int64_t arg_40671 = mul64((int64_t) 256, n_blocks_40669);
+    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672 = add64(rest_40670, arg_40671);
+    bool dim_match_40673 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672 == n_26683;
+    bool empty_or_match_cert_40674;
+    
+    if (!dim_match_40673) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_26683, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "](i32, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #5  ftbasics.fut:115:86-89\n   #6  ftsort.fut:19:9-23\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:19:9-28\n   #9  ftsort.fut:18:1-19:28\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42915 = (int64_t) 4 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672;
+    int64_t bytes_42917 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672;
+    bool loop_nonempty_40678 = slt32(0, iters_40668);
+    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 = add64((int64_t) 1, n_blocks_40669);
+    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+    bool empty_slice_40681 = arg_40671 == (int64_t) 0;
+    int64_t m_40682 = sub64(arg_40671, (int64_t) 1);
+    bool zzero_leq_i_p_m_t_s_40683 = sle64((int64_t) 0, m_40682);
+    bool i_p_m_t_s_leq_w_40684 = slt64(m_40682, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool i_lte_j_40685 = sle64((int64_t) 0, arg_40671);
+    bool y_40686 = zzero_leq_i_p_m_t_s_40683 && i_p_m_t_s_leq_w_40684;
+    bool forwards_ok_40687 = i_lte_j_40685 && y_40686;
+    bool ok_or_empty_40688 = empty_slice_40681 || forwards_ok_40687;
+    bool loop_not_taken_40689 = !loop_nonempty_40678;
+    bool protect_assert_disj_40690 = ok_or_empty_40688 || loop_not_taken_40689;
+    bool index_certs_40691;
+    
+    if (!protect_assert_disj_40690) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_40671, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:19:9-23\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:19:9-28\n   #10 ftsort.fut:18:1-19:28\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool empty_slice_40692 = rest_40670 == (int64_t) 0;
+    int64_t m_40693 = sub64(rest_40670, (int64_t) 1);
+    int64_t i_p_m_t_s_40694 = add64(arg_40671, m_40693);
+    bool zzero_leq_i_p_m_t_s_40695 = sle64((int64_t) 0, i_p_m_t_s_40694);
+    bool i_p_m_t_s_leq_w_40696 = slt64(i_p_m_t_s_40694, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool i_lte_j_40697 = sle64(arg_40671, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool y_40698 = zzero_leq_i_p_m_t_s_40695 && i_p_m_t_s_leq_w_40696;
+    bool forwards_ok_40699 = i_lte_j_40697 && y_40698;
+    bool ok_or_empty_40700 = empty_slice_40692 || forwards_ok_40699;
+    bool protect_assert_disj_40701 = loop_not_taken_40689 || ok_or_empty_40700;
+    bool index_certs_40702;
+    
+    if (!protect_assert_disj_40701) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_40671, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:19:9-23\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:19:9-28\n   #10 ftsort.fut:18:1-19:28\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool binop_x_40703 = sle64((int64_t) 0, n_blocks_40669);
+    bool protect_assert_disj_40704 = loop_not_taken_40689 || binop_x_40703;
+    bool dim_ok_cert_40705;
+    
+    if (!protect_assert_disj_40704) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_40671, "] to array of shape [", (long long) n_blocks_40669, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:19:9-23\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:19:9-28\n   #10 ftsort.fut:18:1-19:28\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool y_40707 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680);
+    bool protect_assert_disj_40708 = loop_not_taken_40689 || y_40707;
+    bool index_certs_40709;
+    
+    if (!protect_assert_disj_40708) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:19:9-23\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:19:9-28\n   #11 ftsort.fut:18:1-19:28\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool x_40711 = sle64((int64_t) 0, m_40693);
+    bool y_40712 = slt64(m_40693, rest_40670);
+    bool bounds_check_40713 = x_40711 && y_40712;
+    bool protect_assert_disj_40714 = empty_slice_40692 || bounds_check_40713;
+    bool protect_assert_disj_40715 = loop_not_taken_40689 || protect_assert_disj_40714;
+    bool index_certs_40716;
+    
+    if (!protect_assert_disj_40715) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_40693, "] out of bounds for array of shape [", (long long) rest_40670, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:166:41-45\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:19:9-23\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:19:9-28\n   #11 ftsort.fut:18:1-19:28\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42925 = (int64_t) 2 * rest_40670;
+    int64_t bytes_42965 = (int64_t) 8 * rest_40670;
+    int64_t bytes_42967 = (int64_t) 4 * rest_40670;
+    int64_t bytes_42991 = (int64_t) 1024 * n_blocks_40669;
+    int64_t bytes_42994 = (int64_t) 2048 * n_blocks_40669;
+    int64_t bytes_42997 = (int64_t) 32 * n_blocks_40669;
+    int64_t bytes_43000 = (int64_t) 8 * n_blocks_40669;
+    int64_t bytes_43092 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679;
+    bool dim_match_40944 = n_26683 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672;
+    bool empty_or_match_cert_40945;
+    
+    if (!dim_match_40944) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "] cannot match shape of type `[", (long long) n_26683, "](i32, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:19:9-23\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:19:9-28\n   #11 ftsort.fut:18:1-19:28\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_43126 = (int64_t) 8 * n_26683;
+    int64_t bytes_43128 = (int64_t) 4 * n_26683;
+    
+    if (mem_42916_cached_sizze_43287 < bytes_42915) {
+        err = lexical_realloc(ctx, &mem_42916, &mem_42916_cached_sizze_43287, bytes_42915);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    lmad_copy_4b(ctx, 1, (uint32_t *) mem_42916, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) xs_mem_42914.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672});
+    if (mem_42918_cached_sizze_43288 < bytes_42917) {
+        err = lexical_realloc(ctx, &mem_42918, &mem_42918_cached_sizze_43288, bytes_42917);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int64_t i_43177 = 0; i_43177 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672; i_43177++) {
+        int64_t x_43178 = (int64_t) 0 + i_43177 * (int64_t) 1;
+        
+        ((int64_t *) mem_42918)[i_43177] = x_43178;
+    }
+    if (mem_42926_cached_sizze_43289 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42926, &mem_42926_cached_sizze_43289, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42928_cached_sizze_43290 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42928, &mem_42928_cached_sizze_43290, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42930_cached_sizze_43291 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42930, &mem_42930_cached_sizze_43291, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42932_cached_sizze_43292 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42932, &mem_42932_cached_sizze_43292, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42934_cached_sizze_43293 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42934, &mem_42934_cached_sizze_43293, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42966_cached_sizze_43294 < bytes_42965) {
+        err = lexical_realloc(ctx, &mem_42966, &mem_42966_cached_sizze_43294, bytes_42965);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42968_cached_sizze_43295 < bytes_42967) {
+        err = lexical_realloc(ctx, &mem_42968, &mem_42968_cached_sizze_43295, bytes_42967);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42981_cached_sizze_43296 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42981, &mem_42981_cached_sizze_43296, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42982_cached_sizze_43297 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_42982, &mem_42982_cached_sizze_43297, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42989_cached_sizze_43298 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42989, &mem_42989_cached_sizze_43298, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42992_cached_sizze_43299 < bytes_42991) {
+        err = lexical_realloc(ctx, &mem_42992, &mem_42992_cached_sizze_43299, bytes_42991);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42995_cached_sizze_43300 < bytes_42994) {
+        err = lexical_realloc(ctx, &mem_42995, &mem_42995_cached_sizze_43300, bytes_42994);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42998_cached_sizze_43301 < bytes_42997) {
+        err = lexical_realloc(ctx, &mem_42998, &mem_42998_cached_sizze_43301, bytes_42997);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43001_cached_sizze_43302 < bytes_43000) {
+        err = lexical_realloc(ctx, &mem_43001, &mem_43001_cached_sizze_43302, bytes_43000);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43018_cached_sizze_43303 < (int64_t) 1024) {
+        err = lexical_realloc(ctx, &mem_43018, &mem_43018_cached_sizze_43303, (int64_t) 1024);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43019_cached_sizze_43304 < (int64_t) 2048) {
+        err = lexical_realloc(ctx, &mem_43019, &mem_43019_cached_sizze_43304, (int64_t) 2048);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43020_cached_sizze_43305 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43020, &mem_43020_cached_sizze_43305, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43021_cached_sizze_43306 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43021, &mem_43021_cached_sizze_43306, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43022_cached_sizze_43307 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43022, &mem_43022_cached_sizze_43307, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43023_cached_sizze_43308 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43023, &mem_43023_cached_sizze_43308, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43024_cached_sizze_43309 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43024, &mem_43024_cached_sizze_43309, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43067_cached_sizze_43310 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_43067, &mem_43067_cached_sizze_43310, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43068_cached_sizze_43311 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_43068, &mem_43068_cached_sizze_43311, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43093_cached_sizze_43312 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43093, &mem_43093_cached_sizze_43312, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43101_cached_sizze_43313 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43101, &mem_43101_cached_sizze_43313, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int32_t i_40719 = 0; i_40719 < iters_40668; i_40719++) {
+        int32_t blocked_radix_sort_step_arg1_40722 = mul32(2, i_40719);
+        int32_t get_bit_arg0_40727 = add32(1, blocked_radix_sort_step_arg1_40722);
+        bool cond_40728 = get_bit_arg0_40727 == 31;
+        bool cond_40729 = blocked_radix_sort_step_arg1_40722 == 31;
+        int16_t discard_42771;
+        int16_t discard_42772;
+        int16_t discard_42773;
+        int16_t discard_42774;
+        int16_t scanacc_42756;
+        int16_t scanacc_42757;
+        int16_t scanacc_42758;
+        int16_t scanacc_42759;
+        
+        scanacc_42756 = (int16_t) 0;
+        scanacc_42757 = (int16_t) 0;
+        scanacc_42758 = (int16_t) 0;
+        scanacc_42759 = (int16_t) 0;
+        for (int64_t i_42765 = 0; i_42765 < rest_40670; i_42765++) {
+            int64_t slice_42899 = arg_40671 + i_42765;
+            int32_t eta_p_42562 = ((int32_t *) mem_42916)[slice_42899];
+            int32_t zgzg_res_42563 = ashr32(eta_p_42562, get_bit_arg0_40727);
+            int32_t za_res_42564 = 1 & zgzg_res_42563;
+            int32_t defunc_0_get_bit_res_42565;
+            
+            if (cond_40728) {
+                int32_t defunc_0_get_bit_res_t_res_42680 = 1 ^ za_res_42564;
+                
+                defunc_0_get_bit_res_42565 = defunc_0_get_bit_res_t_res_42680;
+            } else {
+                defunc_0_get_bit_res_42565 = za_res_42564;
+            }
+            
+            int32_t zp_lhs_42567 = mul32(2, defunc_0_get_bit_res_42565);
+            int32_t zgzg_res_42568 = ashr32(eta_p_42562, blocked_radix_sort_step_arg1_40722);
+            int32_t za_res_42569 = 1 & zgzg_res_42568;
+            int32_t defunc_0_get_bit_res_42570;
+            
+            if (cond_40729) {
+                int32_t defunc_0_get_bit_res_t_res_42681 = 1 ^ za_res_42569;
+                
+                defunc_0_get_bit_res_42570 = defunc_0_get_bit_res_t_res_42681;
+            } else {
+                defunc_0_get_bit_res_42570 = za_res_42569;
+            }
+            
+            int32_t i32_arg0_42572 = add32(zp_lhs_42567, defunc_0_get_bit_res_42570);
+            int16_t i32_res_42573 = sext_i32_i16(i32_arg0_42572);
+            int16_t defunc_0_f_res_42575;
+            int16_t defunc_0_f_res_42576;
+            int16_t defunc_0_f_res_42577;
+            int16_t defunc_0_f_res_42578;
+            
+            if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42575, &defunc_0_f_res_42576, &defunc_0_f_res_42577, &defunc_0_f_res_42578, i32_res_42573) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int16_t defunc_0_op_res_40766 = add16(defunc_0_f_res_42575, scanacc_42756);
+            int16_t defunc_0_op_res_40767 = add16(defunc_0_f_res_42576, scanacc_42757);
+            int16_t defunc_0_op_res_40768 = add16(defunc_0_f_res_42577, scanacc_42758);
+            int16_t defunc_0_op_res_40769 = add16(defunc_0_f_res_42578, scanacc_42759);
+            
+            ((int16_t *) mem_42926)[i_42765] = defunc_0_op_res_40766;
+            ((int16_t *) mem_42928)[i_42765] = defunc_0_op_res_40767;
+            ((int16_t *) mem_42930)[i_42765] = defunc_0_op_res_40768;
+            ((int16_t *) mem_42932)[i_42765] = defunc_0_op_res_40769;
+            ((int16_t *) mem_42934)[i_42765] = i32_res_42573;
+            
+            int16_t scanacc_tmp_43181 = defunc_0_op_res_40766;
+            int16_t scanacc_tmp_43182 = defunc_0_op_res_40767;
+            int16_t scanacc_tmp_43183 = defunc_0_op_res_40768;
+            int16_t scanacc_tmp_43184 = defunc_0_op_res_40769;
+            
+            scanacc_42756 = scanacc_tmp_43181;
+            scanacc_42757 = scanacc_tmp_43182;
+            scanacc_42758 = scanacc_tmp_43183;
+            scanacc_42759 = scanacc_tmp_43184;
+        }
+        discard_42771 = scanacc_42756;
+        discard_42772 = scanacc_42757;
+        discard_42773 = scanacc_42758;
+        discard_42774 = scanacc_42759;
+        
+        int16_t defunc_0_radix_sort_step_i16_res_40770;
+        int16_t defunc_0_radix_sort_step_i16_res_40771;
+        int16_t defunc_0_radix_sort_step_i16_res_40772;
+        int16_t defunc_0_radix_sort_step_i16_res_40773;
+        
+        if (empty_slice_40692) {
+            defunc_0_radix_sort_step_i16_res_40770 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40771 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40772 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40773 = (int16_t) 0;
+        } else {
+            int16_t last_res_40774 = ((int16_t *) mem_42926)[m_40693];
+            int16_t last_res_40775 = ((int16_t *) mem_42928)[m_40693];
+            int16_t last_res_40776 = ((int16_t *) mem_42930)[m_40693];
+            int16_t last_res_40777 = ((int16_t *) mem_42932)[m_40693];
+            
+            defunc_0_radix_sort_step_i16_res_40770 = last_res_40774;
+            defunc_0_radix_sort_step_i16_res_40771 = last_res_40775;
+            defunc_0_radix_sort_step_i16_res_40772 = last_res_40776;
+            defunc_0_radix_sort_step_i16_res_40773 = last_res_40777;
+        }
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_42966, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + (int64_t) 1 * arg_40671, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40670});
+        lmad_copy_4b(ctx, 1, (uint32_t *) mem_42968, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_42916, (int64_t) 0 + (int64_t) 1 * arg_40671, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40670});
+        for (int64_t write_iter_42775 = 0; write_iter_42775 < rest_40670; write_iter_42775++) {
+            int16_t write_iv_42778 = ((int16_t *) mem_42934)[write_iter_42775];
+            int16_t write_iv_42779 = ((int16_t *) mem_42926)[write_iter_42775];
+            int16_t write_iv_42780 = ((int16_t *) mem_42928)[write_iter_42775];
+            int16_t write_iv_42781 = ((int16_t *) mem_42930)[write_iter_42775];
+            int16_t write_iv_42782 = ((int16_t *) mem_42932)[write_iter_42775];
+            int64_t slice_42898 = arg_40671 + write_iter_42775;
+            int32_t write_iv_42783 = ((int32_t *) mem_42916)[slice_42898];
+            int64_t write_iv_42784 = ((int64_t *) mem_42918)[slice_42898];
+            int64_t defunc_0_f_res_42546;
+            
+            if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42546, defunc_0_radix_sort_step_i16_res_40770, defunc_0_radix_sort_step_i16_res_40771, defunc_0_radix_sort_step_i16_res_40772, write_iv_42778, write_iv_42779, write_iv_42780, write_iv_42781, write_iv_42782) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42546) && slt64(defunc_0_f_res_42546, rest_40670)) {
+                ((int32_t *) mem_42968)[defunc_0_f_res_42546] = write_iv_42783;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42546) && slt64(defunc_0_f_res_42546, rest_40670)) {
+                ((int64_t *) mem_42966)[defunc_0_f_res_42546] = write_iv_42784;
+            }
+        }
+        ((int16_t *) mem_42981)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_40770;
+        ((int16_t *) mem_42981)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40771;
+        ((int16_t *) mem_42981)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_40772;
+        ((int16_t *) mem_42981)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_40773;
+        for (int64_t i_42789 = 0; i_42789 < (int64_t) 4; i_42789++) {
+            int16_t eta_p_40794 = ((int16_t *) mem_42981)[i_42789];
+            int64_t i16_res_40795 = sext_i16_i64(eta_p_40794);
+            
+            ((int64_t *) mem_42982)[i_42789] = i16_res_40795;
+        }
+        
+        int16_t tmp_40796 = add16(defunc_0_radix_sort_step_i16_res_40770, defunc_0_radix_sort_step_i16_res_40771);
+        int16_t tmp_40797 = add16(defunc_0_radix_sort_step_i16_res_40772, tmp_40796);
+        
+        ((int16_t *) mem_42989)[(int64_t) 0] = (int16_t) 0;
+        ((int16_t *) mem_42989)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40770;
+        ((int16_t *) mem_42989)[(int64_t) 2] = tmp_40796;
+        ((int16_t *) mem_42989)[(int64_t) 3] = tmp_40797;
+        for (int64_t i_42839 = 0; i_42839 < n_blocks_40669; i_42839++) {
+            lmad_copy_4b(ctx, 1, (uint32_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_42916, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            
+            int64_t binop_x_42912 = (int64_t) 256 * i_42839;
+            int16_t discard_42811;
+            int16_t discard_42812;
+            int16_t discard_42813;
+            int16_t discard_42814;
+            int16_t scanacc_42796;
+            int16_t scanacc_42797;
+            int16_t scanacc_42798;
+            int16_t scanacc_42799;
+            
+            scanacc_42796 = (int16_t) 0;
+            scanacc_42797 = (int16_t) 0;
+            scanacc_42798 = (int16_t) 0;
+            scanacc_42799 = (int16_t) 0;
+            for (int64_t i_42805 = 0; i_42805 < (int64_t) 256; i_42805++) {
+                int64_t new_index_42913 = i_42805 + binop_x_42912;
+                int32_t eta_p_42609 = ((int32_t *) mem_42916)[new_index_42913];
+                int32_t zgzg_res_42610 = ashr32(eta_p_42609, get_bit_arg0_40727);
+                int32_t za_res_42611 = 1 & zgzg_res_42610;
+                int32_t defunc_0_get_bit_res_42612;
+                
+                if (cond_40728) {
+                    int32_t defunc_0_get_bit_res_t_res_42682 = 1 ^ za_res_42611;
+                    
+                    defunc_0_get_bit_res_42612 = defunc_0_get_bit_res_t_res_42682;
+                } else {
+                    defunc_0_get_bit_res_42612 = za_res_42611;
+                }
+                
+                int32_t zp_lhs_42614 = mul32(2, defunc_0_get_bit_res_42612);
+                int32_t zgzg_res_42615 = ashr32(eta_p_42609, blocked_radix_sort_step_arg1_40722);
+                int32_t za_res_42616 = 1 & zgzg_res_42615;
+                int32_t defunc_0_get_bit_res_42617;
+                
+                if (cond_40729) {
+                    int32_t defunc_0_get_bit_res_t_res_42683 = 1 ^ za_res_42616;
+                    
+                    defunc_0_get_bit_res_42617 = defunc_0_get_bit_res_t_res_42683;
+                } else {
+                    defunc_0_get_bit_res_42617 = za_res_42616;
+                }
+                
+                int32_t i32_arg0_42619 = add32(zp_lhs_42614, defunc_0_get_bit_res_42617);
+                int16_t i32_res_42620 = sext_i32_i16(i32_arg0_42619);
+                int16_t defunc_0_f_res_42622;
+                int16_t defunc_0_f_res_42623;
+                int16_t defunc_0_f_res_42624;
+                int16_t defunc_0_f_res_42625;
+                
+                if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42622, &defunc_0_f_res_42623, &defunc_0_f_res_42624, &defunc_0_f_res_42625, i32_res_42620) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int16_t defunc_0_op_res_40847 = add16(defunc_0_f_res_42622, scanacc_42796);
+                int16_t defunc_0_op_res_40848 = add16(defunc_0_f_res_42623, scanacc_42797);
+                int16_t defunc_0_op_res_40849 = add16(defunc_0_f_res_42624, scanacc_42798);
+                int16_t defunc_0_op_res_40850 = add16(defunc_0_f_res_42625, scanacc_42799);
+                
+                ((int16_t *) mem_43020)[i_42805] = defunc_0_op_res_40847;
+                ((int16_t *) mem_43021)[i_42805] = defunc_0_op_res_40848;
+                ((int16_t *) mem_43022)[i_42805] = defunc_0_op_res_40849;
+                ((int16_t *) mem_43023)[i_42805] = defunc_0_op_res_40850;
+                ((int16_t *) mem_43024)[i_42805] = i32_res_42620;
+                
+                int16_t scanacc_tmp_43197 = defunc_0_op_res_40847;
+                int16_t scanacc_tmp_43198 = defunc_0_op_res_40848;
+                int16_t scanacc_tmp_43199 = defunc_0_op_res_40849;
+                int16_t scanacc_tmp_43200 = defunc_0_op_res_40850;
+                
+                scanacc_42796 = scanacc_tmp_43197;
+                scanacc_42797 = scanacc_tmp_43198;
+                scanacc_42798 = scanacc_tmp_43199;
+                scanacc_42799 = scanacc_tmp_43200;
+            }
+            discard_42811 = scanacc_42796;
+            discard_42812 = scanacc_42797;
+            discard_42813 = scanacc_42798;
+            discard_42814 = scanacc_42799;
+            
+            int16_t last_res_40851 = ((int16_t *) mem_43020)[(int64_t) 255];
+            int16_t last_res_40852 = ((int16_t *) mem_43021)[(int64_t) 255];
+            int16_t last_res_40853 = ((int16_t *) mem_43022)[(int64_t) 255];
+            int16_t last_res_40854 = ((int16_t *) mem_43023)[(int64_t) 255];
+            
+            for (int64_t write_iter_42815 = 0; write_iter_42815 < (int64_t) 256; write_iter_42815++) {
+                int16_t write_iv_42818 = ((int16_t *) mem_43024)[write_iter_42815];
+                int16_t write_iv_42819 = ((int16_t *) mem_43020)[write_iter_42815];
+                int16_t write_iv_42820 = ((int16_t *) mem_43021)[write_iter_42815];
+                int16_t write_iv_42821 = ((int16_t *) mem_43022)[write_iter_42815];
+                int16_t write_iv_42822 = ((int16_t *) mem_43023)[write_iter_42815];
+                int64_t new_index_42909 = write_iter_42815 + binop_x_42912;
+                int32_t write_iv_42823 = ((int32_t *) mem_42916)[new_index_42909];
+                int64_t write_iv_42824 = ((int64_t *) mem_42918)[new_index_42909];
+                int64_t defunc_0_f_res_42593;
+                
+                if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42593, last_res_40851, last_res_40852, last_res_40853, write_iv_42818, write_iv_42819, write_iv_42820, write_iv_42821, write_iv_42822) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42593) && slt64(defunc_0_f_res_42593, (int64_t) 256)) {
+                    ((int32_t *) mem_43018)[defunc_0_f_res_42593] = write_iv_42823;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42593) && slt64(defunc_0_f_res_42593, (int64_t) 256)) {
+                    ((int64_t *) mem_43019)[defunc_0_f_res_42593] = write_iv_42824;
+                }
+            }
+            ((int16_t *) mem_43067)[(int64_t) 0] = last_res_40851;
+            ((int16_t *) mem_43067)[(int64_t) 1] = last_res_40852;
+            ((int16_t *) mem_43067)[(int64_t) 2] = last_res_40853;
+            ((int16_t *) mem_43067)[(int64_t) 3] = last_res_40854;
+            for (int64_t i_42829 = 0; i_42829 < (int64_t) 4; i_42829++) {
+                int16_t eta_p_40869 = ((int16_t *) mem_43067)[i_42829];
+                int64_t i16_res_40870 = sext_i16_i64(eta_p_40869);
+                
+                ((int64_t *) mem_43068)[i_42829] = i16_res_40870;
+            }
+            
+            int16_t tmp_40871 = add16(last_res_40851, last_res_40852);
+            int16_t tmp_40872 = add16(last_res_40853, tmp_40871);
+            
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4] = (int16_t) 0;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 1] = last_res_40851;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 2] = tmp_40871;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 3] = tmp_40872;
+            lmad_copy_4b(ctx, 1, (uint32_t *) mem_42992, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42995, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42998, i_42839 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43068, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
+        }
+        
+        int64_t discard_42851;
+        int64_t scanacc_42847 = (int64_t) 0;
+        
+        for (int64_t i_42849 = 0; i_42849 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680; i_42849++) {
+            int64_t new_index_42887 = squot64(i_42849, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+            int64_t binop_y_42889 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 * new_index_42887;
+            int64_t new_index_42890 = i_42849 - binop_y_42889;
+            bool index_concat_cmp_42892 = sle64(n_blocks_40669, new_index_42890);
+            int64_t index_concat_branch_42896;
+            
+            if (index_concat_cmp_42892) {
+                int64_t index_concat_42894 = ((int64_t *) mem_42982)[new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42894;
+            } else {
+                int64_t index_concat_42895 = ((int64_t *) mem_42998)[new_index_42890 * (int64_t) 4 + new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42895;
+            }
+            
+            int64_t defunc_0_op_res_40884 = add64(scanacc_42847, index_concat_branch_42896);
+            
+            ((int64_t *) mem_43093)[i_42849] = defunc_0_op_res_40884;
+            
+            int64_t scanacc_tmp_43209 = defunc_0_op_res_40884;
+            
+            scanacc_42847 = scanacc_tmp_43209;
+        }
+        discard_42851 = scanacc_42847;
+        for (int64_t i_42854 = 0; i_42854 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680; i_42854++) {
+            int64_t zv_lhs_40887 = add64((int64_t) -1, i_42854);
+            int64_t tmp_40888 = smod64(zv_lhs_40887, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680);
+            int64_t lifted_lambda_res_40889 = ((int64_t *) mem_43093)[tmp_40888];
+            
+            ((int64_t *) mem_43101)[i_42854] = lifted_lambda_res_40889;
+        }
+        ((int64_t *) mem_43101)[(int64_t) 0] = (int64_t) 0;
+        for (int64_t write_iter_42856 = 0; write_iter_42856 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672; write_iter_42856++) {
+            bool index_concat_cmp_42878 = sle64(arg_40671, write_iter_42856);
+            int32_t index_concat_branch_42497;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42692 = sub64(write_iter_42856, arg_40671);
+                int32_t index_concat_42693 = ((int32_t *) mem_42968)[index_concat_i_42692];
+                
+                index_concat_branch_42497 = index_concat_42693;
+            } else {
+                int64_t new_index_42500 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42501 = (int64_t) 256 * new_index_42500;
+                int64_t new_index_42502 = write_iter_42856 - binop_y_42501;
+                int32_t index_concat_42503 = ((int32_t *) mem_42992)[new_index_42500 * (int64_t) 256 + new_index_42502];
+                
+                index_concat_branch_42497 = index_concat_42503;
+            }
+            
+            int32_t zlzb_rhs_42504;
+            int32_t acc_42506 = 0;
+            
+            for (int32_t i_42505 = 0; i_42505 < 2; i_42505++) {
+                int32_t get_bit_arg0_42507 = add32(blocked_radix_sort_step_arg1_40722, i_42505);
+                int32_t zgzg_res_42508 = ashr32(index_concat_branch_42497, get_bit_arg0_42507);
+                int32_t za_res_42509 = 1 & zgzg_res_42508;
+                bool cond_42510 = get_bit_arg0_42507 == 31;
+                int32_t defunc_0_get_bit_res_42511;
+                
+                if (cond_42510) {
+                    int32_t defunc_0_get_bit_res_t_res_42694 = 1 ^ za_res_42509;
+                    
+                    defunc_0_get_bit_res_42511 = defunc_0_get_bit_res_t_res_42694;
+                } else {
+                    defunc_0_get_bit_res_42511 = za_res_42509;
+                }
+                
+                int32_t zp_rhs_42513 = shl32(defunc_0_get_bit_res_42511, i_42505);
+                int32_t loopres_42514 = add32(acc_42506, zp_rhs_42513);
+                int32_t acc_tmp_43214 = loopres_42514;
+                
+                acc_42506 = acc_tmp_43214;
+            }
+            zlzb_rhs_42504 = acc_42506;
+            
+            int64_t i32_res_42515 = sext_i32_i64(zlzb_rhs_42504);
+            int64_t block_idx_42516 = sdiv64(write_iter_42856, (int64_t) 256);
+            bool x_42517 = sle64((int64_t) 0, block_idx_42516);
+            bool y_42518 = slt64(block_idx_42516, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+            bool bounds_check_42519 = x_42517 && y_42518;
+            bool index_certs_42520;
+            
+            if (!bounds_check_42519) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_42516, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:19:9-23\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:19:9-28\n   #12 ftsort.fut:18:1-19:28\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            bool x_42521 = sle64((int64_t) 0, i32_res_42515);
+            bool y_42522 = slt64(i32_res_42515, (int64_t) 4);
+            bool bounds_check_42523 = x_42521 && y_42522;
+            bool index_certs_42524;
+            
+            if (!bounds_check_42523) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_42515, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:19:9-23\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:19:9-28\n   #12 ftsort.fut:18:1-19:28\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            int32_t index_concat_branch_42882;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42879 = sub64(write_iter_42856, arg_40671);
+                int32_t index_concat_42880 = ((int32_t *) mem_42968)[index_concat_i_42879];
+                
+                index_concat_branch_42882 = index_concat_42880;
+            } else {
+                int64_t new_index_42904 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42906 = (int64_t) 256 * new_index_42904;
+                int64_t new_index_42907 = write_iter_42856 - binop_y_42906;
+                int32_t index_concat_42881 = ((int32_t *) mem_42992)[new_index_42904 * (int64_t) 256 + new_index_42907];
+                
+                index_concat_branch_42882 = index_concat_42881;
+            }
+            
+            int64_t index_concat_branch_42876;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42873 = sub64(write_iter_42856, arg_40671);
+                int64_t index_concat_42874 = ((int64_t *) mem_42966)[index_concat_i_42873];
+                
+                index_concat_branch_42876 = index_concat_42874;
+            } else {
+                int64_t new_index_42900 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42902 = (int64_t) 256 * new_index_42900;
+                int64_t new_index_42903 = write_iter_42856 - binop_y_42902;
+                int64_t index_concat_42875 = ((int64_t *) mem_42995)[new_index_42900 * (int64_t) 256 + new_index_42903];
+                
+                index_concat_branch_42876 = index_concat_42875;
+            }
+            
+            int64_t binop_x_42525 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 * i32_res_42515;
+            int64_t new_index_42526 = block_idx_42516 + binop_x_42525;
+            int64_t new_offset_42527 = ((int64_t *) mem_43101)[new_index_42526];
+            bool index_concat_cmp_42528 = sle64(n_blocks_40669, block_idx_42516);
+            int16_t index_concat_branch_42529;
+            
+            if (index_concat_cmp_42528) {
+                int16_t index_concat_42695 = ((int16_t *) mem_42989)[i32_res_42515];
+                
+                index_concat_branch_42529 = index_concat_42695;
+            } else {
+                int16_t index_concat_42531 = ((int16_t *) mem_43001)[block_idx_42516 * (int64_t) 4 + i32_res_42515];
+                
+                index_concat_branch_42529 = index_concat_42531;
+            }
+            
+            int64_t i16_res_42532 = sext_i16_i64(index_concat_branch_42529);
+            int64_t zp_lhs_42533 = mul64((int64_t) 256, block_idx_42516);
+            int64_t old_offset_42534 = add64(i16_res_42532, zp_lhs_42533);
+            int64_t zp_lhs_42535 = sub64(write_iter_42856, old_offset_42534);
+            int64_t idx_42536 = add64(new_offset_42527, zp_lhs_42535);
+            
+            if (sle64((int64_t) 0, idx_42536) && slt64(idx_42536, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672)) {
+                ((int32_t *) mem_42916)[idx_42536] = index_concat_branch_42882;
+            }
+            if (sle64((int64_t) 0, idx_42536) && slt64(idx_42536, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672)) {
+                ((int64_t *) mem_42918)[idx_42536] = index_concat_branch_42876;
+            }
+        }
+    }
+    if (memblock_alloc(ctx, &mem_43127, bytes_43126, "mem_43127")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_43129, bytes_43128, "mem_43129")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42868 = 0; i_42868 < n_26683; i_42868++) {
+        int64_t eta_p_40949 = ((int64_t *) mem_42918)[i_42868];
+        bool x_40950 = sle64((int64_t) 0, eta_p_40949);
+        bool y_40951 = slt64(eta_p_40949, n_26683);
+        bool bounds_check_40952 = x_40950 && y_40951;
+        bool index_certs_40953;
+        
+        if (!bounds_check_40952) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_40949, "] out of bounds for array of shape [", (long long) n_26683, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #4  ftbasics.fut:115:86-89\n   #5  ftsort.fut:19:9-23\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:19:9-28\n   #8  ftsort.fut:18:1-19:28\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int64_t index_primexp_40954 = add64(incr_26684, eta_p_40949);
+        int32_t lifted_lambda_res_40955 = ((int32_t *) xs_mem_42914.mem)[eta_p_40949];
+        
+        ((int64_t *) mem_43127.mem)[i_42868] = index_primexp_40954;
+        ((int32_t *) mem_43129.mem)[i_42868] = lifted_lambda_res_40955;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_43127, "mem_43127") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_out_43176, &mem_43129, "mem_43129") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43285, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43286, &mem_out_43176, "mem_out_43176") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        free(mem_42916);
+        free(mem_42918);
+        free(mem_42926);
+        free(mem_42928);
+        free(mem_42930);
+        free(mem_42932);
+        free(mem_42934);
+        free(mem_42966);
+        free(mem_42968);
+        free(mem_42981);
+        free(mem_42982);
+        free(mem_42989);
+        free(mem_42992);
+        free(mem_42995);
+        free(mem_42998);
+        free(mem_43001);
+        free(mem_43018);
+        free(mem_43019);
+        free(mem_43020);
+        free(mem_43021);
+        free(mem_43022);
+        free(mem_43023);
+        free(mem_43024);
+        free(mem_43067);
+        free(mem_43068);
+        free(mem_43093);
+        free(mem_43101);
+        if (memblock_unref(ctx, &mem_43129, "mem_43129") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_43127, "mem_43127") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43176, "mem_out_43176") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_long(struct futhark_context *ctx, struct memblock *mem_out_p_43314, struct memblock *mem_out_p_43315, struct memblock xs_mem_42914, int64_t n_29312, int64_t incr_29313)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int64_t mem_42916_cached_sizze_43316 = 0;
+    unsigned char *mem_42916 = NULL;
+    int64_t mem_42918_cached_sizze_43317 = 0;
+    unsigned char *mem_42918 = NULL;
+    int64_t mem_42926_cached_sizze_43318 = 0;
+    unsigned char *mem_42926 = NULL;
+    int64_t mem_42928_cached_sizze_43319 = 0;
+    unsigned char *mem_42928 = NULL;
+    int64_t mem_42930_cached_sizze_43320 = 0;
+    unsigned char *mem_42930 = NULL;
+    int64_t mem_42932_cached_sizze_43321 = 0;
+    unsigned char *mem_42932 = NULL;
+    int64_t mem_42934_cached_sizze_43322 = 0;
+    unsigned char *mem_42934 = NULL;
+    int64_t mem_42966_cached_sizze_43323 = 0;
+    unsigned char *mem_42966 = NULL;
+    int64_t mem_42968_cached_sizze_43324 = 0;
+    unsigned char *mem_42968 = NULL;
+    int64_t mem_42981_cached_sizze_43325 = 0;
+    unsigned char *mem_42981 = NULL;
+    int64_t mem_42982_cached_sizze_43326 = 0;
+    unsigned char *mem_42982 = NULL;
+    int64_t mem_42989_cached_sizze_43327 = 0;
+    unsigned char *mem_42989 = NULL;
+    int64_t mem_42992_cached_sizze_43328 = 0;
+    unsigned char *mem_42992 = NULL;
+    int64_t mem_42995_cached_sizze_43329 = 0;
+    unsigned char *mem_42995 = NULL;
+    int64_t mem_42998_cached_sizze_43330 = 0;
+    unsigned char *mem_42998 = NULL;
+    int64_t mem_43001_cached_sizze_43331 = 0;
+    unsigned char *mem_43001 = NULL;
+    int64_t mem_43018_cached_sizze_43332 = 0;
+    unsigned char *mem_43018 = NULL;
+    int64_t mem_43019_cached_sizze_43333 = 0;
+    unsigned char *mem_43019 = NULL;
+    int64_t mem_43020_cached_sizze_43334 = 0;
+    unsigned char *mem_43020 = NULL;
+    int64_t mem_43021_cached_sizze_43335 = 0;
+    unsigned char *mem_43021 = NULL;
+    int64_t mem_43022_cached_sizze_43336 = 0;
+    unsigned char *mem_43022 = NULL;
+    int64_t mem_43023_cached_sizze_43337 = 0;
+    unsigned char *mem_43023 = NULL;
+    int64_t mem_43024_cached_sizze_43338 = 0;
+    unsigned char *mem_43024 = NULL;
+    int64_t mem_43067_cached_sizze_43339 = 0;
+    unsigned char *mem_43067 = NULL;
+    int64_t mem_43068_cached_sizze_43340 = 0;
+    unsigned char *mem_43068 = NULL;
+    int64_t mem_43093_cached_sizze_43341 = 0;
+    unsigned char *mem_43093 = NULL;
+    int64_t mem_43101_cached_sizze_43342 = 0;
+    unsigned char *mem_43101 = NULL;
+    struct memblock mem_43129;
+    
+    mem_43129.references = NULL;
+    
+    struct memblock mem_43127;
+    
+    mem_43127.references = NULL;
+    
+    struct memblock mem_out_43176;
+    
+    mem_out_43176.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t rng_40663 = add64(n_29312, incr_29313);
+    bool bounds_invalid_upwards_40664 = slt64(rng_40663, incr_29313);
+    bool valid_40665 = !bounds_invalid_upwards_40664;
+    bool range_valid_c_40666;
+    
+    if (!valid_40665) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_29313, "..<", (long long) rng_40663, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:114:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:114:32-63\n   #4  ftsort.fut:22:9-24\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:22:9-29\n   #7  ftsort.fut:21:1-22:29\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool cond_40667 = n_29312 == (int64_t) 0;
+    int32_t iters_40668;
+    
+    if (cond_40667) {
+        iters_40668 = 0;
+    } else {
+        iters_40668 = 32;
+    }
+    
+    int64_t n_blocks_40669 = sdiv64(n_29312, (int64_t) 256);
+    int64_t rest_40670 = smod64(n_29312, (int64_t) 256);
+    int64_t arg_40671 = mul64((int64_t) 256, n_blocks_40669);
+    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672 = add64(rest_40670, arg_40671);
+    bool dim_match_40673 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672 == n_29312;
+    bool empty_or_match_cert_40674;
+    
+    if (!dim_match_40673) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_29312, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "](i64, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #5  ftbasics.fut:115:86-89\n   #6  ftsort.fut:22:9-24\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:22:9-29\n   #9  ftsort.fut:21:1-22:29\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42915 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672;
+    bool loop_nonempty_40678 = slt32(0, iters_40668);
+    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 = add64((int64_t) 1, n_blocks_40669);
+    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+    bool empty_slice_40681 = arg_40671 == (int64_t) 0;
+    int64_t m_40682 = sub64(arg_40671, (int64_t) 1);
+    bool zzero_leq_i_p_m_t_s_40683 = sle64((int64_t) 0, m_40682);
+    bool i_p_m_t_s_leq_w_40684 = slt64(m_40682, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool i_lte_j_40685 = sle64((int64_t) 0, arg_40671);
+    bool y_40686 = zzero_leq_i_p_m_t_s_40683 && i_p_m_t_s_leq_w_40684;
+    bool forwards_ok_40687 = i_lte_j_40685 && y_40686;
+    bool ok_or_empty_40688 = empty_slice_40681 || forwards_ok_40687;
+    bool loop_not_taken_40689 = !loop_nonempty_40678;
+    bool protect_assert_disj_40690 = ok_or_empty_40688 || loop_not_taken_40689;
+    bool index_certs_40691;
+    
+    if (!protect_assert_disj_40690) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_40671, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:22:9-24\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:22:9-29\n   #10 ftsort.fut:21:1-22:29\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool empty_slice_40692 = rest_40670 == (int64_t) 0;
+    int64_t m_40693 = sub64(rest_40670, (int64_t) 1);
+    int64_t i_p_m_t_s_40694 = add64(arg_40671, m_40693);
+    bool zzero_leq_i_p_m_t_s_40695 = sle64((int64_t) 0, i_p_m_t_s_40694);
+    bool i_p_m_t_s_leq_w_40696 = slt64(i_p_m_t_s_40694, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool i_lte_j_40697 = sle64(arg_40671, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool y_40698 = zzero_leq_i_p_m_t_s_40695 && i_p_m_t_s_leq_w_40696;
+    bool forwards_ok_40699 = i_lte_j_40697 && y_40698;
+    bool ok_or_empty_40700 = empty_slice_40692 || forwards_ok_40699;
+    bool protect_assert_disj_40701 = loop_not_taken_40689 || ok_or_empty_40700;
+    bool index_certs_40702;
+    
+    if (!protect_assert_disj_40701) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_40671, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:22:9-24\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:22:9-29\n   #10 ftsort.fut:21:1-22:29\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool binop_x_40703 = sle64((int64_t) 0, n_blocks_40669);
+    bool protect_assert_disj_40704 = loop_not_taken_40689 || binop_x_40703;
+    bool dim_ok_cert_40705;
+    
+    if (!protect_assert_disj_40704) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_40671, "] to array of shape [", (long long) n_blocks_40669, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:22:9-24\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:22:9-29\n   #10 ftsort.fut:21:1-22:29\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool y_40707 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680);
+    bool protect_assert_disj_40708 = loop_not_taken_40689 || y_40707;
+    bool index_certs_40709;
+    
+    if (!protect_assert_disj_40708) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:22:9-24\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:22:9-29\n   #11 ftsort.fut:21:1-22:29\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool x_40711 = sle64((int64_t) 0, m_40693);
+    bool y_40712 = slt64(m_40693, rest_40670);
+    bool bounds_check_40713 = x_40711 && y_40712;
+    bool protect_assert_disj_40714 = empty_slice_40692 || bounds_check_40713;
+    bool protect_assert_disj_40715 = loop_not_taken_40689 || protect_assert_disj_40714;
+    bool index_certs_40716;
+    
+    if (!protect_assert_disj_40715) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_40693, "] out of bounds for array of shape [", (long long) rest_40670, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:166:41-45\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:22:9-24\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:22:9-29\n   #11 ftsort.fut:21:1-22:29\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42925 = (int64_t) 2 * rest_40670;
+    int64_t bytes_42965 = (int64_t) 8 * rest_40670;
+    int64_t bytes_42991 = (int64_t) 2048 * n_blocks_40669;
+    int64_t bytes_42997 = (int64_t) 32 * n_blocks_40669;
+    int64_t bytes_43000 = (int64_t) 8 * n_blocks_40669;
+    int64_t bytes_43092 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679;
+    bool dim_match_40944 = n_29312 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672;
+    bool empty_or_match_cert_40945;
+    
+    if (!dim_match_40944) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "] cannot match shape of type `[", (long long) n_29312, "](i64, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:22:9-24\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:22:9-29\n   #11 ftsort.fut:21:1-22:29\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_43126 = (int64_t) 8 * n_29312;
+    
+    if (mem_42916_cached_sizze_43316 < bytes_42915) {
+        err = lexical_realloc(ctx, &mem_42916, &mem_42916_cached_sizze_43316, bytes_42915);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_42916, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) xs_mem_42914.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672});
+    if (mem_42918_cached_sizze_43317 < bytes_42915) {
+        err = lexical_realloc(ctx, &mem_42918, &mem_42918_cached_sizze_43317, bytes_42915);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int64_t i_43177 = 0; i_43177 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672; i_43177++) {
+        int64_t x_43178 = (int64_t) 0 + i_43177 * (int64_t) 1;
+        
+        ((int64_t *) mem_42918)[i_43177] = x_43178;
+    }
+    if (mem_42926_cached_sizze_43318 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42926, &mem_42926_cached_sizze_43318, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42928_cached_sizze_43319 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42928, &mem_42928_cached_sizze_43319, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42930_cached_sizze_43320 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42930, &mem_42930_cached_sizze_43320, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42932_cached_sizze_43321 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42932, &mem_42932_cached_sizze_43321, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42934_cached_sizze_43322 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42934, &mem_42934_cached_sizze_43322, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42966_cached_sizze_43323 < bytes_42965) {
+        err = lexical_realloc(ctx, &mem_42966, &mem_42966_cached_sizze_43323, bytes_42965);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42968_cached_sizze_43324 < bytes_42965) {
+        err = lexical_realloc(ctx, &mem_42968, &mem_42968_cached_sizze_43324, bytes_42965);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42981_cached_sizze_43325 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42981, &mem_42981_cached_sizze_43325, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42982_cached_sizze_43326 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_42982, &mem_42982_cached_sizze_43326, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42989_cached_sizze_43327 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42989, &mem_42989_cached_sizze_43327, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42992_cached_sizze_43328 < bytes_42991) {
+        err = lexical_realloc(ctx, &mem_42992, &mem_42992_cached_sizze_43328, bytes_42991);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42995_cached_sizze_43329 < bytes_42991) {
+        err = lexical_realloc(ctx, &mem_42995, &mem_42995_cached_sizze_43329, bytes_42991);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42998_cached_sizze_43330 < bytes_42997) {
+        err = lexical_realloc(ctx, &mem_42998, &mem_42998_cached_sizze_43330, bytes_42997);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43001_cached_sizze_43331 < bytes_43000) {
+        err = lexical_realloc(ctx, &mem_43001, &mem_43001_cached_sizze_43331, bytes_43000);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43018_cached_sizze_43332 < (int64_t) 2048) {
+        err = lexical_realloc(ctx, &mem_43018, &mem_43018_cached_sizze_43332, (int64_t) 2048);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43019_cached_sizze_43333 < (int64_t) 2048) {
+        err = lexical_realloc(ctx, &mem_43019, &mem_43019_cached_sizze_43333, (int64_t) 2048);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43020_cached_sizze_43334 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43020, &mem_43020_cached_sizze_43334, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43021_cached_sizze_43335 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43021, &mem_43021_cached_sizze_43335, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43022_cached_sizze_43336 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43022, &mem_43022_cached_sizze_43336, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43023_cached_sizze_43337 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43023, &mem_43023_cached_sizze_43337, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43024_cached_sizze_43338 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43024, &mem_43024_cached_sizze_43338, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43067_cached_sizze_43339 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_43067, &mem_43067_cached_sizze_43339, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43068_cached_sizze_43340 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_43068, &mem_43068_cached_sizze_43340, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43093_cached_sizze_43341 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43093, &mem_43093_cached_sizze_43341, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43101_cached_sizze_43342 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43101, &mem_43101_cached_sizze_43342, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int32_t i_40719 = 0; i_40719 < iters_40668; i_40719++) {
+        int32_t blocked_radix_sort_step_arg1_40722 = mul32(2, i_40719);
+        int32_t get_bit_arg0_40727 = add32(1, blocked_radix_sort_step_arg1_40722);
+        bool cond_40728 = get_bit_arg0_40727 == 63;
+        bool cond_40729 = blocked_radix_sort_step_arg1_40722 == 63;
+        int16_t discard_42771;
+        int16_t discard_42772;
+        int16_t discard_42773;
+        int16_t discard_42774;
+        int16_t scanacc_42756;
+        int16_t scanacc_42757;
+        int16_t scanacc_42758;
+        int16_t scanacc_42759;
+        
+        scanacc_42756 = (int16_t) 0;
+        scanacc_42757 = (int16_t) 0;
+        scanacc_42758 = (int16_t) 0;
+        scanacc_42759 = (int16_t) 0;
+        for (int64_t i_42765 = 0; i_42765 < rest_40670; i_42765++) {
+            int64_t slice_42899 = arg_40671 + i_42765;
+            int64_t eta_p_42561 = ((int64_t *) mem_42916)[slice_42899];
+            int32_t defunc_0_get_bit_res_42562;
+            
+            if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_42562, get_bit_arg0_40727, eta_p_42561) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int32_t defunc_0_get_bit_res_42563;
+            
+            if (cond_40728) {
+                int32_t defunc_0_get_bit_res_t_res_42675 = 1 ^ defunc_0_get_bit_res_42562;
+                
+                defunc_0_get_bit_res_42563 = defunc_0_get_bit_res_t_res_42675;
+            } else {
+                defunc_0_get_bit_res_42563 = defunc_0_get_bit_res_42562;
+            }
+            
+            int32_t zp_lhs_42565 = mul32(2, defunc_0_get_bit_res_42563);
+            int32_t defunc_0_get_bit_res_42566;
+            
+            if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_42566, blocked_radix_sort_step_arg1_40722, eta_p_42561) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int32_t defunc_0_get_bit_res_42567;
+            
+            if (cond_40729) {
+                int32_t defunc_0_get_bit_res_t_res_42676 = 1 ^ defunc_0_get_bit_res_42566;
+                
+                defunc_0_get_bit_res_42567 = defunc_0_get_bit_res_t_res_42676;
+            } else {
+                defunc_0_get_bit_res_42567 = defunc_0_get_bit_res_42566;
+            }
+            
+            int32_t i32_arg0_42569 = add32(zp_lhs_42565, defunc_0_get_bit_res_42567);
+            int16_t i32_res_42570 = sext_i32_i16(i32_arg0_42569);
+            int16_t defunc_0_f_res_42572;
+            int16_t defunc_0_f_res_42573;
+            int16_t defunc_0_f_res_42574;
+            int16_t defunc_0_f_res_42575;
+            
+            if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42572, &defunc_0_f_res_42573, &defunc_0_f_res_42574, &defunc_0_f_res_42575, i32_res_42570) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int16_t defunc_0_op_res_40766 = add16(defunc_0_f_res_42572, scanacc_42756);
+            int16_t defunc_0_op_res_40767 = add16(defunc_0_f_res_42573, scanacc_42757);
+            int16_t defunc_0_op_res_40768 = add16(defunc_0_f_res_42574, scanacc_42758);
+            int16_t defunc_0_op_res_40769 = add16(defunc_0_f_res_42575, scanacc_42759);
+            
+            ((int16_t *) mem_42926)[i_42765] = defunc_0_op_res_40766;
+            ((int16_t *) mem_42928)[i_42765] = defunc_0_op_res_40767;
+            ((int16_t *) mem_42930)[i_42765] = defunc_0_op_res_40768;
+            ((int16_t *) mem_42932)[i_42765] = defunc_0_op_res_40769;
+            ((int16_t *) mem_42934)[i_42765] = i32_res_42570;
+            
+            int16_t scanacc_tmp_43181 = defunc_0_op_res_40766;
+            int16_t scanacc_tmp_43182 = defunc_0_op_res_40767;
+            int16_t scanacc_tmp_43183 = defunc_0_op_res_40768;
+            int16_t scanacc_tmp_43184 = defunc_0_op_res_40769;
+            
+            scanacc_42756 = scanacc_tmp_43181;
+            scanacc_42757 = scanacc_tmp_43182;
+            scanacc_42758 = scanacc_tmp_43183;
+            scanacc_42759 = scanacc_tmp_43184;
+        }
+        discard_42771 = scanacc_42756;
+        discard_42772 = scanacc_42757;
+        discard_42773 = scanacc_42758;
+        discard_42774 = scanacc_42759;
+        
+        int16_t defunc_0_radix_sort_step_i16_res_40770;
+        int16_t defunc_0_radix_sort_step_i16_res_40771;
+        int16_t defunc_0_radix_sort_step_i16_res_40772;
+        int16_t defunc_0_radix_sort_step_i16_res_40773;
+        
+        if (empty_slice_40692) {
+            defunc_0_radix_sort_step_i16_res_40770 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40771 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40772 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40773 = (int16_t) 0;
+        } else {
+            int16_t last_res_40774 = ((int16_t *) mem_42926)[m_40693];
+            int16_t last_res_40775 = ((int16_t *) mem_42928)[m_40693];
+            int16_t last_res_40776 = ((int16_t *) mem_42930)[m_40693];
+            int16_t last_res_40777 = ((int16_t *) mem_42932)[m_40693];
+            
+            defunc_0_radix_sort_step_i16_res_40770 = last_res_40774;
+            defunc_0_radix_sort_step_i16_res_40771 = last_res_40775;
+            defunc_0_radix_sort_step_i16_res_40772 = last_res_40776;
+            defunc_0_radix_sort_step_i16_res_40773 = last_res_40777;
+        }
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_42966, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + (int64_t) 1 * arg_40671, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40670});
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_42968, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42916, (int64_t) 0 + (int64_t) 1 * arg_40671, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40670});
+        for (int64_t write_iter_42775 = 0; write_iter_42775 < rest_40670; write_iter_42775++) {
+            int16_t write_iv_42778 = ((int16_t *) mem_42934)[write_iter_42775];
+            int16_t write_iv_42779 = ((int16_t *) mem_42926)[write_iter_42775];
+            int16_t write_iv_42780 = ((int16_t *) mem_42928)[write_iter_42775];
+            int16_t write_iv_42781 = ((int16_t *) mem_42930)[write_iter_42775];
+            int16_t write_iv_42782 = ((int16_t *) mem_42932)[write_iter_42775];
+            int64_t slice_42898 = arg_40671 + write_iter_42775;
+            int64_t write_iv_42783 = ((int64_t *) mem_42916)[slice_42898];
+            int64_t write_iv_42784 = ((int64_t *) mem_42918)[slice_42898];
+            int64_t defunc_0_f_res_42545;
+            
+            if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42545, defunc_0_radix_sort_step_i16_res_40770, defunc_0_radix_sort_step_i16_res_40771, defunc_0_radix_sort_step_i16_res_40772, write_iv_42778, write_iv_42779, write_iv_42780, write_iv_42781, write_iv_42782) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42545) && slt64(defunc_0_f_res_42545, rest_40670)) {
+                ((int64_t *) mem_42968)[defunc_0_f_res_42545] = write_iv_42783;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42545) && slt64(defunc_0_f_res_42545, rest_40670)) {
+                ((int64_t *) mem_42966)[defunc_0_f_res_42545] = write_iv_42784;
+            }
+        }
+        ((int16_t *) mem_42981)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_40770;
+        ((int16_t *) mem_42981)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40771;
+        ((int16_t *) mem_42981)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_40772;
+        ((int16_t *) mem_42981)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_40773;
+        for (int64_t i_42789 = 0; i_42789 < (int64_t) 4; i_42789++) {
+            int16_t eta_p_40794 = ((int16_t *) mem_42981)[i_42789];
+            int64_t i16_res_40795 = sext_i16_i64(eta_p_40794);
+            
+            ((int64_t *) mem_42982)[i_42789] = i16_res_40795;
+        }
+        
+        int16_t tmp_40796 = add16(defunc_0_radix_sort_step_i16_res_40770, defunc_0_radix_sort_step_i16_res_40771);
+        int16_t tmp_40797 = add16(defunc_0_radix_sort_step_i16_res_40772, tmp_40796);
+        
+        ((int16_t *) mem_42989)[(int64_t) 0] = (int16_t) 0;
+        ((int16_t *) mem_42989)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40770;
+        ((int16_t *) mem_42989)[(int64_t) 2] = tmp_40796;
+        ((int16_t *) mem_42989)[(int64_t) 3] = tmp_40797;
+        for (int64_t i_42839 = 0; i_42839 < n_blocks_40669; i_42839++) {
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42916, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            
+            int64_t binop_x_42912 = (int64_t) 256 * i_42839;
+            int16_t discard_42811;
+            int16_t discard_42812;
+            int16_t discard_42813;
+            int16_t discard_42814;
+            int16_t scanacc_42796;
+            int16_t scanacc_42797;
+            int16_t scanacc_42798;
+            int16_t scanacc_42799;
+            
+            scanacc_42796 = (int16_t) 0;
+            scanacc_42797 = (int16_t) 0;
+            scanacc_42798 = (int16_t) 0;
+            scanacc_42799 = (int16_t) 0;
+            for (int64_t i_42805 = 0; i_42805 < (int64_t) 256; i_42805++) {
+                int64_t new_index_42913 = i_42805 + binop_x_42912;
+                int64_t eta_p_42606 = ((int64_t *) mem_42916)[new_index_42913];
+                int32_t defunc_0_get_bit_res_42607;
+                
+                if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_42607, get_bit_arg0_40727, eta_p_42606) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int32_t defunc_0_get_bit_res_42608;
+                
+                if (cond_40728) {
+                    int32_t defunc_0_get_bit_res_t_res_42677 = 1 ^ defunc_0_get_bit_res_42607;
+                    
+                    defunc_0_get_bit_res_42608 = defunc_0_get_bit_res_t_res_42677;
+                } else {
+                    defunc_0_get_bit_res_42608 = defunc_0_get_bit_res_42607;
+                }
+                
+                int32_t zp_lhs_42610 = mul32(2, defunc_0_get_bit_res_42608);
+                int32_t defunc_0_get_bit_res_42611;
+                
+                if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_42611, blocked_radix_sort_step_arg1_40722, eta_p_42606) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int32_t defunc_0_get_bit_res_42612;
+                
+                if (cond_40729) {
+                    int32_t defunc_0_get_bit_res_t_res_42678 = 1 ^ defunc_0_get_bit_res_42611;
+                    
+                    defunc_0_get_bit_res_42612 = defunc_0_get_bit_res_t_res_42678;
+                } else {
+                    defunc_0_get_bit_res_42612 = defunc_0_get_bit_res_42611;
+                }
+                
+                int32_t i32_arg0_42614 = add32(zp_lhs_42610, defunc_0_get_bit_res_42612);
+                int16_t i32_res_42615 = sext_i32_i16(i32_arg0_42614);
+                int16_t defunc_0_f_res_42617;
+                int16_t defunc_0_f_res_42618;
+                int16_t defunc_0_f_res_42619;
+                int16_t defunc_0_f_res_42620;
+                
+                if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42617, &defunc_0_f_res_42618, &defunc_0_f_res_42619, &defunc_0_f_res_42620, i32_res_42615) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int16_t defunc_0_op_res_40847 = add16(defunc_0_f_res_42617, scanacc_42796);
+                int16_t defunc_0_op_res_40848 = add16(defunc_0_f_res_42618, scanacc_42797);
+                int16_t defunc_0_op_res_40849 = add16(defunc_0_f_res_42619, scanacc_42798);
+                int16_t defunc_0_op_res_40850 = add16(defunc_0_f_res_42620, scanacc_42799);
+                
+                ((int16_t *) mem_43020)[i_42805] = defunc_0_op_res_40847;
+                ((int16_t *) mem_43021)[i_42805] = defunc_0_op_res_40848;
+                ((int16_t *) mem_43022)[i_42805] = defunc_0_op_res_40849;
+                ((int16_t *) mem_43023)[i_42805] = defunc_0_op_res_40850;
+                ((int16_t *) mem_43024)[i_42805] = i32_res_42615;
+                
+                int16_t scanacc_tmp_43197 = defunc_0_op_res_40847;
+                int16_t scanacc_tmp_43198 = defunc_0_op_res_40848;
+                int16_t scanacc_tmp_43199 = defunc_0_op_res_40849;
+                int16_t scanacc_tmp_43200 = defunc_0_op_res_40850;
+                
+                scanacc_42796 = scanacc_tmp_43197;
+                scanacc_42797 = scanacc_tmp_43198;
+                scanacc_42798 = scanacc_tmp_43199;
+                scanacc_42799 = scanacc_tmp_43200;
+            }
+            discard_42811 = scanacc_42796;
+            discard_42812 = scanacc_42797;
+            discard_42813 = scanacc_42798;
+            discard_42814 = scanacc_42799;
+            
+            int16_t last_res_40851 = ((int16_t *) mem_43020)[(int64_t) 255];
+            int16_t last_res_40852 = ((int16_t *) mem_43021)[(int64_t) 255];
+            int16_t last_res_40853 = ((int16_t *) mem_43022)[(int64_t) 255];
+            int16_t last_res_40854 = ((int16_t *) mem_43023)[(int64_t) 255];
+            
+            for (int64_t write_iter_42815 = 0; write_iter_42815 < (int64_t) 256; write_iter_42815++) {
+                int16_t write_iv_42818 = ((int16_t *) mem_43024)[write_iter_42815];
+                int16_t write_iv_42819 = ((int16_t *) mem_43020)[write_iter_42815];
+                int16_t write_iv_42820 = ((int16_t *) mem_43021)[write_iter_42815];
+                int16_t write_iv_42821 = ((int16_t *) mem_43022)[write_iter_42815];
+                int16_t write_iv_42822 = ((int16_t *) mem_43023)[write_iter_42815];
+                int64_t new_index_42909 = write_iter_42815 + binop_x_42912;
+                int64_t write_iv_42823 = ((int64_t *) mem_42916)[new_index_42909];
+                int64_t write_iv_42824 = ((int64_t *) mem_42918)[new_index_42909];
+                int64_t defunc_0_f_res_42590;
+                
+                if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42590, last_res_40851, last_res_40852, last_res_40853, write_iv_42818, write_iv_42819, write_iv_42820, write_iv_42821, write_iv_42822) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42590) && slt64(defunc_0_f_res_42590, (int64_t) 256)) {
+                    ((int64_t *) mem_43018)[defunc_0_f_res_42590] = write_iv_42823;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42590) && slt64(defunc_0_f_res_42590, (int64_t) 256)) {
+                    ((int64_t *) mem_43019)[defunc_0_f_res_42590] = write_iv_42824;
+                }
+            }
+            ((int16_t *) mem_43067)[(int64_t) 0] = last_res_40851;
+            ((int16_t *) mem_43067)[(int64_t) 1] = last_res_40852;
+            ((int16_t *) mem_43067)[(int64_t) 2] = last_res_40853;
+            ((int16_t *) mem_43067)[(int64_t) 3] = last_res_40854;
+            for (int64_t i_42829 = 0; i_42829 < (int64_t) 4; i_42829++) {
+                int16_t eta_p_40869 = ((int16_t *) mem_43067)[i_42829];
+                int64_t i16_res_40870 = sext_i16_i64(eta_p_40869);
+                
+                ((int64_t *) mem_43068)[i_42829] = i16_res_40870;
+            }
+            
+            int16_t tmp_40871 = add16(last_res_40851, last_res_40852);
+            int16_t tmp_40872 = add16(last_res_40853, tmp_40871);
+            
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4] = (int16_t) 0;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 1] = last_res_40851;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 2] = tmp_40871;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 3] = tmp_40872;
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42992, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42995, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42998, i_42839 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43068, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
+        }
+        
+        int64_t discard_42851;
+        int64_t scanacc_42847 = (int64_t) 0;
+        
+        for (int64_t i_42849 = 0; i_42849 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680; i_42849++) {
+            int64_t new_index_42887 = squot64(i_42849, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+            int64_t binop_y_42889 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 * new_index_42887;
+            int64_t new_index_42890 = i_42849 - binop_y_42889;
+            bool index_concat_cmp_42892 = sle64(n_blocks_40669, new_index_42890);
+            int64_t index_concat_branch_42896;
+            
+            if (index_concat_cmp_42892) {
+                int64_t index_concat_42894 = ((int64_t *) mem_42982)[new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42894;
+            } else {
+                int64_t index_concat_42895 = ((int64_t *) mem_42998)[new_index_42890 * (int64_t) 4 + new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42895;
+            }
+            
+            int64_t defunc_0_op_res_40884 = add64(scanacc_42847, index_concat_branch_42896);
+            
+            ((int64_t *) mem_43093)[i_42849] = defunc_0_op_res_40884;
+            
+            int64_t scanacc_tmp_43209 = defunc_0_op_res_40884;
+            
+            scanacc_42847 = scanacc_tmp_43209;
+        }
+        discard_42851 = scanacc_42847;
+        for (int64_t i_42854 = 0; i_42854 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680; i_42854++) {
+            int64_t zv_lhs_40887 = add64((int64_t) -1, i_42854);
+            int64_t tmp_40888 = smod64(zv_lhs_40887, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680);
+            int64_t lifted_lambda_res_40889 = ((int64_t *) mem_43093)[tmp_40888];
+            
+            ((int64_t *) mem_43101)[i_42854] = lifted_lambda_res_40889;
+        }
+        ((int64_t *) mem_43101)[(int64_t) 0] = (int64_t) 0;
+        for (int64_t write_iter_42856 = 0; write_iter_42856 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672; write_iter_42856++) {
+            bool index_concat_cmp_42878 = sle64(arg_40671, write_iter_42856);
+            int64_t index_concat_branch_42497;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42687 = sub64(write_iter_42856, arg_40671);
+                int64_t index_concat_42688 = ((int64_t *) mem_42968)[index_concat_i_42687];
+                
+                index_concat_branch_42497 = index_concat_42688;
+            } else {
+                int64_t new_index_42500 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42501 = (int64_t) 256 * new_index_42500;
+                int64_t new_index_42502 = write_iter_42856 - binop_y_42501;
+                int64_t index_concat_42503 = ((int64_t *) mem_42992)[new_index_42500 * (int64_t) 256 + new_index_42502];
+                
+                index_concat_branch_42497 = index_concat_42503;
+            }
+            
+            int32_t zlzb_rhs_42504;
+            int32_t acc_42506 = 0;
+            
+            for (int32_t i_42505 = 0; i_42505 < 2; i_42505++) {
+                int32_t get_bit_arg0_42507 = add32(blocked_radix_sort_step_arg1_40722, i_42505);
+                int32_t defunc_0_get_bit_res_42508;
+                
+                if (futrts_get_bit_2253(ctx, &defunc_0_get_bit_res_42508, get_bit_arg0_42507, index_concat_branch_42497) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                bool cond_42509 = get_bit_arg0_42507 == 63;
+                int32_t defunc_0_get_bit_res_42510;
+                
+                if (cond_42509) {
+                    int32_t defunc_0_get_bit_res_t_res_42689 = 1 ^ defunc_0_get_bit_res_42508;
+                    
+                    defunc_0_get_bit_res_42510 = defunc_0_get_bit_res_t_res_42689;
+                } else {
+                    defunc_0_get_bit_res_42510 = defunc_0_get_bit_res_42508;
+                }
+                
+                int32_t zp_rhs_42512 = shl32(defunc_0_get_bit_res_42510, i_42505);
+                int32_t loopres_42513 = add32(acc_42506, zp_rhs_42512);
+                int32_t acc_tmp_43214 = loopres_42513;
+                
+                acc_42506 = acc_tmp_43214;
+            }
+            zlzb_rhs_42504 = acc_42506;
+            
+            int64_t i32_res_42514 = sext_i32_i64(zlzb_rhs_42504);
+            int64_t block_idx_42515 = sdiv64(write_iter_42856, (int64_t) 256);
+            bool x_42516 = sle64((int64_t) 0, block_idx_42515);
+            bool y_42517 = slt64(block_idx_42515, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+            bool bounds_check_42518 = x_42516 && y_42517;
+            bool index_certs_42519;
+            
+            if (!bounds_check_42518) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_42515, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:22:9-24\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:22:9-29\n   #12 ftsort.fut:21:1-22:29\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            bool x_42520 = sle64((int64_t) 0, i32_res_42514);
+            bool y_42521 = slt64(i32_res_42514, (int64_t) 4);
+            bool bounds_check_42522 = x_42520 && y_42521;
+            bool index_certs_42523;
+            
+            if (!bounds_check_42522) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_42514, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:22:9-24\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:22:9-29\n   #12 ftsort.fut:21:1-22:29\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            int64_t index_concat_branch_42882;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42879 = sub64(write_iter_42856, arg_40671);
+                int64_t index_concat_42880 = ((int64_t *) mem_42968)[index_concat_i_42879];
+                
+                index_concat_branch_42882 = index_concat_42880;
+            } else {
+                int64_t new_index_42904 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42906 = (int64_t) 256 * new_index_42904;
+                int64_t new_index_42907 = write_iter_42856 - binop_y_42906;
+                int64_t index_concat_42881 = ((int64_t *) mem_42992)[new_index_42904 * (int64_t) 256 + new_index_42907];
+                
+                index_concat_branch_42882 = index_concat_42881;
+            }
+            
+            int64_t index_concat_branch_42876;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42873 = sub64(write_iter_42856, arg_40671);
+                int64_t index_concat_42874 = ((int64_t *) mem_42966)[index_concat_i_42873];
+                
+                index_concat_branch_42876 = index_concat_42874;
+            } else {
+                int64_t new_index_42900 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42902 = (int64_t) 256 * new_index_42900;
+                int64_t new_index_42903 = write_iter_42856 - binop_y_42902;
+                int64_t index_concat_42875 = ((int64_t *) mem_42995)[new_index_42900 * (int64_t) 256 + new_index_42903];
+                
+                index_concat_branch_42876 = index_concat_42875;
+            }
+            
+            int64_t binop_x_42524 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 * i32_res_42514;
+            int64_t new_index_42525 = block_idx_42515 + binop_x_42524;
+            int64_t new_offset_42526 = ((int64_t *) mem_43101)[new_index_42525];
+            bool index_concat_cmp_42527 = sle64(n_blocks_40669, block_idx_42515);
+            int16_t index_concat_branch_42528;
+            
+            if (index_concat_cmp_42527) {
+                int16_t index_concat_42690 = ((int16_t *) mem_42989)[i32_res_42514];
+                
+                index_concat_branch_42528 = index_concat_42690;
+            } else {
+                int16_t index_concat_42530 = ((int16_t *) mem_43001)[block_idx_42515 * (int64_t) 4 + i32_res_42514];
+                
+                index_concat_branch_42528 = index_concat_42530;
+            }
+            
+            int64_t i16_res_42531 = sext_i16_i64(index_concat_branch_42528);
+            int64_t zp_lhs_42532 = mul64((int64_t) 256, block_idx_42515);
+            int64_t old_offset_42533 = add64(i16_res_42531, zp_lhs_42532);
+            int64_t zp_lhs_42534 = sub64(write_iter_42856, old_offset_42533);
+            int64_t idx_42535 = add64(new_offset_42526, zp_lhs_42534);
+            
+            if (sle64((int64_t) 0, idx_42535) && slt64(idx_42535, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672)) {
+                ((int64_t *) mem_42916)[idx_42535] = index_concat_branch_42882;
+            }
+            if (sle64((int64_t) 0, idx_42535) && slt64(idx_42535, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672)) {
+                ((int64_t *) mem_42918)[idx_42535] = index_concat_branch_42876;
+            }
+        }
+    }
+    if (memblock_alloc(ctx, &mem_43127, bytes_43126, "mem_43127")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_43129, bytes_43126, "mem_43129")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42868 = 0; i_42868 < n_29312; i_42868++) {
+        int64_t eta_p_40949 = ((int64_t *) mem_42918)[i_42868];
+        bool x_40950 = sle64((int64_t) 0, eta_p_40949);
+        bool y_40951 = slt64(eta_p_40949, n_29312);
+        bool bounds_check_40952 = x_40950 && y_40951;
+        bool index_certs_40953;
+        
+        if (!bounds_check_40952) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_40949, "] out of bounds for array of shape [", (long long) n_29312, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #4  ftbasics.fut:115:86-89\n   #5  ftsort.fut:22:9-24\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:22:9-29\n   #8  ftsort.fut:21:1-22:29\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int64_t index_primexp_40954 = add64(incr_29313, eta_p_40949);
+        int64_t lifted_lambda_res_40955 = ((int64_t *) xs_mem_42914.mem)[eta_p_40949];
+        
+        ((int64_t *) mem_43127.mem)[i_42868] = index_primexp_40954;
+        ((int64_t *) mem_43129.mem)[i_42868] = lifted_lambda_res_40955;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_43127, "mem_43127") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_out_43176, &mem_43129, "mem_43129") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43314, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43315, &mem_out_43176, "mem_out_43176") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        free(mem_42916);
+        free(mem_42918);
+        free(mem_42926);
+        free(mem_42928);
+        free(mem_42930);
+        free(mem_42932);
+        free(mem_42934);
+        free(mem_42966);
+        free(mem_42968);
+        free(mem_42981);
+        free(mem_42982);
+        free(mem_42989);
+        free(mem_42992);
+        free(mem_42995);
+        free(mem_42998);
+        free(mem_43001);
+        free(mem_43018);
+        free(mem_43019);
+        free(mem_43020);
+        free(mem_43021);
+        free(mem_43022);
+        free(mem_43023);
+        free(mem_43024);
+        free(mem_43067);
+        free(mem_43068);
+        free(mem_43093);
+        free(mem_43101);
+        if (memblock_unref(ctx, &mem_43129, "mem_43129") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_43127, "mem_43127") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43176, "mem_out_43176") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_sortColumn_short(struct futhark_context *ctx, struct memblock *mem_out_p_43343, struct memblock *mem_out_p_43344, struct memblock xs_mem_42914, int64_t n_24037, int64_t incr_24038)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int64_t mem_42916_cached_sizze_43345 = 0;
+    unsigned char *mem_42916 = NULL;
+    int64_t mem_42918_cached_sizze_43346 = 0;
+    unsigned char *mem_42918 = NULL;
+    int64_t mem_42926_cached_sizze_43347 = 0;
+    unsigned char *mem_42926 = NULL;
+    int64_t mem_42928_cached_sizze_43348 = 0;
+    unsigned char *mem_42928 = NULL;
+    int64_t mem_42930_cached_sizze_43349 = 0;
+    unsigned char *mem_42930 = NULL;
+    int64_t mem_42932_cached_sizze_43350 = 0;
+    unsigned char *mem_42932 = NULL;
+    int64_t mem_42934_cached_sizze_43351 = 0;
+    unsigned char *mem_42934 = NULL;
+    int64_t mem_42966_cached_sizze_43352 = 0;
+    unsigned char *mem_42966 = NULL;
+    int64_t mem_42968_cached_sizze_43353 = 0;
+    unsigned char *mem_42968 = NULL;
+    int64_t mem_42981_cached_sizze_43354 = 0;
+    unsigned char *mem_42981 = NULL;
+    int64_t mem_42982_cached_sizze_43355 = 0;
+    unsigned char *mem_42982 = NULL;
+    int64_t mem_42989_cached_sizze_43356 = 0;
+    unsigned char *mem_42989 = NULL;
+    int64_t mem_42992_cached_sizze_43357 = 0;
+    unsigned char *mem_42992 = NULL;
+    int64_t mem_42995_cached_sizze_43358 = 0;
+    unsigned char *mem_42995 = NULL;
+    int64_t mem_42998_cached_sizze_43359 = 0;
+    unsigned char *mem_42998 = NULL;
+    int64_t mem_43001_cached_sizze_43360 = 0;
+    unsigned char *mem_43001 = NULL;
+    int64_t mem_43018_cached_sizze_43361 = 0;
+    unsigned char *mem_43018 = NULL;
+    int64_t mem_43019_cached_sizze_43362 = 0;
+    unsigned char *mem_43019 = NULL;
+    int64_t mem_43020_cached_sizze_43363 = 0;
+    unsigned char *mem_43020 = NULL;
+    int64_t mem_43021_cached_sizze_43364 = 0;
+    unsigned char *mem_43021 = NULL;
+    int64_t mem_43022_cached_sizze_43365 = 0;
+    unsigned char *mem_43022 = NULL;
+    int64_t mem_43023_cached_sizze_43366 = 0;
+    unsigned char *mem_43023 = NULL;
+    int64_t mem_43024_cached_sizze_43367 = 0;
+    unsigned char *mem_43024 = NULL;
+    int64_t mem_43067_cached_sizze_43368 = 0;
+    unsigned char *mem_43067 = NULL;
+    int64_t mem_43068_cached_sizze_43369 = 0;
+    unsigned char *mem_43068 = NULL;
+    int64_t mem_43093_cached_sizze_43370 = 0;
+    unsigned char *mem_43093 = NULL;
+    int64_t mem_43101_cached_sizze_43371 = 0;
+    unsigned char *mem_43101 = NULL;
+    struct memblock mem_43129;
+    
+    mem_43129.references = NULL;
+    
+    struct memblock mem_43127;
+    
+    mem_43127.references = NULL;
+    
+    struct memblock mem_out_43176;
+    
+    mem_out_43176.references = NULL;
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    int64_t rng_40663 = add64(n_24037, incr_24038);
+    bool bounds_invalid_upwards_40664 = slt64(rng_40663, incr_24038);
+    bool valid_40665 = !bounds_invalid_upwards_40664;
+    bool range_valid_c_40666;
+    
+    if (!valid_40665) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) incr_24038, "..<", (long long) rng_40663, " is invalid.", "-> #0  ftbasics.fut:18:25-40\n   #1  ftbasics.fut:114:32-58\n   #2  /prelude/functional.fut:9:44-45\n   #3  ftbasics.fut:114:32-63\n   #4  ftsort.fut:16:9-25\n   #5  /prelude/functional.fut:9:44-45\n   #6  ftsort.fut:16:9-30\n   #7  ftsort.fut:15:1-16:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool cond_40667 = n_24037 == (int64_t) 0;
+    int32_t iters_40668;
+    
+    if (cond_40667) {
+        iters_40668 = 0;
+    } else {
+        iters_40668 = 8;
+    }
+    
+    int64_t n_blocks_40669 = sdiv64(n_24037, (int64_t) 256);
+    int64_t rest_40670 = smod64(n_24037, (int64_t) 256);
+    int64_t arg_40671 = mul64((int64_t) 256, n_blocks_40669);
+    int64_t dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672 = add64(rest_40670, arg_40671);
+    bool dim_match_40673 = dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672 == n_24037;
+    bool empty_or_match_cert_40674;
+    
+    if (!dim_match_40673) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) n_24037, "] cannot match shape of type `[", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "](i16, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:224:12-46\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #3  /prelude/functional.fut:9:44-45\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #5  ftbasics.fut:115:86-89\n   #6  ftsort.fut:16:9-25\n   #7  /prelude/functional.fut:9:44-45\n   #8  ftsort.fut:16:9-30\n   #9  ftsort.fut:15:1-16:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42915 = (int64_t) 2 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672;
+    int64_t bytes_42917 = (int64_t) 8 * dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672;
+    bool loop_nonempty_40678 = slt32(0, iters_40668);
+    int64_t dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 = add64((int64_t) 1, n_blocks_40669);
+    int64_t dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680 = mul64((int64_t) 4, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+    bool empty_slice_40681 = arg_40671 == (int64_t) 0;
+    int64_t m_40682 = sub64(arg_40671, (int64_t) 1);
+    bool zzero_leq_i_p_m_t_s_40683 = sle64((int64_t) 0, m_40682);
+    bool i_p_m_t_s_leq_w_40684 = slt64(m_40682, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool i_lte_j_40685 = sle64((int64_t) 0, arg_40671);
+    bool y_40686 = zzero_leq_i_p_m_t_s_40683 && i_p_m_t_s_leq_w_40684;
+    bool forwards_ok_40687 = i_lte_j_40685 && y_40686;
+    bool ok_or_empty_40688 = empty_slice_40681 || forwards_ok_40687;
+    bool loop_not_taken_40689 = !loop_nonempty_40678;
+    bool protect_assert_disj_40690 = ok_or_empty_40688 || loop_not_taken_40689;
+    bool index_certs_40691;
+    
+    if (!protect_assert_disj_40690) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) arg_40671, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "].", "-> #0  /prelude/array.fut:65:4-11\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:16:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:16:9-30\n   #10 ftsort.fut:15:1-16:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool empty_slice_40692 = rest_40670 == (int64_t) 0;
+    int64_t m_40693 = sub64(rest_40670, (int64_t) 1);
+    int64_t i_p_m_t_s_40694 = add64(arg_40671, m_40693);
+    bool zzero_leq_i_p_m_t_s_40695 = sle64((int64_t) 0, i_p_m_t_s_40694);
+    bool i_p_m_t_s_leq_w_40696 = slt64(i_p_m_t_s_40694, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool i_lte_j_40697 = sle64(arg_40671, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672);
+    bool y_40698 = zzero_leq_i_p_m_t_s_40695 && i_p_m_t_s_leq_w_40696;
+    bool forwards_ok_40699 = i_lte_j_40697 && y_40698;
+    bool ok_or_empty_40700 = empty_slice_40692 || forwards_ok_40699;
+    bool protect_assert_disj_40701 = loop_not_taken_40689 || ok_or_empty_40700;
+    bool index_certs_40702;
+    
+    if (!protect_assert_disj_40701) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) arg_40671, ":", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "].", "-> #0  /prelude/array.fut:65:13-24\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-164:32\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:16:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:16:9-30\n   #10 ftsort.fut:15:1-16:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool binop_x_40703 = sle64((int64_t) 0, n_blocks_40669);
+    bool protect_assert_disj_40704 = loop_not_taken_40689 || binop_x_40703;
+    bool dim_ok_cert_40705;
+    
+    if (!protect_assert_disj_40704) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Cannot unflatten array of shape [", (long long) arg_40671, "] to array of shape [", (long long) n_blocks_40669, "][", (long long) (int64_t) 256, "]", "-> #0  /prelude/array.fut:184:3-30\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:163:34-168:21\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #4  /prelude/functional.fut:9:44-45\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #6  ftbasics.fut:115:86-89\n   #7  ftsort.fut:16:9-25\n   #8  /prelude/functional.fut:9:44-45\n   #9  ftsort.fut:16:9-30\n   #10 ftsort.fut:15:1-16:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool y_40707 = slt64((int64_t) 0, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680);
+    bool protect_assert_disj_40708 = loop_not_taken_40689 || y_40707;
+    bool index_certs_40709;
+    
+    if (!protect_assert_disj_40708) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:122:3-123:7\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:178:8-20\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:16:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:16:9-30\n   #11 ftsort.fut:15:1-16:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool x_40711 = sle64((int64_t) 0, m_40693);
+    bool y_40712 = slt64(m_40693, rest_40670);
+    bool bounds_check_40713 = x_40711 && y_40712;
+    bool protect_assert_disj_40714 = empty_slice_40692 || bounds_check_40713;
+    bool protect_assert_disj_40715 = loop_not_taken_40689 || protect_assert_disj_40714;
+    bool index_certs_40716;
+    
+    if (!protect_assert_disj_40715) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_40693, "] out of bounds for array of shape [", (long long) rest_40670, "].", "-> #0  /prelude/array.fut:28:29-37\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:149:53-65\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:166:41-45\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:16:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:16:9-30\n   #11 ftsort.fut:15:1-16:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_42925 = (int64_t) 2 * rest_40670;
+    int64_t bytes_42965 = (int64_t) 8 * rest_40670;
+    int64_t bytes_42991 = (int64_t) 512 * n_blocks_40669;
+    int64_t bytes_42994 = (int64_t) 2048 * n_blocks_40669;
+    int64_t bytes_42997 = (int64_t) 32 * n_blocks_40669;
+    int64_t bytes_43000 = (int64_t) 8 * n_blocks_40669;
+    int64_t bytes_43092 = (int64_t) 32 * dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679;
+    bool dim_match_40944 = n_24037 == dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672;
+    bool empty_or_match_cert_40945;
+    
+    if (!dim_match_40944) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672, "] cannot match shape of type `[", (long long) n_24037, "](i16, i64)`.", "-> #0  /prelude/array.fut:58:47-57\n   #1  lib/github.com/diku-dk/sorts/radix_sort.fut:225:6-11\n   #2  /prelude/functional.fut:26:41-42\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:226:6-227:50\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #5  /prelude/functional.fut:9:44-45\n   #6  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #7  ftbasics.fut:115:86-89\n   #8  ftsort.fut:16:9-25\n   #9  /prelude/functional.fut:9:44-45\n   #10 ftsort.fut:16:9-30\n   #11 ftsort.fut:15:1-16:30\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_43126 = (int64_t) 8 * n_24037;
+    int64_t bytes_43128 = (int64_t) 2 * n_24037;
+    
+    if (mem_42916_cached_sizze_43345 < bytes_42915) {
+        err = lexical_realloc(ctx, &mem_42916, &mem_42916_cached_sizze_43345, bytes_42915);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    lmad_copy_2b(ctx, 1, (uint16_t *) mem_42916, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint16_t *) xs_mem_42914.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672});
+    if (mem_42918_cached_sizze_43346 < bytes_42917) {
+        err = lexical_realloc(ctx, &mem_42918, &mem_42918_cached_sizze_43346, bytes_42917);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int64_t i_43177 = 0; i_43177 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672; i_43177++) {
+        int64_t x_43178 = (int64_t) 0 + i_43177 * (int64_t) 1;
+        
+        ((int64_t *) mem_42918)[i_43177] = x_43178;
+    }
+    if (mem_42926_cached_sizze_43347 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42926, &mem_42926_cached_sizze_43347, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42928_cached_sizze_43348 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42928, &mem_42928_cached_sizze_43348, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42930_cached_sizze_43349 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42930, &mem_42930_cached_sizze_43349, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42932_cached_sizze_43350 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42932, &mem_42932_cached_sizze_43350, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42934_cached_sizze_43351 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42934, &mem_42934_cached_sizze_43351, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42966_cached_sizze_43352 < bytes_42965) {
+        err = lexical_realloc(ctx, &mem_42966, &mem_42966_cached_sizze_43352, bytes_42965);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42968_cached_sizze_43353 < bytes_42925) {
+        err = lexical_realloc(ctx, &mem_42968, &mem_42968_cached_sizze_43353, bytes_42925);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42981_cached_sizze_43354 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42981, &mem_42981_cached_sizze_43354, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42982_cached_sizze_43355 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_42982, &mem_42982_cached_sizze_43355, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42989_cached_sizze_43356 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_42989, &mem_42989_cached_sizze_43356, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42992_cached_sizze_43357 < bytes_42991) {
+        err = lexical_realloc(ctx, &mem_42992, &mem_42992_cached_sizze_43357, bytes_42991);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42995_cached_sizze_43358 < bytes_42994) {
+        err = lexical_realloc(ctx, &mem_42995, &mem_42995_cached_sizze_43358, bytes_42994);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_42998_cached_sizze_43359 < bytes_42997) {
+        err = lexical_realloc(ctx, &mem_42998, &mem_42998_cached_sizze_43359, bytes_42997);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43001_cached_sizze_43360 < bytes_43000) {
+        err = lexical_realloc(ctx, &mem_43001, &mem_43001_cached_sizze_43360, bytes_43000);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43018_cached_sizze_43361 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43018, &mem_43018_cached_sizze_43361, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43019_cached_sizze_43362 < (int64_t) 2048) {
+        err = lexical_realloc(ctx, &mem_43019, &mem_43019_cached_sizze_43362, (int64_t) 2048);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43020_cached_sizze_43363 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43020, &mem_43020_cached_sizze_43363, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43021_cached_sizze_43364 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43021, &mem_43021_cached_sizze_43364, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43022_cached_sizze_43365 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43022, &mem_43022_cached_sizze_43365, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43023_cached_sizze_43366 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43023, &mem_43023_cached_sizze_43366, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43024_cached_sizze_43367 < (int64_t) 512) {
+        err = lexical_realloc(ctx, &mem_43024, &mem_43024_cached_sizze_43367, (int64_t) 512);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43067_cached_sizze_43368 < (int64_t) 8) {
+        err = lexical_realloc(ctx, &mem_43067, &mem_43067_cached_sizze_43368, (int64_t) 8);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43068_cached_sizze_43369 < (int64_t) 32) {
+        err = lexical_realloc(ctx, &mem_43068, &mem_43068_cached_sizze_43369, (int64_t) 32);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43093_cached_sizze_43370 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43093, &mem_43093_cached_sizze_43370, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_43101_cached_sizze_43371 < bytes_43092) {
+        err = lexical_realloc(ctx, &mem_43101, &mem_43101_cached_sizze_43371, bytes_43092);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int32_t i_40719 = 0; i_40719 < iters_40668; i_40719++) {
+        int32_t blocked_radix_sort_step_arg1_40722 = mul32(2, i_40719);
+        int32_t get_bit_arg0_40727 = add32(1, blocked_radix_sort_step_arg1_40722);
+        bool cond_40728 = get_bit_arg0_40727 == 15;
+        bool cond_40729 = blocked_radix_sort_step_arg1_40722 == 15;
+        int16_t discard_42771;
+        int16_t discard_42772;
+        int16_t discard_42773;
+        int16_t discard_42774;
+        int16_t scanacc_42756;
+        int16_t scanacc_42757;
+        int16_t scanacc_42758;
+        int16_t scanacc_42759;
+        
+        scanacc_42756 = (int16_t) 0;
+        scanacc_42757 = (int16_t) 0;
+        scanacc_42758 = (int16_t) 0;
+        scanacc_42759 = (int16_t) 0;
+        for (int64_t i_42765 = 0; i_42765 < rest_40670; i_42765++) {
+            int64_t slice_42899 = arg_40671 + i_42765;
+            int16_t eta_p_42561 = ((int16_t *) mem_42916)[slice_42899];
+            int32_t defunc_0_get_bit_res_42562;
+            
+            if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_42562, get_bit_arg0_40727, eta_p_42561) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int32_t defunc_0_get_bit_res_42563;
+            
+            if (cond_40728) {
+                int32_t defunc_0_get_bit_res_t_res_42675 = 1 ^ defunc_0_get_bit_res_42562;
+                
+                defunc_0_get_bit_res_42563 = defunc_0_get_bit_res_t_res_42675;
+            } else {
+                defunc_0_get_bit_res_42563 = defunc_0_get_bit_res_42562;
+            }
+            
+            int32_t zp_lhs_42565 = mul32(2, defunc_0_get_bit_res_42563);
+            int32_t defunc_0_get_bit_res_42566;
+            
+            if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_42566, blocked_radix_sort_step_arg1_40722, eta_p_42561) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int32_t defunc_0_get_bit_res_42567;
+            
+            if (cond_40729) {
+                int32_t defunc_0_get_bit_res_t_res_42676 = 1 ^ defunc_0_get_bit_res_42566;
+                
+                defunc_0_get_bit_res_42567 = defunc_0_get_bit_res_t_res_42676;
+            } else {
+                defunc_0_get_bit_res_42567 = defunc_0_get_bit_res_42566;
+            }
+            
+            int32_t i32_arg0_42569 = add32(zp_lhs_42565, defunc_0_get_bit_res_42567);
+            int16_t i32_res_42570 = sext_i32_i16(i32_arg0_42569);
+            int16_t defunc_0_f_res_42572;
+            int16_t defunc_0_f_res_42573;
+            int16_t defunc_0_f_res_42574;
+            int16_t defunc_0_f_res_42575;
+            
+            if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42572, &defunc_0_f_res_42573, &defunc_0_f_res_42574, &defunc_0_f_res_42575, i32_res_42570) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            
+            int16_t defunc_0_op_res_40766 = add16(defunc_0_f_res_42572, scanacc_42756);
+            int16_t defunc_0_op_res_40767 = add16(defunc_0_f_res_42573, scanacc_42757);
+            int16_t defunc_0_op_res_40768 = add16(defunc_0_f_res_42574, scanacc_42758);
+            int16_t defunc_0_op_res_40769 = add16(defunc_0_f_res_42575, scanacc_42759);
+            
+            ((int16_t *) mem_42926)[i_42765] = defunc_0_op_res_40766;
+            ((int16_t *) mem_42928)[i_42765] = defunc_0_op_res_40767;
+            ((int16_t *) mem_42930)[i_42765] = defunc_0_op_res_40768;
+            ((int16_t *) mem_42932)[i_42765] = defunc_0_op_res_40769;
+            ((int16_t *) mem_42934)[i_42765] = i32_res_42570;
+            
+            int16_t scanacc_tmp_43181 = defunc_0_op_res_40766;
+            int16_t scanacc_tmp_43182 = defunc_0_op_res_40767;
+            int16_t scanacc_tmp_43183 = defunc_0_op_res_40768;
+            int16_t scanacc_tmp_43184 = defunc_0_op_res_40769;
+            
+            scanacc_42756 = scanacc_tmp_43181;
+            scanacc_42757 = scanacc_tmp_43182;
+            scanacc_42758 = scanacc_tmp_43183;
+            scanacc_42759 = scanacc_tmp_43184;
+        }
+        discard_42771 = scanacc_42756;
+        discard_42772 = scanacc_42757;
+        discard_42773 = scanacc_42758;
+        discard_42774 = scanacc_42759;
+        
+        int16_t defunc_0_radix_sort_step_i16_res_40770;
+        int16_t defunc_0_radix_sort_step_i16_res_40771;
+        int16_t defunc_0_radix_sort_step_i16_res_40772;
+        int16_t defunc_0_radix_sort_step_i16_res_40773;
+        
+        if (empty_slice_40692) {
+            defunc_0_radix_sort_step_i16_res_40770 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40771 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40772 = (int16_t) 0;
+            defunc_0_radix_sort_step_i16_res_40773 = (int16_t) 0;
+        } else {
+            int16_t last_res_40774 = ((int16_t *) mem_42926)[m_40693];
+            int16_t last_res_40775 = ((int16_t *) mem_42928)[m_40693];
+            int16_t last_res_40776 = ((int16_t *) mem_42930)[m_40693];
+            int16_t last_res_40777 = ((int16_t *) mem_42932)[m_40693];
+            
+            defunc_0_radix_sort_step_i16_res_40770 = last_res_40774;
+            defunc_0_radix_sort_step_i16_res_40771 = last_res_40775;
+            defunc_0_radix_sort_step_i16_res_40772 = last_res_40776;
+            defunc_0_radix_sort_step_i16_res_40773 = last_res_40777;
+        }
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_42966, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + (int64_t) 1 * arg_40671, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40670});
+        lmad_copy_2b(ctx, 1, (uint16_t *) mem_42968, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint16_t *) mem_42916, (int64_t) 0 + (int64_t) 1 * arg_40671, (int64_t []) {(int64_t) 1}, (int64_t []) {rest_40670});
+        for (int64_t write_iter_42775 = 0; write_iter_42775 < rest_40670; write_iter_42775++) {
+            int16_t write_iv_42778 = ((int16_t *) mem_42934)[write_iter_42775];
+            int16_t write_iv_42779 = ((int16_t *) mem_42926)[write_iter_42775];
+            int16_t write_iv_42780 = ((int16_t *) mem_42928)[write_iter_42775];
+            int16_t write_iv_42781 = ((int16_t *) mem_42930)[write_iter_42775];
+            int16_t write_iv_42782 = ((int16_t *) mem_42932)[write_iter_42775];
+            int64_t slice_42898 = arg_40671 + write_iter_42775;
+            int16_t write_iv_42783 = ((int16_t *) mem_42916)[slice_42898];
+            int64_t write_iv_42784 = ((int64_t *) mem_42918)[slice_42898];
+            int64_t defunc_0_f_res_42545;
+            
+            if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42545, defunc_0_radix_sort_step_i16_res_40770, defunc_0_radix_sort_step_i16_res_40771, defunc_0_radix_sort_step_i16_res_40772, write_iv_42778, write_iv_42779, write_iv_42780, write_iv_42781, write_iv_42782) != 0) {
+                err = 1;
+                goto cleanup;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42545) && slt64(defunc_0_f_res_42545, rest_40670)) {
+                ((int16_t *) mem_42968)[defunc_0_f_res_42545] = write_iv_42783;
+            }
+            if (sle64((int64_t) 0, defunc_0_f_res_42545) && slt64(defunc_0_f_res_42545, rest_40670)) {
+                ((int64_t *) mem_42966)[defunc_0_f_res_42545] = write_iv_42784;
+            }
+        }
+        ((int16_t *) mem_42981)[(int64_t) 0] = defunc_0_radix_sort_step_i16_res_40770;
+        ((int16_t *) mem_42981)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40771;
+        ((int16_t *) mem_42981)[(int64_t) 2] = defunc_0_radix_sort_step_i16_res_40772;
+        ((int16_t *) mem_42981)[(int64_t) 3] = defunc_0_radix_sort_step_i16_res_40773;
+        for (int64_t i_42789 = 0; i_42789 < (int64_t) 4; i_42789++) {
+            int16_t eta_p_40794 = ((int16_t *) mem_42981)[i_42789];
+            int64_t i16_res_40795 = sext_i16_i64(eta_p_40794);
+            
+            ((int64_t *) mem_42982)[i_42789] = i16_res_40795;
+        }
+        
+        int16_t tmp_40796 = add16(defunc_0_radix_sort_step_i16_res_40770, defunc_0_radix_sort_step_i16_res_40771);
+        int16_t tmp_40797 = add16(defunc_0_radix_sort_step_i16_res_40772, tmp_40796);
+        
+        ((int16_t *) mem_42989)[(int64_t) 0] = (int16_t) 0;
+        ((int16_t *) mem_42989)[(int64_t) 1] = defunc_0_radix_sort_step_i16_res_40770;
+        ((int16_t *) mem_42989)[(int64_t) 2] = tmp_40796;
+        ((int16_t *) mem_42989)[(int64_t) 3] = tmp_40797;
+        for (int64_t i_42839 = 0; i_42839 < n_blocks_40669; i_42839++) {
+            lmad_copy_2b(ctx, 1, (uint16_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint16_t *) mem_42916, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_42918, (int64_t) 0 + i_42839 * ((int64_t) 1 * (int64_t) 256), (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            
+            int64_t binop_x_42912 = (int64_t) 256 * i_42839;
+            int16_t discard_42811;
+            int16_t discard_42812;
+            int16_t discard_42813;
+            int16_t discard_42814;
+            int16_t scanacc_42796;
+            int16_t scanacc_42797;
+            int16_t scanacc_42798;
+            int16_t scanacc_42799;
+            
+            scanacc_42796 = (int16_t) 0;
+            scanacc_42797 = (int16_t) 0;
+            scanacc_42798 = (int16_t) 0;
+            scanacc_42799 = (int16_t) 0;
+            for (int64_t i_42805 = 0; i_42805 < (int64_t) 256; i_42805++) {
+                int64_t new_index_42913 = i_42805 + binop_x_42912;
+                int16_t eta_p_42606 = ((int16_t *) mem_42916)[new_index_42913];
+                int32_t defunc_0_get_bit_res_42607;
+                
+                if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_42607, get_bit_arg0_40727, eta_p_42606) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int32_t defunc_0_get_bit_res_42608;
+                
+                if (cond_40728) {
+                    int32_t defunc_0_get_bit_res_t_res_42677 = 1 ^ defunc_0_get_bit_res_42607;
+                    
+                    defunc_0_get_bit_res_42608 = defunc_0_get_bit_res_t_res_42677;
+                } else {
+                    defunc_0_get_bit_res_42608 = defunc_0_get_bit_res_42607;
+                }
+                
+                int32_t zp_lhs_42610 = mul32(2, defunc_0_get_bit_res_42608);
+                int32_t defunc_0_get_bit_res_42611;
+                
+                if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_42611, blocked_radix_sort_step_arg1_40722, eta_p_42606) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int32_t defunc_0_get_bit_res_42612;
+                
+                if (cond_40729) {
+                    int32_t defunc_0_get_bit_res_t_res_42678 = 1 ^ defunc_0_get_bit_res_42611;
+                    
+                    defunc_0_get_bit_res_42612 = defunc_0_get_bit_res_t_res_42678;
+                } else {
+                    defunc_0_get_bit_res_42612 = defunc_0_get_bit_res_42611;
+                }
+                
+                int32_t i32_arg0_42614 = add32(zp_lhs_42610, defunc_0_get_bit_res_42612);
+                int16_t i32_res_42615 = sext_i32_i16(i32_arg0_42614);
+                int16_t defunc_0_f_res_42617;
+                int16_t defunc_0_f_res_42618;
+                int16_t defunc_0_f_res_42619;
+                int16_t defunc_0_f_res_42620;
+                
+                if (futrts_lifted_lambda_7229(ctx, &defunc_0_f_res_42617, &defunc_0_f_res_42618, &defunc_0_f_res_42619, &defunc_0_f_res_42620, i32_res_42615) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                int16_t defunc_0_op_res_40847 = add16(defunc_0_f_res_42617, scanacc_42796);
+                int16_t defunc_0_op_res_40848 = add16(defunc_0_f_res_42618, scanacc_42797);
+                int16_t defunc_0_op_res_40849 = add16(defunc_0_f_res_42619, scanacc_42798);
+                int16_t defunc_0_op_res_40850 = add16(defunc_0_f_res_42620, scanacc_42799);
+                
+                ((int16_t *) mem_43020)[i_42805] = defunc_0_op_res_40847;
+                ((int16_t *) mem_43021)[i_42805] = defunc_0_op_res_40848;
+                ((int16_t *) mem_43022)[i_42805] = defunc_0_op_res_40849;
+                ((int16_t *) mem_43023)[i_42805] = defunc_0_op_res_40850;
+                ((int16_t *) mem_43024)[i_42805] = i32_res_42615;
+                
+                int16_t scanacc_tmp_43197 = defunc_0_op_res_40847;
+                int16_t scanacc_tmp_43198 = defunc_0_op_res_40848;
+                int16_t scanacc_tmp_43199 = defunc_0_op_res_40849;
+                int16_t scanacc_tmp_43200 = defunc_0_op_res_40850;
+                
+                scanacc_42796 = scanacc_tmp_43197;
+                scanacc_42797 = scanacc_tmp_43198;
+                scanacc_42798 = scanacc_tmp_43199;
+                scanacc_42799 = scanacc_tmp_43200;
+            }
+            discard_42811 = scanacc_42796;
+            discard_42812 = scanacc_42797;
+            discard_42813 = scanacc_42798;
+            discard_42814 = scanacc_42799;
+            
+            int16_t last_res_40851 = ((int16_t *) mem_43020)[(int64_t) 255];
+            int16_t last_res_40852 = ((int16_t *) mem_43021)[(int64_t) 255];
+            int16_t last_res_40853 = ((int16_t *) mem_43022)[(int64_t) 255];
+            int16_t last_res_40854 = ((int16_t *) mem_43023)[(int64_t) 255];
+            
+            for (int64_t write_iter_42815 = 0; write_iter_42815 < (int64_t) 256; write_iter_42815++) {
+                int16_t write_iv_42818 = ((int16_t *) mem_43024)[write_iter_42815];
+                int16_t write_iv_42819 = ((int16_t *) mem_43020)[write_iter_42815];
+                int16_t write_iv_42820 = ((int16_t *) mem_43021)[write_iter_42815];
+                int16_t write_iv_42821 = ((int16_t *) mem_43022)[write_iter_42815];
+                int16_t write_iv_42822 = ((int16_t *) mem_43023)[write_iter_42815];
+                int64_t new_index_42909 = write_iter_42815 + binop_x_42912;
+                int16_t write_iv_42823 = ((int16_t *) mem_42916)[new_index_42909];
+                int64_t write_iv_42824 = ((int64_t *) mem_42918)[new_index_42909];
+                int64_t defunc_0_f_res_42590;
+                
+                if (futrts_lifted_f_7230(ctx, &defunc_0_f_res_42590, last_res_40851, last_res_40852, last_res_40853, write_iv_42818, write_iv_42819, write_iv_42820, write_iv_42821, write_iv_42822) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42590) && slt64(defunc_0_f_res_42590, (int64_t) 256)) {
+                    ((int16_t *) mem_43018)[defunc_0_f_res_42590] = write_iv_42823;
+                }
+                if (sle64((int64_t) 0, defunc_0_f_res_42590) && slt64(defunc_0_f_res_42590, (int64_t) 256)) {
+                    ((int64_t *) mem_43019)[defunc_0_f_res_42590] = write_iv_42824;
+                }
+            }
+            ((int16_t *) mem_43067)[(int64_t) 0] = last_res_40851;
+            ((int16_t *) mem_43067)[(int64_t) 1] = last_res_40852;
+            ((int16_t *) mem_43067)[(int64_t) 2] = last_res_40853;
+            ((int16_t *) mem_43067)[(int64_t) 3] = last_res_40854;
+            for (int64_t i_42829 = 0; i_42829 < (int64_t) 4; i_42829++) {
+                int16_t eta_p_40869 = ((int16_t *) mem_43067)[i_42829];
+                int64_t i16_res_40870 = sext_i16_i64(eta_p_40869);
+                
+                ((int64_t *) mem_43068)[i_42829] = i16_res_40870;
+            }
+            
+            int16_t tmp_40871 = add16(last_res_40851, last_res_40852);
+            int16_t tmp_40872 = add16(last_res_40853, tmp_40871);
+            
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4] = (int16_t) 0;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 1] = last_res_40851;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 2] = tmp_40871;
+            ((int16_t *) mem_43001)[i_42839 * (int64_t) 4 + (int64_t) 3] = tmp_40872;
+            lmad_copy_2b(ctx, 1, (uint16_t *) mem_42992, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint16_t *) mem_43018, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42995, i_42839 * (int64_t) 256, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43019, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 256});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_42998, i_42839 * (int64_t) 4, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_43068, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 4});
+        }
+        
+        int64_t discard_42851;
+        int64_t scanacc_42847 = (int64_t) 0;
+        
+        for (int64_t i_42849 = 0; i_42849 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680; i_42849++) {
+            int64_t new_index_42887 = squot64(i_42849, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+            int64_t binop_y_42889 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 * new_index_42887;
+            int64_t new_index_42890 = i_42849 - binop_y_42889;
+            bool index_concat_cmp_42892 = sle64(n_blocks_40669, new_index_42890);
+            int64_t index_concat_branch_42896;
+            
+            if (index_concat_cmp_42892) {
+                int64_t index_concat_42894 = ((int64_t *) mem_42982)[new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42894;
+            } else {
+                int64_t index_concat_42895 = ((int64_t *) mem_42998)[new_index_42890 * (int64_t) 4 + new_index_42887];
+                
+                index_concat_branch_42896 = index_concat_42895;
+            }
+            
+            int64_t defunc_0_op_res_40884 = add64(scanacc_42847, index_concat_branch_42896);
+            
+            ((int64_t *) mem_43093)[i_42849] = defunc_0_op_res_40884;
+            
+            int64_t scanacc_tmp_43209 = defunc_0_op_res_40884;
+            
+            scanacc_42847 = scanacc_tmp_43209;
+        }
+        discard_42851 = scanacc_42847;
+        for (int64_t i_42854 = 0; i_42854 < dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680; i_42854++) {
+            int64_t zv_lhs_40887 = add64((int64_t) -1, i_42854);
+            int64_t tmp_40888 = smod64(zv_lhs_40887, dzlz7bUZLztZRz20U4z20UZLZLzpZRz20Unz20U1ZRz7dUzg_40680);
+            int64_t lifted_lambda_res_40889 = ((int64_t *) mem_43093)[tmp_40888];
+            
+            ((int64_t *) mem_43101)[i_42854] = lifted_lambda_res_40889;
+        }
+        ((int64_t *) mem_43101)[(int64_t) 0] = (int64_t) 0;
+        for (int64_t write_iter_42856 = 0; write_iter_42856 < dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672; write_iter_42856++) {
+            bool index_concat_cmp_42878 = sle64(arg_40671, write_iter_42856);
+            int16_t index_concat_branch_42497;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42687 = sub64(write_iter_42856, arg_40671);
+                int16_t index_concat_42688 = ((int16_t *) mem_42968)[index_concat_i_42687];
+                
+                index_concat_branch_42497 = index_concat_42688;
+            } else {
+                int64_t new_index_42500 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42501 = (int64_t) 256 * new_index_42500;
+                int64_t new_index_42502 = write_iter_42856 - binop_y_42501;
+                int16_t index_concat_42503 = ((int16_t *) mem_42992)[new_index_42500 * (int64_t) 256 + new_index_42502];
+                
+                index_concat_branch_42497 = index_concat_42503;
+            }
+            
+            int32_t zlzb_rhs_42504;
+            int32_t acc_42506 = 0;
+            
+            for (int32_t i_42505 = 0; i_42505 < 2; i_42505++) {
+                int32_t get_bit_arg0_42507 = add32(blocked_radix_sort_step_arg1_40722, i_42505);
+                int32_t defunc_0_get_bit_res_42508;
+                
+                if (futrts_get_bit_1844(ctx, &defunc_0_get_bit_res_42508, get_bit_arg0_42507, index_concat_branch_42497) != 0) {
+                    err = 1;
+                    goto cleanup;
+                }
+                
+                bool cond_42509 = get_bit_arg0_42507 == 15;
+                int32_t defunc_0_get_bit_res_42510;
+                
+                if (cond_42509) {
+                    int32_t defunc_0_get_bit_res_t_res_42689 = 1 ^ defunc_0_get_bit_res_42508;
+                    
+                    defunc_0_get_bit_res_42510 = defunc_0_get_bit_res_t_res_42689;
+                } else {
+                    defunc_0_get_bit_res_42510 = defunc_0_get_bit_res_42508;
+                }
+                
+                int32_t zp_rhs_42512 = shl32(defunc_0_get_bit_res_42510, i_42505);
+                int32_t loopres_42513 = add32(acc_42506, zp_rhs_42512);
+                int32_t acc_tmp_43214 = loopres_42513;
+                
+                acc_42506 = acc_tmp_43214;
+            }
+            zlzb_rhs_42504 = acc_42506;
+            
+            int64_t i32_res_42514 = sext_i32_i64(zlzb_rhs_42504);
+            int64_t block_idx_42515 = sdiv64(write_iter_42856, (int64_t) 256);
+            bool x_42516 = sle64((int64_t) 0, block_idx_42515);
+            bool y_42517 = slt64(block_idx_42515, dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679);
+            bool bounds_check_42518 = x_42516 && y_42517;
+            bool index_certs_42519;
+            
+            if (!bounds_check_42518) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) block_idx_42515, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-48\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:16:9-25\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:16:9-30\n   #12 ftsort.fut:15:1-16:30\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            bool x_42520 = sle64((int64_t) 0, i32_res_42514);
+            bool y_42521 = slt64(i32_res_42514, (int64_t) 4);
+            bool bounds_check_42522 = x_42520 && y_42521;
+            bool index_certs_42523;
+            
+            if (!bounds_check_42522) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_42514, "] out of bounds for array of shape [", (long long) (int64_t) 4, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:187:26-53\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:183:7-191:15\n   #4  lib/github.com/diku-dk/sorts/radix_sort.fut:227:48-50\n   #5  lib/github.com/diku-dk/sorts/radix_sort.fut:248:49-51\n   #6  /prelude/functional.fut:9:44-45\n   #7  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #8  ftbasics.fut:115:86-89\n   #9  ftsort.fut:16:9-25\n   #10 /prelude/functional.fut:9:44-45\n   #11 ftsort.fut:16:9-30\n   #12 ftsort.fut:15:1-16:30\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            int16_t index_concat_branch_42882;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42879 = sub64(write_iter_42856, arg_40671);
+                int16_t index_concat_42880 = ((int16_t *) mem_42968)[index_concat_i_42879];
+                
+                index_concat_branch_42882 = index_concat_42880;
+            } else {
+                int64_t new_index_42904 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42906 = (int64_t) 256 * new_index_42904;
+                int64_t new_index_42907 = write_iter_42856 - binop_y_42906;
+                int16_t index_concat_42881 = ((int16_t *) mem_42992)[new_index_42904 * (int64_t) 256 + new_index_42907];
+                
+                index_concat_branch_42882 = index_concat_42881;
+            }
+            
+            int64_t index_concat_branch_42876;
+            
+            if (index_concat_cmp_42878) {
+                int64_t index_concat_i_42873 = sub64(write_iter_42856, arg_40671);
+                int64_t index_concat_42874 = ((int64_t *) mem_42966)[index_concat_i_42873];
+                
+                index_concat_branch_42876 = index_concat_42874;
+            } else {
+                int64_t new_index_42900 = squot64(write_iter_42856, (int64_t) 256);
+                int64_t binop_y_42902 = (int64_t) 256 * new_index_42900;
+                int64_t new_index_42903 = write_iter_42856 - binop_y_42902;
+                int64_t index_concat_42875 = ((int64_t *) mem_42995)[new_index_42900 * (int64_t) 256 + new_index_42903];
+                
+                index_concat_branch_42876 = index_concat_42875;
+            }
+            
+            int64_t binop_x_42524 = dzlz7bUZLzpZRz20Unz20U1z7dUzg_40679 * i32_res_42514;
+            int64_t new_index_42525 = block_idx_42515 + binop_x_42524;
+            int64_t new_offset_42526 = ((int64_t *) mem_43101)[new_index_42525];
+            bool index_concat_cmp_42527 = sle64(n_blocks_40669, block_idx_42515);
+            int16_t index_concat_branch_42528;
+            
+            if (index_concat_cmp_42527) {
+                int16_t index_concat_42690 = ((int16_t *) mem_42989)[i32_res_42514];
+                
+                index_concat_branch_42528 = index_concat_42690;
+            } else {
+                int16_t index_concat_42530 = ((int16_t *) mem_43001)[block_idx_42515 * (int64_t) 4 + i32_res_42514];
+                
+                index_concat_branch_42528 = index_concat_42530;
+            }
+            
+            int64_t i16_res_42531 = sext_i16_i64(index_concat_branch_42528);
+            int64_t zp_lhs_42532 = mul64((int64_t) 256, block_idx_42515);
+            int64_t old_offset_42533 = add64(i16_res_42531, zp_lhs_42532);
+            int64_t zp_lhs_42534 = sub64(write_iter_42856, old_offset_42533);
+            int64_t idx_42535 = add64(new_offset_42526, zp_lhs_42534);
+            
+            if (sle64((int64_t) 0, idx_42535) && slt64(idx_42535, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672)) {
+                ((int16_t *) mem_42916)[idx_42535] = index_concat_branch_42882;
+            }
+            if (sle64((int64_t) 0, idx_42535) && slt64(idx_42535, dzlz7bUZLzpZRz20UZLZLztZRz20Un_blocksz20UblockZRz20Urestz7dUzg_40672)) {
+                ((int64_t *) mem_42918)[idx_42535] = index_concat_branch_42876;
+            }
+        }
+    }
+    if (memblock_alloc(ctx, &mem_43127, bytes_43126, "mem_43127")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_43129, bytes_43128, "mem_43129")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_42868 = 0; i_42868 < n_24037; i_42868++) {
+        int64_t eta_p_40949 = ((int64_t *) mem_42918)[i_42868];
+        bool x_40950 = sle64((int64_t) 0, eta_p_40949);
+        bool y_40951 = slt64(eta_p_40949, n_24037);
+        bool bounds_check_40952 = x_40950 && y_40951;
+        bool index_certs_40953;
+        
+        if (!bounds_check_40952) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_40949, "] out of bounds for array of shape [", (long long) n_24037, "].", "-> #0  lib/github.com/diku-dk/sorts/radix_sort.fut:68:27-32\n   #1  /prelude/functional.fut:9:44-45\n   #2  lib/github.com/diku-dk/sorts/radix_sort.fut:68:6-33\n   #3  lib/github.com/diku-dk/sorts/radix_sort.fut:258:49-51\n   #4  ftbasics.fut:115:86-89\n   #5  ftsort.fut:16:9-25\n   #6  /prelude/functional.fut:9:44-45\n   #7  ftsort.fut:16:9-30\n   #8  ftsort.fut:15:1-16:30\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int64_t index_primexp_40954 = add64(incr_24038, eta_p_40949);
+        int16_t lifted_lambda_res_40955 = ((int16_t *) xs_mem_42914.mem)[eta_p_40949];
+        
+        ((int64_t *) mem_43127.mem)[i_42868] = index_primexp_40954;
+        ((int16_t *) mem_43129.mem)[i_42868] = lifted_lambda_res_40955;
+    }
+    if (memblock_set(ctx, &mem_out_43175, &mem_43127, "mem_43127") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_out_43176, &mem_43129, "mem_43129") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43343, &mem_out_43175, "mem_out_43175") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_43344, &mem_out_43176, "mem_out_43176") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        free(mem_42916);
+        free(mem_42918);
+        free(mem_42926);
+        free(mem_42928);
+        free(mem_42930);
+        free(mem_42932);
+        free(mem_42934);
+        free(mem_42966);
+        free(mem_42968);
+        free(mem_42981);
+        free(mem_42982);
+        free(mem_42989);
+        free(mem_42992);
+        free(mem_42995);
+        free(mem_42998);
+        free(mem_43001);
+        free(mem_43018);
+        free(mem_43019);
+        free(mem_43020);
+        free(mem_43021);
+        free(mem_43022);
+        free(mem_43023);
+        free(mem_43024);
+        free(mem_43067);
+        free(mem_43068);
+        free(mem_43093);
+        free(mem_43101);
+        if (memblock_unref(ctx, &mem_43129, "mem_43129") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_43127, "mem_43127") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43176, "mem_out_43176") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_43175, "mem_out_43175") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_get_bit_1844(struct futhark_context *ctx, int32_t *out_prim_out_43372, int32_t bit_21855, int16_t x_21856)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int32_t prim_out_43175;
+    int16_t i32_res_36508 = sext_i32_i16(bit_21855);
+    int16_t zgzg_res_36511 = ashr16(x_21856, i32_res_36508);
+    int16_t za_res_36516 = (int16_t) 1 & zgzg_res_36511;
+    int32_t to_i32_res_36518 = sext_i16_i32(za_res_36516);
+    
+    prim_out_43175 = to_i32_res_36518;
+    *out_prim_out_43372 = prim_out_43175;
+    
+  cleanup:
+    { }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_get_bit_2253(struct futhark_context *ctx, int32_t *out_prim_out_43373, int32_t bit_27130, int64_t x_27131)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int32_t prim_out_43175;
+    int64_t i32_res_36508 = sext_i32_i64(bit_27130);
+    int64_t zgzg_res_36511 = ashr64(x_27131, i32_res_36508);
+    int64_t za_res_36516 = (int64_t) 1 & zgzg_res_36511;
+    int32_t to_i32_res_36518 = sext_i64_i32(za_res_36516);
+    
+    prim_out_43175 = to_i32_res_36518;
+    *out_prim_out_43373 = prim_out_43175;
+    
+  cleanup:
+    { }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_lifted_f_7230(struct futhark_context *ctx, int64_t *out_prim_out_43374, int16_t na_21379, int16_t nb_21380, int16_t nc_21381, int16_t bin_21382, int16_t a_21383, int16_t b_21384, int16_t c_21385, int16_t d_21386)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int64_t prim_out_43175;
+    bool bool_arg0_21387 = bin_21382 == (int16_t) 0;
+    int16_t bool_res_36508 = btoi_bool_i16(bool_arg0_21387);
+    int16_t zp_rhs_21391 = mul16(a_21383, bool_res_36508);
+    int16_t zp_lhs_21394 = add16((int16_t) -1, zp_rhs_21391);
+    bool bool_arg0_21396 = slt16((int16_t) 0, bin_21382);
+    int16_t bool_res_36510 = btoi_bool_i16(bool_arg0_21396);
+    int16_t zp_rhs_21400 = mul16(na_21379, bool_res_36510);
+    int16_t zp_lhs_21402 = add16(zp_lhs_21394, zp_rhs_21400);
+    bool bool_arg0_21404 = bin_21382 == (int16_t) 1;
+    int16_t bool_res_36512 = btoi_bool_i16(bool_arg0_21404);
+    int16_t zp_rhs_21408 = mul16(b_21384, bool_res_36512);
+    int16_t zp_lhs_21410 = add16(zp_lhs_21402, zp_rhs_21408);
+    bool bool_arg0_21412 = slt16((int16_t) 1, bin_21382);
+    int16_t bool_res_36514 = btoi_bool_i16(bool_arg0_21412);
+    int16_t zp_rhs_21416 = mul16(nb_21380, bool_res_36514);
+    int16_t zp_lhs_21418 = add16(zp_lhs_21410, zp_rhs_21416);
+    bool bool_arg0_21420 = bin_21382 == (int16_t) 2;
+    int16_t bool_res_36516 = btoi_bool_i16(bool_arg0_21420);
+    int16_t zp_rhs_21424 = mul16(c_21385, bool_res_36516);
+    int16_t zp_lhs_21426 = add16(zp_lhs_21418, zp_rhs_21424);
+    bool bool_arg0_21428 = slt16((int16_t) 2, bin_21382);
+    int16_t bool_res_36518 = btoi_bool_i16(bool_arg0_21428);
+    int16_t zp_rhs_21432 = mul16(nc_21381, bool_res_36518);
+    int16_t zp_lhs_21434 = add16(zp_lhs_21426, zp_rhs_21432);
+    bool bool_arg0_21436 = bin_21382 == (int16_t) 3;
+    int16_t bool_res_36520 = btoi_bool_i16(bool_arg0_21436);
+    int16_t zp_rhs_21440 = mul16(d_21386, bool_res_36520);
+    int16_t i16_arg0_21442 = add16(zp_lhs_21434, zp_rhs_21440);
+    int64_t i16_res_36522 = sext_i16_i64(i16_arg0_21442);
+    
+    prim_out_43175 = i16_res_36522;
+    *out_prim_out_43374 = prim_out_43175;
+    
+  cleanup:
+    { }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_lifted_lambda_7229(struct futhark_context *ctx, int16_t *out_prim_out_43375, int16_t *out_prim_out_43376, int16_t *out_prim_out_43377, int16_t *out_prim_out_43378, int16_t x_21322)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int16_t prim_out_43175;
+    int16_t prim_out_43176;
+    int16_t prim_out_43177;
+    int16_t prim_out_43178;
+    bool bool_arg0_21323 = x_21322 == (int16_t) 0;
+    int16_t bool_res_36508 = btoi_bool_i16(bool_arg0_21323);
+    bool bool_arg0_21327 = x_21322 == (int16_t) 1;
+    int16_t bool_res_36510 = btoi_bool_i16(bool_arg0_21327);
+    bool bool_arg0_21331 = x_21322 == (int16_t) 2;
+    int16_t bool_res_36512 = btoi_bool_i16(bool_arg0_21331);
+    bool bool_arg0_21335 = x_21322 == (int16_t) 3;
+    int16_t bool_res_36514 = btoi_bool_i16(bool_arg0_21335);
+    
+    prim_out_43175 = bool_res_36508;
+    prim_out_43176 = bool_res_36510;
+    prim_out_43177 = bool_res_36512;
+    prim_out_43178 = bool_res_36514;
+    *out_prim_out_43375 = prim_out_43175;
+    *out_prim_out_43376 = prim_out_43176;
+    *out_prim_out_43377 = prim_out_43177;
+    *out_prim_out_43378 = prim_out_43178;
     
   cleanup:
     { }
     return err;
 }
 
-int futhark_entry_orderByIndices_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f64_1d *in2)
+int futhark_entry_argmin_double(struct futhark_context *ctx, int64_t *out0, const struct futhark_f64_1d *in0)
 {
-    int64_t n_34806 = (int64_t) 0;
-    int64_t incr_34807 = (int64_t) 0;
+    int64_t n_36481 = (int64_t) 0;
+    int64_t prim_out_43175 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41493;
+    struct memblock ks_mem_42914;
     
-    mem_out_41493.references = NULL;
-    
-    struct memblock ys_mem_41233;
-    
-    ys_mem_41233.references = NULL;
-    
-    struct memblock is_mem_41232;
-    
-    is_mem_41232.references = NULL;
-    incr_34807 = in0;
-    is_mem_41232 = in1->mem;
-    n_34806 = in1->shape[0];
-    ys_mem_41233 = in2->mem;
-    n_34806 = in2->shape[0];
-    if (!(n_34806 == in1->shape[0] && n_34806 == in2->shape[0])) {
+    ks_mem_42914.references = NULL;
+    ks_mem_42914 = in0->mem;
+    n_36481 = in0->shape[0];
+    if (!(n_36481 == in0->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_orderByIndices_double(ctx, &mem_out_41493, is_mem_41232, ys_mem_41233, n_34806, incr_34807);
+        ret = futrts_entry_argmin_double(ctx, &prim_out_43175, ks_mem_42914, n_36481);
+        if (ret == 0) {
+            *out0 = prim_out_43175;
+        }
+    }
+    lock_unlock(&ctx->lock);
+    return ret;
+}
+int futhark_entry_argmin_float(struct futhark_context *ctx, int64_t *out0, const struct futhark_f32_1d *in0)
+{
+    int64_t n_36312 = (int64_t) 0;
+    int64_t prim_out_43175 = (int64_t) 0;
+    int ret = 0;
+    
+    lock_lock(&ctx->lock);
+    
+    struct memblock ks_mem_42914;
+    
+    ks_mem_42914.references = NULL;
+    ks_mem_42914 = in0->mem;
+    n_36312 = in0->shape[0];
+    if (!(n_36312 == in0->shape[0])) {
+        ret = 1;
+        set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
+    }
+    if (ret == 0) {
+        ret = futrts_entry_argmin_float(ctx, &prim_out_43175, ks_mem_42914, n_36312);
+        if (ret == 0) {
+            *out0 = prim_out_43175;
+        }
+    }
+    lock_unlock(&ctx->lock);
+    return ret;
+}
+int futhark_entry_argmin_int(struct futhark_context *ctx, int64_t *out0, const struct futhark_i32_1d *in0)
+{
+    int64_t n_35977 = (int64_t) 0;
+    int64_t prim_out_43175 = (int64_t) 0;
+    int ret = 0;
+    
+    lock_lock(&ctx->lock);
+    
+    struct memblock ks_mem_42914;
+    
+    ks_mem_42914.references = NULL;
+    ks_mem_42914 = in0->mem;
+    n_35977 = in0->shape[0];
+    if (!(n_35977 == in0->shape[0])) {
+        ret = 1;
+        set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
+    }
+    if (ret == 0) {
+        ret = futrts_entry_argmin_int(ctx, &prim_out_43175, ks_mem_42914, n_35977);
+        if (ret == 0) {
+            *out0 = prim_out_43175;
+        }
+    }
+    lock_unlock(&ctx->lock);
+    return ret;
+}
+int futhark_entry_argmin_long(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0)
+{
+    int64_t n_36143 = (int64_t) 0;
+    int64_t prim_out_43175 = (int64_t) 0;
+    int ret = 0;
+    
+    lock_lock(&ctx->lock);
+    
+    struct memblock ks_mem_42914;
+    
+    ks_mem_42914.references = NULL;
+    ks_mem_42914 = in0->mem;
+    n_36143 = in0->shape[0];
+    if (!(n_36143 == in0->shape[0])) {
+        ret = 1;
+        set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
+    }
+    if (ret == 0) {
+        ret = futrts_entry_argmin_long(ctx, &prim_out_43175, ks_mem_42914, n_36143);
+        if (ret == 0) {
+            *out0 = prim_out_43175;
+        }
+    }
+    lock_unlock(&ctx->lock);
+    return ret;
+}
+int futhark_entry_argmin_short(struct futhark_context *ctx, int64_t *out0, const struct futhark_i16_1d *in0)
+{
+    int64_t n_35811 = (int64_t) 0;
+    int64_t prim_out_43175 = (int64_t) 0;
+    int ret = 0;
+    
+    lock_lock(&ctx->lock);
+    
+    struct memblock ks_mem_42914;
+    
+    ks_mem_42914.references = NULL;
+    ks_mem_42914 = in0->mem;
+    n_35811 = in0->shape[0];
+    if (!(n_35811 == in0->shape[0])) {
+        ret = 1;
+        set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
+    }
+    if (ret == 0) {
+        ret = futrts_entry_argmin_short(ctx, &prim_out_43175, ks_mem_42914, n_35811);
+        if (ret == 0) {
+            *out0 = prim_out_43175;
+        }
+    }
+    lock_unlock(&ctx->lock);
+    return ret;
+}
+int futhark_entry_orderByIndices_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f64_1d *in2)
+{
+    int64_t ni_35642 = (int64_t) 0;
+    int64_t n_35643 = (int64_t) 0;
+    int64_t incr_35644 = (int64_t) 0;
+    int ret = 0;
+    
+    lock_lock(&ctx->lock);
+    
+    struct memblock mem_out_43175;
+    
+    mem_out_43175.references = NULL;
+    
+    struct memblock ys_mem_42915;
+    
+    ys_mem_42915.references = NULL;
+    
+    struct memblock is_mem_42914;
+    
+    is_mem_42914.references = NULL;
+    incr_35644 = in0;
+    is_mem_42914 = in1->mem;
+    ni_35642 = in1->shape[0];
+    ys_mem_42915 = in2->mem;
+    n_35643 = in2->shape[0];
+    if (!(ni_35642 == in1->shape[0] && n_35643 == in2->shape[0])) {
+        ret = 1;
+        set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
+    }
+    if (ret == 0) {
+        ret = futrts_entry_orderByIndices_double(ctx, &mem_out_43175, is_mem_42914, ys_mem_42915, ni_35642, n_35643, incr_35644);
         if (ret == 0) {
             assert((*out0 = (struct futhark_f64_1d *) malloc(sizeof(struct futhark_f64_1d))) != NULL);
-            (*out0)->mem = mem_out_41493;
-            (*out0)->shape[0] = n_34806;
+            (*out0)->mem = mem_out_43175;
+            (*out0)->shape[0] = ni_35642;
         }
     }
     lock_unlock(&ctx->lock);
@@ -11969,38 +12375,39 @@ int futhark_entry_orderByIndices_double(struct futhark_context *ctx, struct futh
 }
 int futhark_entry_orderByIndices_float(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_f32_1d *in2)
 {
-    int64_t n_34653 = (int64_t) 0;
-    int64_t incr_34654 = (int64_t) 0;
+    int64_t ni_35488 = (int64_t) 0;
+    int64_t n_35489 = (int64_t) 0;
+    int64_t incr_35490 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock ys_mem_41233;
+    struct memblock ys_mem_42915;
     
-    ys_mem_41233.references = NULL;
+    ys_mem_42915.references = NULL;
     
-    struct memblock is_mem_41232;
+    struct memblock is_mem_42914;
     
-    is_mem_41232.references = NULL;
-    incr_34654 = in0;
-    is_mem_41232 = in1->mem;
-    n_34653 = in1->shape[0];
-    ys_mem_41233 = in2->mem;
-    n_34653 = in2->shape[0];
-    if (!(n_34653 == in1->shape[0] && n_34653 == in2->shape[0])) {
+    is_mem_42914.references = NULL;
+    incr_35490 = in0;
+    is_mem_42914 = in1->mem;
+    ni_35488 = in1->shape[0];
+    ys_mem_42915 = in2->mem;
+    n_35489 = in2->shape[0];
+    if (!(ni_35488 == in1->shape[0] && n_35489 == in2->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_orderByIndices_float(ctx, &mem_out_41493, is_mem_41232, ys_mem_41233, n_34653, incr_34654);
+        ret = futrts_entry_orderByIndices_float(ctx, &mem_out_43175, is_mem_42914, ys_mem_42915, ni_35488, n_35489, incr_35490);
         if (ret == 0) {
             assert((*out0 = (struct futhark_f32_1d *) malloc(sizeof(struct futhark_f32_1d))) != NULL);
-            (*out0)->mem = mem_out_41493;
-            (*out0)->shape[0] = n_34653;
+            (*out0)->mem = mem_out_43175;
+            (*out0)->shape[0] = ni_35488;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12008,38 +12415,39 @@ int futhark_entry_orderByIndices_float(struct futhark_context *ctx, struct futha
 }
 int futhark_entry_orderByIndices_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i32_1d *in2)
 {
-    int64_t n_34353 = (int64_t) 0;
-    int64_t incr_34354 = (int64_t) 0;
+    int64_t ni_35183 = (int64_t) 0;
+    int64_t n_35184 = (int64_t) 0;
+    int64_t incr_35185 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock ys_mem_41233;
+    struct memblock ys_mem_42915;
     
-    ys_mem_41233.references = NULL;
+    ys_mem_42915.references = NULL;
     
-    struct memblock is_mem_41232;
+    struct memblock is_mem_42914;
     
-    is_mem_41232.references = NULL;
-    incr_34354 = in0;
-    is_mem_41232 = in1->mem;
-    n_34353 = in1->shape[0];
-    ys_mem_41233 = in2->mem;
-    n_34353 = in2->shape[0];
-    if (!(n_34353 == in1->shape[0] && n_34353 == in2->shape[0])) {
+    is_mem_42914.references = NULL;
+    incr_35185 = in0;
+    is_mem_42914 = in1->mem;
+    ni_35183 = in1->shape[0];
+    ys_mem_42915 = in2->mem;
+    n_35184 = in2->shape[0];
+    if (!(ni_35183 == in1->shape[0] && n_35184 == in2->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_orderByIndices_int(ctx, &mem_out_41493, is_mem_41232, ys_mem_41233, n_34353, incr_34354);
+        ret = futrts_entry_orderByIndices_int(ctx, &mem_out_43175, is_mem_42914, ys_mem_42915, ni_35183, n_35184, incr_35185);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->mem = mem_out_41493;
-            (*out0)->shape[0] = n_34353;
+            (*out0)->mem = mem_out_43175;
+            (*out0)->shape[0] = ni_35183;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12047,38 +12455,39 @@ int futhark_entry_orderByIndices_int(struct futhark_context *ctx, struct futhark
 }
 int futhark_entry_orderByIndices_long(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i64_1d *in2)
 {
-    int64_t n_34500 = (int64_t) 0;
-    int64_t incr_34501 = (int64_t) 0;
+    int64_t ni_35334 = (int64_t) 0;
+    int64_t n_35335 = (int64_t) 0;
+    int64_t incr_35336 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock ys_mem_41233;
+    struct memblock ys_mem_42915;
     
-    ys_mem_41233.references = NULL;
+    ys_mem_42915.references = NULL;
     
-    struct memblock is_mem_41232;
+    struct memblock is_mem_42914;
     
-    is_mem_41232.references = NULL;
-    incr_34501 = in0;
-    is_mem_41232 = in1->mem;
-    n_34500 = in1->shape[0];
-    ys_mem_41233 = in2->mem;
-    n_34500 = in2->shape[0];
-    if (!(n_34500 == in1->shape[0] && n_34500 == in2->shape[0])) {
+    is_mem_42914.references = NULL;
+    incr_35336 = in0;
+    is_mem_42914 = in1->mem;
+    ni_35334 = in1->shape[0];
+    ys_mem_42915 = in2->mem;
+    n_35335 = in2->shape[0];
+    if (!(ni_35334 == in1->shape[0] && n_35335 == in2->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_orderByIndices_long(ctx, &mem_out_41493, is_mem_41232, ys_mem_41233, n_34500, incr_34501);
+        ret = futrts_entry_orderByIndices_long(ctx, &mem_out_43175, is_mem_42914, ys_mem_42915, ni_35334, n_35335, incr_35336);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->mem = mem_out_41493;
-            (*out0)->shape[0] = n_34500;
+            (*out0)->mem = mem_out_43175;
+            (*out0)->shape[0] = ni_35334;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12086,38 +12495,39 @@ int futhark_entry_orderByIndices_long(struct futhark_context *ctx, struct futhar
 }
 int futhark_entry_orderByIndices_short(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i16_1d *in2)
 {
-    int64_t n_34200 = (int64_t) 0;
-    int64_t incr_34201 = (int64_t) 0;
+    int64_t ni_35029 = (int64_t) 0;
+    int64_t n_35030 = (int64_t) 0;
+    int64_t incr_35031 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock ys_mem_41233;
+    struct memblock ys_mem_42915;
     
-    ys_mem_41233.references = NULL;
+    ys_mem_42915.references = NULL;
     
-    struct memblock is_mem_41232;
+    struct memblock is_mem_42914;
     
-    is_mem_41232.references = NULL;
-    incr_34201 = in0;
-    is_mem_41232 = in1->mem;
-    n_34200 = in1->shape[0];
-    ys_mem_41233 = in2->mem;
-    n_34200 = in2->shape[0];
-    if (!(n_34200 == in1->shape[0] && n_34200 == in2->shape[0])) {
+    is_mem_42914.references = NULL;
+    incr_35031 = in0;
+    is_mem_42914 = in1->mem;
+    ni_35029 = in1->shape[0];
+    ys_mem_42915 = in2->mem;
+    n_35030 = in2->shape[0];
+    if (!(ni_35029 == in1->shape[0] && n_35030 == in2->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_orderByIndices_short(ctx, &mem_out_41493, is_mem_41232, ys_mem_41233, n_34200, incr_34201);
+        ret = futrts_entry_orderByIndices_short(ctx, &mem_out_43175, is_mem_42914, ys_mem_42915, ni_35029, n_35030, incr_35031);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i16_1d *) malloc(sizeof(struct futhark_i16_1d))) != NULL);
-            (*out0)->mem = mem_out_41493;
-            (*out0)->shape[0] = n_34200;
+            (*out0)->mem = mem_out_43175;
+            (*out0)->shape[0] = ni_35029;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12125,40 +12535,40 @@ int futhark_entry_orderByIndices_short(struct futhark_context *ctx, struct futha
 }
 int futhark_entry_sortColumn_double(struct futhark_context *ctx, struct futhark_opaque_sortInfo_double **out0, const int64_t in0, const struct futhark_f64_1d *in1)
 {
-    int64_t n_34047 = (int64_t) 0;
-    int64_t incr_34048 = (int64_t) 0;
+    int64_t n_34876 = (int64_t) 0;
+    int64_t incr_34877 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41494;
+    struct memblock mem_out_43176;
     
-    mem_out_41494.references = NULL;
+    mem_out_43176.references = NULL;
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock xs_mem_41232;
+    struct memblock xs_mem_42914;
     
-    xs_mem_41232.references = NULL;
-    incr_34048 = in0;
-    xs_mem_41232 = in1->mem;
-    n_34047 = in1->shape[0];
-    if (!(n_34047 == in1->shape[0])) {
+    xs_mem_42914.references = NULL;
+    incr_34877 = in0;
+    xs_mem_42914 = in1->mem;
+    n_34876 = in1->shape[0];
+    if (!(n_34876 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_sortColumn_double(ctx, &mem_out_41493, &mem_out_41494, xs_mem_41232, n_34047, incr_34048);
+        ret = futrts_entry_sortColumn_double(ctx, &mem_out_43175, &mem_out_43176, xs_mem_42914, n_34876, incr_34877);
         if (ret == 0) {
             assert((*out0 = (struct futhark_opaque_sortInfo_double *) malloc(sizeof(struct futhark_opaque_sortInfo_double))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_41493;
-            (*out0)->v0->shape[0] = n_34047;
+            (*out0)->v0->mem = mem_out_43175;
+            (*out0)->v0->shape[0] = n_34876;
             assert(((*out0)->v1 = (struct futhark_f64_1d *) malloc(sizeof(struct futhark_f64_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_41494;
-            (*out0)->v1->shape[0] = n_34047;
+            (*out0)->v1->mem = mem_out_43176;
+            (*out0)->v1->shape[0] = n_34876;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12166,40 +12576,40 @@ int futhark_entry_sortColumn_double(struct futhark_context *ctx, struct futhark_
 }
 int futhark_entry_sortColumn_float(struct futhark_context *ctx, struct futhark_opaque_sortInfo_float **out0, const int64_t in0, const struct futhark_f32_1d *in1)
 {
-    int64_t n_31263 = (int64_t) 0;
-    int64_t incr_31264 = (int64_t) 0;
+    int64_t n_32092 = (int64_t) 0;
+    int64_t incr_32093 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41494;
+    struct memblock mem_out_43176;
     
-    mem_out_41494.references = NULL;
+    mem_out_43176.references = NULL;
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock xs_mem_41232;
+    struct memblock xs_mem_42914;
     
-    xs_mem_41232.references = NULL;
-    incr_31264 = in0;
-    xs_mem_41232 = in1->mem;
-    n_31263 = in1->shape[0];
-    if (!(n_31263 == in1->shape[0])) {
+    xs_mem_42914.references = NULL;
+    incr_32093 = in0;
+    xs_mem_42914 = in1->mem;
+    n_32092 = in1->shape[0];
+    if (!(n_32092 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_sortColumn_float(ctx, &mem_out_41493, &mem_out_41494, xs_mem_41232, n_31263, incr_31264);
+        ret = futrts_entry_sortColumn_float(ctx, &mem_out_43175, &mem_out_43176, xs_mem_42914, n_32092, incr_32093);
         if (ret == 0) {
             assert((*out0 = (struct futhark_opaque_sortInfo_float *) malloc(sizeof(struct futhark_opaque_sortInfo_float))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_41493;
-            (*out0)->v0->shape[0] = n_31263;
+            (*out0)->v0->mem = mem_out_43175;
+            (*out0)->v0->shape[0] = n_32092;
             assert(((*out0)->v1 = (struct futhark_f32_1d *) malloc(sizeof(struct futhark_f32_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_41494;
-            (*out0)->v1->shape[0] = n_31263;
+            (*out0)->v1->mem = mem_out_43176;
+            (*out0)->v1->shape[0] = n_32092;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12207,40 +12617,40 @@ int futhark_entry_sortColumn_float(struct futhark_context *ctx, struct futhark_o
 }
 int futhark_entry_sortColumn_int(struct futhark_context *ctx, struct futhark_opaque_sortInfo_int **out0, const int64_t in0, const struct futhark_i32_1d *in1)
 {
-    int64_t n_25854 = (int64_t) 0;
-    int64_t incr_25855 = (int64_t) 0;
+    int64_t n_26683 = (int64_t) 0;
+    int64_t incr_26684 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41494;
+    struct memblock mem_out_43176;
     
-    mem_out_41494.references = NULL;
+    mem_out_43176.references = NULL;
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock xs_mem_41232;
+    struct memblock xs_mem_42914;
     
-    xs_mem_41232.references = NULL;
-    incr_25855 = in0;
-    xs_mem_41232 = in1->mem;
-    n_25854 = in1->shape[0];
-    if (!(n_25854 == in1->shape[0])) {
+    xs_mem_42914.references = NULL;
+    incr_26684 = in0;
+    xs_mem_42914 = in1->mem;
+    n_26683 = in1->shape[0];
+    if (!(n_26683 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_sortColumn_int(ctx, &mem_out_41493, &mem_out_41494, xs_mem_41232, n_25854, incr_25855);
+        ret = futrts_entry_sortColumn_int(ctx, &mem_out_43175, &mem_out_43176, xs_mem_42914, n_26683, incr_26684);
         if (ret == 0) {
             assert((*out0 = (struct futhark_opaque_sortInfo_int *) malloc(sizeof(struct futhark_opaque_sortInfo_int))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_41493;
-            (*out0)->v0->shape[0] = n_25854;
+            (*out0)->v0->mem = mem_out_43175;
+            (*out0)->v0->shape[0] = n_26683;
             assert(((*out0)->v1 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_41494;
-            (*out0)->v1->shape[0] = n_25854;
+            (*out0)->v1->mem = mem_out_43176;
+            (*out0)->v1->shape[0] = n_26683;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12248,40 +12658,40 @@ int futhark_entry_sortColumn_int(struct futhark_context *ctx, struct futhark_opa
 }
 int futhark_entry_sortColumn_long(struct futhark_context *ctx, struct futhark_opaque_sortInfo_long **out0, const int64_t in0, const struct futhark_i64_1d *in1)
 {
-    int64_t n_28483 = (int64_t) 0;
-    int64_t incr_28484 = (int64_t) 0;
+    int64_t n_29312 = (int64_t) 0;
+    int64_t incr_29313 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41494;
+    struct memblock mem_out_43176;
     
-    mem_out_41494.references = NULL;
+    mem_out_43176.references = NULL;
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock xs_mem_41232;
+    struct memblock xs_mem_42914;
     
-    xs_mem_41232.references = NULL;
-    incr_28484 = in0;
-    xs_mem_41232 = in1->mem;
-    n_28483 = in1->shape[0];
-    if (!(n_28483 == in1->shape[0])) {
+    xs_mem_42914.references = NULL;
+    incr_29313 = in0;
+    xs_mem_42914 = in1->mem;
+    n_29312 = in1->shape[0];
+    if (!(n_29312 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_sortColumn_long(ctx, &mem_out_41493, &mem_out_41494, xs_mem_41232, n_28483, incr_28484);
+        ret = futrts_entry_sortColumn_long(ctx, &mem_out_43175, &mem_out_43176, xs_mem_42914, n_29312, incr_29313);
         if (ret == 0) {
             assert((*out0 = (struct futhark_opaque_sortInfo_long *) malloc(sizeof(struct futhark_opaque_sortInfo_long))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_41493;
-            (*out0)->v0->shape[0] = n_28483;
+            (*out0)->v0->mem = mem_out_43175;
+            (*out0)->v0->shape[0] = n_29312;
             assert(((*out0)->v1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_41494;
-            (*out0)->v1->shape[0] = n_28483;
+            (*out0)->v1->mem = mem_out_43176;
+            (*out0)->v1->shape[0] = n_29312;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12289,40 +12699,40 @@ int futhark_entry_sortColumn_long(struct futhark_context *ctx, struct futhark_op
 }
 int futhark_entry_sortColumn_short(struct futhark_context *ctx, struct futhark_opaque_sortInfo_short **out0, const int64_t in0, const struct futhark_i16_1d *in1)
 {
-    int64_t n_23208 = (int64_t) 0;
-    int64_t incr_23209 = (int64_t) 0;
+    int64_t n_24037 = (int64_t) 0;
+    int64_t incr_24038 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_41494;
+    struct memblock mem_out_43176;
     
-    mem_out_41494.references = NULL;
+    mem_out_43176.references = NULL;
     
-    struct memblock mem_out_41493;
+    struct memblock mem_out_43175;
     
-    mem_out_41493.references = NULL;
+    mem_out_43175.references = NULL;
     
-    struct memblock xs_mem_41232;
+    struct memblock xs_mem_42914;
     
-    xs_mem_41232.references = NULL;
-    incr_23209 = in0;
-    xs_mem_41232 = in1->mem;
-    n_23208 = in1->shape[0];
-    if (!(n_23208 == in1->shape[0])) {
+    xs_mem_42914.references = NULL;
+    incr_24038 = in0;
+    xs_mem_42914 = in1->mem;
+    n_24037 = in1->shape[0];
+    if (!(n_24037 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_sortColumn_short(ctx, &mem_out_41493, &mem_out_41494, xs_mem_41232, n_23208, incr_23209);
+        ret = futrts_entry_sortColumn_short(ctx, &mem_out_43175, &mem_out_43176, xs_mem_42914, n_24037, incr_24038);
         if (ret == 0) {
             assert((*out0 = (struct futhark_opaque_sortInfo_short *) malloc(sizeof(struct futhark_opaque_sortInfo_short))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_41493;
-            (*out0)->v0->shape[0] = n_23208;
+            (*out0)->v0->mem = mem_out_43175;
+            (*out0)->v0->shape[0] = n_24037;
             assert(((*out0)->v1 = (struct futhark_i16_1d *) malloc(sizeof(struct futhark_i16_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_41494;
-            (*out0)->v1->shape[0] = n_23208;
+            (*out0)->v1->mem = mem_out_43176;
+            (*out0)->v1->shape[0] = n_24037;
         }
     }
     lock_unlock(&ctx->lock);
