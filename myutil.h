@@ -3,6 +3,9 @@
 #include "duckdb.h"
 #include "ftsort.h"
 
+#ifndef MYUTIL_H
+#define MYUTIL_H
+
 /** A function like sizeof, but for the duckdb types used.
  * Params:
  * type : the logical type of the data, expressed in enum duckdb_type
@@ -37,3 +40,5 @@ void sortKeyColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, 
  * card : the cardinality of elements to process
  */
 void orderPayloadColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, struct futhark_i64_1d *orderBy, void* inCol, idx_t card);
+
+#endif

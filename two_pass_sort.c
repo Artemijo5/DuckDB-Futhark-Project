@@ -12,6 +12,9 @@
 #define BUFFER_SIZE CHUNK_SIZE*128
 #define TABLE_SIZE 2*BUFFER_SIZE + 5*CHUNK_SIZE
 
+#define DDB_MEMSIZE "2GB"
+#define DDB_TEMPDIR "/tempdir"
+
 /* ------------------------------------------------------------------------------------------------------------------------------
   // TODO
   // save to chunks & new table "sortedTbl" (for now via appenders...)
@@ -31,7 +34,22 @@ int main() {
   // DuckDB initialisation & connection
   duckdb_database db;
 	duckdb_connection con;
-	duckdb_open(NULL, &db);
+  duckdb_config config;
+  
+  // set config
+  if (duckdb_create_config(&config) == DuckDBError) {
+    perror("Failed to create config.");
+    return -1;
+  }
+  duckdb_set_config(config, "max_memory", DDB_MEMSIZE);
+  duckdb_set_config(config, "temp_directory", DDB_TEMPDIR);
+	//duckdb_open(NULL, &db);
+  if(duckdb_open_ext(NULL, &db, config, NULL) == DuckDBError) {
+    perror("Failed to open database with configuration options.");
+    return -1;
+  }
+  duckdb_destroy_config(&config);
+
 	duckdb_connect(db, &con);
 
   // Create the table tbl on which the testing will be done.
