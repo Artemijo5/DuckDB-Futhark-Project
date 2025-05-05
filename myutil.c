@@ -26,7 +26,7 @@ size_t colType_bytes(duckdb_type type) {
 void* colType_malloc(duckdb_type type, idx_t card) {
   size_t ms = colType_bytes(type);
   if (ms == 0) return NULL;
-  return malloc(card * type);
+  return malloc(card * ms);
 }
 
 void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, struct futhark_i64_1d **outIdx, short* keys, idx_t card) {
@@ -219,7 +219,7 @@ void orderPayloadColumn_double(struct futhark_context *ctx, double *outCol, idx_
 }
 void orderPayloadColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, struct futhark_i64_1d *orderBy, void* inCol, idx_t card) {
   switch (type){
-  case DUCKDB_TYPE_SMALLINT:
+    case DUCKDB_TYPE_SMALLINT:
       orderPayloadColumn_short(ctx, (short*)outCol, incr, orderBy, (short*)inCol, card);
       return;
     case DUCKDB_TYPE_INTEGER:
@@ -238,4 +238,124 @@ void orderPayloadColumn(struct futhark_context *ctx, void *outCol, duckdb_type t
       perror("Invalid type.");
       return;
   }
+}
+
+idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize, idx_t col_count, idx_t row_count, duckdb_type* types, void** BuffersIn) {
+  // 0 turn types into logical_types & strings to create the table
+  duckdb_logical_type ltypes[col_count];
+  char type_strs[col_count][25];
+  for(idx_t i=0; i<col_count; i++) {
+    ltypes[i] = duckdb_create_logical_type(types[i]);
+    switch(types[i]){
+      case DUCKDB_TYPE_SMALLINT:
+        sprintf( type_strs[i], "SMALLINT" );
+        break;
+      case DUCKDB_TYPE_INTEGER:
+        sprintf( type_strs[i], "INTEGER" );
+        break;
+      case DUCKDB_TYPE_BIGINT:
+        sprintf( type_strs[i], "BIGINT" );
+        break;
+      case DUCKDB_TYPE_FLOAT:
+        sprintf( type_strs[i], "FLOAT" );
+        break;
+      case DUCKDB_TYPE_DOUBLE:
+        sprintf( type_strs[i], "DOUBLE" );
+        break;
+      default:
+        perror("Invalid type.");
+        return -1;
+    }
+  }
+
+  // 1 create temporary table
+  char tblName[25];
+  sprintf(tblName, "tmp_interm%ld", numInter);
+  char queryStr[100 + 27*col_count];
+  int queryStr_len = sprintf(queryStr, "CREATE TEMP TABLE %s (", tblName);
+  for(idx_t i=0; i<col_count; i++) {
+    if(i<col_count-1) {
+      queryStr_len += sprintf(queryStr + queryStr_len, "%s, ", type_strs[i]);
+    }
+    else {
+      queryStr_len += sprintf(queryStr + queryStr_len, "%s);", type_strs[i]);
+    }
+  }
+  // TODO for testing
+  printf("%s\n", queryStr);
+  if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
+    perror("Failed to create temporary table.\n");
+    return -1;
+  }
+  // TODO for testing
+  printf("Created temporary table #%ld.\n", numInter);
+
+  // 2 create an appender for the table
+  duckdb_appender tmp_appender;
+  if( duckdb_appender_create(con, NULL, tblName, &tmp_appender) == DuckDBError ) {
+    perror("Failed to create appender.\n");
+    return -1;
+  }
+  // TODO for testing
+  printf("Created appender #%ld.\n", numInter);
+
+  // 3 insert the data into the table, 1 chunk at a time
+  for(idx_t r=0; r<row_count; r+=chunkSize) {
+    idx_t end = (r+chunkSize < row_count)? r+chunkSize: row_count-1;
+    idx_t cnk_size = end - r + 1;
+    duckdb_data_chunk cnk = duckdb_create_data_chunk(ltypes, col_count);
+    duckdb_data_chunk_set_size(cnk, cnk_size);
+    for(idx_t c=0; c<col_count; c++) {
+      duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
+      void* dat = duckdb_vector_get_data(vec);
+      size_t colSize = colType_bytes(types[c]);
+      memcpy(dat, BuffersIn[c] +r*colSize, cnk_size * colSize);
+    }
+    if(duckdb_append_data_chunk(tmp_appender, cnk) == DuckDBError) {
+      perror("Failed to append data.\n");
+      return -1;
+    }
+    duckdb_appender_flush(tmp_appender);
+    duckdb_destroy_data_chunk(&cnk);
+  }
+  // TODO for testing
+  printf("Stored all the chunks into the temp table.\n");
+
+  // Cleanup
+  duckdb_appender_destroy(&tmp_appender);
+  for(int i=0; i<col_count; i++) {
+    duckdb_destroy_logical_type(&ltypes[i]);
+  }
+
+  return numInter + 1;
+}
+
+void prepareToFetch_intermediate(idx_t numInter, duckdb_connection con, duckdb_result *result_ptr) {
+  char interName[25];
+  sprintf(interName, "tmp_interm%ld", numInter);
+  char queryStr[50];
+  sprintf(queryStr, "SELECT * FROM %s;", interName);
+  // TODO for testing
+  printf("%s\n", queryStr);
+  if( duckdb_query(con, queryStr, result_ptr) == DuckDBError ) {
+    perror("Failed to retrieve intermediate.");
+  }
+  // TODO better error handling
+}
+idx_t fetch_intermediate(duckdb_result result, idx_t col_count, duckdb_type* types, void** BuffersOut, idx_t start_idx) {
+  duckdb_data_chunk cnk = duckdb_fetch_chunk(result);
+  if(!cnk) {
+    // Result is exhausted.
+    return 0;
+  }
+  idx_t row_count = duckdb_data_chunk_get_size(cnk);
+
+  for(idx_t c=0; c<col_count; c++) {
+    duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
+    void* dat = duckdb_vector_get_data(vec);
+    size_t colSize = colType_bytes(types[c]);
+    memcpy(BuffersOut[c] + start_idx*colSize, dat, row_count*colSize);
+  }
+  duckdb_destroy_data_chunk(&cnk);
+  return row_count;
 }

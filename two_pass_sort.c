@@ -13,14 +13,13 @@
 #define TABLE_SIZE 2*BUFFER_SIZE + 5*CHUNK_SIZE
 
 #define DDB_MEMSIZE "2GB"
-#define DDB_TEMPDIR "/tempdir"
+#define DDB_TEMPDIR "/tempdir/"
 
 /* ------------------------------------------------------------------------------------------------------------------------------
   // TODO
   // save to chunks & new table "sortedTbl" (for now via appenders...)
   // -> 2-PASS
   // gpu runs...
-  // +++ issue with long / int64_t : BIGINT columns give segfaults or other memory-related errors ...
   */
 
 int main() {
@@ -31,11 +30,11 @@ int main() {
     return 1;
   }
 
-  // DuckDB initialisation & connection
+  // DuckDB initialisation
   duckdb_database db;
 	duckdb_connection con;
   duckdb_config config;
-  
+
   // set config
   if (duckdb_create_config(&config) == DuckDBError) {
     perror("Failed to create config.");
@@ -54,7 +53,7 @@ int main() {
 
   // Create the table tbl on which the testing will be done.
   duckdb_result res;
-	duckdb_query(con, "CREATE TABLE tbl (k DOUBLE, payload1 INTEGER, payload2 DOUBLE);", NULL);
+	duckdb_query(con, "CREATE TABLE tbl (k DOUBLE, payload1 BIGINT, payload2 DOUBLE);", NULL);
   duckdb_query(con, "setseed(0.42);", NULL);
 
   duckdb_prepared_statement init_stmt;
