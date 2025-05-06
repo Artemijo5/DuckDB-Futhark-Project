@@ -89,6 +89,8 @@ int main() {
   struct futhark_context *ctx = futhark_context_new(cfg);
   mylog(logfile, "Set up futhark context & config.");
 
+  idx_t numIntermediate = 0;
+
   mylog(logfile, "Beginning to process pages...");
   // STAGE 1 - SCAN TABLE, SAVE INTO TEMPORARY TABLES
   int flag = true;
@@ -220,6 +222,45 @@ int main() {
         "Payload column was reordered correctly.",
         "!!!!!!!!!!!!!!! Error: payload column was not reordered correctly. !!!!!!!!!!!!!!!");
     }
+
+    mylog(logfile, "Now testing storage & retrieval.");
+    numIntermediate = store_intermediate(numIntermediate, con, CHUNK_SIZE, col_count, cur_rows, type_ids, sorted_cols);
+    if(numIntermediate == -1) {
+      perror("Failed to store intermediate.\n");
+      return -1;
+    }
+    void* testBuffers[col_count];
+    for(idx_t c=0; c<col_count; c++) {
+      testBuffers[c] = colType_malloc(type_ids[c], cur_rows);
+    }
+    idx_t scanned_rows = 0;
+    duckdb_result testRes;
+    prepareToFetch_intermediate(numIntermediate-1, con, &testRes);
+    int retrievedPageIsCorrect = true;
+    while(true) {
+      idx_t new_rows = fetch_intermediate(testRes, col_count, type_ids, (void**)testBuffers, scanned_rows);
+      if(new_rows == 0) break;
+
+      for(idx_t c=0; c<col_count; c++) {
+        for(idx_t b=0; b<new_rows*colType_bytes(type_ids[c]); b++) {
+          idx_t B = b + scanned_rows*colType_bytes(type_ids[c]);
+          if(((char*)sorted_cols[c])[B] != ((char*)testBuffers[c])[B]) {
+            //printf("Mistake at col %ld at row %ld !\n", c, B);
+            retrievedPageIsCorrect = false;
+            break;
+          }
+        }
+        if(!retrievedPageIsCorrect) break;
+      }
+
+      scanned_rows += new_rows;
+    }
+    logdbg(logfile,
+      retrievedPageIsCorrect,
+      "Page was stored & retrieved correctly in its entirety.",
+      "!!!!!!!!!!!!!!! Error: retrieved data does not match original. !!!!!!!!!!!!!!!");
+        
+
     // clean-up
     for(idx_t col=0; col<col_count; col++) {
       free(Buffers[col]);

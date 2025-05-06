@@ -271,14 +271,14 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
   // 1 create temporary table
   char tblName[25];
   sprintf(tblName, "tmp_interm%ld", numInter);
-  char queryStr[100 + 27*col_count];
-  int queryStr_len = sprintf(queryStr, "CREATE TEMP TABLE %s (", tblName);
+  char queryStr[100 + 35*col_count];
+  int queryStr_len = sprintf(queryStr, "CREATE OR REPLACE TEMP TABLE %s (", tblName);
   for(idx_t i=0; i<col_count; i++) {
     if(i<col_count-1) {
-      queryStr_len += sprintf(queryStr + queryStr_len, "%s, ", type_strs[i]);
+      queryStr_len += sprintf(queryStr + queryStr_len, "x%ld %s, ", i, type_strs[i]);
     }
     else {
-      queryStr_len += sprintf(queryStr + queryStr_len, "%s);", type_strs[i]);
+      queryStr_len += sprintf(queryStr + queryStr_len, "x%ld %s);", i, type_strs[i]);
     }
   }
   // TODO for testing
@@ -296,30 +296,25 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
     perror("Failed to create appender.\n");
     return -1;
   }
-  // TODO for testing
-  printf("Created appender #%ld.\n", numInter);
+  //printf("Created appender #%ld.\n", numInter);
 
   // 3 insert the data into the table, 1 chunk at a time
   for(idx_t r=0; r<row_count; r+=chunkSize) {
-    idx_t end = (r+chunkSize < row_count)? r+chunkSize: row_count-1;
-    idx_t cnk_size = end - r + 1;
+    size_t this_size = (row_count-r > chunkSize)? chunkSize: row_count-r;
     duckdb_data_chunk cnk = duckdb_create_data_chunk(ltypes, col_count);
-    duckdb_data_chunk_set_size(cnk, cnk_size);
+    duckdb_data_chunk_set_size(cnk, this_size);
     for(idx_t c=0; c<col_count; c++) {
       duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
-      void* dat = duckdb_vector_get_data(vec);
-      size_t colSize = colType_bytes(types[c]);
-      memcpy(dat, BuffersIn[c] +r*colSize, cnk_size * colSize);
+      void *dat = (void*)duckdb_vector_get_data(vec);
+      memcpy(dat, &((char*)BuffersIn[c])[r*colType_bytes(types[c])], this_size*colType_bytes(types[c]));
     }
     if(duckdb_append_data_chunk(tmp_appender, cnk) == DuckDBError) {
-      perror("Failed to append data.\n");
+      perror("Failed to append data chunk.\n");
       return -1;
     }
+    //printf("Appended %ld elements.\n", this_size);
     duckdb_appender_flush(tmp_appender);
-    duckdb_destroy_data_chunk(&cnk);
   }
-  // TODO for testing
-  printf("Stored all the chunks into the temp table.\n");
 
   // Cleanup
   duckdb_appender_destroy(&tmp_appender);
@@ -342,6 +337,7 @@ void prepareToFetch_intermediate(idx_t numInter, duckdb_connection con, duckdb_r
   }
   // TODO better error handling
 }
+
 idx_t fetch_intermediate(duckdb_result result, idx_t col_count, duckdb_type* types, void** BuffersOut, idx_t start_idx) {
   duckdb_data_chunk cnk = duckdb_fetch_chunk(result);
   if(!cnk) {
@@ -354,7 +350,8 @@ idx_t fetch_intermediate(duckdb_result result, idx_t col_count, duckdb_type* typ
     duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
     void* dat = duckdb_vector_get_data(vec);
     size_t colSize = colType_bytes(types[c]);
-    memcpy(BuffersOut[c] + start_idx*colSize, dat, row_count*colSize);
+    char *curBuffer = (char*)BuffersOut[c];
+    memcpy(curBuffer + start_idx*colSize, dat, row_count*colSize);
   }
   duckdb_destroy_data_chunk(&cnk);
   return row_count;
