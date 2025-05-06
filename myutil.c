@@ -282,13 +282,13 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
     }
   }
   // TODO for testing
-  printf("%s\n", queryStr);
+  //printf("%s\n", queryStr);
   if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
     perror("Failed to create temporary table.\n");
     return -1;
   }
   // TODO for testing
-  printf("Created temporary table #%ld.\n", numInter);
+  //printf("Created temporary table #%ld.\n", numInter);
 
   // 2 create an appender for the table
   duckdb_appender tmp_appender;
@@ -314,6 +314,7 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
     }
     //printf("Appended %ld elements.\n", this_size);
     duckdb_appender_flush(tmp_appender);
+    duckdb_destroy_data_chunk(&cnk);
   }
 
   // Cleanup

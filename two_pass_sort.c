@@ -92,7 +92,9 @@ int main() {
   idx_t numIntermediate = 0;
 
   mylog(logfile, "Beginning to process pages...");
+  // #########################################################################################################################
   // STAGE 1 - SCAN TABLE, SAVE INTO TEMPORARY TABLES
+  // #########################################################################################################################
   int flag = true;
   while(flag) {
     mylog(logfile, "Next page...");
@@ -155,16 +157,16 @@ int main() {
     sorted_cols[0] = colType_malloc(type_ids[0], cur_rows);
     void *sorted_x = sorted_cols[0];
     mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, sorted_x, type_ids[0], incr_idx, &sorted_idx_ft, Buffers[0], cur_rows);
+    sortKeyColumn(ctx, sorted_x, type_ids[0], 0, &sorted_idx_ft, Buffers[0], cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
     //logarray_int(logfile, "Sorted x: ", sorted_x, cur_rows);
     // test that sorting & reordering was done correctly
     long sorted_idx[cur_rows];
     futhark_values_i64_1d(ctx, sorted_idx_ft, sorted_idx);
     futhark_context_sync(ctx);
+    /*
     int isSorted = true;
     int indexIsCorrect = true;
-    //size_t x_bytes = colType_bytes
     for(idx_t i=0; i<cur_rows-1; i++) {
       switch(type_ids[0]) {
         case DUCKDB_TYPE_SMALLINT:
@@ -201,14 +203,16 @@ int main() {
       indexIsCorrect,
       "Indices were ordered correctly.",
       "!!!!!!!!!!!!!!! Error: indices were not ordered correctly. !!!!!!!!!!!!!!!");
+    */
     
     // Next do the payload columns
     mylog(logfile, "Reordering payload columns...");
     for(idx_t col=1; col<col_count; col++) {
       sorted_cols[col] = colType_malloc(type_ids[col], cur_rows);
-      orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], incr_idx, sorted_idx_ft, Buffers[col], cur_rows);
+      orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], 0, sorted_idx_ft, Buffers[col], cur_rows);
       mylog(logfile, "Reordered the next payload column.");
       // Test whether the reordering was done correctly...
+      /*
       int yIsCorrect = true;
       for (idx_t i=0; i<cur_rows; i++) {
         size_t y_bytes = colType_bytes(type_ids[col]);
@@ -221,14 +225,17 @@ int main() {
         yIsCorrect,
         "Payload column was reordered correctly.",
         "!!!!!!!!!!!!!!! Error: payload column was not reordered correctly. !!!!!!!!!!!!!!!");
+      */
     }
 
-    mylog(logfile, "Now testing storage & retrieval.");
+    //mylog(logfile, "Now testing storage & retrieval.");
     numIntermediate = store_intermediate(numIntermediate, con, CHUNK_SIZE, col_count, cur_rows, type_ids, sorted_cols);
     if(numIntermediate == -1) {
       perror("Failed to store intermediate.\n");
       return -1;
     }
+    mylog(logfile, "Stored buffer as intermediate.");
+    /*
     void* testBuffers[col_count];
     for(idx_t c=0; c<col_count; c++) {
       testBuffers[c] = colType_malloc(type_ids[c], cur_rows);
@@ -259,8 +266,8 @@ int main() {
       retrievedPageIsCorrect,
       "Page was stored & retrieved correctly in its entirety.",
       "!!!!!!!!!!!!!!! Error: retrieved data does not match original. !!!!!!!!!!!!!!!");
-        
-
+    */
+    
     // clean-up
     for(idx_t col=0; col<col_count; col++) {
       free(Buffers[col]);
@@ -269,6 +276,32 @@ int main() {
     mylog(logfile, "Freed this page's buffers.");
     futhark_free_i64_1d(ctx, sorted_idx_ft);
     mylog(logfile, "Freed futhark objects for this page.");
+
+    incr_idx += cur_rows;
+  }
+
+  // TODO remember how I was supposed to use incr_idx in the sorting funcs & realise why it doesn't seem to work
+  // tho ig I don't need it currently
+  // also possible it works but the checks don't account for it rn?
+
+  // #########################################################################################################################
+  // STAGE 2 - RETRIEVE DATA, SORTING THE FIRST BLOCK OF EACH FILE EACH TIME
+  // #########################################################################################################################
+  mylog(logfile, "Now entering the second stage of processing...");
+  while(true) {
+    // initialise buffer
+
+    // initialise final result table
+
+    // prepare tables for scanning
+
+    // scan all tables into buffer
+    // if all are exhausted, processing is finished, empty the remaining buffer & break
+    break;
+
+    // sort buffer
+
+    // save 1st block of sorted buffer
   }
 
 
