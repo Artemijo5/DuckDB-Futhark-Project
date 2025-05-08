@@ -29,6 +29,46 @@ void* colType_malloc(duckdb_type type, idx_t card) {
   return malloc(card * ms);
 }
 
+idx_t argmin(struct futhark_context *ctx, duckdb_type type, void* arr, idx_t card) {
+  idx_t ind = 0;
+  switch (type) {
+    case DUCKDB_TYPE_SMALLINT:
+      struct futhark_i16_1d *arr_short_ft = futhark_new_i16_1d(ctx, arr, card);
+      futhark_entry_argmin_short(ctx, &ind, arr_short_ft);
+      futhark_context_sync(ctx);
+      futhark_free_i16_1d(ctx, arr_short_ft);
+      break;
+    case DUCKDB_TYPE_INTEGER:
+      struct futhark_i32_1d *arr_int_ft = futhark_new_i32_1d(ctx, arr, card);
+      futhark_entry_argmin_int(ctx, &ind, arr_int_ft);
+      futhark_context_sync(ctx);
+      futhark_free_i32_1d(ctx, arr_int_ft);
+      break;
+    case DUCKDB_TYPE_BIGINT:
+      struct futhark_i64_1d *arr_long_ft = futhark_new_i64_1d(ctx, arr, card);
+      futhark_entry_argmin_long(ctx, &ind, arr_long_ft);
+      futhark_context_sync(ctx);
+      futhark_free_i64_1d(ctx, arr_long_ft);
+      break;
+    case DUCKDB_TYPE_FLOAT:
+      struct futhark_f32_1d *arr_float_ft = futhark_new_f32_1d(ctx, arr, card);
+      futhark_entry_argmin_float(ctx, &ind, arr_float_ft);
+      futhark_context_sync(ctx);
+      futhark_free_f32_1d(ctx, arr_float_ft);
+      break;
+    case DUCKDB_TYPE_DOUBLE:
+      struct futhark_f64_1d *arr_double_ft = futhark_new_f64_1d(ctx, arr, card);
+      futhark_entry_argmin_double(ctx, &ind, arr_double_ft);
+      futhark_context_sync(ctx);
+      futhark_free_f64_1d(ctx, arr_double_ft);
+      break;
+    default:
+      perror("Invalid type.");
+      return -1;
+  }
+  return ind;
+}
+
 void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, struct futhark_i64_1d **outIdx, short* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_i16_1d *x_ft = futhark_new_i16_1d(ctx, keys, card);

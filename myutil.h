@@ -19,6 +19,17 @@ size_t colType_bytes(duckdb_type type);
 void* colType_malloc(duckdb_type type, idx_t card);
 
 /**
+ * A function to return the index of the minimum element of an array.
+ * Params:
+ * ctx : pointer to the futhark context
+ * type : the logical type of the data, expressed in enum duckdb_type
+ * arr : the array to find the argmin of
+ * card : the number of elements in the array
+ * Returns:
+ * index of the minimum element in the array (the smallest index in case of a tie)
+ */
+idx_t argmin(struct futhark_context *ctx, duckdb_type type, void* arr, idx_t card);
+/**
  * A function to sort the key column of a table, also provides the reordered indices.
  * Params:
  * ctx : pointer to the futhark context

@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h> // for maximum values of integral types
+#include <float.h> // for maximum values of floating-point types
 #include "duckdb.h"
+
 #include "ftsort.h"
 #include "mylogger.h"
 #include "myutil.h"
@@ -92,9 +95,13 @@ int main() {
   idx_t numIntermediate = 0;
 
   mylog(logfile, "Beginning to process pages...");
-  // #########################################################################################################################
+  // #########################################################################################################################################
+  // #########################################################################################################################################
+  // #########################################################################################################################################
   // STAGE 1 - SCAN TABLE, SAVE INTO TEMPORARY TABLES
-  // #########################################################################################################################
+  // #########################################################################################################################################
+  // #########################################################################################################################################
+  // #########################################################################################################################################
   int flag = true;
   while(flag) {
     mylog(logfile, "Next page...");
@@ -157,7 +164,7 @@ int main() {
     sorted_cols[0] = colType_malloc(type_ids[0], cur_rows);
     void *sorted_x = sorted_cols[0];
     mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, sorted_x, type_ids[0], 0, &sorted_idx_ft, Buffers[0], cur_rows);
+    sortKeyColumn(ctx, sorted_x, type_ids[0], incr_idx, &sorted_idx_ft, Buffers[0], cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
     //logarray_int(logfile, "Sorted x: ", sorted_x, cur_rows);
     // test that sorting & reordering was done correctly
@@ -189,10 +196,11 @@ int main() {
           return 1;
       }
     }
+    size_t x_bytes = colType_bytes(type_ids[0]);
     for(idx_t i=0; i<cur_rows; i++) {
-      size_t x_bytes = colType_bytes(type_ids[0]);
       for(size_t b=0; b<x_bytes; b++) {
-        indexIsCorrect = indexIsCorrect && (((char*)sorted_x)[i*x_bytes + b] == ((char*)Buffers[0])[sorted_idx[i]*x_bytes + b]);
+        indexIsCorrect = indexIsCorrect && (((char*)sorted_x)[i*x_bytes + b]
+          == ((char*)Buffers[0])[sorted_idx[i]*x_bytes + b - incr_idx*x_bytes]);
       }
     }
     logdbg(logfile,
@@ -209,16 +217,17 @@ int main() {
     mylog(logfile, "Reordering payload columns...");
     for(idx_t col=1; col<col_count; col++) {
       sorted_cols[col] = colType_malloc(type_ids[col], cur_rows);
-      orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], 0, sorted_idx_ft, Buffers[col], cur_rows);
-      mylog(logfile, "Reordered the next payload column.");
+      orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], incr_idx, sorted_idx_ft, Buffers[col], cur_rows);
+      //mylog(logfile, "Reordered the next payload column.");
       // Test whether the reordering was done correctly...
       /*
       int yIsCorrect = true;
+      size_t y_bytes = colType_bytes(type_ids[col]);
       for (idx_t i=0; i<cur_rows; i++) {
-        size_t y_bytes = colType_bytes(type_ids[col]);
         for(size_t b=0; b<y_bytes; b++) {
           // Byte-wise comparison, rather than switch-case per type...
-          yIsCorrect = yIsCorrect && (((char*)sorted_cols[col])[i*y_bytes + b] == ((char*)Buffers[col])[sorted_idx[i]*y_bytes + b]);
+          yIsCorrect = yIsCorrect && (((char*)sorted_cols[col])[i*y_bytes + b]
+            == ((char*)Buffers[col])[sorted_idx[i]*y_bytes + b - incr_idx*y_bytes]);
         }
       }
       logdbg(logfile,
@@ -280,38 +289,198 @@ int main() {
     incr_idx += cur_rows;
   }
 
-  // TODO remember how I was supposed to use incr_idx in the sorting funcs & realise why it doesn't seem to work
-  // tho ig I don't need it currently
-  // also possible it works but the checks don't account for it rn?
+  duckdb_destroy_result(&res);
+  mylog(logfile, "Freed initial duckdb result from the 1st stage.");
 
-  // #########################################################################################################################
+  // TODO currently Stg2 handles only key column - need to also reorder & store the payloads...
+  // Will probably need to put each of those into their own buffers & then reorder, like in Stg1...
+
+  // #########################################################################################################################################
+  // #########################################################################################################################################
+  // #########################################################################################################################################
   // STAGE 2 - RETRIEVE DATA, SORTING THE FIRST BLOCK OF EACH FILE EACH TIME
-  // #########################################################################################################################
+  // #########################################################################################################################################
+  // #########################################################################################################################################
+  // #########################################################################################################################################
   mylog(logfile, "Now entering the second stage of processing...");
-  while(true) {
-    // initialise buffer
+  // The plan:
+  // 1. initialise a buffer of BUFFER_SIZE
+  // half of it is used for new chunks, the other half for leftover data from the last sort
+  // 2. read new chunks
+  // the first time, read 1 chunk from each intermediate
+  // from then on, use priorities (the newly read chunk with the smallest last element takes priority)
+  // exhausted intermediates are exempt from priorities
+  // 3. sort
+  // when all are exhausted, dump the buffer's leftovers into the result
+  // TODO figure out how to handle fragmentation gaps
 
-    // initialise final result table
+  // 1 initialise buffer
+  size_t buffer2_size = (BUFFER_SIZE > 2*numIntermediate*CHUNK_SIZE)?
+    2*numIntermediate*CHUNK_SIZE:
+    BUFFER_SIZE;
+  void* Buffer2 = colType_malloc(type_ids[0], buffer2_size); // TODO make this the 1st of Buffers2, holding all columns
+  size_t buffer2_cap = buffer2_size / CHUNK_SIZE; // buffer capacity (for chunks)
+  size_t pickup = buffer2_cap - numIntermediate; // chunks that are flushed at the end of sorting
+  if(pickup <= 0) {
+    perror("Buffer has insufficient capacity!\n");
+    return -1;
+  }
+  // note exhausted intermediates
+  int isExhausted[numIntermediate];
+  for(idx_t i=0; i<numIntermediate; i++) {
+    isExhausted[i] = false;
+  }
+  size_t still_count = numIntermediate; // number of intermediates that have not been exhausted yet
+  // hold maxima of each last chunk (the last from each intermediate) to judge priorities
+  void* maxima = colType_malloc(type_ids[0], numIntermediate);
+  mylog(logfile, "Initialised buffers.");
 
-    // prepare tables for scanning
+  // 2 prepare tables for scanning
+  duckdb_result retrieved[numIntermediate];
+  for(idx_t i=0; i<numIntermediate; i++) {
+    prepareToFetch_intermediate(i, con, &(retrieved[i]));
+  }
+  mylog(logfile, "Prepared results to fetch chunks from intermediates.");
 
-    // scan all tables into buffer
-    // if all are exhausted, processing is finished, empty the remaining buffer & break
-    break;
+  // initialise final result table
+  char type_strs[col_count][25];
+  for(idx_t c=0; c<col_count; c++) {
+    switch(type_ids[c]){
+      case DUCKDB_TYPE_SMALLINT:
+        sprintf( type_strs[c], "SMALLINT" );
+        break;
+      case DUCKDB_TYPE_INTEGER:
+        sprintf( type_strs[c], "INTEGER" );
+        break;
+      case DUCKDB_TYPE_BIGINT:
+        sprintf( type_strs[c], "BIGINT" );
+        break;
+      case DUCKDB_TYPE_FLOAT:
+        sprintf( type_strs[c], "FLOAT" );
+        break;
+      case DUCKDB_TYPE_DOUBLE:
+        sprintf( type_strs[c], "DOUBLE" );
+        break;
+      default:
+        perror("Invalid type.");
+        return -1;
+    }
+  }
+  const char *resTblName = "tbl_Sorted";
+  char resQueryStr[100+35*col_count];
+  int resQueryStr_len = sprintf(resQueryStr, "CREATE OR REPLACE TABLE %s (", resTblName);
+  for (idx_t c = 0; c < col_count; c++) {
+    if(c<col_count-1) {
+      resQueryStr_len += sprintf(resQueryStr + resQueryStr_len, "x%ld %s, ", c, type_strs[c]);
+    }
+    else {
+      resQueryStr_len += sprintf(resQueryStr + resQueryStr_len, "x%ld %s);", c, type_strs[c]);
+    }
+  }
+  printf("%s\n", resQueryStr);
+  mylog(logfile, "Created final table where results will be stored.");
 
-    // sort buffer
+  // 1st scan of each intermediate
+  idx_t fillFromIndx = 0;
+  idx_t positionsToIgnore = 0; // TODO for handling fragmentation, figure out if good...
+  for(idx_t i=0; i<numIntermediate; i++) {
+    mylog(logfile, "Now loading from next intermediate...");
+    duckdb_data_chunk cnk = duckdb_fetch_chunk(retrieved[i]);
+    if(!cnk) { // result is already exhausted -- shouldn't happen
+      isExhausted[i] = true;
+      switch(type_ids[0]) {
+        case DUCKDB_TYPE_SMALLINT:
+          ((short*)maxima)[i] = SHRT_MAX;
+          break;
+        case DUCKDB_TYPE_INTEGER:
+          ((int32_t*)maxima)[i] = INT_MAX;
+          break;
+        case DUCKDB_TYPE_BIGINT:
+          ((int64_t*)maxima)[i] = LONG_MAX;
+          break;
+        case DUCKDB_TYPE_FLOAT:
+          ((float*)maxima)[i] = FLT_MAX;
+          break;
+        case DUCKDB_TYPE_DOUBLE:
+          ((double*)maxima)[i] = DBL_MAX;
+          break;
+        default:
+          perror("Invalid type.\n");
+          return -1;
+      }
+      mylog(logfile, "Intermediate is empty (this shouldn't happen).");
+      continue;
+    }
+    idx_t cur_rows = duckdb_data_chunk_get_size(cnk);
+    fillFromIndx += cur_rows;
+    positionsToIgnore += CHUNK_SIZE - cur_rows;
 
-    // save 1st block of sorted buffer
+    duckdb_vector keyVec = duckdb_data_chunk_get_vector(cnk, 0);
+    void* keys = duckdb_vector_get_data(keyVec);
+    memcpy(
+      Buffer2 + fillFromIndx*colType_bytes(type_ids[0]),
+      keys,
+      cur_rows*colType_bytes(type_ids[0])
+    );
+    mylog(logfile, "Loaded intermediate's keys into buffer.");
+    // TODO buffer payload columns
+    // also do GFUR implementation with buffering indices (but then also don't order payloads in stg1...)
+
+    // remember maximum key of this chunk
+    memcpy(
+      maxima + i*colType_bytes(type_ids[0]),
+      keys + (cur_rows-1)*colType_bytes(type_ids[0]),
+      colType_bytes(type_ids[0])
+    );
+    mylog(logfile, "Noted maximum key of this intermediate.");
+  }
+  mylog(logfile, "Done loading intermediates into the buffer.");
+  // TODO to avoid internal fragmentation - tidy this up maybe...
+  // ALSO, maybe not actually needed in stg1, but needed later...
+  // TODO another alternative is just to ignore elements from the end when sorting, and shift elements with memcpy when needed...
+  // tbh this is kind of a pain to have to do... maybe the other is less so?
+  for(idx_t i=fillFromIndx; i<fillFromIndx+positionsToIgnore; i++) {
+    switch(type_ids[0]) {
+      case DUCKDB_TYPE_SMALLINT:
+        ((short*)Buffer2)[i] = SHRT_MAX;
+        break;
+      case DUCKDB_TYPE_INTEGER:
+        ((int32_t*)Buffer2)[i] = INT_MAX;
+        break;
+      case DUCKDB_TYPE_BIGINT:
+        ((int64_t*)Buffer2)[i] = LONG_MAX;
+        break;
+      case DUCKDB_TYPE_FLOAT:
+        ((float*)Buffer2)[i] = FLT_MAX;
+        break;
+      case DUCKDB_TYPE_DOUBLE:
+        ((double*)Buffer2)[i] = DBL_MAX;
+        break;
+      default:
+        perror("Invalid type.\n");
+        return -1;
+    }
   }
 
 
+  // sort buffer
+
+  // save 1st block of sorted buffer
+
+
   // clean-up
+  free(Buffer2);
+  free(maxima);
+  for(idx_t i=0; i<numIntermediate; i++) {
+    duckdb_destroy_result(&(retrieved[i]));
+  }
+  mylog(logfile, "Freed buffers from the 2nd stage.");
   futhark_context_free(ctx);
   futhark_context_config_free(cfg);
   mylog(logfile, "Freed futhark core.");
-	duckdb_destroy_result(&res);
 	duckdb_disconnect(&con);
 	duckdb_close(&db);
+  mylog(logfile, "Disconnected duckdb and freed its memory.");
 
   logclose(logfile);
   
