@@ -4,6 +4,8 @@
 #include "mylogger.h"
 #include "ftsort.h"
 #include <string.h>
+#include <limits.h> // for maximum values of integral types
+#include <float.h> // for maximum values of floating-point types
 
 size_t colType_bytes(duckdb_type type) {
   switch (type){
@@ -67,6 +69,31 @@ idx_t argmin(struct futhark_context *ctx, duckdb_type type, void* arr, idx_t car
       return -1;
   }
   return ind;
+}
+
+void max_padding(void* dest, duckdb_type type, idx_t n) {
+  for(idx_t i=0; i<n; i++) {
+    switch(type) {
+      case DUCKDB_TYPE_SMALLINT:
+        ((short*)dest)[i] = SHRT_MAX;
+        break;
+      case DUCKDB_TYPE_INTEGER:
+        ((int*)dest)[i] = INT_MAX;
+        break;
+      case DUCKDB_TYPE_BIGINT:
+        ((long*)dest)[i] = LONG_MAX;
+        break;
+      case DUCKDB_TYPE_FLOAT:
+        ((float*)dest)[i] = FLT_MAX;
+        break;
+      case DUCKDB_TYPE_DOUBLE:
+        ((double*)dest)[i] = DBL_MAX;
+        break;
+      default:
+        perror("Invalid type.");
+        return;
+    }
+  }
 }
 
 void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, struct futhark_i64_1d **outIdx, short* keys, idx_t card) {

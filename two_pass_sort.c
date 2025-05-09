@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h> // for maximum values of integral types
-#include <float.h> // for maximum values of floating-point types
 #include "duckdb.h"
 
 #include "ftsort.h"
@@ -12,8 +10,8 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE CHUNK_SIZE*128
-#define TABLE_SIZE 2*BUFFER_SIZE + 5*CHUNK_SIZE
+#define BUFFER_SIZE 4*CHUNK_SIZE//CHUNK_SIZE*128
+#define TABLE_SIZE 2*BUFFER_SIZE + CHUNK_SIZE//2*BUFFER_SIZE + 5*CHUNK_SIZE
 
 #define DDB_MEMSIZE "2GB"
 #define DDB_TEMPDIR "/tempdir/"
@@ -56,12 +54,12 @@ int main() {
 
   // Create the table tbl on which the testing will be done.
   duckdb_result res;
-	duckdb_query(con, "CREATE TABLE tbl (k DOUBLE, payload1 BIGINT, payload2 DOUBLE);", NULL);
+	duckdb_query(con, "CREATE TABLE tbl (k BIGINT, payload1 BIGINT, payload2 DOUBLE);", NULL);
   duckdb_query(con, "setseed(0.42);", NULL);
 
   duckdb_prepared_statement init_stmt;
   if (duckdb_prepare(con,
-    "INSERT INTO tbl (SELECT 10000*random(), 10000*random(), 10000*random() FROM range($1));",
+    "INSERT INTO tbl (SELECT ($1 - i), 10000*random(), 10000*random() FROM range($1) t(i));",
     &init_stmt) == DuckDBError)
   {
     perror("Failed to initialise the table.");
@@ -313,171 +311,15 @@ int main() {
   // 3. sort
   // when all are exhausted, dump the buffer's leftovers into the result
   // TODO figure out how to handle fragmentation gaps
+  // current idea is a rowsToIgnore counter, & those are filled with max values & not copied, + the ones at the end are not sorted...
+  // ...
+  // TODO organise
+  // TODO use max_padding for the long witch statements I was doing before...
 
-  // 1 initialise buffer
-  size_t buffer2_size = (BUFFER_SIZE > 2*numIntermediate*CHUNK_SIZE)?
-    2*numIntermediate*CHUNK_SIZE:
-    BUFFER_SIZE;
-  void* Buffer2 = colType_malloc(type_ids[0], buffer2_size); // TODO make this the 1st of Buffers2, holding all columns
-  size_t buffer2_cap = buffer2_size / CHUNK_SIZE; // buffer capacity (for chunks)
-  size_t pickup = buffer2_cap - numIntermediate; // chunks that are flushed at the end of sorting
-  if(pickup <= 0) {
-    perror("Buffer has insufficient capacity!\n");
-    return -1;
-  }
-  // note exhausted intermediates
-  int isExhausted[numIntermediate];
-  for(idx_t i=0; i<numIntermediate; i++) {
-    isExhausted[i] = false;
-  }
-  size_t still_count = numIntermediate; // number of intermediates that have not been exhausted yet
-  // hold maxima of each last chunk (the last from each intermediate) to judge priorities
-  void* maxima = colType_malloc(type_ids[0], numIntermediate);
-  mylog(logfile, "Initialised buffers.");
-
-  // 2 prepare tables for scanning
-  duckdb_result retrieved[numIntermediate];
-  for(idx_t i=0; i<numIntermediate; i++) {
-    prepareToFetch_intermediate(i, con, &(retrieved[i]));
-  }
-  mylog(logfile, "Prepared results to fetch chunks from intermediates.");
-
-  // initialise final result table
-  char type_strs[col_count][25];
-  for(idx_t c=0; c<col_count; c++) {
-    switch(type_ids[c]){
-      case DUCKDB_TYPE_SMALLINT:
-        sprintf( type_strs[c], "SMALLINT" );
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        sprintf( type_strs[c], "INTEGER" );
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        sprintf( type_strs[c], "BIGINT" );
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        sprintf( type_strs[c], "FLOAT" );
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        sprintf( type_strs[c], "DOUBLE" );
-        break;
-      default:
-        perror("Invalid type.");
-        return -1;
-    }
-  }
-  const char *resTblName = "tbl_Sorted";
-  char resQueryStr[100+35*col_count];
-  int resQueryStr_len = sprintf(resQueryStr, "CREATE OR REPLACE TABLE %s (", resTblName);
-  for (idx_t c = 0; c < col_count; c++) {
-    if(c<col_count-1) {
-      resQueryStr_len += sprintf(resQueryStr + resQueryStr_len, "x%ld %s, ", c, type_strs[c]);
-    }
-    else {
-      resQueryStr_len += sprintf(resQueryStr + resQueryStr_len, "x%ld %s);", c, type_strs[c]);
-    }
-  }
-  printf("%s\n", resQueryStr);
-  mylog(logfile, "Created final table where results will be stored.");
-
-  // 1st scan of each intermediate
-  idx_t fillFromIndx = 0;
-  idx_t positionsToIgnore = 0; // TODO for handling fragmentation, figure out if good...
-  for(idx_t i=0; i<numIntermediate; i++) {
-    mylog(logfile, "Now loading from next intermediate...");
-    duckdb_data_chunk cnk = duckdb_fetch_chunk(retrieved[i]);
-    if(!cnk) { // result is already exhausted -- shouldn't happen
-      isExhausted[i] = true;
-      switch(type_ids[0]) {
-        case DUCKDB_TYPE_SMALLINT:
-          ((short*)maxima)[i] = SHRT_MAX;
-          break;
-        case DUCKDB_TYPE_INTEGER:
-          ((int32_t*)maxima)[i] = INT_MAX;
-          break;
-        case DUCKDB_TYPE_BIGINT:
-          ((int64_t*)maxima)[i] = LONG_MAX;
-          break;
-        case DUCKDB_TYPE_FLOAT:
-          ((float*)maxima)[i] = FLT_MAX;
-          break;
-        case DUCKDB_TYPE_DOUBLE:
-          ((double*)maxima)[i] = DBL_MAX;
-          break;
-        default:
-          perror("Invalid type.\n");
-          return -1;
-      }
-      mylog(logfile, "Intermediate is empty (this shouldn't happen).");
-      continue;
-    }
-    idx_t cur_rows = duckdb_data_chunk_get_size(cnk);
-    fillFromIndx += cur_rows;
-    positionsToIgnore += CHUNK_SIZE - cur_rows;
-
-    duckdb_vector keyVec = duckdb_data_chunk_get_vector(cnk, 0);
-    void* keys = duckdb_vector_get_data(keyVec);
-    memcpy(
-      Buffer2 + fillFromIndx*colType_bytes(type_ids[0]),
-      keys,
-      cur_rows*colType_bytes(type_ids[0])
-    );
-    mylog(logfile, "Loaded intermediate's keys into buffer.");
-    // TODO buffer payload columns
-    // also do GFUR implementation with buffering indices (but then also don't order payloads in stg1...)
-
-    // remember maximum key of this chunk
-    memcpy(
-      maxima + i*colType_bytes(type_ids[0]),
-      keys + (cur_rows-1)*colType_bytes(type_ids[0]),
-      colType_bytes(type_ids[0])
-    );
-    mylog(logfile, "Noted maximum key of this intermediate.");
-  }
-  mylog(logfile, "Done loading intermediates into the buffer.");
-  // TODO to avoid internal fragmentation - tidy this up maybe...
-  // ALSO, maybe not actually needed in stg1, but needed later...
-  // TODO another alternative is just to ignore elements from the end when sorting, and shift elements with memcpy when needed...
-  // tbh this is kind of a pain to have to do... maybe the other is less so?
-  for(idx_t i=fillFromIndx; i<fillFromIndx+positionsToIgnore; i++) {
-    switch(type_ids[0]) {
-      case DUCKDB_TYPE_SMALLINT:
-        ((short*)Buffer2)[i] = SHRT_MAX;
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        ((int32_t*)Buffer2)[i] = INT_MAX;
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        ((int64_t*)Buffer2)[i] = LONG_MAX;
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        ((float*)Buffer2)[i] = FLT_MAX;
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        ((double*)Buffer2)[i] = DBL_MAX;
-        break;
-      default:
-        perror("Invalid type.\n");
-        return -1;
-    }
-  }
-
-
-  // sort buffer
-
-  // save 1st block of sorted buffer
-
-
-  // clean-up
-  free(Buffer2);
-  free(maxima);
-  for(idx_t i=0; i<numIntermediate; i++) {
-    duckdb_destroy_result(&(retrieved[i]));
-  }
-  mylog(logfile, "Freed buffers from the 2nd stage.");
   futhark_context_free(ctx);
   futhark_context_config_free(cfg);
   mylog(logfile, "Freed futhark core.");
+
 	duckdb_disconnect(&con);
 	duckdb_close(&db);
   mylog(logfile, "Disconnected duckdb and freed its memory.");

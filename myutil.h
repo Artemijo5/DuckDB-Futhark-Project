@@ -29,6 +29,16 @@ void* colType_malloc(duckdb_type type, idx_t card);
  * index of the minimum element in the array (the smallest index in case of a tie)
  */
 idx_t argmin(struct futhark_context *ctx, duckdb_type type, void* arr, idx_t card);
+
+/**
+ * A function to fill elements of an array with the maximum value of a given type.
+ * Params:
+ * dest : pointer to the starting position of the desired array
+ * type : the logical type of the data, expressed in enum duckdb_type
+ * n : the amount of array elements to pad (NOT the number of bytes)
+ */
+void max_padding(void* dest, duckdb_type type, idx_t n);
+
 /**
  * A function to sort the key column of a table, also provides the reordered indices.
  * Params:
