@@ -106,6 +106,8 @@ void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr,
   struct futhark_i16_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_short_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_short_xs(ctx, &sorted_x_ft, sortInfo);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap sorted keys into outCol
   futhark_values_i16_1d(ctx, sorted_x_ft, outCol);
   // Sync context
@@ -125,6 +127,8 @@ void sortKeyColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, str
   struct futhark_i32_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_int_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_int_xs(ctx, &sorted_x_ft, sortInfo);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap sorted keys into outCol
   futhark_values_i32_1d(ctx, sorted_x_ft, outCol);
   // Sync context
@@ -144,6 +148,8 @@ void sortKeyColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, s
   struct futhark_i64_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_long_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_long_xs(ctx, &sorted_x_ft, sortInfo);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap sorted keys into outCol
   futhark_values_i64_1d(ctx, sorted_x_ft, outCol);
   // Sync context
@@ -163,6 +169,8 @@ void sortKeyColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr,
   struct futhark_f32_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_float_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_float_xs(ctx, &sorted_x_ft, sortInfo);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap sorted keys into outCol
   futhark_values_f32_1d(ctx, sorted_x_ft, outCol);
   // Sync context
@@ -182,6 +190,8 @@ void sortKeyColumn_double(struct futhark_context *ctx, double *outCol, idx_t inc
   struct futhark_f64_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_double_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_double_xs(ctx, &sorted_x_ft, sortInfo);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap sorted keys into outCol
   futhark_values_f64_1d(ctx, sorted_x_ft, outCol);
   // Sync context
@@ -220,6 +230,8 @@ void orderPayloadColumn_short(struct futhark_context *ctx, short *outCol, idx_t 
   // Reorder y_ft according to orderBy
   struct futhark_i16_1d *sorted_y_ft;
   futhark_entry_orderByIndices_short(ctx, &sorted_y_ft, (long)incr, orderBy, y_ft);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap reordered payload into outCol
   futhark_values_i16_1d(ctx, sorted_y_ft, outCol);
   // Sync context
@@ -234,6 +246,8 @@ void orderPayloadColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr
   // Reorder y_ft according to orderBy
   struct futhark_i32_1d *sorted_y_ft;
   futhark_entry_orderByIndices_int(ctx, &sorted_y_ft, (long)incr, orderBy, y_ft);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap reordered payload into outCol
   futhark_values_i32_1d(ctx, sorted_y_ft, outCol);
   // Sync context
@@ -248,6 +262,8 @@ void orderPayloadColumn_long(struct futhark_context *ctx, long *outCol, idx_t in
   // Reorder y_ft according to orderBy
   struct futhark_i64_1d *sorted_y_ft;
   futhark_entry_orderByIndices_long(ctx, &sorted_y_ft, (long)incr, orderBy, y_ft);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap reordered payload into outCol
   futhark_values_i64_1d(ctx, sorted_y_ft, outCol);
   // Sync context
@@ -262,6 +278,8 @@ void orderPayloadColumn_float(struct futhark_context *ctx, float *outCol, idx_t 
   // Reorder y_ft according to orderBy
   struct futhark_f32_1d *sorted_y_ft;
   futhark_entry_orderByIndices_float(ctx, &sorted_y_ft, (long)incr, orderBy, y_ft);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap reordered payload into outCol
   futhark_values_f32_1d(ctx, sorted_y_ft, outCol);
   // Sync context
@@ -276,6 +294,8 @@ void orderPayloadColumn_double(struct futhark_context *ctx, double *outCol, idx_
   // Reorder y_ft according to orderBy
   struct futhark_f64_1d *sorted_y_ft;
   futhark_entry_orderByIndices_double(ctx, &sorted_y_ft, (long)incr, orderBy, y_ft);
+  // Sync context
+  futhark_context_sync(ctx);
   // Unwrap reordered payload into outCol
   futhark_values_f64_1d(ctx, sorted_y_ft, outCol);
   // Sync context

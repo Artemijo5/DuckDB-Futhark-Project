@@ -13,6 +13,8 @@
 #define BUFFER_SIZE 4*CHUNK_SIZE//CHUNK_SIZE*128
 #define TABLE_SIZE 2*BUFFER_SIZE + CHUNK_SIZE//2*BUFFER_SIZE + 5*CHUNK_SIZE
 
+#define BUFFER_CHUNK_CAPACITY BUFFER_SIZE/CHUNK_SIZE
+
 #define DDB_MEMSIZE "2GB"
 #define DDB_TEMPDIR "/tempdir/"
 
@@ -315,6 +317,208 @@ int main() {
   // ...
   // TODO organise
   // TODO use max_padding for the long witch statements I was doing before...
+
+  // 2nd stage requires all intermediates + at least 1 empty chunk to fit in the buffer
+  if(numIntermediate > (BUFFER_CHUNK_CAPACITY - 1)) {
+    perror("Insufficient buffer size.");
+    return -1;
+  }
+  // Number of chunks that are picked up from the buffer into storage each iteration
+  // Can increase if an intermediate is exhausted before the others (expected only for the last intermediate)
+  idx_t pickup = BUFFER_CHUNK_CAPACITY - numIntermediate;
+  // Number of rows to ignore, caused by not-full chunks
+  // the slots of those rows in the buffer are padded with the type's maximum value, and neither read nor sorted
+  // expectedly, only the last of all chunks can be not-full
+  // so ignore_rows will be increased at most once, and not again
+  // ALSO, a not-full chunk means that it's the last of that intermediate (assumption for duckdb's logic)
+  // ergo, ignore_rows will be set to 0, and pickup increased by 1 at the end of that iteration
+  idx_t ignore_rows = 0;
+  // Number of intermediates that have not been exhausted yet
+  // reduced by 1 when an intermediate is exhausted
+  idx_t still_interm = numIntermediate;
+
+  // ---------- 1. Initialise buffers.
+  // maximum element of the last-read chunk of each intermediate
+  // the argmin of these is the next chunk to be read
+  // updated immediately when reading a new chunk
+  // when an intermediate is exhausted, its maximum is set to the max of the key type
+  // this creates a theoretical corner case of having eg INT_MAX in non-exhausted intermediates
+  // TODO address this corner case (low priority)
+  void* maxima = colType_malloc(type_ids[0], numIntermediate);
+  // initialised as all false, a slot is set to true when its buffer is exhausted
+  int intermIsExhausted[numIntermediate];
+  // The buffers where the sorting takes place
+  // one buffer of BUFFER_SIZE elements of the appropriate type, for each column
+  // each iteration, the key buffer is sorted, and the payload buffers are reordered
+  // the first pickup bytes of all buffers are stored
+  // then, they are replaced by the next scan
+  // if there is an entirely padded chunk at the end, that is also replaced
+  // then, pickup is updated for the next iteration
+  void** Buffers2 = malloc(col_count*sizeof(void*));
+  for(idx_t c=0; c<col_count; c++) {
+    Buffers2[c] = colType_malloc(type_ids[c], BUFFER_SIZE);
+  }
+  // counter of full empty chunks at the end of buffer
+  // set to 0 when they are replaced
+  idx_t replaceChunksAtTheEnd = 0;
+  mylog(logfile, "Initialised buffers for Stage 2.");
+
+  // ---------- 2. Prepare the table where results will be stored.
+  char type_strs[col_count][25];
+   for(idx_t i=0; i<col_count; i++) {
+    switch(type_ids[i]){
+      case DUCKDB_TYPE_SMALLINT:
+        sprintf( type_strs[i], "SMALLINT" );
+        break;
+      case DUCKDB_TYPE_INTEGER:
+        sprintf( type_strs[i], "INTEGER" );
+        break;
+      case DUCKDB_TYPE_BIGINT:
+        sprintf( type_strs[i], "BIGINT" );
+        break;
+      case DUCKDB_TYPE_FLOAT:
+        sprintf( type_strs[i], "FLOAT" );
+        break;
+      case DUCKDB_TYPE_DOUBLE:
+        sprintf( type_strs[i], "DOUBLE" );
+        break;
+      default:
+        perror("Invalid type.");
+        return -1;
+    }
+  }
+  const char *resultTblName = "TPSResult";
+  char resultQueryStr[100 + 35*col_count];
+  int resultQueryStr_len = sprintf(resultQueryStr, "CREATE OR REPLACE TABLE %s (", resultTblName);
+  for(idx_t i=0; i<col_count; i++) {
+    if(i<col_count-1) {
+      resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "x%ld %s, ", i, type_strs[i]);
+    }
+    else {
+      resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "x%ld %s);", i, type_strs[i]);
+    }
+  }
+  // TODO for testing
+  printf("%s\n", resultQueryStr);
+  // Execute the query
+  if( duckdb_query(con, resultQueryStr, NULL) == DuckDBError ) {
+    perror("Failed to create result table.\n");
+    return -1;
+  }
+  mylog(logfile, "Created table where the sorted results will be stored.");
+  // Create appender
+  duckdb_appender resultApp;
+  if( duckdb_appender_create(con, NULL, resultTblName, &resultApp) == DuckDBError ) {
+    perror("Failed to create appender for the result table.\n");
+    return -1;
+  }
+  mylog(logfile, "Created appender for the result table.");
+
+  // ---------- 3. Prepare the intermediates for scanning.
+  duckdb_result interms[numIntermediate];
+  for(idx_t i=0; i<numIntermediate; i++) {
+    prepareToFetch_intermediate(i, con, &interms[i]);
+  }
+  mylog(logfile, "Prepared intermediates for scanning.");
+
+  // ---------- 4. First scan
+  // Scan the first chunk of all intermediates into the buffer
+  for(idx_t i=0; i<numIntermediate; i++) {
+    duckdb_data_chunk cnk = duckdb_fetch_chunk(interms[i]);
+    idx_t rcount;
+    if(!cnk) {
+      mylog(logfile, "Intermediate is exhausted before scan (unexpected).");
+      intermIsExhausted[i] = true;
+      still_interm -= 1;
+      rcount = 0;
+      // max-pad a chunk from the end
+      for(idx_t c=0; c<col_count; c++) {
+        max_padding(
+          Buffers2[c] + (BUFFER_CHUNK_CAPACITY - 1 - replaceChunksAtTheEnd)*CHUNK_SIZE*colType_bytes(type_ids[c]),
+          type_ids[c],
+          CHUNK_SIZE
+        );
+      }
+      replaceChunksAtTheEnd += 1;
+      // also at the maximum
+      max_padding(maxima + i*colType_bytes(type_ids[0]), type_ids[0], 1);
+      continue;
+    }
+    intermIsExhausted[i] = false;
+
+    rcount = duckdb_data_chunk_get_size(cnk);
+    if(rcount<CHUNK_SIZE) {
+      ignore_rows += CHUNK_SIZE - rcount;
+    }
+
+    for(idx_t c=0; c<col_count; c++) {
+      duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
+      void* dat = duckdb_vector_get_data(vec);
+      void* dest_ptr = Buffers2[c] + (pickup + i - replaceChunksAtTheEnd)*CHUNK_SIZE*colType_bytes(type_ids[c]);
+      // for key column: note maximum
+      if(c == 0) {
+        memcpy(
+          maxima + i*colType_bytes(type_ids[0]),
+          dat + (rcount-1)*colType_bytes(type_ids[0]),
+          colType_bytes(type_ids[0])
+        );
+      }
+      // copy data to buffer
+      memcpy(
+        dest_ptr,
+        dat,
+        rcount*colType_bytes(type_ids[c])
+      );
+      // max-pad remaining space within the chunk
+      if(rcount < CHUNK_SIZE) {
+        max_padding(
+          dest_ptr + rcount*colType_bytes(type_ids[c]),
+          type_ids[c],
+          CHUNK_SIZE - rcount
+        );
+      }
+    }
+    duckdb_destroy_data_chunk(&cnk);
+  }
+  mylog(logfile, "Completed first scan.");
+
+  // ---------- 5. Scan & Sort - loop.
+  while(still_interm > 0) {
+    idx_t fillFromCnkSlot = 0;
+    // 5.i scan the next pickup chunks, each time from the intermediate that is argmin of maxima
+    for(idx_t i=0; i<numIntermediate; i++) {
+      if(intermIsExhausted[i]) continue;
+
+      duckdb_data_chunk cnk = duckdb_fetch_chunk(interms[i]);
+      if(!cnk) {
+        // TODO
+      }
+      // TODO
+
+      duckdb_destroy_data_chunk(&cnk);
+      fillFromCnkSlot += 1;
+    }
+    // 5.ii.a sort key column
+
+    // 5.ii.b reorder payload columns
+
+    // 5.iii pick up & store chunks
+
+    // 5.iv update loop parametres
+  }
+
+  //Clean-up
+  for(idx_t i=0; i<numIntermediate; i++) {
+    duckdb_destroy_result(&interms[i]);
+  }
+  duckdb_appender_destroy(&resultApp);
+  for(idx_t c=0; c<col_count; c++) {
+    free(Buffers2[c]);
+  }
+  free(Buffers2);
+  free(maxima);
+  mylog(logfile, "Freed buffers and objects from Stage 2.");
+
 
   futhark_context_free(ctx);
   futhark_context_config_free(cfg);
