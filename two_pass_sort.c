@@ -10,8 +10,8 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 3*CHUNK_SIZE//CHUNK_SIZE*128
-#define TABLE_SIZE BUFFER_SIZE + 3*CHUNK_SIZE/2 //2*BUFFER_SIZE + CHUNK_SIZE //2*BUFFER_SIZE + 5*CHUNK_SIZE
+#define BUFFER_SIZE 10*CHUNK_SIZE//CHUNK_SIZE*128
+#define TABLE_SIZE 3*BUFFER_SIZE + 3*CHUNK_SIZE/2 //2*BUFFER_SIZE + 5*CHUNK_SIZE
 
 #define BUFFER_CHUNK_CAPACITY BUFFER_SIZE/CHUNK_SIZE
 
@@ -166,7 +166,7 @@ int main() {
     mylog(logfile, "Passing key column for sorting...");
     sortKeyColumn(ctx, sorted_x, type_ids[0], incr_idx, &sorted_idx_ft, Buffers[0], cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
-    //logarray_int(logfile, "Sorted x: ", sorted_x, cur_rows);
+    //logarray_long(logfile, "Sorted x: ", sorted_x, cur_rows);
     // test that sorting & reordering was done correctly
     long sorted_idx[cur_rows];
     futhark_values_i64_1d(ctx, sorted_idx_ft, sorted_idx);
@@ -358,6 +358,14 @@ int main() {
   for(idx_t c=0; c<col_count; c++) {
     Buffers2[c] = colType_malloc(type_ids[c], BUFFER_SIZE);
   }
+  // max-pad key column to get rid of trash values - not needed
+  /*
+  max_padding(
+    Buffers2[0],
+    type_ids[0],
+    BUFFER_SIZE
+  );
+  */
   // counter of full empty chunks at the end of buffer
   // set to 0 when they are replaced
   idx_t replaceChunksAtTheEnd = 0;
@@ -481,13 +489,14 @@ int main() {
     duckdb_destroy_data_chunk(&cnk);
   }
   mylog(logfile, "Completed first scan.");
+  //logarray_long(logfile, "After first scan:\n", Buffers2[0], BUFFER_SIZE);
 
   // ---------- 5. Scan & Sort - loop.
   while(still_interm) {
     // 5.i scan the next pickup chunks, each time from the intermediate that is argmin of maxima
     idx_t i = 0; // chunk counter
     while(still_interm && i < pickup) {
-      idx_t interm = argmin(ctx, type_ids[0], maxima, col_count);
+      idx_t interm = argmin(ctx, type_ids[0], maxima, numIntermediate);
       // TODO address corner-case of valid max values...
 
       duckdb_data_chunk cnk = duckdb_fetch_chunk(interms[interm]);
@@ -497,7 +506,6 @@ int main() {
         // Update maxima
         max_padding(maxima + interm*colType_bytes(type_ids[0]), type_ids[0], 1);
         // no max-padding needed in the buffer, just skip
-        ignore_rows += CHUNK_SIZE;
         continue;
       }
 
@@ -509,7 +517,7 @@ int main() {
       for(idx_t c=0; c<col_count; c++) {
         duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
         void* dat = duckdb_vector_get_data(vec);
-        void* dest_ptr = Buffers2[c] + i*CHUNK_SIZE; // it's that easy...
+        void* dest_ptr = Buffers2[c] + i*colType_bytes(type_ids[0])*CHUNK_SIZE; // it's that easy...
         // for key column: note maximum
         if(c == 0) {
           memcpy(
@@ -536,6 +544,7 @@ int main() {
       duckdb_destroy_data_chunk(&cnk);
       i += 1;
     }
+    //logarray_long(logfile, "Before correct-scanning:\n", Buffers2[0], BUFFER_SIZE);
     // 5.i+ if i<pickup, max-pad remaining pickup space
     if(i<pickup) {
       max_padding(
@@ -543,10 +552,11 @@ int main() {
         type_ids[0],
         CHUNK_SIZE*(pickup-i)
       );
+      ignore_rows += CHUNK_SIZE*(pickup-i);
     }
     // 5.i++ scan more chunks to fill empty pages at the end, if any
     while(still_interm && replaceChunksAtTheEnd) {
-      idx_t interm = argmin(ctx, type_ids[0], maxima, col_count);
+      idx_t interm = argmin(ctx, type_ids[0], maxima, numIntermediate);
       // TODO address corner-case of valid max values...
       duckdb_data_chunk cnk = duckdb_fetch_chunk(interms[interm]);
       if(!cnk) {
@@ -594,6 +604,7 @@ int main() {
       replaceChunksAtTheEnd -= 1;
     }
     mylog(logfile, "Completed a scan.");
+    //logarray_long(logfile, "Before sorting:\n", Buffers2[0], BUFFER_SIZE);
 
     // Update loop parametres here
     replaceChunksAtTheEnd = ignore_rows / CHUNK_SIZE;
@@ -610,6 +621,8 @@ int main() {
       orderPayloadColumn(ctx, Buffers2[c], type_ids[c], 0, stg2_sorted_idx_ft, Buffers2[c], BUFFER_SIZE);
     }
     mylog(logfile, "Sorted this scan.");
+    //printf("%ld, %ld\n", ((long*)Buffers2[0])[0], ((long*)Buffers2[0])[BUFFER_SIZE-1]);
+    //logarray_long(logfile, "After sorting:\n", Buffers2[0], BUFFER_SIZE);
 
     // 5.iii pick up & store chunks
     for(idx_t j=0; j<pickup; j++) {
@@ -632,7 +645,7 @@ int main() {
     }
     mylog(logfile, "Appended data to result table.");
   }
-
+/*
   // review result
   printf("\n\nResults\n");
   duckdb_result finalRes;
@@ -656,7 +669,7 @@ int main() {
   }
   duckdb_destroy_result(&finalRes);
   printf("\n\n");
-
+*/
   //Clean-up
   for(idx_t i=0; i<numIntermediate; i++) {
     duckdb_destroy_result(&interms[i]);

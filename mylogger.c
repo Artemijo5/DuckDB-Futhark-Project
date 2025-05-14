@@ -39,43 +39,43 @@ void logclose(FILE* logfile) {
 void logarray_short(FILE* logfile, const char* header, short* arr, int size) {
 	char res[12*size + strlen(header) + 1];
 
-	int len = sprintf(res, header);
+	int len = sprintf(res, "%s", header);
 	for(int i=0; i<size; i++) {
 		len += sprintf(res + len, "%hd, ", arr[i]);
 	}
 	mylog(logfile, res);
 }
 void logarray_int(FILE* logfile, const char* header, int* arr, int size) {
-	char res[12*size + strlen(header) + 1];
+	char res[15*size + strlen(header) + 1];
 	
-	int len = sprintf(res, header);
+	int len = sprintf(res, "%s", header);
 	for(int i=0; i<size; i++) {
 		len += sprintf(res + len, "%d, ", arr[i]);
 	}
 	mylog(logfile, res);
 }
 void logarray_long(FILE* logfile, const char* header, long* arr, int size) {
-	char res[12*size + strlen(header) + 1];
+	char res[25*size + strlen(header) + 1];
 	
-	int len = sprintf(res, header);
+	int len = sprintf(res, "%s", header);
 	for(int i=0; i<size; i++) {
 		len += sprintf(res + len, "%ld, ", arr[i]);
 	}
 	mylog(logfile, res);
 }
 void logarray_float(FILE* logfile, const char* header, float* arr, int size) {
-	char res[17*size + strlen(header) + 1];
+	char res[25*size + strlen(header) + 1];
 	
-	int len = sprintf(res, header);
+	int len = sprintf(res, "%s", header);
 	for(int i=0; i<size; i++) {
 		len += sprintf(res + len, "%.4f, ", arr[i]);
 	}
 	mylog(logfile, res);
 }
 void logarray_double(FILE* logfile, const char* header, double* arr, int size) {
-	char res[17*size + strlen(header) + 1];
+	char res[25*size + strlen(header) + 1];
 	
-	int len = sprintf(res, header);
+	int len = sprintf(res, "%s", header);
 	for(int i=0; i<size; i++) {
 		len += sprintf(res + len, "%.4f, ", arr[i]);
 	}
