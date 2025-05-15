@@ -10,14 +10,14 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 20*CHUNK_SIZE//CHUNK_SIZE*128
-#define TABLE_SIZE 203*CHUNK_SIZE//2*BUFFER_SIZE + 5*CHUNK_SIZE
+#define BUFFER_SIZE 128*CHUNK_SIZE
+#define TABLE_SIZE 64*BUFFER_SIZE
 
 #define BUFFER_CHUNK_CAPACITY BUFFER_SIZE/CHUNK_SIZE
 
 #define DBFILE "testdb.db"
-#define DDB_MEMSIZE "50MB"
-#define DDB_TEMPDIR "/tempdir/"
+#define DDB_MEMSIZE "2GB"
+#define DDB_TEMPDIR "tps_tempdir"
 
 /* ------------------------------------------------------------------------------------------------------------------------------
   // TODO
@@ -44,7 +44,7 @@ int main() {
     perror("Failed to create config.");
     return -1;
   }
-  //duckdb_set_config(config, "max_memory", DDB_MEMSIZE);
+  duckdb_set_config(config, "max_memory", DDB_MEMSIZE);
   duckdb_set_config(config, "memory_limit", DDB_MEMSIZE);
   duckdb_set_config(config, "temp_directory", DDB_TEMPDIR);
 	//duckdb_open(NULL, &db);
@@ -58,7 +58,7 @@ int main() {
 
   // Create the table tbl on which the testing will be done.
   duckdb_result res;
-	/*
+	
   duckdb_query(con, "CREATE OR REPLACE TABLE tbl (k BIGINT, payload1 BIGINT, payload2 DOUBLE);", NULL);
   duckdb_query(con, "setseed(0.42);", NULL);
 
@@ -73,7 +73,7 @@ int main() {
   duckdb_bind_int32(init_stmt, 1, TABLE_SIZE);
   duckdb_execute_prepared(init_stmt, NULL);
   duckdb_destroy_prepare(&init_stmt);
-  */
+  
   duckdb_query(con, "SELECT * FROM tbl;", &res);
   
   idx_t incr_idx = 0;
@@ -403,7 +403,7 @@ int main() {
   }
   const char *resultTblName = "TPSResult";
   char resultQueryStr[100 + 35*col_count];
-  int resultQueryStr_len = sprintf(resultQueryStr, "CREATE OR REPLACE TABLE %s (", resultTblName);
+  int resultQueryStr_len = sprintf(resultQueryStr, "CREATE OR REPLACE TEMP TABLE %s (", resultTblName);
   for(idx_t i=0; i<col_count; i++) {
     if(i<col_count-1) {
       resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "x%ld %s, ", i, type_strs[i]);
@@ -669,13 +669,13 @@ int main() {
     //for(idx_t j=0; j<r; j++) {
     //  printf("%ld, ", dat[j]);
     //}
-    printf(
-      "Chunk %ld: first element %ld, last element %ld, number of elements %ld.\n",
-      cc,
-      dat[0],
-      dat[r-1],
-      r
-    );
+      printf(
+        "Chunk %ld: first element %ld, last element %ld, number of elements %ld.\n",
+        cc,
+        dat[0],
+        dat[r-1],
+        r
+      );
     cc++;
 
     duckdb_destroy_data_chunk(&cnk);

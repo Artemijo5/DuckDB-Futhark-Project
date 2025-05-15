@@ -403,6 +403,7 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
     duckdb_appender_flush(tmp_appender);
     duckdb_destroy_data_chunk(&cnk);
   }
+  // IF USING PARQUET STORAGE:
   /*
   char storagePart[100];
   sprintf(storagePart, "COPY %s TO tempholder%ld.parquet (FORMAT parquet);", tblName, numInter);
@@ -429,7 +430,9 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
 
 void prepareToFetch_intermediate(idx_t numInter, duckdb_connection con, duckdb_result *result_ptr) {
   char interName[50];
+  // IF _NOT_ USING PARQUET STORAGE:
   sprintf(interName, "tmp_interm%ld", numInter);
+  // IF USING PARQUET STORAGE:
   //sprintf(interName, "tempholder%ld.parquet", numInter);
   char queryStr[100];
   sprintf(queryStr, "SELECT * FROM %s;", interName);
