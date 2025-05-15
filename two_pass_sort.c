@@ -10,12 +10,13 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 10*CHUNK_SIZE//CHUNK_SIZE*128
-#define TABLE_SIZE 3*BUFFER_SIZE + 3*CHUNK_SIZE/2 //2*BUFFER_SIZE + 5*CHUNK_SIZE
+#define BUFFER_SIZE 20*CHUNK_SIZE//CHUNK_SIZE*128
+#define TABLE_SIZE 203*CHUNK_SIZE//2*BUFFER_SIZE + 5*CHUNK_SIZE
 
 #define BUFFER_CHUNK_CAPACITY BUFFER_SIZE/CHUNK_SIZE
 
-#define DDB_MEMSIZE "2GB"
+#define DBFILE "testdb.db"
+#define DDB_MEMSIZE "50MB"
 #define DDB_TEMPDIR "/tempdir/"
 
 /* ------------------------------------------------------------------------------------------------------------------------------
@@ -43,10 +44,11 @@ int main() {
     perror("Failed to create config.");
     return -1;
   }
-  duckdb_set_config(config, "max_memory", DDB_MEMSIZE);
+  //duckdb_set_config(config, "max_memory", DDB_MEMSIZE);
+  duckdb_set_config(config, "memory_limit", DDB_MEMSIZE);
   duckdb_set_config(config, "temp_directory", DDB_TEMPDIR);
 	//duckdb_open(NULL, &db);
-  if(duckdb_open_ext(NULL, &db, config, NULL) == DuckDBError) {
+  if(duckdb_open_ext(DBFILE, &db, config, NULL) == DuckDBError) {
     perror("Failed to open database with configuration options.");
     return -1;
   }
@@ -56,7 +58,8 @@ int main() {
 
   // Create the table tbl on which the testing will be done.
   duckdb_result res;
-	duckdb_query(con, "CREATE TABLE tbl (k BIGINT, payload1 BIGINT, payload2 DOUBLE);", NULL);
+	/*
+  duckdb_query(con, "CREATE OR REPLACE TABLE tbl (k BIGINT, payload1 BIGINT, payload2 DOUBLE);", NULL);
   duckdb_query(con, "setseed(0.42);", NULL);
 
   duckdb_prepared_statement init_stmt;
@@ -70,8 +73,9 @@ int main() {
   duckdb_bind_int32(init_stmt, 1, TABLE_SIZE);
   duckdb_execute_prepared(init_stmt, NULL);
   duckdb_destroy_prepare(&init_stmt);
+  */
   duckdb_query(con, "SELECT * FROM tbl;", &res);
-
+  
   idx_t incr_idx = 0;
   mylog(logfile, "Initialised increment at 0.");
   idx_t col_count = duckdb_column_count(&res);
@@ -645,7 +649,7 @@ int main() {
     }
     mylog(logfile, "Appended data to result table.");
   }
-/*
+
   // review result
   printf("\n\nResults\n");
   duckdb_result finalRes;
@@ -653,6 +657,7 @@ int main() {
     perror("Failed final query...\n");
     return -1;
   }
+  idx_t cc = 0; // chunk counter
   while(true) {
     duckdb_data_chunk cnk = duckdb_fetch_chunk(res);
     if(!cnk) break;
@@ -661,15 +666,23 @@ int main() {
     long* dat = (long*)duckdb_vector_get_data(vec);
 
     idx_t r = duckdb_data_chunk_get_size(cnk);
-    for(idx_t j=0; j<r; j++) {
-      printf("%ld, ", dat[j]);
-    }
+    //for(idx_t j=0; j<r; j++) {
+    //  printf("%ld, ", dat[j]);
+    //}
+    printf(
+      "Chunk %ld: first element %ld, last element %ld, number of elements %ld.\n",
+      cc,
+      dat[0],
+      dat[r-1],
+      r
+    );
+    cc++;
 
     duckdb_destroy_data_chunk(&cnk);
   }
   duckdb_destroy_result(&finalRes);
   printf("\n\n");
-*/
+
   //Clean-up
   for(idx_t i=0; i<numIntermediate; i++) {
     duckdb_destroy_result(&interms[i]);

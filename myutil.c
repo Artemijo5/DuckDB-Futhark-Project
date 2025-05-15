@@ -369,7 +369,7 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
     }
   }
   // TODO for testing
-  //printf("%s\n", queryStr);
+  printf("%s\n", queryStr);
   if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
     perror("Failed to create temporary table.\n");
     return -1;
@@ -403,6 +403,20 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
     duckdb_appender_flush(tmp_appender);
     duckdb_destroy_data_chunk(&cnk);
   }
+  /*
+  char storagePart[100];
+  sprintf(storagePart, "COPY %s TO tempholder%ld.parquet (FORMAT parquet);", tblName, numInter);
+  char clearPart[100];
+  sprintf(clearPart, "DROP TABLE %s;", tblName);
+  if(duckdb_query(con, storagePart, NULL) == DuckDBError) {
+    perror("Failed to spill intermediate result to disk.");
+    return -1;
+  }
+  if(duckdb_query(con, clearPart, NULL) == DuckDBError) {
+    perror("Failed to drop temp table.");
+    return -1;
+  }
+  */
 
   // Cleanup
   duckdb_appender_destroy(&tmp_appender);
@@ -414,9 +428,10 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
 }
 
 void prepareToFetch_intermediate(idx_t numInter, duckdb_connection con, duckdb_result *result_ptr) {
-  char interName[25];
+  char interName[50];
   sprintf(interName, "tmp_interm%ld", numInter);
-  char queryStr[50];
+  //sprintf(interName, "tempholder%ld.parquet", numInter);
+  char queryStr[100];
   sprintf(queryStr, "SELECT * FROM %s;", interName);
   // TODO for testing
   printf("%s\n", queryStr);

@@ -2,5 +2,7 @@
 *.a
 *.o
 *.log.txt
+*.parquet
 *.pkg
+*.db
 /tempdir/*
