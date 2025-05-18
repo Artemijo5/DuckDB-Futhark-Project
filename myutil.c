@@ -327,7 +327,16 @@ void orderPayloadColumn(struct futhark_context *ctx, void *outCol, duckdb_type t
   }
 }
 
-idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize, idx_t col_count, idx_t row_count, duckdb_type* types, void** BuffersIn) {
+idx_t store_intermediate(
+  idx_t numInter,
+  const char *intermName,
+  duckdb_connection con,
+  idx_t chunkSize,
+  idx_t col_count,
+  idx_t row_count,
+  duckdb_type* types,
+  void** BuffersIn
+) {
   // 0 turn types into logical_types & strings to create the table
   duckdb_logical_type ltypes[col_count];
   char type_strs[col_count][25];
@@ -356,8 +365,8 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
   }
 
   // 1 create temporary table
-  char tblName[25];
-  sprintf(tblName, "tmp_interm%ld", numInter);
+  char tblName[strlen(intermName) + 25];
+  sprintf(tblName, "%s%ld", intermName, numInter);
   char queryStr[100 + 35*col_count];
   int queryStr_len = sprintf(queryStr, "CREATE OR REPLACE TEMP TABLE %s (", tblName);
   for(idx_t i=0; i<col_count; i++) {
@@ -369,7 +378,7 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
     }
   }
   // TODO for testing
-  printf("%s\n", queryStr);
+  //printf("%s\n", queryStr);
   if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
     perror("Failed to create temporary table.\n");
     return -1;
@@ -405,8 +414,8 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
   }
   // IF USING PARQUET STORAGE:
   /*
-  char storagePart[100];
-  sprintf(storagePart, "COPY %s TO tempholder%ld.parquet (FORMAT parquet);", tblName, numInter);
+  char storagePart[100 + 2*strlen(tblName)];
+  sprintf(storagePart, "COPY %s TO %s.parquet (FORMAT parquet);", tblName, tblName);
   char clearPart[100];
   sprintf(clearPart, "DROP TABLE %s;", tblName);
   if(duckdb_query(con, storagePart, NULL) == DuckDBError) {
@@ -428,23 +437,34 @@ idx_t store_intermediate(idx_t numInter, duckdb_connection con, idx_t chunkSize,
   return numInter + 1;
 }
 
-void prepareToFetch_intermediate(idx_t numInter, duckdb_connection con, duckdb_result *result_ptr) {
-  char interName[50];
+void prepareToFetch_intermediate(
+  idx_t numInter,
+  const char *intermName,
+  duckdb_connection con,
+  duckdb_result *result_ptr
+) {
+  char tblName[strlen(intermName) + 25];
   // IF _NOT_ USING PARQUET STORAGE:
-  sprintf(interName, "tmp_interm%ld", numInter);
+  sprintf(tblName, "%s%ld", intermName, numInter);
   // IF USING PARQUET STORAGE:
-  //sprintf(interName, "tempholder%ld.parquet", numInter);
+  //sprintf(tblName, "tempholder%ld.parquet", numInter);
   char queryStr[100];
-  sprintf(queryStr, "SELECT * FROM %s;", interName);
+  sprintf(queryStr, "SELECT * FROM %s;", tblName);
   // TODO for testing
-  printf("%s\n", queryStr);
+  //printf("%s\n", queryStr);
   if( duckdb_query(con, queryStr, result_ptr) == DuckDBError ) {
     perror("Failed to retrieve intermediate.");
   }
   // TODO better error handling
 }
 
-idx_t fetch_intermediate(duckdb_result result, idx_t col_count, duckdb_type* types, void** BuffersOut, idx_t start_idx) {
+idx_t fetch_intermediate(
+  duckdb_result result,
+  idx_t col_count,
+  duckdb_type* types,
+  void** BuffersOut,
+  idx_t start_idx
+) {
   duckdb_data_chunk cnk = duckdb_fetch_chunk(result);
   if(!cnk) {
     // Result is exhausted.

@@ -12,6 +12,7 @@
 idx_t sort_Stage1_with_payloads(
 	idx_t chunk_size,
 	size_t buffer_size,
+  const char* intermName,
 	FILE *logfile,
 	struct futhark_context *ctx,
 	duckdb_connection con,
@@ -158,7 +159,7 @@ idx_t sort_Stage1_with_payloads(
     }
 
     //mylog(logfile, "Now testing storage & retrieval.");
-    numIntermediate = store_intermediate(numIntermediate, con, chunk_size, col_count, cur_rows, type_ids, sorted_cols);
+    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, sorted_cols);
     if(numIntermediate == -1) {
       perror("Failed to store intermediate.\n");
       return -1;
@@ -217,6 +218,7 @@ idx_t sort_Stage1_with_payloads(
 idx_t sort_Stage1_without_payloads(
 	idx_t chunk_size,
 	size_t buffer_size,
+  const char* intermName,
 	FILE *logfile,
 	struct futhark_context *ctx,
 	duckdb_connection con,
@@ -231,6 +233,8 @@ idx_t sort_Stage1_without_payloads(
 void sort_Stage2(
 	idx_t CHUNK_SIZE,
 	size_t BUFFER_SIZE,
+  const char* intermName,
+  const char* finalName,
 	FILE *logfile,
 	struct futhark_context *ctx,
 	duckdb_connection con,
@@ -255,7 +259,6 @@ void sort_Stage2(
   // expectedly, only the last of all chunks can be not-full
   // so ignore_rows will be increased at most once, and not again
   // ALSO, a not-full chunk means that it's the last of that intermediate (assumption for duckdb's logic)
-  // ergo, ignore_rows will be set to 0, and pickup increased by 1 at the end of that iteration
   idx_t ignore_rows = 0;
   // Number of intermediates that have not been exhausted yet
   // reduced by 1 when an intermediate is exhausted
@@ -321,9 +324,8 @@ void sort_Stage2(
         return;
     }
   }
-  const char *resultTblName = "TPSResult";
-  char resultQueryStr[100 + 35*col_count];
-  int resultQueryStr_len = sprintf(resultQueryStr, "CREATE OR REPLACE TABLE %s (", resultTblName);
+  char resultQueryStr[100 + strlen(finalName) + 35*col_count];
+  int resultQueryStr_len = sprintf(resultQueryStr, "CREATE OR REPLACE TABLE %s (", finalName);
   for(idx_t i=0; i<col_count; i++) {
     if(i<col_count-1) {
       resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "x%ld %s, ", i, type_strs[i]);
@@ -333,7 +335,7 @@ void sort_Stage2(
     }
   }
   // TODO for testing
-  printf("%s\n", resultQueryStr);
+  //printf("%s\n", resultQueryStr);
   // Execute the query
   if( duckdb_query(con, resultQueryStr, NULL) == DuckDBError ) {
     perror("Failed to create result table.\n");
@@ -342,7 +344,7 @@ void sort_Stage2(
   mylog(logfile, "Created table where the sorted results will be stored.");
   // Create appender
   duckdb_appender resultApp;
-  if( duckdb_appender_create(con, NULL, resultTblName, &resultApp) == DuckDBError ) {
+  if( duckdb_appender_create(con, NULL, finalName, &resultApp) == DuckDBError ) {
     perror("Failed to create appender for the result table.\n");
     return;
   }
@@ -351,7 +353,7 @@ void sort_Stage2(
   // ---------- 3. Prepare the intermediates for scanning.
   duckdb_result interms[numIntermediate];
   for(idx_t i=0; i<numIntermediate; i++) {
-    prepareToFetch_intermediate(i, con, &interms[i]);
+    prepareToFetch_intermediate(i, intermName, con, &interms[i]);
   }
   mylog(logfile, "Prepared intermediates for scanning.");
 
@@ -587,6 +589,8 @@ void sort_Stage2(
 void sort_Stage2_without_payloads(
 	idx_t CHUNK_SIZE,
 	size_t BUFFER_SIZE,
+  const char* intermName,
+  const char* finalName,
 	FILE *logfile,
 	struct futhark_context *ctx,
 	duckdb_connection con,
@@ -597,6 +601,8 @@ void sort_Stage2_without_payloads(
 	sort_Stage2(
 		CHUNK_SIZE,
 		BUFFER_SIZE,
+    intermName,
+    finalName,
 		logfile,
 		ctx,
 		con,
@@ -604,4 +610,81 @@ void sort_Stage2_without_payloads(
 		type_ids,
 		numIntermediate
 	);
+}
+
+// ----------------------------------------------------------------------
+// Consice gathered forms
+// ----------------------------------------------------------------------
+
+/**
+ * A function to perform a (GPU-based) two-pass sort over a duckdb table,
+ * storing the result into a new table of the name specified.
+ * 
+ * Params:
+ * CHUNK_SIZE : the maximum number of rows per chunk read by duckdb (make sure it is always duckdb_vector_size())
+ * BUFFER_SIZE : the number of rows per column the sorting buffer is to hold
+ * logfile : the file used by the logger
+ * ctx : the futhark context
+ * con : the duckdb connection
+ * tblName : name of the unsorted table
+ * intermName : base for the names of intermediate tables that will be used
+ * finalName : name of the final, sorted table
+ * 
+ */
+void two_pass_sort_with_payloads(
+  idx_t CHUNK_SIZE,
+  size_t BUFFER_SIZE,
+  FILE *logfile,
+  struct futhark_context *ctx,
+  duckdb_connection con,
+  const char* tblName,
+  const char* intermName,
+  const char* finalName
+) {
+  duckdb_result res;
+  duckdb_query(con, "SELECT * FROM tbl;", &res);
+  mylog(logfile, "Obtained result from initial table.");
+
+  idx_t incr_idx = 0;
+  mylog(logfile, "Initialised increment at 0.");
+
+  idx_t col_count = duckdb_column_count(&res);
+  duckdb_type type_ids[col_count];
+  mylog(logfile, "Initalising info for each column...");
+  for(idx_t col=0; col<col_count; col++) {
+  type_ids[col] = duckdb_column_type(&res, col);
+    mylog(logfile, "Obtained column's type.");
+  }
+
+  // STAGE 1 - SCAN TABLE, SAVE INTO LOCALLY SORTED TEMPORARY TABLES
+  mylog(logfile, "Beginning to process pages...");
+  idx_t numIntermediate = sort_Stage1_with_payloads(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    intermName,
+    logfile,
+    ctx,
+    con,
+    res,
+    col_count,
+    type_ids,
+    &incr_idx
+  );
+
+  duckdb_destroy_result(&res);
+  mylog(logfile, "Freed initial duckdb result from the 1st stage.");
+
+  // STAGE 2 - RETRIEVE DATA, SORTING THE FIRST BLOCK OF EACH FILE EACH TIME
+  sort_Stage2(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    intermName,
+    finalName,
+    logfile,
+    ctx,
+    con,
+    col_count,
+    type_ids,
+    numIntermediate
+  );  
 }
