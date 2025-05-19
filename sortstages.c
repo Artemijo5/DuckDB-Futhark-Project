@@ -81,127 +81,26 @@ idx_t sort_Stage1_with_payloads(
 
     // sort key column
     struct futhark_i64_1d *sorted_idx_ft;
-    void *sorted_cols[col_count];
-    sorted_cols[0] = colType_malloc(type_ids[0], cur_rows);
-    void *sorted_x = sorted_cols[0];
     mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, sorted_x, type_ids[0], *incr_idx, &sorted_idx_ft, Buffers[0], cur_rows);
+    sortKeyColumn(ctx, Buffers[0], type_ids[0], *incr_idx, &sorted_idx_ft, Buffers[0], cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
-    //logarray_long(logfile, "Sorted x: ", sorted_x, cur_rows);
-    // test that sorting & reordering was done correctly
-    /*
-    long sorted_idx[cur_rows];
-    futhark_values_i64_1d(ctx, sorted_idx_ft, sorted_idx);
-    futhark_context_sync(ctx);
-    int isSorted = true;
-    int indexIsCorrect = true;
-    for(idx_t i=0; i<cur_rows-1; i++) {
-      switch(type_ids[0]) {
-        case DUCKDB_TYPE_SMALLINT:
-          isSorted =  isSorted && (((short*)sorted_x)[i] <= ((short*)sorted_x)[i+1]);
-          break;
-        case DUCKDB_TYPE_INTEGER:
-          isSorted =  isSorted && (((int*)sorted_x)[i] <= ((int*)sorted_x)[i+1]);
-          break;
-        case DUCKDB_TYPE_BIGINT:
-          isSorted =  isSorted && (((long*)sorted_x)[i] <= ((long*)sorted_x)[i+1]);
-          break;
-        case DUCKDB_TYPE_FLOAT:
-          isSorted =  isSorted && (((float*)sorted_x)[i] <= ((float*)sorted_x)[i+1]);
-          break;
-        case DUCKDB_TYPE_DOUBLE:
-          isSorted =  isSorted && (((double*)sorted_x)[i] <= ((double*)sorted_x)[i+1]);
-          break;
-        default:
-          perror("Invalid Type.");
-          return -1;
-      }
-    }
-    size_t x_bytes = colType_bytes(type_ids[0]);
-    for(idx_t i=0; i<cur_rows; i++) {
-      for(size_t b=0; b<x_bytes; b++) {
-        indexIsCorrect = indexIsCorrect && (((char*)sorted_x)[i*x_bytes + b]
-          == ((char*)Buffers[0])[sorted_idx[i]*x_bytes + b - *incr_idx*x_bytes]);
-      }
-    }
-    logdbg(logfile,
-      isSorted,
-      "x was sorted correctly.",
-      "!!!!!!!!!!!!!!! Error: x was not sorted correctly. !!!!!!!!!!!!!!!");
-    logdbg(logfile,
-      indexIsCorrect,
-      "Indices were ordered correctly.",
-      "!!!!!!!!!!!!!!! Error: indices were not ordered correctly. !!!!!!!!!!!!!!!");
-    */
     
     // Next do the payload columns
     mylog(logfile, "Reordering payload columns...");
     for(idx_t col=1; col<col_count; col++) {
-      sorted_cols[col] = colType_malloc(type_ids[col], cur_rows);
-      orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], *incr_idx, sorted_idx_ft, Buffers[col], cur_rows);
-      //mylog(logfile, "Reordered the next payload column.");
-      // Test whether the reordering was done correctly...
-      /*
-      int yIsCorrect = true;
-      size_t y_bytes = colType_bytes(type_ids[col]);
-      for (idx_t i=0; i<cur_rows; i++) {
-        for(size_t b=0; b<y_bytes; b++) {
-          // Byte-wise comparison, rather than switch-case per type...
-          yIsCorrect = yIsCorrect && (((char*)sorted_cols[col])[i*y_bytes + b]
-            == ((char*)Buffers[col])[sorted_idx[i]*y_bytes + b - *incr_idx*y_bytes]);
-        }
-      }
-      logdbg(logfile,
-        yIsCorrect,
-        "Payload column was reordered correctly.",
-        "!!!!!!!!!!!!!!! Error: payload column was not reordered correctly. !!!!!!!!!!!!!!!");
-      */
+      orderPayloadColumn(ctx, Buffers[col], type_ids[col], *incr_idx, sorted_idx_ft, Buffers[col], cur_rows);
     }
 
     //mylog(logfile, "Now testing storage & retrieval.");
-    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, sorted_cols);
+    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, Buffers);
     if(numIntermediate == -1) {
       perror("Failed to store intermediate.\n");
       return -1;
     }
     mylog(logfile, "Stored buffer as intermediate.");
-    /*
-    void* testBuffers[col_count];
-    for(idx_t c=0; c<col_count; c++) {
-      testBuffers[c] = colType_malloc(type_ids[c], cur_rows);
-    }
-    idx_t scanned_rows = 0;
-    duckdb_result testRes;
-    prepareToFetch_intermediate(numIntermediate-1, con, &testRes);
-    int retrievedPageIsCorrect = true;
-    while(true) {
-      idx_t new_rows = fetch_intermediate(testRes, col_count, type_ids, (void**)testBuffers, scanned_rows);
-      if(new_rows == 0) break;
-
-      for(idx_t c=0; c<col_count; c++) {
-        for(idx_t b=0; b<new_rows*colType_bytes(type_ids[c]); b++) {
-          idx_t B = b + scanned_rows*colType_bytes(type_ids[c]);
-          if(((char*)sorted_cols[c])[B] != ((char*)testBuffers[c])[B]) {
-            //printf("Mistake at col %ld at row %ld !\n", c, B);
-            retrievedPageIsCorrect = false;
-            break;
-          }
-        }
-        if(!retrievedPageIsCorrect) break;
-      }
-
-      scanned_rows += new_rows;
-    }
-    logdbg(logfile,
-      retrievedPageIsCorrect,
-      "Page was stored & retrieved correctly in its entirety.",
-      "!!!!!!!!!!!!!!! Error: retrieved data does not match original. !!!!!!!!!!!!!!!");
-    */
-    
     // clean-up
     for(idx_t col=0; col<col_count; col++) {
       free(Buffers[col]);
-      free(sorted_cols[col]);
     }
     mylog(logfile, "Freed this page's buffers.");
     futhark_free_i64_1d(ctx, sorted_idx_ft);
@@ -226,8 +125,85 @@ idx_t sort_Stage1_without_payloads(
 	duckdb_type type_id,
 	idx_t *incr_idx
 ) {
-	// TODO only sorts key column, as well as indices...
-	return -1;
+	idx_t numIntermediate = 0;
+
+  int flag = true;
+  while(flag) {
+    mylog(logfile, "Next page...");
+
+    mylog(logfile, "Initalising buffer for the key column...");
+    void *Buffer = colType_malloc(type_id, buffer_size);
+    if(Buffer == NULL) {
+      mylog(logfile, "ERROR -- failed to allocate memory.");
+      logclose(logfile);
+      return -1;
+    }
+    mylog(logfile, "Successfully initialised buffers.");
+
+    idx_t cur_rows = 0;
+
+    // iterate until result is exhausted
+    while (buffer_size - cur_rows >= chunk_size) {
+      duckdb_data_chunk result = duckdb_fetch_chunk(res);
+      if (!result) {
+        mylog(logfile, "Table has been fully processed.");
+        flag = false; // last iteration of the outer loop
+        break;
+      }
+      // get the number of rows & columns from the data chunk
+      idx_t row_count = duckdb_data_chunk_get_size(result);
+
+      // obtain the column vectors
+      duckdb_vector res_col = duckdb_data_chunk_get_vector(result, 0);
+      void *vector_data = duckdb_vector_get_data(res_col);
+      memcpy(Buffer + cur_rows*colType_bytes(type_id),
+        vector_data,
+        row_count * colType_bytes(type_id)
+      );
+      
+      cur_rows += row_count;
+
+      duckdb_destroy_data_chunk(&result);
+    }
+    if(!flag && cur_rows == 0) { // if table exhausted, break out of outer loop as well
+      free(Buffer);
+      break;
+    }
+    char msgbuffer[50];
+    int msglen = sprintf(msgbuffer, "Finished scanning 'page' -- total of ");
+    msglen += sprintf(msgbuffer + msglen, "%ld", cur_rows);
+    msglen += sprintf(msgbuffer + msglen, " rows.");
+    mylog(logfile, msgbuffer);
+
+    // sort key column
+    struct futhark_i64_1d *sorted_idx_ft;
+    mylog(logfile, "Passing key column for sorting...");
+    sortKeyColumn(ctx, Buffer, type_id, *incr_idx, &sorted_idx_ft, Buffer, cur_rows);
+    mylog(logfile, "Sorted key column and obtained reordered indices.");
+    
+    int64_t orderedIndices[cur_rows];
+    futhark_values_i64_1d(ctx, sorted_idx_ft, orderedIndices);
+
+    void *Buffers[2] = {Buffer, (void*)orderedIndices};
+    duckdb_type type_ids[2] = {type_id, DUCKDB_TYPE_BIGINT};
+    idx_t col_count = 2;
+
+    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, Buffers);
+    if(numIntermediate == -1) {
+      perror("Failed to store intermediate.\n");
+      return -1;
+    }
+    mylog(logfile, "Stored buffer as intermediate.");
+    // clean-up
+    free(Buffer);
+    mylog(logfile, "Freed this page's buffer.");
+    futhark_free_i64_1d(ctx, sorted_idx_ft);
+    mylog(logfile, "Freed futhark objects for this page.");
+
+    *incr_idx += cur_rows;
+  }
+
+  return numIntermediate;
 }
 
 void sort_Stage2(
@@ -642,7 +618,9 @@ void two_pass_sort_with_payloads(
   const char* finalName
 ) {
   duckdb_result res;
-  duckdb_query(con, "SELECT * FROM tbl;", &res);
+  char queryStr[strlen(tblName) + 50];
+  sprintf(queryStr, "SELECT * FROM %s;", tblName);
+  duckdb_query(con, queryStr, &res);
   mylog(logfile, "Obtained result from initial table.");
 
   idx_t incr_idx = 0;
@@ -686,5 +664,73 @@ void two_pass_sort_with_payloads(
     col_count,
     type_ids,
     numIntermediate
-  );  
+  );
+}
+
+/**
+ * A function to perform a (GPU-based) two-pass sort over the key column of a duckdb table,
+ * storing the sorted key column (with the reordered indices) into a new table of the name specified.
+ * 
+ * Params:
+ * CHUNK_SIZE : the maximum number of rows per chunk read by duckdb (make sure it is always duckdb_vector_size())
+ * BUFFER_SIZE : the number of rows per column the sorting buffer is to hold
+ * logfile : the file used by the logger
+ * ctx : the futhark context
+ * con : the duckdb connection
+ * tblName : name of the unsorted table
+ * intermName : base for the names of intermediate tables that will be used
+ * finalName : name of the final, sorted table
+ * 
+ */
+void two_pass_sort_without_payloads(
+  idx_t CHUNK_SIZE,
+  size_t BUFFER_SIZE,
+  FILE *logfile,
+  struct futhark_context *ctx,
+  duckdb_connection con,
+  const char* tblName,
+  const char* intermName,
+  const char* finalName
+) {
+  duckdb_result res;
+  char queryStr[strlen(tblName) + 50];
+  sprintf(queryStr, "SELECT #1 FROM %s;", tblName);
+  duckdb_query(con, queryStr, &res);
+  mylog(logfile, "Obtained result from initial table.");
+
+  idx_t incr_idx = 0;
+  mylog(logfile, "Initialised increment at 0.");
+
+  duckdb_type type_id = duckdb_column_type(&res, 0);
+  mylog(logfile, "Obtained key column's type.");
+
+  // STAGE 1 - SCAN TABLE, SAVE INTO LOCALLY SORTED TEMPORARY TABLES
+  mylog(logfile, "Beginning to process pages...");
+  idx_t numIntermediate = sort_Stage1_without_payloads(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    intermName,
+    logfile,
+    ctx,
+    con,
+    res,
+    type_id,
+    &incr_idx
+  );
+
+  duckdb_destroy_result(&res);
+  mylog(logfile, "Freed initial duckdb result from the 1st stage.");
+
+  // STAGE 2 - RETRIEVE DATA, SORTING THE FIRST BLOCK OF EACH FILE EACH TIME
+  sort_Stage2_without_payloads(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    intermName,
+    finalName,
+    logfile,
+    ctx,
+    con,
+    type_id,
+    numIntermediate
+  );
 }

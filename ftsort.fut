@@ -84,6 +84,7 @@ entry argmin_double [n] (ks: [n]f64) : idx_t.t =
 
 
 -- TODO figure out GPU Merge Path
+-- till then, make a 'naive' join with BNLJ logic...
 
 entry partitionFunc [na] [nb] (threads: i64) (as : [na]i32) (bs : [nb]i32) : [threads](i64, i64) =
   let Adiag = replicate threads na
