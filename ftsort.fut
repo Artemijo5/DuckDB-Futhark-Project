@@ -81,3 +81,54 @@ entry argmin_float [n] (ks: [n]f32) : idx_t.t =
 -- | Obtain the index of the smallest element from a list of doubles.
 entry argmin_double [n] (ks: [n]f64) : idx_t.t =
   argmin (<) (==) (f64.highest) ks
+
+
+-- TODO figure out GPU Merge Path
+
+entry partitionFunc [na] [nb] (threads: i64) (as : [na]i32) (bs : [nb]i32) : [threads](i64, i64) =
+  let Adiag = replicate threads na
+  let Bdiag = replicate threads nb
+  let ts = iota threads
+  let ret = (zip3 ts Adiag Bdiag) |> map
+    (\(i, ad, bd) ->
+      let index = i*(na + nb)/threads
+      let atop = if index > na then na else index
+      let btop = if index > na then index-na else 0
+      let abottom = btop
+      let bigTuple : {a_top: i64, b_top: i64, a_bottom: i64, flag: bool, a_i : i64, b_i : i64}
+        = loop p = {a_top=atop, b_top=btop, a_bottom=abottom, flag=true, a_i=na, b_i=nb}
+        while p.flag do (
+          let offset = (p.a_top - p.a_bottom)/2
+          let ai = p.a_top - offset
+          let bi = p.b_top + offset
+          -- what to do with corner cases???
+          let acur = if (0<=ai && ai<na) then as[ai] else if ai<0 then i32.lowest else i32.highest
+          let aprev = if 0<ai then as[ai-1] else i32.lowest
+          let bcur = if (0<=bi && bi<nb) then bs[bi] else if bi<0 then i32.lowest else i32.highest
+          let bprev = if 0<bi then bs[bi-1] else i32.lowest
+          in if acur > bprev then
+            if aprev <= bcur then
+              {a_top=p.a_top, b_top=p.b_top, a_bottom=p.a_bottom, flag=false, a_i=ai, b_i=bi}
+            else
+              {a_top=ai-1, b_top=bi+1, a_bottom=p.a_bottom, flag=true, a_i=na, b_i=nb}
+          else
+            {a_top=p.a_top, b_top=p.b_top, a_bottom=ai+1, flag=true, a_i=na, b_i=nb}
+        )
+      in (i, bigTuple.a_i, bigTuple.b_i)
+    )
+  in ret |> map (\(t, ad, bd) -> (ad, bd))
+
+entry mergeFunc [w1] [w2]  (xs : [w1]i32) (ys : [w2]i32) : [w1](i64, i32, i64) =
+  let ixcs = zip3 (indices xs) xs (replicate (w1) 0)
+  let iycs = zip3 (indices ys) ys (replicate (w2) 1)
+  in ixcs
+    |> map (\(i, x, c) ->
+      reduce_comm (\(i1, y1, c1) (i2, y2, c2) ->
+        if (y1 != x || i1 >= w2) && (y2 != x || i2 >= w2) then (w2, x, 0)
+        else if (i1>=w2 || y1!=x) then (i2, y2, c2)
+        else if (i2>=w2 || y2!=x) then (i1, y1, c1)
+        else ((if (i1<i2 || i2>=w2) then i1 else i2), x, c1+c2)
+      )
+      (w2, x, 0)
+      iycs
+    )
