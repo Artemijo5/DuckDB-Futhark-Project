@@ -12,6 +12,7 @@
 idx_t sort_Stage1_with_payloads(
 	idx_t chunk_size,
 	size_t buffer_size,
+  const int16_t block_size,
   const char* intermName,
 	FILE *logfile,
 	struct futhark_context *ctx,
@@ -82,7 +83,7 @@ idx_t sort_Stage1_with_payloads(
     // sort key column
     struct futhark_i64_1d *sorted_idx_ft;
     mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, Buffers[0], type_ids[0], *incr_idx, &sorted_idx_ft, Buffers[0], cur_rows);
+    sortKeyColumn(ctx, Buffers[0], type_ids[0], *incr_idx, block_size, &sorted_idx_ft, Buffers[0], cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
     
     // Next do the payload columns
@@ -117,6 +118,7 @@ idx_t sort_Stage1_with_payloads(
 idx_t sort_Stage1_without_payloads(
 	idx_t chunk_size,
 	size_t buffer_size,
+  const int16_t block_size,
   const char* intermName,
 	FILE *logfile,
 	struct futhark_context *ctx,
@@ -178,7 +180,7 @@ idx_t sort_Stage1_without_payloads(
     // sort key column
     struct futhark_i64_1d *sorted_idx_ft;
     mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, Buffer, type_id, *incr_idx, &sorted_idx_ft, Buffer, cur_rows);
+    sortKeyColumn(ctx, Buffer, type_id, *incr_idx, block_size, &sorted_idx_ft, Buffer, cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
     
     int64_t orderedIndices[cur_rows];
@@ -209,6 +211,7 @@ idx_t sort_Stage1_without_payloads(
 void sort_Stage2(
 	idx_t CHUNK_SIZE,
 	size_t BUFFER_SIZE,
+  const int16_t block_size,
   const char* intermName,
   const char* finalName,
 	FILE *logfile,
@@ -216,7 +219,8 @@ void sort_Stage2(
 	duckdb_connection con,
 	idx_t col_count,
 	duckdb_type* type_ids,
-	idx_t numIntermediate
+	idx_t numIntermediate,
+  int quicksaves
 ) {
   mylog(logfile, "Now entering the second stage of processing...");
 
@@ -517,7 +521,7 @@ void sort_Stage2(
     struct futhark_i64_1d *stg2_sorted_idx_ft;
     for(idx_t c=0; c<col_count; c++) {
       if(c==0) {
-        sortKeyColumn(ctx, Buffers2[0], type_ids[0], 0, &stg2_sorted_idx_ft, Buffers2[0], BUFFER_SIZE);
+        sortKeyColumn(ctx, Buffers2[0], type_ids[0], 0, block_size, &stg2_sorted_idx_ft, Buffers2[0], BUFFER_SIZE);
         continue;
       }
       orderPayloadColumn(ctx, Buffers2[c], type_ids[c], 0, stg2_sorted_idx_ft, Buffers2[c], BUFFER_SIZE);
@@ -543,7 +547,7 @@ void sort_Stage2(
         perror("Failed to append data chunk to result table.\n");
         return;
       }
-      duckdb_appender_flush(resultApp);
+      if (quicksaves) duckdb_appender_flush(resultApp);
       duckdb_destroy_data_chunk(&cnk);
     }
     mylog(logfile, "Appended data to result table.");
@@ -553,6 +557,7 @@ void sort_Stage2(
   for(idx_t i=0; i<numIntermediate; i++) {
     duckdb_destroy_result(&interms[i]);
   }
+  duckdb_appender_close(resultApp);
   duckdb_appender_destroy(&resultApp);
   for(idx_t c=0; c<col_count; c++) {
     free(Buffers2[c]);
@@ -565,18 +570,21 @@ void sort_Stage2(
 void sort_Stage2_without_payloads(
 	idx_t CHUNK_SIZE,
 	size_t BUFFER_SIZE,
+  const int16_t block_size,
   const char* intermName,
   const char* finalName,
 	FILE *logfile,
 	struct futhark_context *ctx,
 	duckdb_connection con,
 	duckdb_type type_id,
-	idx_t numIntermediate
+	idx_t numIntermediate,
+  int quicksaves
 ) {
 	duckdb_type type_ids[2] = {type_id, DUCKDB_TYPE_BIGINT};
 	sort_Stage2(
 		CHUNK_SIZE,
 		BUFFER_SIZE,
+    block_size,
     intermName,
     finalName,
 		logfile,
@@ -584,7 +592,8 @@ void sort_Stage2_without_payloads(
 		con,
 		2,
 		type_ids,
-		numIntermediate
+		numIntermediate,
+    quicksaves
 	);
 }
 
@@ -599,6 +608,7 @@ void sort_Stage2_without_payloads(
  * Params:
  * CHUNK_SIZE : the maximum number of rows per chunk read by duckdb (make sure it is always duckdb_vector_size())
  * BUFFER_SIZE : the number of rows per column the sorting buffer is to hold
+ * block_size : used by the blocked gpu sorting function
  * logfile : the file used by the logger
  * ctx : the futhark context
  * con : the duckdb connection
@@ -610,12 +620,14 @@ void sort_Stage2_without_payloads(
 void two_pass_sort_with_payloads(
   idx_t CHUNK_SIZE,
   size_t BUFFER_SIZE,
+  const int16_t block_size,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
   const char* tblName,
   const char* intermName,
-  const char* finalName
+  const char* finalName,
+  int quicksaves
 ) {
   duckdb_result res;
   char queryStr[strlen(tblName) + 50];
@@ -639,6 +651,7 @@ void two_pass_sort_with_payloads(
   idx_t numIntermediate = sort_Stage1_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
+    block_size,
     intermName,
     logfile,
     ctx,
@@ -656,6 +669,7 @@ void two_pass_sort_with_payloads(
   sort_Stage2(
     CHUNK_SIZE,
     BUFFER_SIZE,
+    block_size,
     intermName,
     finalName,
     logfile,
@@ -663,7 +677,8 @@ void two_pass_sort_with_payloads(
     con,
     col_count,
     type_ids,
-    numIntermediate
+    numIntermediate,
+    quicksaves
   );
 }
 
@@ -674,6 +689,7 @@ void two_pass_sort_with_payloads(
  * Params:
  * CHUNK_SIZE : the maximum number of rows per chunk read by duckdb (make sure it is always duckdb_vector_size())
  * BUFFER_SIZE : the number of rows per column the sorting buffer is to hold
+ * block_size : used by the blocked gpu sorting function
  * logfile : the file used by the logger
  * ctx : the futhark context
  * con : the duckdb connection
@@ -685,12 +701,14 @@ void two_pass_sort_with_payloads(
 void two_pass_sort_without_payloads(
   idx_t CHUNK_SIZE,
   size_t BUFFER_SIZE,
+  const int16_t block_size,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
   const char* tblName,
   const char* intermName,
-  const char* finalName
+  const char* finalName,
+  int quicksaves
 ) {
   duckdb_result res;
   char queryStr[strlen(tblName) + 50];
@@ -709,6 +727,7 @@ void two_pass_sort_without_payloads(
   idx_t numIntermediate = sort_Stage1_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
+    block_size,
     intermName,
     logfile,
     ctx,
@@ -725,12 +744,14 @@ void two_pass_sort_without_payloads(
   sort_Stage2_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
+    block_size,
     intermName,
     finalName,
     logfile,
     ctx,
     con,
     type_id,
-    numIntermediate
+    numIntermediate,
+    quicksaves
   );
 }

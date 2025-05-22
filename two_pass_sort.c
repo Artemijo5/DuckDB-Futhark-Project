@@ -11,8 +11,10 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 5*CHUNK_SIZE//128*CHUNK_SIZE
-#define TABLE_SIZE 2*BUFFER_SIZE + CHUNK_SIZE + 13//BUFFER_SIZE + CHUNK_SIZE + 4//64*BUFFER_SIZE
+#define BUFFER_SIZE 5*CHUNK_SIZE//32*CHUNK_SIZE//128*CHUNK_SIZE
+#define TABLE_SIZE 3*BUFFER_SIZE//16*BUFFER_SIZE//BUFFER_SIZE + CHUNK_SIZE + 4//64*BUFFER_SIZE
+
+#define BLOCK_SIZE (int16_t)CHUNK_SIZE
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "2GB"
@@ -28,9 +30,9 @@
 int main() {
   // Initialise logger
   FILE* logfile = loginit(LOGFILE, "Two-Pass Sort : Starting test program.");
-  if(!logfile) {
-    perror("Failed to initialise the logger.");
-    return 1;
+  if(LOGFILE && !logfile) {
+    perror("Failed to initialise logger.");
+    return -1;
   }
 
   // DuckDB initialisation
@@ -63,8 +65,8 @@ int main() {
   if (
     duckdb_prepare(
       con,
-      "INSERT INTO tbl (SELECT ($1 - i), 10000*random(), 10000*random() FROM range($1) t(i));",
-      //"INSERT INTO tbl (SELECT 10000*random(), 10000*random(), 10000*random() FROM range($1) t(i));",
+      //"INSERT INTO tbl (SELECT ($1 - i), 10000*random(), 10000*random() FROM range($1) t(i));",
+      "INSERT INTO tbl (SELECT 10000000*random(), 10000*random(), 10000*random() FROM range($1) t(i));",
       &init_stmt
     ) 
     == DuckDBError
@@ -86,12 +88,14 @@ int main() {
   two_pass_sort_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
+    BLOCK_SIZE,
     logfile,
     ctx,
     con,
     "tbl",
     "tmp_interm",
-    "TPSresult"
+    "TPSresult",
+    false
   );
 
   // review result

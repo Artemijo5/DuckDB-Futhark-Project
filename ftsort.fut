@@ -12,20 +12,20 @@ local def orderByIndices 't (is: [](idx_t.t)) (ys: []t) : []t =
   is |> gather ys
 
 -- | Sort a column of short type.
-entry sortColumn_short [n] (incr: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
-  xs |> shortSorter.sort incr
+entry sortColumn_short [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i16) : sortInfo_short [n] =
+  shortSorter.blocked_sort incr block_size xs
 -- | Sort a column of integer type.
-entry sortColumn_int [n] (incr: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
-  xs |> intSorter.sort incr
+entry sortColumn_int [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i32) : sortInfo_int [n] =
+  intSorter.blocked_sort incr block_size xs
 -- | Sort a column of long type.
-entry sortColumn_long [n] (incr: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
-  xs |> longSorter.sort incr
+entry sortColumn_long [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i64) : sortInfo_long [n] =
+  longSorter.blocked_sort incr block_size xs
 -- | Sort a column of float type.
-entry sortColumn_float [n] (incr: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
-  xs |> floatSorter.sort incr
+entry sortColumn_float [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f32) : sortInfo_float [n] =
+  floatSorter.blocked_sort incr block_size xs
 -- | Sort a column of double type.
-entry sortColumn_double [n] (incr: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
-  xs |> doubleSorter.sort incr
+entry sortColumn_double [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f64) : sortInfo_double [n] =
+  doubleSorter.blocked_sort incr block_size xs
 
 -- | Order a payload column of type short, given the reordered indices.
 entry orderByIndices_short [n] [ni] (incr: idx_t.t) (is: [ni](idx_t.t)) (ys: [n]i16) : [ni]i16 =
@@ -133,3 +133,10 @@ entry mergeFunc [w1] [w2]  (xs : [w1]i32) (ys : [w2]i32) : [w1](i64, i32, i64) =
       (w2, x, 0)
       iycs
     )
+
+--entry mergeTupsToPairs (ixcs : [](i64, i32, i64)) : [](i32, i64, i64) = 
+--  let incrementalCounts = scan (+) 0 (ixcs |> map (\ixc -> ixc.2))
+--  let numPairs = incrementalCounts[-1]
+--  let newArr = replicate numPairs (i32.0, i64.-1, i64.-1)
+  -- for each index of newArr, find the first element of x such that incrementalCounts
+  -- AAAERGH I'll have to look at the paper!!!!!!

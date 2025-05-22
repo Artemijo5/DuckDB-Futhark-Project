@@ -62,6 +62,7 @@ module type colData = {
   val maximum [n] : [n]t -> t
 
   val sort [n] : idx_t.t -> [n]t -> sortInfo [n] t
+  val blocked_sort [n] : idx_t.t -> i16 -> [n]t -> sortInfo [n] t
 }
 
 -- | Abstract type for column data that supports arithmetic operations.
@@ -112,7 +113,13 @@ module intData (T: integral) : numData with t = T.t = {
 
   def sort [n] (incr: idx_t.t) (xs : [n](T.t)) =
     let ixs = xs |> zip (xs |> idx_t.indicesWithIncrement incr)
-    let s_ixs = blocked_radix_sort_int_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
+    let s_ixs = radix_sort_int_by_key (\ix -> ix.1) T.num_bits T.get_bit ixs
+    let tup = unzip s_ixs
+    in {is = tup.0, xs = tup.1}
+
+  def blocked_sort [n] (incr: idx_t.t) (block_size: i16) (xs : [n](T.t)) =
+    let ixs = xs |> zip (xs |> idx_t.indicesWithIncrement incr)
+    let s_ixs = blocked_radix_sort_int_by_key block_size (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
 
@@ -159,7 +166,13 @@ module fltData (T: float) : numData with t = T.t = {
 
   def sort [n] (incr: idx_t.t) (xs : [n](T.t)) =
     let ixs = xs |> zip (xs |> idx_t.indicesWithIncrement incr)
-    let s_ixs = blocked_radix_sort_float_by_key 256 (\ix -> ix.1) T.num_bits T.get_bit ixs
+    let s_ixs = radix_sort_float_by_key (\ix -> ix.1) T.num_bits T.get_bit ixs
+    let tup = unzip s_ixs
+    in {is = tup.0, xs = tup.1}
+
+  def blocked_sort [n] (incr: idx_t.t) (block_size: i16) (xs : [n](T.t)) =
+    let ixs = xs |> zip (xs |> idx_t.indicesWithIncrement incr)
+    let s_ixs = blocked_radix_sort_float_by_key block_size (\ix -> ix.1) T.num_bits T.get_bit ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
 

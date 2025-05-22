@@ -96,12 +96,12 @@ void max_padding(void* dest, duckdb_type type, idx_t n) {
   }
 }
 
-void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, struct futhark_i64_1d **outIdx, short* keys, idx_t card) {
+void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d **outIdx, short* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_i16_1d *x_ft = futhark_new_i16_1d(ctx, keys, card);
   // Sort x_ft
   struct futhark_opaque_sortInfo_short *sortInfo;
-  futhark_entry_sortColumn_short(ctx, &sortInfo, (long)incr, x_ft);
+  futhark_entry_sortColumn_short(ctx, &sortInfo, (long)incr, block_size, x_ft);
   // Decouple indices from keys
   struct futhark_i16_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_short_is(ctx, outIdx, sortInfo);
@@ -117,12 +117,12 @@ void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr,
   futhark_free_opaque_sortInfo_short(ctx, sortInfo);
   futhark_free_i16_1d(ctx, x_ft);
 }
-void sortKeyColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, struct futhark_i64_1d **outIdx, int* keys, idx_t card) {
+void sortKeyColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d **outIdx, int* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_i32_1d *x_ft = futhark_new_i32_1d(ctx, keys, card);
   // Sort x_ft
   struct futhark_opaque_sortInfo_int *sortInfo;
-  futhark_entry_sortColumn_int(ctx, &sortInfo, (long)incr, x_ft);
+  futhark_entry_sortColumn_int(ctx, &sortInfo, (long)incr, block_size, x_ft);
   // Decouple indices from keys
   struct futhark_i32_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_int_is(ctx, outIdx, sortInfo);
@@ -138,12 +138,12 @@ void sortKeyColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, str
   futhark_free_opaque_sortInfo_int(ctx, sortInfo);
   futhark_free_i32_1d(ctx, x_ft);
 }
-void sortKeyColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, struct futhark_i64_1d **outIdx, long* keys, idx_t card) {
+void sortKeyColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d **outIdx, long* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_i64_1d *x_ft = futhark_new_i64_1d(ctx, keys, card);
   // Sort x_ft
   struct futhark_opaque_sortInfo_long *sortInfo;
-  futhark_entry_sortColumn_long(ctx, &sortInfo, (long)incr, x_ft);
+  futhark_entry_sortColumn_long(ctx, &sortInfo, (long)incr, block_size, x_ft);
   // Decouple indices from keys
   struct futhark_i64_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_long_is(ctx, outIdx, sortInfo);
@@ -159,12 +159,12 @@ void sortKeyColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, s
   futhark_free_opaque_sortInfo_long(ctx, sortInfo);
   futhark_free_i64_1d(ctx, x_ft);
 }
-void sortKeyColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr, struct futhark_i64_1d **outIdx, float* keys, idx_t card) {
+void sortKeyColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d **outIdx, float* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_f32_1d *x_ft = futhark_new_f32_1d(ctx, keys, card);
   // Sort x_ft
   struct futhark_opaque_sortInfo_float *sortInfo;
-  futhark_entry_sortColumn_float(ctx, &sortInfo, (long)incr, x_ft);
+  futhark_entry_sortColumn_float(ctx, &sortInfo, (long)incr, block_size, x_ft);
   // Decouple indices from keys
   struct futhark_f32_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_float_is(ctx, outIdx, sortInfo);
@@ -180,12 +180,12 @@ void sortKeyColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr,
   futhark_free_opaque_sortInfo_float(ctx, sortInfo);
   futhark_free_f32_1d(ctx, x_ft);
 }
-void sortKeyColumn_double(struct futhark_context *ctx, double *outCol, idx_t incr, struct futhark_i64_1d **outIdx, double* keys, idx_t card) {
+void sortKeyColumn_double(struct futhark_context *ctx, double *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d **outIdx, double* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_f64_1d *x_ft = futhark_new_f64_1d(ctx, keys, card);
   // Sort x_ft
   struct futhark_opaque_sortInfo_double *sortInfo;
-  futhark_entry_sortColumn_double(ctx, &sortInfo, (long)incr, x_ft);
+  futhark_entry_sortColumn_double(ctx, &sortInfo, (long)incr, block_size, x_ft);
   // Decouple indices from keys
   struct futhark_f64_1d *sorted_x_ft;
   futhark_project_opaque_sortInfo_double_is(ctx, outIdx, sortInfo);
@@ -201,22 +201,22 @@ void sortKeyColumn_double(struct futhark_context *ctx, double *outCol, idx_t inc
   futhark_free_opaque_sortInfo_double(ctx, sortInfo);
   futhark_free_f64_1d(ctx, x_ft);
 }
-void sortKeyColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, struct futhark_i64_1d **outIdx, void* keys, idx_t card) {
+void sortKeyColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, const int16_t block_size, struct futhark_i64_1d **outIdx, void* keys, idx_t card) {
   switch (type){
   case DUCKDB_TYPE_SMALLINT:
-      sortKeyColumn_short(ctx, (short*)outCol, incr, outIdx, (short*)keys, card);
+      sortKeyColumn_short(ctx, (short*)outCol, incr, block_size, outIdx, (short*)keys, card);
       return;
     case DUCKDB_TYPE_INTEGER:
-      sortKeyColumn_int(ctx, (int*)outCol, incr, outIdx, (int*)keys, card);
+      sortKeyColumn_int(ctx, (int*)outCol, incr, block_size, outIdx, (int*)keys, card);
       return;
     case DUCKDB_TYPE_BIGINT:
-      sortKeyColumn_long(ctx, (long*)outCol, incr, outIdx, (long*)keys, card);
+      sortKeyColumn_long(ctx, (long*)outCol, incr, block_size, outIdx, (long*)keys, card);
       return;
     case DUCKDB_TYPE_FLOAT:
-      sortKeyColumn_float(ctx, (float*)outCol, incr, outIdx, (float*)keys, card);
+      sortKeyColumn_float(ctx, (float*)outCol, incr, block_size, outIdx, (float*)keys, card);
       return;
     case DUCKDB_TYPE_DOUBLE:
-      sortKeyColumn_double(ctx, (double*)outCol, incr, outIdx, (double*)keys, card);
+      sortKeyColumn_double(ctx, (double*)outCol, incr, block_size, outIdx, (double*)keys, card);
       return;
     default:
       perror("Invalid type.");
