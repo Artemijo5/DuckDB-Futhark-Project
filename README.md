@@ -12,10 +12,8 @@ To use:
 - add libduckdb.so and libduckdb_static.a from duckdb's Linux C installation page to the project directory https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64
 - add futhak sorts package to the project directory https://github.com/diku-dk/sorts/tree/master (you must have futhark installed first)
 - make sure that the directory is on the load path, eg ```` export LD_LIBRARY_PATH=`pwd` ````
-- compile ftsort.fut as a library using the desired backend, and then compile ftsort.c to libftsort.so (with -fPIC -shared)
-- likewise compile mylogger.c, myutil.c, to libmylogger.so, libmyutil.so (with -fPIC -shared)
-- compile sorting_test.c (or one_pass_sort.c, two_pass_sort.c) to sorting_test.o using libduckdb.so, libmylogger.so, libftsort.so, libmyutil.so
-- IF CUDA BACKEND the last part requires compilation with nvcc, linking with -lcuda -lcudart -lnvrtc https://futhark.readthedocs.io/en/latest/man/futhark-cuda.html
+- see makefile for compilation options
+- for CUDA backend, linking done with -lcuda -lcudart -lnvrtc https://futhark.readthedocs.io/en/latest/man/futhark-cuda.html
 -----------------------------------------
 
 The purpose of this project is to implement some GPU-accelerated database algorithms, using the tools DuckDB and The Futhark Programming Language. 

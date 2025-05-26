@@ -135,7 +135,7 @@ int main() {
   sorted_cols[0] = colType_malloc(type_ids[0], incr_idx);
   void *sorted_x = sorted_cols[0];
   mylog(logfile, "Passing key column for sorting...");
-  sortKeyColumn(ctx, sorted_x, type_ids[0], (idx_t)0, &sorted_idx_ft, Buffers[0], incr_idx);
+  sortKeyColumn(ctx, sorted_x, type_ids[0], (idx_t)0, 256, &sorted_idx_ft, Buffers[0], incr_idx);
   mylog(logfile, "Sorted key column and obtained reordered indices.");
   //logarray_int(logfile, "Sorted x: ", sorted_x, incr_idx);
   // test that sorting & reordering was done correctly

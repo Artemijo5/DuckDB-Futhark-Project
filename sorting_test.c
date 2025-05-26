@@ -88,7 +88,7 @@ int main() {
     //mylog(logfile, "Synced futhark context.");
     
     struct futhark_opaque_sortInfo_int *sortInfo;
-    futhark_entry_sortColumn_int(ctx, &sortInfo, (long)incr_idx, x_ft);
+    futhark_entry_sortColumn_int(ctx, &sortInfo, (long)incr_idx, 256, x_ft);
     mylog(logfile, "Sorted x_arr.");
     //futhark_context_sync(ctx);
     //mylog(logfile, "Synced futhark context.");

@@ -1,6 +1,7 @@
 *.so
 *.a
 *.o
+*.obj
 *.log.txt
 *.parquet
 *.pkg

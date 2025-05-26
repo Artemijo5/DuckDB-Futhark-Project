@@ -1,9 +1,12 @@
+#include "myutil.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "duckdb.h"
 #include "mylogger.h"
 #include "ftsort.h"
 #include <string.h>
+
 #include <limits.h> // for maximum values of integral types
 #include <float.h> // for maximum values of floating-point types
 

@@ -1,3 +1,5 @@
+#include "sortstages.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -615,7 +617,7 @@ void sort_Stage2_without_payloads(
  * tblName : name of the unsorted table
  * intermName : base for the names of intermediate tables that will be used
  * finalName : name of the final, sorted table
- * 
+ * quickSaves : if true, flush appenders chunk-by-chunk
  */
 void two_pass_sort_with_payloads(
   idx_t CHUNK_SIZE,
@@ -666,20 +668,32 @@ void two_pass_sort_with_payloads(
   mylog(logfile, "Freed initial duckdb result from the 1st stage.");
 
   // STAGE 2 - RETRIEVE DATA, SORTING THE FIRST BLOCK OF EACH FILE EACH TIME
-  sort_Stage2(
-    CHUNK_SIZE,
-    BUFFER_SIZE,
-    block_size,
-    intermName,
-    finalName,
-    logfile,
-    ctx,
-    con,
-    col_count,
-    type_ids,
-    numIntermediate,
-    quicksaves
-  );
+  if(numIntermediate > 1) {
+    sort_Stage2(
+      CHUNK_SIZE,
+      BUFFER_SIZE,
+      block_size,
+      intermName,
+      finalName,
+      logfile,
+      ctx,
+      con,
+      col_count,
+      type_ids,
+      numIntermediate,
+      quicksaves
+    );
+  }
+  else if(numIntermediate<1) {
+    logdbg(logfile, (numIntermediate==0), "Note ------- table is empty.", "####### Error saving the intermediates.");
+    return;
+  }
+  else { // if only one intermediate
+    char finalStr[100 + strlen(intermName) + strlen(finalName)];
+    sprintf(finalStr, "CREATE OR REPLACE TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+    duckdb_query(con, finalStr, NULL);
+    mylog(logfile, "Stage 2 has been skipped, as the table fit within one buffer.");
+  }
 }
 
 /**
@@ -696,7 +710,7 @@ void two_pass_sort_with_payloads(
  * tblName : name of the unsorted table
  * intermName : base for the names of intermediate tables that will be used
  * finalName : name of the final, sorted table
- * 
+ * quickSaves : if true, flush appenders chunk-by-chunk
  */
 void two_pass_sort_without_payloads(
   idx_t CHUNK_SIZE,
@@ -741,17 +755,29 @@ void two_pass_sort_without_payloads(
   mylog(logfile, "Freed initial duckdb result from the 1st stage.");
 
   // STAGE 2 - RETRIEVE DATA, SORTING THE FIRST BLOCK OF EACH FILE EACH TIME
-  sort_Stage2_without_payloads(
-    CHUNK_SIZE,
-    BUFFER_SIZE,
-    block_size,
-    intermName,
-    finalName,
-    logfile,
-    ctx,
-    con,
-    type_id,
-    numIntermediate,
-    quicksaves
-  );
+  if(numIntermediate > 1) {
+    sort_Stage2_without_payloads(
+      CHUNK_SIZE,
+      BUFFER_SIZE,
+      block_size,
+      intermName,
+      finalName,
+      logfile,
+      ctx,
+      con,
+      type_id,
+      numIntermediate,
+      quicksaves
+    );
+  }
+  else if(numIntermediate<1) {
+    logdbg(logfile, (numIntermediate==0), "Note ------- table is empty.", "####### Error saving the intermediates.");
+    return;
+  }
+  else { // if only one intermediate
+    char finalStr[100 + strlen(intermName) + strlen(finalName)];
+    sprintf(finalStr, "CREATE OR REPLACE TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+    duckdb_query(con, finalStr, NULL);
+    mylog(logfile, "Stage 2 has been skipped, as the table fit within one buffer.");
+  }
 }
