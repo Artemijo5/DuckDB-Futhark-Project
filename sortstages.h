@@ -22,6 +22,7 @@
  * tblName : name of the unsorted table
  * intermName : base for the names of intermediate tables that will be used
  * finalName : name of the final, sorted table
+ * blocked : if true use blocked radix sort, if false use merge sort
  * quickSaves : if true, flush appenders chunk-by-chunk
  */
 void two_pass_sort_with_payloads(
@@ -34,6 +35,7 @@ void two_pass_sort_with_payloads(
   const char* tblName,
   const char* intermName,
   const char* finalName,
+  int blocked,
   int quicksaves
 );
 
@@ -51,6 +53,7 @@ void two_pass_sort_with_payloads(
  * tblName : name of the unsorted table
  * intermName : base for the names of intermediate tables that will be used
  * finalName : name of the final, sorted table
+ * blocked : if true use blocked radix sort, if false use merge sort
  * quickSaves : if true, flush appenders chunk-by-chunk
  */
 void two_pass_sort_without_payloads(
@@ -63,6 +66,7 @@ void two_pass_sort_without_payloads(
   const char* tblName,
   const char* intermName,
   const char* finalName,
+  int blocked,
   int quicksaves
 );
 

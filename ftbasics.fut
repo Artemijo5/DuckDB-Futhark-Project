@@ -7,10 +7,13 @@
 -- (read up on radix sort in futhark sorts library ++)
 
 import "lib/github.com/diku-dk/sorts/radix_sort"
+import "lib/github.com/diku-dk/sorts/merge_sort"
 
 
 local module param_idx_t (it: integral) = {
   type t = it.t
+  def min = it.min
+  def max = it.max
   def bool = it.bool
   def sum = it.sum
   def indices xs = (indices xs) |> map it.i64
@@ -38,6 +41,27 @@ type sortInfo_double [n] = sortInfo [n] f64
 -- | Gather operation.
 def gather 't (xs: []t) (is: [](idx_t.t)) =
   is |> map (\i -> xs[i])
+-- | Multi-pass gather operation (better cache-locality)
+def partitioned_gather [n] 't (psize : idx_t.t) (xs : [n]t) (is : [n]idx_t.t) = 
+  let m = (n + psize - 1) / psize
+  let procArray : [n]t =
+    let pa : (idx_t.t, [n](idx_t.t, t)) =
+      loop p = (0, zip (copy is) (copy xs))
+      while p.0 < n do
+        let lower_bound = p.0
+        let upper_bound = idx_t.min (p.0 + psize) (n)
+        let nGathered = p.1
+          |> map (\(gi, ugx) ->
+            -- if gi>=0, this one hasn't been gathered yet
+            -- when gathered, set gi to -1
+            if (lower_bound<=gi && upper_bound>gi)
+            then (-1, xs[gi])
+            else (gi, ugx)
+          )
+        in (upper_bound, nGathered)
+    in (unzip (pa.1)).1
+  in procArray
+
 -- | Function to count elements that satisfy a property.
 def countFor 't (p: t -> bool) (xs: []t) : idx_t.t =
   idx_t.sum (xs |> map (p >-> idx_t.bool))
@@ -113,7 +137,7 @@ module intData (T: integral) : numData with t = T.t = {
 
   def sort [n] (incr: idx_t.t) (xs : [n](T.t)) =
     let ixs = xs |> zip (xs |> idx_t.indicesWithIncrement incr)
-    let s_ixs = radix_sort_int_by_key (\ix -> ix.1) T.num_bits T.get_bit ixs
+    let s_ixs = merge_sort_by_key (\ix -> ix.1) (<=) ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
 
@@ -166,7 +190,7 @@ module fltData (T: float) : numData with t = T.t = {
 
   def sort [n] (incr: idx_t.t) (xs : [n](T.t)) =
     let ixs = xs |> zip (xs |> idx_t.indicesWithIncrement incr)
-    let s_ixs = radix_sort_float_by_key (\ix -> ix.1) T.num_bits T.get_bit ixs
+    let s_ixs = merge_sort_by_key (\ix -> ix.1) (<=) ixs
     let tup = unzip s_ixs
     in {is = tup.0, xs = tup.1}
 

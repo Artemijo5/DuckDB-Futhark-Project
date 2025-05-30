@@ -11,10 +11,10 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 64*512*CHUNK_SIZE//32*CHUNK_SIZE//128*CHUNK_SIZE
+#define BUFFER_SIZE 512*CHUNK_SIZE//32*CHUNK_SIZE//128*CHUNK_SIZE
 #define TABLE_SIZE 1*BUFFER_SIZE//3*BUFFER_SIZE//16*BUFFER_SIZE//BUFFER_SIZE + CHUNK_SIZE + 4//64*BUFFER_SIZE
 
-#define BLOCK_SIZE (int16_t)256
+#define BLOCK_SIZE (int16_t)2048
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "2GB"
@@ -85,7 +85,7 @@ int main() {
   mylog(logfile, "Set up futhark context & config.");
 
   // where the sorting happens, concentrated into an one-liner
-  two_pass_sort_with_payloads(
+  two_pass_sort_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
     BLOCK_SIZE,
@@ -95,6 +95,7 @@ int main() {
     "tbl",
     "tmp_interm",
     "TPSresult",
+    false,
     false
   );
 

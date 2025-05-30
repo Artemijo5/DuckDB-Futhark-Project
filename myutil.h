@@ -46,23 +46,44 @@ void max_padding(void* dest, duckdb_type type, idx_t n);
  * outCol : a pointer for the output of the sorted column, which must have enough space allocated
  * type : the logical type of the data, expressed in enum duckdb_type
  * incr : the index of the first row in the current data chunk
+ * blocked : if true, use blocked radix sort, otherwise use merge sort
  * block_size : the block size used by the blocked gpu sorting function
  * outIdx : a double pointer for the output of the reordered indices (as a futhark array)
  * keys : the key column to be sorted
  * card : the cardinality of elements to process
  */
-void sortKeyColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, const int16_t block_size, struct futhark_i64_1d **outIdx, void* keys, idx_t card);
+void sortKeyColumn(
+	struct futhark_context *ctx,
+	void *outCol,
+	duckdb_type type,
+	idx_t incr,
+	int blocked,
+	const int16_t block_size,
+	struct futhark_i64_1d **outIdx,
+	void* keys,
+	idx_t card
+);
 /**
  * A function to reorder a payload column, according to the reordered indices from sorting the key column.
  * Params:
  * ctx : pointer to the futhark context
  * outCol : a pointer for the output of the reordered column, which must have enough space allocated
+ * incr : the index of the first row in the current data chunk
+ * block_size : the block size used by the blocked gpu sorting function
  * type : the logical type of the data, expressed in enum duckdb_type
  * orderBy : the reordered indices (as a futhark array)
  * inCol : the payload column to be reordered
  * card : the cardinality of elements to process
  */
-void orderPayloadColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, struct futhark_i64_1d *orderBy, void* inCol, idx_t card);
+void orderPayloadColumn(
+	struct futhark_context *ctx,
+	void *outCol, duckdb_type type,
+	idx_t incr,
+	const int16_t block_size,
+	struct futhark_i64_1d *orderBy,
+	void* inCol,
+	idx_t card
+);
 
 /**
  * A function to store a buffer of columns between the stages of processing.

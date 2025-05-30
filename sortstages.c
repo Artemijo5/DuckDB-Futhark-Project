@@ -22,7 +22,8 @@ idx_t sort_Stage1_with_payloads(
 	duckdb_result res,
 	idx_t col_count,
 	duckdb_type* type_ids,
-	idx_t *incr_idx
+	idx_t *incr_idx,
+  int blocked
 ) {
   idx_t numIntermediate = 0;
 
@@ -85,13 +86,14 @@ idx_t sort_Stage1_with_payloads(
     // sort key column
     struct futhark_i64_1d *sorted_idx_ft;
     mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, Buffers[0], type_ids[0], *incr_idx, block_size, &sorted_idx_ft, Buffers[0], cur_rows);
+    sortKeyColumn(ctx, Buffers[0], type_ids[0], *incr_idx, blocked, block_size, &sorted_idx_ft, Buffers[0], cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
     
     // Next do the payload columns
     mylog(logfile, "Reordering payload columns...");
     for(idx_t col=1; col<col_count; col++) {
-      orderPayloadColumn(ctx, Buffers[col], type_ids[col], *incr_idx, sorted_idx_ft, Buffers[col], cur_rows);
+      orderPayloadColumn(ctx, Buffers[col], type_ids[col], *incr_idx, block_size, sorted_idx_ft, Buffers[col], cur_rows);
+      mylog(logfile, "Reordered column.");
     }
 
     //mylog(logfile, "Now testing storage & retrieval.");
@@ -127,7 +129,8 @@ idx_t sort_Stage1_without_payloads(
 	duckdb_connection con,
 	duckdb_result res,
 	duckdb_type type_id,
-	idx_t *incr_idx
+	idx_t *incr_idx,
+  int blocked
 ) {
 	idx_t numIntermediate = 0;
 
@@ -182,14 +185,15 @@ idx_t sort_Stage1_without_payloads(
     // sort key column
     struct futhark_i64_1d *sorted_idx_ft;
     mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, Buffer, type_id, *incr_idx, block_size, &sorted_idx_ft, Buffer, cur_rows);
+    sortKeyColumn(ctx, Buffer, type_id, *incr_idx, blocked, block_size, &sorted_idx_ft, Buffer, cur_rows);
     mylog(logfile, "Sorted key column and obtained reordered indices.");
     
-    int64_t orderedIndices[cur_rows];
+    int64_t *orderedIndices = colType_malloc(DUCKDB_TYPE_BIGINT, cur_rows);
     futhark_values_i64_1d(ctx, sorted_idx_ft, orderedIndices);
 
     void *Buffers[2] = {Buffer, (void*)orderedIndices};
     duckdb_type type_ids[2] = {type_id, DUCKDB_TYPE_BIGINT};
+
     idx_t col_count = 2;
 
     numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, Buffers);
@@ -199,6 +203,7 @@ idx_t sort_Stage1_without_payloads(
     }
     mylog(logfile, "Stored buffer as intermediate.");
     // clean-up
+    free(orderedIndices);
     free(Buffer);
     mylog(logfile, "Freed this page's buffer.");
     futhark_free_i64_1d(ctx, sorted_idx_ft);
@@ -222,6 +227,7 @@ void sort_Stage2(
 	idx_t col_count,
 	duckdb_type* type_ids,
 	idx_t numIntermediate,
+  int blocked,
   int quicksaves
 ) {
   mylog(logfile, "Now entering the second stage of processing...");
@@ -523,10 +529,10 @@ void sort_Stage2(
     struct futhark_i64_1d *stg2_sorted_idx_ft;
     for(idx_t c=0; c<col_count; c++) {
       if(c==0) {
-        sortKeyColumn(ctx, Buffers2[0], type_ids[0], 0, block_size, &stg2_sorted_idx_ft, Buffers2[0], BUFFER_SIZE);
+        sortKeyColumn(ctx, Buffers2[0], type_ids[0], 0, blocked, block_size, &stg2_sorted_idx_ft, Buffers2[0], BUFFER_SIZE);
         continue;
       }
-      orderPayloadColumn(ctx, Buffers2[c], type_ids[c], 0, stg2_sorted_idx_ft, Buffers2[c], BUFFER_SIZE);
+      orderPayloadColumn(ctx, Buffers2[c], type_ids[c], 0, block_size, stg2_sorted_idx_ft, Buffers2[c], BUFFER_SIZE);
     }
     futhark_free_i64_1d(ctx, stg2_sorted_idx_ft);
     mylog(logfile, "Sorted this scan.");
@@ -580,6 +586,7 @@ void sort_Stage2_without_payloads(
 	duckdb_connection con,
 	duckdb_type type_id,
 	idx_t numIntermediate,
+  int blocked,
   int quicksaves
 ) {
 	duckdb_type type_ids[2] = {type_id, DUCKDB_TYPE_BIGINT};
@@ -595,6 +602,7 @@ void sort_Stage2_without_payloads(
 		2,
 		type_ids,
 		numIntermediate,
+    blocked,
     quicksaves
 	);
 }
@@ -603,22 +611,6 @@ void sort_Stage2_without_payloads(
 // Consice gathered forms
 // ----------------------------------------------------------------------
 
-/**
- * A function to perform a (GPU-based) two-pass sort over a duckdb table,
- * storing the result into a new table of the name specified.
- * 
- * Params:
- * CHUNK_SIZE : the maximum number of rows per chunk read by duckdb (make sure it is always duckdb_vector_size())
- * BUFFER_SIZE : the number of rows per column the sorting buffer is to hold
- * block_size : used by the blocked gpu sorting function
- * logfile : the file used by the logger
- * ctx : the futhark context
- * con : the duckdb connection
- * tblName : name of the unsorted table
- * intermName : base for the names of intermediate tables that will be used
- * finalName : name of the final, sorted table
- * quickSaves : if true, flush appenders chunk-by-chunk
- */
 void two_pass_sort_with_payloads(
   idx_t CHUNK_SIZE,
   size_t BUFFER_SIZE,
@@ -629,6 +621,7 @@ void two_pass_sort_with_payloads(
   const char* tblName,
   const char* intermName,
   const char* finalName,
+  int blocked,
   int quicksaves
 ) {
   duckdb_result res;
@@ -661,7 +654,8 @@ void two_pass_sort_with_payloads(
     res,
     col_count,
     type_ids,
-    &incr_idx
+    &incr_idx,
+    blocked
   );
 
   duckdb_destroy_result(&res);
@@ -681,6 +675,7 @@ void two_pass_sort_with_payloads(
       col_count,
       type_ids,
       numIntermediate,
+      blocked,
       quicksaves
     );
   }
@@ -696,22 +691,6 @@ void two_pass_sort_with_payloads(
   }
 }
 
-/**
- * A function to perform a (GPU-based) two-pass sort over the key column of a duckdb table,
- * storing the sorted key column (with the reordered indices) into a new table of the name specified.
- * 
- * Params:
- * CHUNK_SIZE : the maximum number of rows per chunk read by duckdb (make sure it is always duckdb_vector_size())
- * BUFFER_SIZE : the number of rows per column the sorting buffer is to hold
- * block_size : used by the blocked gpu sorting function
- * logfile : the file used by the logger
- * ctx : the futhark context
- * con : the duckdb connection
- * tblName : name of the unsorted table
- * intermName : base for the names of intermediate tables that will be used
- * finalName : name of the final, sorted table
- * quickSaves : if true, flush appenders chunk-by-chunk
- */
 void two_pass_sort_without_payloads(
   idx_t CHUNK_SIZE,
   size_t BUFFER_SIZE,
@@ -722,6 +701,7 @@ void two_pass_sort_without_payloads(
   const char* tblName,
   const char* intermName,
   const char* finalName,
+  int blocked,
   int quicksaves
 ) {
   duckdb_result res;
@@ -748,7 +728,8 @@ void two_pass_sort_without_payloads(
     con,
     res,
     type_id,
-    &incr_idx
+    &incr_idx,
+    blocked
   );
 
   duckdb_destroy_result(&res);
@@ -767,6 +748,7 @@ void two_pass_sort_without_payloads(
       con,
       type_id,
       numIntermediate,
+      blocked,
       quicksaves
     );
   }

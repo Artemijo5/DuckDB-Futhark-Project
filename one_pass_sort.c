@@ -135,7 +135,7 @@ int main() {
   sorted_cols[0] = colType_malloc(type_ids[0], incr_idx);
   void *sorted_x = sorted_cols[0];
   mylog(logfile, "Passing key column for sorting...");
-  sortKeyColumn(ctx, sorted_x, type_ids[0], (idx_t)0, 256, &sorted_idx_ft, Buffers[0], incr_idx);
+  sortKeyColumn(ctx, sorted_x, type_ids[0], (idx_t)0, true, 256, &sorted_idx_ft, Buffers[0], incr_idx);
   mylog(logfile, "Sorted key column and obtained reordered indices.");
   //logarray_int(logfile, "Sorted x: ", sorted_x, incr_idx);
   // test that sorting & reordering was done correctly
@@ -186,7 +186,7 @@ int main() {
   mylog(logfile, "Reordering payload columns...");
   for(idx_t col=1; col<col_count; col++) {
     sorted_cols[col] = colType_malloc(type_ids[col], incr_idx);
-    orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], (idx_t)0, sorted_idx_ft, Buffers[col], incr_idx);
+    orderPayloadColumn(ctx, sorted_cols[col], type_ids[col], (idx_t)0, 256, sorted_idx_ft, Buffers[col], incr_idx);
     mylog(logfile, "Reordered the next payload column.");
     // Test whether the reordering was done correctly...
     int yIsCorrect = true;
