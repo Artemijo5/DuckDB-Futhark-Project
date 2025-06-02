@@ -20,12 +20,6 @@
 #define DDB_MEMSIZE "2GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
-/* ------------------------------------------------------------------------------------------------------------------------------
-  // TODO
-  // save to chunks & new table "sortedTbl" (for now via appenders...)
-  // -> 2-PASS
-  // gpu runs...
-  */
 
 int main() {
   // Initialise logger

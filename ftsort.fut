@@ -135,24 +135,60 @@ entry partitionFunc [na] [nb] (threads: i64) (as : [na]i32) (bs : [nb]i32) : [th
     )
   in ret |> map (\(t, ad, bd) -> (ad, bd))
 
-entry mergeFunc [w1] [w2]  (xs : [w1]i32) (ys : [w2]i32) : [w1](i64, i32, i64) =
+-- TODO naive for now, improve based on papers...
+-- doesn't work as I expected... will need to copy paper ig...
+--entry mergeFunc [na] [nb] (threads: i64) (as: [na]i32) (bs: [nb]i32) : [na+nb]i32 =
+--  let perThread = (na+nb+threads-1)/threads
+--  let partitionPoints : [threads](i64, i64) = partitionFunc threads as bs
+--  let ts = iota threads
+--  let da : [threads][perThread]i32 = replicate threads (replicate perThread 0)
+--  let mda = da
+--    |> zip ts
+--    |> map (\(ti, ua) ->
+--      let arr_loop : {j: idx_t.t, a_j: idx_t.t, b_j: idx_t.t, buff: [perThread]i32}
+--        = loop p = {j=0, a_j=partitionPoints[ti].0, b_j=partitionPoints[ti].1, buff = replicate perThread 0}
+--        while (p.j < perThread  && p.j + perThread*ti < (na+nb)) do ( -- this actually needs to handle partition indices ...
+--          if (as[p.a_j] >= bs[p.b_j])
+--          then {j = p.j + 1, a_j = p.a_j + 1, b_j = p.b_j, buff = p.buff with [p.j] = as[p.a_j]}
+--          else {j = p.j + 1, a_j = p.a_j, b_j = p.b_j + 1, buff = p.buff with [p.j] = bs[p.b_j]}
+--        )
+--      in arr_loop.buff
+--    )
+--  let final_arr = (flatten mda)[0:(na+nb)]
+--  in final_arr
+
+-- TODO random experiment
+type mergeInfo [len] 't = {is: [len](idx_t.t), xs: [len]t, cs: [len](idx_t.t)}
+type mergeInfo_short [n] = mergeInfo [n] i16
+type mergeInfo_int [n] = mergeInfo [n] i32
+type mergeInfo_long [n] = mergeInfo [n] i64
+type mergeInfo_float [n] = mergeInfo [n] f32
+type mergeInfo_double [n] = mergeInfo [n] f64
+
+local def mergeTups [w1] [w2] 't (neq: t -> t -> bool)  (xs : [w1]t) (ys : [w2]t) : mergeInfo [w1] t =
   let ixcs = zip3 (indices xs) xs (replicate (w1) 0)
   let iycs = zip3 (indices ys) ys (replicate (w2) 1)
-  in ixcs
+  let ms = ixcs
     |> map (\(i, x, c) ->
       reduce_comm (\(i1, y1, c1) (i2, y2, c2) ->
-        if (y1 != x || i1 >= w2) && (y2 != x || i2 >= w2) then (w2, x, 0)
-        else if (i1>=w2 || y1!=x) then (i2, y2, c2)
-        else if (i2>=w2 || y2!=x) then (i1, y1, c1)
-        else ((if (i1<i2 || i2>=w2) then i1 else i2), x, c1+c2)
+        if ((y1 `neq` x) || i1 < 0) && ((y2 `neq` x) || i2 < 0) then (-1, x, 0)
+        else if (i1<0 || (y1 `neq` x)) then (i2, y2, c2)
+        else if (i2<0 || (y2 `neq` x)) then (i1, y1, c1)
+        else ((if (i1<i2 || i2<0) then i1 else i2), x, c1+c2)
       )
-      (w2, x, 0)
+      (-1, x, 0)
       iycs
     )
+    |> unzip3
+  in {is = ms.0, xs = ms.1, cs = ms.2}
 
---entry mergeTupsToPairs (ixcs : [](i64, i32, i64)) : [](i32, i64, i64) = 
---  let incrementalCounts = scan (+) 0 (ixcs |> map (\ixc -> ixc.2))
---  let numPairs = incrementalCounts[-1]
---  let newArr = replicate numPairs (i32.0, i64.-1, i64.-1)
-  -- for each index of newArr, find the first element of x such that incrementalCounts
-  -- AAAERGH I'll have to look at the paper!!!!!!
+entry mergeTups_short [w1] [w2]  (xs : [w1]i16) (ys : [w2]i16) : mergeInfo_short [w1] =
+  mergeTups (!=) xs ys
+entry mergeTups_int [w1] [w2]  (xs : [w1]i32) (ys : [w2]i32) : mergeInfo_int [w1] =
+  mergeTups (!=) xs ys
+entry mergeTups_long [w1] [w2]  (xs : [w1]i64) (ys : [w2]i64) : mergeInfo_long [w1] =
+  mergeTups (!=) xs ys
+entry mergeTups_float [w1] [w2]  (xs : [w1]f32) (ys : [w2]f32) : mergeInfo_float [w1] =
+  mergeTups (!=) xs ys
+entry mergeTups_double [w1] [w2]  (xs : [w1]f64) (ys : [w2]f64) : mergeInfo_double [w1] =
+  mergeTups (!=) xs ys
