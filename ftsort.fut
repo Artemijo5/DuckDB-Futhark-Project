@@ -1,4 +1,4 @@
-import "lib/github.com/diku-dk/sorts/radix_sort"
+import "lib/github.com/diku-dk/sorts/merge_sort"
 import "ftbasics"
 
 -- Local modules for sorting functions
@@ -135,27 +135,49 @@ entry partitionFunc [na] [nb] (threads: i64) (as : [na]i32) (bs : [nb]i32) : [th
     )
   in ret |> map (\(t, ad, bd) -> (ad, bd))
 
--- TODO naive for now, improve based on papers...
--- doesn't work as I expected... will need to copy paper ig...
---entry mergeFunc [na] [nb] (threads: i64) (as: [na]i32) (bs: [nb]i32) : [na+nb]i32 =
---  let perThread = (na+nb+threads-1)/threads
---  let partitionPoints : [threads](i64, i64) = partitionFunc threads as bs
---  let ts = iota threads
---  let da : [threads][perThread]i32 = replicate threads (replicate perThread 0)
---  let mda = da
---    |> zip ts
---    |> map (\(ti, ua) ->
---      let arr_loop : {j: idx_t.t, a_j: idx_t.t, b_j: idx_t.t, buff: [perThread]i32}
---        = loop p = {j=0, a_j=partitionPoints[ti].0, b_j=partitionPoints[ti].1, buff = replicate perThread 0}
---        while (p.j < perThread  && p.j + perThread*ti < (na+nb)) do ( -- this actually needs to handle partition indices ...
---          if (as[p.a_j] >= bs[p.b_j])
---          then {j = p.j + 1, a_j = p.a_j + 1, b_j = p.b_j, buff = p.buff with [p.j] = as[p.a_j]}
---          else {j = p.j + 1, a_j = p.a_j, b_j = p.b_j + 1, buff = p.buff with [p.j] = bs[p.b_j]}
---        )
---      in arr_loop.buff
---    )
---  let final_arr = (flatten mda)[0:(na+nb)]
---  in final_arr
+entry mergeFunc_seq [na] [nb] (threads: i64) (as: [na]i32) (bs: [nb]i32) : ((i64,i64), [na+nb](i64, i32)) =
+  let perThread = (na+nb)/threads
+  let partitionBounds : [threads](i64, i64) = partitionFunc threads as bs
+  let buff : [na+nb](i64,i32) = 
+    let lbuff : (i64, [na+nb](i64,i32)) =
+      loop p = (0, replicate (na+nb) (-1, 0))
+      while p.0 < threads do
+        let t = p.0
+        let lbs = partitionBounds[t]
+        let ubs = if t+1<threads then partitionBounds[t+1] else lbs
+        let ind_bottom = lbs.0 + lbs.1
+        let ind_top = ubs.0 + ubs.1
+        let at = as |> zip (replicate na 0)
+        let bt = bs |> zip (replicate nb 1)
+        let merger = (at[lbs.0:ubs.0] ++ bt[lbs.1:ubs.1])
+          |> (merge_sort_by_key (\t -> t.1)) (<=) :> [ind_top-ind_bottom](i64,i32)
+        let newSections = p.1 with [ind_bottom:ind_top] = merger[0:(ind_top-ind_bottom)]
+        in (t+1, newSections)
+    in lbuff.1
+  in (partitionBounds[threads-1], buff)
+
+entry mergeFunc_par [na] [nb] (threads: i64) (as: [na]i32) (bs: [nb]i32) : ((i64,i64), [na+nb](i64, i32)) =
+  let perThread = 1 + (na+nb)/threads
+  let partitionBounds : [threads](i64, i64) = partitionFunc threads as bs
+  let ts = iota threads
+  let sections : [threads][perThread](i64,(i64,i32)) = ts
+    |> map(\t ->
+      let secBuff = replicate perThread (-1,0)
+      let lbs = partitionBounds[t]
+      let ubs = if t+1<threads then partitionBounds[t+1] else lbs
+      let card = (ubs.0+ubs.1) - (lbs.0+lbs.1)
+      let at = as |> zip (replicate na 0)
+      let bt = bs |> zip (replicate nb 1)
+      let merger = (at[lbs.0:ubs.0] ++ bt[lbs.1:ubs.1])
+        |> (merge_sort_by_key (\t -> t.1)) (<=) :> [card](i64,i32)
+      let sec = secBuff with [0:card] = merger[0:card]
+      let is_naive = iota perThread |> map (\i -> i+(lbs.0 + lbs.1))
+      let is = if (card == perThread-1) then is_naive with [card] = -1 else is_naive
+      in sec |> zip is
+    )
+  let ims = sections |> flatten |> unzip
+  in (partitionBounds[threads-1], scatter (replicate (na+nb) (-1, 0)) ims.0 ims.1)
+  
 
 -- TODO random experiment
 type mergeInfo [len] 't = {is: [len](idx_t.t), xs: [len]t, cs: [len](idx_t.t)}
