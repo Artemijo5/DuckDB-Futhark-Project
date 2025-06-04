@@ -98,11 +98,17 @@ entry argmin_float [n] (ks: [n]f32) : idx_t.t =
 entry argmin_double [n] (ks: [n]f64) : idx_t.t =
   argmin (<) (==) (f64.highest) ks
 
+-- merge join
 
--- TODO figure out GPU Merge Path
--- till then, make a 'naive' join with BNLJ logic...
-
-entry partitionFunc [na] [nb] (threads: i64) (as : [na]i32) (bs : [nb]i32) : [threads](i64, i64) =
+def partitionFunc [na] [nb] 't
+  (threads: idx_t.t)
+  (as : [na]t)
+  (bs : [nb]t)
+  (lowest: t)
+  (highest: t)
+  (leq: t -> t -> bool)
+  (gt: t -> t -> bool)
+: [threads](idx_t.t, idx_t.t) =
   let Adiag = replicate threads na
   let Bdiag = replicate threads nb
   let ts = iota threads
@@ -112,19 +118,19 @@ entry partitionFunc [na] [nb] (threads: i64) (as : [na]i32) (bs : [nb]i32) : [th
       let atop = if index > na then na else index
       let btop = if index > na then index-na else 0
       let abottom = btop
-      let bigTuple : {a_top: i64, b_top: i64, a_bottom: i64, flag: bool, a_i : i64, b_i : i64}
+      let bigTuple : {a_top: idx_t.t, b_top: idx_t.t, a_bottom: idx_t.t, flag: bool, a_i : idx_t.t, b_i : idx_t.t}
         = loop p = {a_top=atop, b_top=btop, a_bottom=abottom, flag=true, a_i=na, b_i=nb}
         while p.flag do (
           let offset = (p.a_top - p.a_bottom)/2
           let ai = p.a_top - offset
           let bi = p.b_top + offset
           -- what to do with corner cases???
-          let acur = if (0<=ai && ai<na) then as[ai] else if ai<0 then i32.lowest else i32.highest
-          let aprev = if 0<ai then as[ai-1] else i32.lowest
-          let bcur = if (0<=bi && bi<nb) then bs[bi] else if bi<0 then i32.lowest else i32.highest
-          let bprev = if 0<bi then bs[bi-1] else i32.lowest
-          in if acur > bprev then
-            if aprev <= bcur then
+          let acur = if (0<=ai && ai<na) then as[ai] else if ai<0 then lowest else highest
+          let aprev = if 0<ai then as[ai-1] else lowest
+          let bcur = if (0<=bi && bi<nb) then bs[bi] else if bi<0 then lowest else highest
+          let bprev = if 0<bi then bs[bi-1] else lowest
+          in if acur `gt` bprev then
+            if aprev `leq` bcur then
               {a_top=p.a_top, b_top=p.b_top, a_bottom=p.a_bottom, flag=false, a_i=ai, b_i=bi}
             else
               {a_top=ai-1, b_top=bi+1, a_bottom=p.a_bottom, flag=true, a_i=na, b_i=nb}
@@ -135,48 +141,110 @@ entry partitionFunc [na] [nb] (threads: i64) (as : [na]i32) (bs : [nb]i32) : [th
     )
   in ret |> map (\(t, ad, bd) -> (ad, bd))
 
-entry mergeFunc_seq [na] [nb] (threads: i64) (as: [na]i32) (bs: [nb]i32) : ((i64,i64), [na+nb](i64, i32)) =
+def mergeFunc_seq [na] [nb] 't
+  (threads: idx_t.t)
+  (as: [na]t)
+  (bs: [nb]t)
+  (zero: t)
+  (lowest: t)
+  (highest: t)
+  (leq: t -> t -> bool)
+  (gt: t -> t -> bool)
+: ((idx_t.t,idx_t.t), [na+nb](idx_t.t, idx_t.t, t)) =
   let perThread = (na+nb)/threads
-  let partitionBounds : [threads](i64, i64) = partitionFunc threads as bs
-  let buff : [na+nb](i64,i32) = 
-    let lbuff : (i64, [na+nb](i64,i32)) =
-      loop p = (0, replicate (na+nb) (-1, 0))
+  let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs lowest highest leq gt
+  let buff : [na+nb](idx_t.t, idx_t.t, t) = 
+    let lbuff : (idx_t.t, [na+nb](idx_t.t, idx_t.t, t)) =
+      loop p = (0, replicate (na+nb) (-1, -1, zero))
       while p.0 < threads do
-        let t = p.0
-        let lbs = partitionBounds[t]
-        let ubs = if t+1<threads then partitionBounds[t+1] else lbs
+        let thr = p.0
+        let lbs = partitionBounds[thr]
+        let ubs = if thr+1<threads then partitionBounds[thr+1] else lbs
         let ind_bottom = lbs.0 + lbs.1
         let ind_top = ubs.0 + ubs.1
-        let at = as |> zip (replicate na 0)
-        let bt = bs |> zip (replicate nb 1)
+        let at = zip3 (replicate na 0) (iota na) as
+        let bt = zip3 (replicate nb 1) (iota nb) bs
         let merger = (at[lbs.0:ubs.0] ++ bt[lbs.1:ubs.1])
-          |> (merge_sort_by_key (\t -> t.1)) (<=) :> [ind_top-ind_bottom](i64,i32)
+          |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [ind_top-ind_bottom](idx_t.t,idx_t.t,t)
         let newSections = p.1 with [ind_bottom:ind_top] = merger[0:(ind_top-ind_bottom)]
-        in (t+1, newSections)
+        in (thr+1, newSections)
     in lbuff.1
   in (partitionBounds[threads-1], buff)
 
-entry mergeFunc_par [na] [nb] (threads: i64) (as: [na]i32) (bs: [nb]i32) : ((i64,i64), [na+nb](i64, i32)) =
+def mergeFunc_par [na] [nb] 't
+  (threads: idx_t.t)
+  (as: [na]t)
+  (bs: [nb]t)
+  (zero: t)
+  (lowest: t)
+  (highest: t)
+  (leq: t -> t -> bool)
+  (gt: t -> t -> bool)
+: ((idx_t.t,idx_t.t), [na+nb](idx_t.t, idx_t.t, t)) =
   let perThread = 1 + (na+nb)/threads
-  let partitionBounds : [threads](i64, i64) = partitionFunc threads as bs
+  let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs lowest highest leq gt
   let ts = iota threads
-  let sections : [threads][perThread](i64,(i64,i32)) = ts
-    |> map(\t ->
-      let secBuff = replicate perThread (-1,0)
-      let lbs = partitionBounds[t]
-      let ubs = if t+1<threads then partitionBounds[t+1] else lbs
+  let sections : [threads][perThread](idx_t.t,(idx_t.t,idx_t.t,t)) = ts
+    |> map(\thr ->
+      let secBuff = replicate perThread (-1, -1, zero)
+      let lbs = partitionBounds[thr]
+      let ubs = if thr+1<threads then partitionBounds[thr+1] else lbs
       let card = (ubs.0+ubs.1) - (lbs.0+lbs.1)
-      let at = as |> zip (replicate na 0)
-      let bt = bs |> zip (replicate nb 1)
+      let at = zip3 (replicate na 0) (iota na) as
+      let bt = zip3 (replicate nb 1) (iota nb) bs
       let merger = (at[lbs.0:ubs.0] ++ bt[lbs.1:ubs.1])
-        |> (merge_sort_by_key (\t -> t.1)) (<=) :> [card](i64,i32)
+        |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [card](idx_t.t,idx_t.t,t)
       let sec = secBuff with [0:card] = merger[0:card]
       let is_naive = iota perThread |> map (\i -> i+(lbs.0 + lbs.1))
       let is = if (card == perThread-1) then is_naive with [card] = -1 else is_naive
       in sec |> zip is
     )
   let ims = sections |> flatten |> unzip
-  in (partitionBounds[threads-1], scatter (replicate (na+nb) (-1, 0)) ims.0 ims.1)
+  in (partitionBounds[threads-1], scatter (replicate (na+nb) (-1, -1, zero)) ims.0 ims.1)
+
+def merge_pipeline [na] [nb] 't
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]t)
+  (b_list: [nb]t)
+  (zero: t)
+  (lowest: t)
+  (highest: t)
+  (leq: t-> t -> bool)
+  (gt: t -> t -> bool)
+: [na+nb](idx_t.t,idx_t.t, t) =
+  let loop_over : {lbs: (idx_t.t,idx_t.t), buffer: [na+nb](idx_t.t, idx_t.t, t)} =
+    loop p = {lbs = (0,0), buffer = replicate (na+nb) (-1, -1, zero)}
+    while (p.lbs.0 < na-window_size && p.lbs.1 < nb-window_size) do
+      let lb_a = p.lbs.0
+      let lb_b = p.lbs.1
+      let card_a = idx_t.min window_size (na - lb_a)
+      let card_b = idx_t.min window_size (nb - lb_b)
+      let lb_merge = lb_a + lb_b
+      let ub_merge = lb_merge + card_a + card_b
+      let as = a_list[lb_a : (lb_a + card_a)]
+      let bs = b_list[lb_b : (lb_b + card_b)]
+      let res = mergeFunc_par threads as bs zero lowest highest leq gt
+      let corrected_res = res.1
+        |> map(\(r, i, v) ->
+          if r==0 then (r, i+lb_a, v)
+          else if r==1 then (r, i+lb_b, v)
+          else (r, i, v)
+        )
+      in {lbs = res.0, buffer = p.buffer with [lb_merge:ub_merge] = corrected_res}
+  let flb_a = loop_over.lbs.0
+  let flb_b = loop_over.lbs.1
+  let f_as = zip3 (replicate (na-flb_a) 0) (flb_a..<na) a_list[flb_a:na]
+  let f_bs = zip3 (replicate (nb-flb_b) 0) (flb_b..<nb) b_list[flb_b:nb]
+  let finalMerge = (f_as ++ f_bs)
+    |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [(na+nb)-(flb_a+flb_b)](idx_t.t,idx_t.t,t)
+  let finalBuffer = loop_over.buffer with [(flb_a+flb_b):(na+nb)] = finalMerge
+  in finalBuffer
+  -- TODO
+  -- in current form, the last partition of each window is read twice
+  -- figure out how to get rid of this if possible...
+  -- also ADD COMMENTS cuz this is kind of a mess...
+  -- ... aaaand TODO fix !!!!!!!!!!
   
 
 -- TODO random experiment
