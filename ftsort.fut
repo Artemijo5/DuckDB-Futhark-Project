@@ -156,15 +156,15 @@ def mergeFunc_seq [na] [nb] 't
   let buff : [na+nb](idx_t.t, idx_t.t, t) = 
     let lbuff : (idx_t.t, [na+nb](idx_t.t, idx_t.t, t)) =
       loop p = (0, replicate (na+nb) (-1, -1, zero))
-      while p.0 < threads do
+      while p.0 < (threads-1) do
         let thr = p.0
         let lbs = partitionBounds[thr]
         let ubs = if thr+1<threads then partitionBounds[thr+1] else lbs
         let ind_bottom = lbs.0 + lbs.1
         let ind_top = ubs.0 + ubs.1
-        let at = zip3 (replicate na 0) (iota na) as
-        let bt = zip3 (replicate nb 1) (iota nb) bs
-        let merger = (at[lbs.0:ubs.0] ++ bt[lbs.1:ubs.1])
+        let at = zip3 (replicate (ubs.0-lbs.0) 0) ((lbs.0)..<(ubs.0)) as[lbs.0:ubs.0]
+        let bt = zip3 (replicate (ubs.1-lbs.1) 1) ((lbs.1)..<(ubs.1)) bs[lbs.1:ubs.1]
+        let merger = (at ++ bt)
           |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [ind_top-ind_bottom](idx_t.t,idx_t.t,t)
         let newSections = p.1 with [ind_bottom:ind_top] = merger[0:(ind_top-ind_bottom)]
         in (thr+1, newSections)
@@ -190,17 +190,35 @@ def mergeFunc_par [na] [nb] 't
       let lbs = partitionBounds[thr]
       let ubs = if thr+1<threads then partitionBounds[thr+1] else lbs
       let card = (ubs.0+ubs.1) - (lbs.0+lbs.1)
-      let at = zip3 (replicate na 0) (iota na) as
-      let bt = zip3 (replicate nb 1) (iota nb) bs
-      let merger = (at[lbs.0:ubs.0] ++ bt[lbs.1:ubs.1])
+      let at = zip3 (replicate (ubs.0-lbs.0) 0) ((lbs.0)..<(ubs.0)) as[lbs.0:ubs.0]
+      let bt = zip3 (replicate (ubs.1-lbs.1) 1) ((lbs.1)..<(ubs.1)) bs[lbs.1:ubs.1]
+      let merger = (at ++ bt)
         |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [card](idx_t.t,idx_t.t,t)
       let sec = secBuff with [0:card] = merger[0:card]
       let is_naive = iota perThread |> map (\i -> i+(lbs.0 + lbs.1))
       let is = if (card == perThread-1) then is_naive with [card] = -1 else is_naive
       in sec |> zip is
     )
+    -- could also use ts[0:(threads-1)] and add the last one manually (...)
+    -- issue lies in merging using 1 less thread than partitioning
+    -- anyway, with a high enough number of threads, maybe it won't matter
+    -- really, a cyclic buffer doesn't actually solve anything...
   let ims = sections |> flatten |> unzip
   in (partitionBounds[threads-1], scatter (replicate (na+nb) (-1, -1, zero)) ims.0 ims.1)
+
+-- TODO change rs to i8 since only 2 relations are really merged...
+-- | Type used to preserve relation & index information for Sort Merge Join.
+type mergeInfo [len] 't = {rs: [len]idx_t.t, is: [len]idx_t.t, vs: [len]t}
+-- | Sort Merge information type (short).
+type mergeInfo_short [len] = mergeInfo [len] i16
+-- | Sort Merge information type (int).
+type mergeInfo_int [len] = mergeInfo [len] i32
+-- | Sort Merge information type (long).
+type mergeInfo_long [len] = mergeInfo [len] i64
+-- | Sort Merge information type (float).
+type mergeInfo_float [len] = mergeInfo [len] f32
+-- | Sort Merge information type (double).
+type mergeInfo_double [len] = mergeInfo [len] f64
 
 def merge_pipeline [na] [nb] 't
   (window_size: idx_t.t)
@@ -212,7 +230,7 @@ def merge_pipeline [na] [nb] 't
   (highest: t)
   (leq: t-> t -> bool)
   (gt: t -> t -> bool)
-: [na+nb](idx_t.t,idx_t.t, t) =
+: mergeInfo [na+nb] t =
   let loop_over : {lbs: (idx_t.t,idx_t.t), buffer: [na+nb](idx_t.t, idx_t.t, t)} =
     loop p = {lbs = (0,0), buffer = replicate (na+nb) (-1, -1, zero)}
     while (p.lbs.0 < na-window_size || p.lbs.1 < nb-window_size) do
@@ -240,22 +258,63 @@ def merge_pipeline [na] [nb] 't
   let finalMerge = (f_as ++ f_bs)
     |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [(na+nb)-(flb_a+flb_b)](idx_t.t,idx_t.t,t)
   let finalBuffer = loop_over.buffer with [(flb_a+flb_b):(na+nb)] = finalMerge
-  in finalBuffer
+  let fBs = finalBuffer |> unzip3
+  in {rs = fBs.0, is = fBs.1, vs = fBs.2}
   -- TODO
-  -- in current form, the last partition of each window is read twice
-  -- figure out how to get rid of this if possible...
-  -- also ADD COMMENTS cuz this is kind of a mess...
+  --  ADD COMMENTS this is kind of a mess...
+
+
+entry mergeSorted_short [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]i16)
+  (b_list: [nb]i16)
+:  mergeInfo_short [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 i16.lowest i16.highest (<=) (>)
+
+entry mergeSorted_int [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]i32)
+  (b_list: [nb]i32)
+:  mergeInfo_int [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 i32.lowest i32.highest (<=) (>)
+
+entry mergeSorted_long [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]i64)
+  (b_list: [nb]i64)
+:  mergeInfo_long [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 i64.lowest i64.highest (<=) (>)
+
+entry mergeSorted_float [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]f32)
+  (b_list: [nb]f32)
+:  mergeInfo_float [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 f32.lowest f32.highest (<=) (>)
+
+entry mergeSorted_double [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]f64)
+  (b_list: [nb]f64)
+:  mergeInfo_double [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 f64.lowest f64.highest (<=) (>)
+
   
 
 -- TODO random experiment
-type mergeInfo [len] 't = {is: [len](idx_t.t), xs: [len]t, cs: [len](idx_t.t)}
-type mergeInfo_short [n] = mergeInfo [n] i16
-type mergeInfo_int [n] = mergeInfo [n] i32
-type mergeInfo_long [n] = mergeInfo [n] i64
-type mergeInfo_float [n] = mergeInfo [n] f32
-type mergeInfo_double [n] = mergeInfo [n] f64
+type mergeTup [len] 't = {is: [len](idx_t.t), xs: [len]t, cs: [len](idx_t.t)}
+type mergeTup_short [n] = mergeTup [n] i16
+type mergeTup_int [n] = mergeTup [n] i32
+type mergeTup_long [n] = mergeTup [n] i64
+type mergeTup_float [n] = mergeTup [n] f32
+type mergeTup_double [n] = mergeTup [n] f64
 
-local def mergeTups [w1] [w2] 't (neq: t -> t -> bool)  (xs : [w1]t) (ys : [w2]t) : mergeInfo [w1] t =
+local def mergeTups [w1] [w2] 't (neq: t -> t -> bool)  (xs : [w1]t) (ys : [w2]t) : mergeTup [w1] t =
   let ixcs = zip3 (indices xs) xs (replicate (w1) 0)
   let iycs = zip3 (indices ys) ys (replicate (w2) 1)
   let ms = ixcs
@@ -272,13 +331,13 @@ local def mergeTups [w1] [w2] 't (neq: t -> t -> bool)  (xs : [w1]t) (ys : [w2]t
     |> unzip3
   in {is = ms.0, xs = ms.1, cs = ms.2}
 
-entry mergeTups_short [w1] [w2]  (xs : [w1]i16) (ys : [w2]i16) : mergeInfo_short [w1] =
+entry mergeTups_short [w1] [w2]  (xs : [w1]i16) (ys : [w2]i16) : mergeTup_short [w1] =
   mergeTups (!=) xs ys
-entry mergeTups_int [w1] [w2]  (xs : [w1]i32) (ys : [w2]i32) : mergeInfo_int [w1] =
+entry mergeTups_int [w1] [w2]  (xs : [w1]i32) (ys : [w2]i32) : mergeTup_int [w1] =
   mergeTups (!=) xs ys
-entry mergeTups_long [w1] [w2]  (xs : [w1]i64) (ys : [w2]i64) : mergeInfo_long [w1] =
+entry mergeTups_long [w1] [w2]  (xs : [w1]i64) (ys : [w2]i64) : mergeTup_long [w1] =
   mergeTups (!=) xs ys
-entry mergeTups_float [w1] [w2]  (xs : [w1]f32) (ys : [w2]f32) : mergeInfo_float [w1] =
+entry mergeTups_float [w1] [w2]  (xs : [w1]f32) (ys : [w2]f32) : mergeTup_float [w1] =
   mergeTups (!=) xs ys
-entry mergeTups_double [w1] [w2]  (xs : [w1]f64) (ys : [w2]f64) : mergeInfo_double [w1] =
+entry mergeTups_double [w1] [w2]  (xs : [w1]f64) (ys : [w2]f64) : mergeTup_double [w1] =
   mergeTups (!=) xs ys
