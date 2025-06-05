@@ -215,7 +215,7 @@ def merge_pipeline [na] [nb] 't
 : [na+nb](idx_t.t,idx_t.t, t) =
   let loop_over : {lbs: (idx_t.t,idx_t.t), buffer: [na+nb](idx_t.t, idx_t.t, t)} =
     loop p = {lbs = (0,0), buffer = replicate (na+nb) (-1, -1, zero)}
-    while (p.lbs.0 < na-window_size && p.lbs.1 < nb-window_size) do
+    while (p.lbs.0 < na-window_size || p.lbs.1 < nb-window_size) do
       let lb_a = p.lbs.0
       let lb_b = p.lbs.1
       let card_a = idx_t.min window_size (na - lb_a)
@@ -231,11 +231,12 @@ def merge_pipeline [na] [nb] 't
           else if r==1 then (r, i+lb_b, v)
           else (r, i, v)
         )
-      in {lbs = res.0, buffer = p.buffer with [lb_merge:ub_merge] = corrected_res}
+      let corrected_ubs = (res.0.0 + lb_a, res.0.1 + lb_b)
+      in {lbs = corrected_ubs, buffer = p.buffer with [lb_merge:ub_merge] = corrected_res}
   let flb_a = loop_over.lbs.0
   let flb_b = loop_over.lbs.1
   let f_as = zip3 (replicate (na-flb_a) 0) (flb_a..<na) a_list[flb_a:na]
-  let f_bs = zip3 (replicate (nb-flb_b) 0) (flb_b..<nb) b_list[flb_b:nb]
+  let f_bs = zip3 (replicate (nb-flb_b) 1) (flb_b..<nb) b_list[flb_b:nb]
   let finalMerge = (f_as ++ f_bs)
     |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [(na+nb)-(flb_a+flb_b)](idx_t.t,idx_t.t,t)
   let finalBuffer = loop_over.buffer with [(flb_a+flb_b):(na+nb)] = finalMerge
@@ -244,7 +245,6 @@ def merge_pipeline [na] [nb] 't
   -- in current form, the last partition of each window is read twice
   -- figure out how to get rid of this if possible...
   -- also ADD COMMENTS cuz this is kind of a mess...
-  -- ... aaaand TODO fix !!!!!!!!!!
   
 
 -- TODO random experiment
