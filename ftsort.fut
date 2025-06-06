@@ -98,48 +98,68 @@ entry argmin_float [n] (ks: [n]f32) : idx_t.t =
 entry argmin_double [n] (ks: [n]f64) : idx_t.t =
   argmin (<) (==) (f64.highest) ks
 
--- merge join
+-- ------------------------------------------------------------------- MERGE JOIN
+
+-- TODO figure out .......................
 
 def partitionFunc [na] [nb] 't
   (threads: idx_t.t)
   (as : [na]t)
   (bs : [nb]t)
-  (lowest: t)
-  (highest: t)
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
 : [threads](idx_t.t, idx_t.t) =
-  let Adiag = replicate threads na
-  let Bdiag = replicate threads nb
+  let lowest = if (as[0] `leq` bs[0]) then as[0] else bs[0]
+  let highest = if (as[na-1] `gt` bs[nb-1]) then as[na-1] else bs[nb-1]
   let ts = iota threads
-  let ret = (zip3 ts Adiag Bdiag) |> map
-    (\(i, ad, bd) ->
-      let index = i*(na + nb)/threads
-      let atop = if index > na then na else index
-      let btop = if index > na then index-na else 0
-      let abottom = btop
-      let bigTuple : {a_top: idx_t.t, b_top: idx_t.t, a_bottom: idx_t.t, flag: bool, a_i : idx_t.t, b_i : idx_t.t}
-        = loop p = {a_top=atop, b_top=btop, a_bottom=abottom, flag=true, a_i=na, b_i=nb}
-        while p.flag do (
+  let ret : [threads](idx_t.t, idx_t.t) = ts
+    |> map (\t ->
+      let index : idx_t.t = t*(na+nb)/threads
+      let loop_over : {flag: bool, a_top: idx_t.t, b_top: idx_t.t, a_bottom: idx_t.t} =
+        loop p = {
+          flag = true,
+          a_top = if (index > na) then na else index,
+          b_top = if (index > na) then (index - na) else 0,
+          a_bottom = if (index > na) then (index - na - 1) else 0
+        }
+        while p.flag do
           let offset = (p.a_top - p.a_bottom)/2
-          let ai = p.a_top - offset
-          let bi = p.b_top + offset
-          -- what to do with corner cases???
-          let acur = if (0<=ai && ai<na) then as[ai] else if ai<0 then lowest else highest
-          let aprev = if 0<ai then as[ai-1] else lowest
-          let bcur = if (0<=bi && bi<nb) then bs[bi] else if bi<0 then lowest else highest
-          let bprev = if 0<bi then bs[bi-1] else lowest
-          in if acur `gt` bprev then
-            if aprev `leq` bcur then
-              {a_top=p.a_top, b_top=p.b_top, a_bottom=p.a_bottom, flag=false, a_i=ai, b_i=bi}
+          let ai = (p.a_top - offset) -- hypothetical ai
+          let bi = (p.b_top + offset) -- hypothetical bi
+          --let a_prev =if ai <= 0 then lowest else if ai > na then highest else as[ai-1]
+          --let b_prev = if bi <= 0 then lowest else if bi > nb then highest else bs[bi-1]
+          in
+            -- Corner Cases
+            if (ai <= 0 || ai >= na || bi <= 0 || bi >= nb || p.a_top < p.a_bottom) then
+              let ar = if ai<=0 then 0 else if ai>= na then na-1 else ai
+              let br = if bi<=0 then 0 else if bi>= nb then nb-1 else bi
+              let loop_on = !(ai <= 0 || p.a_top < p.a_bottom)
+              in {flag = loop_on, a_top = ar, b_top = br, a_bottom = p.a_bottom}
             else
-              {a_top=ai-1, b_top=bi+1, a_bottom=p.a_bottom, flag=true, a_i=na, b_i=nb}
-          else
-            {a_top=p.a_top, b_top=p.b_top, a_bottom=ai+1, flag=true, a_i=na, b_i=nb}
-        )
-      in (i, bigTuple.a_i, bigTuple.b_i)
-    )
-  in ret |> map (\(t, ad, bd) -> (ad, bd))
+            -- Regular Cases
+            if (as[ai] `gt` bs[bi-1]) then
+              if (as[ai-1] `leq` bs[bi]) then
+                {
+                  flag = false, -- break
+                  a_top = ai,
+                  b_top = bi,
+                  a_bottom = p.a_bottom
+                }
+              else {
+                flag = true,
+                a_top = ai - 1,
+                b_top = bi + 1,
+                a_bottom = p.a_bottom
+              }
+            else {
+              flag = true,
+              a_top = p.a_top,
+              b_top = p.b_top,
+              a_bottom = ai + 1
+            }
+        in (loop_over.a_top, loop_over.b_top)
+      )
+  in ret
 
 def mergeFunc_seq [na] [nb] 't
   (threads: idx_t.t)
@@ -152,7 +172,7 @@ def mergeFunc_seq [na] [nb] 't
   (gt: t -> t -> bool)
 : ((idx_t.t,idx_t.t), [na+nb](idx_t.t, idx_t.t, t)) =
   let perThread = (na+nb)/threads
-  let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs lowest highest leq gt
+  let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs leq gt
   let buff : [na+nb](idx_t.t, idx_t.t, t) = 
     let lbuff : (idx_t.t, [na+nb](idx_t.t, idx_t.t, t)) =
       loop p = (0, replicate (na+nb) (-1, -1, zero))
@@ -182,7 +202,7 @@ def mergeFunc_par [na] [nb] 't
   (gt: t -> t -> bool)
 : ((idx_t.t,idx_t.t), [na+nb](idx_t.t, idx_t.t, t)) =
   let perThread = 1 + (na+nb)/threads
-  let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs lowest highest leq gt
+  let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs leq gt
   let ts = iota threads
   let sections : [threads][perThread](idx_t.t,(idx_t.t,idx_t.t,t)) = ts
     |> map(\thr ->
