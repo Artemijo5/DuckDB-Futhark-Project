@@ -100,42 +100,86 @@ entry argmin_double [n] (ks: [n]f64) : idx_t.t =
 
 -- ------------------------------------------------------------------- MERGE JOIN
 
--- TODO figure out .......................
+def partFunc_sequential_search [n] 't
+  (a_i: idx_t.t)
+  (bi: idx_t.t)
+  (as: [n]t)
+  (bs: [n]t)
+  (leq: t -> t -> bool)
+  (gt: t -> t -> bool)
+: (idx_t.t, idx_t.t) =
+  let ai = if a_i < n then a_i else n-1
+  let b_prev = if bi > 0 then bs[bi-1] else bs[0]
+  let seqSearch : {k: idx_t.t, ak: idx_t.t, bk: idx_t.t} =
+    if as[ai] `gt` b_prev then
+      loop p = {k=0, ak=ai, bk=bi}
+      while (p.k < n-bi) do
+        let i_a = ai-p.k
+        let i_b = bi+p.k
+        in
+          if (as[i_a-1] `leq` bs[i_b])
+          then {k = n-bi, ak = i_a, bk = i_b} --break
+          else {k = p.k+1, ak = ai, bk = bi} -- continue
+    else
+      loop p = {k=0, ak=ai, bk=bi}
+      while (p.k < bi-1) do
+        let hi_a = ai+p.k+1
+        let i_a = if hi_a < n then hi_a else n-1
+        let i_b = bi - p.k - 1
+        in
+          if (as[i_a] `gt` bs[i_b])
+          then {k = bi-1, ak = i_a, bk = i_b+1} -- break
+          else {k = p.k+1, ak = ai, bk = bi} -- continue
+    in (seqSearch.ak, seqSearch.bk)
 
-def partitionFunc [na] [nb] 't
+def partitionFunc [n] 't
   (threads: idx_t.t)
-  (as : [na]t)
-  (bs : [nb]t)
+  (as : [n]t)
+  (bs : [n]t)
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
 : [threads](idx_t.t, idx_t.t) =
   let lowest = if (as[0] `leq` bs[0]) then as[0] else bs[0]
-  let highest = if (as[na-1] `gt` bs[nb-1]) then as[na-1] else bs[nb-1]
+  let highest = if (as[n-1] `gt` bs[n-1]) then as[n-1] else bs[n-1]
   let ts = iota threads
   let ret : [threads](idx_t.t, idx_t.t) = ts
     |> map (\t ->
-      let index : idx_t.t = t*(na+nb)/threads
+      let index : idx_t.t = t*(n+n)/threads
       let loop_over : {flag: bool, a_top: idx_t.t, b_top: idx_t.t, a_bottom: idx_t.t} =
         loop p = {
           flag = true,
-          a_top = if (index > na) then na else index,
-          b_top = if (index > na) then (index - na) else 0,
-          a_bottom = if (index > na) then (index - na - 1) else 0
+          a_top = if (index > n) then n else index,
+          b_top = if (index > n) then (index - n) else 0,
+          a_bottom = if (index > n) then (index - n - 1) else 0
         }
         while p.flag do
           let offset = (p.a_top - p.a_bottom)/2
-          let ai = (p.a_top - offset) -- hypothetical ai
-          let bi = (p.b_top + offset) -- hypothetical bi
+          let ai = (p.a_top - offset)
+          let bi = (p.b_top + offset)
           --let a_prev =if ai <= 0 then lowest else if ai > na then highest else as[ai-1]
           --let b_prev = if bi <= 0 then lowest else if bi > nb then highest else bs[bi-1]
           in
             -- Corner Cases
-            if (ai <= 0 || ai >= na || bi <= 0 || bi >= nb || p.a_top < p.a_bottom) then
-              let ar = if ai<=0 then 0 else if ai>= na then na-1 else ai
-              let br = if bi<=0 then 0 else if bi>= nb then nb-1 else bi
-              let loop_on = !(ai <= 0 || p.a_top < p.a_bottom)
-              in {flag = loop_on, a_top = ar, b_top = br, a_bottom = p.a_bottom}
-            else
+              if ai <= 0-- First Partition, or reached beginning of as
+                then {flag=false, a_top=0, b_top=bi, a_bottom=p.a_bottom}
+              else if bi >= n -- Reached end of Bs
+                then
+                  let a_ind = idx_t.min (ai) (n-1)
+                  in
+                    if (bs[n-1] `leq` as[a_ind])
+                    then {flag=false, a_top=ai, b_top=n, a_bottom=p.a_bottom} -- break
+                    else {flag=true, a_top=p.a_top, b_top = n-1-offset, a_bottom = p.a_bottom} -- continue
+              else if (ai >= n) -- Reached end of As
+                then
+                  let b_ind = idx_t.min (bi) (n-1)
+                  in
+                    if (as[n-1] `leq` bs[b_ind])
+                    then {flag=false, a_top=n, b_top=bi, a_bottom=p.a_bottom} -- break
+                    else {flag=true, a_top=n-1, b_top=p.b_top, a_bottom=p.a_bottom} -- continue
+              else if (p.a_top <= p.a_bottom) then -- resort to sequential search
+                let (sai, sbi) = partFunc_sequential_search ai bi as bs (leq) (gt)
+                in {flag=false, a_top=sai, b_top=sbi, a_bottom=p.a_bottom} -- break
+              else
             -- Regular Cases
             if (as[ai] `gt` bs[bi-1]) then
               if (as[ai-1] `leq` bs[bi]) then
@@ -161,21 +205,19 @@ def partitionFunc [na] [nb] 't
       )
   in ret
 
-def mergeFunc_seq [na] [nb] 't
+def mergeFunc_seq [n] 't
   (threads: idx_t.t)
-  (as: [na]t)
-  (bs: [nb]t)
+  (as: [n]t)
+  (bs: [n]t)
   (zero: t)
-  (lowest: t)
-  (highest: t)
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
-: ((idx_t.t,idx_t.t), [na+nb](idx_t.t, idx_t.t, t)) =
-  let perThread = (na+nb)/threads
+: ((idx_t.t,idx_t.t), [n](idx_t.t, idx_t.t, t)) =
+  let perThread = (2*n)/threads
   let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs leq gt
-  let buff : [na+nb](idx_t.t, idx_t.t, t) = 
-    let lbuff : (idx_t.t, [na+nb](idx_t.t, idx_t.t, t)) =
-      loop p = (0, replicate (na+nb) (-1, -1, zero))
+  let buff : [n](idx_t.t, idx_t.t, t) = 
+    let lbuff : (idx_t.t, [n](idx_t.t, idx_t.t, t)) =
+      loop p = (0, replicate (n) (-1, -1, zero))
       while p.0 < (threads-1) do
         let thr = p.0
         let lbs = partitionBounds[thr]
@@ -186,22 +228,25 @@ def mergeFunc_seq [na] [nb] 't
         let bt = zip3 (replicate (ubs.1-lbs.1) 1) ((lbs.1)..<(ubs.1)) bs[lbs.1:ubs.1]
         let merger = (at ++ bt)
           |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [ind_top-ind_bottom](idx_t.t,idx_t.t,t)
-        let newSections = p.1 with [ind_bottom:ind_top] = merger[0:(ind_top-ind_bottom)]
-        in (thr+1, newSections)
+        let ind_down = idx_t.min ind_bottom n
+        let ind_up = idx_t.min ind_top n
+        let newSections = p.1 with [ind_down:ind_up] = merger[0:(ind_up-ind_down)]
+        let next_thr = if ind_up < n then thr+1 else threads-1
+        in (next_thr, newSections)
     in lbuff.1
   in (partitionBounds[threads-1], buff)
 
-def mergeFunc_par [na] [nb] 't
+def mergeFunc_par [n] 't
   (threads: idx_t.t)
-  (as: [na]t)
-  (bs: [nb]t)
+  (as: [n]t)
+  (bs: [n]t)
   (zero: t)
   (lowest: t)
   (highest: t)
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
-: ((idx_t.t,idx_t.t), [na+nb](idx_t.t, idx_t.t, t)) =
-  let perThread = 1 + (na+nb)/threads
+: ((idx_t.t,idx_t.t), [2*n](idx_t.t, idx_t.t, t)) =
+  let perThread = 1 + (2*n)/threads
   let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs leq gt
   let ts = iota threads
   let sections : [threads][perThread](idx_t.t,(idx_t.t,idx_t.t,t)) = ts
@@ -224,7 +269,7 @@ def mergeFunc_par [na] [nb] 't
     -- anyway, with a high enough number of threads, maybe it won't matter
     -- really, a cyclic buffer doesn't actually solve anything...
   let ims = sections |> flatten |> unzip
-  in (partitionBounds[threads-1], scatter (replicate (na+nb) (-1, -1, zero)) ims.0 ims.1)
+  in (partitionBounds[threads-1], scatter (replicate (2*n) (-1, -1, zero)) ims.0 ims.1)
 
 -- TODO change rs to i8 since only 2 relations are really merged...
 -- | Type used to preserve relation & index information for Sort Merge Join.
@@ -240,89 +285,7 @@ type mergeInfo_float [len] = mergeInfo [len] f32
 -- | Sort Merge information type (double).
 type mergeInfo_double [len] = mergeInfo [len] f64
 
-def merge_pipeline [na] [nb] 't
-  (window_size: idx_t.t)
-  (threads: idx_t.t)
-  (a_list: [na]t)
-  (b_list: [nb]t)
-  (zero: t)
-  (lowest: t)
-  (highest: t)
-  (leq: t-> t -> bool)
-  (gt: t -> t -> bool)
-: mergeInfo [na+nb] t =
-  let loop_over : {lbs: (idx_t.t,idx_t.t), buffer: [na+nb](idx_t.t, idx_t.t, t)} =
-    loop p = {lbs = (0,0), buffer = replicate (na+nb) (-1, -1, zero)}
-    while (p.lbs.0 < na-window_size || p.lbs.1 < nb-window_size) do
-      let lb_a = p.lbs.0
-      let lb_b = p.lbs.1
-      let card_a = idx_t.min window_size (na - lb_a)
-      let card_b = idx_t.min window_size (nb - lb_b)
-      let lb_merge = lb_a + lb_b
-      let ub_merge = lb_merge + card_a + card_b
-      let as = a_list[lb_a : (lb_a + card_a)]
-      let bs = b_list[lb_b : (lb_b + card_b)]
-      let res = mergeFunc_par threads as bs zero lowest highest leq gt
-      let corrected_res = res.1
-        |> map(\(r, i, v) ->
-          if r==0 then (r, i+lb_a, v)
-          else if r==1 then (r, i+lb_b, v)
-          else (r, i, v)
-        )
-      let corrected_ubs = (res.0.0 + lb_a, res.0.1 + lb_b)
-      in {lbs = corrected_ubs, buffer = p.buffer with [lb_merge:ub_merge] = corrected_res}
-  let flb_a = loop_over.lbs.0
-  let flb_b = loop_over.lbs.1
-  let f_as = zip3 (replicate (na-flb_a) 0) (flb_a..<na) a_list[flb_a:na]
-  let f_bs = zip3 (replicate (nb-flb_b) 1) (flb_b..<nb) b_list[flb_b:nb]
-  let finalMerge = (f_as ++ f_bs)
-    |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [(na+nb)-(flb_a+flb_b)](idx_t.t,idx_t.t,t)
-  let finalBuffer = loop_over.buffer with [(flb_a+flb_b):(na+nb)] = finalMerge
-  let fBs = finalBuffer |> unzip3
-  in {rs = fBs.0, is = fBs.1, vs = fBs.2}
-  -- TODO
-  --  ADD COMMENTS this is kind of a mess...
 
-
-entry mergeSorted_short [na] [nb]
-  (window_size: idx_t.t)
-  (threads: idx_t.t)
-  (a_list: [na]i16)
-  (b_list: [nb]i16)
-:  mergeInfo_short [na+nb] =
-  merge_pipeline window_size threads a_list b_list 0 i16.lowest i16.highest (<=) (>)
-
-entry mergeSorted_int [na] [nb]
-  (window_size: idx_t.t)
-  (threads: idx_t.t)
-  (a_list: [na]i32)
-  (b_list: [nb]i32)
-:  mergeInfo_int [na+nb] =
-  merge_pipeline window_size threads a_list b_list 0 i32.lowest i32.highest (<=) (>)
-
-entry mergeSorted_long [na] [nb]
-  (window_size: idx_t.t)
-  (threads: idx_t.t)
-  (a_list: [na]i64)
-  (b_list: [nb]i64)
-:  mergeInfo_long [na+nb] =
-  merge_pipeline window_size threads a_list b_list 0 i64.lowest i64.highest (<=) (>)
-
-entry mergeSorted_float [na] [nb]
-  (window_size: idx_t.t)
-  (threads: idx_t.t)
-  (a_list: [na]f32)
-  (b_list: [nb]f32)
-:  mergeInfo_float [na+nb] =
-  merge_pipeline window_size threads a_list b_list 0 f32.lowest f32.highest (<=) (>)
-
-entry mergeSorted_double [na] [nb]
-  (window_size: idx_t.t)
-  (threads: idx_t.t)
-  (a_list: [na]f64)
-  (b_list: [nb]f64)
-:  mergeInfo_double [na+nb] =
-  merge_pipeline window_size threads a_list b_list 0 f64.lowest f64.highest (<=) (>)
 
   
 
