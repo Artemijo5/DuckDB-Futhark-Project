@@ -133,18 +133,19 @@ def partFunc_sequential_search [n] 't
     in (seqSearch.ak, seqSearch.bk)
 
 def partitionFunc [n] 't
-  (threads: idx_t.t)
+  (partitions: idx_t.t)
+  (upToThread: idx_t.t)
   (as : [n]t)
   (bs : [n]t)
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
-: [threads](idx_t.t, idx_t.t) =
+: [upToThread](idx_t.t, idx_t.t) =
   let lowest = if (as[0] `leq` bs[0]) then as[0] else bs[0]
-  let highest = if (as[n-1] `gt` bs[n-1]) then as[n-1] else bs[n-1]
-  let ts = iota threads
-  let ret : [threads](idx_t.t, idx_t.t) = ts
+  --let highest = if (as[n-1] `gt` bs[n-1]) then as[n-1] else bs[n-1]
+  let ts : [upToThread-1]idx_t.t = 1..<upToThread
+  let pre_ret : [upToThread-1](idx_t.t, idx_t.t) = ts
     |> map (\t ->
-      let index : idx_t.t = t*(n+n)/threads
+      let index : idx_t.t = t*(n+n)/partitions
       let loop_over : {flag: bool, a_top: idx_t.t, b_top: idx_t.t, a_bottom: idx_t.t} =
         loop p = {
           flag = true,
@@ -155,7 +156,8 @@ def partitionFunc [n] 't
         while p.flag do
           let offset = (p.a_top - p.a_bottom)/2
           let ai = (p.a_top - offset)
-          let bi = (p.b_top + offset)
+          let bi = idx_t.max 0 (p.b_top + offset)
+          let b_prev = if bi>0 then bs[bi-1] else lowest
           --let a_prev =if ai <= 0 then lowest else if ai > na then highest else as[ai-1]
           --let b_prev = if bi <= 0 then lowest else if bi > nb then highest else bs[bi-1]
           in
@@ -181,7 +183,7 @@ def partitionFunc [n] 't
                 in {flag=false, a_top=sai, b_top=sbi, a_bottom=p.a_bottom} -- break
               else
             -- Regular Cases
-            if (as[ai] `gt` bs[bi-1]) then
+            if (as[ai] `gt` b_prev) then
               if (as[ai-1] `leq` bs[bi]) then
                 {
                   flag = false, -- break
@@ -203,6 +205,7 @@ def partitionFunc [n] 't
             }
         in (loop_over.a_top, loop_over.b_top)
       )
+  let ret = [(0,0)] ++ pre_ret :> [upToThread](idx_t.t, idx_t.t)
   in ret
 
 def mergeFunc_seq [n] 't
@@ -212,53 +215,57 @@ def mergeFunc_seq [n] 't
   (zero: t)
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
-: ((idx_t.t,idx_t.t), [n](idx_t.t, idx_t.t, t)) =
-  let perThread = (2*n)/threads
-  let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs leq gt
-  let buff : [n](idx_t.t, idx_t.t, t) = 
-    let lbuff : (idx_t.t, [n](idx_t.t, idx_t.t, t)) =
+: ((idx_t.t,idx_t.t), [n](i8, idx_t.t, t)) =
+  let partitionBounds : [threads+1](idx_t.t, idx_t.t) = (partitionFunc (2*threads) (threads+1) as bs leq gt)
+  let buff : [n](i8, idx_t.t, t) = 
+    let lbuff : (idx_t.t, [n](i8, idx_t.t, t)) =
       loop p = (0, replicate (n) (-1, -1, zero))
-      while p.0 < (threads-1) do
+      while p.0 < (threads) do
         let thr = p.0
         let lbs = partitionBounds[thr]
-        let ubs = if thr+1<threads then partitionBounds[thr+1] else lbs
+        let ubs = partitionBounds[thr+1]
         let ind_bottom = lbs.0 + lbs.1
         let ind_top = ubs.0 + ubs.1
         let at = zip3 (replicate (ubs.0-lbs.0) 0) ((lbs.0)..<(ubs.0)) as[lbs.0:ubs.0]
         let bt = zip3 (replicate (ubs.1-lbs.1) 1) ((lbs.1)..<(ubs.1)) bs[lbs.1:ubs.1]
         let merger = (at ++ bt)
-          |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [ind_top-ind_bottom](idx_t.t,idx_t.t,t)
-        let ind_down = idx_t.min ind_bottom n
-        let ind_up = idx_t.min ind_top n
-        let newSections = p.1 with [ind_down:ind_up] = merger[0:(ind_up-ind_down)]
-        let next_thr = if ind_up < n then thr+1 else threads-1
-        in (next_thr, newSections)
+          |> merge_sort (\x1 x2 ->
+            if (x1.0==x2.0)
+            then (x1.1<=x2.1) -- if same relation, keep index order
+            else (x1.2 `leq` x2.2) -- among relations, compare values
+          )
+          :> [ind_top - ind_bottom](i8,idx_t.t,t)
+        let newSections = p.1 with [ind_bottom:ind_top] = merger[0:(ind_top-ind_bottom)]
+        in (thr+1, newSections)
     in lbuff.1
-  in (partitionBounds[threads-1], buff)
+  in (partitionBounds[threads], buff)
 
 def mergeFunc_par [n] 't
   (threads: idx_t.t)
   (as: [n]t)
   (bs: [n]t)
   (zero: t)
-  (lowest: t)
-  (highest: t)
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
-: ((idx_t.t,idx_t.t), [2*n](idx_t.t, idx_t.t, t)) =
-  let perThread = 1 + (2*n)/threads
-  let partitionBounds : [threads](idx_t.t, idx_t.t) = partitionFunc threads as bs leq gt
+: ((idx_t.t,idx_t.t), [n](i8, idx_t.t, t)) =
+  let perThread = 1 + n/threads
+  let partitionBounds : [threads+1](idx_t.t, idx_t.t) = partitionFunc (2*threads) (threads+1) as bs leq gt
   let ts = iota threads
-  let sections : [threads][perThread](idx_t.t,(idx_t.t,idx_t.t,t)) = ts
+  let sections : [threads][perThread](idx_t.t,(i8,idx_t.t,t)) = ts
     |> map(\thr ->
       let secBuff = replicate perThread (-1, -1, zero)
       let lbs = partitionBounds[thr]
-      let ubs = if thr+1<threads then partitionBounds[thr+1] else lbs
+      let ubs = partitionBounds[thr+1]
       let card = (ubs.0+ubs.1) - (lbs.0+lbs.1)
       let at = zip3 (replicate (ubs.0-lbs.0) 0) ((lbs.0)..<(ubs.0)) as[lbs.0:ubs.0]
       let bt = zip3 (replicate (ubs.1-lbs.1) 1) ((lbs.1)..<(ubs.1)) bs[lbs.1:ubs.1]
       let merger = (at ++ bt)
-        |> (merge_sort_by_key (\tup -> tup.2)) (leq) :> [card](idx_t.t,idx_t.t,t)
+        |> merge_sort (\x1 x2 ->
+          if (x1.0==x2.0)
+          then (x1.1<=x2.1) -- if same relation, keep index order
+          else (x1.2 `leq` x2.2) -- among relations, compare values
+        )
+        :> [card](i8,idx_t.t,t)
       let sec = secBuff with [0:card] = merger[0:card]
       let is_naive = iota perThread |> map (\i -> i+(lbs.0 + lbs.1))
       let is = if (card == perThread-1) then is_naive with [card] = -1 else is_naive
@@ -269,11 +276,11 @@ def mergeFunc_par [n] 't
     -- anyway, with a high enough number of threads, maybe it won't matter
     -- really, a cyclic buffer doesn't actually solve anything...
   let ims = sections |> flatten |> unzip
-  in (partitionBounds[threads-1], scatter (replicate (2*n) (-1, -1, zero)) ims.0 ims.1)
+  in (partitionBounds[threads], scatter (replicate (n) (-1, -1, zero)) ims.0 ims.1)
 
 -- TODO change rs to i8 since only 2 relations are really merged...
 -- | Type used to preserve relation & index information for Sort Merge Join.
-type mergeInfo [len] 't = {rs: [len]idx_t.t, is: [len]idx_t.t, vs: [len]t}
+type mergeInfo [len] 't = {rs: [len]i8, is: [len]idx_t.t, vs: [len]t}
 -- | Sort Merge information type (short).
 type mergeInfo_short [len] = mergeInfo [len] i16
 -- | Sort Merge information type (int).
@@ -286,7 +293,104 @@ type mergeInfo_float [len] = mergeInfo [len] f32
 type mergeInfo_double [len] = mergeInfo [len] f64
 
 
+def merge_pipeline [na] [nb] 't
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]t)
+  (b_list: [nb]t)
+  (zero: t)
+  (leq: t -> t -> bool)
+  (gt: t -> t -> bool)
+  (inParallel: bool)
+: mergeInfo [na+nb] t =
+  let loop_over : {lbs: (idx_t.t, idx_t.t), buffer: [na+nb](i8, idx_t.t, t)}
+  = loop p = {lbs = (0,0), buffer = replicate (na+nb) (-1, -1, zero)}
+  while (p.lbs.0 < na-window_size && p.lbs.1 < nb-window_size) do
+    let ubs = (p.lbs.0 + window_size, p.lbs.1 + window_size)
+    let ind_bottom = p.lbs.0 + p.lbs.1
+    let ind_top = ind_bottom + window_size
+    let at = a_list[p.lbs.0:ubs.0] :> [window_size]t
+    let bt = b_list[p.lbs.1:ubs.1] :> [window_size]t
+    let merger : ((idx_t.t, idx_t.t), [window_size](i8, idx_t.t, t)) =
+      if inParallel
+      then mergeFunc_par threads at bt zero leq gt
+      else mergeFunc_seq threads at bt zero leq gt
+    let shifted_merger = merger.1
+      |> map (\(r,i,v) -> (r, if r==0 then i+p.lbs.0 else i+p.lbs.1, v))
+      :> [window_size](i8, idx_t.t, t)
+    let next_lbs = (merger.0.0 + p.lbs.0, merger.0.1 + p.lbs.1)
+    let next_buff = p.buffer with [ind_bottom:ind_top] = (copy shifted_merger)
+    in {lbs = next_lbs, buffer = next_buff}
+  let finFrom = loop_over.lbs
+  let lenAs = na - finFrom.0
+  let lenBs = nb - finFrom.1
+  let at_f = a_list[finFrom.0:na] :> [lenAs]t
+  let zat_f : [lenAs](i8, idx_t.t, t)
+    = zip3
+      (replicate lenAs 0)
+      (((finFrom.0)..<na) :> [lenAs]idx_t.t)
+      at_f
+  let bt_f = b_list[finFrom.1:nb] :> [lenBs]t
+  let zbt_f : [lenBs](i8, idx_t.t, t)
+   = zip3
+      (replicate lenBs 1)
+      (((finFrom.1)..<nb) :> [lenBs]idx_t.t)
+      bt_f
+  let merger_f = (zat_f ++ zbt_f)
+    |> merge_sort (\x1 x2 ->
+      if (x1.0==x2.0)
+      then (x1.1<=x2.1) -- if same relation, keep index order
+      else (x1.2 `leq` x2.2) -- among relations, compare values
+    )
+    :> [lenAs + lenBs](i8, idx_t.t, t)
+  let final_buffer = loop_over.buffer with [(finFrom.0 + finFrom.1):na+nb] = merger_f[0:lenAs+lenBs]
+  let split_buffer = final_buffer |> unzip3
+  in {rs = split_buffer.0, is = split_buffer.1, vs = split_buffer.2}
 
+entry mergeSorted_short [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]i16)
+  (b_list: [nb]i16)
+  (inParallel: bool)
+:  mergeInfo_short [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 (<=) (>) inParallel
+
+entry mergeSorted_int [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]i32)
+  (b_list: [nb]i32)
+  (inParallel: bool)
+:  mergeInfo_int [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 (<=) (>) inParallel
+
+entry mergeSorted_long [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]i64)
+  (b_list: [nb]i64)
+  (inParallel: bool)
+:  mergeInfo_long [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 (<=) (>) inParallel
+
+entry mergeSorted_float [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]f32)
+  (b_list: [nb]f32)
+  (inParallel: bool)
+:  mergeInfo_float [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 (<=) (>) inParallel
+
+entry mergeSorted_double [na] [nb]
+  (window_size: idx_t.t)
+  (threads: idx_t.t)
+  (a_list: [na]f64)
+  (b_list: [nb]f64)
+  (inParallel: bool)
+:  mergeInfo_double [na+nb] =
+  merge_pipeline window_size threads a_list b_list 0 (<=) (>) inParallel
   
 
 -- TODO random experiment
