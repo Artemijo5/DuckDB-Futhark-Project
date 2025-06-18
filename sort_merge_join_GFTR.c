@@ -119,10 +119,82 @@ int main() {
   );
   mylog(logfile, "Sorted table S.");
 
-  
+  struct futhark_i8_1d **relInfo_ft;
+  struct futhark_i64_1d **idx_ft;
+
+  long *Rbuff = colType_malloc(DUCKDB_TYPE_BIGINT, R_TABLE_SIZE);
+  long *Sbuff = colType_malloc(DUCKDB_TYPE_BIGINT, S_TABLE_SIZE);
+  void *Merger = colType_malloc(DUCKDB_TYPE_BIGINT, R_TABLE_SIZE + S_TABLE_SIZE);
+
+  // TODO why does it segfault ?!?!?!?!?!?!?!?
+
+  mylog(logfile, "Buffering sorted R...");
+  duckdb_result res_R;
+  duckdb_query(con, "SELECT * FROM R_tbl_sorted;", &res_R);
+  mylog(logfile, "Obtained result...");
+  idx_t R_cnk_counter = 0;
+  while(true) {
+    printf("Marco!\n");
+    duckdb_data_chunk cnk = duckdb_fetch_chunk(res_R);
+    if(!cnk) {
+      mylog(logfile, "Exhausted result.");
+      break;
+    }
+    idx_t vecsize = duckdb_data_chunk_get_size(cnk);
+
+    duckdb_vector kvec = duckdb_data_chunk_get_vector(cnk, 0);
+    long *kdata = duckdb_vector_get_data(kvec);
+    memcpy(
+      Rbuff + CHUNK_SIZE*colType_bytes(DUCKDB_TYPE_BIGINT)*R_cnk_counter,
+      kdata,
+      vecsize*colType_bytes(DUCKDB_TYPE_BIGINT)
+    );
+    R_cnk_counter+=1;
+
+    duckdb_destroy_data_chunk(&cnk);
+  }
+  duckdb_destroy_result(&res_R);
+
+  mylog(logfile, "Buffering sorted S...");
+  duckdb_result res_S;
+  duckdb_query(con, "SELECT * FROM S_tbl_sorted;", &res_S);
+  mylog(logfile, "Obtained result...");
+  idx_t S_cnk_counter = 0;
+  while(true) {
+    duckdb_data_chunk cnk = duckdb_fetch_chunk(res_S);
+    if(!cnk) {
+      mylog(logfile, "Exhausted result.");
+      break;
+    }
+    idx_t vecsize = duckdb_data_chunk_get_size(cnk);
+
+    duckdb_vector kvec = duckdb_data_chunk_get_vector(cnk, 0);
+    long *kdata = duckdb_vector_get_data(kvec);
+    memcpy(
+      Sbuff + CHUNK_SIZE*colType_bytes(DUCKDB_TYPE_BIGINT)*S_cnk_counter,
+      kdata,
+      vecsize*colType_bytes(DUCKDB_TYPE_BIGINT)
+    );
+    S_cnk_counter+=1;
+
+    duckdb_destroy_data_chunk(&cnk);
+  }
+  duckdb_destroy_result(&res_S);
+
+  mylog(logfile, "Beginning to merge keys of R & S...");
+  mergeSortedKeys(ctx, relInfo_ft, idx_ft, Merger, DUCKDB_TYPE_BIGINT, 20, 100, Rbuff, Sbuff, R_TABLE_SIZE, S_TABLE_SIZE, true);
+  mylog(logfile, "Finished merging sorted keys of tables R & S.");
+
+  logarray_long(logfile, "Merged key list:", Merger, R_TABLE_SIZE + S_TABLE_SIZE);
 
 
   // Clean-up
+  free(Rbuff);
+  free(Sbuff);
+  free(Merger);
+
+  futhark_free_i8_1d(ctx, *relInfo_ft);
+  futhark_free_i64_1d(ctx, *idx_ft);
   futhark_context_free(ctx);
   futhark_context_config_free(cfg);
   mylog(logfile, "Freed futhark core.");

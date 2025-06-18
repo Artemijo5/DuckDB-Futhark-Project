@@ -510,3 +510,227 @@ idx_t fetch_intermediate(
   duckdb_destroy_data_chunk(&cnk);
   return row_count;
 }
+
+
+// -------------------------------------------------------------------------------------- SORT-MERGE JOIN
+
+void mergeSortedKeys_short(
+  struct futhark_context *ctx,
+  struct futhark_i8_1d **outRelation,
+  struct futhark_i64_1d **outIdx,
+  short *outValues,
+  idx_t threads,
+  idx_t window_size,
+  short *As,
+  short *Bs,
+  idx_t card_As,
+  idx_t card_Bs,
+  int inParallel
+) {
+  // Wrap arrays into futhark arays.
+  struct futhark_i16_1d *As_ft = futhark_new_i16_1d(ctx, As, card_As);
+  struct futhark_i16_1d *Bs_ft = futhark_new_i16_1d(ctx, As, card_As);
+  // Perform the merging.
+  struct futhark_opaque_mergeInfo_short *mergeInfo;
+  futhark_entry_mergeSorted_short(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Output relation info, indices, and merged values
+  futhark_project_opaque_mergeInfo_short_rs(ctx, outRelation, mergeInfo);
+  futhark_project_opaque_mergeInfo_short_is(ctx, outIdx, mergeInfo);
+  struct futhark_i16_1d *M_ft;
+  futhark_project_opaque_mergeInfo_short_vs(ctx, &M_ft, mergeInfo);
+  futhark_values_i16_1d(ctx, M_ft, outValues);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Free futhark objects
+  futhark_free_i16_1d(ctx, As_ft);
+  futhark_free_i16_1d(ctx, Bs_ft);
+  futhark_free_i16_1d(ctx, M_ft);
+  futhark_free_opaque_mergeInfo_short(ctx, mergeInfo);
+}
+void mergeSortedKeys_int(
+  struct futhark_context *ctx,
+  struct futhark_i8_1d **outRelation,
+  struct futhark_i64_1d **outIdx,
+  int *outValues,
+  idx_t threads,
+  idx_t window_size,
+  int *As,
+  int *Bs,
+  idx_t card_As,
+  idx_t card_Bs,
+  int inParallel
+) {
+  // Wrap arrays into futhark arays.
+  struct futhark_i32_1d *As_ft = futhark_new_i32_1d(ctx, As, card_As);
+  struct futhark_i32_1d *Bs_ft = futhark_new_i32_1d(ctx, As, card_As);
+  // Perform the merging.
+  struct futhark_opaque_mergeInfo_int *mergeInfo;
+  futhark_entry_mergeSorted_int(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Output relation info, indices, and merged values
+  futhark_project_opaque_mergeInfo_int_rs(ctx, outRelation, mergeInfo);
+  futhark_project_opaque_mergeInfo_int_is(ctx, outIdx, mergeInfo);
+  struct futhark_i32_1d *M_ft;
+  futhark_project_opaque_mergeInfo_int_vs(ctx, &M_ft, mergeInfo);
+  futhark_values_i32_1d(ctx, M_ft, outValues);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Free futhark objects
+  futhark_free_i32_1d(ctx, As_ft);
+  futhark_free_i32_1d(ctx, Bs_ft);
+  futhark_free_i32_1d(ctx, M_ft);
+  futhark_free_opaque_mergeInfo_int(ctx, mergeInfo);
+}
+void mergeSortedKeys_long(
+  struct futhark_context *ctx,
+  struct futhark_i8_1d **outRelation,
+  struct futhark_i64_1d **outIdx,
+  long *outValues,
+  idx_t threads,
+  idx_t window_size,
+  long *As,
+  long *Bs,
+  idx_t card_As,
+  idx_t card_Bs,
+  int inParallel
+) {
+  // Wrap arrays into futhark arays.
+  struct futhark_i64_1d *As_ft = futhark_new_i64_1d(ctx, As, card_As);
+  struct futhark_i64_1d *Bs_ft = futhark_new_i64_1d(ctx, As, card_As);
+  // Perform the merging.
+  struct futhark_opaque_mergeInfo_long *mergeInfo;
+  futhark_entry_mergeSorted_long(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Output relation info, indices, and merged values
+  futhark_project_opaque_mergeInfo_long_rs(ctx, outRelation, mergeInfo);
+  futhark_project_opaque_mergeInfo_long_is(ctx, outIdx, mergeInfo);
+  struct futhark_i64_1d *M_ft;
+  futhark_project_opaque_mergeInfo_long_vs(ctx, &M_ft, mergeInfo);
+  futhark_values_i64_1d(ctx, M_ft, outValues);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Free futhark objects
+  futhark_free_i64_1d(ctx, As_ft);
+  futhark_free_i64_1d(ctx, Bs_ft);
+  futhark_free_i64_1d(ctx, M_ft);
+  futhark_free_opaque_mergeInfo_long(ctx, mergeInfo);
+}
+void mergeSortedKeys_float(
+  struct futhark_context *ctx,
+  struct futhark_i8_1d **outRelation,
+  struct futhark_i64_1d **outIdx,
+  float *outValues,
+  idx_t threads,
+  idx_t window_size,
+  float *As,
+  float *Bs,
+  idx_t card_As,
+  idx_t card_Bs,
+  int inParallel
+) {
+  // Wrap arrays into futhark arays.
+  struct futhark_f32_1d *As_ft = futhark_new_f32_1d(ctx, As, card_As);
+  struct futhark_f32_1d *Bs_ft = futhark_new_f32_1d(ctx, As, card_As);
+  // Perform the merging.
+  struct futhark_opaque_mergeInfo_float *mergeInfo;
+  futhark_entry_mergeSorted_float(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Output relation info, indices, and merged values
+  futhark_project_opaque_mergeInfo_float_rs(ctx, outRelation, mergeInfo);
+  futhark_project_opaque_mergeInfo_float_is(ctx, outIdx, mergeInfo);
+  struct futhark_f32_1d *M_ft;
+  futhark_project_opaque_mergeInfo_float_vs(ctx, &M_ft, mergeInfo);
+  futhark_values_f32_1d(ctx, M_ft, outValues);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Free futhark objects
+  futhark_free_f32_1d(ctx, As_ft);
+  futhark_free_f32_1d(ctx, Bs_ft);
+  futhark_free_f32_1d(ctx, M_ft);
+  futhark_free_opaque_mergeInfo_float(ctx, mergeInfo);
+}
+void mergeSortedKeys_double(
+  struct futhark_context *ctx,
+  struct futhark_i8_1d **outRelation,
+  struct futhark_i64_1d **outIdx,
+  double *outValues,
+  idx_t threads,
+  idx_t window_size,
+  double *As,
+  double *Bs,
+  idx_t card_As,
+  idx_t card_Bs,
+  int inParallel
+) {
+  // Wrap arrays into futhark arays.
+  struct futhark_f64_1d *As_ft = futhark_new_f64_1d(ctx, As, card_As);
+  struct futhark_f64_1d *Bs_ft = futhark_new_f64_1d(ctx, As, card_As);
+  // Perform the merging.
+  struct futhark_opaque_mergeInfo_double *mergeInfo;
+  futhark_entry_mergeSorted_double(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Output relation info, indices, and merged values
+  futhark_project_opaque_mergeInfo_double_rs(ctx, outRelation, mergeInfo);
+  futhark_project_opaque_mergeInfo_double_is(ctx, outIdx, mergeInfo);
+  struct futhark_f64_1d *M_ft;
+  futhark_project_opaque_mergeInfo_double_vs(ctx, &M_ft, mergeInfo);
+  futhark_values_f64_1d(ctx, M_ft, outValues);
+  // Sync context
+  futhark_context_sync(ctx);
+  // Free futhark objects
+  futhark_free_f64_1d(ctx, As_ft);
+  futhark_free_f64_1d(ctx, Bs_ft);
+  futhark_free_f64_1d(ctx, M_ft);
+  futhark_free_opaque_mergeInfo_double(ctx, mergeInfo);
+}
+void mergeSortedKeys(
+  struct futhark_context *ctx,
+  struct futhark_i8_1d **outRelation,
+  struct futhark_i64_1d **outIdx,
+  void *outValues,
+  duckdb_type type,
+  idx_t threads,
+  idx_t window_size,
+  void *As,
+  void *Bs,
+  idx_t card_As,
+  idx_t card_Bs,
+  int inParallel
+) {
+  switch (type){
+    case DUCKDB_TYPE_SMALLINT:
+      mergeSortedKeys_short(
+        ctx, outRelation, outIdx, (short*)outValues, threads, window_size, (short*)As, (short*)Bs, card_As, card_Bs, inParallel
+      );
+      return;
+    case DUCKDB_TYPE_INTEGER:
+      mergeSortedKeys_int(
+        ctx, outRelation, outIdx, (int*)outValues, threads, window_size, (int*)As, (int*)Bs, card_As, card_Bs, inParallel
+      );
+      return;
+    case DUCKDB_TYPE_BIGINT:
+      mergeSortedKeys_long(
+        ctx, outRelation, outIdx, (long*)outValues, threads, window_size, (long*)As, (long*)Bs, card_As, card_Bs, inParallel
+      );
+      return;
+    case DUCKDB_TYPE_FLOAT:
+      mergeSortedKeys_float(
+        ctx, outRelation, outIdx, (float*)outValues, threads, window_size, (float*)As, (float*)Bs, card_As, card_Bs, inParallel
+      );
+      return;
+    case DUCKDB_TYPE_DOUBLE:
+      mergeSortedKeys_double(
+        ctx, outRelation, outIdx, (double*)outValues, threads, window_size, (double*)As, (double*)Bs, card_As, card_Bs, inParallel
+      );
+      return;
+    default:
+      perror("Invalid type.");
+      return;
+  }
+}

@@ -77,7 +77,8 @@ void sortKeyColumn(
  */
 void orderPayloadColumn(
 	struct futhark_context *ctx,
-	void *outCol, duckdb_type type,
+	void *outCol,
+	duckdb_type type,
 	idx_t incr,
 	const int16_t block_size,
 	struct futhark_i64_1d *orderBy,
@@ -144,5 +145,24 @@ idx_t fetch_intermediate(
 	void** BuffersOut,
 	idx_t start_idx
 );
+
+
+// -------------------------------------------------------------------------------------- SORT-MERGE JOIN
+
+void mergeSortedKeys(
+	struct futhark_context *ctx,
+	struct futhark_i8_1d **outRelation,
+	struct futhark_i64_1d **outIdx,
+	void *outValues,
+	duckdb_type type,
+	idx_t threads,
+	idx_t window_size,
+	void *As,
+	void *Bs,
+	idx_t card_As,
+	idx_t card_Bs,
+	int inParallel
+);
+// TODO add incr for multi-pass? low priority for now - implement other algos first...
 
 #endif
