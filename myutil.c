@@ -529,7 +529,7 @@ void mergeSortedKeys_short(
 ) {
   // Wrap arrays into futhark arays.
   struct futhark_i16_1d *As_ft = futhark_new_i16_1d(ctx, As, card_As);
-  struct futhark_i16_1d *Bs_ft = futhark_new_i16_1d(ctx, As, card_As);
+  struct futhark_i16_1d *Bs_ft = futhark_new_i16_1d(ctx, Bs, card_Bs);
   // Perform the merging.
   struct futhark_opaque_mergeInfo_short *mergeInfo;
   futhark_entry_mergeSorted_short(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
@@ -564,7 +564,7 @@ void mergeSortedKeys_int(
 ) {
   // Wrap arrays into futhark arays.
   struct futhark_i32_1d *As_ft = futhark_new_i32_1d(ctx, As, card_As);
-  struct futhark_i32_1d *Bs_ft = futhark_new_i32_1d(ctx, As, card_As);
+  struct futhark_i32_1d *Bs_ft = futhark_new_i32_1d(ctx, Bs, card_Bs);
   // Perform the merging.
   struct futhark_opaque_mergeInfo_int *mergeInfo;
   futhark_entry_mergeSorted_int(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
@@ -599,7 +599,7 @@ void mergeSortedKeys_long(
 ) {
   // Wrap arrays into futhark arays.
   struct futhark_i64_1d *As_ft = futhark_new_i64_1d(ctx, As, card_As);
-  struct futhark_i64_1d *Bs_ft = futhark_new_i64_1d(ctx, As, card_As);
+  struct futhark_i64_1d *Bs_ft = futhark_new_i64_1d(ctx, Bs, card_Bs);
   // Perform the merging.
   struct futhark_opaque_mergeInfo_long *mergeInfo;
   futhark_entry_mergeSorted_long(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
@@ -634,7 +634,7 @@ void mergeSortedKeys_float(
 ) {
   // Wrap arrays into futhark arays.
   struct futhark_f32_1d *As_ft = futhark_new_f32_1d(ctx, As, card_As);
-  struct futhark_f32_1d *Bs_ft = futhark_new_f32_1d(ctx, As, card_As);
+  struct futhark_f32_1d *Bs_ft = futhark_new_f32_1d(ctx, Bs, card_Bs);
   // Perform the merging.
   struct futhark_opaque_mergeInfo_float *mergeInfo;
   futhark_entry_mergeSorted_float(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);
@@ -669,7 +669,7 @@ void mergeSortedKeys_double(
 ) {
   // Wrap arrays into futhark arays.
   struct futhark_f64_1d *As_ft = futhark_new_f64_1d(ctx, As, card_As);
-  struct futhark_f64_1d *Bs_ft = futhark_new_f64_1d(ctx, As, card_As);
+  struct futhark_f64_1d *Bs_ft = futhark_new_f64_1d(ctx, Bs, card_Bs);
   // Perform the merging.
   struct futhark_opaque_mergeInfo_double *mergeInfo;
   futhark_entry_mergeSorted_double(ctx, &mergeInfo, window_size, threads, As_ft, Bs_ft, inParallel);

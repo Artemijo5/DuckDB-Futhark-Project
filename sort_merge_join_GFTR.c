@@ -18,12 +18,12 @@ then make buffer for tuple file
 #define LOGFILE "sort_merge_join_GFTR.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 5*CHUNK_SIZE //512*CHUNK_SIZE
+#define BUFFER_SIZE 512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 3*CHUNK_SIZE
-#define S_TABLE_SIZE 4*CHUNK_SIZE
+#define R_TABLE_SIZE 9*CHUNK_SIZE + 12
+#define S_TABLE_SIZE 32*CHUNK_SIZE
 
-#define BLOCK_SIZE (int16_t)2048
+#define BLOCK_SIZE (int16_t)256
 #define MERGE_PARTITION_SIZE CHUNK_SIZE
 
 #define DBFILE "testdb.db"
@@ -70,12 +70,12 @@ int main() {
   char S_init_query[1000];
   sprintf(
   	R_init_query,
-  	"INSERT INTO R_tbl (SELECT 10000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+  	"INSERT INTO R_tbl (SELECT 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
   	R_TABLE_SIZE
   );
   sprintf(
   	S_init_query,
-  	"INSERT INTO S_tbl (SELECT 10000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+  	"INSERT INTO S_tbl (SELECT 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
   	S_TABLE_SIZE
   );
   duckdb_query(con, R_init_query, NULL);
@@ -119,22 +119,24 @@ int main() {
   );
   mylog(logfile, "Sorted table S.");
 
-  struct futhark_i8_1d **relInfo_ft;
-  struct futhark_i64_1d **idx_ft;
+  struct futhark_i8_1d *relInfo_ft;
+  struct futhark_i64_1d *idx_ft;
 
-  long *Rbuff = colType_malloc(DUCKDB_TYPE_BIGINT, R_TABLE_SIZE);
-  long *Sbuff = colType_malloc(DUCKDB_TYPE_BIGINT, S_TABLE_SIZE);
+  void *Rbuff = colType_malloc(DUCKDB_TYPE_BIGINT, R_TABLE_SIZE);
+  void *Sbuff = colType_malloc(DUCKDB_TYPE_BIGINT, S_TABLE_SIZE);
   void *Merger = colType_malloc(DUCKDB_TYPE_BIGINT, R_TABLE_SIZE + S_TABLE_SIZE);
 
   // TODO why does it segfault ?!?!?!?!?!?!?!?
 
   mylog(logfile, "Buffering sorted R...");
   duckdb_result res_R;
-  duckdb_query(con, "SELECT * FROM R_tbl_sorted;", &res_R);
+  if( duckdb_query(con, "SELECT #1 FROM R_tbl_sorted;", &res_R) == DuckDBError) {
+    perror("Failed to read R_tbl_sorted...\n");
+    return -1;
+  }
   mylog(logfile, "Obtained result...");
   idx_t R_cnk_counter = 0;
   while(true) {
-    printf("Marco!\n");
     duckdb_data_chunk cnk = duckdb_fetch_chunk(res_R);
     if(!cnk) {
       mylog(logfile, "Exhausted result.");
@@ -143,9 +145,9 @@ int main() {
     idx_t vecsize = duckdb_data_chunk_get_size(cnk);
 
     duckdb_vector kvec = duckdb_data_chunk_get_vector(cnk, 0);
-    long *kdata = duckdb_vector_get_data(kvec);
+    long *kdata = (long*)duckdb_vector_get_data(kvec);
     memcpy(
-      Rbuff + CHUNK_SIZE*colType_bytes(DUCKDB_TYPE_BIGINT)*R_cnk_counter,
+      Rbuff + R_cnk_counter*CHUNK_SIZE*colType_bytes(DUCKDB_TYPE_BIGINT),
       kdata,
       vecsize*colType_bytes(DUCKDB_TYPE_BIGINT)
     );
@@ -157,7 +159,10 @@ int main() {
 
   mylog(logfile, "Buffering sorted S...");
   duckdb_result res_S;
-  duckdb_query(con, "SELECT * FROM S_tbl_sorted;", &res_S);
+  if(duckdb_query(con, "SELECT #1 FROM S_tbl_sorted;", &res_S) == DuckDBError) {
+    perror("Failed to read S_tbl_sorted...\n");
+    return -1;
+  }
   mylog(logfile, "Obtained result...");
   idx_t S_cnk_counter = 0;
   while(true) {
@@ -169,9 +174,9 @@ int main() {
     idx_t vecsize = duckdb_data_chunk_get_size(cnk);
 
     duckdb_vector kvec = duckdb_data_chunk_get_vector(cnk, 0);
-    long *kdata = duckdb_vector_get_data(kvec);
+    long *kdata = (long*)duckdb_vector_get_data(kvec);
     memcpy(
-      Sbuff + CHUNK_SIZE*colType_bytes(DUCKDB_TYPE_BIGINT)*S_cnk_counter,
+      Sbuff + S_cnk_counter*CHUNK_SIZE*colType_bytes(DUCKDB_TYPE_BIGINT),
       kdata,
       vecsize*colType_bytes(DUCKDB_TYPE_BIGINT)
     );
@@ -182,10 +187,26 @@ int main() {
   duckdb_destroy_result(&res_S);
 
   mylog(logfile, "Beginning to merge keys of R & S...");
-  mergeSortedKeys(ctx, relInfo_ft, idx_ft, Merger, DUCKDB_TYPE_BIGINT, 20, 100, Rbuff, Sbuff, R_TABLE_SIZE, S_TABLE_SIZE, true);
+  mergeSortedKeys(ctx, &relInfo_ft, &idx_ft, Merger, DUCKDB_TYPE_BIGINT, 20, 100, Rbuff, Sbuff, R_TABLE_SIZE, S_TABLE_SIZE, true);
   mylog(logfile, "Finished merging sorted keys of tables R & S.");
-
-  logarray_long(logfile, "Merged key list:", Merger, R_TABLE_SIZE + S_TABLE_SIZE);
+/*
+  logarray_long(logfile, "Merged key list:", Rbuff, R_TABLE_SIZE);
+  logarray_long(logfile, "Merged key list:", Sbuff, S_TABLE_SIZE);
+  logarray_long(logfile, "Merged key list:", (long*)Merger, R_TABLE_SIZE + S_TABLE_SIZE);
+*/
+  idx_t i_r = 0, i_s = 0;
+  int is_right = true;
+  for(idx_t j=0; j<(R_TABLE_SIZE+S_TABLE_SIZE); j++) {
+    long cur = ((long*)Merger)[j];
+    if(i_r < R_TABLE_SIZE && cur == ((long*)Rbuff)[i_r]) i_r ++;
+    else if(i_s < S_TABLE_SIZE && cur == ((long*)Sbuff)[i_s]) i_s++;
+    else {
+      is_right = false;
+      printf("Failure at iter: %ld\n", j);
+      break;
+    }
+  }
+  logdbg(logfile, is_right, "Merging was done correctly.", "!!!!!!! Incorrect merging!");
 
 
   // Clean-up
@@ -193,8 +214,8 @@ int main() {
   free(Sbuff);
   free(Merger);
 
-  futhark_free_i8_1d(ctx, *relInfo_ft);
-  futhark_free_i64_1d(ctx, *idx_ft);
+  futhark_free_i8_1d(ctx, relInfo_ft);
+  futhark_free_i64_1d(ctx, idx_ft);
   futhark_context_free(ctx);
   futhark_context_config_free(cfg);
   mylog(logfile, "Freed futhark core.");
