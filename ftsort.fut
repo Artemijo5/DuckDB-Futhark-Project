@@ -98,7 +98,10 @@ entry argmin_float [n] (ks: [n]f32) : idx_t.t =
 entry argmin_double [n] (ks: [n]f64) : idx_t.t =
   argmin (<) (==) (f64.highest) ks
 
--- ------------------------------------------------------------------- MERGE JOIN
+-- -------------------------------------------------------------------
+-- SMJ Partitions
+-- & Merging functions
+-- -------------------------------------------------------------------
 
 def partFunc_sequential_search [n] 't
   (a_i: idx_t.t)
@@ -134,16 +137,18 @@ def partFunc_sequential_search [n] 't
 
 def partitionFunc [n] 't
   (partitions: idx_t.t)
+  (fromThread: idx_t.t)
   (upToThread: idx_t.t)
   (as : [n]t)
   (bs : [n]t)
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
-: [upToThread](idx_t.t, idx_t.t) =
+: [upToThread-fromThread](idx_t.t, idx_t.t) =
   let lowest = if (as[0] `leq` bs[0]) then as[0] else bs[0]
+  let firstThr = idx_t.max (fromThread) (1)
   --let highest = if (as[n-1] `gt` bs[n-1]) then as[n-1] else bs[n-1]
-  let ts : [upToThread-1]idx_t.t = 1..<upToThread
-  let pre_ret : [upToThread-1](idx_t.t, idx_t.t) = ts
+  let ts : [upToThread-firstThr]idx_t.t = (firstThr)..<(upToThread)
+  let pre_ret : [upToThread-firstThr](idx_t.t, idx_t.t) = ts
     |> map (\t ->
       let index : idx_t.t = t*(n+n)/partitions
       let loop_over : {flag: bool, a_top: idx_t.t, b_top: idx_t.t, a_bottom: idx_t.t} =
@@ -205,7 +210,13 @@ def partitionFunc [n] 't
             }
         in (loop_over.a_top, loop_over.b_top)
       )
-  let ret = [(0,0)] ++ pre_ret :> [upToThread](idx_t.t, idx_t.t)
+  let ret =
+    (
+      if fromThread>0
+      then pre_ret
+      else [(0,0)] ++ pre_ret
+    )
+    :> [upToThread-fromThread](idx_t.t, idx_t.t)
   in ret
 
 def mergeFunc_seq [n] 't
@@ -216,7 +227,7 @@ def mergeFunc_seq [n] 't
   (leq: t -> t -> bool)
   (gt: t -> t -> bool)
 : ((idx_t.t,idx_t.t), [n](i8, idx_t.t, t)) =
-  let partitionBounds : [threads+1](idx_t.t, idx_t.t) = (partitionFunc (2*threads) (threads+1) as bs leq gt)
+  let partitionBounds = (partitionFunc (2*threads) 0 (threads+1) as bs leq gt) :> [threads+1](idx_t.t, idx_t.t)
   let buff : [n](i8, idx_t.t, t) = 
     let lbuff : (idx_t.t, [n](i8, idx_t.t, t)) =
       loop p = (0, replicate (n) (-1, -1, zero))
@@ -249,7 +260,7 @@ def mergeFunc_par [n] 't
   (gt: t -> t -> bool)
 : ((idx_t.t,idx_t.t), [n](i8, idx_t.t, t)) =
   let perThread = 1 + n/threads
-  let partitionBounds : [threads+1](idx_t.t, idx_t.t) = partitionFunc (2*threads) (threads+1) as bs leq gt
+  let partitionBounds = partitionFunc (2*threads) 0 (threads+1) as bs leq gt :> [threads+1](idx_t.t, idx_t.t)
   let ts = iota threads
   let sections : [threads][perThread](idx_t.t,(i8,idx_t.t,t)) = ts
     |> map(\thr ->
@@ -271,14 +282,9 @@ def mergeFunc_par [n] 't
       let is = if (card == perThread-1) then is_naive with [card] = -1 else is_naive
       in sec |> zip is
     )
-    -- could also use ts[0:(threads-1)] and add the last one manually (...)
-    -- issue lies in merging using 1 less thread than partitioning
-    -- anyway, with a high enough number of threads, maybe it won't matter
-    -- really, a cyclic buffer doesn't actually solve anything...
   let ims = sections |> flatten |> unzip
   in (partitionBounds[threads], scatter (replicate (n) (-1, -1, zero)) ims.0 ims.1)
 
--- TODO change rs to i8 since only 2 relations are really merged...
 -- | Type used to preserve relation & index information for Sort Merge Join.
 type mergeInfo [len] 't = {rs: [len]i8, is: [len]idx_t.t, vs: [len]t}
 -- | Sort Merge information type (short).
@@ -392,39 +398,3 @@ entry mergeSorted_double [na] [nb]
 :  mergeInfo_double [na+nb] =
   merge_pipeline window_size threads a_list b_list 0 (<=) (>) inParallel
   
-
--- TODO random experiment
-type mergeTup [len] 't = {is: [len](idx_t.t), xs: [len]t, cs: [len](idx_t.t)}
-type mergeTup_short [n] = mergeTup [n] i16
-type mergeTup_int [n] = mergeTup [n] i32
-type mergeTup_long [n] = mergeTup [n] i64
-type mergeTup_float [n] = mergeTup [n] f32
-type mergeTup_double [n] = mergeTup [n] f64
-
-local def mergeTups [w1] [w2] 't (neq: t -> t -> bool)  (xs : [w1]t) (ys : [w2]t) : mergeTup [w1] t =
-  let ixcs = zip3 (indices xs) xs (replicate (w1) 0)
-  let iycs = zip3 (indices ys) ys (replicate (w2) 1)
-  let ms = ixcs
-    |> map (\(i, x, c) ->
-      reduce_comm (\(i1, y1, c1) (i2, y2, c2) ->
-        if ((y1 `neq` x) || i1 < 0) && ((y2 `neq` x) || i2 < 0) then (-1, x, 0)
-        else if (i1<0 || (y1 `neq` x)) then (i2, y2, c2)
-        else if (i2<0 || (y2 `neq` x)) then (i1, y1, c1)
-        else ((if (i1<i2 || i2<0) then i1 else i2), x, c1+c2)
-      )
-      (-1, x, 0)
-      iycs
-    )
-    |> unzip3
-  in {is = ms.0, xs = ms.1, cs = ms.2}
-
-entry mergeTups_short [w1] [w2]  (xs : [w1]i16) (ys : [w2]i16) : mergeTup_short [w1] =
-  mergeTups (!=) xs ys
-entry mergeTups_int [w1] [w2]  (xs : [w1]i32) (ys : [w2]i32) : mergeTup_int [w1] =
-  mergeTups (!=) xs ys
-entry mergeTups_long [w1] [w2]  (xs : [w1]i64) (ys : [w2]i64) : mergeTup_long [w1] =
-  mergeTups (!=) xs ys
-entry mergeTups_float [w1] [w2]  (xs : [w1]f32) (ys : [w2]f32) : mergeTup_float [w1] =
-  mergeTups (!=) xs ys
-entry mergeTups_double [w1] [w2]  (xs : [w1]f64) (ys : [w2]f64) : mergeTup_double [w1] =
-  mergeTups (!=) xs ys
