@@ -79,7 +79,7 @@ int main() {
   mylog(logfile, "Set up futhark context & config.");
 
   // where the sorting happens, concentrated into an one-liner
-  two_pass_sort_without_payloads(
+  two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
     BLOCK_SIZE,

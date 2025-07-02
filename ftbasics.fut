@@ -32,15 +32,15 @@ type sortInfo_float [n] = sortInfo [n] f32
 type sortInfo_double [n] = sortInfo [n] f64
 
 
--- | Gather operation.
+-- | Gather operation (from Futhark by Example).
 def gather 't (xs: []t) (is: [](idx_t.t)) =
   is |> map (\i -> xs[i])
 -- | Multi-pass gather operation (better cache-locality)
-def partitioned_gather [n] 't (psize : idx_t.t) (xs : [n]t) (is : [n]idx_t.t) = 
+def partitioned_gather [ni] [n] 't (psize : idx_t.t) (dummy_elem: t) (xs : [n]t) (is : [ni]idx_t.t) = 
   let m = (n + psize - 1) / psize
-  let procArray : [n]t =
-    let pa : (idx_t.t, [n](idx_t.t, t)) =
-      loop p = (0, zip (copy is) (copy xs))
+  let procArray : [ni]t =
+    let pa : (idx_t.t, [ni](idx_t.t, t)) =
+      loop p = (0, zip (copy is) (replicate ni dummy_elem))
       while p.0 < n do
         let lower_bound = p.0
         let upper_bound = idx_t.min (p.0 + psize) (n)
@@ -55,6 +55,15 @@ def partitioned_gather [n] 't (psize : idx_t.t) (xs : [n]t) (is : [n]idx_t.t) =
         in (upper_bound, nGathered)
     in (unzip (pa.1)).1
   in procArray
+
+-- TODO could make a multi-pass map (would require dummy element like partitioned_gather)
+
+-- | Exclusive scan operation (from Futhark by Example).
+def exscan f ne xs =
+  map2
+    (\i x -> if i==0 then ne else x)
+    (indices xs)
+    (rotate (-1) (scan f ne xs))
 
 -- | Function to count elements that satisfy a property.
 def countFor 't (p: t -> bool) (xs: []t) : idx_t.t =

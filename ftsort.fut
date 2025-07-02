@@ -8,8 +8,8 @@ local module longSorter = intData i64
 local module floatSorter = fltData f32
 local module doubleSorter = fltData f64
 -- Order a payload column given the reordered indices.
-local def orderByIndices 't (block_size: idx_t.t) (is: [](idx_t.t)) (ys: []t) : []t =
-  partitioned_gather block_size ys is
+local def orderByIndices [n] 't (block_size: idx_t.t) (dummy_elem: t) (is: [n](idx_t.t)) (ys: [n]t) : [n]t =
+  partitioned_gather block_size dummy_elem ys is
 
 -- | Sort a column of short type.
 entry radixSortColumn_short [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i16) : sortInfo_short [n] =
@@ -46,23 +46,23 @@ entry mergeSortColumn_double [n] (incr: idx_t.t) (xs: [n]f64) : sortInfo_double 
 -- | Order a payload column of type short, given the reordered indices.
 entry orderByIndices_short [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i16) : [n]i16 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size offset_is ys
+  in orderByIndices block_size (0) offset_is ys
 -- | Order a payload column of type int, given the reordered indices.
 entry orderByIndices_int [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i32) : [n]i32 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size offset_is ys
+  in orderByIndices block_size (0) offset_is ys
 -- | Order a payload column of type long, given the reordered indices.
 entry orderByIndices_long [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i64) : [n]i64 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size offset_is ys
+  in orderByIndices block_size (0) offset_is ys
 -- | Order a payload column of type float, given the reordered indices.
 entry orderByIndices_float [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f32) : [n]f32 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size offset_is ys
+  in orderByIndices block_size (0) offset_is ys
 -- | Order a payload column of type double, given the reordered indices.
 entry orderByIndices_double [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f64) : [n]f64 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size offset_is ys
+  in orderByIndices block_size (0) offset_is ys
 
 
 -- argmin - for getting chunk replacement priorities

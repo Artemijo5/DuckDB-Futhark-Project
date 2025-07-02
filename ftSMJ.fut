@@ -1,13 +1,13 @@
 import "ftbasics"
 import "ftsort"
 
--- | Type used to store the results of a join (between x&y) in a partition.
+-- | Type used to store the information of a join (between x&y) in a partition.
 -- vs : the values of the x's
 -- ix : the corresponding index of the value in x
 -- iy : the first match in y
 -- cm : number of matches found in y
--- Note : due to partitioning, it's possible for a single x entry to appear multiple, non-overlapping tuples.
--- This is only the case if y does not represent a primary key column.
+-- NOTE - each tuple corresponds to an individual x column, containing info about all its matches (or no matches) in y.
+-- Pure pairs are expressed with type joinPairs.
 type joinTup [n] 't = {vs: [n]t, ix: [n]idx_t.t, iy: [n]idx_t.t, cm: [n]idx_t.t}
 
 entry totalMatches (cm: []idx_t.t)
@@ -55,6 +55,7 @@ def find_joinTuples [nR] [nS] 't
   (offset_S: idx_t.t)
   (extParallelism: idx_t.t)
   (neq: t -> t -> bool)
+  (gt: t -> t -> bool)
 : joinTup [nR] t =
   let numIter = (nR+extParallelism-1) / extParallelism
   let pre_joinTup = uncooked_joinTup (tR) (offset_R)
@@ -64,6 +65,15 @@ def find_joinTuples [nR] [nS] 't
       let start = p.iter*extParallelism
       let iter_size = idx_t.min (extParallelism) (nR - start)
       let iter_R = tR[start : start + iter_size] :> [iter_size]t
+      in -- skip if R and S do not overlap
+        let r_min = iter_R[0]
+        let r_max = iter_R[iter_size-1]
+        let s_min = if nS>0 then tS[0] else r_min
+        let s_max = if nS>0 then tS[nS-1] else r_max
+        in
+          if (r_min `gt` s_max) then {iter= numIter, result= p.result} -- S < iter_R -> break
+          else if (s_min `gt` r_max) then {iter= p.iter+1, result= p.result} -- S > iter_R -> continue
+      else -- default case
       let ircs = zip3 (idx_t.indicesWithIncrement (offset_R+start) iter_R) (iter_R) (replicate iter_size 0)
       let iscs = zip3 (idx_t.indicesWithIncrement (offset_S) tS) tS (replicate nS 1)
       let ms = ircs
@@ -199,7 +209,7 @@ def join_chunks [n] 't
       let s_start = parts[dp.curPart].1
       let s_end = if dp.curPart + 1 == np then n else parts[dp.curPart+1].1
       let curS = tS[s_start:s_end]
-      let curJoin = find_joinTuples (curR) (curS) (offset_R+r_start) (offset_S+s_start) (extParallelism) (neq)
+      let curJoin = find_joinTuples (curR) (curS) (offset_R+r_start) (offset_S+s_start) (extParallelism) (neq) (gt)
       let newVs = dp.curTups.vs
       let newIx = dp.curTups.ix
       let newIy = map2 (\alt neu -> if (alt<0) then neu else alt) (dp.curTups.iy) (curJoin.iy)
@@ -215,9 +225,6 @@ def join_chunks [n] 't
     let newTups = {vs=newVs, ix=newIx, iy=newIy, cm=newCm}
     in {iter=p.iter+1, tups=newTups}
   in loop_over.tups
-
-
--- find_joinTuples tR tS (offset_R) (offset_S) (extParallelism) (neq)
 
 -- FOLLOWING FUNCTION
 -- assume a single chunk of R, multiple chunks of S
@@ -247,7 +254,7 @@ def mergeJoin [nR] [nS] 't
         -- TODO (very low priority, maybe not needed)
         -- could save the first 'relevant' partition of R from each default iteration
         -- only join R from thereon in final iteration
-        find_joinTuples tR curS (offset_R) (offset_S+tS_start) (extParallelism) (neq)
+        find_joinTuples tR curS (offset_R) (offset_S+tS_start) (extParallelism) (neq) (gt)
       else -- default case
         let bS = curS :> [nR]t
         in join_chunks
@@ -266,4 +273,37 @@ def mergeJoin [nR] [nS] 't
   --in coal_tups
   in loop_over.tups
 
--- TODO join basically works - implement entry points & C side, then consider further optimisations
+-- | The pairs obtained from joining x&y.
+-- vs : the values of each pair
+-- ix : the respective index in x
+-- iy : the respective index in y
+-- NOTE - unlike type joinTup, each tuple here corresponds to an individual match.
+type joinPairs [n] 't = {vs: [n]t, ix: [n]idx_t.t, iy: [n]idx_t.t}
+
+def joinTups_to_joinPairs_InnerJoin [n] 't
+  (tups: joinTup [n] t)
+  (dummy_elem: t)
+=
+  -- TODO figure out if loop can be avoided and if can be done with better scattering techniques...
+  let zipTups = zip4 tups.vs tups.ix tups.iy tups.cm
+  let filteredTups = zipTups |> filter (\(v, ix, iy, cm) -> (cm>0))
+  let n_filt = length filteredTups
+  let tup_index = exscan (\(v1, ix1, iy1, cm1) (v2, ix2, iy2, cm2) -> (v1, ix1, iy1, cm1+cm2)) (dummy_elem, -1, -1, 0) filteredTups
+    |> map (\(v, ix, iy, cm) -> cm)
+  let n_pairs = tup_index[(length tup_index)-1] + filteredTups[(length filteredTups)-1].3
+  let fTups_minusCm = filteredTups |> map (\(v, ix, iy, cm) -> (v, ix, iy))
+  let pairsArray = scatter (replicate n_pairs (dummy_elem, -1, -1)) (tup_index) (fTups_minusCm) -- TODO multi-pass
+  let loop_over : {iter: idx_t.t, buff: [](t, idx_t.t, idx_t.t)}
+  = loop p = {iter=0, buff=pairsArray}
+  while (p.iter<n_filt) && (n_pairs>n_filt) do -- second && skips the thing if no multiplicity in pairs
+    let j = tup_index[p.iter]
+    let nj = filteredTups[p.iter].3
+    let newIy_block = (zip (iota nj) (replicate nj p.buff[j]))
+      |> map (\(i, (v, ix, iy)) -> (v, ix, iy+i))
+    in {
+      iter = p.iter+1,
+      buff = (copy p.buff) with [j:j+nj] = newIy_block
+    }
+  let unzPairs = loop_over.buff |> unzip3
+  let pairs : joinPairs [n_pairs] t = {vs=unzPairs.0, ix=unzPairs.1, iy=unzPairs.2}
+  in pairs
