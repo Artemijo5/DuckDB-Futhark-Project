@@ -10,9 +10,6 @@ import "ftsort"
 -- Pure pairs are expressed with type joinPairs.
 type joinTup [n] 't = {vs: [n]t, ix: [n]idx_t.t, iy: [n]idx_t.t, cm: [n]idx_t.t}
 
-entry totalMatches (cm: []idx_t.t)
- = idx_t.sum cm
-
 def empty_joinTup 't
   (tR: []t)
 : joinTup [0] t =
@@ -278,7 +275,7 @@ def mergeJoin [nR] [nS] 't
 -- ix : the respective index in x
 -- iy : the respective index in y
 -- NOTE - unlike type joinTup, each tuple here corresponds to an individual match.
-type joinPairs [n] 't = {vs: [n]t, ix: [n]idx_t.t, iy: [n]idx_t.t}
+type~ joinPairs 't = {vs: []t, ix: []idx_t.t, iy: []idx_t.t}
 
 def joinTups_to_joinPairs_InnerJoin [n] 't
   (tups: joinTup [n] t)
@@ -305,5 +302,89 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
       buff = (copy p.buff) with [j:j+nj] = newIy_block
     }
   let unzPairs = loop_over.buff |> unzip3
-  let pairs : joinPairs [n_pairs] t = {vs=unzPairs.0, ix=unzPairs.1, iy=unzPairs.2}
+  let pairs : joinPairs t = {vs=unzPairs.0, ix=unzPairs.1, iy=unzPairs.2}
   in pairs
+
+def inner_SMJ [nR] [nS] 't
+  (dummy_elem: t)
+  (tR: [nR]t)
+  (tS: [nS]t)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (extParallelism: idx_t.t)
+  (neq: t -> t -> bool)
+  (leq: t -> t -> bool)
+  (gt : t -> t -> bool)
+=
+  let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (neq) (leq) (gt)
+  in joinTups_to_joinPairs_InnerJoin (jTups) (dummy_elem)
+
+-- | Join pairs of type short.
+type~ joinPairs_short = joinPairs i16
+-- | Join pairs of type int.
+type~ joinPairs_int = joinPairs i32
+-- | Join pairs of type long.
+type~ joinPairs_long = joinPairs i64
+-- | Join pairs of type float.
+type~ joinPairs_float = joinPairs f32
+-- | Join pairs of type double.
+type~ joinPairs_double = joinPairs f64
+
+entry inner_SMJ_short [nR] [nS]
+  (tR: [nR]i16)
+  (tS: [nS]i16)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (extParallelism: idx_t.t)
+: joinPairs_short =
+  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+
+entry inner_SMJ_int [nR] [nS]
+  (tR: [nR]i32)
+  (tS: [nS]i32)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (extParallelism: idx_t.t)
+: joinPairs_int =
+  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+
+entry inner_SMJ_long [nR] [nS]
+  (tR: [nR]i64)
+  (tS: [nS]i64)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (extParallelism: idx_t.t)
+: joinPairs_long =
+  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+
+entry inner_SMJ_float [nR] [nS]
+  (tR: [nR]f32)
+  (tS: [nS]f32)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (extParallelism: idx_t.t)
+: joinPairs_float =
+  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+
+entry inner_SMJ_double [nR] [nS]
+  (tR: [nR]f64)
+  (tS: [nS]f64)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (extParallelism: idx_t.t)
+: joinPairs_double =
+  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+
+-- TODO payload gathering, continue to C side
