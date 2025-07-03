@@ -32,29 +32,42 @@ type sortInfo_float [n] = sortInfo [n] f32
 type sortInfo_double [n] = sortInfo [n] f64
 
 
--- | Gather operation (from Futhark by Example).
-def gather 't (xs: []t) (is: [](idx_t.t)) =
-  is |> map (\i -> xs[i])
--- | Multi-pass gather operation (better cache-locality)
-def partitioned_gather [ni] [n] 't (psize : idx_t.t) (dummy_elem: t) (xs : [n]t) (is : [ni]idx_t.t) = 
-  let m = (n + psize - 1) / psize
-  let procArray : [ni]t =
-    let pa : (idx_t.t, [ni](idx_t.t, t)) =
-      loop p = (0, zip (copy is) (replicate ni dummy_elem))
-      while p.0 < n do
-        let lower_bound = p.0
-        let upper_bound = idx_t.min (p.0 + psize) (n)
-        let nGathered = p.1
-          |> map (\(gi, ugx) ->
-            -- if gi>=0, this one hasn't been gathered yet
-            -- when gathered, set gi to -1
-            if (lower_bound<=gi && upper_bound>gi)
-            then (-1, xs[gi])
-            else (gi, ugx)
-          )
-        in (upper_bound, nGathered)
-    in (unzip (pa.1)).1
-  in procArray
+-- | Gather operation (based on futhark example).
+def gather 't [ni] [n] (dummy_elem: t) (xs: [n]t) (is: [ni](idx_t.t)) =
+  is |> map (\i -> if (i>0 && i<n) then xs[i] else dummy_elem)
+-- | Multi-pass gather operation (better cache-locality).
+-- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
+-- by Bingsheng He et al.
+def partitioned_gather [ni] [n] 't (psize : idx_t.t) (dummy_elem: t) (xs : [n]t) (is : [ni]idx_t.t) =
+  let m = (ni+psize-1)/psize
+  let dummy_array = (replicate ni dummy_elem)
+  let loop_over : {iter: idx_t.t, buff: []t}
+  = loop p = {iter=0, buff = dummy_array}
+  while p.iter<m do
+    let lower_bound = p.iter * psize
+    let upper_bound = idx_t.min (ni) (lower_bound + psize)
+    let cur_gather = gather (dummy_elem) (xs) (is[lower_bound:upper_bound])
+    in {iter = p.iter+1, buff = p.buff with [lower_bound:upper_bound] = cur_gather}
+  in loop_over.buff
+-- | Multi-pass scatter operation (better cache-locality).
+-- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
+-- by Bingsheng He et al.
+def partitioned_scatter [nd] [n] 'a
+  (psize: idx_t.t) 
+  (dest: *[nd]a)
+  (is: [n]idx_t.t)
+  (vs: [n]a)
+: *[]a =
+  let m = (nd+psize-1)/psize
+  let loop_over : {iter: idx_t.t, buff: [nd]a}
+  = loop p = {iter=0, buff = dest}
+  while p.iter < m do
+    let lower_bound = p.iter * psize
+    let upper_bound = idx_t.min (nd) (lower_bound + psize)
+    let cur_is = is |> map (\i -> if (i >= lower_bound && i < upper_bound) then i else -1)
+    in {iter=p.iter+1, buff = scatter (p.buff) cur_is vs}
+  in loop_over.buff
+
 
 -- TODO could make a multi-pass map (would require dummy element like partitioned_gather)
 

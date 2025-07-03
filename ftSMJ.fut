@@ -248,9 +248,9 @@ def mergeJoin [nR] [nS] 't
     in if (curS[0] `gt` tR[nR-1]) then {iter=numIter, tups=p.tups} else -- if exceeded Rmax, break
     let curTup : joinTup [nR] t =
       if (tS_end - tS_start) < nR then -- last chunk of S - join without partitioning...
-        -- TODO (very low priority, maybe not needed)
-        -- could save the first 'relevant' partition of R from each default iteration
-        -- only join R from thereon in final iteration
+        -- TODO break tR into chunks equisized with last chunk of S
+        -- adjust number of windows & partitions to new size
+        -- might end up too complicated (?)
         find_joinTuples tR curS (offset_R) (offset_S+tS_start) (extParallelism) (neq) (gt)
       else -- default case
         let bS = curS :> [nR]t
@@ -278,23 +278,35 @@ def mergeJoin [nR] [nS] 't
 type~ joinPairs 't = {vs: []t, ix: []idx_t.t, iy: []idx_t.t}
 
 def joinTups_to_joinPairs_InnerJoin [n] 't
+  (psize: idx_t.t)
   (tups: joinTup [n] t)
   (dummy_elem: t)
 =
-  -- TODO figure out if loop can be avoided and if can be done with better scattering techniques...
   let zipTups = zip4 tups.vs tups.ix tups.iy tups.cm
   let filteredTups = zipTups |> filter (\(v, ix, iy, cm) -> (cm>0))
   let n_filt = length filteredTups
-  let tup_index = exscan (\(v1, ix1, iy1, cm1) (v2, ix2, iy2, cm2) -> (v1, ix1, iy1, cm1+cm2)) (dummy_elem, -1, -1, 0) filteredTups
-    |> map (\(v, ix, iy, cm) -> cm)
-  let n_pairs = tup_index[(length tup_index)-1] + filteredTups[(length filteredTups)-1].3
+  -- separate match counts & pair info
+  let fcm = filteredTups |> map (\(v,ix,iy,cm)->cm)
   let fTups_minusCm = filteredTups |> map (\(v, ix, iy, cm) -> (v, ix, iy))
-  let pairsArray = scatter (replicate n_pairs (dummy_elem, -1, -1)) (tup_index) (fTups_minusCm) -- TODO multi-pass
+  -- obtain the starting indices of each match in the output array
+  let tup_index = exscan (\cm1 cm2 -> cm1+cm2) 0 fcm
+  -- obtain the total number of pairs
+  let n_pairs = tup_index[(length tup_index)-1] + filteredTups[(length filteredTups)-1].3
+  -- initialise the array
+  let pairsArray = partitioned_scatter
+    (psize)
+    (replicate n_pairs (dummy_elem, -1, -1))
+    (tup_index)
+    (fTups_minusCm)
+  -- find pairs with multiplicity (in ys) to minimise the following loop
+  let pairsWithMultiplicity = fcm |> zip tup_index |> filter (\(i, cm) -> cm>1)
+  let n_mult = length pairsWithMultiplicity
+  -- loop over output array for matches with multiplicity
   let loop_over : {iter: idx_t.t, buff: [](t, idx_t.t, idx_t.t)}
   = loop p = {iter=0, buff=pairsArray}
-  while (p.iter<n_filt) && (n_pairs>n_filt) do -- second && skips the thing if no multiplicity in pairs
-    let j = tup_index[p.iter]
-    let nj = filteredTups[p.iter].3
+  while (p.iter<n_mult) && (n_pairs>n_filt) do -- second && skips the thing if no multiplicity in pairs
+    let j = pairsWithMultiplicity[p.iter].0
+    let nj = pairsWithMultiplicity[p.iter].1
     let newIy_block = (zip (iota nj) (replicate nj p.buff[j]))
       |> map (\(i, (v, ix, iy)) -> (v, ix, iy+i))
     in {
@@ -314,12 +326,13 @@ def inner_SMJ [nR] [nS] 't
   (partitionsPerWindow: idx_t.t)
   (numberOfWindows: idx_t.t)
   (extParallelism: idx_t.t)
+  (scatter_psize: idx_t.t)
   (neq: t -> t -> bool)
   (leq: t -> t -> bool)
   (gt : t -> t -> bool)
 =
   let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (neq) (leq) (gt)
-  in joinTups_to_joinPairs_InnerJoin (jTups) (dummy_elem)
+  in joinTups_to_joinPairs_InnerJoin (scatter_psize) (jTups) (dummy_elem)
 
 -- | Join pairs of type short.
 type~ joinPairs_short = joinPairs i16
@@ -340,8 +353,10 @@ entry inner_SMJ_short [nR] [nS]
   (partitionsPerWindow: idx_t.t)
   (numberOfWindows: idx_t.t)
   (extParallelism: idx_t.t)
+  (scatter_psize: idx_t.t)
 : joinPairs_short =
-  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+  inner_SMJ
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
 
 entry inner_SMJ_int [nR] [nS]
   (tR: [nR]i32)
@@ -351,8 +366,10 @@ entry inner_SMJ_int [nR] [nS]
   (partitionsPerWindow: idx_t.t)
   (numberOfWindows: idx_t.t)
   (extParallelism: idx_t.t)
+  (scatter_psize: idx_t.t)
 : joinPairs_int =
-  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+  inner_SMJ
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
 
 entry inner_SMJ_long [nR] [nS]
   (tR: [nR]i64)
@@ -362,8 +379,10 @@ entry inner_SMJ_long [nR] [nS]
   (partitionsPerWindow: idx_t.t)
   (numberOfWindows: idx_t.t)
   (extParallelism: idx_t.t)
+  (scatter_psize: idx_t.t)
 : joinPairs_long =
-  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+  inner_SMJ
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
 
 entry inner_SMJ_float [nR] [nS]
   (tR: [nR]f32)
@@ -373,8 +392,10 @@ entry inner_SMJ_float [nR] [nS]
   (partitionsPerWindow: idx_t.t)
   (numberOfWindows: idx_t.t)
   (extParallelism: idx_t.t)
+  (scatter_psize: idx_t.t)
 : joinPairs_float =
-  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+  inner_SMJ
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
 
 entry inner_SMJ_double [nR] [nS]
   (tR: [nR]f64)
@@ -384,7 +405,35 @@ entry inner_SMJ_double [nR] [nS]
   (partitionsPerWindow: idx_t.t)
   (numberOfWindows: idx_t.t)
   (extParallelism: idx_t.t)
+  (scatter_psize: idx_t.t)
 : joinPairs_double =
-  inner_SMJ (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (!=) (<=) (>)
+  inner_SMJ
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
 
--- TODO payload gathering, continue to C side
+-- Payload gathering
+
+-- | Function to gather the payload columns of a relation after the join.
+def gather_payloads [ni] [n] 't
+  (incr: idx_t.t)
+  (psize: idx_t.t)
+  (dummy_elem: t)
+  (is: [ni]idx_t.t)
+  (ys: [n]t)
+=
+  let offset_is = is |> map (\j -> j - incr)
+  in partitioned_gather (psize) (dummy_elem) (ys) (offset_is)
+
+entry gather_payloads_short (incr) (psize) (is) (ys: []i16)
+  = gather_payloads incr psize (0) is ys
+
+entry gather_payloads_int (incr) (psize) (is) (ys: []i32)
+  = gather_payloads incr psize (0) is ys
+
+entry gather_payloads_long (incr) (psize) (is) (ys: []i64)
+  = gather_payloads incr psize (0) is ys
+
+entry gather_payloads_float (incr) (psize) (is) (ys: []f32)
+  = gather_payloads incr psize (0) is ys
+
+entry gather_payloads_double (incr) (psize) (is) (ys: []f64)
+  = gather_payloads incr psize (0) is ys
