@@ -6,9 +6,17 @@ C-ftsort: ftsort.fut
 	futhark c ftsort.fut --library
 	gcc ftsort.c -o libftsort.so -fPIC -shared
 
-CUDA-ftsort:
+CUDA-ftsort: ftsort.fut
 	futhark cuda ftsort.fut --library
 	gcc ftsort.c -o libftsort.so -fPIC -shared -lcuda -lcudart -lnvrtc
+
+C-ftSMJ: ftSMJ.fut
+	futhark c ftSMJ.fut --library
+	gcc ftSMJ.c -o libftSMJ.so -fPIC -shared
+
+CUDA-ftSMJ: ftSMJ.fut
+	futhark cuda ftSMJ.fut --library
+	gcc ftSMJ.c -o libftSMJ.so -fPIC -shared -lcuda -lcudart -lnvrtc
 
 sorting_test: sorting_test.c libftsort.so mylogger.c libduckdb.so
 	$(CC) sorting_test.c -o sorting_test.o libftsort.so mylogger.c libduckdb.so $(CFLAGS)

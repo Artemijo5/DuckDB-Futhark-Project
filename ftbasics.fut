@@ -34,7 +34,7 @@ type sortInfo_double [n] = sortInfo [n] f64
 
 -- | Gather operation (based on futhark example).
 def gather 't [ni] [n] (dummy_elem: t) (xs: [n]t) (is: [ni](idx_t.t)) =
-  is |> map (\i -> if (i>0 && i<n) then xs[i] else dummy_elem)
+  is |> map (\i -> if (i>=0 && i<n) then xs[i] else dummy_elem)
 -- | Multi-pass gather operation (better cache-locality).
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
 -- by Bingsheng He et al.
