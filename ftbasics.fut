@@ -39,15 +39,18 @@ def gather 't [ni] [n] (dummy_elem: t) (xs: [n]t) (is: [ni](idx_t.t)) =
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
 -- by Bingsheng He et al.
 def partitioned_gather [ni] [n] 't (psize : idx_t.t) (dummy_elem: t) (xs : [n]t) (is : [ni]idx_t.t) =
-  let m = (ni+psize-1)/psize
+  let m = (n+psize-1)/psize
   let dummy_array = (replicate ni dummy_elem)
   let loop_over : {iter: idx_t.t, buff: []t}
   = loop p = {iter=0, buff = dummy_array}
   while p.iter<m do
     let lower_bound = p.iter * psize
-    let upper_bound = idx_t.min (ni) (lower_bound + psize)
-    let cur_gather = gather (dummy_elem) (xs) (is[lower_bound:upper_bound])
-    in {iter = p.iter+1, buff = p.buff with [lower_bound:upper_bound] = cur_gather}
+    let upper_bound = idx_t.min (n) (lower_bound + psize)
+    let cur_is = is |> map (\j -> if (j>=lower_bound && j<upper_bound) then j else -1)
+    let cur_gather = gather (dummy_elem) (xs) (cur_is)
+      |> zip cur_is
+    let nextBuff = map2 (\alt (gi, neu) -> if gi>=0 then neu else alt) p.buff cur_gather
+    in {iter = p.iter+1, buff = nextBuff}
   in loop_over.buff
 -- | Multi-pass scatter operation (better cache-locality).
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
