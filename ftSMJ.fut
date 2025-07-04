@@ -10,16 +10,6 @@ import "ftsort"
 -- Pure pairs are expressed with type joinPairs.
 type joinTup [n] 't = {vs: [n]t, ix: [n]idx_t.t, iy: [n]idx_t.t, cm: [n]idx_t.t}
 
-def empty_joinTup 't
-  (tR: []t)
-: joinTup [0] t =
-  {
-    vs = [],
-    ix = [],
-    iy = [],
-    cm = []
-  }
-
 def uncooked_joinTup [nR] 't
   (tR: [nR]t)
   (offset_R: idx_t.t)
@@ -73,7 +63,7 @@ def find_joinTuples [nR] [nS] 't
       else -- default case
       let ircs = zip3 (idx_t.indicesWithIncrement (offset_R+start) iter_R) (iter_R) (replicate iter_size 0)
       let iscs = zip3 (idx_t.indicesWithIncrement (offset_S) tS) tS (replicate nS 1)
-      let ms = ircs
+      let ms = ircs -- TODO optimisation: if iscs below a certain size, use loop rather than reduce (?)
         |> map (\(i, x, c) ->
           let redTup = reduce_comm (\(i1, y1, c1) (i2, y2, c2) ->
               if ((y1 `neq` x) || i1 < 0) && ((y2 `neq` x) || i2 < 0) then (-1, x, 0)
@@ -261,13 +251,11 @@ def mergeJoin [nR] [nS] 't
           (neq) (leq) (gt)
     let newVs = p.tups.vs
     let newIx = p.tups.ix
-    let newIy = map2 (\alt neu -> if (alt<0) then neu else alt) (p.tups.iy) (curTup.iy)
+    let newIy = map2 (\alt neu -> if (alt<0) then neu else alt) (p.tups.iy) (curTup.iy) -- TODO change to avoid rand acc (?)
     let newCm = map2 (+) (p.tups.cm) (curTup.cm)
     let nextTup = {vs=newVs, ix=newIx, iy=newIy, cm=newCm}
     let nextIter = if curS[(length curS)-1] `leq` tR[nR-1] then p.iter+1 else numIter -- break if exceeded Rmax
     in {iter=nextIter, tups = nextTup}
-  --let coal_tups = reduce_comm (merge_joinTups) (empty_joinTup tR) (loop_over.tups)
-  --in coal_tups
   in loop_over.tups
 
 -- | The pairs obtained from joining x&y.
