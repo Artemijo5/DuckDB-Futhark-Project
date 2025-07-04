@@ -46,7 +46,8 @@ def partitioned_gather [ni] [n] 'a (psize : idx_t.t) (dummy_elem: a) (xs : [n]a)
   while p.iter<m do
     let lower_bound = p.iter * psize
     let upper_bound = idx_t.min (n) (lower_bound + psize)
-    let nextBuff = p.buff |> map (\(j, v) -> if (j>=lower_bound && j<upper_bound) then (j, xs[j]) else (j, v))
+    let cur_xs = xs[lower_bound:upper_bound]
+    let nextBuff = p.buff |> map (\(j, v) -> if (j>=lower_bound && j<upper_bound) then (j, cur_xs[j-lower_bound]) else (j, v))
     in {iter = p.iter+1, buff = nextBuff}
   in loop_over.buff |> map (\(i, v) -> v)
 -- | Multi-pass scatter operation (better cache-locality).
@@ -64,8 +65,9 @@ def partitioned_scatter [nd] [n] 'a
   while p.iter < m do
     let lower_bound = p.iter * psize
     let upper_bound = idx_t.min (nd) (lower_bound + psize)
-    let cur_is = is |> map (\i -> if (i >= lower_bound && i < upper_bound) then i else -1)
-    in {iter=p.iter+1, buff = scatter (p.buff) cur_is vs}
+    let cur_dest = copy p.buff[lower_bound:upper_bound] -- TODO copy needed?
+    let cur_is = is |> map (\i -> if (i >= lower_bound && i < upper_bound) then (i-lower_bound) else -1)
+    in {iter=p.iter+1, buff = p.buff with [lower_bound:upper_bound] = scatter cur_dest cur_is vs}
   in loop_over.buff
 
 
