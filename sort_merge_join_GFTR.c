@@ -8,6 +8,9 @@
 #include "myutil.h"
 #include "sortstages.h"
 
+#include "ftSMJ.h"
+#include "smjutil.h"
+
 /*
 TODO
 start with assumption of primary keys (even if test data doesn't match)
@@ -25,6 +28,10 @@ then make buffer for tuple file
 
 #define BLOCK_SIZE (int16_t)256
 #define MERGE_PARTITION_SIZE CHUNK_SIZE
+
+#define R_join_buffer 3*CHUNK_SIZE
+#define S_join_buffer 3*R_join_buffer
+#define JOIN_TBL_NAME "R_S_joinTbl"
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "2GB"
@@ -124,10 +131,8 @@ int main() {
 
   void *Rbuff = colType_malloc(DUCKDB_TYPE_BIGINT, R_TABLE_SIZE);
   void *Sbuff = colType_malloc(DUCKDB_TYPE_BIGINT, S_TABLE_SIZE);
-  void *Merger = colType_malloc(DUCKDB_TYPE_BIGINT, R_TABLE_SIZE + S_TABLE_SIZE);
-
-  // TODO why does it segfault ?!?!?!?!?!?!?!?
-
+  duckb_type key_type = DUCKDB_TYPE_BIGINT; // TODO obtain from results
+  
   mylog(logfile, "Buffering sorted R...");
   duckdb_result res_R;
   if( duckdb_query(con, "SELECT #1 FROM R_tbl_sorted;", &res_R) == DuckDBError) {
@@ -186,14 +191,17 @@ int main() {
   }
   duckdb_destroy_result(&res_S);
 
+// Merging code
+/*
+  void *Merger = colType_malloc(DUCKDB_TYPE_BIGINT, R_TABLE_SIZE + S_TABLE_SIZE);
   mylog(logfile, "Beginning to merge keys of R & S...");
   mergeSortedKeys(ctx, &relInfo_ft, &idx_ft, Merger, DUCKDB_TYPE_BIGINT, 20, 100, Rbuff, Sbuff, R_TABLE_SIZE, S_TABLE_SIZE, true);
   mylog(logfile, "Finished merging sorted keys of tables R & S.");
-/*
+
   logarray_long(logfile, "Merged key list:", Rbuff, R_TABLE_SIZE);
   logarray_long(logfile, "Merged key list:", Sbuff, S_TABLE_SIZE);
   logarray_long(logfile, "Merged key list:", (long*)Merger, R_TABLE_SIZE + S_TABLE_SIZE);
-*/
+
   idx_t i_r = 0, i_s = 0;
   int is_right = true;
   for(idx_t j=0; j<(R_TABLE_SIZE+S_TABLE_SIZE); j++) {
@@ -208,11 +216,81 @@ int main() {
   }
   logdbg(logfile, is_right, "Merging was done correctly.", "!!!!!!! Incorrect merging!");
 
+  free(Merger);
+*/
+
+// ############################################################################################################
+// ############################################################################################################
+// ############################################################################################################
+// JOIN PHASE
+// ############################################################################################################
+// ############################################################################################################
+// ############################################################################################################
+
+  // ##### 0 --- Create Join Table & Appender
+  // TODO for now only keys, make a short func to copy their payloads as well (also obtain from results)
+
+  // Create the Table
+  char joinTbl_init_query[2000];
+  sprintf(
+    joinTbl_init_query,
+    "CREATE OR REPLACE TABLE %s (kR %s, kS %s);",
+    JOIN_TBL_NAME, "BIGINT", "BIGINT"
+  );
+  duckdb_query(con, joinTbl_init_query, NULL);
+
+  // Create the Appender
+  duckdb_appender join_appender;
+  if( duckdb_appender_create(con, NULL, JOIN_TBL_NAME, &join_appender) == DuckDBError ) {
+    perror("Failed to create appender.\n");
+    return -1;
+  }
+
+  mylog(logfile, "Created result table and its appender.");
+
+  // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
+  //while(true) {
+    // ##### 1 --- Create buffers
+    // - R chunks
+    // - S chunks
+    // - values
+    // - R indices
+    // - S indices
+    // ##### 2 --- Iterate over R
+    // for each chunk of R
+    // fill chunks of S
+    // (will involve finding minimum and maximum relevant S chunks, shifting the buffer with memmove, ...)
+    // (start with a simple version (with deprecated get_chunk) and improve from there)
+    // if Sbuffered < Rbuffered, fragment R buffer to Sbuffered-sized pieces (no smaller than a certain threshold)
+    // perform the join
+    // unwrap join tuples from the futhark context
+    // append to join table
+    // cleanup (...)
+    // (...) then I'll also have to do the payloads (...)
+  //}
+  idx_t numPairs;
+  InnerJoin_joinKeyColumns(
+    ctx,
+    &numPairs,
+    NULL, // TODO vs
+    NULL, // TODO R indices
+    NULL, // TODO S indices
+    key_type,
+    0, // R_idx
+    0, // S_idx
+    R_TABLE_SIZE, // card1
+    S_TABLE_SIZE, // card2
+    5, // num_windows
+    5, // partitions per window
+    1024, // extParallelism,
+    256 // block size for multi-pass scatter
+  );
+  // TODO do...
+
 
   // Clean-up
   free(Rbuff);
   free(Sbuff);
-  free(Merger);
 
   futhark_free_i8_1d(ctx, relInfo_ft);
   futhark_free_i64_1d(ctx, idx_ft);

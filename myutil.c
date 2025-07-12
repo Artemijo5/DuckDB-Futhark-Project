@@ -512,7 +512,7 @@ idx_t fetch_intermediate(
 }
 
 
-// -------------------------------------------------------------------------------------- SORT-MERGE JOIN
+// -------------------------------------------------------------------------------------- MERGING FUNCTIONS
 
 void mergeSortedKeys_short(
   struct futhark_context *ctx,
