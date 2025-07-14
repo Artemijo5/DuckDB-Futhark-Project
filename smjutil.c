@@ -13,24 +13,24 @@ int compare_max_to_min(duckdb_type type, void* arr1, void* arr2, idx_t card1, id
 	int ret = 0;
 	switch(type) {
 		case DUCKDB_TYPE_SMALLINT:
-			if ((short*(arr1))[card1-1] < (short*(arr2))[0]) ret = -1;
-			else if ((short*(arr1))[card1-1] > (short*(arr2))[0]) ret = +1;
+			if (((short*)arr1)[card1-1] < ((short*)arr2)[0]) ret = -1;
+			else if (((short*)arr1)[card1-1] > ((short*)arr2)[0]) ret = +1;
 			break;
 		case DUCKDB_TYPE_INTEGER:
-			if ((int*(arr1))[card1-1] < (int*(arr2))[0]) ret = -1;
-			else if ((int*(arr1))[card1-1] > (int*(arr2))[0]) ret = +1;
+			if (((int*)arr1)[card1-1] < ((int*)arr2)[0]) ret = -1;
+			else if (((int*)arr1)[card1-1] > ((int*)arr2)[0]) ret = +1;
 			break;
 		case DUCKDB_TYPE_BIGINT:
-			if ((long*(arr1))[card1-1] < (long*(arr2))[0]) ret = -1;
-			else if ((long*(arr1))[card1-1] > (long*(arr2))[0]) ret = +1;
+			if (((long*)arr1)[card1-1] < ((long*)arr2)[0]) ret = -1;
+			else if (((long*)arr1)[card1-1] > ((long*)arr2)[0]) ret = +1;
 			break;
 		case DUCKDB_TYPE_FLOAT:
-			if ((float*(arr1))[card1-1] < (float*(arr2))[0]) ret = -1;
-			else if ((float*(arr1))[card1-1] > (float*(arr2))[0]) ret = +1;
+			if (((float*)arr1)[card1-1] < ((float*)arr2)[0]) ret = -1;
+			else if (((float*)arr1)[card1-1] > ((float*)arr2)[0]) ret = +1;
 			break;
 		case DUCKDB_TYPE_DOUBLE:
-			if ((double*(arr1))[card1-1] < (double*(arr2))[0]) ret = -1;
-			else if ((double*(arr1))[card1-1] > (double*(arr2))[0]) ret = +1;
+			if (((double*)arr1)[card1-1] < ((double*)arr2)[0]) ret = -1;
+			else if (((double*)arr1)[card1-1] > ((double*)arr2)[0]) ret = +1;
 			break;
 		default:
 			perror("compare_max_to_min: Invalid duckdb type.");
@@ -57,10 +57,10 @@ void InnerJoin_joinKeyColumns_short(
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
-	futhark_i16_1d *keys1_ft = futhark_new_i16_1d(ctx, keys1, card1);
-	futhark_i16_1d *keys2_ft = futhark_new_i16_1d(ctx, keys2, card2);
+	struct futhark_i16_1d *keys1_ft = futhark_new_i16_1d(ctx, keys1, card1);
+	struct futhark_i16_1d *keys2_ft = futhark_new_i16_1d(ctx, keys2, card2);
 	// Prepare output array
-	futhark_opaque_joinPairs_short *joinPairs;
+	struct futhark_opaque_joinPairs_short *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_short(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
@@ -70,7 +70,7 @@ void InnerJoin_joinKeyColumns_short(
 	// Project joinPair
 	futhark_project_opaque_joinPairs_short_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_short_iy(ctx, outIdx2, joinPairs);
-	futhark_i16_1d *outVs_ft;
+	struct futhark_i16_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_short_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i16_1d(ctx, outVs_ft)[0];
@@ -104,10 +104,10 @@ void InnerJoin_joinKeyColumns_int(
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
-	futhark_i32_1d *keys1_ft = futhark_new_i32_1d(ctx, keys1, card1);
-	futhark_i32_1d *keys2_ft = futhark_new_i32_1d(ctx, keys2, card2);
+	struct futhark_i32_1d *keys1_ft = futhark_new_i32_1d(ctx, keys1, card1);
+	struct futhark_i32_1d *keys2_ft = futhark_new_i32_1d(ctx, keys2, card2);
 	// Prepare output array
-	futhark_opaque_joinPairs_int *joinPairs;
+	struct futhark_opaque_joinPairs_int *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_int(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
@@ -117,7 +117,7 @@ void InnerJoin_joinKeyColumns_int(
 	// Project joinPair
 	futhark_project_opaque_joinPairs_int_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_int_iy(ctx, outIdx2, joinPairs);
-	futhark_i32_1d *outVs_ft;
+	struct futhark_i32_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_int_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i32_1d(ctx, outVs_ft)[0];
@@ -151,10 +151,10 @@ void InnerJoin_joinKeyColumns_long(
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
-	futhark_i64_1d *keys1_ft = futhark_new_i64_1d(ctx, keys1, card1);
-	futhark_i64_1d *keys2_ft = futhark_new_i64_1d(ctx, keys2, card2);
+	struct futhark_i64_1d *keys1_ft = futhark_new_i64_1d(ctx, keys1, card1);
+	struct futhark_i64_1d *keys2_ft = futhark_new_i64_1d(ctx, keys2, card2);
 	// Prepare output array
-	futhark_opaque_joinPairs_long *joinPairs;
+	struct futhark_opaque_joinPairs_long *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_long(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
@@ -164,7 +164,7 @@ void InnerJoin_joinKeyColumns_long(
 	// Project joinPair
 	futhark_project_opaque_joinPairs_long_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_long_iy(ctx, outIdx2, joinPairs);
-	futhark_i64_1d *outVs_ft;
+	struct futhark_i64_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_long_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i64_1d(ctx, outVs_ft)[0];
@@ -198,10 +198,10 @@ void InnerJoin_joinKeyColumns_float(
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
-	futhark_f32_1d *keys1_ft = futhark_new_f32_1d(ctx, keys1, card1);
-	futhark_f32_1d *keys2_ft = futhark_new_f32_1d(ctx, keys2, card2);
+	struct futhark_f32_1d *keys1_ft = futhark_new_f32_1d(ctx, keys1, card1);
+	struct futhark_f32_1d *keys2_ft = futhark_new_f32_1d(ctx, keys2, card2);
 	// Prepare output array
-	futhark_opaque_joinPairs_float *joinPairs;
+	struct futhark_opaque_joinPairs_float *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_float(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
@@ -211,7 +211,7 @@ void InnerJoin_joinKeyColumns_float(
 	// Project joinPair
 	futhark_project_opaque_joinPairs_float_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_float_iy(ctx, outIdx2, joinPairs);
-	futhark_f32_1d *outVs_ft;
+	struct futhark_f32_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_float_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_f32_1d(ctx, outVs_ft)[0];
@@ -245,10 +245,10 @@ void InnerJoin_joinKeyColumns_double(
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
-	futhark_f64_1d *keys1_ft = futhark_new_f64_1d(ctx, keys1, card1);
-	futhark_f64_1d *keys2_ft = futhark_new_f64_1d(ctx, keys2, card2);
+	struct futhark_f64_1d *keys1_ft = futhark_new_f64_1d(ctx, keys1, card1);
+	struct futhark_f64_1d *keys2_ft = futhark_new_f64_1d(ctx, keys2, card2);
 	// Prepare output array
-	futhark_opaque_joinPairs_double *joinPairs;
+	struct futhark_opaque_joinPairs_double *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_double(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
@@ -258,7 +258,7 @@ void InnerJoin_joinKeyColumns_double(
 	// Project joinPair
 	futhark_project_opaque_joinPairs_double_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_double_iy(ctx, outIdx2, joinPairs);
-	futhark_f64_1d *outVs_ft;
+	struct futhark_f64_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_double_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_f64_1d(ctx, outVs_ft)[0];
@@ -294,31 +294,31 @@ void InnerJoin_joinKeyColumns(
 ) {
 	switch (type) {
 		case DUCKDB_TYPE_SMALLINT:
-			InnerJoin_joinKeyColumns_short(ctx, numPairs, (short**)outVs_dptr, outIdx1, outIdx2, type,
+			InnerJoin_joinKeyColumns_short(ctx, numPairs, (short**)outVs_dptr, outIdx1, outIdx2,
 			 incr1, incr2, (short*)keys1, (short*)keys2, card1, card2,numWindows, partitionsPerWindow,
 			 extParallelism, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_INTEGER:
-			InnerJoin_joinKeyColumns_int(ctx, numPairs, (int**)outVs_dptr, outIdx1, outIdx2, type,
+			InnerJoin_joinKeyColumns_int(ctx, numPairs, (int**)outVs_dptr, outIdx1, outIdx2,
 			 incr1, incr2, (int*)keys1, (int*)keys2, card1, card2,numWindows, partitionsPerWindow,
 			 extParallelism, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_BIGINT:
-			InnerJoin_joinKeyColumns_long(ctx, numPairs, (long**)outVs_dptr, outIdx1, outIdx2, type,
+			InnerJoin_joinKeyColumns_long(ctx, numPairs, (long**)outVs_dptr, outIdx1, outIdx2,
 			 incr1, incr2, (long*)keys1, (long*)keys2, card1, card2,numWindows, partitionsPerWindow,
 			 extParallelism, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_FLOAT:
-			InnerJoin_joinKeyColumns_float(ctx, numPairs, (float**)outVs_dptr, outIdx1, outIdx2, type,
+			InnerJoin_joinKeyColumns_float(ctx, numPairs, (float**)outVs_dptr, outIdx1, outIdx2,
 			 incr1, incr2, (float*)keys1, (float*)keys2, card1, card2,numWindows, partitionsPerWindow,
 			 extParallelism, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_DOUBLE:
-			InnerJoin_joinKeyColumns_double(ctx, numPairs, (double**)outVs_dptr, outIdx1, outIdx2, type,
+			InnerJoin_joinKeyColumns_double(ctx, numPairs, (double**)outVs_dptr, outIdx1, outIdx2,
 			 incr1, incr2, (double*)keys1, (double*)keys2, card1, card2,numWindows, partitionsPerWindow,
 			 extParallelism, scatter_psize
 			);
@@ -341,7 +341,7 @@ void gatherPayloads_short(
 	idx_t numPairs
 ) {
 	// Wrap inCol into a futhark array
-	struct futhark_i16_1d *inCol_ft = futhark_new_i16_1d(ctx, inCol);
+	struct futhark_i16_1d *inCol_ft = futhark_new_i16_1d(ctx, inCol, card_columns);
 	// Gather
 	struct futhark_i16_1d *outCol_ft;
 	futhark_entry_gather_payloads_short(ctx, &outCol_ft, incr, block_size, gatherIs, inCol_ft);
@@ -352,8 +352,8 @@ void gatherPayloads_short(
 	// Sync
 	futhark_context_sync(ctx);
 	// Cleanup
-	futhark_free_i16_1d(inCol_ft);
-	futhark_free_i16_1d(outCol_ft);
+	futhark_free_i16_1d(ctx, inCol_ft);
+	futhark_free_i16_1d(ctx, outCol_ft);
 }
 void gatherPayloads_int(
 	struct futhark_context *ctx,
@@ -366,7 +366,7 @@ void gatherPayloads_int(
 	idx_t numPairs
 ) {
 	// Wrap inCol into a futhark array
-	struct futhark_i32_1d *inCol_ft = futhark_new_i32_1d(ctx, inCol);
+	struct futhark_i32_1d *inCol_ft = futhark_new_i32_1d(ctx, inCol, card_columns);
 	// Gather
 	struct futhark_i32_1d *outCol_ft;
 	futhark_entry_gather_payloads_int(ctx, &outCol_ft, incr, block_size, gatherIs, inCol_ft);
@@ -377,8 +377,8 @@ void gatherPayloads_int(
 	// Sync
 	futhark_context_sync(ctx);
 	// Cleanup
-	futhark_free_i32_1d(inCol_ft);
-	futhark_free_i32_1d(outCol_ft);
+	futhark_free_i32_1d(ctx, inCol_ft);
+	futhark_free_i32_1d(ctx, outCol_ft);
 }
 void gatherPayloads_long(
 	struct futhark_context *ctx,
@@ -391,7 +391,7 @@ void gatherPayloads_long(
 	idx_t numPairs
 ) {
 	// Wrap inCol into a futhark array
-	struct futhark_i64_1d *inCol_ft = futhark_new_i64_1d(ctx, inCol);
+	struct futhark_i64_1d *inCol_ft = futhark_new_i64_1d(ctx, inCol, card_columns);
 	// Gather
 	struct futhark_i64_1d *outCol_ft;
 	futhark_entry_gather_payloads_long(ctx, &outCol_ft, incr, block_size, gatherIs, inCol_ft);
@@ -402,8 +402,8 @@ void gatherPayloads_long(
 	// Sync
 	futhark_context_sync(ctx);
 	// Cleanup
-	futhark_free_i64_1d(inCol_ft);
-	futhark_free_i64_1d(outCol_ft);
+	futhark_free_i64_1d(ctx, inCol_ft);
+	futhark_free_i64_1d(ctx, outCol_ft);
 }
 void gatherPayloads_float(
 	struct futhark_context *ctx,
@@ -416,7 +416,7 @@ void gatherPayloads_float(
 	idx_t numPairs
 ) {
 	// Wrap inCol into a futhark array
-	struct futhark_f32_1d *inCol_ft = futhark_new_f32_1d(ctx, inCol);
+	struct futhark_f32_1d *inCol_ft = futhark_new_f32_1d(ctx, inCol, card_columns);
 	// Gather
 	struct futhark_f32_1d *outCol_ft;
 	futhark_entry_gather_payloads_float(ctx, &outCol_ft, incr, block_size, gatherIs, inCol_ft);
@@ -427,8 +427,8 @@ void gatherPayloads_float(
 	// Sync
 	futhark_context_sync(ctx);
 	// Cleanup
-	futhark_free_f32_1d(inCol_ft);
-	futhark_free_f32_1d(outCol_ft);
+	futhark_free_f32_1d(ctx, inCol_ft);
+	futhark_free_f32_1d(ctx, outCol_ft);
 }
 void gatherPayloads_double(
 	struct futhark_context *ctx,
@@ -441,7 +441,7 @@ void gatherPayloads_double(
 	idx_t numPairs
 ) {
 	// Wrap inCol into a futhark array
-	struct futhark_f64_1d *inCol_ft = futhark_new_f64_1d(ctx, inCol);
+	struct futhark_f64_1d *inCol_ft = futhark_new_f64_1d(ctx, inCol, card_columns);
 	// Gather
 	struct futhark_f64_1d *outCol_ft;
 	futhark_entry_gather_payloads_double(ctx, &outCol_ft, incr, block_size, gatherIs, inCol_ft);
@@ -452,8 +452,8 @@ void gatherPayloads_double(
 	// Sync
 	futhark_context_sync(ctx);
 	// Cleanup
-	futhark_free_f64_1d(inCol_ft);
-	futhark_free_f64_1d(outCol_ft);
+	futhark_free_f64_1d(ctx, inCol_ft);
+	futhark_free_f64_1d(ctx, outCol_ft);
 }
 
 void gatherPayloads(

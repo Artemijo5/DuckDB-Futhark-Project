@@ -15,8 +15,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 9*CHUNK_SIZE + 12
-#define S_TABLE_SIZE 32*CHUNK_SIZE
+#define R_TABLE_SIZE 8*CHUNK_SIZE + 12
+#define S_TABLE_SIZE 18*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)256
 #define EXT_PARALLELISM 1024
@@ -137,13 +137,13 @@ int main() {
   mylog(logfile, "Obtained sorted R result.");
   // result info
   idx_t R_col_count = duckdb_column_count(&res_Rk);
-  duckdb_type R_type_ids[col_count];
+  duckdb_type R_type_ids[R_col_count];
   for(idx_t col=0; col<R_col_count; col++) {
     R_type_ids[col] = duckdb_column_type(&res_Rk, col);
   }
   mylog(logfile, "Obtained R's column & type info.");
   // Key type
-  duckb_type key_type = R_type_ids[0];
+  duckdb_type key_type = R_type_ids[0];
   // ALSO OBTAIN S INFO
   duckdb_result S_dummyRes;
   if( duckdb_query(con, "SELECT * FROM S_tbl_sorted LIMIT 1;", &S_dummyRes) == DuckDBError) {
@@ -151,7 +151,7 @@ int main() {
     return -1;
   }
   idx_t S_col_count = duckdb_column_count(&S_dummyRes);
-  duckdb_type S_type_ids[col_count];
+  duckdb_type S_type_ids[S_col_count];
   for(idx_t col=0; col<S_col_count; col++) {
     S_type_ids[col] = duckdb_column_type(&S_dummyRes, col);
   }
@@ -169,7 +169,7 @@ int main() {
   // ##### 0 --- Create Join Table & Appender
 
   // 0.0 create strings for types...
-  char R_type_strs[col_count][25];
+  char R_type_strs[R_col_count][25];
   for(idx_t col=0; col<R_col_count; col++) {
     switch(R_type_ids[col]){
       case DUCKDB_TYPE_SMALLINT:
@@ -192,7 +192,7 @@ int main() {
         return -1;
     }
   }
-  char S_type_strs[col_count][25];
+  char S_type_strs[S_col_count][25];
   for(idx_t col=0; col<S_col_count; col++) {
     switch(S_type_ids[col]){
       case DUCKDB_TYPE_SMALLINT:
@@ -217,7 +217,7 @@ int main() {
   }
 
   // Create the Table
-  char joinTbl_init_query[150 + strlen(JOIN_TBL_NAME) + 30 + (R_rowCount-1)*30 + (S_rowCount-1)*30];
+  char joinTbl_init_query[150 + strlen(JOIN_TBL_NAME) + 30 + (R_col_count-1)*30 + (S_col_count-1)*30];
   int joinTbl_strLen = sprintf(
     joinTbl_init_query,
     "CREATE OR REPLACE TABLE %s (k %s",
@@ -244,7 +244,7 @@ int main() {
     join_type_ids[col] = duckdb_create_logical_type(R_type_ids[col]);
   }
   for(idx_t col=1; col<S_col_count; col++) {
-    join_type_ids[col + R_rowCount - 1] = duckdb_create_logical_type(S_type_ids[col]);
+    join_type_ids[col + R_col_count - 1] = duckdb_create_logical_type(S_type_ids[col]);
   }
 
   // Create the Appender
@@ -267,12 +267,12 @@ int main() {
 
     // READ R DATA INTO BUFFER
     while(R_rowCount < R_JOIN_BUFFER) {
-      duckdb_data_chunk cnk = duckdb_fetch_data_chunk(res_Rk);
+      duckdb_data_chunk cnk = duckdb_fetch_chunk(res_Rk);
       if(!cnk) {
         mylog(logfile, "Exhausted sorted R result.");
         break;
       }
-      curRows = duckdb_data_chunk_get_size(cnk);
+      idx_t curRows = duckdb_data_chunk_get_size(cnk);
       // Read all column data
       for(idx_t col=0; col<R_col_count; col++) {
         duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
@@ -310,12 +310,12 @@ int main() {
       }
 
       while(S_rowCount < S_JOIN_BUFFER) {
-        duckdb_data_chunk cnk = duckdb_fetch_data_chunk(res_Sk);
+        duckdb_data_chunk cnk = duckdb_fetch_chunk(res_Sk);
         if(!cnk) {
           mylog(logfile, "Exhausted S result.");
           break;
         }
-        curRows = duckdb_data_chunk_get_size(cnk);
+        idx_t curRows = duckdb_data_chunk_get_size(cnk);
 
         // FIRST BUFFER KEY COLUMN TO HANDLE IRRELEVANT CHUNKS
         duckdb_vector kvec = duckdb_data_chunk_get_vector(cnk,0);
@@ -370,7 +370,7 @@ int main() {
       idx_t numPartitions = (avgSize + MERGE_PARTITION_SIZE - 1) / MERGE_PARTITION_SIZE;
       idx_t numWindows = 1;
       // arbitrary rescaling...
-      if numPartitions >= 10 {
+      if(numPartitions >= 10) {
         int rsDenom = 5;
         idx_t rescale = (numPartitions + rsDenom - 1) / rsDenom;
         numWindows *= rescale;
@@ -400,14 +400,14 @@ int main() {
       void* Rpl[R_col_count-1];
       for(idx_t col=1; col<R_col_count; col++) {
         Rpl[col-1] = colType_malloc(R_type_ids[col], numPairs);
-        gatherPayloads(ctx, Rpl[col-1], R_type_ids[col], R_curIdx, BLOCK_SIZE, idxR_ft, Rbuff[col] R_rowCount, numPairs)
+        gatherPayloads(ctx, Rpl[col-1], R_type_ids[col], R_curIdx, BLOCK_SIZE, idxR_ft, Rbuff[col], R_rowCount, numPairs);
       }
       mylog(logfile, "Gathered R payloads.");
       // Gather S's payloads
       void* Spl[S_col_count-1];
       for(idx_t col=1; col<S_col_count; col++) {
         Spl[col-1] = colType_malloc(S_type_ids[col], numPairs);
-        gatherPayloads(ctx, Spl[col-1], S_type_ids[col], S_curIdx, BLOCK_SIZE, idxS_ft, Sbuff[col], S_rowCount, numPairs)
+        gatherPayloads(ctx, Spl[col-1], S_type_ids[col], S_curIdx, BLOCK_SIZE, idxS_ft, Sbuff[col], S_rowCount, numPairs);
       }
       mylog(logfile, "Gathered S payloads.");
 
@@ -439,7 +439,7 @@ int main() {
       mylog(logfile, "Appended datachunk to result table.");
 
       // CLEANUP
-      duckdb_destroy_data_chunk(&cnk);
+      duckdb_destroy_data_chunk(&joinCnk);
       for(idx_t col=0; col<S_col_count; col++) {
         free(Sbuff[col]);
       }

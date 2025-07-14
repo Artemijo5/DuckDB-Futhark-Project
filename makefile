@@ -27,5 +27,5 @@ one_pass_sort: one_pass_sort.c libftsort.so myutil.c mylogger.c libduckdb.so
 two_pass_sort: two_pass_sort.c sortstages.c libftsort.so myutil.c mylogger.c libduckdb.so
 	$(CC) two_pass_sort.c -o two_pass_sort.o sortstages.c libftsort.so myutil.c mylogger.c libduckdb.so $(CFLAGS)
 
-sort_merge_join_GFTR: sort_merge_join_GFTR.c sortstages.c libftsort.so myutil.c mylogger.c libduckdb.so
-	$(CC) sort_merge_join_GFTR.c -o sort_merge_join_GFTR.o sortstages.c libftsort.so myutil.c mylogger.c libduckdb.so $(CFLAGS)
+sort_merge_join_GFTR: sort_merge_join_GFTR.c smjutil.c sortstages.c libftsort.so libftSMJ.so myutil.c mylogger.c libduckdb.so
+	$(CC) sort_merge_join_GFTR.c -o sort_merge_join_GFTR.o smjutil.c sortstages.c libftsort.so libftSMJ.so myutil.c mylogger.c libduckdb.so $(CFLAGS)
