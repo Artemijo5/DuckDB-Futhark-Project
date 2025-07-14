@@ -637,7 +637,7 @@ void two_pass_sort_with_payloads(
   duckdb_type type_ids[col_count];
   mylog(logfile, "Initalising info for each column...");
   for(idx_t col=0; col<col_count; col++) {
-  type_ids[col] = duckdb_column_type(&res, col);
+    type_ids[col] = duckdb_column_type(&res, col);
     mylog(logfile, "Obtained column's type.");
   }
 
