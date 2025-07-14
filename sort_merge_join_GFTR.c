@@ -3,7 +3,6 @@
 #include <string.h>
 #include "duckdb.h"
 
-#include "ftsort.h"
 #include "mylogger.h"
 #include "myutil.h"
 #include "sortstages.h"
@@ -282,7 +281,7 @@ int main() {
         memcpy(
           Rbuff[col] + R_rowCount*colType_bytes(R_type_ids[col]),
           dat,
-          curRows
+          curRows*colType_bytes(R_type_ids[col])
         );
       }
       duckdb_destroy_data_chunk(&cnk);
@@ -342,7 +341,7 @@ int main() {
         memcpy(
           Sbuff[0] + S_rowCount*colType_bytes(key_type),
           kdat,
-          curRows
+          curRows*colType_bytes(key_type)
         );
         // NOW BUFFER PAYLOAD COLUMNS
         for(idx_t col=1; col<S_col_count; col++) {
@@ -351,7 +350,7 @@ int main() {
           memcpy(
             Sbuff[col] + S_rowCount*colType_bytes(S_type_ids[col]),
             dat,
-            curRows
+            curRows*colType_bytes(S_type_ids[col])
           );
         }
 

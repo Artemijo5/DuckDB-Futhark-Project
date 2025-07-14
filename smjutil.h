@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "duckdb.h"
-#include "ftsmj.h"
+#include "ftSMJ.h"
 
 #ifndef SMJUTIL_H
 #define SMJUTIL_H
