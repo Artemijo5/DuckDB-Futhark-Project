@@ -57,4 +57,24 @@ void gatherPayloads(
 	idx_t numPairs
 );
 
+void indexRange(
+	struct futhark_context *ctx,
+	idx_t *minIndex,
+	idx_t *maxIndex,
+	idx_t *indices,
+	idx_t count
+);
+
+void gatherPayloads_GFUR(
+	struct futhark_context *ctx,
+	void *outCol,
+	duckdb_type type,
+	idx_t incr,
+	const int16_t block_size,
+	idx_t *gatherIs,
+	void* inCol,
+	idx_t card_columns,
+	idx_t numPairs
+);
+
 #endif

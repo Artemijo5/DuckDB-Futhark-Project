@@ -10,22 +10,26 @@
 #include "ftSMJ.h"
 #include "smjutil.h"
 
-#define LOGFILE "sort_merge_join_GFTR.log.txt"
+#define LOGFILE "sort_merge_join_GFUR.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 512*CHUNK_SIZE
+#define BUFFER_SIZE 512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
 
-#define R_TABLE_SIZE 8*CHUNK_SIZE + 526
-#define S_TABLE_SIZE 26*CHUNK_SIZE + 526
+#define R_TABLE_SIZE 31*CHUNK_SIZE + 526
+#define S_TABLE_SIZE 31*CHUNK_SIZE + 526
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
 #define MERGE_PARTITION_SIZE 64 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
 #define RESCALE_FACTOR 5 // (arbitrarily) used to set the number of windows vs the number of partitions
 
-#define R_JOIN_BUFFER 3*CHUNK_SIZE
-#define S_JOIN_BUFFER 3*R_JOIN_BUFFER
-#define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
+#define PAYLOAD_INDEX_BLOCK CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
+#define PAYLOAD_GATHER_BLOCK 5*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
+
+#define R_JOIN_BUFFER 3*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
+#define S_JOIN_BUFFER 3*R_JOIN_BUFFER // MUST BE CHUNK_SIZE MULTIPLE
+#define JOIN_TMP_TBL_NAME "R_S_joinTbl_GFUR_TMP"
+#define JOIN_TBL_NAME "R_S_joinTbl_GFUR"
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "4GB"
@@ -33,7 +37,7 @@
 
 int main() {
   // Initialise logger
-  FILE* logfile = loginit(LOGFILE, "GFTR SMJ: Starting test program...");
+  FILE* logfile = loginit(LOGFILE, "GFUR SMJ: Starting test program...");
   if(LOGFILE && !logfile) {
     perror("Failed to initialise logger.");
     return -1;
@@ -63,7 +67,7 @@ int main() {
 
   // Create tables R and S 
   duckdb_query(con, "setseed(0.42);", NULL);
-  duckdb_query(con, "CREATE OR REPLACE TABLE R_tbl (k BIGINT, payload1 BIGINT, payload2 DOUBLE);", NULL);
+  duckdb_query(con, "CREATE OR REPLACE TABLE R_tbl (k BIGINT, payload1 BIGINT, payload2 FLOAT);", NULL);
   duckdb_query(con, "CREATE OR REPLACE TABLE S_tbl (k BIGINT, payload3 DOUBLE, payload4 DOUBLE);", NULL);
 
   // Create the test tables.
@@ -90,7 +94,7 @@ int main() {
 
   mylog(logfile, "Now sorting the tables...");
   // R
-  two_pass_sort_with_payloads(
+  two_pass_sort_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
     BLOCK_SIZE,
@@ -105,7 +109,7 @@ int main() {
   );
   mylog(logfile, "Sorted table R.");
   // S
-  two_pass_sort_with_payloads(
+  two_pass_sort_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
     BLOCK_SIZE,
@@ -118,7 +122,7 @@ int main() {
     false,
     false
   );
-  mylog(logfile, "Sorted table S.");  
+  mylog(logfile, "Sorted table S.");
 
 // ############################################################################################################
 // ############################################################################################################
@@ -129,7 +133,7 @@ int main() {
 // ############################################################################################################
 
   // Read R's sorted keys
-  mylog(logfile, "Preparing for join - obtain R's sorted keys...");
+  mylog(logfile, "Preparing for (key) join - obtain R's sorted keys...");
   duckdb_result res_Rk;
   if( duckdb_query(con, "SELECT * FROM R_tbl_sorted;", &res_Rk) == DuckDBError) {
     perror("Failed to read R_tbl_sorted...\n");
@@ -142,7 +146,7 @@ int main() {
   for(idx_t col=0; col<R_col_count; col++) {
     R_type_ids[col] = duckdb_column_type(&res_Rk, col);
   }
-  mylog(logfile, "Obtained R's column & type info.");
+  mylog(logfile, "Obtained R's key & index info.");
   // Key type
   duckdb_type key_type = R_type_ids[0];
   // ALSO OBTAIN S INFO
@@ -156,7 +160,7 @@ int main() {
   for(idx_t col=0; col<S_col_count; col++) {
     S_type_ids[col] = duckdb_column_type(&S_dummyRes, col);
   }
-  mylog(logfile, "Obtained S's column & type info.");
+  mylog(logfile, "Obtained S's key & index info.");
   if(S_type_ids[0] != key_type) {
     perror("Key type mismatch!!!!!");
     return -1;
@@ -218,11 +222,11 @@ int main() {
   }
 
   // Create the Table
-  char joinTbl_init_query[150 + strlen(JOIN_TBL_NAME) + 30 + (R_col_count-1)*30 + (S_col_count-1)*30];
+  char joinTbl_init_query[150 + strlen(JOIN_TMP_TBL_NAME) + 30 + (R_col_count-1)*30 + (S_col_count-1)*30];
   int joinTbl_strLen = sprintf(
     joinTbl_init_query,
-    "CREATE OR REPLACE TABLE %s (k %s",
-    JOIN_TBL_NAME, R_type_strs[0]
+    "CREATE OR REPLACE TEMP TABLE %s (k %s",
+    JOIN_TMP_TBL_NAME, R_type_strs[0]
   );
   for(idx_t col=1; col<R_col_count; col++) {
     joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", R%ld %s", col, R_type_strs[col]);
@@ -236,7 +240,7 @@ int main() {
     perror("Failed to create Join Result Table.");
     return -1;
   }
-  mylog(logfile, "Created result table where join pairs will be stored.");
+  mylog(logfile, "Created temp result table where join ID tuples will be stored.");
 
   // Create composite logical_type id info
   duckdb_logical_type join_type_ids[R_col_count + S_col_count - 1];
@@ -249,13 +253,13 @@ int main() {
   }
 
   // Create the Appender
-  duckdb_appender join_appender;
-  if( duckdb_appender_create(con, NULL, JOIN_TBL_NAME, &join_appender) == DuckDBError ) {
+  duckdb_appender tmp_join_appender;
+  if( duckdb_appender_create(con, NULL, JOIN_TMP_TBL_NAME, &tmp_join_appender) == DuckDBError ) {
     perror("Failed to create appender.\n");
     return -1;
   }
 
-  mylog(logfile, "Created result table and its appender.");
+  mylog(logfile, "Created temp result table and its appender.");
 
   // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
@@ -443,18 +447,18 @@ int main() {
         );
         mylog(logfile, "Join has been performed (S first).");
       }
-      // Gather R's payloads
-      void* Rpl[R_col_count-1];
+      // Gather R's payload indices
+      void* Rind[R_col_count-1];
       for(idx_t col=1; col<R_col_count; col++) {
-        Rpl[col-1] = colType_malloc(R_type_ids[col], numPairs);
-        gatherPayloads(ctx, Rpl[col-1], R_type_ids[col], R_curIdx, BLOCK_SIZE, idxR_ft, Rbuff[col], R_rowCount, numPairs);
+        Rind[col-1] = colType_malloc(R_type_ids[col], numPairs);
+        gatherPayloads(ctx, Rind[col-1], R_type_ids[col], R_curIdx, BLOCK_SIZE, idxR_ft, Rbuff[col], R_rowCount, numPairs);
       }
       mylog(logfile, "Gathered R payloads.");
-      // Gather S's payloads
-      void* Spl[S_col_count-1];
+      // Gather S's payload indices
+      void* Sind[S_col_count-1];
       for(idx_t col=1; col<S_col_count; col++) {
-        Spl[col-1] = colType_malloc(S_type_ids[col], numPairs);
-        gatherPayloads(ctx, Spl[col-1], S_type_ids[col], S_curIdx, BLOCK_SIZE, idxS_ft, Sbuff[col], S_rowCount, numPairs);
+        Sind[col-1] = colType_malloc(S_type_ids[col], numPairs);
+        gatherPayloads(ctx, Sind[col-1], S_type_ids[col], S_curIdx, BLOCK_SIZE, idxS_ft, Sbuff[col], S_rowCount, numPairs);
       }
       mylog(logfile, "Gathered S payloads.");
 
@@ -469,17 +473,17 @@ int main() {
       for(idx_t col=1; col<R_col_count; col++) {
         duckdb_vector join_vec = duckdb_data_chunk_get_vector(joinCnk, col);
         void* join_dat = duckdb_vector_get_data(join_vec);
-        memcpy(join_dat, Rpl[col-1], numPairs*colType_bytes(R_type_ids[col]));
+        memcpy(join_dat, Rind[col-1], numPairs*colType_bytes(R_type_ids[col]));
       }
       // Then for S
       for(idx_t col=1; col<S_col_count; col++) {
         duckdb_vector join_vec = duckdb_data_chunk_get_vector(joinCnk, col + R_col_count - 1);
         void* join_dat = duckdb_vector_get_data(join_vec);
-        memcpy(join_dat, Spl[col-1], numPairs*colType_bytes(R_type_ids[col]));
+        memcpy(join_dat, Sind[col-1], numPairs*colType_bytes(R_type_ids[col]));
       }
       mylog(logfile, "Prepared datachunk to load.");
       // Then APPEND
-      if(duckdb_append_data_chunk(join_appender, joinCnk) == DuckDBError) {
+      if(duckdb_append_data_chunk(tmp_join_appender, joinCnk) == DuckDBError) {
         perror("Failed to append data chunk.\n");
         return -1;
       }
@@ -491,10 +495,10 @@ int main() {
         free(Sbuff[col]);
       }
       for(idx_t col=1; col<R_col_count; col++) {
-        free(Rpl[col-1]);
+        free(Rind[col-1]);
       }
       for(idx_t col=1; col<S_col_count; col++) {
-        free(Spl[col-1]);
+        free(Sind[col-1]);
       }
       free(joinedKeys);
       futhark_free_i64_1d(ctx, idxR_ft);
@@ -503,7 +507,7 @@ int main() {
       S_curIdx += S_rowCount;
     }
 
-    duckdb_appender_flush(join_appender);
+    duckdb_appender_flush(tmp_join_appender);
 
     for(idx_t col=0; col<R_col_count; col++) {
       free(Rbuff[col]);
@@ -513,8 +517,279 @@ int main() {
     R_curIdx += R_rowCount;
   }
   duckdb_destroy_result(&res_Rk);
-  duckdb_appender_flush(join_appender);
-  duckdb_appender_destroy(&join_appender);
+  duckdb_appender_flush(tmp_join_appender);
+  duckdb_appender_destroy(&tmp_join_appender);
+
+// ############################################################################################################
+// ############################################################################################################
+// ############################################################################################################
+// MATERIALISATION PHASE
+// ############################################################################################################
+// ############################################################################################################
+// ############################################################################################################
+
+  // 0. Get payload info from R_tbl, S_tbl
+  duckdb_result R_plInfo, S_plInfo; // use these results to obtain info about original payloads
+  if (
+    duckdb_query(con, "SELECT * EXCLUDE(k) FROM R_tbl LIMIT 1;", &R_plInfo) == DuckDBError
+    ||
+    duckdb_query(con, "SELECT * EXCLUDE(k) FROM S_tbl LIMIT 1;", &S_plInfo) == DuckDBError
+  ) {
+    perror("Failed to obtain original payload info.");
+    return -1;
+  }
+  idx_t R_payload_count = duckdb_column_count(&R_plInfo);
+  idx_t S_payload_count = duckdb_column_count(&S_plInfo);
+  idx_t total_payload_count = R_payload_count + S_payload_count;
+
+  duckdb_type payload_types[total_payload_count];
+  for(idx_t col=0; col<R_payload_count; col++) {
+    payload_types[col] = duckdb_column_type(&R_plInfo, col);
+  }
+  for(idx_t col=R_col_count; col<total_payload_count; col++) {
+    payload_types[col] = duckdb_column_type(&S_plInfo, col-R_payload_count);
+  }
+  // String & logical type equivalents
+  char payload_type_strs[total_payload_count][25];
+  duckdb_logical_type payload_ltypes[1+total_payload_count];
+  payload_ltypes[0] = duckdb_create_logical_type(key_type);
+  for(idx_t col=0; col<total_payload_count; col++) {
+    payload_ltypes[1+col] = duckdb_create_logical_type(payload_types[col]);
+    switch(payload_types[col]){
+      case DUCKDB_TYPE_SMALLINT:
+        sprintf( payload_type_strs[col], "SMALLINT" );
+        break;
+      case DUCKDB_TYPE_INTEGER:
+        sprintf( payload_type_strs[col], "INTEGER" );
+        break;
+      case DUCKDB_TYPE_BIGINT:
+        sprintf( payload_type_strs[col], "BIGINT" );
+        break;
+      case DUCKDB_TYPE_FLOAT:
+        sprintf( payload_type_strs[col], "FLOAT" );
+        break;
+      case DUCKDB_TYPE_DOUBLE:
+        sprintf( payload_type_strs[col], "DOUBLE" );
+        break;
+      default:
+        perror("Invalid type.");
+        return -1;
+    }
+  }
+
+  // 1. Create FINAL (not tmp) result table & appender
+  char finTbl_init_query[150 + strlen(JOIN_TBL_NAME) + 30 + (total_payload_count)*30];
+  int finTbl_strLen = sprintf(
+    finTbl_init_query,
+    "CREATE OR REPLACE TABLE %s (k %s",
+    JOIN_TBL_NAME, R_type_strs[0]
+  );
+  for(idx_t col=0; col<R_payload_count; col++) {
+    finTbl_strLen += sprintf(finTbl_init_query + finTbl_strLen, ", R%ld %s", (col+1), payload_type_strs[col]);
+  }
+  for(idx_t col=R_payload_count; col<total_payload_count; col++) {
+    finTbl_strLen += sprintf(finTbl_init_query + finTbl_strLen, ", S%ld %s", (col+1-R_payload_count), payload_type_strs[col]);
+  }
+  finTbl_strLen += sprintf(finTbl_init_query + finTbl_strLen, ");");
+  // EXECUTE THE QUERY TO CREATE THE TABLE
+  if (duckdb_query(con, finTbl_init_query, NULL) == DuckDBError) {
+    perror("Failed to create Final Join Result Table.");
+    return -1;
+  }
+  mylog(logfile, "Created final result table where join tuples will be stored.");
+
+  // Create the Appender
+  duckdb_appender final_join_appender;
+  if( duckdb_appender_create(con, NULL, JOIN_TBL_NAME, &final_join_appender) == DuckDBError ) {
+    perror("Failed to create appender.\n");
+    return -1;
+  }
+
+  mylog(logfile, "Created FINAL result table and its appender.");
+
+  // 2. Nested Loop (outer over Join Results, 2 inner loops over the original relations)
+  // In ideal scenario, join results can fit entirely in memory, but figured this might be useful
+  duckdb_result resIDs;
+  char scan_resIDs[50 + strlen(JOIN_TMP_TBL_NAME)];
+  sprintf(scan_resIDs, "SELECT * FROM %s;", JOIN_TMP_TBL_NAME);
+  if(duckdb_query(con, scan_resIDs, &resIDs) == DuckDBError) {
+    perror("Failed to obtain join ID's.");
+    return -1;
+  }
+  void *buffer_keys = colType_malloc(key_type, PAYLOAD_INDEX_BLOCK);
+  idx_t *buffer_R_is = colType_malloc(DUCKDB_TYPE_BIGINT, PAYLOAD_INDEX_BLOCK);
+  idx_t *buffer_S_is = colType_malloc(DUCKDB_TYPE_BIGINT, PAYLOAD_INDEX_BLOCK);
+  int finalFlag = true;
+  while(finalFlag) {
+    idx_t id_rows = 0;
+
+    while(id_rows < PAYLOAD_INDEX_BLOCK) {
+      duckdb_data_chunk cnk = duckdb_fetch_chunk(resIDs);
+      if(!cnk) {
+        mylog(logfile, "Join ID's have been exhausted.");
+        finalFlag = false;
+        break;
+      }
+      idx_t curRows = duckdb_data_chunk_get_size(cnk);
+
+      duckdb_vector kvec = duckdb_data_chunk_get_vector(cnk, 0);
+      duckdb_vector Rvec = duckdb_data_chunk_get_vector(cnk, 1);
+      duckdb_vector Svec = duckdb_data_chunk_get_vector(cnk, 2);
+
+      void* kdat = duckdb_vector_get_data(kvec);
+      void* Rdat = duckdb_vector_get_data(Rvec);
+      void* Sdat = duckdb_vector_get_data(Svec);
+
+      memcpy(buffer_keys + id_rows*colType_bytes(key_type), kdat, curRows*colType_bytes(key_type));
+      memcpy(buffer_R_is + id_rows*sizeof(idx_t), Rdat, curRows*sizeof(idx_t));
+      memcpy(buffer_S_is + id_rows*sizeof(idx_t), Sdat, curRows*sizeof(idx_t));
+
+      id_rows += curRows;
+      duckdb_destroy_data_chunk(&cnk);
+    }
+    if(id_rows == 0) { // nothing left
+      break;
+    }
+    // Get index ranges
+    idx_t min_R_idx, max_R_idx, min_S_idx, max_S_idx;
+    indexRange(ctx, &min_R_idx, &max_R_idx, buffer_R_is, id_rows);
+    indexRange(ctx, &min_S_idx, &max_S_idx, buffer_S_is, id_rows);
+
+    printf("Ranges -----\n R: %ld - %ld \n S: %ld - %ld\n", min_R_idx, max_R_idx, min_S_idx, max_S_idx);
+
+    // Prepare payload buffers
+    void *PAYLOAD_BUFFERS[total_payload_count];
+    void *MATERIALISED[total_payload_count];
+    for(idx_t col=0; col<total_payload_count; col++) {
+      PAYLOAD_BUFFERS[col] = colType_malloc(payload_types[col], PAYLOAD_GATHER_BLOCK);
+      MATERIALISED[col] = colType_malloc(payload_types[col], id_rows);
+    }
+    // Prepare results.
+    duckdb_result Rpl_res, Spl_res;
+    char Rpl_query[250];
+    sprintf(Rpl_query, "SELECT * EXCLUDE(k) FROM R_tbl LIMIT %ld OFFSET %ld;", (max_R_idx-min_R_idx+1), min_R_idx);
+    if(duckdb_query(con, Rpl_query, &Rpl_res) == DuckDBError) {
+      perror("Failed to obtain original R payloads.");
+      return -1;
+    }
+    char Spl_query[250];
+    sprintf(Spl_query, "SELECT * EXCLUDE(k) FROM S_tbl LIMIT %ld OFFSET %ld;", (max_S_idx-min_S_idx+1), min_S_idx);
+    if(duckdb_query(con, Spl_query, &Spl_res) == DuckDBError) {
+      perror("Failed to obtain original S payloads.");
+      return -1;
+    }
+    mylog(logfile, "Obtained appropriate chunks for R & S.");
+
+    // Gather R payloads.
+    idx_t Rpl_incr = 0;
+    int flag_Rpl = true;
+    while(flag_Rpl) {
+      idx_t scanned_Rpl_rows = 0;
+      while(scanned_Rpl_rows < PAYLOAD_GATHER_BLOCK) {
+        duckdb_data_chunk cnk = duckdb_fetch_chunk(Rpl_res);
+        if(!cnk) {
+          mylog(logfile, "Exhausted R payloads.");
+          flag_Rpl = false;
+          break;
+        }
+        idx_t curRows = duckdb_data_chunk_get_size(cnk);
+
+        for(idx_t col=0; col<R_payload_count; col++) {
+          duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, col);
+          void* dat = duckdb_vector_get_data(vec);
+          memcpy(
+            PAYLOAD_BUFFERS[col] + scanned_Rpl_rows*colType_bytes(payload_types[col]),
+            dat,
+            curRows*colType_bytes(payload_types[col])
+          );
+        }
+
+        scanned_Rpl_rows += curRows;
+        duckdb_destroy_data_chunk(&cnk);
+      }
+      if(scanned_Rpl_rows == 0) break; // Nothing left
+      // Now do the gather
+      for(idx_t col=0; col<R_payload_count; col++) {
+        gatherPayloads_GFUR(ctx, MATERIALISED[col], payload_types[col], Rpl_incr+min_R_idx, BLOCK_SIZE,
+          buffer_R_is, PAYLOAD_BUFFERS[col], scanned_Rpl_rows, id_rows
+        );
+      }
+      Rpl_incr += scanned_Rpl_rows;
+    }
+    duckdb_destroy_result(&Rpl_res);
+    mylog(logfile, "Did a gathering iteration over R.");
+
+    // Gather S payloads
+    idx_t Spl_incr = 0;
+    int flag_Spl = true;
+    while(flag_Spl) {
+      idx_t scanned_Spl_rows = 0;
+      while(scanned_Spl_rows < PAYLOAD_GATHER_BLOCK) {
+        duckdb_data_chunk cnk = duckdb_fetch_chunk(Spl_res);
+        if(!cnk) {
+          mylog(logfile, "Exhausted S payloads.");
+          flag_Spl = false;
+          break;
+        }
+        idx_t curRows = duckdb_data_chunk_get_size(cnk);
+
+        for(idx_t col=0; col<S_payload_count; col++) {
+          duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, col);
+          void* dat = duckdb_vector_get_data(vec);
+          memcpy(
+            PAYLOAD_BUFFERS[col+R_payload_count] + scanned_Spl_rows*colType_bytes(payload_types[col+R_payload_count]),
+            dat,
+            curRows*colType_bytes(payload_types[col+R_payload_count])
+          );
+        }
+
+        scanned_Spl_rows += curRows;
+        duckdb_destroy_data_chunk(&cnk);
+      }
+      if(scanned_Spl_rows == 0) break; // Nothing left
+      // Now do the gather
+      for(idx_t col=R_payload_count; col<total_payload_count; col++) {
+        gatherPayloads_GFUR(ctx, MATERIALISED[col], payload_types[col], Spl_incr+min_S_idx, BLOCK_SIZE,
+          buffer_S_is, PAYLOAD_BUFFERS[col], scanned_Spl_rows, id_rows
+        );
+      }
+      Spl_incr += scanned_Spl_rows;
+    }
+    duckdb_destroy_result(&Spl_res);
+    mylog(logfile, "Did a gathering iteration over S.");
+
+    // Append to join result table
+    duckdb_data_chunk finalCnk = duckdb_create_data_chunk(payload_ltypes, 1 + total_payload_count);
+    duckdb_data_chunk_set_size(finalCnk, id_rows);
+    // First take care of key column
+    duckdb_vector f_kvec = duckdb_data_chunk_get_vector(finalCnk, 0);
+    void* f_kdat = duckdb_vector_get_data(f_kvec);
+    memcpy(f_kdat, buffer_keys, id_rows*colType_bytes(key_type));
+    // Then payloads
+    for(idx_t col=0; col<total_payload_count; col++) {
+      duckdb_vector fvec = duckdb_data_chunk_get_vector(finalCnk, col+1);
+      void* fdat = duckdb_vector_get_data(fvec);
+      memcpy(fdat, MATERIALISED[col], id_rows*colType_bytes(payload_types[col]));
+    }
+    // Append, flush, destroy data chunk
+    if (duckdb_append_data_chunk(final_join_appender, finalCnk) == DuckDBError) {
+      perror("Failed to append data chunk to final table.");
+      return -1;
+    }
+    duckdb_appender_flush(final_join_appender);
+    duckdb_destroy_data_chunk(&finalCnk);
+
+    // Cleanup
+    for(idx_t col=0; col<total_payload_count; col++) {
+      free(MATERIALISED[col]);
+      free(PAYLOAD_BUFFERS[col]);
+    }
+  }
+  duckdb_destroy_result(&resIDs);
+  duckdb_appender_destroy(&final_join_appender);
+  free(buffer_keys);
+  free(buffer_R_is);
+  free(buffer_S_is);
 
   // Clean-up  
   futhark_context_free(ctx);

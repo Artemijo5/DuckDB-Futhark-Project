@@ -116,15 +116,22 @@ int futhark_new_opaque_joinPairs_short(struct futhark_context *ctx, struct futha
 
 // Entry points
 int futhark_entry_gather_payloads_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_f64_1d *in3);
+int futhark_entry_gather_payloads_double_GFUR(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_f64_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_f64_1d *in4);
 int futhark_entry_gather_payloads_float(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_f32_1d *in3);
+int futhark_entry_gather_payloads_float_GFUR(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_f32_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_f32_1d *in4);
 int futhark_entry_gather_payloads_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i32_1d *in3);
+int futhark_entry_gather_payloads_int_GFUR(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i32_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_i32_1d *in4);
 int futhark_entry_gather_payloads_long(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3);
+int futhark_entry_gather_payloads_long_GFUR(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_i64_1d *in4);
 int futhark_entry_gather_payloads_short(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i16_1d *in3);
+int futhark_entry_gather_payloads_short_GFUR(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i16_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_i16_1d *in4);
 int futhark_entry_inner_SMJ_double(struct futhark_context *ctx, struct futhark_opaque_joinPairs_double **out0, const struct futhark_f64_1d *in0, const struct futhark_f64_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7);
 int futhark_entry_inner_SMJ_float(struct futhark_context *ctx, struct futhark_opaque_joinPairs_float **out0, const struct futhark_f32_1d *in0, const struct futhark_f32_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7);
 int futhark_entry_inner_SMJ_int(struct futhark_context *ctx, struct futhark_opaque_joinPairs_int **out0, const struct futhark_i32_1d *in0, const struct futhark_i32_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7);
 int futhark_entry_inner_SMJ_long(struct futhark_context *ctx, struct futhark_opaque_joinPairs_long **out0, const struct futhark_i64_1d *in0, const struct futhark_i64_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7);
 int futhark_entry_inner_SMJ_short(struct futhark_context *ctx, struct futhark_opaque_joinPairs_short **out0, const struct futhark_i16_1d *in0, const struct futhark_i16_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7);
+int futhark_entry_max_idx(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0);
+int futhark_entry_min_idx(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);

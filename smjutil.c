@@ -518,3 +518,198 @@ void gatherPayloads(
 			return;
 	}
 }
+
+void indexRange(
+	struct futhark_context *ctx,
+	idx_t *minIndex,
+	idx_t *maxIndex,
+	idx_t *indices,
+	idx_t count
+) {
+	// Wrap indices in futhark context
+	struct futhark_i64_1d *indices_ft = futhark_new_i64_1d(ctx, indices, count);
+	// Obtain min & max
+	futhark_entry_min_idx(ctx, minIndex, indices_ft);
+	futhark_entry_max_idx(ctx, maxIndex, indices_ft);
+	// Cleanup
+	futhark_free_i64_1d(ctx, indices_ft);
+}
+
+
+void gatherPayloads_short_GFUR(
+	struct futhark_context *ctx,
+	short *outCol,
+	idx_t incr,
+	const int16_t block_size,
+	idx_t *gatherIs,
+	short* inCol,
+	idx_t card_columns,
+	idx_t numPairs
+) {
+	// Wrap inCol & indices into futhark arrays
+	struct futhark_i16_1d *inCol_ft = futhark_new_i16_1d(ctx, inCol, card_columns);
+	struct futhark_i64_1d *gatherIs_ft = futhark_new_i64_1d(ctx, gatherIs, numPairs);
+	// Gather
+	struct futhark_i16_1d *preCol_ft = futhark_new_i16_1d(ctx, outCol, numPairs);
+	struct futhark_i16_1d *outCol_ft;
+	futhark_entry_gather_payloads_short_GFUR(ctx, &outCol_ft, incr, block_size, preCol_ft, gatherIs_ft, inCol_ft);
+	// Sync
+	futhark_context_sync(ctx);
+	// Unwrap
+	futhark_values_i16_1d(ctx, outCol_ft, outCol);
+	// Sync
+	futhark_context_sync(ctx);
+	// Cleanup
+	futhark_free_i16_1d(ctx, inCol_ft);
+	futhark_free_i64_1d(ctx, gatherIs_ft);
+	futhark_free_i16_1d(ctx, preCol_ft);
+	futhark_free_i16_1d(ctx, outCol_ft);
+}
+void gatherPayloads_int_GFUR(
+	struct futhark_context *ctx,
+	int *outCol,
+	idx_t incr,
+	const int16_t block_size,
+	idx_t *gatherIs,
+	int* inCol,
+	idx_t card_columns,
+	idx_t numPairs
+) {
+	// Wrap inCol & indices into futhark arrays
+	struct futhark_i32_1d *inCol_ft = futhark_new_i32_1d(ctx, inCol, card_columns);
+	struct futhark_i64_1d *gatherIs_ft = futhark_new_i64_1d(ctx, gatherIs, numPairs);
+	// Gather
+	struct futhark_i32_1d *preCol_ft = futhark_new_i32_1d(ctx, outCol, numPairs);
+	struct futhark_i32_1d *outCol_ft;
+	futhark_entry_gather_payloads_int_GFUR(ctx, &outCol_ft, incr, block_size, preCol_ft, gatherIs_ft, inCol_ft);
+	// Sync
+	futhark_context_sync(ctx);
+	// Unwrap
+	futhark_values_i32_1d(ctx, outCol_ft, outCol);
+	// Sync
+	futhark_context_sync(ctx);
+	// Cleanup
+	futhark_free_i32_1d(ctx, inCol_ft);
+	futhark_free_i64_1d(ctx, gatherIs_ft);
+	futhark_free_i32_1d(ctx, preCol_ft);
+	futhark_free_i32_1d(ctx, outCol_ft);
+}
+void gatherPayloads_long_GFUR(
+	struct futhark_context *ctx,
+	long *outCol,
+	idx_t incr,
+	const int16_t block_size,
+	idx_t *gatherIs,
+	long* inCol,
+	idx_t card_columns,
+	idx_t numPairs
+) {
+	// Wrap inCol & indices into futhark arrays
+	struct futhark_i64_1d *inCol_ft = futhark_new_i64_1d(ctx, inCol, card_columns);
+	struct futhark_i64_1d *gatherIs_ft = futhark_new_i64_1d(ctx, gatherIs, numPairs);
+	// Gather
+	struct futhark_i64_1d *preCol_ft = futhark_new_i64_1d(ctx, outCol, numPairs);
+	struct futhark_i64_1d *outCol_ft;
+	futhark_entry_gather_payloads_long_GFUR(ctx, &outCol_ft, incr, block_size, preCol_ft, gatherIs_ft, inCol_ft);
+	// Sync
+	futhark_context_sync(ctx);
+	// Unwrap
+	futhark_values_i64_1d(ctx, outCol_ft, outCol);
+	// Sync
+	futhark_context_sync(ctx);
+	// Cleanup
+	futhark_free_i64_1d(ctx, inCol_ft);
+	futhark_free_i64_1d(ctx, gatherIs_ft);
+	futhark_free_i64_1d(ctx, preCol_ft);
+	futhark_free_i64_1d(ctx, outCol_ft);
+}
+void gatherPayloads_float_GFUR(
+	struct futhark_context *ctx,
+	float *outCol,
+	idx_t incr,
+	const int16_t block_size,
+	idx_t *gatherIs,
+	float* inCol,
+	idx_t card_columns,
+	idx_t numPairs
+) {
+	// Wrap inCol & indices into futhark arrays
+	struct futhark_f32_1d *inCol_ft = futhark_new_f32_1d(ctx, inCol, card_columns);
+	struct futhark_i64_1d *gatherIs_ft = futhark_new_i64_1d(ctx, gatherIs, numPairs);
+	// Gather
+	struct futhark_f32_1d *preCol_ft = futhark_new_f32_1d(ctx, outCol, numPairs);
+	struct futhark_f32_1d *outCol_ft;
+	futhark_entry_gather_payloads_float_GFUR(ctx, &outCol_ft, incr, block_size, preCol_ft, gatherIs_ft, inCol_ft);
+	// Sync
+	futhark_context_sync(ctx);
+	// Unwrap
+	futhark_values_f32_1d(ctx, outCol_ft, outCol);
+	// Sync
+	futhark_context_sync(ctx);
+	// Cleanup
+	futhark_free_f32_1d(ctx, inCol_ft);
+	futhark_free_i64_1d(ctx, gatherIs_ft);
+	futhark_free_f32_1d(ctx, preCol_ft);
+	futhark_free_f32_1d(ctx, outCol_ft);
+}
+void gatherPayloads_double_GFUR(
+	struct futhark_context *ctx,
+	double *outCol,
+	idx_t incr,
+	const int16_t block_size,
+	idx_t *gatherIs,
+	double* inCol,
+	idx_t card_columns,
+	idx_t numPairs
+) {
+	// Wrap inCol & indices into futhark arrays
+	struct futhark_f64_1d *inCol_ft = futhark_new_f64_1d(ctx, inCol, card_columns);
+	struct futhark_i64_1d *gatherIs_ft = futhark_new_i64_1d(ctx, gatherIs, numPairs);
+	// Gather
+	struct futhark_f64_1d *preCol_ft = futhark_new_f64_1d(ctx, outCol, numPairs);
+	struct futhark_f64_1d *outCol_ft;
+	futhark_entry_gather_payloads_double_GFUR(ctx, &outCol_ft, incr, block_size, preCol_ft, gatherIs_ft, inCol_ft);
+	// Sync
+	futhark_context_sync(ctx);
+	// Unwrap
+	futhark_values_f64_1d(ctx, outCol_ft, outCol);
+	// Sync
+	futhark_context_sync(ctx);
+	// Cleanup
+	futhark_free_f64_1d(ctx, inCol_ft);
+	futhark_free_i64_1d(ctx, gatherIs_ft);
+	futhark_free_f64_1d(ctx, preCol_ft);
+	futhark_free_f64_1d(ctx, outCol_ft);
+}
+void gatherPayloads_GFUR(
+	struct futhark_context *ctx,
+	void *outCol,
+	duckdb_type type,
+	idx_t incr,
+	const int16_t block_size,
+	idx_t *gatherIs,
+	void* inCol,
+	idx_t card_columns,
+	idx_t numPairs
+) {
+	switch(type) {
+		case DUCKDB_TYPE_SMALLINT:
+			gatherPayloads_short_GFUR(ctx, (short*)outCol, incr, block_size, gatherIs, (short*)inCol, card_columns, numPairs);
+			return;
+		case DUCKDB_TYPE_INTEGER:
+			gatherPayloads_int_GFUR(ctx, (int*)outCol, incr, block_size, gatherIs, (int*)inCol, card_columns, numPairs);
+			return;
+		case DUCKDB_TYPE_BIGINT:
+			gatherPayloads_long_GFUR(ctx, (long*)outCol, incr, block_size, gatherIs, (long*)inCol, card_columns, numPairs);
+			return;
+		case DUCKDB_TYPE_FLOAT:
+			gatherPayloads_float_GFUR(ctx, (float*)outCol, incr, block_size, gatherIs, (float*)inCol, card_columns, numPairs);
+			return;
+		case DUCKDB_TYPE_DOUBLE:
+			gatherPayloads_double_GFUR(ctx, (double*)outCol, incr, block_size, gatherIs, (double*)inCol, card_columns, numPairs);
+			return;
+		default:
+			perror("gatherPayloads: Invalid duckdb type.");
+			return;
+	}
+}

@@ -398,7 +398,7 @@ entry inner_SMJ_double [nR] [nS]
   inner_SMJ
     (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
 
--- Payload gathering
+-- Payload gathering (GFTR)
 
 -- | Function to gather the payload columns of a relation after the join.
 def gather_payloads [ni] [n] 't
@@ -425,3 +425,36 @@ entry gather_payloads_float (incr) (psize) (is) (ys: []f32)
 
 entry gather_payloads_double (incr) (psize) (is) (ys: []f64)
   = gather_payloads incr psize (0) is ys
+
+  -- Payload gathering (GFUR)
+
+  -- | Function to gather the payload columns of a relation after the join, over an array with previously gathered values.
+def gather_payloads_GFUR [ni] [n] 't
+  (incr: idx_t.t)
+  (psize: idx_t.t)
+  (dummy_array: [ni]t)
+  (is: [ni]idx_t.t)
+  (ys: [n]t)
+=
+  let offset_is = is |> map (\j -> j - incr)
+  in partitioned_gather_over_array (psize) (dummy_array) (ys) (offset_is)
+
+entry gather_payloads_short_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i16) (is: [ni]idx_t.t) (ys: [n]i16)
+  = gather_payloads_GFUR incr psize preVals is ys
+
+entry gather_payloads_int_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i32) (is: [ni]idx_t.t) (ys: [n]i32)
+  = gather_payloads_GFUR incr psize preVals is ys
+
+entry gather_payloads_long_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i64) (is: [ni]idx_t.t) (ys: [n]i64)
+  = gather_payloads_GFUR incr psize preVals is ys
+
+entry gather_payloads_float_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f32) (is: [ni]idx_t.t) (ys: [n]f32)
+  = gather_payloads_GFUR incr psize preVals is ys
+
+entry gather_payloads_double_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f64) (is: [ni]idx_t.t) (ys: [n]f64)
+  = gather_payloads_GFUR incr psize preVals is ys
+
+-- | Get the minimum index to start scanning from there.
+entry min_idx = idx_t.minimum
+-- | Get the maximum index to stop scanning there.
+entry max_idx = idx_t.maximum -- TODO consider warning (...)

@@ -50,6 +50,20 @@ def partitioned_gather [ni] [n] 'a (psize : idx_t.t) (dummy_elem: a) (xs : [n]a)
     let nextBuff = p.buff |> map (\(j, v) -> if (j>=lower_bound && j<upper_bound) then (j, cur_xs[j-lower_bound]) else (j, v))
     in {iter = p.iter+1, buff = nextBuff}
   in loop_over.buff |> map (\(i, v) -> v)
+-- | Multi-pass gather operation (better cache-locality) - uses base array rather than dummy value.
+-- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
+-- by Bingsheng He et al.
+def partitioned_gather_over_array [ni] [n] 'a (psize : idx_t.t) (dummy_array: [ni]a) (xs : [n]a) (is : [ni]idx_t.t) =
+  let m = (n+psize-1)/psize
+  let loop_over : {iter: idx_t.t, buff: [](idx_t.t, a)}
+  = loop p = {iter=0, buff = dummy_array |> zip is}
+  while p.iter<m do
+    let lower_bound = p.iter * psize
+    let upper_bound = idx_t.min (n) (lower_bound + psize)
+    let cur_xs = xs[lower_bound:upper_bound]
+    let nextBuff = p.buff |> map (\(j, v) -> if (j>=lower_bound && j<upper_bound) then (j, cur_xs[j-lower_bound]) else (j, v))
+    in {iter = p.iter+1, buff = nextBuff}
+  in loop_over.buff |> map (\(i, v) -> v)
 -- | Multi-pass scatter operation (better cache-locality).
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
 -- by Bingsheng He et al.
