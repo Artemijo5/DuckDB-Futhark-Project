@@ -15,12 +15,13 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 8*CHUNK_SIZE + 12
-#define S_TABLE_SIZE 18*CHUNK_SIZE
+#define R_TABLE_SIZE 8*CHUNK_SIZE + 526
+#define S_TABLE_SIZE 26*CHUNK_SIZE + 526
 
-#define BLOCK_SIZE (int16_t)256
-#define EXT_PARALLELISM 1024
-#define MERGE_PARTITION_SIZE 64
+#define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
+#define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
+#define MERGE_PARTITION_SIZE 64 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
+#define RESCALE_FACTOR 5 // (arbitrarily) used to set the number of windows vs the number of partitions
 
 #define R_JOIN_BUFFER 3*CHUNK_SIZE
 #define S_JOIN_BUFFER 3*R_JOIN_BUFFER
@@ -302,7 +303,9 @@ int main() {
     mylog(logfile, "Obtained S's sorted keys.");
     mylog(logfile, "Now iterating over S for the join...");
     S_curIdx = S_minimum_relevant_idx;
-    while(true) {
+    int flag_continueWithThisR_partition = true; // when Sbuff.max > Rbuff.max, stop reading S chunks for this R partition
+    // (saves an input to determine this afterwards)
+    while(flag_continueWithThisR_partition) {
       idx_t S_rowCount = 0;
       void* Sbuff[S_col_count];
       for(idx_t col=0; col<S_col_count; col++) {
@@ -333,10 +336,17 @@ int main() {
         if(compare_max_to_min(key_type, Rbuff[0], kdat, R_rowCount, curRows) < 0) {
           mylog(logfile, "S chunks no longer relevant, break...");
           duckdb_destroy_data_chunk(&cnk);
+          flag_continueWithThisR_partition = false;
           break;
         }
         // c. Chunk is relevant, proceed with buffering...
         mylog(logfile, "Buffering this (relevant) S chunk...");
+        // d. CHECK IF IT'LL BE RELEVANT FOR NEXT R PARTITION
+        int Smax_vs_Rmax = compare_maxima(key_type, kdat, Rbuff[0], curRows, R_rowCount);
+        if(Smax_vs_Rmax < 0) {
+          mylog(logfile, "(This chunk will be irrelevant in the next iteration over R.)");
+          S_minimum_relevant_idx += curRows;
+        }
         // Copy to buffer
         memcpy(
           Sbuff[0] + S_rowCount*colType_bytes(key_type),
@@ -353,9 +363,15 @@ int main() {
             curRows*colType_bytes(S_type_ids[col])
           );
         }
-
         duckdb_destroy_data_chunk(&cnk);
         S_rowCount += curRows;
+
+        // e. If cnk.max > Rbuff.max, stop buffering S chunks
+        if (Smax_vs_Rmax > 0) {
+          mylog(logfile, "(This is the last relevant chunk for this partition of R)");
+          flag_continueWithThisR_partition = false;
+          break;
+        }
       }
       if(S_rowCount == 0) break; // Nothing left to join.
       mylog(logfile, "Buffered this partition of S.");
@@ -370,32 +386,63 @@ int main() {
       idx_t numPartitions = (avgSize + MERGE_PARTITION_SIZE - 1) / MERGE_PARTITION_SIZE;
       idx_t numWindows = 1;
       // arbitrary rescaling...
-      if(numPartitions >= 10) {
-        int rsDenom = 5;
-        idx_t rescale = (numPartitions + rsDenom - 1) / rsDenom;
+      if(numPartitions >= RESCALE_FACTOR*2) {
+        int rsFactor = RESCALE_FACTOR;
+        idx_t rescale = (numPartitions + rsFactor - 1) / rsFactor;
         numWindows *= rescale;
         numPartitions /= rescale;
       }
-      // TODO if R_rowCount > S_rowCount, subpartition Rbuff
-      InnerJoin_joinKeyColumns(
-        ctx,
-        &numPairs,
-        &joinedKeys, // vs
-        &idxR_ft, // R indices
-        &idxS_ft, // S indices
-        key_type,
-        R_curIdx, // R_idx
-        S_curIdx, // S_idx
-        Rbuff[0], // R keys
-        Sbuff[0], // S keys
-        R_rowCount, // card1
-        S_rowCount, // card2
-        numWindows,
-        numPartitions,
-        EXT_PARALLELISM,
-        BLOCK_SIZE // for multi-pass scatter
-      );
-
+      // #######################################################################################################
+      // #######################################################################################################
+      // #######################################################################################################
+      // PERFORM THE JOIN
+      // Internally, left side is the smaller one
+      // (if implementing a left outer join, I'd have to subpartition the external left side instead...)
+      // #######################################################################################################
+      // #######################################################################################################
+      // #######################################################################################################
+      if (R_rowCount <= S_rowCount) {
+        InnerJoin_joinKeyColumns(
+          ctx,
+          &numPairs,
+          &joinedKeys, // vs
+          &idxR_ft, // R indices
+          &idxS_ft, // S indices
+          key_type,
+          R_curIdx, // R_idx
+          S_curIdx, // S_idx
+          Rbuff[0], // R keys
+          Sbuff[0], // S keys
+          R_rowCount, // card1
+          S_rowCount, // card2
+          numWindows,
+          numPartitions,
+          EXT_PARALLELISM,
+          BLOCK_SIZE // for multi-pass scatter
+        );
+        mylog(logfile, "Join has been performed (R first).");
+      }
+      else {
+        InnerJoin_joinKeyColumns(
+          ctx,
+          &numPairs,
+          &joinedKeys, // vs
+          &idxS_ft, // S indices
+          &idxR_ft, // R indices
+          key_type,
+          S_curIdx, // S_idx
+          R_curIdx, // R_idx
+          Sbuff[0], // S keys
+          Rbuff[0], // R keys
+          S_rowCount, // card2
+          R_rowCount, // card1
+          numWindows,
+          numPartitions,
+          EXT_PARALLELISM,
+          BLOCK_SIZE // for multi-pass scatter
+        );
+        mylog(logfile, "Join has been performed (S first).");
+      }
       // Gather R's payloads
       void* Rpl[R_col_count-1];
       for(idx_t col=1; col<R_col_count; col++) {

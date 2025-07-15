@@ -39,6 +39,36 @@ int compare_max_to_min(duckdb_type type, void* arr1, void* arr2, idx_t card1, id
 	return ret;
 }
 
+int compare_maxima(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t card2) {
+	int ret = 0;
+	switch(type) {
+		case DUCKDB_TYPE_SMALLINT:
+			if (((short*)arr1)[card1-1] < ((short*)arr2)[card2-1]) ret = -1;
+			else if (((short*)arr1)[card1-1] > ((short*)arr2)[card2-1]) ret = +1;
+			break;
+		case DUCKDB_TYPE_INTEGER:
+			if (((int*)arr1)[card1-1] < ((int*)arr2)[card2-1]) ret = -1;
+			else if (((int*)arr1)[card1-1] > ((int*)arr2)[card2-1]) ret = +1;
+			break;
+		case DUCKDB_TYPE_BIGINT:
+			if (((long*)arr1)[card1-1] < ((long*)arr2)[card2-1]) ret = -1;
+			else if (((long*)arr1)[card1-1] > ((long*)arr2)[card2-1]) ret = +1;
+			break;
+		case DUCKDB_TYPE_FLOAT:
+			if (((float*)arr1)[card1-1] < ((float*)arr2)[card2-1]) ret = -1;
+			else if (((float*)arr1)[card1-1] > ((float*)arr2)[card2-1]) ret = +1;
+			break;
+		case DUCKDB_TYPE_DOUBLE:
+			if (((double*)arr1)[card1-1] < ((double*)arr2)[card2-1]) ret = -1;
+			else if (((double*)arr1)[card1-1] > ((double*)arr2)[card2-1]) ret = +1;
+			break;
+		default:
+			perror("compare_maxima: Invalid duckdb type.");
+			return 0;
+	}
+	return ret;
+}
+
 void InnerJoin_joinKeyColumns_short(
 	struct futhark_context *ctx,
 	idx_t *numPairs,
