@@ -18,17 +18,17 @@ local module param_idx_t (it: integral) = {
 -- | Integer type used for indices.
 module idx_t = param_idx_t i64
 
--- | Type used to preserve original index information when sorting.
+-- | Type used to preserve original index information when sorting (GFUR).
 type sortInfo [len] 't = {is: [len](idx_t.t), xs: [len]t}
--- | Sorting information type (short).
+-- | Sorting information type (short)(GFUR).
 type sortInfo_short [n] = sortInfo [n] i16
--- | Sorting information type (integer).
+-- | Sorting information type (integer)(GFUR).
 type sortInfo_int [n] = sortInfo [n] i32
--- | Sorting information type (long).
+-- | Sorting information type (long)(GFUR).
 type sortInfo_long [n] = sortInfo [n] i64
--- | Sorting information type (float).
+-- | Sorting information type (float)(GFUR).
 type sortInfo_float [n] = sortInfo [n] f32
--- | Sorting information type (double).
+-- | Sorting information type (double)(GFUR).
 type sortInfo_double [n] = sortInfo [n] f64
 
 
