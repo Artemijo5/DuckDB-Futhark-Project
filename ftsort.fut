@@ -4,9 +4,10 @@ import "ftbasics"
 
 -- GFTR SORTING
 -- TODO compiler error, testing in ftError.fut
--- this does not also happen for ftError in its current form though...
--- TODO investigate some more, and report on github if can't find the reason (...)
--- (...) but get back to this after working on Hash Join (!!!)
+-- It's caused specifically by the radix sort functions (...)
+-- TODO report on github
+-- consider if I will use radix sort funcs after all for GFTR (...)
+-- For now focus on cleaning SMJ C code
 
 -- | Type used to sort a key column (GFTR), simultaneously transforming the payloads (stored as a byte array).
 --type sortStruct [n] [b] 'a = {k: [n]a, pL: [n*b]u8}
