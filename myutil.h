@@ -154,9 +154,6 @@ void orderPayloadColumn(
 
 /**
  * A function to store a buffer of columns between the stages of processing.
- * TODO
- * Current implementation is to use temporary tables, matching duckdb's own logic.
- * I might change this to saving to parquet files manually.
  * Params:
  * numInter : number of intermediates that have been used so far
  * intermName : the naming scheme used for intermediates (with numInter appended) - make sure it's a valid name for duckdb temp tables

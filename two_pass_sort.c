@@ -11,8 +11,8 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 32*CHUNK_SIZE//32*CHUNK_SIZE//128*CHUNK_SIZE
-#define TABLE_SIZE 1*BUFFER_SIZE//3*BUFFER_SIZE//16*BUFFER_SIZE//BUFFER_SIZE + CHUNK_SIZE + 4//64*BUFFER_SIZE
+#define BUFFER_SIZE 32*CHUNK_SIZE
+#define TABLE_SIZE BUFFER_SIZE
 
 #define BLOCK_SIZE (int16_t)2048
 
@@ -52,7 +52,7 @@ int main() {
 	duckdb_connect(db, &con);
 
   // Create the table tbl on which the testing will be done.
-  duckdb_query(con, "CREATE OR REPLACE TABLE tbl (k BIGINT, payload1 BIGINT, payload2 DOUBLE);", NULL);
+  duckdb_query(con, "CREATE OR REPLACE TABLE tbl (k BIGINT, payload1 SMALLINT, payload2 FLOAT, payload3 DOUBLE);", NULL);
   duckdb_query(con, "setseed(0.42);", NULL);
 
   duckdb_prepared_statement init_stmt;
@@ -60,7 +60,7 @@ int main() {
     duckdb_prepare(
       con,
       //"INSERT INTO tbl (SELECT ($1 - i), 10000*random(), 10000*random() FROM range($1) t(i));",
-      "INSERT INTO tbl (SELECT 10000000*random(), 10000*random(), 10000*random() FROM range($1) t(i));",
+      "INSERT INTO tbl (SELECT 10000000*random(), 10000*random(), 10000*random(), (10000*random() + 10000) FROM range($1) t(i));",
       &init_stmt
     ) 
     == DuckDBError

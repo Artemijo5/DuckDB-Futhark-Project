@@ -49,7 +49,7 @@ void Inner_MergeJoin_GFTR(
   // ALSO OBTAIN S INFO
   duckdb_result S_dummyRes;
   char dummySq[100 + strlen(sorted_S_tbl_name)];
-  sprintf(dummySq, "SELECT * FROM %s LIMIT 1;", sorted_S_tbl_name);
+  sprintf(dummySq, "SELECT * FROM %s LIMIT 0;", sorted_S_tbl_name);
   if( duckdb_query(con, dummySq, &S_dummyRes) == DuckDBError) {
     perror("Failed to obtain info for S table...\n");
     return;
@@ -471,8 +471,8 @@ void Inner_MergeJoin_GFUR(
   duckdb_result R_plInfo, S_plInfo; // use these results to obtain info about original payloads
   char R_pLQ[150 + strlen(R_tbl_name)];
   char S_pLQ[150 + strlen(S_tbl_name)];
-  sprintf(R_pLQ, "SELECT * FROM %s LIMIT 1;", R_tbl_name);
-  sprintf(S_pLQ, "SELECT * EXCLUDE(k) FROM %s LIMIT 1;", S_tbl_name);
+  sprintf(R_pLQ, "SELECT * FROM %s LIMIT 0;", R_tbl_name);
+  sprintf(S_pLQ, "SELECT * EXCLUDE(k) FROM %s LIMIT 0;", S_tbl_name);
   if (
     duckdb_query(con, R_pLQ, &R_plInfo) == DuckDBError
     ||

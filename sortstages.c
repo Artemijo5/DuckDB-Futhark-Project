@@ -66,7 +66,7 @@ idx_t sort_Stage1_with_payloads(
       // payload columns to payloadBuffer
   		for (idx_t col = 1; col < col_count; col++) {
   			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, col);
-        void* dat = duckdb_vector_get_data(kvec);
+        void* dat = duckdb_vector_get_data(vec);
         // iteratively add to payloadBuffer
         idx_t this_bytes = pL_byteSizes[col-1];
         idx_t this_inRowPos = pL_prefixSizes[col-1];
@@ -145,17 +145,12 @@ idx_t sort_Stage1_with_payloads(
     }
     mylog(logfile, "Stored buffer as intermediate.");
     // clean-up
-    printf("Marco!\n");
     free(keyBuffer);
-    printf("Polo!\n");
     for(idx_t col=1; col<col_count; col++) {
       free(payloadCols[col-1]);
     }
-    printf("Venezziano!\n");
     free(payloadCols);
-    printf("Italiano!\n");
     mylog(logfile, "Freed this page's buffers.");
-    mylog(logfile, "Freed futhark objects for this page.");
 
     *incr_idx += cur_rows;
   }
