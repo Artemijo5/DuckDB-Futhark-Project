@@ -1,4 +1,3 @@
-import "lib/github.com/diku-dk/sorts/merge_sort"
 import "lib/github.com/diku-dk/sorts/radix_sort"
 
 -- TODO when using commented code for radixSort, compiler issues

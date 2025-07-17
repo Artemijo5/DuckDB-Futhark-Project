@@ -6,7 +6,7 @@ import "ftbasics"
 -- TODO see ftError.fut
 
 -- | Type used to sort a key column (GFTR), simultaneously transforming the payloads (stored as a byte array).
-type sortStruct [n] [b] 'a = {k: [n]a, pL: [n*b]u8}
+type sortStruct [n] [b] 'a = {k: [n]a, pL: [n][b]u8}
 
 type sortStruct_short [n] [b] = sortStruct [n] [b] i16
 type sortStruct_int [n] [b] = sortStruct [n] [b] i32
@@ -20,134 +20,158 @@ local def radixSortRelation_signed_integral [n] [b] 'a
   (num_bits: i32)
   (get_bit: i32 -> a -> i32)
  : sortStruct [n] [b] a =
-  let reshaped_pL : [n][b]u8 = xs.pL |> unflatten
-  let xys : [n](a, [b]u8) = zip xs.k reshaped_pL
+  let xys : [n](a, [b]u8) = zip xs.k xs.pL
   let sorted_xys = blocked_radix_sort_int_by_key block_size (\xy -> xy.0) num_bits get_bit xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
-  in {k = un_xys.0, pL = un_xys.1 |> flatten}
-
+  in {k = un_xys.0, pL = un_xys.1}
 local def radixSortRelation_signed_float [n] [b] 'a 
   (block_size: i16)
   (xs: sortStruct [n] [b] a)
   (num_bits: i32)
   (get_bit: i32 -> a -> i32)
  : sortStruct [n] [b] a =
-  let reshaped_pL : [n][b]u8 = xs.pL |> unflatten
-  let xys : [n](a, [b]u8) = zip xs.k reshaped_pL
+  let xys : [n](a, [b]u8) = zip xs.k xs.pL
   let sorted_xys = blocked_radix_sort_float_by_key block_size (\xy -> xy.0) num_bits get_bit xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
-  in {k = un_xys.0, pL = un_xys.1 |> flatten}
-
+  in {k = un_xys.0, pL = un_xys.1}
 local def mergeSortRelation [n] [b] 'a
   (xs: sortStruct [n] [b] a)
   (leq: a -> a -> bool)
  : sortStruct [n] [b] a =
-  let reshaped_pL : [n][b]u8 = xs.pL |> unflatten
-  let xys : [n](a, [b]u8) = zip xs.k reshaped_pL
+  let xys : [n](a, [b]u8) = zip xs.k xs.pL
   let sorted_xys = merge_sort_by_key (\xy -> xy.0) (leq) xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
-  in {k = un_xys.0, pL = un_xys.1 |> flatten}
+  in {k = un_xys.0, pL = un_xys.1}
 
-entry radixSortRelation_short [n]
+entry radixSortRelation_short [n] [b]
   (block_size: i16)
-  (payload_bytes: i64)
-  (xs: sortStruct_short [n] [payload_bytes])
- : sortStruct_short [n] [payload_bytes]
+  (xs: sortStruct_short [n] [b])
+ : sortStruct_short [n] [b]
   = radixSortRelation_signed_integral (block_size) (xs) (i16.num_bits) (i16.get_bit)
-entry radixSortRelation_int [n]
+entry radixSortRelation_int [n] [b]
   (block_size: i16)
-  (payload_bytes: i64)
-  (xs: sortStruct_int [n] [payload_bytes])
- : sortStruct_int [n] [payload_bytes]
+  (xs: sortStruct_int [n] [b])
+ : sortStruct_int [n] [b]
   = radixSortRelation_signed_integral (block_size) (xs) (i32.num_bits) (i32.get_bit)
-entry radixSortRelation_long [n]
+entry radixSortRelation_long [n] [b]
   (block_size: i16)
-  (payload_bytes: i64)
-  (xs: sortStruct_long [n] [payload_bytes])
- : sortStruct_long [n] [payload_bytes]
+  (xs: sortStruct_long [n] [b])
+ : sortStruct_long [n] [b]
   = radixSortRelation_signed_integral (block_size) (xs) (i64.num_bits) (i64.get_bit)
-entry radixSortRelation_float [n]
+entry radixSortRelation_float [n] [b]
   (block_size: i16)
-  (payload_bytes: i64)
-  (xs: sortStruct_float [n] [payload_bytes])
- : sortStruct_float [n] [payload_bytes]
+  (xs: sortStruct_float [n] [b])
+ : sortStruct_float [n] [b]
   = radixSortRelation_signed_float (block_size) (xs) (f32.num_bits) (f32.get_bit)
-entry radixSortRelation_double [n]
+entry radixSortRelation_double [n] [b]
   (block_size: i16)
-  (payload_bytes: i64)
-  (xs: sortStruct_double [n] [payload_bytes])
- : sortStruct_double [n] [payload_bytes]
+  (xs: sortStruct_double [n] [b])
+ : sortStruct_double [n] [b]
   = radixSortRelation_signed_float (block_size) (xs) (f64.num_bits) (f64.get_bit)
 
-entry mergeSortRelation_short [n]
-  (payload_bytes: idx_t.t)
-  (xs: sortStruct_short [n] [payload_bytes])
-: sortStruct_short [n] [payload_bytes]
+entry mergeSortRelation_short [n] [b]
+  (xs: sortStruct_short [n] [b])
+: sortStruct_short [n] [b]
   = mergeSortRelation (xs) (<=)
-entry mergeSortRelation_int [n]
-  (payload_bytes: idx_t.t)
-  (xs: sortStruct_int [n] [payload_bytes])
-: sortStruct_int [n] [payload_bytes]
+entry mergeSortRelation_int [n] [b]
+  (xs: sortStruct_int [n] [b])
+: sortStruct_int [n] [b]
   = mergeSortRelation (xs) (<=)
-entry mergeSortRelation_long [n]
-  (payload_bytes: idx_t.t)
-  (xs: sortStruct_long [n] [payload_bytes])
-: sortStruct_long [n] [payload_bytes]
+entry mergeSortRelation_long [n] [b]
+  (xs: sortStruct_long [n] [b])
+: sortStruct_long [n] [b]
   = mergeSortRelation (xs) (<=)
-entry mergeSortRelation_float [n]
-  (payload_bytes: idx_t.t)
-  (xs: sortStruct_float [n] [payload_bytes])
-: sortStruct_float [n] [payload_bytes]
+entry mergeSortRelation_float [n] [b]
+  (xs: sortStruct_float [n] [b])
+: sortStruct_float [n] [b]
   = mergeSortRelation (xs) (<=)
-entry mergeSortRelation_double [n]
-  (payload_bytes: idx_t.t)
-  (xs: sortStruct_double [n] [payload_bytes])
-: sortStruct_double [n] [payload_bytes]
+entry mergeSortRelation_double [n] [b]
+  (xs: sortStruct_double [n] [b])
+: sortStruct_double [n] [b]
   = mergeSortRelation (xs) (<=)
 
 -- GFUR SORTING
 
--- Local modules for GFUR sorting functions
-local module shortSorter = intData i16
-local module intSorter = intData i32
-local module longSorter = intData i64
-local module floatSorter = fltData f32
-local module doubleSorter = fltData f64
+-- | Type used to preserve original index information when sorting (GFUR).
+type sortInfo [len] 't = {is: [len](idx_t.t), xs: [len]t}
+-- | Sorting information type (short)(GFUR).
+type sortInfo_short [n] = sortInfo [n] i16
+-- | Sorting information type (integer)(GFUR).
+type sortInfo_int [n] = sortInfo [n] i32
+-- | Sorting information type (long)(GFUR).
+type sortInfo_long [n] = sortInfo [n] i64
+-- | Sorting information type (float)(GFUR).
+type sortInfo_float [n] = sortInfo [n] f32
+-- | Sorting information type (double)(GFUR).
+type sortInfo_double [n] = sortInfo [n] f64
+
+local def radixSortColumn_signed_integral [n] 'a
+  (incr: idx_t.t)
+  (block_size: i16)
+  (xs: [n]a)
+  (num_bits: i32)
+  (get_bit: i32 -> a -> i32)
+ : sortInfo [n] a =
+  let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
+  let sorted_ixs = blocked_radix_sort_int_by_key block_size (\ixs -> ixs.1) num_bits get_bit ixs
+  let un_ixs = unzip sorted_ixs
+  in {is = un_ixs.0, xs = un_ixs.1}
+local def radixSortColumn_signed_float [n] 'a 
+  (incr: idx_t.t)
+  (block_size: i16)
+  (xs: [n]a)
+  (num_bits: i32)
+  (get_bit: i32 -> a -> i32)
+ : sortInfo [n] a =
+  let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
+  let sorted_ixs = blocked_radix_sort_float_by_key block_size (\ixs -> ixs.1) num_bits get_bit ixs
+  let un_ixs = unzip sorted_ixs
+  in {is = un_ixs.0, xs = un_ixs.1}
+local def mergeSortColumn [n] 'a
+  (incr: idx_t.t)
+  (xs: [n]a)
+  (leq: a -> a -> bool)
+ : sortInfo [n] a =
+  let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
+  let sorted_ixs = merge_sort_by_key (\ixs -> ixs.1) (leq) ixs
+  let un_ixs = unzip sorted_ixs
+  in {is = un_ixs.0, xs = un_ixs.1}
+
 -- Order a payload column given the reordered indices.
 local def orderByIndices [n] 't (block_size: idx_t.t) (dummy_elem: t) (is: [n](idx_t.t)) (ys: [n]t) : [n]t =
   partitioned_gather block_size dummy_elem ys is
 
 -- | Sort a column of short type (GFUR).
 entry radixSortColumn_short [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i16) : sortInfo_short [n] =
-  shortSorter.blocked_sort incr block_size xs
+  radixSortColumn_signed_integral incr block_size xs (i16.num_bits) (i16.get_bit)
 -- | Sort a column of integer type (GFUR).
 entry radixSortColumn_int [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i32) : sortInfo_int [n] =
-  intSorter.blocked_sort incr block_size xs
+  radixSortColumn_signed_integral incr block_size xs (i32.num_bits) (i32.get_bit)
 -- | Sort a column of long type (GFUR).
 entry radixSortColumn_long [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i64) : sortInfo_long [n] =
-  longSorter.blocked_sort incr block_size xs
+  radixSortColumn_signed_integral incr block_size xs (i64.num_bits) (i64.get_bit)
 -- | Sort a column of float type (GFUR).
 entry radixSortColumn_float [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f32) : sortInfo_float [n] =
-  floatSorter.blocked_sort incr block_size xs
+  radixSortColumn_signed_float incr block_size xs (f32.num_bits) (f32.get_bit)
 -- | Sort a column of double type (GFUR).
 entry radixSortColumn_double [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f64) : sortInfo_double [n] =
-  doubleSorter.blocked_sort incr block_size xs
+  radixSortColumn_signed_float incr block_size xs (f64.num_bits) (f64.get_bit)
 
 -- | Sort a column of short type (GFUR).
 entry mergeSortColumn_short [n] (incr: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
-  shortSorter.sort incr xs
+  mergeSortColumn incr xs (<=)
 -- | Sort a column of integer type (GFUR).
 entry mergeSortColumn_int [n] (incr: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
-  intSorter.sort incr xs
+  mergeSortColumn incr xs (<=)
 -- | Sort a column of long type (GFUR).
 entry mergeSortColumn_long [n] (incr: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
-  longSorter.sort incr xs
+  mergeSortColumn incr xs (<=)
 -- | Sort a column of float type (GFUR).
 entry mergeSortColumn_float [n] (incr: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
-  floatSorter.sort incr xs
+  mergeSortColumn incr xs (<=)
 -- | Sort a column of double type (GFUR).
 entry mergeSortColumn_double [n] (incr: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
-  doubleSorter.sort incr xs
+  mergeSortColumn incr xs (<=)
 
 -- | Order a payload column of type short, given the reordered indices.
 entry orderByIndices_short [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i16) : [n]i16 =
