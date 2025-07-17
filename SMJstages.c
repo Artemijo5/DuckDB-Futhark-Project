@@ -384,7 +384,7 @@ void Inner_MergeJoin_GFTR(
       for(idx_t col=1; col<S_col_count; col++) {
         duckdb_vector join_vec = duckdb_data_chunk_get_vector(joinCnk, col + R_col_count - 1);
         void* join_dat = duckdb_vector_get_data(join_vec);
-        memcpy(join_dat, Spl[col-1], numPairs*colType_bytes(R_type_ids[col]));
+        memcpy(join_dat, Spl[col-1], numPairs*colType_bytes(S_type_ids[col]));
       }
       mylog(logfile, "Prepared datachunk to load.");
       // Then APPEND

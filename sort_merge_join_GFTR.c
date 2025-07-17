@@ -75,9 +75,9 @@ int main() {
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
-  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 BIGINT, payload2 FLOAT, payload3 INTEGER);", R_TBL_NAME);
+  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 SMALLINT, payload2 INTEGER, payload3 BIGINT);", R_TBL_NAME);
   duckdb_query(con, createRtbl, NULL);
-  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 BIGINT, payload5 INTEGER, payload6 DOUBLE);", S_TBL_NAME);
+  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 INTEGER, payload5 INTEGER, payload6 DOUBLE);", S_TBL_NAME);
   duckdb_query(con, createStbl, NULL);
 
   // Create the test tables.
