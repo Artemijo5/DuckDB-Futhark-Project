@@ -228,7 +228,8 @@ void sort_Stage2(
 	duckdb_type* type_ids,
 	idx_t numIntermediate,
   int blocked,
-  int quicksaves
+  int quicksaves,
+  int saveAsTempTable
 ) {
   mylog(logfile, "Now entering the second stage of processing...");
 
@@ -312,8 +313,10 @@ void sort_Stage2(
         return;
     }
   }
-  char resultQueryStr[100 + strlen(finalName) + 35*col_count];
-  int resultQueryStr_len = sprintf(resultQueryStr, "CREATE OR REPLACE TABLE %s (", finalName);
+  char resultQueryStr[150 + strlen(finalName) + 35*col_count];
+  int resultQueryStr_len = (saveAsTempTable)?
+    sprintf(resultQueryStr, "CREATE OR REPLACE TEMP TABLE %s (", finalName):
+    sprintf(resultQueryStr, "CREATE OR REPLACE TABLE %s (", finalName);
   for(idx_t i=0; i<col_count; i++) {
     if(i<col_count-1) {
       resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "x%ld %s, ", i, type_strs[i]);
@@ -587,7 +590,8 @@ void sort_Stage2_without_payloads(
 	duckdb_type type_id,
 	idx_t numIntermediate,
   int blocked,
-  int quicksaves
+  int quicksaves,
+  int saveAsTempTable
 ) {
 	duckdb_type type_ids[2] = {type_id, DUCKDB_TYPE_BIGINT};
 	sort_Stage2(
@@ -603,7 +607,8 @@ void sort_Stage2_without_payloads(
 		type_ids,
 		numIntermediate,
     blocked,
-    quicksaves
+    quicksaves,
+    saveAsTempTable
 	);
 }
 
@@ -622,7 +627,8 @@ void two_pass_sort_with_payloads(
   const char* intermName,
   const char* finalName,
   int blocked,
-  int quicksaves
+  int quicksaves,
+  int saveAsTempTable
 ) {
   duckdb_result res;
   char queryStr[strlen(tblName) + 50];
@@ -676,7 +682,8 @@ void two_pass_sort_with_payloads(
       type_ids,
       numIntermediate,
       blocked,
-      quicksaves
+      quicksaves,
+      saveAsTempTable
     );
   }
   else if(numIntermediate<1) {
@@ -685,7 +692,12 @@ void two_pass_sort_with_payloads(
   }
   else { // if only one intermediate
     char finalStr[100 + strlen(intermName) + strlen(finalName)];
-    sprintf(finalStr, "CREATE OR REPLACE TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+    if(saveAsTempTable) {
+      sprintf(finalStr, "CREATE OR REPLACE TEMP TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+    }
+    else {
+      sprintf(finalStr, "CREATE OR REPLACE TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+    }
     duckdb_query(con, finalStr, NULL);
     mylog(logfile, "Stage 2 has been skipped, as the table fit within one buffer.");
   }
@@ -702,7 +714,8 @@ void two_pass_sort_without_payloads(
   const char* intermName,
   const char* finalName,
   int blocked,
-  int quicksaves
+  int quicksaves,
+  int saveAsTempTable
 ) {
   duckdb_result res;
   char queryStr[strlen(tblName) + 50];
@@ -749,7 +762,8 @@ void two_pass_sort_without_payloads(
       type_id,
       numIntermediate,
       blocked,
-      quicksaves
+      quicksaves,
+      saveAsTempTable
     );
   }
   else if(numIntermediate<1) {
@@ -758,7 +772,12 @@ void two_pass_sort_without_payloads(
   }
   else { // if only one intermediate
     char finalStr[100 + strlen(intermName) + strlen(finalName)];
-    sprintf(finalStr, "CREATE OR REPLACE TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+    if(saveAsTempTable) {
+      sprintf(finalStr, "CREATE OR REPLACE TEMP TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+    }
+    else {
+      sprintf(finalStr, "CREATE OR REPLACE TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+    }
     duckdb_query(con, finalStr, NULL);
     mylog(logfile, "Stage 2 has been skipped, as the table fit within one buffer.");
   }

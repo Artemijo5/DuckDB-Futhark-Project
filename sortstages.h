@@ -36,7 +36,8 @@ void two_pass_sort_with_payloads(
   const char* intermName,
   const char* finalName,
   int blocked,
-  int quicksaves
+  int quicksaves,
+  int saveAsTempTable
 );
 
 /**
@@ -67,7 +68,8 @@ void two_pass_sort_without_payloads(
   const char* intermName,
   const char* finalName,
   int blocked,
-  int quicksaves
+  int quicksaves,
+  int saveAsTempTable
 );
 
 #endif
