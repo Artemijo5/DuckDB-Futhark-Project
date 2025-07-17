@@ -11,7 +11,7 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 512*CHUNK_SIZE//32*CHUNK_SIZE//128*CHUNK_SIZE
+#define BUFFER_SIZE 32*CHUNK_SIZE//32*CHUNK_SIZE//128*CHUNK_SIZE
 #define TABLE_SIZE 1*BUFFER_SIZE//3*BUFFER_SIZE//16*BUFFER_SIZE//BUFFER_SIZE + CHUNK_SIZE + 4//64*BUFFER_SIZE
 
 #define BLOCK_SIZE (int16_t)2048
@@ -50,7 +50,7 @@ int main() {
   duckdb_destroy_config(&config);
 
 	duckdb_connect(db, &con);
-/*
+
   // Create the table tbl on which the testing will be done.
   duckdb_query(con, "CREATE OR REPLACE TABLE tbl (k BIGINT, payload1 BIGINT, payload2 DOUBLE);", NULL);
   duckdb_query(con, "setseed(0.42);", NULL);
@@ -72,7 +72,7 @@ int main() {
   duckdb_bind_int32(init_stmt, 1, TABLE_SIZE);
   duckdb_execute_prepared(init_stmt, NULL);
   duckdb_destroy_prepare(&init_stmt);
-*/
+
   // Set up futhark core
   struct futhark_context_config *cfg = futhark_context_config_new();
   struct futhark_context *ctx = futhark_context_new(cfg);

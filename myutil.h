@@ -40,6 +40,72 @@ idx_t argmin(struct futhark_context *ctx, duckdb_type type, void* arr, idx_t car
 void max_padding(void* dest, duckdb_type type, idx_t n);
 
 /**
+ * A function to transform payload columns into a byte array.
+ * Elements of the same row are adjacent.
+ * Params:
+ * outBytes : where to store the output byte array (allocated within the function)
+ * pL_rowBytes : pointer to store the total number of (payload) bytes per row
+ * payload_types : array of the duckdb_type types of each payload row
+ * inPayloads : input payload arrays
+ * pL_col_count : number of payload columns
+ * row_count : number of rows
+*/
+// TODO needed? more efficient to transfer vector data directly to byte buffer (...)
+void payloadColumnsToByteArray(
+	char** outBytes,
+	idx_t* pL_rowBytes,
+	duckdb_type* payload_types,
+	void** inPayloads,
+	idx_t pL_col_count,
+	idx_t row_count
+);
+
+/**
+ * A function to transform a byte array into payload columns.
+ * Elements of the same row are adjacent.
+ * Params:
+ * outPayloads : where to output the payloads (double pointer must be preallocated; referenced pointers are allocated within function)
+ * payload_types : array of the duckdb_type types of each columns (including key column)
+ * inBytes : input byte array
+ * pL_col_count : number of payload columns
+ * row_count : number of rows
+*/
+void payloadColumnsFromByteArray(
+	void** outPayloads,
+	duckdb_type* payload_types,
+	char* inBytes,
+	idx_t pL_col_count,
+	idx_t row_count
+);
+
+/**
+ * A function to sort a relation by its key column.
+ * Params:
+ * ctx : pointer to the futhark context
+ * outKeys : where to store sorted keys (must be pre-allocated)
+ * outPayloads : where to store rearranged payloads (must be pre-allocated)
+ * key_type : the logical type of the data, expressed in enum duckdb_type
+ * blocked : if true, use blocked radix sort, otherwise use merge sort
+ * block_size : the block size used by the blocked gpu sorting function
+ * inKeys : the key column of the unsorted input relation
+ * inPayloads : the payloads of the unsorted input relation, as a continuous byte array (elems of same row adjacent)
+ * pL_bytesPerRow : how many bytes the payload columns of each row take
+ * card : number of rows in the relation
+*/
+void sortRelationByKey(
+	struct futhark_context *ctx,
+	void *outKeys,
+	char *outPayloads,
+	duckdb_type key_type,
+	int blocked,
+	const int16_t block_size,
+	void* inKeys,
+	char* inPayloads,
+	idx_t pL_bytesPerRow,
+	idx_t card
+);
+
+/**
  * A function to sort the key column of a table, also provides the reordered indices.
  * Params:
  * ctx : pointer to the futhark context

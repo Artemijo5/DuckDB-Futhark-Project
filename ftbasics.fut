@@ -75,6 +75,7 @@ def exscan f ne xs =
     (\i x -> if i==0 then ne else x)
     (indices xs)
     (rotate (-1) (scan f ne xs))
+    -- [ne] ++ (scan f ne xs[0:((length xs) - 1)]) -- TODO ???
 
 -- | Function to count elements that satisfy a property.
 def countFor 't (p: t -> bool) (xs: []t) : idx_t.t =

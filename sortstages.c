@@ -31,59 +31,98 @@ idx_t sort_Stage1_with_payloads(
   while(flag) {
     mylog(logfile, "Next page...");
 
-    void *Buffers[col_count];
+    void *keyBuffer = colType_malloc(type_ids[0], buffer_size);
+    char* payloadBuffer;
     mylog(logfile, "Initalising buffers for each column...");
-    for(idx_t col=0; col<col_count; col++) {
-      Buffers[col] = colType_malloc(type_ids[col], buffer_size);
-      if(Buffers[col] == NULL) {
-        mylog(logfile, "ERROR -- failed to allocate memory.");
-        logclose(logfile);
-        return -1;
-      }
+    idx_t pL_bytes = 0; // total bytes taken by payload columns altogether
+    idx_t pL_byteSizes[col_count-1]; // bytes taken by each column
+    idx_t pL_prefixSizes[col_count-1]; // bytes taken up to each column
+    for(idx_t col=1; col<col_count; col++) {
+      pL_byteSizes[col-1] = colType_bytes(type_ids[col]);
+      pL_prefixSizes[col-1] = pL_bytes;
+      pL_bytes += pL_byteSizes[col-1];
     }
+    payloadBuffer = malloc(pL_bytes*buffer_size);
     mylog(logfile, "Successfully initialised buffers.");
 
     idx_t cur_rows = 0;
 
     // iterate until result is exhausted
   	while (buffer_size - cur_rows >= chunk_size) {
-  		duckdb_data_chunk result = duckdb_fetch_chunk(res);
-  		if (!result) {
+  		duckdb_data_chunk cnk = duckdb_fetch_chunk(res);
+  		if (!cnk) {
   			mylog(logfile, "Table has been fully processed.");
         flag = false; // last iteration of the outer loop
   			break;
   		}
   		// get the number of rows & columns from the data chunk
-  		idx_t row_count = duckdb_data_chunk_get_size(result);
+  		idx_t row_count = duckdb_data_chunk_get_size(cnk);
 
       // obtain the column vectors
-  		duckdb_vector res_col[col_count];
-  		void *vector_data[col_count];
-  		for (idx_t col = 0; col < col_count; col++) {
-  			res_col[col] = duckdb_data_chunk_get_vector(result, col);
-  			vector_data[col] = duckdb_vector_get_data(res_col[col]);
-        memcpy(Buffers[col] + cur_rows*colType_bytes(type_ids[col]),
-          vector_data[col],
-          row_count * colType_bytes(type_ids[col]));
+      // key column to keyBuffer
+      duckdb_vector kvec = duckdb_data_chunk_get_vector(cnk, 0);
+      void* kdat = duckdb_vector_get_data(kvec);
+      memcpy(keyBuffer + cur_rows*colType_bytes(type_ids[0]), kdat, row_count*colType_bytes(type_ids[0]));
+      // payload columns to payloadBuffer
+  		for (idx_t col = 1; col < col_count; col++) {
+  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, col);
+        void* dat = duckdb_vector_get_data(kvec);
+        // iteratively add to payloadBuffer
+        idx_t this_bytes = pL_byteSizes[col-1];
+        idx_t this_inRowPos = pL_prefixSizes[col-1];
+        for(idx_t r=0; r<row_count; r++) {
+          char *thisEntry = &((char*)dat)[r*this_bytes];
+          memcpy(
+            payloadBuffer + (cur_rows+r)*pL_bytes + this_inRowPos,
+            thisEntry,
+            this_bytes
+          );
+        }
   		}
       
       cur_rows += row_count;
 
-      duckdb_destroy_data_chunk(&result);
+      duckdb_destroy_data_chunk(&cnk);
     }
     if(!flag && cur_rows == 0) { // if table exhausted, break out of outer loop as well
-      for(idx_t col=0; col<col_count; col++) {
-        free(Buffers[col]); // free buffers
-      }
+      free(keyBuffer);
+      free(payloadBuffer);
       break;
-    } // TODO flag is probably superfluous...
+    }
     char msgbuffer[50];
     int msglen = sprintf(msgbuffer, "Finished scanning 'page' -- total of ");
     msglen += sprintf(msgbuffer + msglen, "%ld", cur_rows);
     msglen += sprintf(msgbuffer + msglen, " rows.");
     mylog(logfile, msgbuffer);
 
+    // Sort
+    sortRelationByKey(
+      ctx,
+      keyBuffer,
+      payloadBuffer,
+      type_ids[0],
+      blocked,
+      block_size,
+      keyBuffer,
+      payloadBuffer,
+      pL_bytes,
+      cur_rows
+    );
+    mylog(logfile, "Performed sorting.");
+    // Obtain payload columns from byte buffer
+    void** payloadCols = malloc((col_count-1)*sizeof(void*));
+    payloadColumnsFromByteArray(payloadCols, &(type_ids[1]), payloadBuffer, (col_count-1), cur_rows);
+    mylog(logfile, "Reobtained payload columns.");
+    free(payloadBuffer);
+
+    void* Buffers[col_count];
+    Buffers[0] = keyBuffer;
+    for(idx_t col=1; col<col_count; col++) {
+      Buffers[col] = payloadCols[col-1];
+    }
+
     // sort key column
+    /*
     struct futhark_i64_1d *sorted_idx_ft;
     mylog(logfile, "Passing key column for sorting...");
     sortKeyColumn(ctx, Buffers[0], type_ids[0], *incr_idx, blocked, block_size, &sorted_idx_ft, Buffers[0], cur_rows);
@@ -95,6 +134,8 @@ idx_t sort_Stage1_with_payloads(
       orderPayloadColumn(ctx, Buffers[col], type_ids[col], *incr_idx, block_size, sorted_idx_ft, Buffers[col], cur_rows);
       mylog(logfile, "Reordered column.");
     }
+    futhark_free_i64_1d(ctx, sorted_idx_ft);
+    */
 
     //mylog(logfile, "Now testing storage & retrieval.");
     numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, Buffers);
@@ -104,11 +145,16 @@ idx_t sort_Stage1_with_payloads(
     }
     mylog(logfile, "Stored buffer as intermediate.");
     // clean-up
-    for(idx_t col=0; col<col_count; col++) {
-      free(Buffers[col]);
+    printf("Marco!\n");
+    free(keyBuffer);
+    printf("Polo!\n");
+    for(idx_t col=1; col<col_count; col++) {
+      free(payloadCols[col-1]);
     }
+    printf("Venezziano!\n");
+    free(payloadCols);
+    printf("Italiano!\n");
     mylog(logfile, "Freed this page's buffers.");
-    futhark_free_i64_1d(ctx, sorted_idx_ft);
     mylog(logfile, "Freed futhark objects for this page.");
 
     *incr_idx += cur_rows;
