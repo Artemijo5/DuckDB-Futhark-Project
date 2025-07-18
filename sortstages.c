@@ -9,6 +9,9 @@
 #include "mylogger.h"
 #include "myutil.h"
 
+#include <limits.h> // for maximum values of integral types
+#include <float.h> // for maximum values of floating-point types
+
 // returns numIntermediate
 // incr_idx is also updated
 idx_t sort_Stage1_with_payloads(
@@ -304,25 +307,18 @@ void sort_Stage2(
   void* maxima = colType_malloc(type_ids[0], numIntermediate);
   // initialised as all false, a slot is set to true when its buffer is exhausted
   int intermIsExhausted[numIntermediate];
-  // The buffers where the sorting takes place
-  // one buffer of BUFFER_SIZE elements of the appropriate type, for each column
-  // each iteration, the key buffer is sorted, and the payload buffers are reordered
-  // the first pickup bytes of all buffers are stored
-  // then, they are replaced by the next scan
-  // if there is an entirely padded chunk at the end, that is also replaced
-  // then, pickup is updated for the next iteration
-  void** Buffers2 = malloc(col_count*sizeof(void*));
-  for(idx_t c=0; c<col_count; c++) {
-    Buffers2[c] = colType_malloc(type_ids[c], BUFFER_SIZE);
+  // keyBuffer2 : holds key data
+  void* keyBuffer2 = colType_malloc(type_ids[0], BUFFER_SIZE);
+  char* payloadBuffer2;
+  idx_t pL_bytes = 0; // total bytes taken by payload columns altogether
+  idx_t pL_byteSizes[col_count-1]; // bytes taken by each column
+  idx_t pL_prefixSizes[col_count-1]; // bytes taken up to each column
+  for(idx_t col=1; col<col_count; col++) {
+    pL_byteSizes[col-1] = colType_bytes(type_ids[col]);
+    pL_prefixSizes[col-1] = pL_bytes;
+    pL_bytes += pL_byteSizes[col-1];
   }
-  // max-pad key column to get rid of trash values - not needed
-  /*
-  max_padding(
-    Buffers2[0],
-    type_ids[0],
-    BUFFER_SIZE
-  );
-  */
+  payloadBuffer2 = malloc(pL_bytes*BUFFER_SIZE);
   // counter of full empty chunks at the end of buffer
   // set to 0 when they are replaced
   idx_t replaceChunksAtTheEnd = 0;
@@ -397,14 +393,12 @@ void sort_Stage2(
       mylog(logfile, "Intermediate is exhausted before scan (unexpected).");
       intermIsExhausted[i] = true;
       still_interm -= 1;
-      // max-pad a chunk from the end
-      for(idx_t c=0; c<col_count; c++) {
-        max_padding(
-          Buffers2[c] + (BUFFER_CHUNK_CAPACITY - 1 - replaceChunksAtTheEnd)*CHUNK_SIZE*colType_bytes(type_ids[c]),
-          type_ids[c],
-          CHUNK_SIZE
-        );
-      }
+      // max-pad a chunk from the end (only the key column)
+      max_padding(
+        keyBuffer2 + (BUFFER_CHUNK_CAPACITY - 1 - replaceChunksAtTheEnd)*CHUNK_SIZE*colType_bytes(type_ids[0]),
+        type_ids[0],
+        CHUNK_SIZE
+      );
       replaceChunksAtTheEnd += 1;
       // also at the maximum
       max_padding(maxima + i*colType_bytes(type_ids[0]), type_ids[0], 1);
@@ -420,7 +414,6 @@ void sort_Stage2(
     for(idx_t c=0; c<col_count; c++) {
       duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
       void* dat = duckdb_vector_get_data(vec);
-      void* dest_ptr = Buffers2[c] + (pickup + i - replaceChunksAtTheEnd)*CHUNK_SIZE*colType_bytes(type_ids[c]);
       // for key column: note maximum
       if(c == 0) {
         memcpy(
@@ -430,13 +423,29 @@ void sort_Stage2(
         );
       }
       // copy data to buffer
-      memcpy(
-        dest_ptr,
-        dat,
-        rcount*colType_bytes(type_ids[c])
-      );
+      void *dest_ptr = (c==0)?
+       keyBuffer2 + (pickup + i - replaceChunksAtTheEnd)*CHUNK_SIZE*colType_bytes(type_ids[0]):
+       payloadBuffer2 + (pickup + i - replaceChunksAtTheEnd)*CHUNK_SIZE*pL_bytes + pL_prefixSizes[c-1];
+      if(c==0) {
+        
+        memcpy(
+          dest_ptr,
+          dat,
+          rcount*colType_bytes(type_ids[c])
+        );
+      }
+      else {
+        for(idx_t r=0; r<rcount; r++) {
+          memcpy(
+            dest_ptr + r*pL_bytes,
+            dat + r*pL_byteSizes[c-1],
+            pL_byteSizes[c-1]
+          );
+        }
+      }
+      
       // max-pad remaining space within the chunk
-      if(rcount < CHUNK_SIZE) {
+      if(c==0 && rcount < CHUNK_SIZE) {
         max_padding(
           dest_ptr + rcount*colType_bytes(type_ids[c]),
           type_ids[c],
@@ -447,7 +456,7 @@ void sort_Stage2(
     duckdb_destroy_data_chunk(&cnk);
   }
   mylog(logfile, "Completed first scan.");
-  //logarray_long(logfile, "After first scan:\n", Buffers2[0], BUFFER_SIZE);
+  //logarray_long(logfile, "After first scan:\n", keyBuffer2, BUFFER_SIZE);
 
   // ---------- 5. Scan & Sort - loop.
   while(still_interm) {
@@ -455,7 +464,36 @@ void sort_Stage2(
     idx_t i = 0; // chunk counter
     while(still_interm && i < pickup) {
       idx_t interm = argmin(ctx, type_ids[0], maxima, numIntermediate);
-      // TODO address corner-case of valid max values...
+      // address corner-case of valid max values
+      int investigateCornerCase = false;
+      switch(type_ids[0]) {
+        case DUCKDB_TYPE_SMALLINT:
+          if(((short*)maxima)[interm] == SHRT_MAX) investigateCornerCase = true;
+          break;
+        case DUCKDB_TYPE_INTEGER:
+          if(((int*)maxima)[interm] == INT_MAX) investigateCornerCase = true;
+          break;
+        case DUCKDB_TYPE_BIGINT:
+          if(((long*)maxima)[interm] == LONG_MAX) investigateCornerCase = true;
+          break;
+        case DUCKDB_TYPE_FLOAT:
+          if(((float*)maxima)[interm] == FLT_MAX) investigateCornerCase = true;
+          break;
+        case DUCKDB_TYPE_DOUBLE:
+          if(((double*)maxima)[interm] == DBL_MAX) investigateCornerCase = true;
+          break;
+        default:
+          perror("Invalid key type.");
+          return;
+      }
+      if(investigateCornerCase) { // if all maxima, pick first valid intermediate
+        for(idx_t j=0; j<numIntermediate; j++) {
+          if(!intermIsExhausted[j]) {
+            interm = j;
+            break;
+          }
+        }
+      }
 
       duckdb_data_chunk cnk = duckdb_fetch_chunk(interms[interm]);
       if(!cnk) {
@@ -475,7 +513,9 @@ void sort_Stage2(
       for(idx_t c=0; c<col_count; c++) {
         duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
         void* dat = duckdb_vector_get_data(vec);
-        void* dest_ptr = Buffers2[c] + i*colType_bytes(type_ids[0])*CHUNK_SIZE; // it's that easy...
+        void* dest_ptr = (c==0)?
+          keyBuffer2 + i*colType_bytes(type_ids[0])*CHUNK_SIZE:
+          payloadBuffer2 + i*pL_bytes*CHUNK_SIZE + pL_prefixSizes[c-1];
         // for key column: note maximum
         if(c == 0) {
           memcpy(
@@ -485,11 +525,23 @@ void sort_Stage2(
           );
         }
         // copy data to buffer
-        memcpy(
-          dest_ptr,
-          dat,
-          rcount*colType_bytes(type_ids[c])
-        );
+        if(c==0){
+          memcpy(
+            dest_ptr,
+            dat,
+            rcount*colType_bytes(type_ids[c])
+          );
+        }
+        else {
+          for(idx_t r=0; r<rcount; r++) {
+            memcpy(
+              dest_ptr + r*pL_bytes,
+              dat + r*pL_byteSizes[c-1],
+              pL_byteSizes[c-1]
+            );
+          }
+        }
+       
         // max-pad remaining space within the chunk
         if(rcount < CHUNK_SIZE) {
           max_padding(
@@ -502,11 +554,10 @@ void sort_Stage2(
       duckdb_destroy_data_chunk(&cnk);
       i += 1;
     }
-    //logarray_long(logfile, "Before correct-scanning:\n", Buffers2[0], BUFFER_SIZE);
     // 5.i+ if i<pickup, max-pad remaining pickup space
     if(i<pickup) {
       max_padding(
-        Buffers2[0] + i*CHUNK_SIZE*colType_bytes(type_ids[0]),
+        keyBuffer2 + i*CHUNK_SIZE*colType_bytes(type_ids[0]),
         type_ids[0],
         CHUNK_SIZE*(pickup-i)
       );
@@ -515,7 +566,37 @@ void sort_Stage2(
     // 5.i++ scan more chunks to fill empty pages at the end, if any
     while(still_interm && replaceChunksAtTheEnd) {
       idx_t interm = argmin(ctx, type_ids[0], maxima, numIntermediate);
-      // TODO address corner-case of valid max values...
+      // address corner-case of valid max values
+      int investigateCornerCase = false;
+      switch(type_ids[0]) {
+        case DUCKDB_TYPE_SMALLINT:
+          if(((short*)maxima)[interm] == SHRT_MAX) investigateCornerCase = true;
+          break;
+        case DUCKDB_TYPE_INTEGER:
+          if(((int*)maxima)[interm] == INT_MAX) investigateCornerCase = true;
+          break;
+        case DUCKDB_TYPE_BIGINT:
+          if(((long*)maxima)[interm] == LONG_MAX) investigateCornerCase = true;
+          break;
+        case DUCKDB_TYPE_FLOAT:
+          if(((float*)maxima)[interm] == FLT_MAX) investigateCornerCase = true;
+          break;
+        case DUCKDB_TYPE_DOUBLE:
+          if(((double*)maxima)[interm] == DBL_MAX) investigateCornerCase = true;
+          break;
+        default:
+          perror("Invalid key type.");
+          return;
+      }
+      if(investigateCornerCase) { // if all maxima, pick first valid intermediate
+        for(idx_t j=0; j<numIntermediate; j++) {
+          if(!intermIsExhausted[j]) {
+            interm = j;
+            break;
+          }
+        }
+      }
+
       duckdb_data_chunk cnk = duckdb_fetch_chunk(interms[interm]);
       if(!cnk) {
         intermIsExhausted[interm] = true;
@@ -534,7 +615,9 @@ void sort_Stage2(
       for(idx_t c=0; c<col_count; c++) {
         duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
         void* dat = duckdb_vector_get_data(vec);
-        void* dest_ptr = Buffers2[c] + (BUFFER_CHUNK_CAPACITY - replaceChunksAtTheEnd)*CHUNK_SIZE*colType_bytes(type_ids[c]);
+        void* dest_ptr = (c==0)?
+          keyBuffer2 + (BUFFER_CHUNK_CAPACITY - replaceChunksAtTheEnd)*CHUNK_SIZE*colType_bytes(type_ids[c]):
+          payloadBuffer2 + (BUFFER_CHUNK_CAPACITY - replaceChunksAtTheEnd)*CHUNK_SIZE*pL_bytes + pL_prefixSizes[c-1];
         // for key column: note maximum
         if(c == 0) {
           memcpy(
@@ -544,13 +627,25 @@ void sort_Stage2(
           );
         }
         // copy data to buffer
-        memcpy(
-          dest_ptr,
-          dat,
-          rcount*colType_bytes(type_ids[c])
-        );
+        if(c==0) {
+          memcpy(
+            dest_ptr,
+            dat,
+            rcount*colType_bytes(type_ids[c])
+          );
+        }
+        else {
+          for(idx_t r=0; r<rcount; r++) {
+            memcpy(
+              dest_ptr + r*pL_bytes,
+              dat + r*pL_byteSizes[c-1],
+              pL_byteSizes[c-1]
+            );
+          }
+        }
+        
         // max-pad remaining space within the chunk
-        if(rcount < CHUNK_SIZE) {
+        if(c==0 && rcount < CHUNK_SIZE) {
           max_padding(
             dest_ptr + rcount*colType_bytes(type_ids[c]),
             type_ids[c],
@@ -562,7 +657,7 @@ void sort_Stage2(
       replaceChunksAtTheEnd -= 1;
     }
     mylog(logfile, "Completed a scan.");
-    //logarray_long(logfile, "Before sorting:\n", Buffers2[0], BUFFER_SIZE);
+    //logarray_long(logfile, "Before sorting:\n", keyBuffer2, BUFFER_SIZE);
 
     // Update loop parametres here
     replaceChunksAtTheEnd = ignore_rows / CHUNK_SIZE;
@@ -570,18 +665,15 @@ void sort_Stage2(
     pickup = BUFFER_CHUNK_CAPACITY - still_interm - replaceChunksAtTheEnd;
 
     // 5.ii sort key column, reorder payload columns
-    struct futhark_i64_1d *stg2_sorted_idx_ft;
-    for(idx_t c=0; c<col_count; c++) {
-      if(c==0) {
-        sortKeyColumn(ctx, Buffers2[0], type_ids[0], 0, blocked, block_size, &stg2_sorted_idx_ft, Buffers2[0], BUFFER_SIZE);
-        continue;
-      }
-      orderPayloadColumn(ctx, Buffers2[c], type_ids[c], 0, block_size, stg2_sorted_idx_ft, Buffers2[c], BUFFER_SIZE);
-    }
-    futhark_free_i64_1d(ctx, stg2_sorted_idx_ft);
+    sortRelationByKey(
+      ctx, keyBuffer2, payloadBuffer2, type_ids[0], blocked, block_size, 
+      keyBuffer2, payloadBuffer2, pL_bytes, BUFFER_SIZE
+    );
     mylog(logfile, "Sorted this scan.");
-    //printf("%ld, %ld\n", ((long*)Buffers2[0])[0], ((long*)Buffers2[0])[BUFFER_SIZE-1]);
-    //logarray_long(logfile, "After sorting:\n", Buffers2[0], BUFFER_SIZE);
+    // prepare combined buffers
+    void* payloadCols[col_count-1];
+    payloadColumnsFromByteArray(payloadCols, &(type_ids[1]), payloadBuffer2, (col_count-1), BUFFER_SIZE);
+    mylog(logfile, "Reobtained payload columns.");
 
     // 5.iii pick up & store chunks
     for(idx_t j=0; j<pickup; j++) {
@@ -593,7 +685,8 @@ void sort_Stage2(
       for(idx_t c=0; c<col_count; c++) {
         duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
         void *dat = (void*)duckdb_vector_get_data(vec);
-        memcpy(dat, &((char*)Buffers2[c])[j*CHUNK_SIZE*colType_bytes(type_ids[c])], rowsToWrite*colType_bytes(type_ids[c]));
+        void *srcBuff = (c==0)? keyBuffer2: payloadCols[c-1];
+        memcpy(dat, &((char*)srcBuff)[j*CHUNK_SIZE*colType_bytes(type_ids[c])], rowsToWrite*colType_bytes(type_ids[c]));
       }
       if(duckdb_append_data_chunk(resultApp, cnk) == DuckDBError) {
         perror("Failed to append data chunk to result table.\n");
@@ -601,6 +694,9 @@ void sort_Stage2(
       }
       if (quicksaves) duckdb_appender_flush(resultApp);
       duckdb_destroy_data_chunk(&cnk);
+    }
+    for(idx_t c=0; c<col_count-1; c++) {
+      free(payloadCols[c]);
     }
     mylog(logfile, "Appended data to result table.");
   }
@@ -611,10 +707,7 @@ void sort_Stage2(
   }
   duckdb_appender_close(resultApp);
   duckdb_appender_destroy(&resultApp);
-  for(idx_t c=0; c<col_count; c++) {
-    free(Buffers2[c]);
-  }
-  free(Buffers2);
+  free(payloadBuffer2);
   free(maxima);
   mylog(logfile, "Freed buffers and objects from Stage 2.");
 }

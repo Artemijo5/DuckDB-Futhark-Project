@@ -99,6 +99,37 @@ void max_padding(void* dest, duckdb_type type, idx_t n) {
   }
 }
 
+void payloadColumnsToByteArray(
+  char** outBytes,
+  idx_t* pL_rowBytes,
+  duckdb_type* payload_types,
+  void** inPayloads,
+  idx_t pL_col_count,
+  idx_t row_count
+) {
+  idx_t pL_bytes = 0; // total bytes taken by payload columns altogether
+  idx_t pL_byteSizes[pL_col_count]; // bytes taken by each column
+  idx_t pL_prefixSizes[pL_col_count]; // bytes taken up to each column
+  for(idx_t col=0; col<pL_col_count; col++) {
+    pL_byteSizes[col] = colType_bytes(payload_types[col]);
+    pL_prefixSizes[col] = pL_bytes;
+    pL_bytes += pL_byteSizes[col];
+  }
+  // Allocate
+  *outBytes = malloc(row_count*pL_bytes);
+  // Transform
+  for(idx_t r=0; r<row_count; r++) {
+    for(idx_t col=0; col<pL_col_count; col++) {
+      memcpy(
+        (*outBytes) + r*pL_bytes + pL_prefixSizes[col],
+        &((char*)inPayloads[col])[r*pL_byteSizes[col]],
+        pL_byteSizes[col]
+      );
+    }
+  }
+  *pL_rowBytes = pL_bytes;
+}
+
 void payloadColumnsFromByteArray(
   void** outPayloads,
   duckdb_type* payload_types,
@@ -116,7 +147,9 @@ void payloadColumnsFromByteArray(
   }
   for(idx_t col=0; col<pL_col_count; col++) {
     outPayloads[col] = colType_malloc(payload_types[col], row_count);
-    for(idx_t r=0; r<row_count; r++) {
+  }
+  for(idx_t r=0; r<row_count; r++) {
+    for(idx_t col=0; col<pL_col_count; col++) {
       memcpy(
         outPayloads[col] + r*pL_byteSizes[col],
         inBytes + r*pL_bytes + pL_prefixSizes[col],

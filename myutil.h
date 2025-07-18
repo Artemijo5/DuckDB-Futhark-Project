@@ -42,6 +42,7 @@ void max_padding(void* dest, duckdb_type type, idx_t n);
 /**
  * A function to transform payload columns into a byte array.
  * Elements of the same row are adjacent.
+ * (Note: it's more efficient to directly store payloads as bytes, rather than transforming them with this)
  * Params:
  * outBytes : where to store the output byte array (allocated within the function)
  * pL_rowBytes : pointer to store the total number of (payload) bytes per row
@@ -50,7 +51,6 @@ void max_padding(void* dest, duckdb_type type, idx_t n);
  * pL_col_count : number of payload columns
  * row_count : number of rows
 */
-// TODO needed? more efficient to transfer vector data directly to byte buffer (...)
 void payloadColumnsToByteArray(
 	char** outBytes,
 	idx_t* pL_rowBytes,

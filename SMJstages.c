@@ -549,11 +549,17 @@ void Inner_MergeJoin_GFUR(
 
   // 1. Create FINAL (not tmp) result table & appender
   char finTbl_init_query[150 + strlen(Join_tbl_name) + 30 + (total_payload_count)*30];
-  int finTbl_strLen = sprintf(
-    finTbl_init_query,
-    "CREATE OR REPLACE TABLE %s (k %s",
-    Join_tbl_name, key_type_str
-  );
+  int finTbl_strLen = (saveAsTempTable)?
+    sprintf(
+      finTbl_init_query,
+      "CREATE OR REPLACE TEMP TABLE %s (k %s",
+      Join_tbl_name, key_type_str
+    ):
+    sprintf(
+      finTbl_init_query,
+      "CREATE OR REPLACE TABLE %s (k %s",
+      Join_tbl_name, key_type_str
+    );
   for(idx_t col=0; col<R_payload_count; col++) {
     finTbl_strLen += sprintf(finTbl_init_query + finTbl_strLen, ", R%ld %s", (col+1), payload_type_strs[col]);
   }
@@ -625,7 +631,7 @@ void Inner_MergeJoin_GFUR(
     indexRange(ctx, &min_R_idx, &max_R_idx, buffer_R_is, id_rows);
     indexRange(ctx, &min_S_idx, &max_S_idx, buffer_S_is, id_rows);
 
-    printf("Ranges -----\n R: %ld - %ld \n S: %ld - %ld\n", min_R_idx, max_R_idx, min_S_idx, max_S_idx);
+    //printf("Ranges -----\n R: %ld - %ld \n S: %ld - %ld\n", min_R_idx, max_R_idx, min_S_idx, max_S_idx);
 
     // Prepare payload buffers
     void *PAYLOAD_BUFFERS[total_payload_count];
