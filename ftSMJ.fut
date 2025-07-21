@@ -35,6 +35,7 @@ def merge_joinTups [n1] [n2] 't
 -- extParallelism controls the external parallelism of a nested op (map x (reduce y))
 -- Note: Futhark by Example claims the compiler uses loop fission for nested parallelism
 -- so it might already be doing this...
+-- TODO a hist-based implementation might be more efficient
 def find_joinTuples [nR] [nS] 't
   (tR: [nR]t)
   (tS: [nS]t)

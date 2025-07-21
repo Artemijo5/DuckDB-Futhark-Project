@@ -307,6 +307,7 @@ void Inner_MergeJoin_GFTR(
       // PERFORM THE JOIN
       // Internally, left side is the smaller one
       // (if implementing a left outer join, I'd have to subpartition the external left side instead...)
+      // TODO might want to do that anyway for "correctness" (sorted R-wise then S-wise)
       // #######################################################################################################
       // #######################################################################################################
       // #######################################################################################################
