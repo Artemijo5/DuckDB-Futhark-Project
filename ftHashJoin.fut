@@ -11,14 +11,32 @@ import "ftsort"
 -- sortStruct & sortInfo are used to hold partition information
 -- since partitioning is sorting-based, and results in a contiguous array
 
-local def findPartitionBoundaries 'a
+local def findPartitionBoundaries 'a 'int_t
 	(pXs: []a)
 	(num_bits: i32)
 	(get_bit: i32 -> a -> i32)
 	(i: i32)
 	(j: i32)
-: [i64.i32 (2**(j-i))]idx_t.t
-= replicate (i64.i32 (2**(j-i))) 0 -- TODO implement with hist
+: [](i64, idx_t.t) =
+  let radixBits = i32.min (num_bits+1-i) (j-i)
+  let numParts = i64.i32 (2**(radixBits))
+  --let fromMSB = i32.min 0 (num_bits - j + 1)
+  --let getRadix (x: a) = x * (2**fromMSB) / (2**(fromMSB+i)) -- this only works for unsigned int
+  -- could use it if first transforming to uint type...
+  -- TODO figure out *efficient* method to obtain radix
+  let getRadix (x: a) : i32 =
+    let loop_over =
+      loop p = (0, 0)
+      while p.0<radixBits do
+        (p.0+1, i32.set_bit p.0 p.1 (get_bit (p.0+i) x))
+    in loop_over.1
+  let radixs = pXs |> map getRadix |> map (i64.i32)
+  -- based on Futhark by Example - Removing Duplicates
+  in hist (idx_t.min) (length radixs) numParts radixs (indices radixs)
+    |> zip (iota numParts)
+    |> filter (\pair -> pair.1 < (length radixs))
+-- TODO make appropriate types for access from the C API
+-- TODO also, consider including partitionDepth parameter for recursive partitioning
 
 entry findPartitionBoundaries_short (pXs: []i16) (i: i32) (j: i32)
 	= findPartitionBoundaries pXs i16.num_bits i16.get_bit i j
