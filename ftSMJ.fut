@@ -280,7 +280,10 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
   -- obtain the starting indices of each match in the output array
   let tup_index = exscan (\cm1 cm2 -> cm1+cm2) 0 fcm
   -- obtain the total number of pairs
-  let n_pairs = tup_index[(length tup_index)-1] + filteredTups[(length filteredTups)-1].3
+  let n_pairs =
+    if ((length filteredTups)>0)
+    then tup_index[(length tup_index)-1] + filteredTups[(length filteredTups)-1].3
+    else 0
   -- initialise the array
   let pairsArray = partitioned_scatter
     (psize)

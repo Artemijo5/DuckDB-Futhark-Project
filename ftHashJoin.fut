@@ -24,6 +24,7 @@ local def findPartitionBoundaries 'a 'int_t
   --let getRadix (x: a) = x * (2**fromMSB) / (2**(fromMSB+i)) -- this only works for unsigned int
   -- could use it if first transforming to uint type...
   -- TODO figure out *efficient* method to obtain radix
+  -- Ideas: 1. have all data in unsigned int form & bit-shift 2. use a bit mask (!)
   let getRadix (x: a) : i32 =
     let loop_over =
       loop p = (0, 0)
