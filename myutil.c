@@ -803,7 +803,7 @@ idx_t fetch_intermediate(
 
 
 // -------------------------------------------------------------------------------------- MERGING FUNCTIONS
-
+/*
 void mergeSortedKeys_short(
   struct futhark_context *ctx,
   struct futhark_i8_1d **outRelation,
@@ -1024,3 +1024,4 @@ void mergeSortedKeys(
       return;
   }
 }
+/*

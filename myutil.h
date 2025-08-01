@@ -211,7 +211,7 @@ idx_t fetch_intermediate(
 
 
 // -------------------------------------------------------------------------------------- SORT-MERGE JOIN
-
+/*
 void mergeSortedKeys(
 	struct futhark_context *ctx,
 	struct futhark_i8_1d **outRelation,
@@ -226,6 +226,7 @@ void mergeSortedKeys(
 	idx_t card_Bs,
 	int inParallel
 );
-// TODO add incr for multi-pass? low priority for now - implement other algos first...
+*/
+// TODO unneeded + doesn't compile for cuda for now...
 
 #endif
