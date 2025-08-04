@@ -336,15 +336,15 @@ def inner_SMJ [nR] [nS] 't
   --in joinTups_to_joinPairs_InnerJoin (scatter_psize) (jTups) (dummy_elem)
 
 -- | Join pairs of type short.
-type~ joinPairs_short = joinPairs i16
+type joinPairs_short = joinPairs i16
 -- | Join pairs of type int.
-type~ joinPairs_int = joinPairs i32
+type joinPairs_int = joinPairs i32
 -- | Join pairs of type long.
-type~ joinPairs_long = joinPairs i64
+type joinPairs_long = joinPairs i64
 -- | Join pairs of type float.
-type~ joinPairs_float = joinPairs f32
+type joinPairs_float = joinPairs f32
 -- | Join pairs of type double.
-type~ joinPairs_double = joinPairs f64
+type joinPairs_double = joinPairs f64
 
 entry inner_SMJ_short [nR] [nS]
   (tR: [nR]i16)
