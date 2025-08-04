@@ -327,9 +327,9 @@ def inner_SMJ [nR] [nS] 't
   --let jTups = find_joinTuples (tR) (tS) (offset_R) (offset_S) (extParallelism) (neq) (gt)
   let uncooked_joinPair : joinPairs t =
     {
-      vs = tR,
-      ix = indices tR,
-      iy = indices tR
+      vs = [],
+      ix = [],
+      iy = []
     }
   in uncooked_joinPair
   --let jTups = uncooked_joinTup tR offset_R
