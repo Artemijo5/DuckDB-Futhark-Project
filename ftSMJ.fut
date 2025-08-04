@@ -323,7 +323,8 @@ def inner_SMJ [nR] [nS] 't
   (leq: t -> t -> bool)
   (gt : t -> t -> bool)
 =
-  let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (neq) (leq) (gt)
+  --let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (neq) (leq) (gt)
+  let jTups = find_joinTuples (tR) (tS) (offset_R) (offset_S) (extParallelism) (neq) (gt)
   in joinTups_to_joinPairs_InnerJoin (scatter_psize) (jTups) (dummy_elem)
 
 -- | Join pairs of type short.
