@@ -8,6 +8,30 @@
 
 #include "ftSMJ.h"
 
+size_t colType_bytes(duckdb_type type) {
+  switch (type){
+    case DUCKDB_TYPE_SMALLINT:
+      return sizeof(int16_t);
+    case DUCKDB_TYPE_INTEGER:
+      return sizeof(int32_t);
+    case DUCKDB_TYPE_BIGINT:
+      return sizeof(int64_t);
+    case DUCKDB_TYPE_FLOAT:
+      return sizeof(float);
+    case DUCKDB_TYPE_DOUBLE:
+      return sizeof(double);
+    default:
+      perror("Invalid type.");
+      return 0;
+  }
+}
+
+void* colType_malloc(duckdb_type type, idx_t card) {
+  size_t ms = colType_bytes(type);
+  if (ms == 0) return NULL;
+  return malloc(card * ms);
+}
+
 int compare_max_to_min(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t card2) {
 	int ret = 0;
 	switch(type) {

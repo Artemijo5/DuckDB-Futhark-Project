@@ -5,7 +5,6 @@
 #include <string.h>
 #include "duckdb.h"
 
-#include "myutil.h"
 #include "ftSMJ.h"
 #include "mylogger.h"
 #include "smjutil.h"

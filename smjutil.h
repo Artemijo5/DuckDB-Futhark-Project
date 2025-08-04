@@ -6,6 +6,18 @@
 #ifndef SMJUTIL_H
 #define SMJUTIL_H
 
+/** A function like sizeof, but for the duckdb types used.
+ * Params:
+ * type : the logical type of the data, expressed in enum duckdb_type
+ */
+size_t colType_bytes(duckdb_type type);
+/** A function to allocate memory for any type of column data.
+ * Params:
+ * type : the logical type of the data, expressed in enum duckdb_type
+ * card : the cardinality of elements to store 
+ */
+void* colType_malloc(duckdb_type type, idx_t card);
+
 /**
  * A function to compare the maximum element of arr1 to the minimum of arr2.
  * Both arr1 and arr2 must be sorted in increasing order!
