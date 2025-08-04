@@ -65,6 +65,176 @@ def find_joinTuples [nR] [nS] 't
       }
   in joinLoop.result
 
+-- Returns the same as partitionFunc but allows control of max parallelism
+-- TODO can be made to strictly access certain subarrays at once, but the loop to do that will be quite convoluted in futhark
+def windowed_partitionFunc [n] 't
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (tR: [n]t)
+  (tS: [n]t)
+  (leq: t -> t -> bool)
+  (gt: t -> t -> bool)
+ : [partitionsPerWindow*numberOfWindows](idx_t.t, idx_t.t) =
+  let totalNo = partitionsPerWindow*numberOfWindows
+  let loop_over : {iter: idx_t.t, result: [totalNo](idx_t.t, idx_t.t)}
+    = loop p = {iter=0, result = (replicate totalNo (n, n))}
+    while p.iter<numberOfWindows do
+      let start = p.iter*partitionsPerWindow
+      let end = start+partitionsPerWindow
+      let nextParts = partitionFunc (totalNo) (start) (end) tR tS (leq) (gt) :> [end-start](idx_t.t, idx_t.t)
+      in {iter = p.iter+1, result = p.result with [start:end] = nextParts}
+  in loop_over.result :> [partitionsPerWindow*numberOfWindows](idx_t.t, idx_t.t)
+
+-- Pass as arguments the partitions derived from windowed_partitionFunc
+-- finds for each partition of tR the first and last matching partitions that can match it in tS
+-- returns the indices of those partitions, as they are in partitionPairs
+-- (returns np if there's a potential of continuing into the next chunk of S)
+def partitionMatchBounds [n] [np] 't
+  (tR: [n]t)
+  (tS: [n]t)
+  (partitionPairs: [np](idx_t.t, idx_t.t))
+  (extParallelism: idx_t.t)
+  (leq: t -> t -> bool)
+  (gt : t -> t -> bool)
+: [np](idx_t.t, idx_t.t) =
+  partitionPairs
+    |> zip (indices partitionPairs)
+    |> map (\(j, (ri, si)) ->
+      let r_min = tR[idx_t.min ri (n-1)]
+      let ri_next = if j==np-1 then n else partitionPairs[j+1].0
+      let r_max = tR[idx_t.max 0 (ri_next-1)]
+      -- TODO turn the following sequential searches into binary ones? or selectable
+      let firstMatch : {flag: bool, smatch: idx_t.t}
+        = loop fm = {flag=true, smatch=j}
+        while (fm.flag) do
+          let sj = idx_t.min (n-1) partitionPairs[fm.smatch].1
+          let s_min = tS[sj]
+          let si_next = if fm.smatch>=np-1 then n else partitionPairs[fm.smatch+1].1
+          let s_max = tS[idx_t.max sj (si_next-1)]
+          let s_nextMin = tS[idx_t.min (np-1) si_next]
+          let s_prevMax = tS[idx_t.max 0 (sj-1)]
+          in
+            if (r_min `gt` s_min)
+            then
+              if (r_min `leq` s_max)
+              then {flag=false, smatch=fm.smatch}
+              else {flag= !((r_min `leq` s_nextMin)||(fm.smatch+1>=np)), smatch=fm.smatch+1} -- break if at end OR if r_min <= s_nextMin
+            else {flag= !((s_prevMax `leq` r_min)||(fm.smatch-1<=0)), smatch=idx_t.max 0 (fm.smatch-1)}
+      let lastMatch : {flag:bool, smatch: idx_t.t}
+        = loop lm = {flag=true, smatch=j}
+        while (lm.flag && lm.smatch<np) do
+          let sj = idx_t.min (n-1) partitionPairs[lm.smatch].1
+          let s_min = tS[sj]
+          let si_next = if lm.smatch>=np-1 then n else partitionPairs[lm.smatch+1].1
+          let s_max = tS[idx_t.max sj (si_next-1)]
+          let s_nextMin = tS[idx_t.min (np-1) si_next]
+          let s_prevMax = tS[idx_t.max 0 (sj-1)]
+          in
+            if (s_max `gt` r_max)
+            then
+              if (s_min `leq` r_max)
+              then {flag=false, smatch=lm.smatch}
+              else {flag= !((s_prevMax `leq` r_max)||(lm.smatch-1<=0)), smatch= idx_t.max 0 (lm.smatch-1)} -- break if at 0 OR if s_prevMax <= r_max
+            else {flag= !((r_max `leq` s_nextMin)), smatch=lm.smatch+1}
+      in (firstMatch.smatch, lastMatch.smatch)
+    )
+    -- spent too much time taking care of corner cases for dense arrays...
+    -- TODO tidy up & implement the extParallelism option
+    -- TODO modify so can be -1 if R_min < S_min (or R_max < S_min)
+
+def join_chunks [n] 't
+  (tR: [n]t)
+  (tS: [n]t)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (extParallelism: idx_t.t)
+  (neq: t -> t -> bool)
+  (leq: t -> t -> bool)
+  (gt : t -> t -> bool)
+: joinTup [n] t =
+  let parts = windowed_partitionFunc (partitionsPerWindow) (numberOfWindows) (tR) (tS) (leq) (gt)
+  let np = length parts
+  let pmbs = partitionMatchBounds (tR) (tS) (parts) (extParallelism) (leq) (gt)
+  let loop_over : {iter: idx_t.t, tups: joinTup [n] t}
+  = loop p = {iter=0, tups = uncooked_joinTup (tR) (offset_R)}
+  while p.iter<np do
+    let firstMatch = pmbs[p.iter].0
+    let lastMatch = idx_t.min (np - 1) (pmbs[p.iter].1)
+    in if (firstMatch >= np) then {iter = np, tups = p.tups} else -- break if reached the end
+    if (lastMatch < 0) then {iter = p.iter+1, tups = p.tups} else -- continue if partition smaller than S_min - code unused yet
+    let r_start = parts[p.iter].0
+    let r_end = if p.iter + 1 == np then n else parts[p.iter+1].0
+    let curR = tR[r_start:r_end] :> [r_end-r_start]t
+    let inner_loop : {curPart: idx_t.t, curTups: joinTup [r_end-r_start] t}
+    = loop dp = {curPart = firstMatch, curTups = uncooked_joinTup (curR) (offset_R + r_start)}
+    while dp.curPart <= lastMatch do
+      let s_start = parts[dp.curPart].1
+      let s_end = if dp.curPart + 1 == np then n else parts[dp.curPart+1].1
+      let curS = tS[s_start:s_end]
+      let curJoin = find_joinTuples (curR) (curS) (offset_R+r_start) (offset_S+s_start) (extParallelism) (neq) (gt)
+      let newVs = dp.curTups.vs
+      let newIx = dp.curTups.ix
+      let newIy = map2 (\alt neu -> if (alt<0) then neu else alt) (dp.curTups.iy) (curJoin.iy)
+      let newCm = map2 (+) (dp.curTups.cm) (curJoin.cm)
+      let nextTup = {vs=newVs, ix=newIx, iy=newIy, cm=newCm}
+      in {curPart=dp.curPart+1, curTups=nextTup}
+    let newIx = p.tups.ix
+    let newVs = p.tups.vs
+    let newIy_block = map2 (\alt neu -> if (alt<0) then neu else alt) (p.tups.iy[r_start:r_end]) (inner_loop.curTups.iy)
+    let newCm_block = map2 (+) (p.tups.cm[r_start:r_end]) (inner_loop.curTups.cm)
+    let newIy = (copy p.tups.iy) with [r_start:r_end] = newIy_block
+    let newCm = (copy p.tups.cm) with [r_start:r_end] = newCm_block
+    let newTups = {vs=newVs, ix=newIx, iy=newIy, cm=newCm}
+    in {iter=p.iter+1, tups=newTups}
+  in loop_over.tups
+
+-- FOLLOWING FUNCTION
+-- assume a single chunk of R, multiple chunks of S
+-- nR serves as the max_window_size
+def mergeJoin [nR] [nS] 't
+  (tR: [nR]t)
+  (tS: [nS]t)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (extParallelism: idx_t.t)
+  (neq: t -> t -> bool)
+  (leq: t -> t -> bool)
+  (gt : t -> t -> bool)
+: joinTup [nR] t =
+  let numIter = (nR+nS-1)/nR
+  let loop_over : {iter:idx_t.t, tups: joinTup [nR] t}
+  = loop p = {iter=0, tups = uncooked_joinTup (tR) (offset_R)}
+  while p.iter < numIter do
+    let tS_start = p.iter*nR
+    let tS_end = idx_t.min (nS) (tS_start + nR)
+    let curS = tS[tS_start:tS_end]
+    in if (curS[0] `gt` tR[nR-1]) then {iter=numIter, tups=p.tups} else -- if exceeded Rmax, break
+    let curTup : joinTup [nR] t =
+      if (tS_end - tS_start) < nR then -- last chunk of S - join without partitioning...
+        -- TODO break tR into chunks equisized with last chunk of S
+        -- adjust number of windows & partitions to new size
+        -- might end up too complicated (?)
+        find_joinTuples tR curS (offset_R) (offset_S+tS_start) (extParallelism) (neq) (gt)
+      else -- default case
+        let bS = curS :> [nR]t
+        in join_chunks
+          (tR) (bS)
+          (offset_R) (offset_S+tS_start)
+          (partitionsPerWindow) (numberOfWindows) (extParallelism)
+          (neq) (leq) (gt)
+    let newVs = p.tups.vs
+    let newIx = p.tups.ix
+    let newIy = map2 (\alt neu -> if (alt<0) then neu else alt) (p.tups.iy) (curTup.iy) -- TODO change to avoid rand acc (?)
+    let newCm = map2 (+) (p.tups.cm) (curTup.cm)
+    let nextTup = {vs=newVs, ix=newIx, iy=newIy, cm=newCm}
+    let nextIter = if curS[(length curS)-1] `leq` tR[nR-1] then p.iter+1 else numIter -- break if exceeded Rmax
+    in {iter=nextIter, tups = nextTup}
+  in loop_over.tups
+
 type~ joinPairs 't = {vs: []t, ix: []i64, iy: []i64}
 
 def joinTups_to_joinPairs_InnerJoin [n] 't
@@ -124,8 +294,10 @@ def inner_SMJ 't [nR] [nS]
   (leq: t -> t -> bool)
   (gt : t -> t -> bool)
 : joinPairs t =
-	let jT = find_joinTuples tR tS offset_R offset_S extParallelism (neq) (gt)
-	in joinTups_to_joinPairs_InnerJoin scatter_psize jT dummy_elem
+	--let jT = find_joinTuples tR tS offset_R offset_S extParallelism (neq) (gt)
+	--in joinTups_to_joinPairs_InnerJoin scatter_psize jT dummy_elem
+	let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (neq) (leq) (gt)
+  	in joinTups_to_joinPairs_InnerJoin (scatter_psize) (jTups) (dummy_elem)
 
 type~ joinPairs_int = joinPairs i32
 
