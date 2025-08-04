@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "duckdb.h"
+#include "duckdb.h"
 
 #include "ftSMJerr.h"
 //#include "mylogger.h"
@@ -14,7 +14,7 @@ int main() {
   	int Rk[10] = {2, 4, 6, 7, 8, 9, 10, 12, 15, 16};
   	int Sk[10] = {3, 4, 5, 9, 11, 12, 13, 14, 16, 17};
 
-  	idx_t numPairs = 0;
+  	int64_t numPairs = 0;
   	int* joinedKeys;
   	struct futhark_i64_1d *idxR_ft;
     struct futhark_i64_1d *idxS_ft;
@@ -71,19 +71,19 @@ int main() {
   	printf("Completed join!\n");
 
   	printf("R keys:\n");
-  	for(idx_t i=0;i<10;i++) {
+  	for(int64_t i=0;i<10;i++) {
   		printf("%d, ", Rk[i]);
   	}
   	printf("\n");
 
   	printf("S keys:\n");
-  	for(idx_t i=0;i<10;i++) {
+  	for(int64_t i=0;i<10;i++) {
   		printf("%d, ", Sk[i]);
   	}
   	printf("\n");
 
   	printf("Join results:\n");
-  	for(idx_t i=0;i<numPairs;i++) {
+  	for(int64_t i=0;i<numPairs;i++) {
   		printf("%d, ", joinedKeys[i]);
   	}
   	printf("\n");
