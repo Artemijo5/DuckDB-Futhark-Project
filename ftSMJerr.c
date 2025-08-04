@@ -5173,9 +5173,6 @@ struct memblock {
 struct constants {
     int dummy;
 };
-static int32_t inner_SMJ_intzistatic_array_realtype_5254[2] = { 4,5};
-static int64_t inner_SMJ_intzistatic_array_realtype_5255[2] = { (int64_t) 0,(int64_t) 1};
-static int64_t inner_SMJ_intzistatic_array_realtype_5256[2] = { (int64_t) 0,(int64_t) 1};
 struct tuning_params {
     int dummy;
 };
@@ -7726,7 +7723,7 @@ GEN_LMAD_COPY(8b, uint64_t)
 
 #define FUTHARK_FUN_ATTR static
 
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_5251, struct memblock_device *mem_out_p_5252, struct memblock_device *mem_out_p_5253, struct memblock_device tR_mem_5240, struct memblock_device tS_mem_5241, int64_t nR_5214, int64_t nS_5215, int64_t offset_R_5218, int64_t offset_S_5219, int64_t partitionsPerWindow_5220, int64_t numberOfWindows_5221, int64_t extParallelism_5222, int64_t scatter_psizze_5223);
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_5334, struct memblock_device *mem_out_p_5335, struct memblock_device *mem_out_p_5336, struct memblock_device tR_mem_5326, struct memblock_device tS_mem_5327, int64_t nR_5280, int64_t nS_5281, int64_t offset_R_5284, int64_t offset_S_5285, int64_t partitionsPerWindow_5286, int64_t numberOfWindows_5287, int64_t extParallelism_5288, int64_t scatter_psizze_5289);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -8149,87 +8146,72 @@ struct futhark_opaque_joinPairs_int *futhark_restore_opaque_joinPairs_int(struct
     return obj;
 }
 
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_5251, struct memblock_device *mem_out_p_5252, struct memblock_device *mem_out_p_5253, struct memblock_device tR_mem_5240, struct memblock_device tS_mem_5241, int64_t nR_5214, int64_t nS_5215, int64_t offset_R_5218, int64_t offset_S_5219, int64_t partitionsPerWindow_5220, int64_t numberOfWindows_5221, int64_t extParallelism_5222, int64_t scatter_psizze_5223)
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_5334, struct memblock_device *mem_out_p_5335, struct memblock_device *mem_out_p_5336, struct memblock_device tR_mem_5326, struct memblock_device tS_mem_5327, int64_t nR_5280, int64_t nS_5281, int64_t offset_R_5284, int64_t offset_S_5285, int64_t partitionsPerWindow_5286, int64_t numberOfWindows_5287, int64_t extParallelism_5288, int64_t scatter_psizze_5289)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_5244;
+    struct memblock_device mem_5330;
     
-    mem_5244.references = NULL;
+    mem_5330.references = NULL;
     
-    struct memblock_device mem_5243;
+    struct memblock_device mem_5329;
     
-    mem_5243.references = NULL;
+    mem_5329.references = NULL;
     
-    struct memblock_device mem_5242;
+    struct memblock_device mem_5328;
     
-    mem_5242.references = NULL;
+    mem_5328.references = NULL;
     
-    struct memblock_device mem_out_5247;
+    struct memblock_device mem_out_5333;
     
-    mem_out_5247.references = NULL;
+    mem_out_5333.references = NULL;
     
-    struct memblock_device mem_out_5246;
+    struct memblock_device mem_out_5332;
     
-    mem_out_5246.references = NULL;
+    mem_out_5332.references = NULL;
     
-    struct memblock_device mem_out_5245;
+    struct memblock_device mem_out_5331;
     
-    mem_out_5245.references = NULL;
-    if (memblock_alloc_device(ctx, &mem_5242, (int64_t) 8, "mem_5242")) {
+    mem_out_5331.references = NULL;
+    if (memblock_alloc_device(ctx, &mem_5328, (int64_t) 0, "mem_5328")) {
         err = 1;
         goto cleanup;
     }
-    
-    struct memblock inner_SMJ_intzistatic_array_5248 = (struct memblock) {NULL, (unsigned char *) inner_SMJ_intzistatic_array_realtype_5254, 0, "inner_SMJ_int.static_array_5248"};
-    
-    if ((err = lmad_copy_host2gpu(ctx, 4, true, 1, mem_5242.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, inner_SMJ_intzistatic_array_5248.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 2})) != 0)
-        goto cleanup;
-    if (memblock_alloc_device(ctx, &mem_5243, (int64_t) 16, "mem_5243")) {
+    if (memblock_alloc_device(ctx, &mem_5329, (int64_t) 0, "mem_5329")) {
         err = 1;
         goto cleanup;
     }
-    
-    struct memblock inner_SMJ_intzistatic_array_5249 = (struct memblock) {NULL, (unsigned char *) inner_SMJ_intzistatic_array_realtype_5255, 0, "inner_SMJ_int.static_array_5249"};
-    
-    if ((err = lmad_copy_host2gpu(ctx, 8, true, 1, mem_5243.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, inner_SMJ_intzistatic_array_5249.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 2})) != 0)
-        goto cleanup;
-    if (memblock_alloc_device(ctx, &mem_5244, (int64_t) 16, "mem_5244")) {
+    if (memblock_alloc_device(ctx, &mem_5330, (int64_t) 0, "mem_5330")) {
         err = 1;
         goto cleanup;
     }
-    
-    struct memblock inner_SMJ_intzistatic_array_5250 = (struct memblock) {NULL, (unsigned char *) inner_SMJ_intzistatic_array_realtype_5256, 0, "inner_SMJ_int.static_array_5250"};
-    
-    if ((err = lmad_copy_host2gpu(ctx, 8, true, 1, mem_5244.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, inner_SMJ_intzistatic_array_5250.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 2})) != 0)
-        goto cleanup;
-    if (memblock_set_device(ctx, &mem_out_5245, &mem_5243, "mem_5243") != 0)
+    if (memblock_set_device(ctx, &mem_out_5331, &mem_5328, "mem_5328") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_5246, &mem_5244, "mem_5244") != 0)
+    if (memblock_set_device(ctx, &mem_out_5332, &mem_5329, "mem_5329") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_5247, &mem_5242, "mem_5242") != 0)
+    if (memblock_set_device(ctx, &mem_out_5333, &mem_5330, "mem_5330") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_5251, &mem_out_5245, "mem_out_5245") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_5334, &mem_out_5331, "mem_out_5331") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_5252, &mem_out_5246, "mem_out_5246") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_5335, &mem_out_5332, "mem_out_5332") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_5253, &mem_out_5247, "mem_out_5247") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_5336, &mem_out_5333, "mem_out_5333") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_5244, "mem_5244") != 0)
+        if (memblock_unref_device(ctx, &mem_5330, "mem_5330") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_5243, "mem_5243") != 0)
+        if (memblock_unref_device(ctx, &mem_5329, "mem_5329") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_5242, "mem_5242") != 0)
+        if (memblock_unref_device(ctx, &mem_5328, "mem_5328") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_5247, "mem_out_5247") != 0)
+        if (memblock_unref_device(ctx, &mem_out_5333, "mem_out_5333") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_5246, "mem_out_5246") != 0)
+        if (memblock_unref_device(ctx, &mem_out_5332, "mem_out_5332") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_5245, "mem_out_5245") != 0)
+        if (memblock_unref_device(ctx, &mem_out_5331, "mem_out_5331") != 0)
             return 1;
     }
     return err;
@@ -8237,65 +8219,65 @@ FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, str
 
 int futhark_entry_inner_SMJ_int(struct futhark_context *ctx, struct futhark_opaque_joinPairs_int **out0, const struct futhark_i32_1d *in0, const struct futhark_i32_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7)
 {
-    int64_t nR_5214 = (int64_t) 0;
-    int64_t nS_5215 = (int64_t) 0;
-    int64_t offset_R_5218 = (int64_t) 0;
-    int64_t offset_S_5219 = (int64_t) 0;
-    int64_t partitionsPerWindow_5220 = (int64_t) 0;
-    int64_t numberOfWindows_5221 = (int64_t) 0;
-    int64_t extParallelism_5222 = (int64_t) 0;
-    int64_t scatter_psizze_5223 = (int64_t) 0;
+    int64_t nR_5280 = (int64_t) 0;
+    int64_t nS_5281 = (int64_t) 0;
+    int64_t offset_R_5284 = (int64_t) 0;
+    int64_t offset_S_5285 = (int64_t) 0;
+    int64_t partitionsPerWindow_5286 = (int64_t) 0;
+    int64_t numberOfWindows_5287 = (int64_t) 0;
+    int64_t extParallelism_5288 = (int64_t) 0;
+    int64_t scatter_psizze_5289 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_5247;
+    struct memblock_device mem_out_5333;
     
-    mem_out_5247.references = NULL;
+    mem_out_5333.references = NULL;
     
-    struct memblock_device mem_out_5246;
+    struct memblock_device mem_out_5332;
     
-    mem_out_5246.references = NULL;
+    mem_out_5332.references = NULL;
     
-    struct memblock_device mem_out_5245;
+    struct memblock_device mem_out_5331;
     
-    mem_out_5245.references = NULL;
+    mem_out_5331.references = NULL;
     
-    struct memblock_device tS_mem_5241;
+    struct memblock_device tS_mem_5327;
     
-    tS_mem_5241.references = NULL;
+    tS_mem_5327.references = NULL;
     
-    struct memblock_device tR_mem_5240;
+    struct memblock_device tR_mem_5326;
     
-    tR_mem_5240.references = NULL;
-    tR_mem_5240 = in0->mem;
-    nR_5214 = in0->shape[0];
-    tS_mem_5241 = in1->mem;
-    nS_5215 = in1->shape[0];
-    offset_R_5218 = in2;
-    offset_S_5219 = in3;
-    partitionsPerWindow_5220 = in4;
-    numberOfWindows_5221 = in5;
-    extParallelism_5222 = in6;
-    scatter_psizze_5223 = in7;
-    if (!(nR_5214 == in0->shape[0] && nS_5215 == in1->shape[0])) {
+    tR_mem_5326.references = NULL;
+    tR_mem_5326 = in0->mem;
+    nR_5280 = in0->shape[0];
+    tS_mem_5327 = in1->mem;
+    nS_5281 = in1->shape[0];
+    offset_R_5284 = in2;
+    offset_S_5285 = in3;
+    partitionsPerWindow_5286 = in4;
+    numberOfWindows_5287 = in5;
+    extParallelism_5288 = in6;
+    scatter_psizze_5289 = in7;
+    if (!(nR_5280 == in0->shape[0] && nS_5281 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_inner_SMJ_int(ctx, &mem_out_5245, &mem_out_5246, &mem_out_5247, tR_mem_5240, tS_mem_5241, nR_5214, nS_5215, offset_R_5218, offset_S_5219, partitionsPerWindow_5220, numberOfWindows_5221, extParallelism_5222, scatter_psizze_5223);
+        ret = futrts_entry_inner_SMJ_int(ctx, &mem_out_5331, &mem_out_5332, &mem_out_5333, tR_mem_5326, tS_mem_5327, nR_5280, nS_5281, offset_R_5284, offset_S_5285, partitionsPerWindow_5286, numberOfWindows_5287, extParallelism_5288, scatter_psizze_5289);
         if (ret == 0) {
             assert((*out0 = (struct futhark_opaque_joinPairs_int *) malloc(sizeof(struct futhark_opaque_joinPairs_int))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_5245;
-            (*out0)->v0->shape[0] = (int64_t) 2;
+            (*out0)->v0->mem = mem_out_5331;
+            (*out0)->v0->shape[0] = (int64_t) 0;
             assert(((*out0)->v1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_5246;
-            (*out0)->v1->shape[0] = (int64_t) 2;
+            (*out0)->v1->mem = mem_out_5332;
+            (*out0)->v1->shape[0] = (int64_t) 0;
             assert(((*out0)->v2 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->v2->mem = mem_out_5247;
-            (*out0)->v2->shape[0] = (int64_t) 2;
+            (*out0)->v2->mem = mem_out_5333;
+            (*out0)->v2->shape[0] = (int64_t) 0;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));

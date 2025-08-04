@@ -1,4 +1,28 @@
-type joinPairs_int = {vs: [2]i32, ix: [2]i64, iy: [2]i64}
+type joinPairs 't = {vs: [0]t, ix: [0]i64, iy: [0]i64}
+
+def inner_SMJ 't [nR] [nS]
+  (dummy_elem: t)
+  (tR: [nR]t)
+  (tS: [nS]t)
+  (offset_R: i64)
+  (offset_S: i64)
+  (partitionsPerWindow: i64)
+  (numberOfWindows: i64)
+  (extParallelism: i64)
+  (scatter_psize: i64)
+  (neq: t -> t -> bool)
+  (leq: t -> t -> bool)
+  (gt : t -> t -> bool)
+: joinPairs t =
+	let uncooked_joinPair : joinPairs t =
+    {
+      vs = [],
+      ix = [],
+      iy = []
+    }
+  	in uncooked_joinPair
+
+type joinPairs_int = joinPairs i32
 
 entry inner_SMJ_int [nR] [nS]
   (tR: [nR]i32)
@@ -10,10 +34,5 @@ entry inner_SMJ_int [nR] [nS]
   (extParallelism: i64)
   (scatter_psize: i64)
 : joinPairs_int =
-	let uncooked_joinPair : joinPairs_int =
-    {
-      vs = [4, 5],
-      ix = [0, 1],
-      iy = [0, 1]
-    }
-  	in uncooked_joinPair
+  inner_SMJ
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows) (extParallelism) (scatter_psize) (!=) (<=) (>)
