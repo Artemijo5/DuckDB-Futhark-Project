@@ -1,5 +1,4 @@
 import "ftbasics"
-import "ftsort"
 
 -- | Type used to store the information of a join (between x&y) in a partition.
 -- vs : the values of the x's

@@ -37,5 +37,5 @@ CUDA-ftSMJerr: ftSMJerr.fut
 	futhark cuda ftSMJerr.fut --library
 	gcc ftSMJerr.c -o libftSMJerr.so -fPIC -shared -lcuda -lcudart -lnvrtc
 
-joinTest: joinTest.c libftSMJerr.so
-	$(CC) joinTest.c -o joinTest.o libftSMJerr.so $(CFLAGS)
+joinTest: joinTest.c libftSMJ.so
+	$(CC) joinTest.c -o joinTest.o libftSMJ.so $(CFLAGS)
