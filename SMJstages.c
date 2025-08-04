@@ -5,9 +5,9 @@
 #include <string.h>
 #include "duckdb.h"
 
+#include "myutil.h"
 #include "ftSMJ.h"
 #include "mylogger.h"
-#include "myutil.h"
 #include "smjutil.h"
 
 void Inner_MergeJoin_GFTR(

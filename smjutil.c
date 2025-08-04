@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include "duckdb.h"
 #include "mylogger.h"
-#include "myutil.h"
 #include <string.h>
 
 #include "ftSMJ.h"

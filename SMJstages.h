@@ -4,7 +4,6 @@
 
 #include "ftSMJ.h"
 #include "mylogger.h"
-#include "myutil.h"
 #include "smjutil.h"
 
 #ifndef SMJSTAGES_H

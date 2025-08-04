@@ -4,7 +4,6 @@
 #include "duckdb.h"
 
 #include "mylogger.h"
-#include "myutil.h"
 #include "sortstages.h"
 
 #include "ftSMJ.h"
