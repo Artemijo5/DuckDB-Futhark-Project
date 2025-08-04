@@ -5244,44 +5244,44 @@ struct memblock {
 };
 struct constants {
     int dummy;
-    struct memblock_device counters_mem_17185;
+    struct memblock_device counters_mem_17073;
 };
 struct tuning_params {
     int dummy;
-    int64_t *builtinzhiota_i64zitblock_sizze_17194;
-    int64_t *builtinzhreplicate_f32zitblock_sizze_17201;
-    int64_t *builtinzhreplicate_f64zitblock_sizze_17201;
-    int64_t *builtinzhreplicate_i16zitblock_sizze_17201;
-    int64_t *builtinzhreplicate_i32zitblock_sizze_17201;
-    int64_t *builtinzhreplicate_i64zitblock_sizze_17201;
-    int64_t *gather_payloads_doublezisegmap_tblock_sizze_16823;
-    int64_t *gather_payloads_doublezisegmap_tblock_sizze_16841;
-    int64_t *gather_payloads_double_GFURzisegmap_tblock_sizze_17103;
-    int64_t *gather_payloads_double_GFURzisegmap_tblock_sizze_17121;
-    int64_t *gather_payloads_floatzisegmap_tblock_sizze_16767;
-    int64_t *gather_payloads_floatzisegmap_tblock_sizze_16785;
-    int64_t *gather_payloads_float_GFURzisegmap_tblock_sizze_17047;
-    int64_t *gather_payloads_float_GFURzisegmap_tblock_sizze_17065;
-    int64_t *gather_payloads_intzisegmap_tblock_sizze_16655;
-    int64_t *gather_payloads_intzisegmap_tblock_sizze_16673;
-    int64_t *gather_payloads_int_GFURzisegmap_tblock_sizze_16935;
-    int64_t *gather_payloads_int_GFURzisegmap_tblock_sizze_16953;
-    int64_t *gather_payloads_longzisegmap_tblock_sizze_16711;
-    int64_t *gather_payloads_longzisegmap_tblock_sizze_16729;
-    int64_t *gather_payloads_long_GFURzisegmap_tblock_sizze_16991;
-    int64_t *gather_payloads_long_GFURzisegmap_tblock_sizze_17009;
-    int64_t *gather_payloads_shortzisegmap_tblock_sizze_16599;
-    int64_t *gather_payloads_shortzisegmap_tblock_sizze_16617;
-    int64_t *gather_payloads_short_GFURzisegmap_tblock_sizze_16879;
-    int64_t *gather_payloads_short_GFURzisegmap_tblock_sizze_16897;
-    int64_t *max_idxzisegred_num_tblocks_16589;
-    int64_t *max_idxzisegred_tblock_sizze_16587;
-    int64_t *min_idxzisegred_num_tblocks_16579;
-    int64_t *min_idxzisegred_tblock_sizze_16577;
+    int64_t *builtinzhiota_i64zitblock_sizze_17082;
+    int64_t *builtinzhreplicate_f32zitblock_sizze_17089;
+    int64_t *builtinzhreplicate_f64zitblock_sizze_17089;
+    int64_t *builtinzhreplicate_i16zitblock_sizze_17089;
+    int64_t *builtinzhreplicate_i32zitblock_sizze_17089;
+    int64_t *builtinzhreplicate_i64zitblock_sizze_17089;
+    int64_t *gather_payloads_doublezisegmap_tblock_sizze_16711;
+    int64_t *gather_payloads_doublezisegmap_tblock_sizze_16729;
+    int64_t *gather_payloads_double_GFURzisegmap_tblock_sizze_16991;
+    int64_t *gather_payloads_double_GFURzisegmap_tblock_sizze_17009;
+    int64_t *gather_payloads_floatzisegmap_tblock_sizze_16655;
+    int64_t *gather_payloads_floatzisegmap_tblock_sizze_16673;
+    int64_t *gather_payloads_float_GFURzisegmap_tblock_sizze_16935;
+    int64_t *gather_payloads_float_GFURzisegmap_tblock_sizze_16953;
+    int64_t *gather_payloads_intzisegmap_tblock_sizze_16543;
+    int64_t *gather_payloads_intzisegmap_tblock_sizze_16561;
+    int64_t *gather_payloads_int_GFURzisegmap_tblock_sizze_16823;
+    int64_t *gather_payloads_int_GFURzisegmap_tblock_sizze_16841;
+    int64_t *gather_payloads_longzisegmap_tblock_sizze_16599;
+    int64_t *gather_payloads_longzisegmap_tblock_sizze_16617;
+    int64_t *gather_payloads_long_GFURzisegmap_tblock_sizze_16879;
+    int64_t *gather_payloads_long_GFURzisegmap_tblock_sizze_16897;
+    int64_t *gather_payloads_shortzisegmap_tblock_sizze_16487;
+    int64_t *gather_payloads_shortzisegmap_tblock_sizze_16505;
+    int64_t *gather_payloads_short_GFURzisegmap_tblock_sizze_16767;
+    int64_t *gather_payloads_short_GFURzisegmap_tblock_sizze_16785;
+    int64_t *max_idxzisegred_num_tblocks_16477;
+    int64_t *max_idxzisegred_tblock_sizze_16475;
+    int64_t *min_idxzisegred_num_tblocks_16467;
+    int64_t *min_idxzisegred_tblock_sizze_16465;
 };
 static const int num_tuning_params = 30;
-static const char *tuning_param_names[] = {"builtin#iota_i64.tblock_size_17194", "builtin#replicate_f32.tblock_size_17201", "builtin#replicate_f64.tblock_size_17201", "builtin#replicate_i16.tblock_size_17201", "builtin#replicate_i32.tblock_size_17201", "builtin#replicate_i64.tblock_size_17201", "gather_payloads_double.segmap_tblock_size_16823", "gather_payloads_double.segmap_tblock_size_16841", "gather_payloads_double_GFUR.segmap_tblock_size_17103", "gather_payloads_double_GFUR.segmap_tblock_size_17121", "gather_payloads_float.segmap_tblock_size_16767", "gather_payloads_float.segmap_tblock_size_16785", "gather_payloads_float_GFUR.segmap_tblock_size_17047", "gather_payloads_float_GFUR.segmap_tblock_size_17065", "gather_payloads_int.segmap_tblock_size_16655", "gather_payloads_int.segmap_tblock_size_16673", "gather_payloads_int_GFUR.segmap_tblock_size_16935", "gather_payloads_int_GFUR.segmap_tblock_size_16953", "gather_payloads_long.segmap_tblock_size_16711", "gather_payloads_long.segmap_tblock_size_16729", "gather_payloads_long_GFUR.segmap_tblock_size_16991", "gather_payloads_long_GFUR.segmap_tblock_size_17009", "gather_payloads_short.segmap_tblock_size_16599", "gather_payloads_short.segmap_tblock_size_16617", "gather_payloads_short_GFUR.segmap_tblock_size_16879", "gather_payloads_short_GFUR.segmap_tblock_size_16897", "max_idx.segred_num_tblocks_16589", "max_idx.segred_tblock_size_16587", "min_idx.segred_num_tblocks_16579", "min_idx.segred_tblock_size_16577", NULL};
-static const char *tuning_param_vars[] = {"builtinzhiota_i64zitblock_sizze_17194", "builtinzhreplicate_f32zitblock_sizze_17201", "builtinzhreplicate_f64zitblock_sizze_17201", "builtinzhreplicate_i16zitblock_sizze_17201", "builtinzhreplicate_i32zitblock_sizze_17201", "builtinzhreplicate_i64zitblock_sizze_17201", "gather_payloads_doublezisegmap_tblock_sizze_16823", "gather_payloads_doublezisegmap_tblock_sizze_16841", "gather_payloads_double_GFURzisegmap_tblock_sizze_17103", "gather_payloads_double_GFURzisegmap_tblock_sizze_17121", "gather_payloads_floatzisegmap_tblock_sizze_16767", "gather_payloads_floatzisegmap_tblock_sizze_16785", "gather_payloads_float_GFURzisegmap_tblock_sizze_17047", "gather_payloads_float_GFURzisegmap_tblock_sizze_17065", "gather_payloads_intzisegmap_tblock_sizze_16655", "gather_payloads_intzisegmap_tblock_sizze_16673", "gather_payloads_int_GFURzisegmap_tblock_sizze_16935", "gather_payloads_int_GFURzisegmap_tblock_sizze_16953", "gather_payloads_longzisegmap_tblock_sizze_16711", "gather_payloads_longzisegmap_tblock_sizze_16729", "gather_payloads_long_GFURzisegmap_tblock_sizze_16991", "gather_payloads_long_GFURzisegmap_tblock_sizze_17009", "gather_payloads_shortzisegmap_tblock_sizze_16599", "gather_payloads_shortzisegmap_tblock_sizze_16617", "gather_payloads_short_GFURzisegmap_tblock_sizze_16879", "gather_payloads_short_GFURzisegmap_tblock_sizze_16897", "max_idxzisegred_num_tblocks_16589", "max_idxzisegred_tblock_sizze_16587", "min_idxzisegred_num_tblocks_16579", "min_idxzisegred_tblock_sizze_16577", NULL};
+static const char *tuning_param_names[] = {"builtin#iota_i64.tblock_size_17082", "builtin#replicate_f32.tblock_size_17089", "builtin#replicate_f64.tblock_size_17089", "builtin#replicate_i16.tblock_size_17089", "builtin#replicate_i32.tblock_size_17089", "builtin#replicate_i64.tblock_size_17089", "gather_payloads_double.segmap_tblock_size_16711", "gather_payloads_double.segmap_tblock_size_16729", "gather_payloads_double_GFUR.segmap_tblock_size_16991", "gather_payloads_double_GFUR.segmap_tblock_size_17009", "gather_payloads_float.segmap_tblock_size_16655", "gather_payloads_float.segmap_tblock_size_16673", "gather_payloads_float_GFUR.segmap_tblock_size_16935", "gather_payloads_float_GFUR.segmap_tblock_size_16953", "gather_payloads_int.segmap_tblock_size_16543", "gather_payloads_int.segmap_tblock_size_16561", "gather_payloads_int_GFUR.segmap_tblock_size_16823", "gather_payloads_int_GFUR.segmap_tblock_size_16841", "gather_payloads_long.segmap_tblock_size_16599", "gather_payloads_long.segmap_tblock_size_16617", "gather_payloads_long_GFUR.segmap_tblock_size_16879", "gather_payloads_long_GFUR.segmap_tblock_size_16897", "gather_payloads_short.segmap_tblock_size_16487", "gather_payloads_short.segmap_tblock_size_16505", "gather_payloads_short_GFUR.segmap_tblock_size_16767", "gather_payloads_short_GFUR.segmap_tblock_size_16785", "max_idx.segred_num_tblocks_16477", "max_idx.segred_tblock_size_16475", "min_idx.segred_num_tblocks_16467", "min_idx.segred_tblock_size_16465", NULL};
+static const char *tuning_param_vars[] = {"builtinzhiota_i64zitblock_sizze_17082", "builtinzhreplicate_f32zitblock_sizze_17089", "builtinzhreplicate_f64zitblock_sizze_17089", "builtinzhreplicate_i16zitblock_sizze_17089", "builtinzhreplicate_i32zitblock_sizze_17089", "builtinzhreplicate_i64zitblock_sizze_17089", "gather_payloads_doublezisegmap_tblock_sizze_16711", "gather_payloads_doublezisegmap_tblock_sizze_16729", "gather_payloads_double_GFURzisegmap_tblock_sizze_16991", "gather_payloads_double_GFURzisegmap_tblock_sizze_17009", "gather_payloads_floatzisegmap_tblock_sizze_16655", "gather_payloads_floatzisegmap_tblock_sizze_16673", "gather_payloads_float_GFURzisegmap_tblock_sizze_16935", "gather_payloads_float_GFURzisegmap_tblock_sizze_16953", "gather_payloads_intzisegmap_tblock_sizze_16543", "gather_payloads_intzisegmap_tblock_sizze_16561", "gather_payloads_int_GFURzisegmap_tblock_sizze_16823", "gather_payloads_int_GFURzisegmap_tblock_sizze_16841", "gather_payloads_longzisegmap_tblock_sizze_16599", "gather_payloads_longzisegmap_tblock_sizze_16617", "gather_payloads_long_GFURzisegmap_tblock_sizze_16879", "gather_payloads_long_GFURzisegmap_tblock_sizze_16897", "gather_payloads_shortzisegmap_tblock_sizze_16487", "gather_payloads_shortzisegmap_tblock_sizze_16505", "gather_payloads_short_GFURzisegmap_tblock_sizze_16767", "gather_payloads_short_GFURzisegmap_tblock_sizze_16785", "max_idxzisegred_num_tblocks_16477", "max_idxzisegred_tblock_sizze_16475", "min_idxzisegred_num_tblocks_16467", "min_idxzisegred_tblock_sizze_16465", NULL};
 static const char *tuning_param_classes[] = {"thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "thread_block_size", "grid_size", "thread_block_size", "grid_size", "thread_block_size", NULL};
 static int64_t tuning_param_defaults[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static const int max_failure_args = 2;
@@ -5313,20 +5313,20 @@ static const char *gpu_program[] = {"#define FUTHARK_CUDA\n// start of prelude.c
                                     "                                               int32_t repeat_2) {     \\\n  __local ELEM_TYPE* block = (__local ELEM_TYPE*)shared_mem;            \\\n  int tblock_id_0 = get_tblock_id(0);                                   \\\n  int global_id_0 = get_global_id(0);                                   \\\n  int tblock_id_1 = get_tblock_id(1);                                   \\\n  int global_id_1 = get_global_id(1);                                   \\\n  for (int i1 = 0; i1 <= repeat_1; i1++) {                              \\\n    int tblock_id_2 = get_tblock_id(2);                                 \\\n    int global_id_2 = get_global_id(2);                                 \\\n    for (int i2 = 0; i2 <= repeat_2; i2++) {                            \\\n      int32_t our_array_offset = tblock_id_2 * x_elems * y_elems;       \\\n      int32_t odata_offset = dst_offset + our_array_offset;             \\\n      int32_t idata_offset = src_offset + our_array_offset;             \\\n      int32_t x_index =                                                 \\\n        tblock_id_0 * TR_BLOCK_DIM * mulx +                             \\\n        get_local_id(0) +                                               \\\n        get_local_id(1)%mulx * TR_BLOCK_DIM;                            \\\n      int32_t y_index = tblock_id_1 * TR_BLOCK_DIM + get_local_id(1)/mulx; \\\n      int32_t index_in = y_index * x_elems + x_index;                   \\\n      if (x_index < x_elems && y_index < y_elems) {                     \\\n        block[get_local_id(1) * (TR_BLOCK_DIM+1) + get_local_id(0)] =   \\\n          src_mem[idata_offset + index_in];                             \\\n      }                                                                 \\\n      barrier_local();                                                  \\\n      x_index = tblock_id_1 * TR_BLOCK_DIM + get_local_id(0)/mulx;      \\\n      y_index =                                                         \\\n        tblock_id_0 * TR_BLOCK_DIM * mulx +                             \\\n", "        get_local_id(1) +                                               \\\n        (get_local_id(0)%mulx) * TR_BLOCK_DIM;                          \\\n      int32_t index_out = y_index * y_elems + x_index;                  \\\n      if (x_index < y_elems && y_index < x_elems) {                     \\\n        dst_mem[odata_offset + index_out] =                             \\\n          block[get_local_id(0) * (TR_BLOCK_DIM+1) + get_local_id(1)];  \\\n      }                                                                 \\\n      tblock_id_2 += get_num_tblocks(2);                                \\\n      global_id_2 += get_global_size(2);                                \\\n    }                                                                   \\\n    tblock_id_1 += get_num_tblocks(1);                                  \\\n    global_id_1 += get_global_size(1);                                  \\\n  }                                                                     \\\n}                                                                       \\\n                                                                        \\\nFUTHARK_KERNEL_SIZED(TR_BLOCK_DIM, TR_BLOCK_DIM, 1)                     \\\nvoid map_transpose_##NAME##_low_width(SHARED_MEM_PARAM                  \\\n                                      __global ELEM_TYPE *dst_mem,      \\\n                                      int64_t dst_offset,               \\\n                                      __global ELEM_TYPE *src_mem,      \\\n                                      int64_t src_offset,               \\\n                                      int32_t num_arrays,               \\\n                                      int32_t x_elems,                  \\\n                                      int32_t y_elems,                  \\\n                                      int32_t mulx,                     \\\n                                      int32_t muly,                     \\\n                                      int32_t repeat_1,                 \\\n  ", "                                    int32_t repeat_2) {               \\\n  __local ELEM_TYPE* block = (__local ELEM_TYPE*)shared_mem;            \\\n  int tblock_id_0 = get_tblock_id(0);                                   \\\n  int global_id_0 = get_global_id(0);                                   \\\n  int tblock_id_1 = get_tblock_id(1);                                   \\\n  int global_id_1 = get_global_id(1);                                   \\\n  for (int i1 = 0; i1 <= repeat_1; i1++) {                              \\\n    int tblock_id_2 = get_tblock_id(2);                                 \\\n    int global_id_2 = get_global_id(2);                                 \\\n    for (int i2 = 0; i2 <= repeat_2; i2++) {                            \\\n      int32_t our_array_offset = tblock_id_2 * x_elems * y_elems;       \\\n      int32_t odata_offset = dst_offset + our_array_offset;             \\\n      int32_t idata_offset = src_offset + our_array_offset;             \\\n      int32_t x_index = tblock_id_0 * TR_BLOCK_DIM + get_local_id(0)/muly; \\\n      int32_t y_index =                                                 \\\n        tblock_id_1 * TR_BLOCK_DIM * muly +                             \\\n        get_local_id(1) + (get_local_id(0)%muly) * TR_BLOCK_DIM;        \\\n      int32_t index_in = y_index * x_elems + x_index;                   \\\n      if (x_index < x_elems && y_index < y_elems) {                     \\\n        block[get_local_id(1) * (TR_BLOCK_DIM+1) + get_local_id(0)] =   \\\n          src_mem[idata_offset + index_in];                             \\\n      }                                                                 \\\n      barrier_local();                                                  \\\n      x_index = tblock_id_1 * TR_BLOCK_DIM * muly +                     \\\n        get_local_id(0) + (get_local_id(1)%muly) * TR_BLOCK_DIM;        \\\n      y_index = tblock_id_0 * TR_BLOCK_DIM + get_local_id(1)/muly;      \\\n      int32_t index_out = y_index * y_elems + x_index;                  \\\n ",
                                     "     if (x_index < y_elems && y_index < x_elems) {                     \\\n        dst_mem[odata_offset + index_out] =                             \\\n          block[get_local_id(0) * (TR_BLOCK_DIM+1) + get_local_id(1)];  \\\n      }                                                                 \\\n      tblock_id_2 += get_num_tblocks(2);                                \\\n      global_id_2 += get_num_tblocks(2) * get_local_size(2);            \\\n    }                                                                   \\\n    tblock_id_1 += get_num_tblocks(1);                                  \\\n    global_id_1 += get_num_tblocks(1) * get_local_size(1);              \\\n  }                                                                     \\\n}                                                                       \\\n                                                                        \\\nFUTHARK_KERNEL_SIZED(TR_BLOCK_DIM*TR_BLOCK_DIM, 1, 1)                   \\\nvoid map_transpose_##NAME##_small(SHARED_MEM_PARAM                       \\\n                                  __global ELEM_TYPE *dst_mem,          \\\n                                  int64_t dst_offset,                   \\\n                                  __global ELEM_TYPE *src_mem,          \\\n                                  int64_t src_offset,                   \\\n                                  int32_t num_arrays,                   \\\n                                  int32_t x_elems,                      \\\n                                  int32_t y_elems,                      \\\n                                  int32_t mulx,                         \\\n                                  int32_t muly,                         \\\n                                  int32_t repeat_1,                     \\\n                                  int32_t repeat_2) {                   \\\n  (void)mulx; (void)muly;                                               \\\n  __local ELEM_TYPE* block = (__local ELEM_TYPE*)shared_mem;            \\\n  ", "int tblock_id_0 = get_tblock_id(0);                                   \\\n  int global_id_0 = get_global_id(0);                                   \\\n  int tblock_id_1 = get_tblock_id(1);                                   \\\n  int global_id_1 = get_global_id(1);                                   \\\n  for (int i1 = 0; i1 <= repeat_1; i1++) {                              \\\n    int tblock_id_2 = get_tblock_id(2);                                 \\\n    int global_id_2 = get_global_id(2);                                 \\\n    for (int i2 = 0; i2 <= repeat_2; i2++) {                            \\\n      int32_t our_array_offset = global_id_0/(y_elems * x_elems) * y_elems * x_elems; \\\n      int32_t x_index = (global_id_0 % (y_elems * x_elems))/y_elems;    \\\n      int32_t y_index = global_id_0%y_elems;                            \\\n      int32_t odata_offset = dst_offset + our_array_offset;             \\\n      int32_t idata_offset = src_offset + our_array_offset;             \\\n      int32_t index_in = y_index * x_elems + x_index;                   \\\n      int32_t index_out = x_index * y_elems + y_index;                  \\\n      if (global_id_0 < x_elems * y_elems * num_arrays) {               \\\n        dst_mem[odata_offset + index_out] = src_mem[idata_offset + index_in]; \\\n      }                                                                 \\\n      tblock_id_2 += get_num_tblocks(2);                                \\\n      global_id_2 += get_global_size(2);                                \\\n    }                                                                   \\\n    tblock_id_1 += get_num_tblocks(1);                                  \\\n    global_id_1 += get_global_size(1);                                  \\\n  }                                                                     \\\n}                                                                       \\\n                                                                        \\\nFUTHARK_KERNEL_SIZED(TR_BLOCK_DIM*2, TR_TILE_DIM/TR_ELEMS_", "PER_THREAD, 1)\\\nvoid map_transpose_##NAME##_large(SHARED_MEM_PARAM                      \\\n                                  __global ELEM_TYPE *dst_mem,          \\\n                                  int64_t dst_offset,                   \\\n                                  __global ELEM_TYPE *src_mem,          \\\n                                  int64_t src_offset,                   \\\n                                  int64_t num_arrays,                   \\\n                                  int64_t x_elems,                      \\\n                                  int64_t y_elems,                      \\\n                                  int64_t mulx,                         \\\n                                  int64_t muly,                         \\\n                                  int32_t repeat_1,                     \\\n                                  int32_t repeat_2) {                   \\\n  (void)mulx; (void)muly;                                               \\\n  __local ELEM_TYPE* block = (__local ELEM_TYPE*)shared_mem;             \\\n  int tblock_id_0 = get_tblock_id(0);                                   \\\n  int global_id_0 = get_global_id(0);                                   \\\n  int tblock_id_1 = get_tblock_id(1);                                   \\\n  int global_id_1 = get_global_id(1);                                   \\\n  for (int i1 = 0; i1 <= repeat_1; i1++) {                              \\\n    int tblock_id_2 = get_tblock_id(2);                                 \\\n    int global_id_2 = get_global_id(2);                                 \\\n    for (int i2 = 0; i2 <= repeat_2; i2++) {                            \\\n      int64_t our_array_offset = tblock_id_2 * x_elems * y_elems;       \\\n      int64_t odata_offset = dst_offset + our_array_offset;             \\\n      int64_t idata_offset = src_offset + our_array_offset;             \\\n      int64_t x_index = global_id_0;                                    \\\n      int64_t y_index = tblock_id_1 * TR_TILE_DIM + get_loc",
                                     "al_id(1);    \\\n      if (x_index < x_elems) {                                          \\\n        for (int64_t j = 0; j < TR_ELEMS_PER_THREAD; j++) {             \\\n          int64_t index_i = (y_index + j * (TR_TILE_DIM/TR_ELEMS_PER_THREAD)) * x_elems + x_index; \\\n          if (y_index + j * (TR_TILE_DIM/TR_ELEMS_PER_THREAD) < y_elems) { \\\n            block[(get_local_id(1) + j * (TR_TILE_DIM/TR_ELEMS_PER_THREAD)) * (TR_TILE_DIM+1) + \\\n                  get_local_id(0)] =                                    \\\n              src_mem[idata_offset + index_i];                          \\\n          }                                                             \\\n        }                                                               \\\n      }                                                                 \\\n      barrier_local();                                                  \\\n      x_index = tblock_id_1 * TR_TILE_DIM + get_local_id(0);            \\\n      y_index = tblock_id_0 * TR_TILE_DIM + get_local_id(1);            \\\n      if (x_index < y_elems) {                                          \\\n        for (int64_t j = 0; j < TR_ELEMS_PER_THREAD; j++) {             \\\n          int64_t index_out = (y_index + j * (TR_TILE_DIM/TR_ELEMS_PER_THREAD)) * y_elems + x_index; \\\n          if (y_index + j * (TR_TILE_DIM/TR_ELEMS_PER_THREAD) < x_elems) { \\\n            dst_mem[(odata_offset + index_out)] =                       \\\n              block[get_local_id(0) * (TR_TILE_DIM+1) +                 \\\n                    get_local_id(1) + j * (TR_TILE_DIM/TR_ELEMS_PER_THREAD)]; \\\n          }                                                             \\\n        }                                                               \\\n      }                                                                 \\\n      tblock_id_2 += get_num_tblocks(2);                                \\\n      global_id_2 += get_global_size(2);                                \\\n    }                                      ", "                             \\\n    tblock_id_1 += get_num_tblocks(1);                                  \\\n    global_id_1 += get_global_size(1);                                  \\\n  }                                                                     \\\n}                                                                       \\\n\nGEN_TRANSPOSE_KERNELS(1b, uint8_t)\nGEN_TRANSPOSE_KERNELS(2b, uint16_t)\nGEN_TRANSPOSE_KERNELS(4b, uint32_t)\nGEN_TRANSPOSE_KERNELS(8b, uint64_t)\n\n// End of transpose.cl\n// Start of copy.cl\n\n#define GEN_COPY_KERNEL(NAME, ELEM_TYPE) \\\nFUTHARK_KERNEL void lmad_copy_##NAME(SHARED_MEM_PARAM                   \\\n                               __global ELEM_TYPE *dst_mem,             \\\n                               int64_t dst_offset,                      \\\n                               __global ELEM_TYPE *src_mem,             \\\n                               int64_t src_offset,                      \\\n                               int64_t n,                               \\\n                               int r,                                   \\\n                               int64_t shape0, int64_t dst_stride0, int64_t src_stride0, \\\n                               int64_t shape1, int64_t dst_stride1, int64_t src_stride1, \\\n                               int64_t shape2, int64_t dst_stride2, int64_t src_stride2, \\\n                               int64_t shape3, int64_t dst_stride3, int64_t src_stride3, \\\n                               int64_t shape4, int64_t dst_stride4, int64_t src_stride4, \\\n                               int64_t shape5, int64_t dst_stride5, int64_t src_stride5, \\\n                               int64_t shape6, int64_t dst_stride6, int64_t src_stride6, \\\n                               int64_t shape7, int64_t dst_stride7, int64_t src_stride7) { \\\n  int64_t gtid = get_global_id(0);                                      \\\n  int64_t remainder = gtid;                                             \\\n                                             ", "                           \\\n  if (gtid >= n) {                                                      \\\n    return;                                                             \\\n  }                                                                     \\\n                                                                        \\\n  if (r > 0) {                                                          \\\n    int64_t i = remainder % shape0;                                     \\\n    dst_offset += i * dst_stride0;                                      \\\n    src_offset += i * src_stride0;                                      \\\n    remainder /= shape0;                                                \\\n  }                                                                     \\\n  if (r > 1) {                                                          \\\n    int64_t i = remainder % shape1;                                     \\\n    dst_offset += i * dst_stride1;                                      \\\n    src_offset += i * src_stride1;                                      \\\n    remainder /= shape1;                                                \\\n  }                                                                     \\\n  if (r > 2) {                                                          \\\n    int64_t i = remainder % shape2;                                     \\\n    dst_offset += i * dst_stride2;                                      \\\n    src_offset += i * src_stride2;                                      \\\n    remainder /= shape2;                                                \\\n  }                                                                     \\\n  if (r > 3) {                                                          \\\n    int64_t i = remainder % shape3;                                     \\\n    dst_offset += i * dst_stride3;                                      \\\n    src_offset += i * src_stride3;                                      \\\n    remainder /= shape3;                       ",
-                                    "                         \\\n  }                                                                     \\\n  if (r > 4) {                                                          \\\n    int64_t i = remainder % shape4;                                     \\\n    dst_offset += i * dst_stride4;                                      \\\n    src_offset += i * src_stride4;                                      \\\n    remainder /= shape4;                                                \\\n  }                                                                     \\\n  if (r > 5) {                                                          \\\n    int64_t i = remainder % shape5;                                     \\\n    dst_offset += i * dst_stride5;                                      \\\n    src_offset += i * src_stride5;                                      \\\n    remainder /= shape5;                                                \\\n  }                                                                     \\\n  if (r > 6) {                                                          \\\n    int64_t i = remainder % shape6;                                     \\\n    dst_offset += i * dst_stride6;                                      \\\n    src_offset += i * src_stride6;                                      \\\n    remainder /= shape6;                                                \\\n  }                                                                     \\\n  if (r > 7) {                                                          \\\n    int64_t i = remainder % shape7;                                     \\\n    dst_offset += i * dst_stride7;                                      \\\n    src_offset += i * src_stride7;                                      \\\n    remainder /= shape7;                                                \\\n  }                                                                     \\\n                                                                        \\\n  dst_mem[dst_offset] = src_mem[src_offset];     ", "                       \\\n}\n\nGEN_COPY_KERNEL(1b, uint8_t)\nGEN_COPY_KERNEL(2b, uint16_t)\nGEN_COPY_KERNEL(4b, uint32_t)\nGEN_COPY_KERNEL(8b, uint64_t)\n\n// End of copy.cl\n\n\n\nFUTHARK_KERNEL\nvoid builtinzhiota_i64ziiota_i64_17190(int64_t n_17186, int64_t x_17187, int64_t s_17188, int64_t virt_num_tblocks_17195, int64_t num_tblocks_17196, __global unsigned char *mem_17185)\n{\n    int32_t iota_ltid_17191;\n    int32_t tblock_sizze_17193;\n    int32_t iota_gid_17192;\n    int32_t iota_gtid_17190;\n    int32_t phys_tblock_id_17197;\n    int32_t iterations_17198;\n    \n    iota_ltid_17191 = get_local_id(0);\n    tblock_sizze_17193 = get_local_size(0);\n    iota_gid_17192 = get_tblock_id(0);\n    iota_gtid_17190 = iota_gid_17192 * tblock_sizze_17193 + iota_ltid_17191;\n    phys_tblock_id_17197 = get_tblock_id(0);\n    iterations_17198 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17195) - phys_tblock_id_17197, sext_i64_i32(num_tblocks_17196));\n    for (int32_t i_17199 = 0; i_17199 < iterations_17198; i_17199++) {\n        int32_t virt_tblock_id_17200;\n        int64_t global_tid_17201;\n        \n        virt_tblock_id_17200 = phys_tblock_id_17197 + i_17199 * sext_i64_i32(num_tblocks_17196);\n        global_tid_17201 = sext_i32_i64(virt_tblock_id_17200) * sext_i32_i64(tblock_sizze_17193) + sext_i32_i64(iota_ltid_17191);\n        if (slt64(global_tid_17201, n_17186)) {\n            ((__global int64_t *) mem_17185)[global_tid_17201] = add64(mul64(global_tid_17201, s_17188), x_17187);\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_f32zireplicate_17197(int64_t num_elems_17193, float val_17194, int64_t replicate_n_17196, int64_t virt_num_tblocks_17202, int64_t num_tblocks_17203, __global unsigned char *mem_17192)\n{\n    int32_t replicate_ltid_17198;\n    int32_t tblock_sizze_17200;\n    int32_t replicate_gid_17199;\n    int32_t replicate_gtid_17197;\n    int32_t phys_tblock_id_17204;\n    int32_t iterations_17205;\n", "    \n    replicate_ltid_17198 = get_local_id(0);\n    tblock_sizze_17200 = get_local_size(0);\n    replicate_gid_17199 = get_tblock_id(0);\n    replicate_gtid_17197 = replicate_gid_17199 * tblock_sizze_17200 + replicate_ltid_17198;\n    phys_tblock_id_17204 = get_tblock_id(0);\n    iterations_17205 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17202) - phys_tblock_id_17204, sext_i64_i32(num_tblocks_17203));\n    for (int32_t i_17206 = 0; i_17206 < iterations_17205; i_17206++) {\n        int32_t virt_tblock_id_17207;\n        int64_t global_tid_17208;\n        int64_t slice_17210;\n        int64_t rep_i_17209;\n        int64_t remnant_17211;\n        \n        virt_tblock_id_17207 = phys_tblock_id_17204 + i_17206 * sext_i64_i32(num_tblocks_17203);\n        global_tid_17208 = sext_i32_i64(virt_tblock_id_17207) * sext_i32_i64(tblock_sizze_17200) + sext_i32_i64(replicate_ltid_17198);\n        slice_17210 = num_elems_17193;\n        rep_i_17209 = global_tid_17208;\n        remnant_17211 = global_tid_17208 - rep_i_17209;\n        if (slt64(global_tid_17208, replicate_n_17196)) {\n            ((__global float *) mem_17192)[rep_i_17209] = val_17194;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_f64zireplicate_17197(int64_t num_elems_17193, double val_17194, int64_t replicate_n_17196, int64_t virt_num_tblocks_17202, int64_t num_tblocks_17203, __global unsigned char *mem_17192)\n{\n    int32_t replicate_ltid_17198;\n    int32_t tblock_sizze_17200;\n    int32_t replicate_gid_17199;\n    int32_t replicate_gtid_17197;\n    int32_t phys_tblock_id_17204;\n    int32_t iterations_17205;\n    \n    replicate_ltid_17198 = get_local_id(0);\n    tblock_sizze_17200 = get_local_size(0);\n    replicate_gid_17199 = get_tblock_id(0);\n    replicate_gtid_17197 = replicate_gid_17199 * tblock_sizze_17200 + replicate_ltid_17198;\n    phys_tblock_id_17204 = get_tblock_id(0);\n    iterations_17205 = sdiv_up32(sext_i64_i32(virt_num_tblo",
-                                    "cks_17202) - phys_tblock_id_17204, sext_i64_i32(num_tblocks_17203));\n    for (int32_t i_17206 = 0; i_17206 < iterations_17205; i_17206++) {\n        int32_t virt_tblock_id_17207;\n        int64_t global_tid_17208;\n        int64_t slice_17210;\n        int64_t rep_i_17209;\n        int64_t remnant_17211;\n        \n        virt_tblock_id_17207 = phys_tblock_id_17204 + i_17206 * sext_i64_i32(num_tblocks_17203);\n        global_tid_17208 = sext_i32_i64(virt_tblock_id_17207) * sext_i32_i64(tblock_sizze_17200) + sext_i32_i64(replicate_ltid_17198);\n        slice_17210 = num_elems_17193;\n        rep_i_17209 = global_tid_17208;\n        remnant_17211 = global_tid_17208 - rep_i_17209;\n        if (slt64(global_tid_17208, replicate_n_17196)) {\n            ((__global double *) mem_17192)[rep_i_17209] = val_17194;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_i16zireplicate_17197(int64_t num_elems_17193, int16_t val_17194, int64_t replicate_n_17196, int64_t virt_num_tblocks_17202, int64_t num_tblocks_17203, __global unsigned char *mem_17192)\n{\n    int32_t replicate_ltid_17198;\n    int32_t tblock_sizze_17200;\n    int32_t replicate_gid_17199;\n    int32_t replicate_gtid_17197;\n    int32_t phys_tblock_id_17204;\n    int32_t iterations_17205;\n    \n    replicate_ltid_17198 = get_local_id(0);\n    tblock_sizze_17200 = get_local_size(0);\n    replicate_gid_17199 = get_tblock_id(0);\n    replicate_gtid_17197 = replicate_gid_17199 * tblock_sizze_17200 + replicate_ltid_17198;\n    phys_tblock_id_17204 = get_tblock_id(0);\n    iterations_17205 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17202) - phys_tblock_id_17204, sext_i64_i32(num_tblocks_17203));\n    for (int32_t i_17206 = 0; i_17206 < iterations_17205; i_17206++) {\n        int32_t virt_tblock_id_17207;\n        int64_t global_tid_17208;\n        int64_t slice_17210;\n        int64_t rep_i_17209;\n        int64_t remnant_17211;\n        \n        virt_tblock_i", "d_17207 = phys_tblock_id_17204 + i_17206 * sext_i64_i32(num_tblocks_17203);\n        global_tid_17208 = sext_i32_i64(virt_tblock_id_17207) * sext_i32_i64(tblock_sizze_17200) + sext_i32_i64(replicate_ltid_17198);\n        slice_17210 = num_elems_17193;\n        rep_i_17209 = global_tid_17208;\n        remnant_17211 = global_tid_17208 - rep_i_17209;\n        if (slt64(global_tid_17208, replicate_n_17196)) {\n            ((__global int16_t *) mem_17192)[rep_i_17209] = val_17194;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_i32zireplicate_17197(int64_t num_elems_17193, int32_t val_17194, int64_t replicate_n_17196, int64_t virt_num_tblocks_17202, int64_t num_tblocks_17203, __global unsigned char *mem_17192)\n{\n    int32_t replicate_ltid_17198;\n    int32_t tblock_sizze_17200;\n    int32_t replicate_gid_17199;\n    int32_t replicate_gtid_17197;\n    int32_t phys_tblock_id_17204;\n    int32_t iterations_17205;\n    \n    replicate_ltid_17198 = get_local_id(0);\n    tblock_sizze_17200 = get_local_size(0);\n    replicate_gid_17199 = get_tblock_id(0);\n    replicate_gtid_17197 = replicate_gid_17199 * tblock_sizze_17200 + replicate_ltid_17198;\n    phys_tblock_id_17204 = get_tblock_id(0);\n    iterations_17205 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17202) - phys_tblock_id_17204, sext_i64_i32(num_tblocks_17203));\n    for (int32_t i_17206 = 0; i_17206 < iterations_17205; i_17206++) {\n        int32_t virt_tblock_id_17207;\n        int64_t global_tid_17208;\n        int64_t slice_17210;\n        int64_t rep_i_17209;\n        int64_t remnant_17211;\n        \n        virt_tblock_id_17207 = phys_tblock_id_17204 + i_17206 * sext_i64_i32(num_tblocks_17203);\n        global_tid_17208 = sext_i32_i64(virt_tblock_id_17207) * sext_i32_i64(tblock_sizze_17200) + sext_i32_i64(replicate_ltid_17198);\n        slice_17210 = num_elems_17193;\n        rep_i_17209 = global_tid_17208;\n        remnant_17211 = global_tid_17208", " - rep_i_17209;\n        if (slt64(global_tid_17208, replicate_n_17196)) {\n            ((__global int32_t *) mem_17192)[rep_i_17209] = val_17194;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_i64zireplicate_17197(int64_t num_elems_17193, int64_t val_17194, int64_t replicate_n_17196, int64_t virt_num_tblocks_17202, int64_t num_tblocks_17203, __global unsigned char *mem_17192)\n{\n    int32_t replicate_ltid_17198;\n    int32_t tblock_sizze_17200;\n    int32_t replicate_gid_17199;\n    int32_t replicate_gtid_17197;\n    int32_t phys_tblock_id_17204;\n    int32_t iterations_17205;\n    \n    replicate_ltid_17198 = get_local_id(0);\n    tblock_sizze_17200 = get_local_size(0);\n    replicate_gid_17199 = get_tblock_id(0);\n    replicate_gtid_17197 = replicate_gid_17199 * tblock_sizze_17200 + replicate_ltid_17198;\n    phys_tblock_id_17204 = get_tblock_id(0);\n    iterations_17205 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17202) - phys_tblock_id_17204, sext_i64_i32(num_tblocks_17203));\n    for (int32_t i_17206 = 0; i_17206 < iterations_17205; i_17206++) {\n        int32_t virt_tblock_id_17207;\n        int64_t global_tid_17208;\n        int64_t slice_17210;\n        int64_t rep_i_17209;\n        int64_t remnant_17211;\n        \n        virt_tblock_id_17207 = phys_tblock_id_17204 + i_17206 * sext_i64_i32(num_tblocks_17203);\n        global_tid_17208 = sext_i32_i64(virt_tblock_id_17207) * sext_i32_i64(tblock_sizze_17200) + sext_i32_i64(replicate_ltid_17198);\n        slice_17210 = num_elems_17193;\n        rep_i_17209 = global_tid_17208;\n        remnant_17211 = global_tid_17208 - rep_i_17209;\n        if (slt64(global_tid_17208, replicate_n_17196)) {\n            ((__global int64_t *) mem_17192)[rep_i_17209] = val_17194;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_doublezisegmap_16835_dim1, 1, 1)\nvoid gat",
-                                    "her_payloads_doublezisegmap_16835(__global int *global_failure, int64_t niz2084U_14686, int64_t incr_14688, __global unsigned char *is_mem_17156, __global unsigned char *mem_17160)\n{\n    #define segmap_tblock_sizze_16831 (gather_payloads_doublezisegmap_16835zisegmap_tblock_sizze_16831)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_16835;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_16834;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_16835 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_16831 + sext_i32_i64(local_tid_17185);\n    slice_17190 = niz2084U_14686;\n    gtid_16834 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_16834;\n    if (slt64(gtid_16834, niz2084U_14686)) {\n        int64_t eta_p_16836;\n        int64_t lifted_lambda_res_16837;\n        \n        eta_p_16836 = ((__global int64_t *) is_mem_17156)[gtid_16834];\n        lifted_lambda_res_16837 = sub64(eta_p_16836, incr_14688);\n        ((__global int64_t *) mem_17160)[gtid_16834] = lifted_lambda_res_16837;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16831\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_doublezisegmap_16863_dim1, 1, 1)\nvoid gather_payloads_doublezisegmap_16863(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_14686, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17157, __global unsigned char *mem_param_17165, __global unsigned char *mem_param_17168, __global unsi", "gned char *mem_17173)\n{\n    #define segmap_tblock_sizze_16859 (gather_payloads_doublezisegmap_16863zisegmap_tblock_sizze_16859)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17220;\n    int32_t tblock_sizze_17223;\n    int32_t wave_sizze_17222;\n    int32_t block_id_17221;\n    int32_t global_tid_17219;\n    int64_t phys_tid_16863;\n    int64_t global_tid_17224;\n    int64_t slice_17225;\n    int64_t gtid_16862;\n    int64_t remnant_17226;\n    \n    local_tid_17220 = get_local_id(0);\n    tblock_sizze_17223 = get_local_size(0);\n    wave_sizze_17222 = LOCKSTEP_WIDTH;\n    block_id_17221 = get_tblock_id(0);\n    global_tid_17219 = block_id_17221 * tblock_sizze_17223 + local_tid_17220;\n    phys_tid_16863 = sext_i32_i64(global_tid_17219);\n    global_tid_17224 = sext_i32_i64(block_id_17221) * segmap_tblock_sizze_16859 + sext_i32_i64(local_tid_17220);\n    slice_17225 = niz2084U_14686;\n    gtid_16862 = global_tid_17224;\n    remnant_17226 = global_tid_17224 - gtid_16862;\n    if (slt64(gtid_16862, niz2084U_14686)) {\n        int64_t eta_p_16864;\n        bool cond_16866;\n        bool cond_t_res_16867;\n        bool x_16868;\n        double lifted_lambda_res_16869;\n        \n        eta_p_16864 = ((__global int64_t *) mem_param_17165)[gtid_16862];\n        cond_16866 = sle64(lower_bound_16535, eta_p_16864);\n        cond_t_res_16867 = slt64(eta_p_16864, min_res_16537);\n        x_16868 = cond_16866 && cond_t_res_16867;\n        if (x_16868) {\n            int64_t tmp_16870;\n            bool x_16871;\n            bool y_16872;\n            bool bounds_check_16873;\n            bool index_certs_16874;\n            double tmp_16875;\n            \n            tmp_16870 = sub64(eta_p_16864, lower_bound_16535);\n            x_16871 = sle64((int64_t) 0, tmp_16870);\n            y_16872 = slt64(tmp_16870, j_m_i_16538);\n            bounds_check_16873 = x_16871 && y_16872;\n            if (!bounds_check_16873) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_fai", "lure, -1, 0) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16870;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16875 = ((__global double *) ys_mem_17157)[eta_p_16864];\n            lifted_lambda_res_16869 = tmp_16875;\n        } else {\n            double eta_p_16865 = ((__global double *) mem_param_17168)[gtid_16862];\n            \n            lifted_lambda_res_16869 = eta_p_16865;\n        }\n        ((__global double *) mem_17173)[gtid_16862] = lifted_lambda_res_16869;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16859\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_double_GFURzisegmap_17115_dim1, 1, 1)\nvoid gather_payloads_double_GFURzisegmap_17115(__global int *global_failure, int64_t ni_16193, int64_t incr_16195, __global unsigned char *is_mem_17157, __global unsigned char *mem_17161)\n{\n    #define segmap_tblock_sizze_17111 (gather_payloads_double_GFURzisegmap_17115zisegmap_tblock_sizze_17111)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_17115;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_17114;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_17115 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_17111 + sext_i32_i64(local_tid_17185);\n    slice_17190 = ni_16193;\n    gtid_17114 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_17114;\n    if (slt64(gtid_17114, ni_16193)) {\n        ",
-                                    "int64_t eta_p_17116;\n        int64_t lifted_lambda_res_17117;\n        \n        eta_p_17116 = ((__global int64_t *) is_mem_17157)[gtid_17114];\n        lifted_lambda_res_17117 = sub64(eta_p_17116, incr_16195);\n        ((__global int64_t *) mem_17161)[gtid_17114] = lifted_lambda_res_17117;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_17111\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_double_GFURzisegmap_17143_dim1, 1, 1)\nvoid gather_payloads_double_GFURzisegmap_17143(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_16193, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17158, __global unsigned char *mem_param_17164, __global unsigned char *mem_param_17167, __global unsigned char *mem_17172)\n{\n    #define segmap_tblock_sizze_17139 (gather_payloads_double_GFURzisegmap_17143zisegmap_tblock_sizze_17139)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17200;\n    int32_t tblock_sizze_17203;\n    int32_t wave_sizze_17202;\n    int32_t block_id_17201;\n    int32_t global_tid_17199;\n    int64_t phys_tid_17143;\n    int64_t global_tid_17204;\n    int64_t slice_17205;\n    int64_t gtid_17142;\n    int64_t remnant_17206;\n    \n    local_tid_17200 = get_local_id(0);\n    tblock_sizze_17203 = get_local_size(0);\n    wave_sizze_17202 = LOCKSTEP_WIDTH;\n    block_id_17201 = get_tblock_id(0);\n    global_tid_17199 = block_id_17201 * tblock_sizze_17203 + local_tid_17200;\n    phys_tid_17143 = sext_i32_i64(global_tid_17199);\n    global_tid_17204 = sext_i32_i64(block_id_17201) * segmap_tblock_sizze_17139 + sext_i32_i64(local_tid_17200);\n    slice_17205 = ni_16193;\n    gtid_17142 = global_tid_17204;\n    remnant_17206 = global_tid_17204 - gtid_17142;\n    if (slt64(gtid_17142, ni_16193)) {\n        int64_t eta_p_17144;\n        bool cond_17146;\n        bool cond_t_res_17147;\n        bool x_17148;\n        double lifted_lambda_res_17149;\n        \n        eta_p_", "17144 = ((__global int64_t *) mem_param_17164)[gtid_17142];\n        cond_17146 = sle64(lower_bound_16535, eta_p_17144);\n        cond_t_res_17147 = slt64(eta_p_17144, min_res_16537);\n        x_17148 = cond_17146 && cond_t_res_17147;\n        if (x_17148) {\n            int64_t tmp_17150;\n            bool x_17151;\n            bool y_17152;\n            bool bounds_check_17153;\n            bool index_certs_17154;\n            double tmp_17155;\n            \n            tmp_17150 = sub64(eta_p_17144, lower_bound_16535);\n            x_17151 = sle64((int64_t) 0, tmp_17150);\n            y_17152 = slt64(tmp_17150, j_m_i_16538);\n            bounds_check_17153 = x_17151 && y_17152;\n            if (!bounds_check_17153) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 1) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_17150;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_17155 = ((__global double *) ys_mem_17158)[eta_p_17144];\n            lifted_lambda_res_17149 = tmp_17155;\n        } else {\n            double eta_p_17145 = ((__global double *) mem_param_17167)[gtid_17142];\n            \n            lifted_lambda_res_17149 = eta_p_17145;\n        }\n        ((__global double *) mem_17172)[gtid_17142] = lifted_lambda_res_17149;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_17139\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_floatzisegmap_16779_dim1, 1, 1)\nvoid gather_payloads_floatzisegmap_16779(__global int *global_failure, int64_t niz2084U_14346, int64_t incr_14348, __global unsigned char *is_mem_17156, __global unsigned char *mem_17160)\n{\n    #define segmap_tblock_sizze_16775 (gather_payloads_floatzisegmap_16779zisegmap_tblock_sizze_16775)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t ", "wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_16779;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_16778;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_16779 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_16775 + sext_i32_i64(local_tid_17185);\n    slice_17190 = niz2084U_14346;\n    gtid_16778 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_16778;\n    if (slt64(gtid_16778, niz2084U_14346)) {\n        int64_t eta_p_16780;\n        int64_t lifted_lambda_res_16781;\n        \n        eta_p_16780 = ((__global int64_t *) is_mem_17156)[gtid_16778];\n        lifted_lambda_res_16781 = sub64(eta_p_16780, incr_14348);\n        ((__global int64_t *) mem_17160)[gtid_16778] = lifted_lambda_res_16781;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16775\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_floatzisegmap_16807_dim1, 1, 1)\nvoid gather_payloads_floatzisegmap_16807(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_14346, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17157, __global unsigned char *mem_param_17165, __global unsigned char *mem_param_17168, __global unsigned char *mem_17173)\n{\n    #define segmap_tblock_sizze_16803 (gather_payloads_floatzisegmap_16807zisegmap_tblock_sizze_16803)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17220;\n    int32_t tblock_sizze_17223;\n    int32_t wave_sizze_17222;\n    int32_t block_id_17221;\n    int32_t global_tid_17219;\n    int64_t phys_tid_16807;\n    int64_t global_tid_17224;\n    int64_t slice_17225;\n   ",
-                                    " int64_t gtid_16806;\n    int64_t remnant_17226;\n    \n    local_tid_17220 = get_local_id(0);\n    tblock_sizze_17223 = get_local_size(0);\n    wave_sizze_17222 = LOCKSTEP_WIDTH;\n    block_id_17221 = get_tblock_id(0);\n    global_tid_17219 = block_id_17221 * tblock_sizze_17223 + local_tid_17220;\n    phys_tid_16807 = sext_i32_i64(global_tid_17219);\n    global_tid_17224 = sext_i32_i64(block_id_17221) * segmap_tblock_sizze_16803 + sext_i32_i64(local_tid_17220);\n    slice_17225 = niz2084U_14346;\n    gtid_16806 = global_tid_17224;\n    remnant_17226 = global_tid_17224 - gtid_16806;\n    if (slt64(gtid_16806, niz2084U_14346)) {\n        int64_t eta_p_16808;\n        bool cond_16810;\n        bool cond_t_res_16811;\n        bool x_16812;\n        float lifted_lambda_res_16813;\n        \n        eta_p_16808 = ((__global int64_t *) mem_param_17165)[gtid_16806];\n        cond_16810 = sle64(lower_bound_16535, eta_p_16808);\n        cond_t_res_16811 = slt64(eta_p_16808, min_res_16537);\n        x_16812 = cond_16810 && cond_t_res_16811;\n        if (x_16812) {\n            int64_t tmp_16814;\n            bool x_16815;\n            bool y_16816;\n            bool bounds_check_16817;\n            bool index_certs_16818;\n            float tmp_16819;\n            \n            tmp_16814 = sub64(eta_p_16808, lower_bound_16535);\n            x_16815 = sle64((int64_t) 0, tmp_16814);\n            y_16816 = slt64(tmp_16814, j_m_i_16538);\n            bounds_check_16817 = x_16815 && y_16816;\n            if (!bounds_check_16817) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 2) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16814;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16819 = ((__global float *) ys_mem_17157)[eta_p_16808];\n            lifted_lambda_res_16813 = tmp_16819;\n        } else {\n      ", "      float eta_p_16809 = ((__global float *) mem_param_17168)[gtid_16806];\n            \n            lifted_lambda_res_16813 = eta_p_16809;\n        }\n        ((__global float *) mem_17173)[gtid_16806] = lifted_lambda_res_16813;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16803\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_float_GFURzisegmap_17059_dim1, 1, 1)\nvoid gather_payloads_float_GFURzisegmap_17059(__global int *global_failure, int64_t ni_15892, int64_t incr_15894, __global unsigned char *is_mem_17157, __global unsigned char *mem_17161)\n{\n    #define segmap_tblock_sizze_17055 (gather_payloads_float_GFURzisegmap_17059zisegmap_tblock_sizze_17055)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_17059;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_17058;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_17059 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_17055 + sext_i32_i64(local_tid_17185);\n    slice_17190 = ni_15892;\n    gtid_17058 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_17058;\n    if (slt64(gtid_17058, ni_15892)) {\n        int64_t eta_p_17060;\n        int64_t lifted_lambda_res_17061;\n        \n        eta_p_17060 = ((__global int64_t *) is_mem_17157)[gtid_17058];\n        lifted_lambda_res_17061 = sub64(eta_p_17060, incr_15894);\n        ((__global int64_t *) mem_17161)[gtid_17058] = lifted_lambda_res_17061;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_17055\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_float_GFURzisegmap_17087_", "dim1, 1, 1)\nvoid gather_payloads_float_GFURzisegmap_17087(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_15892, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17158, __global unsigned char *mem_param_17164, __global unsigned char *mem_param_17167, __global unsigned char *mem_17172)\n{\n    #define segmap_tblock_sizze_17083 (gather_payloads_float_GFURzisegmap_17087zisegmap_tblock_sizze_17083)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17200;\n    int32_t tblock_sizze_17203;\n    int32_t wave_sizze_17202;\n    int32_t block_id_17201;\n    int32_t global_tid_17199;\n    int64_t phys_tid_17087;\n    int64_t global_tid_17204;\n    int64_t slice_17205;\n    int64_t gtid_17086;\n    int64_t remnant_17206;\n    \n    local_tid_17200 = get_local_id(0);\n    tblock_sizze_17203 = get_local_size(0);\n    wave_sizze_17202 = LOCKSTEP_WIDTH;\n    block_id_17201 = get_tblock_id(0);\n    global_tid_17199 = block_id_17201 * tblock_sizze_17203 + local_tid_17200;\n    phys_tid_17087 = sext_i32_i64(global_tid_17199);\n    global_tid_17204 = sext_i32_i64(block_id_17201) * segmap_tblock_sizze_17083 + sext_i32_i64(local_tid_17200);\n    slice_17205 = ni_15892;\n    gtid_17086 = global_tid_17204;\n    remnant_17206 = global_tid_17204 - gtid_17086;\n    if (slt64(gtid_17086, ni_15892)) {\n        int64_t eta_p_17088;\n        bool cond_17090;\n        bool cond_t_res_17091;\n        bool x_17092;\n        float lifted_lambda_res_17093;\n        \n        eta_p_17088 = ((__global int64_t *) mem_param_17164)[gtid_17086];\n        cond_17090 = sle64(lower_bound_16535, eta_p_17088);\n        cond_t_res_17091 = slt64(eta_p_17088, min_res_16537);\n        x_17092 = cond_17090 && cond_t_res_17091;\n        if (x_17092) {\n            int64_t tmp_17094;\n            bool x_17095;\n            bool y_17096;\n            bool bounds_check_17097;\n            bool index_certs_17098;\n            floa",
-                                    "t tmp_17099;\n            \n            tmp_17094 = sub64(eta_p_17088, lower_bound_16535);\n            x_17095 = sle64((int64_t) 0, tmp_17094);\n            y_17096 = slt64(tmp_17094, j_m_i_16538);\n            bounds_check_17097 = x_17095 && y_17096;\n            if (!bounds_check_17097) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 3) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_17094;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_17099 = ((__global float *) ys_mem_17158)[eta_p_17088];\n            lifted_lambda_res_17093 = tmp_17099;\n        } else {\n            float eta_p_17089 = ((__global float *) mem_param_17167)[gtid_17086];\n            \n            lifted_lambda_res_17093 = eta_p_17089;\n        }\n        ((__global float *) mem_17172)[gtid_17086] = lifted_lambda_res_17093;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_17083\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_intzisegmap_16667_dim1, 1, 1)\nvoid gather_payloads_intzisegmap_16667(__global int *global_failure, int64_t niz2084U_13666, int64_t incr_13668, __global unsigned char *is_mem_17156, __global unsigned char *mem_17160)\n{\n    #define segmap_tblock_sizze_16663 (gather_payloads_intzisegmap_16667zisegmap_tblock_sizze_16663)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_16667;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_16666;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + l", "ocal_tid_17185;\n    phys_tid_16667 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_16663 + sext_i32_i64(local_tid_17185);\n    slice_17190 = niz2084U_13666;\n    gtid_16666 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_16666;\n    if (slt64(gtid_16666, niz2084U_13666)) {\n        int64_t eta_p_16668;\n        int64_t lifted_lambda_res_16669;\n        \n        eta_p_16668 = ((__global int64_t *) is_mem_17156)[gtid_16666];\n        lifted_lambda_res_16669 = sub64(eta_p_16668, incr_13668);\n        ((__global int64_t *) mem_17160)[gtid_16666] = lifted_lambda_res_16669;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16663\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_intzisegmap_16695_dim1, 1, 1)\nvoid gather_payloads_intzisegmap_16695(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_13666, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17157, __global unsigned char *mem_param_17165, __global unsigned char *mem_param_17168, __global unsigned char *mem_17173)\n{\n    #define segmap_tblock_sizze_16691 (gather_payloads_intzisegmap_16695zisegmap_tblock_sizze_16691)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17220;\n    int32_t tblock_sizze_17223;\n    int32_t wave_sizze_17222;\n    int32_t block_id_17221;\n    int32_t global_tid_17219;\n    int64_t phys_tid_16695;\n    int64_t global_tid_17224;\n    int64_t slice_17225;\n    int64_t gtid_16694;\n    int64_t remnant_17226;\n    \n    local_tid_17220 = get_local_id(0);\n    tblock_sizze_17223 = get_local_size(0);\n    wave_sizze_17222 = LOCKSTEP_WIDTH;\n    block_id_17221 = get_tblock_id(0);\n    global_tid_17219 = block_id_17221 * tblock_sizze_17223 + local_tid_17220;\n    phys_tid_16695 = sext_i32_i64(global_tid_17219);\n    global_tid_17224 = sext_i32_i64(block_id_17221) * segmap_tblock_sizze_16691 + sext_i32_i64(loca", "l_tid_17220);\n    slice_17225 = niz2084U_13666;\n    gtid_16694 = global_tid_17224;\n    remnant_17226 = global_tid_17224 - gtid_16694;\n    if (slt64(gtid_16694, niz2084U_13666)) {\n        int64_t eta_p_16696;\n        bool cond_16698;\n        bool cond_t_res_16699;\n        bool x_16700;\n        int32_t lifted_lambda_res_16701;\n        \n        eta_p_16696 = ((__global int64_t *) mem_param_17165)[gtid_16694];\n        cond_16698 = sle64(lower_bound_16535, eta_p_16696);\n        cond_t_res_16699 = slt64(eta_p_16696, min_res_16537);\n        x_16700 = cond_16698 && cond_t_res_16699;\n        if (x_16700) {\n            int64_t tmp_16702;\n            bool x_16703;\n            bool y_16704;\n            bool bounds_check_16705;\n            bool index_certs_16706;\n            int32_t tmp_16707;\n            \n            tmp_16702 = sub64(eta_p_16696, lower_bound_16535);\n            x_16703 = sle64((int64_t) 0, tmp_16702);\n            y_16704 = slt64(tmp_16702, j_m_i_16538);\n            bounds_check_16705 = x_16703 && y_16704;\n            if (!bounds_check_16705) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 4) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16702;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16707 = ((__global int32_t *) ys_mem_17157)[eta_p_16696];\n            lifted_lambda_res_16701 = tmp_16707;\n        } else {\n            int32_t eta_p_16697 = ((__global int32_t *) mem_param_17168)[gtid_16694];\n            \n            lifted_lambda_res_16701 = eta_p_16697;\n        }\n        ((__global int32_t *) mem_17173)[gtid_16694] = lifted_lambda_res_16701;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16691\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_int_GFURzisegmap_16947_dim1, 1, 1)\nvoid gather_payloads_int_GFURzisegmap_16947(__global int *g",
-                                    "lobal_failure, int64_t ni_15290, int64_t incr_15292, __global unsigned char *is_mem_17157, __global unsigned char *mem_17161)\n{\n    #define segmap_tblock_sizze_16943 (gather_payloads_int_GFURzisegmap_16947zisegmap_tblock_sizze_16943)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_16947;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_16946;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_16947 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_16943 + sext_i32_i64(local_tid_17185);\n    slice_17190 = ni_15290;\n    gtid_16946 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_16946;\n    if (slt64(gtid_16946, ni_15290)) {\n        int64_t eta_p_16948;\n        int64_t lifted_lambda_res_16949;\n        \n        eta_p_16948 = ((__global int64_t *) is_mem_17157)[gtid_16946];\n        lifted_lambda_res_16949 = sub64(eta_p_16948, incr_15292);\n        ((__global int64_t *) mem_17161)[gtid_16946] = lifted_lambda_res_16949;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16943\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_int_GFURzisegmap_16975_dim1, 1, 1)\nvoid gather_payloads_int_GFURzisegmap_16975(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_15290, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17158, __global unsigned char *mem_param_17164, __global unsigned char *mem_param_17167, __global unsigned char *mem_17172)\n{\n    #define segmap_tblock_sizze_16971 (gath", "er_payloads_int_GFURzisegmap_16975zisegmap_tblock_sizze_16971)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17200;\n    int32_t tblock_sizze_17203;\n    int32_t wave_sizze_17202;\n    int32_t block_id_17201;\n    int32_t global_tid_17199;\n    int64_t phys_tid_16975;\n    int64_t global_tid_17204;\n    int64_t slice_17205;\n    int64_t gtid_16974;\n    int64_t remnant_17206;\n    \n    local_tid_17200 = get_local_id(0);\n    tblock_sizze_17203 = get_local_size(0);\n    wave_sizze_17202 = LOCKSTEP_WIDTH;\n    block_id_17201 = get_tblock_id(0);\n    global_tid_17199 = block_id_17201 * tblock_sizze_17203 + local_tid_17200;\n    phys_tid_16975 = sext_i32_i64(global_tid_17199);\n    global_tid_17204 = sext_i32_i64(block_id_17201) * segmap_tblock_sizze_16971 + sext_i32_i64(local_tid_17200);\n    slice_17205 = ni_15290;\n    gtid_16974 = global_tid_17204;\n    remnant_17206 = global_tid_17204 - gtid_16974;\n    if (slt64(gtid_16974, ni_15290)) {\n        int64_t eta_p_16976;\n        bool cond_16978;\n        bool cond_t_res_16979;\n        bool x_16980;\n        int32_t lifted_lambda_res_16981;\n        \n        eta_p_16976 = ((__global int64_t *) mem_param_17164)[gtid_16974];\n        cond_16978 = sle64(lower_bound_16535, eta_p_16976);\n        cond_t_res_16979 = slt64(eta_p_16976, min_res_16537);\n        x_16980 = cond_16978 && cond_t_res_16979;\n        if (x_16980) {\n            int64_t tmp_16982;\n            bool x_16983;\n            bool y_16984;\n            bool bounds_check_16985;\n            bool index_certs_16986;\n            int32_t tmp_16987;\n            \n            tmp_16982 = sub64(eta_p_16976, lower_bound_16535);\n            x_16983 = sle64((int64_t) 0, tmp_16982);\n            y_16984 = slt64(tmp_16982, j_m_i_16538);\n            bounds_check_16985 = x_16983 && y_16984;\n            if (!bounds_check_16985) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 5) == -1) {\n                        global_failure_args[0] = (int", "64_t) tmp_16982;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16987 = ((__global int32_t *) ys_mem_17158)[eta_p_16976];\n            lifted_lambda_res_16981 = tmp_16987;\n        } else {\n            int32_t eta_p_16977 = ((__global int32_t *) mem_param_17167)[gtid_16974];\n            \n            lifted_lambda_res_16981 = eta_p_16977;\n        }\n        ((__global int32_t *) mem_17172)[gtid_16974] = lifted_lambda_res_16981;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16971\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_longzisegmap_16723_dim1, 1, 1)\nvoid gather_payloads_longzisegmap_16723(__global int *global_failure, int64_t niz2084U_14006, int64_t incr_14008, __global unsigned char *is_mem_17156, __global unsigned char *mem_17160)\n{\n    #define segmap_tblock_sizze_16719 (gather_payloads_longzisegmap_16723zisegmap_tblock_sizze_16719)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_16723;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_16722;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_16723 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_16719 + sext_i32_i64(local_tid_17185);\n    slice_17190 = niz2084U_14006;\n    gtid_16722 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_16722;\n    if (slt64(gtid_16722, niz2084U_14006)) {\n        int64_t eta_p_16724;\n        int64_t lifted_lambda_res_16725;\n        \n   ",
-                                    "     eta_p_16724 = ((__global int64_t *) is_mem_17156)[gtid_16722];\n        lifted_lambda_res_16725 = sub64(eta_p_16724, incr_14008);\n        ((__global int64_t *) mem_17160)[gtid_16722] = lifted_lambda_res_16725;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16719\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_longzisegmap_16751_dim1, 1, 1)\nvoid gather_payloads_longzisegmap_16751(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_14006, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17157, __global unsigned char *mem_param_17165, __global unsigned char *mem_param_17168, __global unsigned char *mem_17173)\n{\n    #define segmap_tblock_sizze_16747 (gather_payloads_longzisegmap_16751zisegmap_tblock_sizze_16747)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17220;\n    int32_t tblock_sizze_17223;\n    int32_t wave_sizze_17222;\n    int32_t block_id_17221;\n    int32_t global_tid_17219;\n    int64_t phys_tid_16751;\n    int64_t global_tid_17224;\n    int64_t slice_17225;\n    int64_t gtid_16750;\n    int64_t remnant_17226;\n    \n    local_tid_17220 = get_local_id(0);\n    tblock_sizze_17223 = get_local_size(0);\n    wave_sizze_17222 = LOCKSTEP_WIDTH;\n    block_id_17221 = get_tblock_id(0);\n    global_tid_17219 = block_id_17221 * tblock_sizze_17223 + local_tid_17220;\n    phys_tid_16751 = sext_i32_i64(global_tid_17219);\n    global_tid_17224 = sext_i32_i64(block_id_17221) * segmap_tblock_sizze_16747 + sext_i32_i64(local_tid_17220);\n    slice_17225 = niz2084U_14006;\n    gtid_16750 = global_tid_17224;\n    remnant_17226 = global_tid_17224 - gtid_16750;\n    if (slt64(gtid_16750, niz2084U_14006)) {\n        int64_t eta_p_16752;\n        bool cond_16754;\n        bool cond_t_res_16755;\n        bool x_16756;\n        int64_t lifted_lambda_res_16757;\n        \n        eta_p_16752 = ((__global int64_t *) mem_param_17165)[gtid_16750];\n        cond_167", "54 = sle64(lower_bound_16535, eta_p_16752);\n        cond_t_res_16755 = slt64(eta_p_16752, min_res_16537);\n        x_16756 = cond_16754 && cond_t_res_16755;\n        if (x_16756) {\n            int64_t tmp_16758;\n            bool x_16759;\n            bool y_16760;\n            bool bounds_check_16761;\n            bool index_certs_16762;\n            int64_t tmp_16763;\n            \n            tmp_16758 = sub64(eta_p_16752, lower_bound_16535);\n            x_16759 = sle64((int64_t) 0, tmp_16758);\n            y_16760 = slt64(tmp_16758, j_m_i_16538);\n            bounds_check_16761 = x_16759 && y_16760;\n            if (!bounds_check_16761) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 6) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16758;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16763 = ((__global int64_t *) ys_mem_17157)[eta_p_16752];\n            lifted_lambda_res_16757 = tmp_16763;\n        } else {\n            int64_t eta_p_16753 = ((__global int64_t *) mem_param_17168)[gtid_16750];\n            \n            lifted_lambda_res_16757 = eta_p_16753;\n        }\n        ((__global int64_t *) mem_17173)[gtid_16750] = lifted_lambda_res_16757;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16747\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_long_GFURzisegmap_17003_dim1, 1, 1)\nvoid gather_payloads_long_GFURzisegmap_17003(__global int *global_failure, int64_t ni_15591, int64_t incr_15593, __global unsigned char *is_mem_17157, __global unsigned char *mem_17161)\n{\n    #define segmap_tblock_sizze_16999 (gather_payloads_long_GFURzisegmap_17003zisegmap_tblock_sizze_16999)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_", "tid_17184;\n    int64_t phys_tid_17003;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_17002;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_17003 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_16999 + sext_i32_i64(local_tid_17185);\n    slice_17190 = ni_15591;\n    gtid_17002 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_17002;\n    if (slt64(gtid_17002, ni_15591)) {\n        int64_t eta_p_17004;\n        int64_t lifted_lambda_res_17005;\n        \n        eta_p_17004 = ((__global int64_t *) is_mem_17157)[gtid_17002];\n        lifted_lambda_res_17005 = sub64(eta_p_17004, incr_15593);\n        ((__global int64_t *) mem_17161)[gtid_17002] = lifted_lambda_res_17005;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16999\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_long_GFURzisegmap_17031_dim1, 1, 1)\nvoid gather_payloads_long_GFURzisegmap_17031(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_15591, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17158, __global unsigned char *mem_param_17164, __global unsigned char *mem_param_17167, __global unsigned char *mem_17172)\n{\n    #define segmap_tblock_sizze_17027 (gather_payloads_long_GFURzisegmap_17031zisegmap_tblock_sizze_17027)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17200;\n    int32_t tblock_sizze_17203;\n    int32_t wave_sizze_17202;\n    int32_t block_id_17201;\n    int32_t global_tid_17199;\n    int64_t phys_tid_17031;\n    int64_t global_tid_17204;\n    int64_t slice_17205;\n    int64_t gtid_17030;\n    int64_t remnant_17206;\n    \n    local_tid_1720",
-                                    "0 = get_local_id(0);\n    tblock_sizze_17203 = get_local_size(0);\n    wave_sizze_17202 = LOCKSTEP_WIDTH;\n    block_id_17201 = get_tblock_id(0);\n    global_tid_17199 = block_id_17201 * tblock_sizze_17203 + local_tid_17200;\n    phys_tid_17031 = sext_i32_i64(global_tid_17199);\n    global_tid_17204 = sext_i32_i64(block_id_17201) * segmap_tblock_sizze_17027 + sext_i32_i64(local_tid_17200);\n    slice_17205 = ni_15591;\n    gtid_17030 = global_tid_17204;\n    remnant_17206 = global_tid_17204 - gtid_17030;\n    if (slt64(gtid_17030, ni_15591)) {\n        int64_t eta_p_17032;\n        bool cond_17034;\n        bool cond_t_res_17035;\n        bool x_17036;\n        int64_t lifted_lambda_res_17037;\n        \n        eta_p_17032 = ((__global int64_t *) mem_param_17164)[gtid_17030];\n        cond_17034 = sle64(lower_bound_16535, eta_p_17032);\n        cond_t_res_17035 = slt64(eta_p_17032, min_res_16537);\n        x_17036 = cond_17034 && cond_t_res_17035;\n        if (x_17036) {\n            int64_t tmp_17038;\n            bool x_17039;\n            bool y_17040;\n            bool bounds_check_17041;\n            bool index_certs_17042;\n            int64_t tmp_17043;\n            \n            tmp_17038 = sub64(eta_p_17032, lower_bound_16535);\n            x_17039 = sle64((int64_t) 0, tmp_17038);\n            y_17040 = slt64(tmp_17038, j_m_i_16538);\n            bounds_check_17041 = x_17039 && y_17040;\n            if (!bounds_check_17041) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 7) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_17038;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_17043 = ((__global int64_t *) ys_mem_17158)[eta_p_17032];\n            lifted_lambda_res_17037 = tmp_17043;\n        } else {\n            int64_t eta_p_17033 = ((__global int64_t *) mem_param_17167)[gtid_17030", "];\n            \n            lifted_lambda_res_17037 = eta_p_17033;\n        }\n        ((__global int64_t *) mem_17172)[gtid_17030] = lifted_lambda_res_17037;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_17027\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_shortzisegmap_16611_dim1, 1, 1)\nvoid gather_payloads_shortzisegmap_16611(__global int *global_failure, int64_t niz2084U_13326, int64_t incr_13328, __global unsigned char *is_mem_17156, __global unsigned char *mem_17160)\n{\n    #define segmap_tblock_sizze_16607 (gather_payloads_shortzisegmap_16611zisegmap_tblock_sizze_16607)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_16611;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_16610;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_16611 = sext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_16607 + sext_i32_i64(local_tid_17185);\n    slice_17190 = niz2084U_13326;\n    gtid_16610 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_16610;\n    if (slt64(gtid_16610, niz2084U_13326)) {\n        int64_t eta_p_16612;\n        int64_t lifted_lambda_res_16613;\n        \n        eta_p_16612 = ((__global int64_t *) is_mem_17156)[gtid_16610];\n        lifted_lambda_res_16613 = sub64(eta_p_16612, incr_13328);\n        ((__global int64_t *) mem_17160)[gtid_16610] = lifted_lambda_res_16613;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16607\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_shortzisegmap_16639_dim1, 1, 1)\nvoid gather_payloads_shortzisegmap_16639(__global int *global", "_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_13326, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17157, __global unsigned char *mem_param_17165, __global unsigned char *mem_param_17168, __global unsigned char *mem_17173)\n{\n    #define segmap_tblock_sizze_16635 (gather_payloads_shortzisegmap_16639zisegmap_tblock_sizze_16635)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17220;\n    int32_t tblock_sizze_17223;\n    int32_t wave_sizze_17222;\n    int32_t block_id_17221;\n    int32_t global_tid_17219;\n    int64_t phys_tid_16639;\n    int64_t global_tid_17224;\n    int64_t slice_17225;\n    int64_t gtid_16638;\n    int64_t remnant_17226;\n    \n    local_tid_17220 = get_local_id(0);\n    tblock_sizze_17223 = get_local_size(0);\n    wave_sizze_17222 = LOCKSTEP_WIDTH;\n    block_id_17221 = get_tblock_id(0);\n    global_tid_17219 = block_id_17221 * tblock_sizze_17223 + local_tid_17220;\n    phys_tid_16639 = sext_i32_i64(global_tid_17219);\n    global_tid_17224 = sext_i32_i64(block_id_17221) * segmap_tblock_sizze_16635 + sext_i32_i64(local_tid_17220);\n    slice_17225 = niz2084U_13326;\n    gtid_16638 = global_tid_17224;\n    remnant_17226 = global_tid_17224 - gtid_16638;\n    if (slt64(gtid_16638, niz2084U_13326)) {\n        int64_t eta_p_16640;\n        bool cond_16642;\n        bool cond_t_res_16643;\n        bool x_16644;\n        int16_t lifted_lambda_res_16645;\n        \n        eta_p_16640 = ((__global int64_t *) mem_param_17165)[gtid_16638];\n        cond_16642 = sle64(lower_bound_16535, eta_p_16640);\n        cond_t_res_16643 = slt64(eta_p_16640, min_res_16537);\n        x_16644 = cond_16642 && cond_t_res_16643;\n        if (x_16644) {\n            int64_t tmp_16646;\n            bool x_16647;\n            bool y_16648;\n            bool bounds_check_16649;\n            bool index_certs_16650;\n            int16_t tmp_16651;\n            \n            tmp_16646 = sub64(eta_p",
-                                    "_16640, lower_bound_16535);\n            x_16647 = sle64((int64_t) 0, tmp_16646);\n            y_16648 = slt64(tmp_16646, j_m_i_16538);\n            bounds_check_16649 = x_16647 && y_16648;\n            if (!bounds_check_16649) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 8) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16646;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16651 = ((__global int16_t *) ys_mem_17157)[eta_p_16640];\n            lifted_lambda_res_16645 = tmp_16651;\n        } else {\n            int16_t eta_p_16641 = ((__global int16_t *) mem_param_17168)[gtid_16638];\n            \n            lifted_lambda_res_16645 = eta_p_16641;\n        }\n        ((__global int16_t *) mem_17173)[gtid_16638] = lifted_lambda_res_16645;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16635\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_short_GFURzisegmap_16891_dim1, 1, 1)\nvoid gather_payloads_short_GFURzisegmap_16891(__global int *global_failure, int64_t ni_14989, int64_t incr_14991, __global unsigned char *is_mem_17157, __global unsigned char *mem_17161)\n{\n    #define segmap_tblock_sizze_16887 (gather_payloads_short_GFURzisegmap_16891zisegmap_tblock_sizze_16887)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17185;\n    int32_t tblock_sizze_17188;\n    int32_t wave_sizze_17187;\n    int32_t block_id_17186;\n    int32_t global_tid_17184;\n    int64_t phys_tid_16891;\n    int64_t global_tid_17189;\n    int64_t slice_17190;\n    int64_t gtid_16890;\n    int64_t remnant_17191;\n    \n    local_tid_17185 = get_local_id(0);\n    tblock_sizze_17188 = get_local_size(0);\n    wave_sizze_17187 = LOCKSTEP_WIDTH;\n    block_id_17186 = get_tblock_id(0);\n    global_tid_17184 = block_id_17186 * tblock_sizze_17188 + local_tid_17185;\n    phys_tid_16891 = s", "ext_i32_i64(global_tid_17184);\n    global_tid_17189 = sext_i32_i64(block_id_17186) * segmap_tblock_sizze_16887 + sext_i32_i64(local_tid_17185);\n    slice_17190 = ni_14989;\n    gtid_16890 = global_tid_17189;\n    remnant_17191 = global_tid_17189 - gtid_16890;\n    if (slt64(gtid_16890, ni_14989)) {\n        int64_t eta_p_16892;\n        int64_t lifted_lambda_res_16893;\n        \n        eta_p_16892 = ((__global int64_t *) is_mem_17157)[gtid_16890];\n        lifted_lambda_res_16893 = sub64(eta_p_16892, incr_14991);\n        ((__global int64_t *) mem_17161)[gtid_16890] = lifted_lambda_res_16893;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16887\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_short_GFURzisegmap_16919_dim1, 1, 1)\nvoid gather_payloads_short_GFURzisegmap_16919(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_14989, int64_t lower_bound_16535, int64_t min_res_16537, int64_t j_m_i_16538, __global unsigned char *ys_mem_17158, __global unsigned char *mem_param_17164, __global unsigned char *mem_param_17167, __global unsigned char *mem_17172)\n{\n    #define segmap_tblock_sizze_16915 (gather_payloads_short_GFURzisegmap_16919zisegmap_tblock_sizze_16915)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17200;\n    int32_t tblock_sizze_17203;\n    int32_t wave_sizze_17202;\n    int32_t block_id_17201;\n    int32_t global_tid_17199;\n    int64_t phys_tid_16919;\n    int64_t global_tid_17204;\n    int64_t slice_17205;\n    int64_t gtid_16918;\n    int64_t remnant_17206;\n    \n    local_tid_17200 = get_local_id(0);\n    tblock_sizze_17203 = get_local_size(0);\n    wave_sizze_17202 = LOCKSTEP_WIDTH;\n    block_id_17201 = get_tblock_id(0);\n    global_tid_17199 = block_id_17201 * tblock_sizze_17203 + local_tid_17200;\n    phys_tid_16919 = sext_i32_i64(global_tid_17199);\n    global_tid_17204 = sext_i32_i64(block_id_17201) * segmap_tblock_sizze_16915 + sext_i32_i64(local_tid_17200);\n    slice_17205 = ni_", "14989;\n    gtid_16918 = global_tid_17204;\n    remnant_17206 = global_tid_17204 - gtid_16918;\n    if (slt64(gtid_16918, ni_14989)) {\n        int64_t eta_p_16920;\n        bool cond_16922;\n        bool cond_t_res_16923;\n        bool x_16924;\n        int16_t lifted_lambda_res_16925;\n        \n        eta_p_16920 = ((__global int64_t *) mem_param_17164)[gtid_16918];\n        cond_16922 = sle64(lower_bound_16535, eta_p_16920);\n        cond_t_res_16923 = slt64(eta_p_16920, min_res_16537);\n        x_16924 = cond_16922 && cond_t_res_16923;\n        if (x_16924) {\n            int64_t tmp_16926;\n            bool x_16927;\n            bool y_16928;\n            bool bounds_check_16929;\n            bool index_certs_16930;\n            int16_t tmp_16931;\n            \n            tmp_16926 = sub64(eta_p_16920, lower_bound_16535);\n            x_16927 = sle64((int64_t) 0, tmp_16926);\n            y_16928 = slt64(tmp_16926, j_m_i_16538);\n            bounds_check_16929 = x_16927 && y_16928;\n            if (!bounds_check_16929) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 9) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16926;\n                        global_failure_args[1] = (int64_t) j_m_i_16538;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16931 = ((__global int16_t *) ys_mem_17158)[eta_p_16920];\n            lifted_lambda_res_16925 = tmp_16931;\n        } else {\n            int16_t eta_p_16921 = ((__global int16_t *) mem_param_17167)[gtid_16918];\n            \n            lifted_lambda_res_16925 = eta_p_16921;\n        }\n        ((__global int16_t *) mem_17172)[gtid_16918] = lifted_lambda_res_16925;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16915\n}\nFUTHARK_KERNEL_SIZED(max_idxzisegred_nonseg_16595_dim1, 1, 1)\nvoid max_idxzisegred_nonseg_16595(__global int *global_failure, int64_t nz2080U_16272, int64_t num_tblocks_16590, in",
-                                    "t64_t num_threads_17209, __global unsigned char *eta_p_mem_17156, __global unsigned char *mem_17158, __global unsigned char *counters_mem_17185, __global unsigned char *segred_tmp_mem_17207)\n{\n    #define segred_tblock_sizze_16588 (max_idxzisegred_nonseg_16595zisegred_tblock_sizze_16588)\n    #define chunk_sizze_17184 (max_idxzisegred_nonseg_16595zichunk_sizze_17184)\n    \n    volatile __local unsigned char *sync_arr_mem_17217_backing_1 = &shared_mem[0];\n    const int64_t sync_arr_mem_17217_backing_1_offset = 0 + 8;\n    volatile __local unsigned char *red_arr_i64_mem_17215_backing_0 = &shared_mem[sync_arr_mem_17217_backing_1_offset];\n    const int64_t red_arr_i64_mem_17215_backing_0_offset = sync_arr_mem_17217_backing_1_offset + ((int64_t) 8 * segred_tblock_sizze_16588 + srem64((int64_t) 8 - srem64((int64_t) 8 * segred_tblock_sizze_16588, (int64_t) 8), (int64_t) 8));\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17211;\n    int32_t tblock_sizze_17214;\n    int32_t wave_sizze_17213;\n    int32_t block_id_17212;\n    int32_t global_tid_17210;\n    int64_t phys_tid_16595;\n    __local unsigned char *red_arr_i64_mem_17215;\n    __local unsigned char *sync_arr_mem_17217;\n    int64_t dummy_16593;\n    int64_t gtid_16594;\n    int64_t q_17219;\n    int64_t eta_p_block_res_acc_17220;\n    int64_t eta_p_16455;\n    int64_t eta_p_16456;\n    int64_t tblock_id_in_segment_17224;\n    int64_t block_base_offset_17225;\n    int32_t offset_17228;\n    int32_t skip_waves_17229;\n    int64_t eta_p_17221;\n    int64_t eta_p_17222;\n    int32_t old_counter_17230;\n    bool is_last_block_17231;\n    \n    local_tid_17211 = get_local_id(0);\n    tblock_sizze_17214 = get_local_size(0);\n    wave_sizze_17213 = LOCKSTEP_WIDTH;\n    block_id_17212 = get_tblock_id(0);\n    global_tid_17210 = block_id_17212 * tblock_sizze_17214 + local_tid_17211;\n    phys_tid_16595 = sext_i32_i64(global_tid_17210);\n    red_arr_i64_mem_17215 = (__local unsigned char *) red_arr_i64_mem_17215_backing_0;\n    s", "ync_arr_mem_17217 = (__local unsigned char *) sync_arr_mem_17217_backing_1;\n    dummy_16593 = (int64_t) 0;\n    gtid_16594 = (int64_t) 0;\n    q_17219 = sdiv_up64(nz2080U_16272, sext_i32_i64(sext_i64_i32(segred_tblock_sizze_16588 * num_tblocks_16590)) * chunk_sizze_17184);\n    // ne-initialise the outer (per-block) accumulator(s)\n    {\n        eta_p_block_res_acc_17220 = (int64_t) -9223372036854775808;\n    }\n    tblock_id_in_segment_17224 = squot64(phys_tid_16595, segred_tblock_sizze_16588);\n    block_base_offset_17225 = tblock_id_in_segment_17224 * q_17219 * segred_tblock_sizze_16588;\n    for (int64_t i_17226 = 0; i_17226 < q_17219; i_17226++) {\n        int64_t block_offset_17227 = block_base_offset_17225 + i_17226 * segred_tblock_sizze_16588;\n        \n        gtid_16594 = phys_tid_16595 + num_threads_17209 * i_17226;\n        if (slt64(gtid_16594, nz2080U_16272)) {\n            // apply map function(s)\n            {\n                // apply map function\n                {\n                    int64_t x_16454 = ((__global int64_t *) eta_p_mem_17156)[gtid_16594];\n                    \n                    // load accumulator(s)\n                    {\n                        eta_p_16455 = eta_p_block_res_acc_17220;\n                    }\n                    // load next value(s)\n                    {\n                        eta_p_16456 = x_16454;\n                    }\n                    // apply reduction operator(s)\n                    {\n                        int64_t max_res_16457 = smax64(eta_p_16455, eta_p_16456);\n                        \n                        // store in accumulator(s)\n                        {\n                            eta_p_block_res_acc_17220 = max_res_16457;\n                        }\n                    }\n                }\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // store accs. prims go in lmem; non-prims in params (in global mem)\n    {\n        ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] ", "= eta_p_block_res_acc_17220;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    skip_waves_17229 = 1;\n    offset_17228 = 0;\n    // participating threads read initial accumulator\n    {\n        if (slt32(local_tid_17211, sext_i64_i32(segred_tblock_sizze_16588))) {\n            eta_p_17221 = ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17228)];\n        }\n    }\n    offset_17228 = 1;\n    while (slt32(offset_17228, wave_sizze_17213)) {\n        if (slt32(local_tid_17211 + offset_17228, sext_i64_i32(segred_tblock_sizze_16588)) && ((local_tid_17211 - squot32(local_tid_17211, wave_sizze_17213) * wave_sizze_17213) & (2 * offset_17228 - 1)) == 0) {\n            // read array element\n            {\n                eta_p_17222 = ((volatile __local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17228)];\n            }\n            // apply reduction operation\n            {\n                int64_t max_res_17223 = smax64(eta_p_17221, eta_p_17222);\n                \n                eta_p_17221 = max_res_17223;\n            }\n            // write result of operation\n            {\n                ((volatile __local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_17221;\n            }\n        }\n        offset_17228 *= 2;\n    }\n    while (slt32(skip_waves_17229, squot32(sext_i64_i32(segred_tblock_sizze_16588) + wave_sizze_17213 - 1, wave_sizze_17213))) {\n        barrier(CLK_LOCAL_MEM_FENCE);\n        offset_17228 = skip_waves_17229 * wave_sizze_17213;\n        if (slt32(local_tid_17211 + offset_17228, sext_i64_i32(segred_tblock_sizze_16588)) && ((local_tid_17211 - squot32(local_tid_17211, wave_sizze_17213) * wave_sizze_17213) == 0 && (squot32(local_tid_17211, wave_sizze_17213) & (2 * skip_waves_17229 - 1)) == 0)) {\n            // read array element\n            {\n                eta_p_17222 = ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17228)];\n            }\n            // apply red",
-                                    "uction operation\n            {\n                int64_t max_res_17223 = smax64(eta_p_17221, eta_p_17222);\n                \n                eta_p_17221 = max_res_17223;\n            }\n            // write result of operation\n            {\n                ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_17221;\n            }\n        }\n        skip_waves_17229 *= 2;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // thread 0 updates per-block acc(s); rest reset to ne\n    {\n        if (sext_i32_i64(local_tid_17211) == (int64_t) 0) {\n            eta_p_block_res_acc_17220 = eta_p_17221;\n        } else {\n            eta_p_block_res_acc_17220 = (int64_t) -9223372036854775808;\n        }\n    }\n    // first thread in block saves block result to global memory\n    {\n        if (local_tid_17211 == 0) {\n            ((__global int64_t *) segred_tmp_mem_17207)[sext_i32_i64(block_id_17212)] = eta_p_block_res_acc_17220;\n            mem_fence_global();\n            old_counter_17230 = atomic_add_i32_global(&((volatile __global int *) counters_mem_17185)[(int64_t) 0], (int) 1);\n            ((__local bool *) sync_arr_mem_17217)[(int64_t) 0] = old_counter_17230 == sext_i64_i32(num_tblocks_16590 - (int64_t) 1);\n        }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    is_last_block_17231 = ((__local bool *) sync_arr_mem_17217)[(int64_t) 0];\n    if (is_last_block_17231) {\n        if (local_tid_17211 == 0) {\n            old_counter_17230 = atomic_add_i32_global(&((volatile __global int *) counters_mem_17185)[(int64_t) 0], (int) sext_i64_i32((int64_t) 0 - num_tblocks_16590));\n        }\n        // read in the per-block-results\n        {\n            int64_t read_per_thread_17232 = sdiv_up64(num_tblocks_16590, segred_tblock_sizze_16588);\n            \n            eta_p_16455 = (int64_t) -9223372036854775808;\n            for (int64_t i_17233 = 0; i_17233 < read_per_thread_17232; i_17233++) {\n                int64_t bloc", "k_res_id_17234 = sext_i32_i64(local_tid_17211) * read_per_thread_17232 + i_17233;\n                int64_t index_of_block_res_17235 = block_res_id_17234;\n                \n                if (slt64(block_res_id_17234, num_tblocks_16590)) {\n                    eta_p_16456 = ((__global int64_t *) segred_tmp_mem_17207)[index_of_block_res_17235];\n                    \n                    int64_t max_res_16457 = smax64(eta_p_16455, eta_p_16456);\n                    \n                    eta_p_16455 = max_res_16457;\n                }\n            }\n        }\n        ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_16455;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // reduce the per-block results\n        {\n            int32_t offset_17236;\n            int32_t skip_waves_17237 = 1;\n            int64_t eta_p_17221;\n            int64_t eta_p_17222;\n            \n            offset_17236 = 0;\n            // participating threads read initial accumulator\n            {\n                if (slt32(local_tid_17211, sext_i64_i32(segred_tblock_sizze_16588))) {\n                    eta_p_17221 = ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17236)];\n                }\n            }\n            offset_17236 = 1;\n            while (slt32(offset_17236, wave_sizze_17213)) {\n                if (slt32(local_tid_17211 + offset_17236, sext_i64_i32(segred_tblock_sizze_16588)) && ((local_tid_17211 - squot32(local_tid_17211, wave_sizze_17213) * wave_sizze_17213) & (2 * offset_17236 - 1)) == 0) {\n                    // read array element\n                    {\n                        eta_p_17222 = ((volatile __local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17236)];\n                    }\n                    // apply reduction operation\n                    {\n                        int64_t max_res_17223 = smax64(eta_p_17221, eta_p_17222);\n                        \n                        eta_p_17221 = max_re", "s_17223;\n                    }\n                    // write result of operation\n                    {\n                        ((volatile __local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_17221;\n                    }\n                }\n                offset_17236 *= 2;\n            }\n            while (slt32(skip_waves_17237, squot32(sext_i64_i32(segred_tblock_sizze_16588) + wave_sizze_17213 - 1, wave_sizze_17213))) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n                offset_17236 = skip_waves_17237 * wave_sizze_17213;\n                if (slt32(local_tid_17211 + offset_17236, sext_i64_i32(segred_tblock_sizze_16588)) && ((local_tid_17211 - squot32(local_tid_17211, wave_sizze_17213) * wave_sizze_17213) == 0 && (squot32(local_tid_17211, wave_sizze_17213) & (2 * skip_waves_17237 - 1)) == 0)) {\n                    // read array element\n                    {\n                        eta_p_17222 = ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17236)];\n                    }\n                    // apply reduction operation\n                    {\n                        int64_t max_res_17223 = smax64(eta_p_17221, eta_p_17222);\n                        \n                        eta_p_17221 = max_res_17223;\n                    }\n                    // write result of operation\n                    {\n                        ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_17221;\n                    }\n                }\n                skip_waves_17237 *= 2;\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // and back to memory with the final result\n            {\n                if (local_tid_17211 == 0) {\n                    ((__global int64_t *) mem_17158)[(int64_t) 0] = eta_p_17221;\n                }\n            }\n        }\n    }\n    \n  error_5:\n    return;\n    #undef segred_tblock_sizze_16588\n    #undef chunk_sizze_17184\n}\nFUTHARK_KERNEL_SIZED(min_idxzise",
-                                    "gred_nonseg_16585_dim1, 1, 1)\nvoid min_idxzisegred_nonseg_16585(__global int *global_failure, int64_t nz2080U_16232, int64_t num_tblocks_16580, int64_t num_threads_17209, __global unsigned char *eta_p_mem_17156, __global unsigned char *mem_17158, __global unsigned char *counters_mem_17185, __global unsigned char *segred_tmp_mem_17207)\n{\n    #define segred_tblock_sizze_16578 (min_idxzisegred_nonseg_16585zisegred_tblock_sizze_16578)\n    #define chunk_sizze_17184 (min_idxzisegred_nonseg_16585zichunk_sizze_17184)\n    \n    volatile __local unsigned char *sync_arr_mem_17217_backing_1 = &shared_mem[0];\n    const int64_t sync_arr_mem_17217_backing_1_offset = 0 + 8;\n    volatile __local unsigned char *red_arr_i64_mem_17215_backing_0 = &shared_mem[sync_arr_mem_17217_backing_1_offset];\n    const int64_t red_arr_i64_mem_17215_backing_0_offset = sync_arr_mem_17217_backing_1_offset + ((int64_t) 8 * segred_tblock_sizze_16578 + srem64((int64_t) 8 - srem64((int64_t) 8 * segred_tblock_sizze_16578, (int64_t) 8), (int64_t) 8));\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17211;\n    int32_t tblock_sizze_17214;\n    int32_t wave_sizze_17213;\n    int32_t block_id_17212;\n    int32_t global_tid_17210;\n    int64_t phys_tid_16585;\n    __local unsigned char *red_arr_i64_mem_17215;\n    __local unsigned char *sync_arr_mem_17217;\n    int64_t dummy_16583;\n    int64_t gtid_16584;\n    int64_t q_17219;\n    int64_t eta_p_block_res_acc_17220;\n    int64_t eta_p_16455;\n    int64_t eta_p_16456;\n    int64_t tblock_id_in_segment_17224;\n    int64_t block_base_offset_17225;\n    int32_t offset_17228;\n    int32_t skip_waves_17229;\n    int64_t eta_p_17221;\n    int64_t eta_p_17222;\n    int32_t old_counter_17230;\n    bool is_last_block_17231;\n    \n    local_tid_17211 = get_local_id(0);\n    tblock_sizze_17214 = get_local_size(0);\n    wave_sizze_17213 = LOCKSTEP_WIDTH;\n    block_id_17212 = get_tblock_id(0);\n    global_tid_17210 = block_id_17212 * tblock_sizze_17214 + local_tid_17211;", "\n    phys_tid_16585 = sext_i32_i64(global_tid_17210);\n    red_arr_i64_mem_17215 = (__local unsigned char *) red_arr_i64_mem_17215_backing_0;\n    sync_arr_mem_17217 = (__local unsigned char *) sync_arr_mem_17217_backing_1;\n    dummy_16583 = (int64_t) 0;\n    gtid_16584 = (int64_t) 0;\n    q_17219 = sdiv_up64(nz2080U_16232, sext_i32_i64(sext_i64_i32(segred_tblock_sizze_16578 * num_tblocks_16580)) * chunk_sizze_17184);\n    // ne-initialise the outer (per-block) accumulator(s)\n    {\n        eta_p_block_res_acc_17220 = (int64_t) 9223372036854775807;\n    }\n    tblock_id_in_segment_17224 = squot64(phys_tid_16585, segred_tblock_sizze_16578);\n    block_base_offset_17225 = tblock_id_in_segment_17224 * q_17219 * segred_tblock_sizze_16578;\n    for (int64_t i_17226 = 0; i_17226 < q_17219; i_17226++) {\n        int64_t block_offset_17227 = block_base_offset_17225 + i_17226 * segred_tblock_sizze_16578;\n        \n        gtid_16584 = phys_tid_16585 + num_threads_17209 * i_17226;\n        if (slt64(gtid_16584, nz2080U_16232)) {\n            // apply map function(s)\n            {\n                // apply map function\n                {\n                    int64_t x_16454 = ((__global int64_t *) eta_p_mem_17156)[gtid_16584];\n                    \n                    // load accumulator(s)\n                    {\n                        eta_p_16455 = eta_p_block_res_acc_17220;\n                    }\n                    // load next value(s)\n                    {\n                        eta_p_16456 = x_16454;\n                    }\n                    // apply reduction operator(s)\n                    {\n                        int64_t min_res_16457 = smin64(eta_p_16455, eta_p_16456);\n                        \n                        // store in accumulator(s)\n                        {\n                            eta_p_block_res_acc_17220 = min_res_16457;\n                        }\n                    }\n                }\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // store accs", ". prims go in lmem; non-prims in params (in global mem)\n    {\n        ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_block_res_acc_17220;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    skip_waves_17229 = 1;\n    offset_17228 = 0;\n    // participating threads read initial accumulator\n    {\n        if (slt32(local_tid_17211, sext_i64_i32(segred_tblock_sizze_16578))) {\n            eta_p_17221 = ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17228)];\n        }\n    }\n    offset_17228 = 1;\n    while (slt32(offset_17228, wave_sizze_17213)) {\n        if (slt32(local_tid_17211 + offset_17228, sext_i64_i32(segred_tblock_sizze_16578)) && ((local_tid_17211 - squot32(local_tid_17211, wave_sizze_17213) * wave_sizze_17213) & (2 * offset_17228 - 1)) == 0) {\n            // read array element\n            {\n                eta_p_17222 = ((volatile __local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17228)];\n            }\n            // apply reduction operation\n            {\n                int64_t min_res_17223 = smin64(eta_p_17221, eta_p_17222);\n                \n                eta_p_17221 = min_res_17223;\n            }\n            // write result of operation\n            {\n                ((volatile __local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_17221;\n            }\n        }\n        offset_17228 *= 2;\n    }\n    while (slt32(skip_waves_17229, squot32(sext_i64_i32(segred_tblock_sizze_16578) + wave_sizze_17213 - 1, wave_sizze_17213))) {\n        barrier(CLK_LOCAL_MEM_FENCE);\n        offset_17228 = skip_waves_17229 * wave_sizze_17213;\n        if (slt32(local_tid_17211 + offset_17228, sext_i64_i32(segred_tblock_sizze_16578)) && ((local_tid_17211 - squot32(local_tid_17211, wave_sizze_17213) * wave_sizze_17213) == 0 && (squot32(local_tid_17211, wave_sizze_17213) & (2 * skip_waves_17229 - 1)) == 0)) {\n            // read array element\n            {\n              ",
-                                    "  eta_p_17222 = ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17228)];\n            }\n            // apply reduction operation\n            {\n                int64_t min_res_17223 = smin64(eta_p_17221, eta_p_17222);\n                \n                eta_p_17221 = min_res_17223;\n            }\n            // write result of operation\n            {\n                ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_17221;\n            }\n        }\n        skip_waves_17229 *= 2;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // thread 0 updates per-block acc(s); rest reset to ne\n    {\n        if (sext_i32_i64(local_tid_17211) == (int64_t) 0) {\n            eta_p_block_res_acc_17220 = eta_p_17221;\n        } else {\n            eta_p_block_res_acc_17220 = (int64_t) 9223372036854775807;\n        }\n    }\n    // first thread in block saves block result to global memory\n    {\n        if (local_tid_17211 == 0) {\n            ((__global int64_t *) segred_tmp_mem_17207)[sext_i32_i64(block_id_17212)] = eta_p_block_res_acc_17220;\n            mem_fence_global();\n            old_counter_17230 = atomic_add_i32_global(&((volatile __global int *) counters_mem_17185)[(int64_t) 0], (int) 1);\n            ((__local bool *) sync_arr_mem_17217)[(int64_t) 0] = old_counter_17230 == sext_i64_i32(num_tblocks_16580 - (int64_t) 1);\n        }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    is_last_block_17231 = ((__local bool *) sync_arr_mem_17217)[(int64_t) 0];\n    if (is_last_block_17231) {\n        if (local_tid_17211 == 0) {\n            old_counter_17230 = atomic_add_i32_global(&((volatile __global int *) counters_mem_17185)[(int64_t) 0], (int) sext_i64_i32((int64_t) 0 - num_tblocks_16580));\n        }\n        // read in the per-block-results\n        {\n            int64_t read_per_thread_17232 = sdiv_up64(num_tblocks_16580, segred_tblock_sizze_16578);\n            \n            eta_p_16455 = ", "(int64_t) 9223372036854775807;\n            for (int64_t i_17233 = 0; i_17233 < read_per_thread_17232; i_17233++) {\n                int64_t block_res_id_17234 = sext_i32_i64(local_tid_17211) * read_per_thread_17232 + i_17233;\n                int64_t index_of_block_res_17235 = block_res_id_17234;\n                \n                if (slt64(block_res_id_17234, num_tblocks_16580)) {\n                    eta_p_16456 = ((__global int64_t *) segred_tmp_mem_17207)[index_of_block_res_17235];\n                    \n                    int64_t min_res_16457 = smin64(eta_p_16455, eta_p_16456);\n                    \n                    eta_p_16455 = min_res_16457;\n                }\n            }\n        }\n        ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_16455;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // reduce the per-block results\n        {\n            int32_t offset_17236;\n            int32_t skip_waves_17237 = 1;\n            int64_t eta_p_17221;\n            int64_t eta_p_17222;\n            \n            offset_17236 = 0;\n            // participating threads read initial accumulator\n            {\n                if (slt32(local_tid_17211, sext_i64_i32(segred_tblock_sizze_16578))) {\n                    eta_p_17221 = ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17236)];\n                }\n            }\n            offset_17236 = 1;\n            while (slt32(offset_17236, wave_sizze_17213)) {\n                if (slt32(local_tid_17211 + offset_17236, sext_i64_i32(segred_tblock_sizze_16578)) && ((local_tid_17211 - squot32(local_tid_17211, wave_sizze_17213) * wave_sizze_17213) & (2 * offset_17236 - 1)) == 0) {\n                    // read array element\n                    {\n                        eta_p_17222 = ((volatile __local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17236)];\n                    }\n                    // apply reduction operation\n                    {\n        ", "                int64_t min_res_17223 = smin64(eta_p_17221, eta_p_17222);\n                        \n                        eta_p_17221 = min_res_17223;\n                    }\n                    // write result of operation\n                    {\n                        ((volatile __local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_17221;\n                    }\n                }\n                offset_17236 *= 2;\n            }\n            while (slt32(skip_waves_17237, squot32(sext_i64_i32(segred_tblock_sizze_16578) + wave_sizze_17213 - 1, wave_sizze_17213))) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n                offset_17236 = skip_waves_17237 * wave_sizze_17213;\n                if (slt32(local_tid_17211 + offset_17236, sext_i64_i32(segred_tblock_sizze_16578)) && ((local_tid_17211 - squot32(local_tid_17211, wave_sizze_17213) * wave_sizze_17213) == 0 && (squot32(local_tid_17211, wave_sizze_17213) & (2 * skip_waves_17237 - 1)) == 0)) {\n                    // read array element\n                    {\n                        eta_p_17222 = ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211 + offset_17236)];\n                    }\n                    // apply reduction operation\n                    {\n                        int64_t min_res_17223 = smin64(eta_p_17221, eta_p_17222);\n                        \n                        eta_p_17221 = min_res_17223;\n                    }\n                    // write result of operation\n                    {\n                        ((__local int64_t *) red_arr_i64_mem_17215)[sext_i32_i64(local_tid_17211)] = eta_p_17221;\n                    }\n                }\n                skip_waves_17237 *= 2;\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // and back to memory with the final result\n            {\n                if (local_tid_17211 == 0) {\n                    ((__global int64_t *) mem_17158)[(int64_t) 0] = eta_p_17221;\n                }\n            }\n ", "       }\n    }\n    \n  error_5:\n    return;\n    #undef segred_tblock_sizze_16578\n    #undef chunk_sizze_17184\n}\n", NULL};
+                                    "                         \\\n  }                                                                     \\\n  if (r > 4) {                                                          \\\n    int64_t i = remainder % shape4;                                     \\\n    dst_offset += i * dst_stride4;                                      \\\n    src_offset += i * src_stride4;                                      \\\n    remainder /= shape4;                                                \\\n  }                                                                     \\\n  if (r > 5) {                                                          \\\n    int64_t i = remainder % shape5;                                     \\\n    dst_offset += i * dst_stride5;                                      \\\n    src_offset += i * src_stride5;                                      \\\n    remainder /= shape5;                                                \\\n  }                                                                     \\\n  if (r > 6) {                                                          \\\n    int64_t i = remainder % shape6;                                     \\\n    dst_offset += i * dst_stride6;                                      \\\n    src_offset += i * src_stride6;                                      \\\n    remainder /= shape6;                                                \\\n  }                                                                     \\\n  if (r > 7) {                                                          \\\n    int64_t i = remainder % shape7;                                     \\\n    dst_offset += i * dst_stride7;                                      \\\n    src_offset += i * src_stride7;                                      \\\n    remainder /= shape7;                                                \\\n  }                                                                     \\\n                                                                        \\\n  dst_mem[dst_offset] = src_mem[src_offset];     ", "                       \\\n}\n\nGEN_COPY_KERNEL(1b, uint8_t)\nGEN_COPY_KERNEL(2b, uint16_t)\nGEN_COPY_KERNEL(4b, uint32_t)\nGEN_COPY_KERNEL(8b, uint64_t)\n\n// End of copy.cl\n\n\n\nFUTHARK_KERNEL\nvoid builtinzhiota_i64ziiota_i64_17078(int64_t n_17074, int64_t x_17075, int64_t s_17076, int64_t virt_num_tblocks_17083, int64_t num_tblocks_17084, __global unsigned char *mem_17073)\n{\n    int32_t iota_ltid_17079;\n    int32_t tblock_sizze_17081;\n    int32_t iota_gid_17080;\n    int32_t iota_gtid_17078;\n    int32_t phys_tblock_id_17085;\n    int32_t iterations_17086;\n    \n    iota_ltid_17079 = get_local_id(0);\n    tblock_sizze_17081 = get_local_size(0);\n    iota_gid_17080 = get_tblock_id(0);\n    iota_gtid_17078 = iota_gid_17080 * tblock_sizze_17081 + iota_ltid_17079;\n    phys_tblock_id_17085 = get_tblock_id(0);\n    iterations_17086 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17083) - phys_tblock_id_17085, sext_i64_i32(num_tblocks_17084));\n    for (int32_t i_17087 = 0; i_17087 < iterations_17086; i_17087++) {\n        int32_t virt_tblock_id_17088;\n        int64_t global_tid_17089;\n        \n        virt_tblock_id_17088 = phys_tblock_id_17085 + i_17087 * sext_i64_i32(num_tblocks_17084);\n        global_tid_17089 = sext_i32_i64(virt_tblock_id_17088) * sext_i32_i64(tblock_sizze_17081) + sext_i32_i64(iota_ltid_17079);\n        if (slt64(global_tid_17089, n_17074)) {\n            ((__global int64_t *) mem_17073)[global_tid_17089] = add64(mul64(global_tid_17089, s_17076), x_17075);\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_f32zireplicate_17085(int64_t num_elems_17081, float val_17082, int64_t replicate_n_17084, int64_t virt_num_tblocks_17090, int64_t num_tblocks_17091, __global unsigned char *mem_17080)\n{\n    int32_t replicate_ltid_17086;\n    int32_t tblock_sizze_17088;\n    int32_t replicate_gid_17087;\n    int32_t replicate_gtid_17085;\n    int32_t phys_tblock_id_17092;\n    int32_t iterations_17093;\n", "    \n    replicate_ltid_17086 = get_local_id(0);\n    tblock_sizze_17088 = get_local_size(0);\n    replicate_gid_17087 = get_tblock_id(0);\n    replicate_gtid_17085 = replicate_gid_17087 * tblock_sizze_17088 + replicate_ltid_17086;\n    phys_tblock_id_17092 = get_tblock_id(0);\n    iterations_17093 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17090) - phys_tblock_id_17092, sext_i64_i32(num_tblocks_17091));\n    for (int32_t i_17094 = 0; i_17094 < iterations_17093; i_17094++) {\n        int32_t virt_tblock_id_17095;\n        int64_t global_tid_17096;\n        int64_t slice_17098;\n        int64_t rep_i_17097;\n        int64_t remnant_17099;\n        \n        virt_tblock_id_17095 = phys_tblock_id_17092 + i_17094 * sext_i64_i32(num_tblocks_17091);\n        global_tid_17096 = sext_i32_i64(virt_tblock_id_17095) * sext_i32_i64(tblock_sizze_17088) + sext_i32_i64(replicate_ltid_17086);\n        slice_17098 = num_elems_17081;\n        rep_i_17097 = global_tid_17096;\n        remnant_17099 = global_tid_17096 - rep_i_17097;\n        if (slt64(global_tid_17096, replicate_n_17084)) {\n            ((__global float *) mem_17080)[rep_i_17097] = val_17082;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_f64zireplicate_17085(int64_t num_elems_17081, double val_17082, int64_t replicate_n_17084, int64_t virt_num_tblocks_17090, int64_t num_tblocks_17091, __global unsigned char *mem_17080)\n{\n    int32_t replicate_ltid_17086;\n    int32_t tblock_sizze_17088;\n    int32_t replicate_gid_17087;\n    int32_t replicate_gtid_17085;\n    int32_t phys_tblock_id_17092;\n    int32_t iterations_17093;\n    \n    replicate_ltid_17086 = get_local_id(0);\n    tblock_sizze_17088 = get_local_size(0);\n    replicate_gid_17087 = get_tblock_id(0);\n    replicate_gtid_17085 = replicate_gid_17087 * tblock_sizze_17088 + replicate_ltid_17086;\n    phys_tblock_id_17092 = get_tblock_id(0);\n    iterations_17093 = sdiv_up32(sext_i64_i32(virt_num_tblo",
+                                    "cks_17090) - phys_tblock_id_17092, sext_i64_i32(num_tblocks_17091));\n    for (int32_t i_17094 = 0; i_17094 < iterations_17093; i_17094++) {\n        int32_t virt_tblock_id_17095;\n        int64_t global_tid_17096;\n        int64_t slice_17098;\n        int64_t rep_i_17097;\n        int64_t remnant_17099;\n        \n        virt_tblock_id_17095 = phys_tblock_id_17092 + i_17094 * sext_i64_i32(num_tblocks_17091);\n        global_tid_17096 = sext_i32_i64(virt_tblock_id_17095) * sext_i32_i64(tblock_sizze_17088) + sext_i32_i64(replicate_ltid_17086);\n        slice_17098 = num_elems_17081;\n        rep_i_17097 = global_tid_17096;\n        remnant_17099 = global_tid_17096 - rep_i_17097;\n        if (slt64(global_tid_17096, replicate_n_17084)) {\n            ((__global double *) mem_17080)[rep_i_17097] = val_17082;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_i16zireplicate_17085(int64_t num_elems_17081, int16_t val_17082, int64_t replicate_n_17084, int64_t virt_num_tblocks_17090, int64_t num_tblocks_17091, __global unsigned char *mem_17080)\n{\n    int32_t replicate_ltid_17086;\n    int32_t tblock_sizze_17088;\n    int32_t replicate_gid_17087;\n    int32_t replicate_gtid_17085;\n    int32_t phys_tblock_id_17092;\n    int32_t iterations_17093;\n    \n    replicate_ltid_17086 = get_local_id(0);\n    tblock_sizze_17088 = get_local_size(0);\n    replicate_gid_17087 = get_tblock_id(0);\n    replicate_gtid_17085 = replicate_gid_17087 * tblock_sizze_17088 + replicate_ltid_17086;\n    phys_tblock_id_17092 = get_tblock_id(0);\n    iterations_17093 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17090) - phys_tblock_id_17092, sext_i64_i32(num_tblocks_17091));\n    for (int32_t i_17094 = 0; i_17094 < iterations_17093; i_17094++) {\n        int32_t virt_tblock_id_17095;\n        int64_t global_tid_17096;\n        int64_t slice_17098;\n        int64_t rep_i_17097;\n        int64_t remnant_17099;\n        \n        virt_tblock_i", "d_17095 = phys_tblock_id_17092 + i_17094 * sext_i64_i32(num_tblocks_17091);\n        global_tid_17096 = sext_i32_i64(virt_tblock_id_17095) * sext_i32_i64(tblock_sizze_17088) + sext_i32_i64(replicate_ltid_17086);\n        slice_17098 = num_elems_17081;\n        rep_i_17097 = global_tid_17096;\n        remnant_17099 = global_tid_17096 - rep_i_17097;\n        if (slt64(global_tid_17096, replicate_n_17084)) {\n            ((__global int16_t *) mem_17080)[rep_i_17097] = val_17082;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_i32zireplicate_17085(int64_t num_elems_17081, int32_t val_17082, int64_t replicate_n_17084, int64_t virt_num_tblocks_17090, int64_t num_tblocks_17091, __global unsigned char *mem_17080)\n{\n    int32_t replicate_ltid_17086;\n    int32_t tblock_sizze_17088;\n    int32_t replicate_gid_17087;\n    int32_t replicate_gtid_17085;\n    int32_t phys_tblock_id_17092;\n    int32_t iterations_17093;\n    \n    replicate_ltid_17086 = get_local_id(0);\n    tblock_sizze_17088 = get_local_size(0);\n    replicate_gid_17087 = get_tblock_id(0);\n    replicate_gtid_17085 = replicate_gid_17087 * tblock_sizze_17088 + replicate_ltid_17086;\n    phys_tblock_id_17092 = get_tblock_id(0);\n    iterations_17093 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17090) - phys_tblock_id_17092, sext_i64_i32(num_tblocks_17091));\n    for (int32_t i_17094 = 0; i_17094 < iterations_17093; i_17094++) {\n        int32_t virt_tblock_id_17095;\n        int64_t global_tid_17096;\n        int64_t slice_17098;\n        int64_t rep_i_17097;\n        int64_t remnant_17099;\n        \n        virt_tblock_id_17095 = phys_tblock_id_17092 + i_17094 * sext_i64_i32(num_tblocks_17091);\n        global_tid_17096 = sext_i32_i64(virt_tblock_id_17095) * sext_i32_i64(tblock_sizze_17088) + sext_i32_i64(replicate_ltid_17086);\n        slice_17098 = num_elems_17081;\n        rep_i_17097 = global_tid_17096;\n        remnant_17099 = global_tid_17096", " - rep_i_17097;\n        if (slt64(global_tid_17096, replicate_n_17084)) {\n            ((__global int32_t *) mem_17080)[rep_i_17097] = val_17082;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL\nvoid builtinzhreplicate_i64zireplicate_17085(int64_t num_elems_17081, int64_t val_17082, int64_t replicate_n_17084, int64_t virt_num_tblocks_17090, int64_t num_tblocks_17091, __global unsigned char *mem_17080)\n{\n    int32_t replicate_ltid_17086;\n    int32_t tblock_sizze_17088;\n    int32_t replicate_gid_17087;\n    int32_t replicate_gtid_17085;\n    int32_t phys_tblock_id_17092;\n    int32_t iterations_17093;\n    \n    replicate_ltid_17086 = get_local_id(0);\n    tblock_sizze_17088 = get_local_size(0);\n    replicate_gid_17087 = get_tblock_id(0);\n    replicate_gtid_17085 = replicate_gid_17087 * tblock_sizze_17088 + replicate_ltid_17086;\n    phys_tblock_id_17092 = get_tblock_id(0);\n    iterations_17093 = sdiv_up32(sext_i64_i32(virt_num_tblocks_17090) - phys_tblock_id_17092, sext_i64_i32(num_tblocks_17091));\n    for (int32_t i_17094 = 0; i_17094 < iterations_17093; i_17094++) {\n        int32_t virt_tblock_id_17095;\n        int64_t global_tid_17096;\n        int64_t slice_17098;\n        int64_t rep_i_17097;\n        int64_t remnant_17099;\n        \n        virt_tblock_id_17095 = phys_tblock_id_17092 + i_17094 * sext_i64_i32(num_tblocks_17091);\n        global_tid_17096 = sext_i32_i64(virt_tblock_id_17095) * sext_i32_i64(tblock_sizze_17088) + sext_i32_i64(replicate_ltid_17086);\n        slice_17098 = num_elems_17081;\n        rep_i_17097 = global_tid_17096;\n        remnant_17099 = global_tid_17096 - rep_i_17097;\n        if (slt64(global_tid_17096, replicate_n_17084)) {\n            ((__global int64_t *) mem_17080)[rep_i_17097] = val_17082;\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_1:\n    return;\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_doublezisegmap_16723_dim1, 1, 1)\nvoid gat",
+                                    "her_payloads_doublezisegmap_16723(__global int *global_failure, int64_t niz2084U_14574, int64_t incr_14576, __global unsigned char *is_mem_17044, __global unsigned char *mem_17048)\n{\n    #define segmap_tblock_sizze_16719 (gather_payloads_doublezisegmap_16723zisegmap_tblock_sizze_16719)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_16723;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16722;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_16723 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16719 + sext_i32_i64(local_tid_17073);\n    slice_17078 = niz2084U_14574;\n    gtid_16722 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16722;\n    if (slt64(gtid_16722, niz2084U_14574)) {\n        int64_t eta_p_16724;\n        int64_t lifted_lambda_res_16725;\n        \n        eta_p_16724 = ((__global int64_t *) is_mem_17044)[gtid_16722];\n        lifted_lambda_res_16725 = sub64(eta_p_16724, incr_14576);\n        ((__global int64_t *) mem_17048)[gtid_16722] = lifted_lambda_res_16725;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16719\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_doublezisegmap_16751_dim1, 1, 1)\nvoid gather_payloads_doublezisegmap_16751(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_14574, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17045, __global unsigned char *mem_param_17053, __global unsigned char *mem_param_17056, __global unsi", "gned char *mem_17061)\n{\n    #define segmap_tblock_sizze_16747 (gather_payloads_doublezisegmap_16751zisegmap_tblock_sizze_16747)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17108;\n    int32_t tblock_sizze_17111;\n    int32_t wave_sizze_17110;\n    int32_t block_id_17109;\n    int32_t global_tid_17107;\n    int64_t phys_tid_16751;\n    int64_t global_tid_17112;\n    int64_t slice_17113;\n    int64_t gtid_16750;\n    int64_t remnant_17114;\n    \n    local_tid_17108 = get_local_id(0);\n    tblock_sizze_17111 = get_local_size(0);\n    wave_sizze_17110 = LOCKSTEP_WIDTH;\n    block_id_17109 = get_tblock_id(0);\n    global_tid_17107 = block_id_17109 * tblock_sizze_17111 + local_tid_17108;\n    phys_tid_16751 = sext_i32_i64(global_tid_17107);\n    global_tid_17112 = sext_i32_i64(block_id_17109) * segmap_tblock_sizze_16747 + sext_i32_i64(local_tid_17108);\n    slice_17113 = niz2084U_14574;\n    gtid_16750 = global_tid_17112;\n    remnant_17114 = global_tid_17112 - gtid_16750;\n    if (slt64(gtid_16750, niz2084U_14574)) {\n        int64_t eta_p_16752;\n        bool cond_16754;\n        bool cond_t_res_16755;\n        bool x_16756;\n        double lifted_lambda_res_16757;\n        \n        eta_p_16752 = ((__global int64_t *) mem_param_17053)[gtid_16750];\n        cond_16754 = sle64(lower_bound_16423, eta_p_16752);\n        cond_t_res_16755 = slt64(eta_p_16752, min_res_16425);\n        x_16756 = cond_16754 && cond_t_res_16755;\n        if (x_16756) {\n            int64_t tmp_16758;\n            bool x_16759;\n            bool y_16760;\n            bool bounds_check_16761;\n            bool index_certs_16762;\n            double tmp_16763;\n            \n            tmp_16758 = sub64(eta_p_16752, lower_bound_16423);\n            x_16759 = sle64((int64_t) 0, tmp_16758);\n            y_16760 = slt64(tmp_16758, j_m_i_16426);\n            bounds_check_16761 = x_16759 && y_16760;\n            if (!bounds_check_16761) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_fai", "lure, -1, 0) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16758;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16763 = ((__global double *) ys_mem_17045)[eta_p_16752];\n            lifted_lambda_res_16757 = tmp_16763;\n        } else {\n            double eta_p_16753 = ((__global double *) mem_param_17056)[gtid_16750];\n            \n            lifted_lambda_res_16757 = eta_p_16753;\n        }\n        ((__global double *) mem_17061)[gtid_16750] = lifted_lambda_res_16757;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16747\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_double_GFURzisegmap_17003_dim1, 1, 1)\nvoid gather_payloads_double_GFURzisegmap_17003(__global int *global_failure, int64_t ni_16081, int64_t incr_16083, __global unsigned char *is_mem_17045, __global unsigned char *mem_17049)\n{\n    #define segmap_tblock_sizze_16999 (gather_payloads_double_GFURzisegmap_17003zisegmap_tblock_sizze_16999)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_17003;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_17002;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_17003 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16999 + sext_i32_i64(local_tid_17073);\n    slice_17078 = ni_16081;\n    gtid_17002 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_17002;\n    if (slt64(gtid_17002, ni_16081)) {\n        ",
+                                    "int64_t eta_p_17004;\n        int64_t lifted_lambda_res_17005;\n        \n        eta_p_17004 = ((__global int64_t *) is_mem_17045)[gtid_17002];\n        lifted_lambda_res_17005 = sub64(eta_p_17004, incr_16083);\n        ((__global int64_t *) mem_17049)[gtid_17002] = lifted_lambda_res_17005;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16999\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_double_GFURzisegmap_17031_dim1, 1, 1)\nvoid gather_payloads_double_GFURzisegmap_17031(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_16081, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17046, __global unsigned char *mem_param_17052, __global unsigned char *mem_param_17055, __global unsigned char *mem_17060)\n{\n    #define segmap_tblock_sizze_17027 (gather_payloads_double_GFURzisegmap_17031zisegmap_tblock_sizze_17027)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17088;\n    int32_t tblock_sizze_17091;\n    int32_t wave_sizze_17090;\n    int32_t block_id_17089;\n    int32_t global_tid_17087;\n    int64_t phys_tid_17031;\n    int64_t global_tid_17092;\n    int64_t slice_17093;\n    int64_t gtid_17030;\n    int64_t remnant_17094;\n    \n    local_tid_17088 = get_local_id(0);\n    tblock_sizze_17091 = get_local_size(0);\n    wave_sizze_17090 = LOCKSTEP_WIDTH;\n    block_id_17089 = get_tblock_id(0);\n    global_tid_17087 = block_id_17089 * tblock_sizze_17091 + local_tid_17088;\n    phys_tid_17031 = sext_i32_i64(global_tid_17087);\n    global_tid_17092 = sext_i32_i64(block_id_17089) * segmap_tblock_sizze_17027 + sext_i32_i64(local_tid_17088);\n    slice_17093 = ni_16081;\n    gtid_17030 = global_tid_17092;\n    remnant_17094 = global_tid_17092 - gtid_17030;\n    if (slt64(gtid_17030, ni_16081)) {\n        int64_t eta_p_17032;\n        bool cond_17034;\n        bool cond_t_res_17035;\n        bool x_17036;\n        double lifted_lambda_res_17037;\n        \n        eta_p_", "17032 = ((__global int64_t *) mem_param_17052)[gtid_17030];\n        cond_17034 = sle64(lower_bound_16423, eta_p_17032);\n        cond_t_res_17035 = slt64(eta_p_17032, min_res_16425);\n        x_17036 = cond_17034 && cond_t_res_17035;\n        if (x_17036) {\n            int64_t tmp_17038;\n            bool x_17039;\n            bool y_17040;\n            bool bounds_check_17041;\n            bool index_certs_17042;\n            double tmp_17043;\n            \n            tmp_17038 = sub64(eta_p_17032, lower_bound_16423);\n            x_17039 = sle64((int64_t) 0, tmp_17038);\n            y_17040 = slt64(tmp_17038, j_m_i_16426);\n            bounds_check_17041 = x_17039 && y_17040;\n            if (!bounds_check_17041) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 1) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_17038;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_17043 = ((__global double *) ys_mem_17046)[eta_p_17032];\n            lifted_lambda_res_17037 = tmp_17043;\n        } else {\n            double eta_p_17033 = ((__global double *) mem_param_17055)[gtid_17030];\n            \n            lifted_lambda_res_17037 = eta_p_17033;\n        }\n        ((__global double *) mem_17060)[gtid_17030] = lifted_lambda_res_17037;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_17027\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_floatzisegmap_16667_dim1, 1, 1)\nvoid gather_payloads_floatzisegmap_16667(__global int *global_failure, int64_t niz2084U_14234, int64_t incr_14236, __global unsigned char *is_mem_17044, __global unsigned char *mem_17048)\n{\n    #define segmap_tblock_sizze_16663 (gather_payloads_floatzisegmap_16667zisegmap_tblock_sizze_16663)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t ", "wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_16667;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16666;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_16667 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16663 + sext_i32_i64(local_tid_17073);\n    slice_17078 = niz2084U_14234;\n    gtid_16666 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16666;\n    if (slt64(gtid_16666, niz2084U_14234)) {\n        int64_t eta_p_16668;\n        int64_t lifted_lambda_res_16669;\n        \n        eta_p_16668 = ((__global int64_t *) is_mem_17044)[gtid_16666];\n        lifted_lambda_res_16669 = sub64(eta_p_16668, incr_14236);\n        ((__global int64_t *) mem_17048)[gtid_16666] = lifted_lambda_res_16669;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16663\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_floatzisegmap_16695_dim1, 1, 1)\nvoid gather_payloads_floatzisegmap_16695(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_14234, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17045, __global unsigned char *mem_param_17053, __global unsigned char *mem_param_17056, __global unsigned char *mem_17061)\n{\n    #define segmap_tblock_sizze_16691 (gather_payloads_floatzisegmap_16695zisegmap_tblock_sizze_16691)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17108;\n    int32_t tblock_sizze_17111;\n    int32_t wave_sizze_17110;\n    int32_t block_id_17109;\n    int32_t global_tid_17107;\n    int64_t phys_tid_16695;\n    int64_t global_tid_17112;\n    int64_t slice_17113;\n   ",
+                                    " int64_t gtid_16694;\n    int64_t remnant_17114;\n    \n    local_tid_17108 = get_local_id(0);\n    tblock_sizze_17111 = get_local_size(0);\n    wave_sizze_17110 = LOCKSTEP_WIDTH;\n    block_id_17109 = get_tblock_id(0);\n    global_tid_17107 = block_id_17109 * tblock_sizze_17111 + local_tid_17108;\n    phys_tid_16695 = sext_i32_i64(global_tid_17107);\n    global_tid_17112 = sext_i32_i64(block_id_17109) * segmap_tblock_sizze_16691 + sext_i32_i64(local_tid_17108);\n    slice_17113 = niz2084U_14234;\n    gtid_16694 = global_tid_17112;\n    remnant_17114 = global_tid_17112 - gtid_16694;\n    if (slt64(gtid_16694, niz2084U_14234)) {\n        int64_t eta_p_16696;\n        bool cond_16698;\n        bool cond_t_res_16699;\n        bool x_16700;\n        float lifted_lambda_res_16701;\n        \n        eta_p_16696 = ((__global int64_t *) mem_param_17053)[gtid_16694];\n        cond_16698 = sle64(lower_bound_16423, eta_p_16696);\n        cond_t_res_16699 = slt64(eta_p_16696, min_res_16425);\n        x_16700 = cond_16698 && cond_t_res_16699;\n        if (x_16700) {\n            int64_t tmp_16702;\n            bool x_16703;\n            bool y_16704;\n            bool bounds_check_16705;\n            bool index_certs_16706;\n            float tmp_16707;\n            \n            tmp_16702 = sub64(eta_p_16696, lower_bound_16423);\n            x_16703 = sle64((int64_t) 0, tmp_16702);\n            y_16704 = slt64(tmp_16702, j_m_i_16426);\n            bounds_check_16705 = x_16703 && y_16704;\n            if (!bounds_check_16705) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 2) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16702;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16707 = ((__global float *) ys_mem_17045)[eta_p_16696];\n            lifted_lambda_res_16701 = tmp_16707;\n        } else {\n      ", "      float eta_p_16697 = ((__global float *) mem_param_17056)[gtid_16694];\n            \n            lifted_lambda_res_16701 = eta_p_16697;\n        }\n        ((__global float *) mem_17061)[gtid_16694] = lifted_lambda_res_16701;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16691\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_float_GFURzisegmap_16947_dim1, 1, 1)\nvoid gather_payloads_float_GFURzisegmap_16947(__global int *global_failure, int64_t ni_15780, int64_t incr_15782, __global unsigned char *is_mem_17045, __global unsigned char *mem_17049)\n{\n    #define segmap_tblock_sizze_16943 (gather_payloads_float_GFURzisegmap_16947zisegmap_tblock_sizze_16943)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_16947;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16946;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_16947 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16943 + sext_i32_i64(local_tid_17073);\n    slice_17078 = ni_15780;\n    gtid_16946 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16946;\n    if (slt64(gtid_16946, ni_15780)) {\n        int64_t eta_p_16948;\n        int64_t lifted_lambda_res_16949;\n        \n        eta_p_16948 = ((__global int64_t *) is_mem_17045)[gtid_16946];\n        lifted_lambda_res_16949 = sub64(eta_p_16948, incr_15782);\n        ((__global int64_t *) mem_17049)[gtid_16946] = lifted_lambda_res_16949;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16943\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_float_GFURzisegmap_16975_", "dim1, 1, 1)\nvoid gather_payloads_float_GFURzisegmap_16975(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_15780, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17046, __global unsigned char *mem_param_17052, __global unsigned char *mem_param_17055, __global unsigned char *mem_17060)\n{\n    #define segmap_tblock_sizze_16971 (gather_payloads_float_GFURzisegmap_16975zisegmap_tblock_sizze_16971)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17088;\n    int32_t tblock_sizze_17091;\n    int32_t wave_sizze_17090;\n    int32_t block_id_17089;\n    int32_t global_tid_17087;\n    int64_t phys_tid_16975;\n    int64_t global_tid_17092;\n    int64_t slice_17093;\n    int64_t gtid_16974;\n    int64_t remnant_17094;\n    \n    local_tid_17088 = get_local_id(0);\n    tblock_sizze_17091 = get_local_size(0);\n    wave_sizze_17090 = LOCKSTEP_WIDTH;\n    block_id_17089 = get_tblock_id(0);\n    global_tid_17087 = block_id_17089 * tblock_sizze_17091 + local_tid_17088;\n    phys_tid_16975 = sext_i32_i64(global_tid_17087);\n    global_tid_17092 = sext_i32_i64(block_id_17089) * segmap_tblock_sizze_16971 + sext_i32_i64(local_tid_17088);\n    slice_17093 = ni_15780;\n    gtid_16974 = global_tid_17092;\n    remnant_17094 = global_tid_17092 - gtid_16974;\n    if (slt64(gtid_16974, ni_15780)) {\n        int64_t eta_p_16976;\n        bool cond_16978;\n        bool cond_t_res_16979;\n        bool x_16980;\n        float lifted_lambda_res_16981;\n        \n        eta_p_16976 = ((__global int64_t *) mem_param_17052)[gtid_16974];\n        cond_16978 = sle64(lower_bound_16423, eta_p_16976);\n        cond_t_res_16979 = slt64(eta_p_16976, min_res_16425);\n        x_16980 = cond_16978 && cond_t_res_16979;\n        if (x_16980) {\n            int64_t tmp_16982;\n            bool x_16983;\n            bool y_16984;\n            bool bounds_check_16985;\n            bool index_certs_16986;\n            floa",
+                                    "t tmp_16987;\n            \n            tmp_16982 = sub64(eta_p_16976, lower_bound_16423);\n            x_16983 = sle64((int64_t) 0, tmp_16982);\n            y_16984 = slt64(tmp_16982, j_m_i_16426);\n            bounds_check_16985 = x_16983 && y_16984;\n            if (!bounds_check_16985) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 3) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16982;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16987 = ((__global float *) ys_mem_17046)[eta_p_16976];\n            lifted_lambda_res_16981 = tmp_16987;\n        } else {\n            float eta_p_16977 = ((__global float *) mem_param_17055)[gtid_16974];\n            \n            lifted_lambda_res_16981 = eta_p_16977;\n        }\n        ((__global float *) mem_17060)[gtid_16974] = lifted_lambda_res_16981;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16971\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_intzisegmap_16555_dim1, 1, 1)\nvoid gather_payloads_intzisegmap_16555(__global int *global_failure, int64_t niz2084U_13554, int64_t incr_13556, __global unsigned char *is_mem_17044, __global unsigned char *mem_17048)\n{\n    #define segmap_tblock_sizze_16551 (gather_payloads_intzisegmap_16555zisegmap_tblock_sizze_16551)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_16555;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16554;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + l", "ocal_tid_17073;\n    phys_tid_16555 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16551 + sext_i32_i64(local_tid_17073);\n    slice_17078 = niz2084U_13554;\n    gtid_16554 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16554;\n    if (slt64(gtid_16554, niz2084U_13554)) {\n        int64_t eta_p_16556;\n        int64_t lifted_lambda_res_16557;\n        \n        eta_p_16556 = ((__global int64_t *) is_mem_17044)[gtid_16554];\n        lifted_lambda_res_16557 = sub64(eta_p_16556, incr_13556);\n        ((__global int64_t *) mem_17048)[gtid_16554] = lifted_lambda_res_16557;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16551\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_intzisegmap_16583_dim1, 1, 1)\nvoid gather_payloads_intzisegmap_16583(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_13554, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17045, __global unsigned char *mem_param_17053, __global unsigned char *mem_param_17056, __global unsigned char *mem_17061)\n{\n    #define segmap_tblock_sizze_16579 (gather_payloads_intzisegmap_16583zisegmap_tblock_sizze_16579)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17108;\n    int32_t tblock_sizze_17111;\n    int32_t wave_sizze_17110;\n    int32_t block_id_17109;\n    int32_t global_tid_17107;\n    int64_t phys_tid_16583;\n    int64_t global_tid_17112;\n    int64_t slice_17113;\n    int64_t gtid_16582;\n    int64_t remnant_17114;\n    \n    local_tid_17108 = get_local_id(0);\n    tblock_sizze_17111 = get_local_size(0);\n    wave_sizze_17110 = LOCKSTEP_WIDTH;\n    block_id_17109 = get_tblock_id(0);\n    global_tid_17107 = block_id_17109 * tblock_sizze_17111 + local_tid_17108;\n    phys_tid_16583 = sext_i32_i64(global_tid_17107);\n    global_tid_17112 = sext_i32_i64(block_id_17109) * segmap_tblock_sizze_16579 + sext_i32_i64(loca", "l_tid_17108);\n    slice_17113 = niz2084U_13554;\n    gtid_16582 = global_tid_17112;\n    remnant_17114 = global_tid_17112 - gtid_16582;\n    if (slt64(gtid_16582, niz2084U_13554)) {\n        int64_t eta_p_16584;\n        bool cond_16586;\n        bool cond_t_res_16587;\n        bool x_16588;\n        int32_t lifted_lambda_res_16589;\n        \n        eta_p_16584 = ((__global int64_t *) mem_param_17053)[gtid_16582];\n        cond_16586 = sle64(lower_bound_16423, eta_p_16584);\n        cond_t_res_16587 = slt64(eta_p_16584, min_res_16425);\n        x_16588 = cond_16586 && cond_t_res_16587;\n        if (x_16588) {\n            int64_t tmp_16590;\n            bool x_16591;\n            bool y_16592;\n            bool bounds_check_16593;\n            bool index_certs_16594;\n            int32_t tmp_16595;\n            \n            tmp_16590 = sub64(eta_p_16584, lower_bound_16423);\n            x_16591 = sle64((int64_t) 0, tmp_16590);\n            y_16592 = slt64(tmp_16590, j_m_i_16426);\n            bounds_check_16593 = x_16591 && y_16592;\n            if (!bounds_check_16593) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 4) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16590;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16595 = ((__global int32_t *) ys_mem_17045)[eta_p_16584];\n            lifted_lambda_res_16589 = tmp_16595;\n        } else {\n            int32_t eta_p_16585 = ((__global int32_t *) mem_param_17056)[gtid_16582];\n            \n            lifted_lambda_res_16589 = eta_p_16585;\n        }\n        ((__global int32_t *) mem_17061)[gtid_16582] = lifted_lambda_res_16589;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16579\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_int_GFURzisegmap_16835_dim1, 1, 1)\nvoid gather_payloads_int_GFURzisegmap_16835(__global int *g",
+                                    "lobal_failure, int64_t ni_15178, int64_t incr_15180, __global unsigned char *is_mem_17045, __global unsigned char *mem_17049)\n{\n    #define segmap_tblock_sizze_16831 (gather_payloads_int_GFURzisegmap_16835zisegmap_tblock_sizze_16831)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_16835;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16834;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_16835 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16831 + sext_i32_i64(local_tid_17073);\n    slice_17078 = ni_15178;\n    gtid_16834 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16834;\n    if (slt64(gtid_16834, ni_15178)) {\n        int64_t eta_p_16836;\n        int64_t lifted_lambda_res_16837;\n        \n        eta_p_16836 = ((__global int64_t *) is_mem_17045)[gtid_16834];\n        lifted_lambda_res_16837 = sub64(eta_p_16836, incr_15180);\n        ((__global int64_t *) mem_17049)[gtid_16834] = lifted_lambda_res_16837;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16831\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_int_GFURzisegmap_16863_dim1, 1, 1)\nvoid gather_payloads_int_GFURzisegmap_16863(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_15178, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17046, __global unsigned char *mem_param_17052, __global unsigned char *mem_param_17055, __global unsigned char *mem_17060)\n{\n    #define segmap_tblock_sizze_16859 (gath", "er_payloads_int_GFURzisegmap_16863zisegmap_tblock_sizze_16859)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17088;\n    int32_t tblock_sizze_17091;\n    int32_t wave_sizze_17090;\n    int32_t block_id_17089;\n    int32_t global_tid_17087;\n    int64_t phys_tid_16863;\n    int64_t global_tid_17092;\n    int64_t slice_17093;\n    int64_t gtid_16862;\n    int64_t remnant_17094;\n    \n    local_tid_17088 = get_local_id(0);\n    tblock_sizze_17091 = get_local_size(0);\n    wave_sizze_17090 = LOCKSTEP_WIDTH;\n    block_id_17089 = get_tblock_id(0);\n    global_tid_17087 = block_id_17089 * tblock_sizze_17091 + local_tid_17088;\n    phys_tid_16863 = sext_i32_i64(global_tid_17087);\n    global_tid_17092 = sext_i32_i64(block_id_17089) * segmap_tblock_sizze_16859 + sext_i32_i64(local_tid_17088);\n    slice_17093 = ni_15178;\n    gtid_16862 = global_tid_17092;\n    remnant_17094 = global_tid_17092 - gtid_16862;\n    if (slt64(gtid_16862, ni_15178)) {\n        int64_t eta_p_16864;\n        bool cond_16866;\n        bool cond_t_res_16867;\n        bool x_16868;\n        int32_t lifted_lambda_res_16869;\n        \n        eta_p_16864 = ((__global int64_t *) mem_param_17052)[gtid_16862];\n        cond_16866 = sle64(lower_bound_16423, eta_p_16864);\n        cond_t_res_16867 = slt64(eta_p_16864, min_res_16425);\n        x_16868 = cond_16866 && cond_t_res_16867;\n        if (x_16868) {\n            int64_t tmp_16870;\n            bool x_16871;\n            bool y_16872;\n            bool bounds_check_16873;\n            bool index_certs_16874;\n            int32_t tmp_16875;\n            \n            tmp_16870 = sub64(eta_p_16864, lower_bound_16423);\n            x_16871 = sle64((int64_t) 0, tmp_16870);\n            y_16872 = slt64(tmp_16870, j_m_i_16426);\n            bounds_check_16873 = x_16871 && y_16872;\n            if (!bounds_check_16873) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 5) == -1) {\n                        global_failure_args[0] = (int", "64_t) tmp_16870;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16875 = ((__global int32_t *) ys_mem_17046)[eta_p_16864];\n            lifted_lambda_res_16869 = tmp_16875;\n        } else {\n            int32_t eta_p_16865 = ((__global int32_t *) mem_param_17055)[gtid_16862];\n            \n            lifted_lambda_res_16869 = eta_p_16865;\n        }\n        ((__global int32_t *) mem_17060)[gtid_16862] = lifted_lambda_res_16869;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16859\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_longzisegmap_16611_dim1, 1, 1)\nvoid gather_payloads_longzisegmap_16611(__global int *global_failure, int64_t niz2084U_13894, int64_t incr_13896, __global unsigned char *is_mem_17044, __global unsigned char *mem_17048)\n{\n    #define segmap_tblock_sizze_16607 (gather_payloads_longzisegmap_16611zisegmap_tblock_sizze_16607)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_16611;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16610;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_16611 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16607 + sext_i32_i64(local_tid_17073);\n    slice_17078 = niz2084U_13894;\n    gtid_16610 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16610;\n    if (slt64(gtid_16610, niz2084U_13894)) {\n        int64_t eta_p_16612;\n        int64_t lifted_lambda_res_16613;\n        \n   ",
+                                    "     eta_p_16612 = ((__global int64_t *) is_mem_17044)[gtid_16610];\n        lifted_lambda_res_16613 = sub64(eta_p_16612, incr_13896);\n        ((__global int64_t *) mem_17048)[gtid_16610] = lifted_lambda_res_16613;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16607\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_longzisegmap_16639_dim1, 1, 1)\nvoid gather_payloads_longzisegmap_16639(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_13894, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17045, __global unsigned char *mem_param_17053, __global unsigned char *mem_param_17056, __global unsigned char *mem_17061)\n{\n    #define segmap_tblock_sizze_16635 (gather_payloads_longzisegmap_16639zisegmap_tblock_sizze_16635)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17108;\n    int32_t tblock_sizze_17111;\n    int32_t wave_sizze_17110;\n    int32_t block_id_17109;\n    int32_t global_tid_17107;\n    int64_t phys_tid_16639;\n    int64_t global_tid_17112;\n    int64_t slice_17113;\n    int64_t gtid_16638;\n    int64_t remnant_17114;\n    \n    local_tid_17108 = get_local_id(0);\n    tblock_sizze_17111 = get_local_size(0);\n    wave_sizze_17110 = LOCKSTEP_WIDTH;\n    block_id_17109 = get_tblock_id(0);\n    global_tid_17107 = block_id_17109 * tblock_sizze_17111 + local_tid_17108;\n    phys_tid_16639 = sext_i32_i64(global_tid_17107);\n    global_tid_17112 = sext_i32_i64(block_id_17109) * segmap_tblock_sizze_16635 + sext_i32_i64(local_tid_17108);\n    slice_17113 = niz2084U_13894;\n    gtid_16638 = global_tid_17112;\n    remnant_17114 = global_tid_17112 - gtid_16638;\n    if (slt64(gtid_16638, niz2084U_13894)) {\n        int64_t eta_p_16640;\n        bool cond_16642;\n        bool cond_t_res_16643;\n        bool x_16644;\n        int64_t lifted_lambda_res_16645;\n        \n        eta_p_16640 = ((__global int64_t *) mem_param_17053)[gtid_16638];\n        cond_166", "42 = sle64(lower_bound_16423, eta_p_16640);\n        cond_t_res_16643 = slt64(eta_p_16640, min_res_16425);\n        x_16644 = cond_16642 && cond_t_res_16643;\n        if (x_16644) {\n            int64_t tmp_16646;\n            bool x_16647;\n            bool y_16648;\n            bool bounds_check_16649;\n            bool index_certs_16650;\n            int64_t tmp_16651;\n            \n            tmp_16646 = sub64(eta_p_16640, lower_bound_16423);\n            x_16647 = sle64((int64_t) 0, tmp_16646);\n            y_16648 = slt64(tmp_16646, j_m_i_16426);\n            bounds_check_16649 = x_16647 && y_16648;\n            if (!bounds_check_16649) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 6) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16646;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16651 = ((__global int64_t *) ys_mem_17045)[eta_p_16640];\n            lifted_lambda_res_16645 = tmp_16651;\n        } else {\n            int64_t eta_p_16641 = ((__global int64_t *) mem_param_17056)[gtid_16638];\n            \n            lifted_lambda_res_16645 = eta_p_16641;\n        }\n        ((__global int64_t *) mem_17061)[gtid_16638] = lifted_lambda_res_16645;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16635\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_long_GFURzisegmap_16891_dim1, 1, 1)\nvoid gather_payloads_long_GFURzisegmap_16891(__global int *global_failure, int64_t ni_15479, int64_t incr_15481, __global unsigned char *is_mem_17045, __global unsigned char *mem_17049)\n{\n    #define segmap_tblock_sizze_16887 (gather_payloads_long_GFURzisegmap_16891zisegmap_tblock_sizze_16887)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_", "tid_17072;\n    int64_t phys_tid_16891;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16890;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_16891 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16887 + sext_i32_i64(local_tid_17073);\n    slice_17078 = ni_15479;\n    gtid_16890 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16890;\n    if (slt64(gtid_16890, ni_15479)) {\n        int64_t eta_p_16892;\n        int64_t lifted_lambda_res_16893;\n        \n        eta_p_16892 = ((__global int64_t *) is_mem_17045)[gtid_16890];\n        lifted_lambda_res_16893 = sub64(eta_p_16892, incr_15481);\n        ((__global int64_t *) mem_17049)[gtid_16890] = lifted_lambda_res_16893;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16887\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_long_GFURzisegmap_16919_dim1, 1, 1)\nvoid gather_payloads_long_GFURzisegmap_16919(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_15479, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17046, __global unsigned char *mem_param_17052, __global unsigned char *mem_param_17055, __global unsigned char *mem_17060)\n{\n    #define segmap_tblock_sizze_16915 (gather_payloads_long_GFURzisegmap_16919zisegmap_tblock_sizze_16915)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17088;\n    int32_t tblock_sizze_17091;\n    int32_t wave_sizze_17090;\n    int32_t block_id_17089;\n    int32_t global_tid_17087;\n    int64_t phys_tid_16919;\n    int64_t global_tid_17092;\n    int64_t slice_17093;\n    int64_t gtid_16918;\n    int64_t remnant_17094;\n    \n    local_tid_1708",
+                                    "8 = get_local_id(0);\n    tblock_sizze_17091 = get_local_size(0);\n    wave_sizze_17090 = LOCKSTEP_WIDTH;\n    block_id_17089 = get_tblock_id(0);\n    global_tid_17087 = block_id_17089 * tblock_sizze_17091 + local_tid_17088;\n    phys_tid_16919 = sext_i32_i64(global_tid_17087);\n    global_tid_17092 = sext_i32_i64(block_id_17089) * segmap_tblock_sizze_16915 + sext_i32_i64(local_tid_17088);\n    slice_17093 = ni_15479;\n    gtid_16918 = global_tid_17092;\n    remnant_17094 = global_tid_17092 - gtid_16918;\n    if (slt64(gtid_16918, ni_15479)) {\n        int64_t eta_p_16920;\n        bool cond_16922;\n        bool cond_t_res_16923;\n        bool x_16924;\n        int64_t lifted_lambda_res_16925;\n        \n        eta_p_16920 = ((__global int64_t *) mem_param_17052)[gtid_16918];\n        cond_16922 = sle64(lower_bound_16423, eta_p_16920);\n        cond_t_res_16923 = slt64(eta_p_16920, min_res_16425);\n        x_16924 = cond_16922 && cond_t_res_16923;\n        if (x_16924) {\n            int64_t tmp_16926;\n            bool x_16927;\n            bool y_16928;\n            bool bounds_check_16929;\n            bool index_certs_16930;\n            int64_t tmp_16931;\n            \n            tmp_16926 = sub64(eta_p_16920, lower_bound_16423);\n            x_16927 = sle64((int64_t) 0, tmp_16926);\n            y_16928 = slt64(tmp_16926, j_m_i_16426);\n            bounds_check_16929 = x_16927 && y_16928;\n            if (!bounds_check_16929) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 7) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16926;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16931 = ((__global int64_t *) ys_mem_17046)[eta_p_16920];\n            lifted_lambda_res_16925 = tmp_16931;\n        } else {\n            int64_t eta_p_16921 = ((__global int64_t *) mem_param_17055)[gtid_16918", "];\n            \n            lifted_lambda_res_16925 = eta_p_16921;\n        }\n        ((__global int64_t *) mem_17060)[gtid_16918] = lifted_lambda_res_16925;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16915\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_shortzisegmap_16499_dim1, 1, 1)\nvoid gather_payloads_shortzisegmap_16499(__global int *global_failure, int64_t niz2084U_13214, int64_t incr_13216, __global unsigned char *is_mem_17044, __global unsigned char *mem_17048)\n{\n    #define segmap_tblock_sizze_16495 (gather_payloads_shortzisegmap_16499zisegmap_tblock_sizze_16495)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_16499;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16498;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_16499 = sext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16495 + sext_i32_i64(local_tid_17073);\n    slice_17078 = niz2084U_13214;\n    gtid_16498 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16498;\n    if (slt64(gtid_16498, niz2084U_13214)) {\n        int64_t eta_p_16500;\n        int64_t lifted_lambda_res_16501;\n        \n        eta_p_16500 = ((__global int64_t *) is_mem_17044)[gtid_16498];\n        lifted_lambda_res_16501 = sub64(eta_p_16500, incr_13216);\n        ((__global int64_t *) mem_17048)[gtid_16498] = lifted_lambda_res_16501;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16495\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_shortzisegmap_16527_dim1, 1, 1)\nvoid gather_payloads_shortzisegmap_16527(__global int *global", "_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t niz2084U_13214, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17045, __global unsigned char *mem_param_17053, __global unsigned char *mem_param_17056, __global unsigned char *mem_17061)\n{\n    #define segmap_tblock_sizze_16523 (gather_payloads_shortzisegmap_16527zisegmap_tblock_sizze_16523)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17108;\n    int32_t tblock_sizze_17111;\n    int32_t wave_sizze_17110;\n    int32_t block_id_17109;\n    int32_t global_tid_17107;\n    int64_t phys_tid_16527;\n    int64_t global_tid_17112;\n    int64_t slice_17113;\n    int64_t gtid_16526;\n    int64_t remnant_17114;\n    \n    local_tid_17108 = get_local_id(0);\n    tblock_sizze_17111 = get_local_size(0);\n    wave_sizze_17110 = LOCKSTEP_WIDTH;\n    block_id_17109 = get_tblock_id(0);\n    global_tid_17107 = block_id_17109 * tblock_sizze_17111 + local_tid_17108;\n    phys_tid_16527 = sext_i32_i64(global_tid_17107);\n    global_tid_17112 = sext_i32_i64(block_id_17109) * segmap_tblock_sizze_16523 + sext_i32_i64(local_tid_17108);\n    slice_17113 = niz2084U_13214;\n    gtid_16526 = global_tid_17112;\n    remnant_17114 = global_tid_17112 - gtid_16526;\n    if (slt64(gtid_16526, niz2084U_13214)) {\n        int64_t eta_p_16528;\n        bool cond_16530;\n        bool cond_t_res_16531;\n        bool x_16532;\n        int16_t lifted_lambda_res_16533;\n        \n        eta_p_16528 = ((__global int64_t *) mem_param_17053)[gtid_16526];\n        cond_16530 = sle64(lower_bound_16423, eta_p_16528);\n        cond_t_res_16531 = slt64(eta_p_16528, min_res_16425);\n        x_16532 = cond_16530 && cond_t_res_16531;\n        if (x_16532) {\n            int64_t tmp_16534;\n            bool x_16535;\n            bool y_16536;\n            bool bounds_check_16537;\n            bool index_certs_16538;\n            int16_t tmp_16539;\n            \n            tmp_16534 = sub64(eta_p",
+                                    "_16528, lower_bound_16423);\n            x_16535 = sle64((int64_t) 0, tmp_16534);\n            y_16536 = slt64(tmp_16534, j_m_i_16426);\n            bounds_check_16537 = x_16535 && y_16536;\n            if (!bounds_check_16537) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 8) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16534;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16539 = ((__global int16_t *) ys_mem_17045)[eta_p_16528];\n            lifted_lambda_res_16533 = tmp_16539;\n        } else {\n            int16_t eta_p_16529 = ((__global int16_t *) mem_param_17056)[gtid_16526];\n            \n            lifted_lambda_res_16533 = eta_p_16529;\n        }\n        ((__global int16_t *) mem_17061)[gtid_16526] = lifted_lambda_res_16533;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16523\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_short_GFURzisegmap_16779_dim1, 1, 1)\nvoid gather_payloads_short_GFURzisegmap_16779(__global int *global_failure, int64_t ni_14877, int64_t incr_14879, __global unsigned char *is_mem_17045, __global unsigned char *mem_17049)\n{\n    #define segmap_tblock_sizze_16775 (gather_payloads_short_GFURzisegmap_16779zisegmap_tblock_sizze_16775)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17073;\n    int32_t tblock_sizze_17076;\n    int32_t wave_sizze_17075;\n    int32_t block_id_17074;\n    int32_t global_tid_17072;\n    int64_t phys_tid_16779;\n    int64_t global_tid_17077;\n    int64_t slice_17078;\n    int64_t gtid_16778;\n    int64_t remnant_17079;\n    \n    local_tid_17073 = get_local_id(0);\n    tblock_sizze_17076 = get_local_size(0);\n    wave_sizze_17075 = LOCKSTEP_WIDTH;\n    block_id_17074 = get_tblock_id(0);\n    global_tid_17072 = block_id_17074 * tblock_sizze_17076 + local_tid_17073;\n    phys_tid_16779 = s", "ext_i32_i64(global_tid_17072);\n    global_tid_17077 = sext_i32_i64(block_id_17074) * segmap_tblock_sizze_16775 + sext_i32_i64(local_tid_17073);\n    slice_17078 = ni_14877;\n    gtid_16778 = global_tid_17077;\n    remnant_17079 = global_tid_17077 - gtid_16778;\n    if (slt64(gtid_16778, ni_14877)) {\n        int64_t eta_p_16780;\n        int64_t lifted_lambda_res_16781;\n        \n        eta_p_16780 = ((__global int64_t *) is_mem_17045)[gtid_16778];\n        lifted_lambda_res_16781 = sub64(eta_p_16780, incr_14879);\n        ((__global int64_t *) mem_17049)[gtid_16778] = lifted_lambda_res_16781;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16775\n}\nFUTHARK_KERNEL_SIZED(gather_payloads_short_GFURzisegmap_16807_dim1, 1, 1)\nvoid gather_payloads_short_GFURzisegmap_16807(__global int *global_failure, int failure_is_an_option, __global int64_t *global_failure_args, int64_t ni_14877, int64_t lower_bound_16423, int64_t min_res_16425, int64_t j_m_i_16426, __global unsigned char *ys_mem_17046, __global unsigned char *mem_param_17052, __global unsigned char *mem_param_17055, __global unsigned char *mem_17060)\n{\n    #define segmap_tblock_sizze_16803 (gather_payloads_short_GFURzisegmap_16807zisegmap_tblock_sizze_16803)\n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17088;\n    int32_t tblock_sizze_17091;\n    int32_t wave_sizze_17090;\n    int32_t block_id_17089;\n    int32_t global_tid_17087;\n    int64_t phys_tid_16807;\n    int64_t global_tid_17092;\n    int64_t slice_17093;\n    int64_t gtid_16806;\n    int64_t remnant_17094;\n    \n    local_tid_17088 = get_local_id(0);\n    tblock_sizze_17091 = get_local_size(0);\n    wave_sizze_17090 = LOCKSTEP_WIDTH;\n    block_id_17089 = get_tblock_id(0);\n    global_tid_17087 = block_id_17089 * tblock_sizze_17091 + local_tid_17088;\n    phys_tid_16807 = sext_i32_i64(global_tid_17087);\n    global_tid_17092 = sext_i32_i64(block_id_17089) * segmap_tblock_sizze_16803 + sext_i32_i64(local_tid_17088);\n    slice_17093 = ni_", "14877;\n    gtid_16806 = global_tid_17092;\n    remnant_17094 = global_tid_17092 - gtid_16806;\n    if (slt64(gtid_16806, ni_14877)) {\n        int64_t eta_p_16808;\n        bool cond_16810;\n        bool cond_t_res_16811;\n        bool x_16812;\n        int16_t lifted_lambda_res_16813;\n        \n        eta_p_16808 = ((__global int64_t *) mem_param_17052)[gtid_16806];\n        cond_16810 = sle64(lower_bound_16423, eta_p_16808);\n        cond_t_res_16811 = slt64(eta_p_16808, min_res_16425);\n        x_16812 = cond_16810 && cond_t_res_16811;\n        if (x_16812) {\n            int64_t tmp_16814;\n            bool x_16815;\n            bool y_16816;\n            bool bounds_check_16817;\n            bool index_certs_16818;\n            int16_t tmp_16819;\n            \n            tmp_16814 = sub64(eta_p_16808, lower_bound_16423);\n            x_16815 = sle64((int64_t) 0, tmp_16814);\n            y_16816 = slt64(tmp_16814, j_m_i_16426);\n            bounds_check_16817 = x_16815 && y_16816;\n            if (!bounds_check_16817) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 9) == -1) {\n                        global_failure_args[0] = (int64_t) tmp_16814;\n                        global_failure_args[1] = (int64_t) j_m_i_16426;\n                        ;\n                    }\n                    return;\n                }\n            }\n            tmp_16819 = ((__global int16_t *) ys_mem_17046)[eta_p_16808];\n            lifted_lambda_res_16813 = tmp_16819;\n        } else {\n            int16_t eta_p_16809 = ((__global int16_t *) mem_param_17055)[gtid_16806];\n            \n            lifted_lambda_res_16813 = eta_p_16809;\n        }\n        ((__global int16_t *) mem_17060)[gtid_16806] = lifted_lambda_res_16813;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_tblock_sizze_16803\n}\nFUTHARK_KERNEL_SIZED(max_idxzisegred_nonseg_16483_dim1, 1, 1)\nvoid max_idxzisegred_nonseg_16483(__global int *global_failure, int64_t nz2080U_16160, int64_t num_tblocks_16478, in",
+                                    "t64_t num_threads_17097, __global unsigned char *eta_p_mem_17044, __global unsigned char *mem_17046, __global unsigned char *counters_mem_17073, __global unsigned char *segred_tmp_mem_17095)\n{\n    #define segred_tblock_sizze_16476 (max_idxzisegred_nonseg_16483zisegred_tblock_sizze_16476)\n    #define chunk_sizze_17072 (max_idxzisegred_nonseg_16483zichunk_sizze_17072)\n    \n    volatile __local unsigned char *sync_arr_mem_17105_backing_1 = &shared_mem[0];\n    const int64_t sync_arr_mem_17105_backing_1_offset = 0 + 8;\n    volatile __local unsigned char *red_arr_i64_mem_17103_backing_0 = &shared_mem[sync_arr_mem_17105_backing_1_offset];\n    const int64_t red_arr_i64_mem_17103_backing_0_offset = sync_arr_mem_17105_backing_1_offset + ((int64_t) 8 * segred_tblock_sizze_16476 + srem64((int64_t) 8 - srem64((int64_t) 8 * segred_tblock_sizze_16476, (int64_t) 8), (int64_t) 8));\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17099;\n    int32_t tblock_sizze_17102;\n    int32_t wave_sizze_17101;\n    int32_t block_id_17100;\n    int32_t global_tid_17098;\n    int64_t phys_tid_16483;\n    __local unsigned char *red_arr_i64_mem_17103;\n    __local unsigned char *sync_arr_mem_17105;\n    int64_t dummy_16481;\n    int64_t gtid_16482;\n    int64_t q_17107;\n    int64_t eta_p_block_res_acc_17108;\n    int64_t eta_p_16343;\n    int64_t eta_p_16344;\n    int64_t tblock_id_in_segment_17112;\n    int64_t block_base_offset_17113;\n    int32_t offset_17116;\n    int32_t skip_waves_17117;\n    int64_t eta_p_17109;\n    int64_t eta_p_17110;\n    int32_t old_counter_17118;\n    bool is_last_block_17119;\n    \n    local_tid_17099 = get_local_id(0);\n    tblock_sizze_17102 = get_local_size(0);\n    wave_sizze_17101 = LOCKSTEP_WIDTH;\n    block_id_17100 = get_tblock_id(0);\n    global_tid_17098 = block_id_17100 * tblock_sizze_17102 + local_tid_17099;\n    phys_tid_16483 = sext_i32_i64(global_tid_17098);\n    red_arr_i64_mem_17103 = (__local unsigned char *) red_arr_i64_mem_17103_backing_0;\n    s", "ync_arr_mem_17105 = (__local unsigned char *) sync_arr_mem_17105_backing_1;\n    dummy_16481 = (int64_t) 0;\n    gtid_16482 = (int64_t) 0;\n    q_17107 = sdiv_up64(nz2080U_16160, sext_i32_i64(sext_i64_i32(segred_tblock_sizze_16476 * num_tblocks_16478)) * chunk_sizze_17072);\n    // ne-initialise the outer (per-block) accumulator(s)\n    {\n        eta_p_block_res_acc_17108 = (int64_t) -9223372036854775808;\n    }\n    tblock_id_in_segment_17112 = squot64(phys_tid_16483, segred_tblock_sizze_16476);\n    block_base_offset_17113 = tblock_id_in_segment_17112 * q_17107 * segred_tblock_sizze_16476;\n    for (int64_t i_17114 = 0; i_17114 < q_17107; i_17114++) {\n        int64_t block_offset_17115 = block_base_offset_17113 + i_17114 * segred_tblock_sizze_16476;\n        \n        gtid_16482 = phys_tid_16483 + num_threads_17097 * i_17114;\n        if (slt64(gtid_16482, nz2080U_16160)) {\n            // apply map function(s)\n            {\n                // apply map function\n                {\n                    int64_t x_16342 = ((__global int64_t *) eta_p_mem_17044)[gtid_16482];\n                    \n                    // load accumulator(s)\n                    {\n                        eta_p_16343 = eta_p_block_res_acc_17108;\n                    }\n                    // load next value(s)\n                    {\n                        eta_p_16344 = x_16342;\n                    }\n                    // apply reduction operator(s)\n                    {\n                        int64_t max_res_16345 = smax64(eta_p_16343, eta_p_16344);\n                        \n                        // store in accumulator(s)\n                        {\n                            eta_p_block_res_acc_17108 = max_res_16345;\n                        }\n                    }\n                }\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // store accs. prims go in lmem; non-prims in params (in global mem)\n    {\n        ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] ", "= eta_p_block_res_acc_17108;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    skip_waves_17117 = 1;\n    offset_17116 = 0;\n    // participating threads read initial accumulator\n    {\n        if (slt32(local_tid_17099, sext_i64_i32(segred_tblock_sizze_16476))) {\n            eta_p_17109 = ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17116)];\n        }\n    }\n    offset_17116 = 1;\n    while (slt32(offset_17116, wave_sizze_17101)) {\n        if (slt32(local_tid_17099 + offset_17116, sext_i64_i32(segred_tblock_sizze_16476)) && ((local_tid_17099 - squot32(local_tid_17099, wave_sizze_17101) * wave_sizze_17101) & (2 * offset_17116 - 1)) == 0) {\n            // read array element\n            {\n                eta_p_17110 = ((volatile __local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17116)];\n            }\n            // apply reduction operation\n            {\n                int64_t max_res_17111 = smax64(eta_p_17109, eta_p_17110);\n                \n                eta_p_17109 = max_res_17111;\n            }\n            // write result of operation\n            {\n                ((volatile __local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_17109;\n            }\n        }\n        offset_17116 *= 2;\n    }\n    while (slt32(skip_waves_17117, squot32(sext_i64_i32(segred_tblock_sizze_16476) + wave_sizze_17101 - 1, wave_sizze_17101))) {\n        barrier(CLK_LOCAL_MEM_FENCE);\n        offset_17116 = skip_waves_17117 * wave_sizze_17101;\n        if (slt32(local_tid_17099 + offset_17116, sext_i64_i32(segred_tblock_sizze_16476)) && ((local_tid_17099 - squot32(local_tid_17099, wave_sizze_17101) * wave_sizze_17101) == 0 && (squot32(local_tid_17099, wave_sizze_17101) & (2 * skip_waves_17117 - 1)) == 0)) {\n            // read array element\n            {\n                eta_p_17110 = ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17116)];\n            }\n            // apply red",
+                                    "uction operation\n            {\n                int64_t max_res_17111 = smax64(eta_p_17109, eta_p_17110);\n                \n                eta_p_17109 = max_res_17111;\n            }\n            // write result of operation\n            {\n                ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_17109;\n            }\n        }\n        skip_waves_17117 *= 2;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // thread 0 updates per-block acc(s); rest reset to ne\n    {\n        if (sext_i32_i64(local_tid_17099) == (int64_t) 0) {\n            eta_p_block_res_acc_17108 = eta_p_17109;\n        } else {\n            eta_p_block_res_acc_17108 = (int64_t) -9223372036854775808;\n        }\n    }\n    // first thread in block saves block result to global memory\n    {\n        if (local_tid_17099 == 0) {\n            ((__global int64_t *) segred_tmp_mem_17095)[sext_i32_i64(block_id_17100)] = eta_p_block_res_acc_17108;\n            mem_fence_global();\n            old_counter_17118 = atomic_add_i32_global(&((volatile __global int *) counters_mem_17073)[(int64_t) 0], (int) 1);\n            ((__local bool *) sync_arr_mem_17105)[(int64_t) 0] = old_counter_17118 == sext_i64_i32(num_tblocks_16478 - (int64_t) 1);\n        }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    is_last_block_17119 = ((__local bool *) sync_arr_mem_17105)[(int64_t) 0];\n    if (is_last_block_17119) {\n        if (local_tid_17099 == 0) {\n            old_counter_17118 = atomic_add_i32_global(&((volatile __global int *) counters_mem_17073)[(int64_t) 0], (int) sext_i64_i32((int64_t) 0 - num_tblocks_16478));\n        }\n        // read in the per-block-results\n        {\n            int64_t read_per_thread_17120 = sdiv_up64(num_tblocks_16478, segred_tblock_sizze_16476);\n            \n            eta_p_16343 = (int64_t) -9223372036854775808;\n            for (int64_t i_17121 = 0; i_17121 < read_per_thread_17120; i_17121++) {\n                int64_t bloc", "k_res_id_17122 = sext_i32_i64(local_tid_17099) * read_per_thread_17120 + i_17121;\n                int64_t index_of_block_res_17123 = block_res_id_17122;\n                \n                if (slt64(block_res_id_17122, num_tblocks_16478)) {\n                    eta_p_16344 = ((__global int64_t *) segred_tmp_mem_17095)[index_of_block_res_17123];\n                    \n                    int64_t max_res_16345 = smax64(eta_p_16343, eta_p_16344);\n                    \n                    eta_p_16343 = max_res_16345;\n                }\n            }\n        }\n        ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_16343;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // reduce the per-block results\n        {\n            int32_t offset_17124;\n            int32_t skip_waves_17125 = 1;\n            int64_t eta_p_17109;\n            int64_t eta_p_17110;\n            \n            offset_17124 = 0;\n            // participating threads read initial accumulator\n            {\n                if (slt32(local_tid_17099, sext_i64_i32(segred_tblock_sizze_16476))) {\n                    eta_p_17109 = ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17124)];\n                }\n            }\n            offset_17124 = 1;\n            while (slt32(offset_17124, wave_sizze_17101)) {\n                if (slt32(local_tid_17099 + offset_17124, sext_i64_i32(segred_tblock_sizze_16476)) && ((local_tid_17099 - squot32(local_tid_17099, wave_sizze_17101) * wave_sizze_17101) & (2 * offset_17124 - 1)) == 0) {\n                    // read array element\n                    {\n                        eta_p_17110 = ((volatile __local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17124)];\n                    }\n                    // apply reduction operation\n                    {\n                        int64_t max_res_17111 = smax64(eta_p_17109, eta_p_17110);\n                        \n                        eta_p_17109 = max_re", "s_17111;\n                    }\n                    // write result of operation\n                    {\n                        ((volatile __local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_17109;\n                    }\n                }\n                offset_17124 *= 2;\n            }\n            while (slt32(skip_waves_17125, squot32(sext_i64_i32(segred_tblock_sizze_16476) + wave_sizze_17101 - 1, wave_sizze_17101))) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n                offset_17124 = skip_waves_17125 * wave_sizze_17101;\n                if (slt32(local_tid_17099 + offset_17124, sext_i64_i32(segred_tblock_sizze_16476)) && ((local_tid_17099 - squot32(local_tid_17099, wave_sizze_17101) * wave_sizze_17101) == 0 && (squot32(local_tid_17099, wave_sizze_17101) & (2 * skip_waves_17125 - 1)) == 0)) {\n                    // read array element\n                    {\n                        eta_p_17110 = ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17124)];\n                    }\n                    // apply reduction operation\n                    {\n                        int64_t max_res_17111 = smax64(eta_p_17109, eta_p_17110);\n                        \n                        eta_p_17109 = max_res_17111;\n                    }\n                    // write result of operation\n                    {\n                        ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_17109;\n                    }\n                }\n                skip_waves_17125 *= 2;\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // and back to memory with the final result\n            {\n                if (local_tid_17099 == 0) {\n                    ((__global int64_t *) mem_17046)[(int64_t) 0] = eta_p_17109;\n                }\n            }\n        }\n    }\n    \n  error_5:\n    return;\n    #undef segred_tblock_sizze_16476\n    #undef chunk_sizze_17072\n}\nFUTHARK_KERNEL_SIZED(min_idxzise",
+                                    "gred_nonseg_16473_dim1, 1, 1)\nvoid min_idxzisegred_nonseg_16473(__global int *global_failure, int64_t nz2080U_16120, int64_t num_tblocks_16468, int64_t num_threads_17097, __global unsigned char *eta_p_mem_17044, __global unsigned char *mem_17046, __global unsigned char *counters_mem_17073, __global unsigned char *segred_tmp_mem_17095)\n{\n    #define segred_tblock_sizze_16466 (min_idxzisegred_nonseg_16473zisegred_tblock_sizze_16466)\n    #define chunk_sizze_17072 (min_idxzisegred_nonseg_16473zichunk_sizze_17072)\n    \n    volatile __local unsigned char *sync_arr_mem_17105_backing_1 = &shared_mem[0];\n    const int64_t sync_arr_mem_17105_backing_1_offset = 0 + 8;\n    volatile __local unsigned char *red_arr_i64_mem_17103_backing_0 = &shared_mem[sync_arr_mem_17105_backing_1_offset];\n    const int64_t red_arr_i64_mem_17103_backing_0_offset = sync_arr_mem_17105_backing_1_offset + ((int64_t) 8 * segred_tblock_sizze_16466 + srem64((int64_t) 8 - srem64((int64_t) 8 * segred_tblock_sizze_16466, (int64_t) 8), (int64_t) 8));\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t local_tid_17099;\n    int32_t tblock_sizze_17102;\n    int32_t wave_sizze_17101;\n    int32_t block_id_17100;\n    int32_t global_tid_17098;\n    int64_t phys_tid_16473;\n    __local unsigned char *red_arr_i64_mem_17103;\n    __local unsigned char *sync_arr_mem_17105;\n    int64_t dummy_16471;\n    int64_t gtid_16472;\n    int64_t q_17107;\n    int64_t eta_p_block_res_acc_17108;\n    int64_t eta_p_16343;\n    int64_t eta_p_16344;\n    int64_t tblock_id_in_segment_17112;\n    int64_t block_base_offset_17113;\n    int32_t offset_17116;\n    int32_t skip_waves_17117;\n    int64_t eta_p_17109;\n    int64_t eta_p_17110;\n    int32_t old_counter_17118;\n    bool is_last_block_17119;\n    \n    local_tid_17099 = get_local_id(0);\n    tblock_sizze_17102 = get_local_size(0);\n    wave_sizze_17101 = LOCKSTEP_WIDTH;\n    block_id_17100 = get_tblock_id(0);\n    global_tid_17098 = block_id_17100 * tblock_sizze_17102 + local_tid_17099;", "\n    phys_tid_16473 = sext_i32_i64(global_tid_17098);\n    red_arr_i64_mem_17103 = (__local unsigned char *) red_arr_i64_mem_17103_backing_0;\n    sync_arr_mem_17105 = (__local unsigned char *) sync_arr_mem_17105_backing_1;\n    dummy_16471 = (int64_t) 0;\n    gtid_16472 = (int64_t) 0;\n    q_17107 = sdiv_up64(nz2080U_16120, sext_i32_i64(sext_i64_i32(segred_tblock_sizze_16466 * num_tblocks_16468)) * chunk_sizze_17072);\n    // ne-initialise the outer (per-block) accumulator(s)\n    {\n        eta_p_block_res_acc_17108 = (int64_t) 9223372036854775807;\n    }\n    tblock_id_in_segment_17112 = squot64(phys_tid_16473, segred_tblock_sizze_16466);\n    block_base_offset_17113 = tblock_id_in_segment_17112 * q_17107 * segred_tblock_sizze_16466;\n    for (int64_t i_17114 = 0; i_17114 < q_17107; i_17114++) {\n        int64_t block_offset_17115 = block_base_offset_17113 + i_17114 * segred_tblock_sizze_16466;\n        \n        gtid_16472 = phys_tid_16473 + num_threads_17097 * i_17114;\n        if (slt64(gtid_16472, nz2080U_16120)) {\n            // apply map function(s)\n            {\n                // apply map function\n                {\n                    int64_t x_16342 = ((__global int64_t *) eta_p_mem_17044)[gtid_16472];\n                    \n                    // load accumulator(s)\n                    {\n                        eta_p_16343 = eta_p_block_res_acc_17108;\n                    }\n                    // load next value(s)\n                    {\n                        eta_p_16344 = x_16342;\n                    }\n                    // apply reduction operator(s)\n                    {\n                        int64_t min_res_16345 = smin64(eta_p_16343, eta_p_16344);\n                        \n                        // store in accumulator(s)\n                        {\n                            eta_p_block_res_acc_17108 = min_res_16345;\n                        }\n                    }\n                }\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // store accs", ". prims go in lmem; non-prims in params (in global mem)\n    {\n        ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_block_res_acc_17108;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    skip_waves_17117 = 1;\n    offset_17116 = 0;\n    // participating threads read initial accumulator\n    {\n        if (slt32(local_tid_17099, sext_i64_i32(segred_tblock_sizze_16466))) {\n            eta_p_17109 = ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17116)];\n        }\n    }\n    offset_17116 = 1;\n    while (slt32(offset_17116, wave_sizze_17101)) {\n        if (slt32(local_tid_17099 + offset_17116, sext_i64_i32(segred_tblock_sizze_16466)) && ((local_tid_17099 - squot32(local_tid_17099, wave_sizze_17101) * wave_sizze_17101) & (2 * offset_17116 - 1)) == 0) {\n            // read array element\n            {\n                eta_p_17110 = ((volatile __local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17116)];\n            }\n            // apply reduction operation\n            {\n                int64_t min_res_17111 = smin64(eta_p_17109, eta_p_17110);\n                \n                eta_p_17109 = min_res_17111;\n            }\n            // write result of operation\n            {\n                ((volatile __local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_17109;\n            }\n        }\n        offset_17116 *= 2;\n    }\n    while (slt32(skip_waves_17117, squot32(sext_i64_i32(segred_tblock_sizze_16466) + wave_sizze_17101 - 1, wave_sizze_17101))) {\n        barrier(CLK_LOCAL_MEM_FENCE);\n        offset_17116 = skip_waves_17117 * wave_sizze_17101;\n        if (slt32(local_tid_17099 + offset_17116, sext_i64_i32(segred_tblock_sizze_16466)) && ((local_tid_17099 - squot32(local_tid_17099, wave_sizze_17101) * wave_sizze_17101) == 0 && (squot32(local_tid_17099, wave_sizze_17101) & (2 * skip_waves_17117 - 1)) == 0)) {\n            // read array element\n            {\n              ",
+                                    "  eta_p_17110 = ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17116)];\n            }\n            // apply reduction operation\n            {\n                int64_t min_res_17111 = smin64(eta_p_17109, eta_p_17110);\n                \n                eta_p_17109 = min_res_17111;\n            }\n            // write result of operation\n            {\n                ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_17109;\n            }\n        }\n        skip_waves_17117 *= 2;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // thread 0 updates per-block acc(s); rest reset to ne\n    {\n        if (sext_i32_i64(local_tid_17099) == (int64_t) 0) {\n            eta_p_block_res_acc_17108 = eta_p_17109;\n        } else {\n            eta_p_block_res_acc_17108 = (int64_t) 9223372036854775807;\n        }\n    }\n    // first thread in block saves block result to global memory\n    {\n        if (local_tid_17099 == 0) {\n            ((__global int64_t *) segred_tmp_mem_17095)[sext_i32_i64(block_id_17100)] = eta_p_block_res_acc_17108;\n            mem_fence_global();\n            old_counter_17118 = atomic_add_i32_global(&((volatile __global int *) counters_mem_17073)[(int64_t) 0], (int) 1);\n            ((__local bool *) sync_arr_mem_17105)[(int64_t) 0] = old_counter_17118 == sext_i64_i32(num_tblocks_16468 - (int64_t) 1);\n        }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    is_last_block_17119 = ((__local bool *) sync_arr_mem_17105)[(int64_t) 0];\n    if (is_last_block_17119) {\n        if (local_tid_17099 == 0) {\n            old_counter_17118 = atomic_add_i32_global(&((volatile __global int *) counters_mem_17073)[(int64_t) 0], (int) sext_i64_i32((int64_t) 0 - num_tblocks_16468));\n        }\n        // read in the per-block-results\n        {\n            int64_t read_per_thread_17120 = sdiv_up64(num_tblocks_16468, segred_tblock_sizze_16466);\n            \n            eta_p_16343 = ", "(int64_t) 9223372036854775807;\n            for (int64_t i_17121 = 0; i_17121 < read_per_thread_17120; i_17121++) {\n                int64_t block_res_id_17122 = sext_i32_i64(local_tid_17099) * read_per_thread_17120 + i_17121;\n                int64_t index_of_block_res_17123 = block_res_id_17122;\n                \n                if (slt64(block_res_id_17122, num_tblocks_16468)) {\n                    eta_p_16344 = ((__global int64_t *) segred_tmp_mem_17095)[index_of_block_res_17123];\n                    \n                    int64_t min_res_16345 = smin64(eta_p_16343, eta_p_16344);\n                    \n                    eta_p_16343 = min_res_16345;\n                }\n            }\n        }\n        ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_16343;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // reduce the per-block results\n        {\n            int32_t offset_17124;\n            int32_t skip_waves_17125 = 1;\n            int64_t eta_p_17109;\n            int64_t eta_p_17110;\n            \n            offset_17124 = 0;\n            // participating threads read initial accumulator\n            {\n                if (slt32(local_tid_17099, sext_i64_i32(segred_tblock_sizze_16466))) {\n                    eta_p_17109 = ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17124)];\n                }\n            }\n            offset_17124 = 1;\n            while (slt32(offset_17124, wave_sizze_17101)) {\n                if (slt32(local_tid_17099 + offset_17124, sext_i64_i32(segred_tblock_sizze_16466)) && ((local_tid_17099 - squot32(local_tid_17099, wave_sizze_17101) * wave_sizze_17101) & (2 * offset_17124 - 1)) == 0) {\n                    // read array element\n                    {\n                        eta_p_17110 = ((volatile __local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17124)];\n                    }\n                    // apply reduction operation\n                    {\n        ", "                int64_t min_res_17111 = smin64(eta_p_17109, eta_p_17110);\n                        \n                        eta_p_17109 = min_res_17111;\n                    }\n                    // write result of operation\n                    {\n                        ((volatile __local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_17109;\n                    }\n                }\n                offset_17124 *= 2;\n            }\n            while (slt32(skip_waves_17125, squot32(sext_i64_i32(segred_tblock_sizze_16466) + wave_sizze_17101 - 1, wave_sizze_17101))) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n                offset_17124 = skip_waves_17125 * wave_sizze_17101;\n                if (slt32(local_tid_17099 + offset_17124, sext_i64_i32(segred_tblock_sizze_16466)) && ((local_tid_17099 - squot32(local_tid_17099, wave_sizze_17101) * wave_sizze_17101) == 0 && (squot32(local_tid_17099, wave_sizze_17101) & (2 * skip_waves_17125 - 1)) == 0)) {\n                    // read array element\n                    {\n                        eta_p_17110 = ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099 + offset_17124)];\n                    }\n                    // apply reduction operation\n                    {\n                        int64_t min_res_17111 = smin64(eta_p_17109, eta_p_17110);\n                        \n                        eta_p_17109 = min_res_17111;\n                    }\n                    // write result of operation\n                    {\n                        ((__local int64_t *) red_arr_i64_mem_17103)[sext_i32_i64(local_tid_17099)] = eta_p_17109;\n                    }\n                }\n                skip_waves_17125 *= 2;\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // and back to memory with the final result\n            {\n                if (local_tid_17099 == 0) {\n                    ((__global int64_t *) mem_17046)[(int64_t) 0] = eta_p_17109;\n                }\n            }\n ", "       }\n    }\n    \n  error_5:\n    return;\n    #undef segred_tblock_sizze_16466\n    #undef chunk_sizze_17072\n}\n", NULL};
 // Start of gpu_prototypes.h
 
 // Constants used for transpositions.  In principle these should be configurable.
@@ -7156,188 +7156,188 @@ static int gpu_macros(struct futhark_context *ctx, char ***names_out, int64_t **
     int64_t *values = malloc(num_macros * sizeof(int64_t));
     
     {
-        names[0] = "min_idxzisegred_nonseg_16585_dim1";
-        values[0] = *ctx->tuning_params.min_idxzisegred_tblock_sizze_16577;
+        names[0] = "min_idxzisegred_nonseg_16473_dim1";
+        values[0] = *ctx->tuning_params.min_idxzisegred_tblock_sizze_16465;
     }
     {
-        names[1] = "min_idxzisegred_nonseg_16585zisegred_tblock_sizze_16578";
-        values[1] = *ctx->tuning_params.min_idxzisegred_tblock_sizze_16577;
+        names[1] = "min_idxzisegred_nonseg_16473zisegred_tblock_sizze_16466";
+        values[1] = *ctx->tuning_params.min_idxzisegred_tblock_sizze_16465;
     }
     {
-        names[2] = "min_idxzisegred_nonseg_16585zichunk_sizze_17184";
+        names[2] = "min_idxzisegred_nonseg_16473zichunk_sizze_17072";
         values[2] = (int64_t) 1;
     }
     {
-        names[3] = "max_idxzisegred_nonseg_16595_dim1";
-        values[3] = *ctx->tuning_params.max_idxzisegred_tblock_sizze_16587;
+        names[3] = "max_idxzisegred_nonseg_16483_dim1";
+        values[3] = *ctx->tuning_params.max_idxzisegred_tblock_sizze_16475;
     }
     {
-        names[4] = "max_idxzisegred_nonseg_16595zisegred_tblock_sizze_16588";
-        values[4] = *ctx->tuning_params.max_idxzisegred_tblock_sizze_16587;
+        names[4] = "max_idxzisegred_nonseg_16483zisegred_tblock_sizze_16476";
+        values[4] = *ctx->tuning_params.max_idxzisegred_tblock_sizze_16475;
     }
     {
-        names[5] = "max_idxzisegred_nonseg_16595zichunk_sizze_17184";
+        names[5] = "max_idxzisegred_nonseg_16483zichunk_sizze_17072";
         values[5] = (int64_t) 1;
     }
     {
-        names[6] = "gather_payloads_short_GFURzisegmap_16919_dim1";
-        values[6] = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16897;
+        names[6] = "gather_payloads_short_GFURzisegmap_16807_dim1";
+        values[6] = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16785;
     }
     {
-        names[7] = "gather_payloads_short_GFURzisegmap_16919zisegmap_tblock_sizze_16915";
-        values[7] = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16897;
+        names[7] = "gather_payloads_short_GFURzisegmap_16807zisegmap_tblock_sizze_16803";
+        values[7] = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16785;
     }
     {
-        names[8] = "gather_payloads_short_GFURzisegmap_16891_dim1";
-        values[8] = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16879;
+        names[8] = "gather_payloads_short_GFURzisegmap_16779_dim1";
+        values[8] = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16767;
     }
     {
-        names[9] = "gather_payloads_short_GFURzisegmap_16891zisegmap_tblock_sizze_16887";
-        values[9] = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16879;
+        names[9] = "gather_payloads_short_GFURzisegmap_16779zisegmap_tblock_sizze_16775";
+        values[9] = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16767;
     }
     {
-        names[10] = "gather_payloads_shortzisegmap_16639_dim1";
-        values[10] = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16617;
+        names[10] = "gather_payloads_shortzisegmap_16527_dim1";
+        values[10] = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16505;
     }
     {
-        names[11] = "gather_payloads_shortzisegmap_16639zisegmap_tblock_sizze_16635";
-        values[11] = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16617;
+        names[11] = "gather_payloads_shortzisegmap_16527zisegmap_tblock_sizze_16523";
+        values[11] = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16505;
     }
     {
-        names[12] = "gather_payloads_shortzisegmap_16611_dim1";
-        values[12] = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16599;
+        names[12] = "gather_payloads_shortzisegmap_16499_dim1";
+        values[12] = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16487;
     }
     {
-        names[13] = "gather_payloads_shortzisegmap_16611zisegmap_tblock_sizze_16607";
-        values[13] = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16599;
+        names[13] = "gather_payloads_shortzisegmap_16499zisegmap_tblock_sizze_16495";
+        values[13] = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16487;
     }
     {
-        names[14] = "gather_payloads_long_GFURzisegmap_17031_dim1";
-        values[14] = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_17009;
+        names[14] = "gather_payloads_long_GFURzisegmap_16919_dim1";
+        values[14] = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16897;
     }
     {
-        names[15] = "gather_payloads_long_GFURzisegmap_17031zisegmap_tblock_sizze_17027";
-        values[15] = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_17009;
+        names[15] = "gather_payloads_long_GFURzisegmap_16919zisegmap_tblock_sizze_16915";
+        values[15] = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16897;
     }
     {
-        names[16] = "gather_payloads_long_GFURzisegmap_17003_dim1";
-        values[16] = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16991;
+        names[16] = "gather_payloads_long_GFURzisegmap_16891_dim1";
+        values[16] = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16879;
     }
     {
-        names[17] = "gather_payloads_long_GFURzisegmap_17003zisegmap_tblock_sizze_16999";
-        values[17] = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16991;
+        names[17] = "gather_payloads_long_GFURzisegmap_16891zisegmap_tblock_sizze_16887";
+        values[17] = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16879;
     }
     {
-        names[18] = "gather_payloads_longzisegmap_16751_dim1";
-        values[18] = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16729;
+        names[18] = "gather_payloads_longzisegmap_16639_dim1";
+        values[18] = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16617;
     }
     {
-        names[19] = "gather_payloads_longzisegmap_16751zisegmap_tblock_sizze_16747";
-        values[19] = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16729;
+        names[19] = "gather_payloads_longzisegmap_16639zisegmap_tblock_sizze_16635";
+        values[19] = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16617;
     }
     {
-        names[20] = "gather_payloads_longzisegmap_16723_dim1";
-        values[20] = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16711;
+        names[20] = "gather_payloads_longzisegmap_16611_dim1";
+        values[20] = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16599;
     }
     {
-        names[21] = "gather_payloads_longzisegmap_16723zisegmap_tblock_sizze_16719";
-        values[21] = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16711;
+        names[21] = "gather_payloads_longzisegmap_16611zisegmap_tblock_sizze_16607";
+        values[21] = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16599;
     }
     {
-        names[22] = "gather_payloads_int_GFURzisegmap_16975_dim1";
-        values[22] = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16953;
+        names[22] = "gather_payloads_int_GFURzisegmap_16863_dim1";
+        values[22] = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16841;
     }
     {
-        names[23] = "gather_payloads_int_GFURzisegmap_16975zisegmap_tblock_sizze_16971";
-        values[23] = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16953;
+        names[23] = "gather_payloads_int_GFURzisegmap_16863zisegmap_tblock_sizze_16859";
+        values[23] = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16841;
     }
     {
-        names[24] = "gather_payloads_int_GFURzisegmap_16947_dim1";
-        values[24] = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16935;
+        names[24] = "gather_payloads_int_GFURzisegmap_16835_dim1";
+        values[24] = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16823;
     }
     {
-        names[25] = "gather_payloads_int_GFURzisegmap_16947zisegmap_tblock_sizze_16943";
-        values[25] = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16935;
+        names[25] = "gather_payloads_int_GFURzisegmap_16835zisegmap_tblock_sizze_16831";
+        values[25] = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16823;
     }
     {
-        names[26] = "gather_payloads_intzisegmap_16695_dim1";
-        values[26] = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16673;
+        names[26] = "gather_payloads_intzisegmap_16583_dim1";
+        values[26] = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16561;
     }
     {
-        names[27] = "gather_payloads_intzisegmap_16695zisegmap_tblock_sizze_16691";
-        values[27] = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16673;
+        names[27] = "gather_payloads_intzisegmap_16583zisegmap_tblock_sizze_16579";
+        values[27] = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16561;
     }
     {
-        names[28] = "gather_payloads_intzisegmap_16667_dim1";
-        values[28] = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16655;
+        names[28] = "gather_payloads_intzisegmap_16555_dim1";
+        values[28] = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16543;
     }
     {
-        names[29] = "gather_payloads_intzisegmap_16667zisegmap_tblock_sizze_16663";
-        values[29] = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16655;
+        names[29] = "gather_payloads_intzisegmap_16555zisegmap_tblock_sizze_16551";
+        values[29] = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16543;
     }
     {
-        names[30] = "gather_payloads_float_GFURzisegmap_17087_dim1";
-        values[30] = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17065;
+        names[30] = "gather_payloads_float_GFURzisegmap_16975_dim1";
+        values[30] = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16953;
     }
     {
-        names[31] = "gather_payloads_float_GFURzisegmap_17087zisegmap_tblock_sizze_17083";
-        values[31] = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17065;
+        names[31] = "gather_payloads_float_GFURzisegmap_16975zisegmap_tblock_sizze_16971";
+        values[31] = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16953;
     }
     {
-        names[32] = "gather_payloads_float_GFURzisegmap_17059_dim1";
-        values[32] = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17047;
+        names[32] = "gather_payloads_float_GFURzisegmap_16947_dim1";
+        values[32] = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16935;
     }
     {
-        names[33] = "gather_payloads_float_GFURzisegmap_17059zisegmap_tblock_sizze_17055";
-        values[33] = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17047;
+        names[33] = "gather_payloads_float_GFURzisegmap_16947zisegmap_tblock_sizze_16943";
+        values[33] = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16935;
     }
     {
-        names[34] = "gather_payloads_floatzisegmap_16807_dim1";
-        values[34] = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16785;
+        names[34] = "gather_payloads_floatzisegmap_16695_dim1";
+        values[34] = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16673;
     }
     {
-        names[35] = "gather_payloads_floatzisegmap_16807zisegmap_tblock_sizze_16803";
-        values[35] = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16785;
+        names[35] = "gather_payloads_floatzisegmap_16695zisegmap_tblock_sizze_16691";
+        values[35] = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16673;
     }
     {
-        names[36] = "gather_payloads_floatzisegmap_16779_dim1";
-        values[36] = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16767;
+        names[36] = "gather_payloads_floatzisegmap_16667_dim1";
+        values[36] = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16655;
     }
     {
-        names[37] = "gather_payloads_floatzisegmap_16779zisegmap_tblock_sizze_16775";
-        values[37] = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16767;
+        names[37] = "gather_payloads_floatzisegmap_16667zisegmap_tblock_sizze_16663";
+        values[37] = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16655;
     }
     {
-        names[38] = "gather_payloads_double_GFURzisegmap_17143_dim1";
-        values[38] = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17121;
+        names[38] = "gather_payloads_double_GFURzisegmap_17031_dim1";
+        values[38] = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17009;
     }
     {
-        names[39] = "gather_payloads_double_GFURzisegmap_17143zisegmap_tblock_sizze_17139";
-        values[39] = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17121;
+        names[39] = "gather_payloads_double_GFURzisegmap_17031zisegmap_tblock_sizze_17027";
+        values[39] = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17009;
     }
     {
-        names[40] = "gather_payloads_double_GFURzisegmap_17115_dim1";
-        values[40] = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17103;
+        names[40] = "gather_payloads_double_GFURzisegmap_17003_dim1";
+        values[40] = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_16991;
     }
     {
-        names[41] = "gather_payloads_double_GFURzisegmap_17115zisegmap_tblock_sizze_17111";
-        values[41] = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17103;
+        names[41] = "gather_payloads_double_GFURzisegmap_17003zisegmap_tblock_sizze_16999";
+        values[41] = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_16991;
     }
     {
-        names[42] = "gather_payloads_doublezisegmap_16863_dim1";
-        values[42] = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16841;
+        names[42] = "gather_payloads_doublezisegmap_16751_dim1";
+        values[42] = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16729;
     }
     {
-        names[43] = "gather_payloads_doublezisegmap_16863zisegmap_tblock_sizze_16859";
-        values[43] = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16841;
+        names[43] = "gather_payloads_doublezisegmap_16751zisegmap_tblock_sizze_16747";
+        values[43] = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16729;
     }
     {
-        names[44] = "gather_payloads_doublezisegmap_16835_dim1";
-        values[44] = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16823;
+        names[44] = "gather_payloads_doublezisegmap_16723_dim1";
+        values[44] = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16711;
     }
     {
-        names[45] = "gather_payloads_doublezisegmap_16835zisegmap_tblock_sizze_16831";
-        values[45] = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16823;
+        names[45] = "gather_payloads_doublezisegmap_16723zisegmap_tblock_sizze_16719";
+        values[45] = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16711;
     }
     *names_out = names;
     *values_out = values;
@@ -7412,34 +7412,34 @@ static char *get_failure_msg(int failure_idx, int64_t args[])
 }
 struct program {
     int dummy;
-    gpu_kernel builtinzhiota_i64ziiota_i64_17190;
-    gpu_kernel builtinzhreplicate_f32zireplicate_17197;
-    gpu_kernel builtinzhreplicate_f64zireplicate_17197;
-    gpu_kernel builtinzhreplicate_i16zireplicate_17197;
-    gpu_kernel builtinzhreplicate_i32zireplicate_17197;
-    gpu_kernel builtinzhreplicate_i64zireplicate_17197;
-    gpu_kernel gather_payloads_doublezisegmap_16835;
-    gpu_kernel gather_payloads_doublezisegmap_16863;
-    gpu_kernel gather_payloads_double_GFURzisegmap_17115;
-    gpu_kernel gather_payloads_double_GFURzisegmap_17143;
-    gpu_kernel gather_payloads_floatzisegmap_16779;
-    gpu_kernel gather_payloads_floatzisegmap_16807;
-    gpu_kernel gather_payloads_float_GFURzisegmap_17059;
-    gpu_kernel gather_payloads_float_GFURzisegmap_17087;
-    gpu_kernel gather_payloads_intzisegmap_16667;
-    gpu_kernel gather_payloads_intzisegmap_16695;
-    gpu_kernel gather_payloads_int_GFURzisegmap_16947;
-    gpu_kernel gather_payloads_int_GFURzisegmap_16975;
-    gpu_kernel gather_payloads_longzisegmap_16723;
-    gpu_kernel gather_payloads_longzisegmap_16751;
-    gpu_kernel gather_payloads_long_GFURzisegmap_17003;
-    gpu_kernel gather_payloads_long_GFURzisegmap_17031;
-    gpu_kernel gather_payloads_shortzisegmap_16611;
-    gpu_kernel gather_payloads_shortzisegmap_16639;
-    gpu_kernel gather_payloads_short_GFURzisegmap_16891;
-    gpu_kernel gather_payloads_short_GFURzisegmap_16919;
-    gpu_kernel max_idxzisegred_nonseg_16595;
-    gpu_kernel min_idxzisegred_nonseg_16585;
+    gpu_kernel builtinzhiota_i64ziiota_i64_17078;
+    gpu_kernel builtinzhreplicate_f32zireplicate_17085;
+    gpu_kernel builtinzhreplicate_f64zireplicate_17085;
+    gpu_kernel builtinzhreplicate_i16zireplicate_17085;
+    gpu_kernel builtinzhreplicate_i32zireplicate_17085;
+    gpu_kernel builtinzhreplicate_i64zireplicate_17085;
+    gpu_kernel gather_payloads_doublezisegmap_16723;
+    gpu_kernel gather_payloads_doublezisegmap_16751;
+    gpu_kernel gather_payloads_double_GFURzisegmap_17003;
+    gpu_kernel gather_payloads_double_GFURzisegmap_17031;
+    gpu_kernel gather_payloads_floatzisegmap_16667;
+    gpu_kernel gather_payloads_floatzisegmap_16695;
+    gpu_kernel gather_payloads_float_GFURzisegmap_16947;
+    gpu_kernel gather_payloads_float_GFURzisegmap_16975;
+    gpu_kernel gather_payloads_intzisegmap_16555;
+    gpu_kernel gather_payloads_intzisegmap_16583;
+    gpu_kernel gather_payloads_int_GFURzisegmap_16835;
+    gpu_kernel gather_payloads_int_GFURzisegmap_16863;
+    gpu_kernel gather_payloads_longzisegmap_16611;
+    gpu_kernel gather_payloads_longzisegmap_16639;
+    gpu_kernel gather_payloads_long_GFURzisegmap_16891;
+    gpu_kernel gather_payloads_long_GFURzisegmap_16919;
+    gpu_kernel gather_payloads_shortzisegmap_16499;
+    gpu_kernel gather_payloads_shortzisegmap_16527;
+    gpu_kernel gather_payloads_short_GFURzisegmap_16779;
+    gpu_kernel gather_payloads_short_GFURzisegmap_16807;
+    gpu_kernel max_idxzisegred_nonseg_16483;
+    gpu_kernel min_idxzisegred_nonseg_16473;
 };
 static void setup_program(struct futhark_context *ctx)
 {
@@ -7449,34 +7449,34 @@ static void setup_program(struct futhark_context *ctx)
     
     (void) error;
     ctx->program = malloc(sizeof(struct program));
-    gpu_create_kernel(ctx, &ctx->program->builtinzhiota_i64ziiota_i64_17190, "builtinzhiota_i64ziiota_i64_17190");
-    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_f32zireplicate_17197, "builtinzhreplicate_f32zireplicate_17197");
-    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_f64zireplicate_17197, "builtinzhreplicate_f64zireplicate_17197");
-    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_i16zireplicate_17197, "builtinzhreplicate_i16zireplicate_17197");
-    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_i32zireplicate_17197, "builtinzhreplicate_i32zireplicate_17197");
-    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_i64zireplicate_17197, "builtinzhreplicate_i64zireplicate_17197");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_doublezisegmap_16835, "gather_payloads_doublezisegmap_16835");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_doublezisegmap_16863, "gather_payloads_doublezisegmap_16863");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_double_GFURzisegmap_17115, "gather_payloads_double_GFURzisegmap_17115");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_double_GFURzisegmap_17143, "gather_payloads_double_GFURzisegmap_17143");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_floatzisegmap_16779, "gather_payloads_floatzisegmap_16779");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_floatzisegmap_16807, "gather_payloads_floatzisegmap_16807");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_float_GFURzisegmap_17059, "gather_payloads_float_GFURzisegmap_17059");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_float_GFURzisegmap_17087, "gather_payloads_float_GFURzisegmap_17087");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_intzisegmap_16667, "gather_payloads_intzisegmap_16667");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_intzisegmap_16695, "gather_payloads_intzisegmap_16695");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_int_GFURzisegmap_16947, "gather_payloads_int_GFURzisegmap_16947");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_int_GFURzisegmap_16975, "gather_payloads_int_GFURzisegmap_16975");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_longzisegmap_16723, "gather_payloads_longzisegmap_16723");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_longzisegmap_16751, "gather_payloads_longzisegmap_16751");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_long_GFURzisegmap_17003, "gather_payloads_long_GFURzisegmap_17003");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_long_GFURzisegmap_17031, "gather_payloads_long_GFURzisegmap_17031");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_shortzisegmap_16611, "gather_payloads_shortzisegmap_16611");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_shortzisegmap_16639, "gather_payloads_shortzisegmap_16639");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_short_GFURzisegmap_16891, "gather_payloads_short_GFURzisegmap_16891");
-    gpu_create_kernel(ctx, &ctx->program->gather_payloads_short_GFURzisegmap_16919, "gather_payloads_short_GFURzisegmap_16919");
-    gpu_create_kernel(ctx, &ctx->program->max_idxzisegred_nonseg_16595, "max_idxzisegred_nonseg_16595");
-    gpu_create_kernel(ctx, &ctx->program->min_idxzisegred_nonseg_16585, "min_idxzisegred_nonseg_16585");
+    gpu_create_kernel(ctx, &ctx->program->builtinzhiota_i64ziiota_i64_17078, "builtinzhiota_i64ziiota_i64_17078");
+    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_f32zireplicate_17085, "builtinzhreplicate_f32zireplicate_17085");
+    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_f64zireplicate_17085, "builtinzhreplicate_f64zireplicate_17085");
+    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_i16zireplicate_17085, "builtinzhreplicate_i16zireplicate_17085");
+    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_i32zireplicate_17085, "builtinzhreplicate_i32zireplicate_17085");
+    gpu_create_kernel(ctx, &ctx->program->builtinzhreplicate_i64zireplicate_17085, "builtinzhreplicate_i64zireplicate_17085");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_doublezisegmap_16723, "gather_payloads_doublezisegmap_16723");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_doublezisegmap_16751, "gather_payloads_doublezisegmap_16751");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_double_GFURzisegmap_17003, "gather_payloads_double_GFURzisegmap_17003");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_double_GFURzisegmap_17031, "gather_payloads_double_GFURzisegmap_17031");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_floatzisegmap_16667, "gather_payloads_floatzisegmap_16667");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_floatzisegmap_16695, "gather_payloads_floatzisegmap_16695");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_float_GFURzisegmap_16947, "gather_payloads_float_GFURzisegmap_16947");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_float_GFURzisegmap_16975, "gather_payloads_float_GFURzisegmap_16975");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_intzisegmap_16555, "gather_payloads_intzisegmap_16555");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_intzisegmap_16583, "gather_payloads_intzisegmap_16583");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_int_GFURzisegmap_16835, "gather_payloads_int_GFURzisegmap_16835");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_int_GFURzisegmap_16863, "gather_payloads_int_GFURzisegmap_16863");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_longzisegmap_16611, "gather_payloads_longzisegmap_16611");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_longzisegmap_16639, "gather_payloads_longzisegmap_16639");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_long_GFURzisegmap_16891, "gather_payloads_long_GFURzisegmap_16891");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_long_GFURzisegmap_16919, "gather_payloads_long_GFURzisegmap_16919");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_shortzisegmap_16499, "gather_payloads_shortzisegmap_16499");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_shortzisegmap_16527, "gather_payloads_shortzisegmap_16527");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_short_GFURzisegmap_16779, "gather_payloads_short_GFURzisegmap_16779");
+    gpu_create_kernel(ctx, &ctx->program->gather_payloads_short_GFURzisegmap_16807, "gather_payloads_short_GFURzisegmap_16807");
+    gpu_create_kernel(ctx, &ctx->program->max_idxzisegred_nonseg_16483, "max_idxzisegred_nonseg_16483");
+    gpu_create_kernel(ctx, &ctx->program->min_idxzisegred_nonseg_16473, "min_idxzisegred_nonseg_16473");
 }
 static void teardown_program(struct futhark_context *ctx)
 {
@@ -7485,69 +7485,69 @@ static void teardown_program(struct futhark_context *ctx)
     int error = 0;
     
     (void) error;
-    gpu_free_kernel(ctx, ctx->program->builtinzhiota_i64ziiota_i64_17190);
-    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_f32zireplicate_17197);
-    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_f64zireplicate_17197);
-    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_i16zireplicate_17197);
-    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_i32zireplicate_17197);
-    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_i64zireplicate_17197);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_doublezisegmap_16835);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_doublezisegmap_16863);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_double_GFURzisegmap_17115);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_double_GFURzisegmap_17143);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_floatzisegmap_16779);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_floatzisegmap_16807);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_float_GFURzisegmap_17059);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_float_GFURzisegmap_17087);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_intzisegmap_16667);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_intzisegmap_16695);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_int_GFURzisegmap_16947);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_int_GFURzisegmap_16975);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_longzisegmap_16723);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_longzisegmap_16751);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_long_GFURzisegmap_17003);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_long_GFURzisegmap_17031);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_shortzisegmap_16611);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_shortzisegmap_16639);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_short_GFURzisegmap_16891);
-    gpu_free_kernel(ctx, ctx->program->gather_payloads_short_GFURzisegmap_16919);
-    gpu_free_kernel(ctx, ctx->program->max_idxzisegred_nonseg_16595);
-    gpu_free_kernel(ctx, ctx->program->min_idxzisegred_nonseg_16585);
+    gpu_free_kernel(ctx, ctx->program->builtinzhiota_i64ziiota_i64_17078);
+    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_f32zireplicate_17085);
+    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_f64zireplicate_17085);
+    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_i16zireplicate_17085);
+    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_i32zireplicate_17085);
+    gpu_free_kernel(ctx, ctx->program->builtinzhreplicate_i64zireplicate_17085);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_doublezisegmap_16723);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_doublezisegmap_16751);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_double_GFURzisegmap_17003);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_double_GFURzisegmap_17031);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_floatzisegmap_16667);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_floatzisegmap_16695);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_float_GFURzisegmap_16947);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_float_GFURzisegmap_16975);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_intzisegmap_16555);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_intzisegmap_16583);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_int_GFURzisegmap_16835);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_int_GFURzisegmap_16863);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_longzisegmap_16611);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_longzisegmap_16639);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_long_GFURzisegmap_16891);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_long_GFURzisegmap_16919);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_shortzisegmap_16499);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_shortzisegmap_16527);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_short_GFURzisegmap_16779);
+    gpu_free_kernel(ctx, ctx->program->gather_payloads_short_GFURzisegmap_16807);
+    gpu_free_kernel(ctx, ctx->program->max_idxzisegred_nonseg_16483);
+    gpu_free_kernel(ctx, ctx->program->min_idxzisegred_nonseg_16473);
     free(ctx->program);
 }
 static void set_tuning_params(struct futhark_context *ctx)
 {
     (void) ctx;
-    ctx->tuning_params.builtinzhiota_i64zitblock_sizze_17194 = &ctx->cfg->tuning_params[0];
-    ctx->tuning_params.builtinzhreplicate_f32zitblock_sizze_17201 = &ctx->cfg->tuning_params[1];
-    ctx->tuning_params.builtinzhreplicate_f64zitblock_sizze_17201 = &ctx->cfg->tuning_params[2];
-    ctx->tuning_params.builtinzhreplicate_i16zitblock_sizze_17201 = &ctx->cfg->tuning_params[3];
-    ctx->tuning_params.builtinzhreplicate_i32zitblock_sizze_17201 = &ctx->cfg->tuning_params[4];
-    ctx->tuning_params.builtinzhreplicate_i64zitblock_sizze_17201 = &ctx->cfg->tuning_params[5];
-    ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16823 = &ctx->cfg->tuning_params[6];
-    ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16841 = &ctx->cfg->tuning_params[7];
-    ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17103 = &ctx->cfg->tuning_params[8];
-    ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17121 = &ctx->cfg->tuning_params[9];
-    ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16767 = &ctx->cfg->tuning_params[10];
-    ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16785 = &ctx->cfg->tuning_params[11];
-    ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17047 = &ctx->cfg->tuning_params[12];
-    ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17065 = &ctx->cfg->tuning_params[13];
-    ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16655 = &ctx->cfg->tuning_params[14];
-    ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16673 = &ctx->cfg->tuning_params[15];
-    ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16935 = &ctx->cfg->tuning_params[16];
-    ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16953 = &ctx->cfg->tuning_params[17];
-    ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16711 = &ctx->cfg->tuning_params[18];
-    ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16729 = &ctx->cfg->tuning_params[19];
-    ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16991 = &ctx->cfg->tuning_params[20];
-    ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_17009 = &ctx->cfg->tuning_params[21];
-    ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16599 = &ctx->cfg->tuning_params[22];
-    ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16617 = &ctx->cfg->tuning_params[23];
-    ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16879 = &ctx->cfg->tuning_params[24];
-    ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16897 = &ctx->cfg->tuning_params[25];
-    ctx->tuning_params.max_idxzisegred_num_tblocks_16589 = &ctx->cfg->tuning_params[26];
-    ctx->tuning_params.max_idxzisegred_tblock_sizze_16587 = &ctx->cfg->tuning_params[27];
-    ctx->tuning_params.min_idxzisegred_num_tblocks_16579 = &ctx->cfg->tuning_params[28];
-    ctx->tuning_params.min_idxzisegred_tblock_sizze_16577 = &ctx->cfg->tuning_params[29];
+    ctx->tuning_params.builtinzhiota_i64zitblock_sizze_17082 = &ctx->cfg->tuning_params[0];
+    ctx->tuning_params.builtinzhreplicate_f32zitblock_sizze_17089 = &ctx->cfg->tuning_params[1];
+    ctx->tuning_params.builtinzhreplicate_f64zitblock_sizze_17089 = &ctx->cfg->tuning_params[2];
+    ctx->tuning_params.builtinzhreplicate_i16zitblock_sizze_17089 = &ctx->cfg->tuning_params[3];
+    ctx->tuning_params.builtinzhreplicate_i32zitblock_sizze_17089 = &ctx->cfg->tuning_params[4];
+    ctx->tuning_params.builtinzhreplicate_i64zitblock_sizze_17089 = &ctx->cfg->tuning_params[5];
+    ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16711 = &ctx->cfg->tuning_params[6];
+    ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16729 = &ctx->cfg->tuning_params[7];
+    ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_16991 = &ctx->cfg->tuning_params[8];
+    ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17009 = &ctx->cfg->tuning_params[9];
+    ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16655 = &ctx->cfg->tuning_params[10];
+    ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16673 = &ctx->cfg->tuning_params[11];
+    ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16935 = &ctx->cfg->tuning_params[12];
+    ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16953 = &ctx->cfg->tuning_params[13];
+    ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16543 = &ctx->cfg->tuning_params[14];
+    ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16561 = &ctx->cfg->tuning_params[15];
+    ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16823 = &ctx->cfg->tuning_params[16];
+    ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16841 = &ctx->cfg->tuning_params[17];
+    ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16599 = &ctx->cfg->tuning_params[18];
+    ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16617 = &ctx->cfg->tuning_params[19];
+    ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16879 = &ctx->cfg->tuning_params[20];
+    ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16897 = &ctx->cfg->tuning_params[21];
+    ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16487 = &ctx->cfg->tuning_params[22];
+    ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16505 = &ctx->cfg->tuning_params[23];
+    ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16767 = &ctx->cfg->tuning_params[24];
+    ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16785 = &ctx->cfg->tuning_params[25];
+    ctx->tuning_params.max_idxzisegred_num_tblocks_16477 = &ctx->cfg->tuning_params[26];
+    ctx->tuning_params.max_idxzisegred_tblock_sizze_16475 = &ctx->cfg->tuning_params[27];
+    ctx->tuning_params.min_idxzisegred_num_tblocks_16467 = &ctx->cfg->tuning_params[28];
+    ctx->tuning_params.min_idxzisegred_tblock_sizze_16465 = &ctx->cfg->tuning_params[29];
 }
 int memblock_unref_device(struct futhark_context *ctx, struct memblock_device *block, const char *desc)
 {
@@ -8198,29 +8198,29 @@ GEN_LMAD_COPY(8b, uint64_t)
 
 #define FUTHARK_FUN_ATTR static
 
-FUTHARK_FUN_ATTR int futrts_builtinzhiota_i64(struct futhark_context *ctx, struct memblock_device mem_17185, int64_t n_17186, int64_t x_17187, int64_t s_17188);
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f32(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, float val_17194);
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f64(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, double val_17194);
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i16(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, int16_t val_17194);
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i32(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, int32_t val_17194);
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i64(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, int64_t val_17194);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_double(struct futhark_context *ctx, struct memblock_device *mem_out_p_17238, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_14686, int64_t dz2083U_14687, int64_t incr_14688, int64_t psizze_14689);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_double_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17239, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_16193, int64_t n_16194, int64_t incr_16195, int64_t psizze_16196);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_float(struct futhark_context *ctx, struct memblock_device *mem_out_p_17240, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_14346, int64_t dz2083U_14347, int64_t incr_14348, int64_t psizze_14349);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_float_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17241, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_15892, int64_t n_15893, int64_t incr_15894, int64_t psizze_15895);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_17242, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_13666, int64_t dz2083U_13667, int64_t incr_13668, int64_t psizze_13669);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_int_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17243, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_15290, int64_t n_15291, int64_t incr_15292, int64_t psizze_15293);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long(struct futhark_context *ctx, struct memblock_device *mem_out_p_17244, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_14006, int64_t dz2083U_14007, int64_t incr_14008, int64_t psizze_14009);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17245, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_15591, int64_t n_15592, int64_t incr_15593, int64_t psizze_15594);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short(struct futhark_context *ctx, struct memblock_device *mem_out_p_17246, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_13326, int64_t dz2083U_13327, int64_t incr_13328, int64_t psizze_13329);
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17247, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_14989, int64_t n_14990, int64_t incr_14991, int64_t psizze_14992);
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_double(struct futhark_context *ctx, struct memblock_device *mem_out_p_17248, struct memblock_device *mem_out_p_17249, struct memblock_device *mem_out_p_17250, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12968, int64_t nS_12969, int64_t offset_R_12972, int64_t offset_S_12973, int64_t partitionsPerWindow_12974, int64_t numberOfWindows_12975, int64_t extParallelism_12976, int64_t scatter_psizze_12977);
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_float(struct futhark_context *ctx, struct memblock_device *mem_out_p_17251, struct memblock_device *mem_out_p_17252, struct memblock_device *mem_out_p_17253, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12898, int64_t nS_12899, int64_t offset_R_12902, int64_t offset_S_12903, int64_t partitionsPerWindow_12904, int64_t numberOfWindows_12905, int64_t extParallelism_12906, int64_t scatter_psizze_12907);
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_17254, struct memblock_device *mem_out_p_17255, struct memblock_device *mem_out_p_17256, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12758, int64_t nS_12759, int64_t offset_R_12762, int64_t offset_S_12763, int64_t partitionsPerWindow_12764, int64_t numberOfWindows_12765, int64_t extParallelism_12766, int64_t scatter_psizze_12767);
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_long(struct futhark_context *ctx, struct memblock_device *mem_out_p_17257, struct memblock_device *mem_out_p_17258, struct memblock_device *mem_out_p_17259, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12828, int64_t nS_12829, int64_t offset_R_12832, int64_t offset_S_12833, int64_t partitionsPerWindow_12834, int64_t numberOfWindows_12835, int64_t extParallelism_12836, int64_t scatter_psizze_12837);
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_short(struct futhark_context *ctx, struct memblock_device *mem_out_p_17260, struct memblock_device *mem_out_p_17261, struct memblock_device *mem_out_p_17262, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12688, int64_t nS_12689, int64_t offset_R_12692, int64_t offset_S_12693, int64_t partitionsPerWindow_12694, int64_t numberOfWindows_12695, int64_t extParallelism_12696, int64_t scatter_psizze_12697);
-FUTHARK_FUN_ATTR int futrts_entry_max_idx(struct futhark_context *ctx, int64_t *out_prim_out_17263, struct memblock_device eta_p_mem_17156, int64_t nz2080U_16272);
-FUTHARK_FUN_ATTR int futrts_entry_min_idx(struct futhark_context *ctx, int64_t *out_prim_out_17265, struct memblock_device eta_p_mem_17156, int64_t nz2080U_16232);
+FUTHARK_FUN_ATTR int futrts_builtinzhiota_i64(struct futhark_context *ctx, struct memblock_device mem_17073, int64_t n_17074, int64_t x_17075, int64_t s_17076);
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f32(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, float val_17082);
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f64(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, double val_17082);
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i16(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, int16_t val_17082);
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i32(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, int32_t val_17082);
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i64(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, int64_t val_17082);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_double(struct futhark_context *ctx, struct memblock_device *mem_out_p_17126, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_14574, int64_t dz2083U_14575, int64_t incr_14576, int64_t psizze_14577);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_double_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17127, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_16081, int64_t n_16082, int64_t incr_16083, int64_t psizze_16084);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_float(struct futhark_context *ctx, struct memblock_device *mem_out_p_17128, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_14234, int64_t dz2083U_14235, int64_t incr_14236, int64_t psizze_14237);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_float_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17129, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_15780, int64_t n_15781, int64_t incr_15782, int64_t psizze_15783);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_17130, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_13554, int64_t dz2083U_13555, int64_t incr_13556, int64_t psizze_13557);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_int_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17131, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_15178, int64_t n_15179, int64_t incr_15180, int64_t psizze_15181);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long(struct futhark_context *ctx, struct memblock_device *mem_out_p_17132, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_13894, int64_t dz2083U_13895, int64_t incr_13896, int64_t psizze_13897);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17133, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_15479, int64_t n_15480, int64_t incr_15481, int64_t psizze_15482);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short(struct futhark_context *ctx, struct memblock_device *mem_out_p_17134, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_13214, int64_t dz2083U_13215, int64_t incr_13216, int64_t psizze_13217);
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17135, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_14877, int64_t n_14878, int64_t incr_14879, int64_t psizze_14880);
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_double(struct futhark_context *ctx, struct memblock_device *mem_out_p_17136, struct memblock_device *mem_out_p_17137, struct memblock_device *mem_out_p_17138, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12856, int64_t nS_12857, int64_t offset_R_12860, int64_t offset_S_12861, int64_t partitionsPerWindow_12862, int64_t numberOfWindows_12863, int64_t extParallelism_12864, int64_t scatter_psizze_12865);
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_float(struct futhark_context *ctx, struct memblock_device *mem_out_p_17139, struct memblock_device *mem_out_p_17140, struct memblock_device *mem_out_p_17141, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12797, int64_t nS_12798, int64_t offset_R_12801, int64_t offset_S_12802, int64_t partitionsPerWindow_12803, int64_t numberOfWindows_12804, int64_t extParallelism_12805, int64_t scatter_psizze_12806);
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_17142, struct memblock_device *mem_out_p_17143, struct memblock_device *mem_out_p_17144, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12679, int64_t nS_12680, int64_t offset_R_12683, int64_t offset_S_12684, int64_t partitionsPerWindow_12685, int64_t numberOfWindows_12686, int64_t extParallelism_12687, int64_t scatter_psizze_12688);
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_long(struct futhark_context *ctx, struct memblock_device *mem_out_p_17145, struct memblock_device *mem_out_p_17146, struct memblock_device *mem_out_p_17147, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12738, int64_t nS_12739, int64_t offset_R_12742, int64_t offset_S_12743, int64_t partitionsPerWindow_12744, int64_t numberOfWindows_12745, int64_t extParallelism_12746, int64_t scatter_psizze_12747);
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_short(struct futhark_context *ctx, struct memblock_device *mem_out_p_17148, struct memblock_device *mem_out_p_17149, struct memblock_device *mem_out_p_17150, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12620, int64_t nS_12621, int64_t offset_R_12624, int64_t offset_S_12625, int64_t partitionsPerWindow_12626, int64_t numberOfWindows_12627, int64_t extParallelism_12628, int64_t scatter_psizze_12629);
+FUTHARK_FUN_ATTR int futrts_entry_max_idx(struct futhark_context *ctx, int64_t *out_prim_out_17151, struct memblock_device eta_p_mem_17044, int64_t nz2080U_16160);
+FUTHARK_FUN_ATTR int futrts_entry_min_idx(struct futhark_context *ctx, int64_t *out_prim_out_17153, struct memblock_device eta_p_mem_17044, int64_t nz2080U_16120);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -8228,25 +8228,25 @@ static int init_constants(struct futhark_context *ctx)
     
     int err = 0;
     
-    #define counters_mem_17185 (ctx->constants->counters_mem_17185)
-    counters_mem_17185.references = NULL;
-    if (memblock_alloc_device(ctx, &counters_mem_17185, (int64_t) 80, "counters_mem_17185")) {
+    #define counters_mem_17073 (ctx->constants->counters_mem_17073)
+    counters_mem_17073.references = NULL;
+    if (memblock_alloc_device(ctx, &counters_mem_17073, (int64_t) 80, "counters_mem_17073")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhreplicate_i32(ctx, counters_mem_17185, (int64_t) 20, 0) != 0) {
+    if (futrts_builtinzhreplicate_i32(ctx, counters_mem_17073, (int64_t) 20, 0) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &counters_mem_17185, (int64_t) 80, "counters_mem_17185")) {
+    if (memblock_alloc_device(ctx, &counters_mem_17073, (int64_t) 80, "counters_mem_17073")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhreplicate_i32(ctx, counters_mem_17185, (int64_t) 20, 0) != 0) {
+    if (futrts_builtinzhreplicate_i32(ctx, counters_mem_17073, (int64_t) 20, 0) != 0) {
         err = 1;
         goto cleanup;
     }
-    #undef counters_mem_17185
+    #undef counters_mem_17073
     
   cleanup:
     return err;
@@ -8254,287 +8254,287 @@ static int init_constants(struct futhark_context *ctx)
 static int free_constants(struct futhark_context *ctx)
 {
     (void) ctx;
-    if (memblock_unref_device(ctx, &ctx->constants->counters_mem_17185, "ctx->constants->counters_mem_17185") != 0)
+    if (memblock_unref_device(ctx, &ctx->constants->counters_mem_17073, "ctx->constants->counters_mem_17073") != 0)
         return 1;
     return 0;
 }
-static int gpu_kernel_builtinzhiota_i64ziiota_i64_17190(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
+static int gpu_kernel_builtinzhiota_i64ziiota_i64_17078(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[6] = {&arg0, &arg1, &arg2, &arg3, &arg4, &arg5};
         size_t args_sizes[6] = {sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5)};
         
-        return gpu_launch_kernel(ctx, ctx->program->builtinzhiota_i64ziiota_i64_17190, "builtin#iota_i64.iota_i64_17190", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->builtinzhiota_i64ziiota_i64_17078, "builtin#iota_i64.iota_i64_17078", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_builtinzhreplicate_f32zireplicate_17197(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, float arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
+static int gpu_kernel_builtinzhreplicate_f32zireplicate_17085(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, float arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[6] = {&arg0, &arg1, &arg2, &arg3, &arg4, &arg5};
         size_t args_sizes[6] = {sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5)};
         
-        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_f32zireplicate_17197, "builtin#replicate_f32.replicate_17197", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_f32zireplicate_17085, "builtin#replicate_f32.replicate_17085", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_builtinzhreplicate_f64zireplicate_17197(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, double arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
+static int gpu_kernel_builtinzhreplicate_f64zireplicate_17085(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, double arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[6] = {&arg0, &arg1, &arg2, &arg3, &arg4, &arg5};
         size_t args_sizes[6] = {sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5)};
         
-        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_f64zireplicate_17197, "builtin#replicate_f64.replicate_17197", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_f64zireplicate_17085, "builtin#replicate_f64.replicate_17085", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_builtinzhreplicate_i16zireplicate_17197(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int16_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
+static int gpu_kernel_builtinzhreplicate_i16zireplicate_17085(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int16_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[6] = {&arg0, &arg1, &arg2, &arg3, &arg4, &arg5};
         size_t args_sizes[6] = {sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5)};
         
-        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_i16zireplicate_17197, "builtin#replicate_i16.replicate_17197", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_i16zireplicate_17085, "builtin#replicate_i16.replicate_17085", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_builtinzhreplicate_i32zireplicate_17197(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int32_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
+static int gpu_kernel_builtinzhreplicate_i32zireplicate_17085(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int32_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[6] = {&arg0, &arg1, &arg2, &arg3, &arg4, &arg5};
         size_t args_sizes[6] = {sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5)};
         
-        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_i32zireplicate_17197, "builtin#replicate_i32.replicate_17197", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_i32zireplicate_17085, "builtin#replicate_i32.replicate_17085", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_builtinzhreplicate_i64zireplicate_17197(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
+static int gpu_kernel_builtinzhreplicate_i64zireplicate_17085(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, int64_t arg4, gpu_mem arg5)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[6] = {&arg0, &arg1, &arg2, &arg3, &arg4, &arg5};
         size_t args_sizes[6] = {sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5)};
         
-        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_i64zireplicate_17197, "builtin#replicate_i64.replicate_17197", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->builtinzhreplicate_i64zireplicate_17085, "builtin#replicate_i64.replicate_17085", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 6, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_doublezisegmap_16835(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_doublezisegmap_16723(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_doublezisegmap_16835, "gather_payloads_double.segmap_16835", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_doublezisegmap_16723, "gather_payloads_double.segmap_16723", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_doublezisegmap_16863(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_doublezisegmap_16751(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_doublezisegmap_16863, "gather_payloads_double.segmap_16863", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_doublezisegmap_16751, "gather_payloads_double.segmap_16751", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_double_GFURzisegmap_17115(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_double_GFURzisegmap_17003(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_double_GFURzisegmap_17115, "gather_payloads_double_GFUR.segmap_17115", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_double_GFURzisegmap_17003, "gather_payloads_double_GFUR.segmap_17003", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_double_GFURzisegmap_17143(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_double_GFURzisegmap_17031(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_double_GFURzisegmap_17143, "gather_payloads_double_GFUR.segmap_17143", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_double_GFURzisegmap_17031, "gather_payloads_double_GFUR.segmap_17031", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_floatzisegmap_16779(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_floatzisegmap_16667(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_floatzisegmap_16779, "gather_payloads_float.segmap_16779", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_floatzisegmap_16667, "gather_payloads_float.segmap_16667", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_floatzisegmap_16807(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_floatzisegmap_16695(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_floatzisegmap_16807, "gather_payloads_float.segmap_16807", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_floatzisegmap_16695, "gather_payloads_float.segmap_16695", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_float_GFURzisegmap_17059(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_float_GFURzisegmap_16947(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_float_GFURzisegmap_17059, "gather_payloads_float_GFUR.segmap_17059", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_float_GFURzisegmap_16947, "gather_payloads_float_GFUR.segmap_16947", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_float_GFURzisegmap_17087(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_float_GFURzisegmap_16975(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_float_GFURzisegmap_17087, "gather_payloads_float_GFUR.segmap_17087", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_float_GFURzisegmap_16975, "gather_payloads_float_GFUR.segmap_16975", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_intzisegmap_16667(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_intzisegmap_16555(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_intzisegmap_16667, "gather_payloads_int.segmap_16667", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_intzisegmap_16555, "gather_payloads_int.segmap_16555", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_intzisegmap_16695(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_intzisegmap_16583(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_intzisegmap_16695, "gather_payloads_int.segmap_16695", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_intzisegmap_16583, "gather_payloads_int.segmap_16583", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_int_GFURzisegmap_16947(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_int_GFURzisegmap_16835(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_int_GFURzisegmap_16947, "gather_payloads_int_GFUR.segmap_16947", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_int_GFURzisegmap_16835, "gather_payloads_int_GFUR.segmap_16835", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_int_GFURzisegmap_16975(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_int_GFURzisegmap_16863(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_int_GFURzisegmap_16975, "gather_payloads_int_GFUR.segmap_16975", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_int_GFURzisegmap_16863, "gather_payloads_int_GFUR.segmap_16863", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_longzisegmap_16723(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_longzisegmap_16611(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_longzisegmap_16723, "gather_payloads_long.segmap_16723", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_longzisegmap_16611, "gather_payloads_long.segmap_16611", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_longzisegmap_16751(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_longzisegmap_16639(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_longzisegmap_16751, "gather_payloads_long.segmap_16751", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_longzisegmap_16639, "gather_payloads_long.segmap_16639", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_long_GFURzisegmap_17003(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_long_GFURzisegmap_16891(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_long_GFURzisegmap_17003, "gather_payloads_long_GFUR.segmap_17003", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_long_GFURzisegmap_16891, "gather_payloads_long_GFUR.segmap_16891", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_long_GFURzisegmap_17031(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_long_GFURzisegmap_16919(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_long_GFURzisegmap_17031, "gather_payloads_long_GFUR.segmap_17031", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_long_GFURzisegmap_16919, "gather_payloads_long_GFUR.segmap_16919", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_shortzisegmap_16611(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_shortzisegmap_16499(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_shortzisegmap_16611, "gather_payloads_short.segmap_16611", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_shortzisegmap_16499, "gather_payloads_short.segmap_16499", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_shortzisegmap_16639(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_shortzisegmap_16527(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_shortzisegmap_16639, "gather_payloads_short.segmap_16639", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_shortzisegmap_16527, "gather_payloads_short.segmap_16527", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_short_GFURzisegmap_16891(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
+static int gpu_kernel_gather_payloads_short_GFURzisegmap_16779(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, gpu_mem arg2, gpu_mem arg3)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[5] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3};
         size_t args_sizes[5] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_short_GFURzisegmap_16891, "gather_payloads_short_GFUR.segmap_16891", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_short_GFURzisegmap_16779, "gather_payloads_short_GFUR.segmap_16779", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 5, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_gather_payloads_short_GFURzisegmap_16919(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
+static int gpu_kernel_gather_payloads_short_GFURzisegmap_16807(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, int64_t arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6, gpu_mem arg7)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[11] = {&ctx->global_failure, &ctx->failure_is_an_option, &ctx->global_failure_args, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7};
         size_t args_sizes[11] = {sizeof(ctx->global_failure), sizeof(ctx->failure_is_an_option), sizeof(ctx->global_failure_args), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6), sizeof(arg7)};
         
-        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_short_GFURzisegmap_16919, "gather_payloads_short_GFUR.segmap_16919", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->gather_payloads_short_GFURzisegmap_16807, "gather_payloads_short_GFUR.segmap_16807", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 11, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_max_idxzisegred_nonseg_16595(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, gpu_mem arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6)
+static int gpu_kernel_max_idxzisegred_nonseg_16483(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, gpu_mem arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[8] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6};
         size_t args_sizes[8] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6)};
         
-        return gpu_launch_kernel(ctx, ctx->program->max_idxzisegred_nonseg_16595, "max_idx.segred_nonseg_16595", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 8, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->max_idxzisegred_nonseg_16483, "max_idx.segred_nonseg_16483", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 8, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
-static int gpu_kernel_min_idxzisegred_nonseg_16585(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, gpu_mem arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6)
+static int gpu_kernel_min_idxzisegred_nonseg_16473(struct futhark_context *ctx, unsigned int grid_x, unsigned int grid_y, unsigned int grid_z, unsigned int block_x, unsigned int block_y, unsigned int block_z, unsigned int shared_bytes, int64_t arg0, int64_t arg1, int64_t arg2, gpu_mem arg3, gpu_mem arg4, gpu_mem arg5, gpu_mem arg6)
 {
     if (grid_x * grid_y * grid_z * block_x * block_y * block_z != 0) {
         void *args[8] = {&ctx->global_failure, &arg0, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6};
         size_t args_sizes[8] = {sizeof(ctx->global_failure), sizeof(arg0), sizeof(arg1), sizeof(arg2), sizeof(arg3), sizeof(arg4), sizeof(arg5), sizeof(arg6)};
         
-        return gpu_launch_kernel(ctx, ctx->program->min_idxzisegred_nonseg_16585, "min_idx.segred_nonseg_16585", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 8, args, args_sizes);
+        return gpu_launch_kernel(ctx, ctx->program->min_idxzisegred_nonseg_16473, "min_idx.segred_nonseg_16473", (const int32_t []) {grid_x, grid_y, grid_z}, (const int32_t []) {block_x, block_y, block_z}, shared_bytes, 8, args, args_sizes);
     }
     return FUTHARK_SUCCESS;
 }
@@ -10104,21 +10104,21 @@ struct futhark_opaque_joinPairs_double *futhark_restore_opaque_joinPairs_double(
     return obj;
 }
 
-FUTHARK_FUN_ATTR int futrts_builtinzhiota_i64(struct futhark_context *ctx, struct memblock_device mem_17185, int64_t n_17186, int64_t x_17187, int64_t s_17188)
+FUTHARK_FUN_ATTR int futrts_builtinzhiota_i64(struct futhark_context *ctx, struct memblock_device mem_17073, int64_t n_17074, int64_t x_17075, int64_t s_17076)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t tblock_sizze_17194;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t tblock_sizze_17082;
     
-    tblock_sizze_17194 = *ctx->tuning_params.builtinzhiota_i64zitblock_sizze_17194;
+    tblock_sizze_17082 = *ctx->tuning_params.builtinzhiota_i64zitblock_sizze_17082;
     
-    int64_t virt_num_tblocks_17195 = sdiv_up64(n_17186, tblock_sizze_17194);
-    int64_t num_tblocks_17196 = smin64(virt_num_tblocks_17195, (int64_t) 1048576);
+    int64_t virt_num_tblocks_17083 = sdiv_up64(n_17074, tblock_sizze_17082);
+    int64_t num_tblocks_17084 = smin64(virt_num_tblocks_17083, (int64_t) 1048576);
     
     {
-        err = gpu_kernel_builtinzhiota_i64ziiota_i64_17190(ctx, num_tblocks_17196, 1, 1, tblock_sizze_17194, 1, 1, (int64_t) 0, n_17186, x_17187, s_17188, virt_num_tblocks_17195, num_tblocks_17196, mem_17185.mem);
+        err = gpu_kernel_builtinzhiota_i64ziiota_i64_17078(ctx, num_tblocks_17084, 1, 1, tblock_sizze_17082, 1, 1, (int64_t) 0, n_17074, x_17075, s_17076, virt_num_tblocks_17083, num_tblocks_17084, mem_17073.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
@@ -10127,22 +10127,22 @@ FUTHARK_FUN_ATTR int futrts_builtinzhiota_i64(struct futhark_context *ctx, struc
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f32(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, float val_17194)
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f32(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, float val_17082)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t replicate_n_17196 = num_elems_17193;
-    int64_t tblock_sizze_17201;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t replicate_n_17084 = num_elems_17081;
+    int64_t tblock_sizze_17089;
     
-    tblock_sizze_17201 = *ctx->tuning_params.builtinzhreplicate_f32zitblock_sizze_17201;
+    tblock_sizze_17089 = *ctx->tuning_params.builtinzhreplicate_f32zitblock_sizze_17089;
     
-    int64_t virt_num_tblocks_17202 = sdiv_up64(replicate_n_17196, tblock_sizze_17201);
-    int64_t num_tblocks_17203 = smin64(virt_num_tblocks_17202, (int64_t) 1048576);
+    int64_t virt_num_tblocks_17090 = sdiv_up64(replicate_n_17084, tblock_sizze_17089);
+    int64_t num_tblocks_17091 = smin64(virt_num_tblocks_17090, (int64_t) 1048576);
     
     {
-        err = gpu_kernel_builtinzhreplicate_f32zireplicate_17197(ctx, num_tblocks_17203, 1, 1, tblock_sizze_17201, 1, 1, (int64_t) 0, num_elems_17193, val_17194, replicate_n_17196, virt_num_tblocks_17202, num_tblocks_17203, mem_17192.mem);
+        err = gpu_kernel_builtinzhreplicate_f32zireplicate_17085(ctx, num_tblocks_17091, 1, 1, tblock_sizze_17089, 1, 1, (int64_t) 0, num_elems_17081, val_17082, replicate_n_17084, virt_num_tblocks_17090, num_tblocks_17091, mem_17080.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
@@ -10151,22 +10151,22 @@ FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f32(struct futhark_context *ctx, 
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f64(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, double val_17194)
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f64(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, double val_17082)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t replicate_n_17196 = num_elems_17193;
-    int64_t tblock_sizze_17201;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t replicate_n_17084 = num_elems_17081;
+    int64_t tblock_sizze_17089;
     
-    tblock_sizze_17201 = *ctx->tuning_params.builtinzhreplicate_f64zitblock_sizze_17201;
+    tblock_sizze_17089 = *ctx->tuning_params.builtinzhreplicate_f64zitblock_sizze_17089;
     
-    int64_t virt_num_tblocks_17202 = sdiv_up64(replicate_n_17196, tblock_sizze_17201);
-    int64_t num_tblocks_17203 = smin64(virt_num_tblocks_17202, (int64_t) 1048576);
+    int64_t virt_num_tblocks_17090 = sdiv_up64(replicate_n_17084, tblock_sizze_17089);
+    int64_t num_tblocks_17091 = smin64(virt_num_tblocks_17090, (int64_t) 1048576);
     
     {
-        err = gpu_kernel_builtinzhreplicate_f64zireplicate_17197(ctx, num_tblocks_17203, 1, 1, tblock_sizze_17201, 1, 1, (int64_t) 0, num_elems_17193, val_17194, replicate_n_17196, virt_num_tblocks_17202, num_tblocks_17203, mem_17192.mem);
+        err = gpu_kernel_builtinzhreplicate_f64zireplicate_17085(ctx, num_tblocks_17091, 1, 1, tblock_sizze_17089, 1, 1, (int64_t) 0, num_elems_17081, val_17082, replicate_n_17084, virt_num_tblocks_17090, num_tblocks_17091, mem_17080.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
@@ -10175,22 +10175,22 @@ FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_f64(struct futhark_context *ctx, 
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i16(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, int16_t val_17194)
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i16(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, int16_t val_17082)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t replicate_n_17196 = num_elems_17193;
-    int64_t tblock_sizze_17201;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t replicate_n_17084 = num_elems_17081;
+    int64_t tblock_sizze_17089;
     
-    tblock_sizze_17201 = *ctx->tuning_params.builtinzhreplicate_i16zitblock_sizze_17201;
+    tblock_sizze_17089 = *ctx->tuning_params.builtinzhreplicate_i16zitblock_sizze_17089;
     
-    int64_t virt_num_tblocks_17202 = sdiv_up64(replicate_n_17196, tblock_sizze_17201);
-    int64_t num_tblocks_17203 = smin64(virt_num_tblocks_17202, (int64_t) 1048576);
+    int64_t virt_num_tblocks_17090 = sdiv_up64(replicate_n_17084, tblock_sizze_17089);
+    int64_t num_tblocks_17091 = smin64(virt_num_tblocks_17090, (int64_t) 1048576);
     
     {
-        err = gpu_kernel_builtinzhreplicate_i16zireplicate_17197(ctx, num_tblocks_17203, 1, 1, tblock_sizze_17201, 1, 1, (int64_t) 0, num_elems_17193, val_17194, replicate_n_17196, virt_num_tblocks_17202, num_tblocks_17203, mem_17192.mem);
+        err = gpu_kernel_builtinzhreplicate_i16zireplicate_17085(ctx, num_tblocks_17091, 1, 1, tblock_sizze_17089, 1, 1, (int64_t) 0, num_elems_17081, val_17082, replicate_n_17084, virt_num_tblocks_17090, num_tblocks_17091, mem_17080.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
@@ -10199,22 +10199,22 @@ FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i16(struct futhark_context *ctx, 
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i32(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, int32_t val_17194)
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i32(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, int32_t val_17082)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t replicate_n_17196 = num_elems_17193;
-    int64_t tblock_sizze_17201;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t replicate_n_17084 = num_elems_17081;
+    int64_t tblock_sizze_17089;
     
-    tblock_sizze_17201 = *ctx->tuning_params.builtinzhreplicate_i32zitblock_sizze_17201;
+    tblock_sizze_17089 = *ctx->tuning_params.builtinzhreplicate_i32zitblock_sizze_17089;
     
-    int64_t virt_num_tblocks_17202 = sdiv_up64(replicate_n_17196, tblock_sizze_17201);
-    int64_t num_tblocks_17203 = smin64(virt_num_tblocks_17202, (int64_t) 1048576);
+    int64_t virt_num_tblocks_17090 = sdiv_up64(replicate_n_17084, tblock_sizze_17089);
+    int64_t num_tblocks_17091 = smin64(virt_num_tblocks_17090, (int64_t) 1048576);
     
     {
-        err = gpu_kernel_builtinzhreplicate_i32zireplicate_17197(ctx, num_tblocks_17203, 1, 1, tblock_sizze_17201, 1, 1, (int64_t) 0, num_elems_17193, val_17194, replicate_n_17196, virt_num_tblocks_17202, num_tblocks_17203, mem_17192.mem);
+        err = gpu_kernel_builtinzhreplicate_i32zireplicate_17085(ctx, num_tblocks_17091, 1, 1, tblock_sizze_17089, 1, 1, (int64_t) 0, num_elems_17081, val_17082, replicate_n_17084, virt_num_tblocks_17090, num_tblocks_17091, mem_17080.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
@@ -10223,22 +10223,22 @@ FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i32(struct futhark_context *ctx, 
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i64(struct futhark_context *ctx, struct memblock_device mem_17192, int64_t num_elems_17193, int64_t val_17194)
+FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i64(struct futhark_context *ctx, struct memblock_device mem_17080, int64_t num_elems_17081, int64_t val_17082)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t replicate_n_17196 = num_elems_17193;
-    int64_t tblock_sizze_17201;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t replicate_n_17084 = num_elems_17081;
+    int64_t tblock_sizze_17089;
     
-    tblock_sizze_17201 = *ctx->tuning_params.builtinzhreplicate_i64zitblock_sizze_17201;
+    tblock_sizze_17089 = *ctx->tuning_params.builtinzhreplicate_i64zitblock_sizze_17089;
     
-    int64_t virt_num_tblocks_17202 = sdiv_up64(replicate_n_17196, tblock_sizze_17201);
-    int64_t num_tblocks_17203 = smin64(virt_num_tblocks_17202, (int64_t) 1048576);
+    int64_t virt_num_tblocks_17090 = sdiv_up64(replicate_n_17084, tblock_sizze_17089);
+    int64_t num_tblocks_17091 = smin64(virt_num_tblocks_17090, (int64_t) 1048576);
     
     {
-        err = gpu_kernel_builtinzhreplicate_i64zireplicate_17197(ctx, num_tblocks_17203, 1, 1, tblock_sizze_17201, 1, 1, (int64_t) 0, num_elems_17193, val_17194, replicate_n_17196, virt_num_tblocks_17202, num_tblocks_17203, mem_17192.mem);
+        err = gpu_kernel_builtinzhreplicate_i64zireplicate_17085(ctx, num_tblocks_17091, 1, 1, tblock_sizze_17089, 1, 1, (int64_t) 0, num_elems_17081, val_17082, replicate_n_17084, virt_num_tblocks_17090, num_tblocks_17091, mem_17080.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
@@ -10247,1524 +10247,164 @@ FUTHARK_FUN_ATTR int futrts_builtinzhreplicate_i64(struct futhark_context *ctx, 
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_double(struct futhark_context *ctx, struct memblock_device *mem_out_p_17238, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_14686, int64_t dz2083U_14687, int64_t incr_14688, int64_t psizze_14689)
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_double(struct futhark_context *ctx, struct memblock_device *mem_out_p_17126, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_14574, int64_t dz2083U_14575, int64_t incr_14576, int64_t psizze_14577)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17181;
+    struct memblock_device mem_17069;
     
-    mem_17181.references = NULL;
+    mem_17069.references = NULL;
     
-    struct memblock_device mem_param_tmp_17213;
+    struct memblock_device mem_param_tmp_17101;
     
-    mem_param_tmp_17213.references = NULL;
+    mem_param_tmp_17101.references = NULL;
     
-    struct memblock_device mem_param_tmp_17212;
+    struct memblock_device mem_param_tmp_17100;
     
-    mem_param_tmp_17212.references = NULL;
+    mem_param_tmp_17100.references = NULL;
     
-    struct memblock_device mem_17173;
+    struct memblock_device mem_17061;
     
-    mem_17173.references = NULL;
+    mem_17061.references = NULL;
     
-    struct memblock_device mem_17170;
+    struct memblock_device mem_17058;
     
-    mem_17170.references = NULL;
+    mem_17058.references = NULL;
     
-    struct memblock_device mem_param_17168;
+    struct memblock_device mem_param_17056;
     
-    mem_param_17168.references = NULL;
+    mem_param_17056.references = NULL;
     
-    struct memblock_device mem_param_17165;
+    struct memblock_device mem_param_17053;
     
-    mem_param_17165.references = NULL;
+    mem_param_17053.references = NULL;
     
-    struct memblock_device ext_mem_17178;
+    struct memblock_device ext_mem_17066;
     
-    ext_mem_17178.references = NULL;
+    ext_mem_17066.references = NULL;
     
-    struct memblock_device ext_mem_17179;
+    struct memblock_device ext_mem_17067;
     
-    ext_mem_17179.references = NULL;
+    ext_mem_17067.references = NULL;
     
-    struct memblock_device mem_17162;
+    struct memblock_device mem_17050;
     
-    mem_17162.references = NULL;
+    mem_17050.references = NULL;
     
-    struct memblock_device mem_17160;
+    struct memblock_device mem_17048;
     
-    mem_17160.references = NULL;
+    mem_17048.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17159 = (int64_t) 8 * niz2084U_14686;
-    bool zzero_16521 = psizze_14689 == (int64_t) 0;
-    bool nonzzero_16522 = !zzero_16521;
-    bool nonzzero_cert_16523;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17047 = (int64_t) 8 * niz2084U_14574;
+    bool zzero_16409 = psizze_14577 == (int64_t) 0;
+    bool nonzzero_16410 = !zzero_16409;
+    bool nonzzero_cert_16411;
     
-    if (!nonzzero_16522) {
+    if (!nonzzero_16410) {
         set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:24:22-28\n   #1  ftSMJ.fut:440:5-41\n   #2  ftSMJ.fut:439:1-440:41\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t segmap_tblock_sizze_16831;
-    
-    segmap_tblock_sizze_16831 = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16823;
-    
-    int64_t segmap_usable_groups_16832 = sdiv_up64(niz2084U_14686, segmap_tblock_sizze_16831);
-    
-    if (memblock_alloc_device(ctx, &mem_17160, bytes_17159, "mem_17160")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
-    
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(niz2084U_14686, segmap_tblock_sizze_16831));
-    
-    {
-        err = gpu_kernel_gather_payloads_doublezisegmap_16835(ctx, segmap_usable_groups_16832, 1, 1, *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16823, 1, 1, (int64_t) 0, niz2084U_14686, incr_14688, is_mem_17156.mem, mem_17160.mem);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    
-    int64_t zm_lhs_16519 = add64(dz2083U_14687, psizze_14689);
-    int64_t zs_lhs_16520 = sub64(zm_lhs_16519, (int64_t) 1);
-    int64_t m_16524 = sdiv64(zs_lhs_16520, psizze_14689);
-    
-    if (memblock_alloc_device(ctx, &mem_17162, bytes_17159, "mem_17162")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (futrts_builtinzhreplicate_f64(ctx, mem_17162, niz2084U_14686, 0.0) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16524);
-    int64_t segmap_tblock_sizze_16859;
-    
-    segmap_tblock_sizze_16859 = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16841;
-    
-    int64_t segmap_usable_groups_16860 = sdiv_up_safe64(niz2084U_14686, segmap_tblock_sizze_16859);
-    bool partitioned_gather_res_16527;
-    int64_t partitioned_gather_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
-    
-    if (memblock_set_device(ctx, &mem_param_17165, &mem_17160, "mem_17160") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_param_17168, &mem_17162, "mem_17162") != 0)
-        return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_14689, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_14689, lower_bound_16535);
-        int64_t min_res_16537 = smin64(dz2083U_14687, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, dz2083U_14687);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
-        
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) dz2083U_14687, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:440:5-41\n   #2  ftSMJ.fut:439:1-440:41\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        if (memblock_alloc_device(ctx, &mem_17170, bytes_17159, "mem_17170")) {
-            err = 1;
-            goto cleanup;
-        }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17170.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17165.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14686})) != 0)
-            goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17173, bytes_17159, "mem_17173")) {
-            err = 1;
-            goto cleanup;
-        }
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "\n# SegMap");
-        
-        int32_t virt_num_tblocks_17218 = sext_i64_i32(sdiv_up64(niz2084U_14686, segmap_tblock_sizze_16859));
-        
-        {
-            err = gpu_kernel_gather_payloads_doublezisegmap_16863(ctx, segmap_usable_groups_16860, 1, 1, *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16841, 1, 1, (int64_t) 0, niz2084U_14686, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17157.mem, mem_param_17165.mem, mem_param_17168.mem, mem_17173.mem);
-            if (err != FUTHARK_SUCCESS)
-                goto cleanup;
-        }
-        ctx->failure_is_an_option = 1;
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "");
-        
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16524);
-        
-        if (memblock_set_device(ctx, &mem_param_tmp_17212, &mem_17170, "mem_17170") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17213, &mem_17173, "mem_17173") != 0)
-            return 1;
-        
-        bool loop_while_tmp_17214 = loop_cond_16566;
-        int64_t p_tmp_17217 = tmp_16565;
-        
-        if (memblock_set_device(ctx, &mem_param_17165, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_17168, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
-            return 1;
-        loop_while_16531 = loop_while_tmp_17214;
-        p_16534 = p_tmp_17217;
-    }
-    if (memblock_set_device(ctx, &ext_mem_17179, &mem_param_17165, "mem_param_17165") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17168, "mem_param_17168") != 0)
-        return 1;
-    partitioned_gather_res_16527 = loop_while_16531;
-    partitioned_gather_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
-        return 1;
-    if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
-        return 1;
-    if (memblock_alloc_device(ctx, &mem_17181, bytes_17159, "mem_17181")) {
-        err = 1;
-        goto cleanup;
-    }
-    if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17181.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17178.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14686})) != 0)
-        goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17181, "mem_17181") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17238, &mem_out_17182, "mem_out_17182") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref_device(ctx, &mem_17181, "mem_17181") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17173, "mem_17173") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17170, "mem_17170") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17168, "mem_param_17168") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17165, "mem_param_17165") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17179, "ext_mem_17179") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_double_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17239, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_16193, int64_t n_16194, int64_t incr_16195, int64_t psizze_16196)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock_device mem_17180;
-    
-    mem_17180.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17193;
-    
-    mem_param_tmp_17193.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17192;
-    
-    mem_param_tmp_17192.references = NULL;
-    
-    struct memblock_device mem_17172;
-    
-    mem_17172.references = NULL;
-    
-    struct memblock_device mem_17169;
-    
-    mem_17169.references = NULL;
-    
-    struct memblock_device mem_param_17167;
-    
-    mem_param_17167.references = NULL;
-    
-    struct memblock_device mem_param_17164;
-    
-    mem_param_17164.references = NULL;
-    
-    struct memblock_device ext_mem_17177;
-    
-    ext_mem_17177.references = NULL;
-    
-    struct memblock_device ext_mem_17178;
-    
-    ext_mem_17178.references = NULL;
-    
-    struct memblock_device mem_17161;
-    
-    mem_17161.references = NULL;
-    
-    struct memblock_device mem_out_17182;
-    
-    mem_out_17182.references = NULL;
-    
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17160 = (int64_t) 8 * ni_16193;
-    bool zzero_16522 = psizze_16196 == (int64_t) 0;
-    bool nonzzero_16523 = !zzero_16522;
-    bool nonzzero_cert_16524;
-    
-    if (!nonzzero_16523) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:468:5-50\n   #2  ftSMJ.fut:467:1-468:50\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t segmap_tblock_sizze_17111;
-    
-    segmap_tblock_sizze_17111 = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17103;
-    
-    int64_t segmap_usable_groups_17112 = sdiv_up64(ni_16193, segmap_tblock_sizze_17111);
-    
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17160, "mem_17161")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
-    
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(ni_16193, segmap_tblock_sizze_17111));
-    
-    {
-        err = gpu_kernel_gather_payloads_double_GFURzisegmap_17115(ctx, segmap_usable_groups_17112, 1, 1, *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17103, 1, 1, (int64_t) 0, ni_16193, incr_16195, is_mem_17157.mem, mem_17161.mem);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    
-    int64_t zm_lhs_16520 = add64(n_16194, psizze_16196);
-    int64_t zs_lhs_16521 = sub64(zm_lhs_16520, (int64_t) 1);
-    int64_t m_16525 = sdiv64(zs_lhs_16521, psizze_16196);
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16525);
-    int64_t segmap_tblock_sizze_17139;
-    
-    segmap_tblock_sizze_17139 = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17121;
-    
-    int64_t segmap_usable_groups_17140 = sdiv_up_safe64(ni_16193, segmap_tblock_sizze_17139);
-    bool partitioned_gather_over_array_res_16527;
-    int64_t partitioned_gather_over_array_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
-    
-    if (memblock_set_device(ctx, &mem_param_17164, &mem_17161, "mem_17161") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_param_17167, &preVals_mem_17156, "preVals_mem_17156") != 0)
-        return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_16196, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_16196, lower_bound_16535);
-        int64_t min_res_16537 = smin64(n_16194, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, n_16194);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
-        
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) n_16194, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:468:5-50\n   #2  ftSMJ.fut:467:1-468:50\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        if (memblock_alloc_device(ctx, &mem_17169, bytes_17160, "mem_17169")) {
-            err = 1;
-            goto cleanup;
-        }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17169.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17164.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_16193})) != 0)
-            goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17172, bytes_17160, "mem_17172")) {
-            err = 1;
-            goto cleanup;
-        }
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "\n# SegMap");
-        
-        int32_t virt_num_tblocks_17198 = sext_i64_i32(sdiv_up64(ni_16193, segmap_tblock_sizze_17139));
-        
-        {
-            err = gpu_kernel_gather_payloads_double_GFURzisegmap_17143(ctx, segmap_usable_groups_17140, 1, 1, *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17121, 1, 1, (int64_t) 0, ni_16193, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17158.mem, mem_param_17164.mem, mem_param_17167.mem, mem_17172.mem);
-            if (err != FUTHARK_SUCCESS)
-                goto cleanup;
-        }
-        ctx->failure_is_an_option = 1;
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "");
-        
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16525);
-        
-        if (memblock_set_device(ctx, &mem_param_tmp_17192, &mem_17169, "mem_17169") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17193, &mem_17172, "mem_17172") != 0)
-            return 1;
-        
-        bool loop_while_tmp_17194 = loop_cond_16566;
-        int64_t p_tmp_17197 = tmp_16565;
-        
-        if (memblock_set_device(ctx, &mem_param_17164, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_17167, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
-            return 1;
-        loop_while_16531 = loop_while_tmp_17194;
-        p_16534 = p_tmp_17197;
-    }
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17164, "mem_param_17164") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &ext_mem_17177, &mem_param_17167, "mem_param_17167") != 0)
-        return 1;
-    partitioned_gather_over_array_res_16527 = loop_while_16531;
-    partitioned_gather_over_array_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
-        return 1;
-    if (memblock_alloc_device(ctx, &mem_17180, bytes_17160, "mem_17180")) {
-        err = 1;
-        goto cleanup;
-    }
-    if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17180.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17177.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_16193})) != 0)
-        goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17180, "mem_17180") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17239, &mem_out_17182, "mem_out_17182") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref_device(ctx, &mem_17180, "mem_17180") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17172, "mem_17172") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17169, "mem_17169") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17167, "mem_param_17167") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17164, "mem_param_17164") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_float(struct futhark_context *ctx, struct memblock_device *mem_out_p_17240, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_14346, int64_t dz2083U_14347, int64_t incr_14348, int64_t psizze_14349)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock_device mem_17181;
-    
-    mem_17181.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17213;
-    
-    mem_param_tmp_17213.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17212;
-    
-    mem_param_tmp_17212.references = NULL;
-    
-    struct memblock_device mem_17173;
-    
-    mem_17173.references = NULL;
-    
-    struct memblock_device mem_17170;
-    
-    mem_17170.references = NULL;
-    
-    struct memblock_device mem_param_17168;
-    
-    mem_param_17168.references = NULL;
-    
-    struct memblock_device mem_param_17165;
-    
-    mem_param_17165.references = NULL;
-    
-    struct memblock_device ext_mem_17178;
-    
-    ext_mem_17178.references = NULL;
-    
-    struct memblock_device ext_mem_17179;
-    
-    ext_mem_17179.references = NULL;
-    
-    struct memblock_device mem_17162;
-    
-    mem_17162.references = NULL;
-    
-    struct memblock_device mem_17160;
-    
-    mem_17160.references = NULL;
-    
-    struct memblock_device mem_out_17182;
-    
-    mem_out_17182.references = NULL;
-    
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17159 = (int64_t) 8 * niz2084U_14346;
-    bool zzero_16521 = psizze_14349 == (int64_t) 0;
-    bool nonzzero_16522 = !zzero_16521;
-    bool nonzzero_cert_16523;
-    
-    if (!nonzzero_16522) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:24:22-28\n   #1  ftSMJ.fut:437:5-41\n   #2  ftSMJ.fut:436:1-437:41\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_17161 = (int64_t) 4 * niz2084U_14346;
-    int64_t segmap_tblock_sizze_16775;
-    
-    segmap_tblock_sizze_16775 = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16767;
-    
-    int64_t segmap_usable_groups_16776 = sdiv_up64(niz2084U_14346, segmap_tblock_sizze_16775);
-    
-    if (memblock_alloc_device(ctx, &mem_17160, bytes_17159, "mem_17160")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
-    
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(niz2084U_14346, segmap_tblock_sizze_16775));
-    
-    {
-        err = gpu_kernel_gather_payloads_floatzisegmap_16779(ctx, segmap_usable_groups_16776, 1, 1, *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16767, 1, 1, (int64_t) 0, niz2084U_14346, incr_14348, is_mem_17156.mem, mem_17160.mem);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    
-    int64_t zm_lhs_16519 = add64(dz2083U_14347, psizze_14349);
-    int64_t zs_lhs_16520 = sub64(zm_lhs_16519, (int64_t) 1);
-    int64_t m_16524 = sdiv64(zs_lhs_16520, psizze_14349);
-    
-    if (memblock_alloc_device(ctx, &mem_17162, bytes_17161, "mem_17162")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (futrts_builtinzhreplicate_f32(ctx, mem_17162, niz2084U_14346, 0.0F) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16524);
-    int64_t segmap_tblock_sizze_16803;
-    
-    segmap_tblock_sizze_16803 = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16785;
-    
-    int64_t segmap_usable_groups_16804 = sdiv_up_safe64(niz2084U_14346, segmap_tblock_sizze_16803);
-    bool partitioned_gather_res_16527;
-    int64_t partitioned_gather_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
-    
-    if (memblock_set_device(ctx, &mem_param_17165, &mem_17160, "mem_17160") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_param_17168, &mem_17162, "mem_17162") != 0)
-        return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_14349, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_14349, lower_bound_16535);
-        int64_t min_res_16537 = smin64(dz2083U_14347, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, dz2083U_14347);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
-        
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) dz2083U_14347, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:437:5-41\n   #2  ftSMJ.fut:436:1-437:41\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        if (memblock_alloc_device(ctx, &mem_17170, bytes_17159, "mem_17170")) {
-            err = 1;
-            goto cleanup;
-        }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17170.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17165.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14346})) != 0)
-            goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17173, bytes_17161, "mem_17173")) {
-            err = 1;
-            goto cleanup;
-        }
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "\n# SegMap");
-        
-        int32_t virt_num_tblocks_17218 = sext_i64_i32(sdiv_up64(niz2084U_14346, segmap_tblock_sizze_16803));
-        
-        {
-            err = gpu_kernel_gather_payloads_floatzisegmap_16807(ctx, segmap_usable_groups_16804, 1, 1, *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16785, 1, 1, (int64_t) 0, niz2084U_14346, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17157.mem, mem_param_17165.mem, mem_param_17168.mem, mem_17173.mem);
-            if (err != FUTHARK_SUCCESS)
-                goto cleanup;
-        }
-        ctx->failure_is_an_option = 1;
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "");
-        
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16524);
-        
-        if (memblock_set_device(ctx, &mem_param_tmp_17212, &mem_17170, "mem_17170") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17213, &mem_17173, "mem_17173") != 0)
-            return 1;
-        
-        bool loop_while_tmp_17214 = loop_cond_16566;
-        int64_t p_tmp_17217 = tmp_16565;
-        
-        if (memblock_set_device(ctx, &mem_param_17165, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_17168, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
-            return 1;
-        loop_while_16531 = loop_while_tmp_17214;
-        p_16534 = p_tmp_17217;
-    }
-    if (memblock_set_device(ctx, &ext_mem_17179, &mem_param_17165, "mem_param_17165") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17168, "mem_param_17168") != 0)
-        return 1;
-    partitioned_gather_res_16527 = loop_while_16531;
-    partitioned_gather_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
-        return 1;
-    if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
-        return 1;
-    if (memblock_alloc_device(ctx, &mem_17181, bytes_17161, "mem_17181")) {
-        err = 1;
-        goto cleanup;
-    }
-    if ((err = lmad_copy_gpu2gpu_4b(ctx, 1, mem_17181.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17178.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14346})) != 0)
-        goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17181, "mem_17181") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17240, &mem_out_17182, "mem_out_17182") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref_device(ctx, &mem_17181, "mem_17181") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17173, "mem_17173") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17170, "mem_17170") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17168, "mem_param_17168") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17165, "mem_param_17165") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17179, "ext_mem_17179") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_float_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17241, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_15892, int64_t n_15893, int64_t incr_15894, int64_t psizze_15895)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock_device mem_17180;
-    
-    mem_17180.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17193;
-    
-    mem_param_tmp_17193.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17192;
-    
-    mem_param_tmp_17192.references = NULL;
-    
-    struct memblock_device mem_17172;
-    
-    mem_17172.references = NULL;
-    
-    struct memblock_device mem_17169;
-    
-    mem_17169.references = NULL;
-    
-    struct memblock_device mem_param_17167;
-    
-    mem_param_17167.references = NULL;
-    
-    struct memblock_device mem_param_17164;
-    
-    mem_param_17164.references = NULL;
-    
-    struct memblock_device ext_mem_17177;
-    
-    ext_mem_17177.references = NULL;
-    
-    struct memblock_device ext_mem_17178;
-    
-    ext_mem_17178.references = NULL;
-    
-    struct memblock_device mem_17161;
-    
-    mem_17161.references = NULL;
-    
-    struct memblock_device mem_out_17182;
-    
-    mem_out_17182.references = NULL;
-    
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17160 = (int64_t) 8 * ni_15892;
-    bool zzero_16522 = psizze_15895 == (int64_t) 0;
-    bool nonzzero_16523 = !zzero_16522;
-    bool nonzzero_cert_16524;
-    
-    if (!nonzzero_16523) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:465:5-50\n   #2  ftSMJ.fut:464:1-465:50\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_17171 = (int64_t) 4 * ni_15892;
-    int64_t segmap_tblock_sizze_17055;
-    
-    segmap_tblock_sizze_17055 = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17047;
-    
-    int64_t segmap_usable_groups_17056 = sdiv_up64(ni_15892, segmap_tblock_sizze_17055);
-    
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17160, "mem_17161")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
-    
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(ni_15892, segmap_tblock_sizze_17055));
-    
-    {
-        err = gpu_kernel_gather_payloads_float_GFURzisegmap_17059(ctx, segmap_usable_groups_17056, 1, 1, *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17047, 1, 1, (int64_t) 0, ni_15892, incr_15894, is_mem_17157.mem, mem_17161.mem);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    
-    int64_t zm_lhs_16520 = add64(n_15893, psizze_15895);
-    int64_t zs_lhs_16521 = sub64(zm_lhs_16520, (int64_t) 1);
-    int64_t m_16525 = sdiv64(zs_lhs_16521, psizze_15895);
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16525);
-    int64_t segmap_tblock_sizze_17083;
-    
-    segmap_tblock_sizze_17083 = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17065;
-    
-    int64_t segmap_usable_groups_17084 = sdiv_up_safe64(ni_15892, segmap_tblock_sizze_17083);
-    bool partitioned_gather_over_array_res_16527;
-    int64_t partitioned_gather_over_array_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
-    
-    if (memblock_set_device(ctx, &mem_param_17164, &mem_17161, "mem_17161") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_param_17167, &preVals_mem_17156, "preVals_mem_17156") != 0)
-        return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_15895, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_15895, lower_bound_16535);
-        int64_t min_res_16537 = smin64(n_15893, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, n_15893);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
-        
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) n_15893, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:465:5-50\n   #2  ftSMJ.fut:464:1-465:50\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        if (memblock_alloc_device(ctx, &mem_17169, bytes_17160, "mem_17169")) {
-            err = 1;
-            goto cleanup;
-        }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17169.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17164.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15892})) != 0)
-            goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17172, bytes_17171, "mem_17172")) {
-            err = 1;
-            goto cleanup;
-        }
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "\n# SegMap");
-        
-        int32_t virt_num_tblocks_17198 = sext_i64_i32(sdiv_up64(ni_15892, segmap_tblock_sizze_17083));
-        
-        {
-            err = gpu_kernel_gather_payloads_float_GFURzisegmap_17087(ctx, segmap_usable_groups_17084, 1, 1, *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_17065, 1, 1, (int64_t) 0, ni_15892, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17158.mem, mem_param_17164.mem, mem_param_17167.mem, mem_17172.mem);
-            if (err != FUTHARK_SUCCESS)
-                goto cleanup;
-        }
-        ctx->failure_is_an_option = 1;
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "");
-        
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16525);
-        
-        if (memblock_set_device(ctx, &mem_param_tmp_17192, &mem_17169, "mem_17169") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17193, &mem_17172, "mem_17172") != 0)
-            return 1;
-        
-        bool loop_while_tmp_17194 = loop_cond_16566;
-        int64_t p_tmp_17197 = tmp_16565;
-        
-        if (memblock_set_device(ctx, &mem_param_17164, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_17167, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
-            return 1;
-        loop_while_16531 = loop_while_tmp_17194;
-        p_16534 = p_tmp_17197;
-    }
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17164, "mem_param_17164") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &ext_mem_17177, &mem_param_17167, "mem_param_17167") != 0)
-        return 1;
-    partitioned_gather_over_array_res_16527 = loop_while_16531;
-    partitioned_gather_over_array_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
-        return 1;
-    if (memblock_alloc_device(ctx, &mem_17180, bytes_17171, "mem_17180")) {
-        err = 1;
-        goto cleanup;
-    }
-    if ((err = lmad_copy_gpu2gpu_4b(ctx, 1, mem_17180.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17177.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15892})) != 0)
-        goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17180, "mem_17180") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17241, &mem_out_17182, "mem_out_17182") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref_device(ctx, &mem_17180, "mem_17180") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17172, "mem_17172") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17169, "mem_17169") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17167, "mem_param_17167") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17164, "mem_param_17164") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_17242, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_13666, int64_t dz2083U_13667, int64_t incr_13668, int64_t psizze_13669)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock_device mem_17181;
-    
-    mem_17181.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17213;
-    
-    mem_param_tmp_17213.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17212;
-    
-    mem_param_tmp_17212.references = NULL;
-    
-    struct memblock_device mem_17173;
-    
-    mem_17173.references = NULL;
-    
-    struct memblock_device mem_17170;
-    
-    mem_17170.references = NULL;
-    
-    struct memblock_device mem_param_17168;
-    
-    mem_param_17168.references = NULL;
-    
-    struct memblock_device mem_param_17165;
-    
-    mem_param_17165.references = NULL;
-    
-    struct memblock_device ext_mem_17178;
-    
-    ext_mem_17178.references = NULL;
-    
-    struct memblock_device ext_mem_17179;
-    
-    ext_mem_17179.references = NULL;
-    
-    struct memblock_device mem_17162;
-    
-    mem_17162.references = NULL;
-    
-    struct memblock_device mem_17160;
-    
-    mem_17160.references = NULL;
-    
-    struct memblock_device mem_out_17182;
-    
-    mem_out_17182.references = NULL;
-    
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17159 = (int64_t) 8 * niz2084U_13666;
-    bool zzero_16521 = psizze_13669 == (int64_t) 0;
-    bool nonzzero_16522 = !zzero_16521;
-    bool nonzzero_cert_16523;
-    
-    if (!nonzzero_16522) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:24:22-28\n   #1  ftSMJ.fut:431:5-41\n   #2  ftSMJ.fut:430:1-431:41\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_17161 = (int64_t) 4 * niz2084U_13666;
-    int64_t segmap_tblock_sizze_16663;
-    
-    segmap_tblock_sizze_16663 = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16655;
-    
-    int64_t segmap_usable_groups_16664 = sdiv_up64(niz2084U_13666, segmap_tblock_sizze_16663);
-    
-    if (memblock_alloc_device(ctx, &mem_17160, bytes_17159, "mem_17160")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
-    
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(niz2084U_13666, segmap_tblock_sizze_16663));
-    
-    {
-        err = gpu_kernel_gather_payloads_intzisegmap_16667(ctx, segmap_usable_groups_16664, 1, 1, *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16655, 1, 1, (int64_t) 0, niz2084U_13666, incr_13668, is_mem_17156.mem, mem_17160.mem);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    
-    int64_t zm_lhs_16519 = add64(dz2083U_13667, psizze_13669);
-    int64_t zs_lhs_16520 = sub64(zm_lhs_16519, (int64_t) 1);
-    int64_t m_16524 = sdiv64(zs_lhs_16520, psizze_13669);
-    
-    if (memblock_alloc_device(ctx, &mem_17162, bytes_17161, "mem_17162")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (futrts_builtinzhreplicate_i32(ctx, mem_17162, niz2084U_13666, 0) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16524);
-    int64_t segmap_tblock_sizze_16691;
-    
-    segmap_tblock_sizze_16691 = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16673;
-    
-    int64_t segmap_usable_groups_16692 = sdiv_up_safe64(niz2084U_13666, segmap_tblock_sizze_16691);
-    bool partitioned_gather_res_16527;
-    int64_t partitioned_gather_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
-    
-    if (memblock_set_device(ctx, &mem_param_17165, &mem_17160, "mem_17160") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_param_17168, &mem_17162, "mem_17162") != 0)
-        return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_13669, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_13669, lower_bound_16535);
-        int64_t min_res_16537 = smin64(dz2083U_13667, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, dz2083U_13667);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
-        
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) dz2083U_13667, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:431:5-41\n   #2  ftSMJ.fut:430:1-431:41\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        if (memblock_alloc_device(ctx, &mem_17170, bytes_17159, "mem_17170")) {
-            err = 1;
-            goto cleanup;
-        }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17170.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17165.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13666})) != 0)
-            goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17173, bytes_17161, "mem_17173")) {
-            err = 1;
-            goto cleanup;
-        }
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "\n# SegMap");
-        
-        int32_t virt_num_tblocks_17218 = sext_i64_i32(sdiv_up64(niz2084U_13666, segmap_tblock_sizze_16691));
-        
-        {
-            err = gpu_kernel_gather_payloads_intzisegmap_16695(ctx, segmap_usable_groups_16692, 1, 1, *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16673, 1, 1, (int64_t) 0, niz2084U_13666, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17157.mem, mem_param_17165.mem, mem_param_17168.mem, mem_17173.mem);
-            if (err != FUTHARK_SUCCESS)
-                goto cleanup;
-        }
-        ctx->failure_is_an_option = 1;
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "");
-        
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16524);
-        
-        if (memblock_set_device(ctx, &mem_param_tmp_17212, &mem_17170, "mem_17170") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17213, &mem_17173, "mem_17173") != 0)
-            return 1;
-        
-        bool loop_while_tmp_17214 = loop_cond_16566;
-        int64_t p_tmp_17217 = tmp_16565;
-        
-        if (memblock_set_device(ctx, &mem_param_17165, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_17168, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
-            return 1;
-        loop_while_16531 = loop_while_tmp_17214;
-        p_16534 = p_tmp_17217;
-    }
-    if (memblock_set_device(ctx, &ext_mem_17179, &mem_param_17165, "mem_param_17165") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17168, "mem_param_17168") != 0)
-        return 1;
-    partitioned_gather_res_16527 = loop_while_16531;
-    partitioned_gather_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
-        return 1;
-    if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
-        return 1;
-    if (memblock_alloc_device(ctx, &mem_17181, bytes_17161, "mem_17181")) {
-        err = 1;
-        goto cleanup;
-    }
-    if ((err = lmad_copy_gpu2gpu_4b(ctx, 1, mem_17181.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17178.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13666})) != 0)
-        goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17181, "mem_17181") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17242, &mem_out_17182, "mem_out_17182") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref_device(ctx, &mem_17181, "mem_17181") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17173, "mem_17173") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17170, "mem_17170") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17168, "mem_param_17168") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17165, "mem_param_17165") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17179, "ext_mem_17179") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_int_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17243, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_15290, int64_t n_15291, int64_t incr_15292, int64_t psizze_15293)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock_device mem_17180;
-    
-    mem_17180.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17193;
-    
-    mem_param_tmp_17193.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17192;
-    
-    mem_param_tmp_17192.references = NULL;
-    
-    struct memblock_device mem_17172;
-    
-    mem_17172.references = NULL;
-    
-    struct memblock_device mem_17169;
-    
-    mem_17169.references = NULL;
-    
-    struct memblock_device mem_param_17167;
-    
-    mem_param_17167.references = NULL;
-    
-    struct memblock_device mem_param_17164;
-    
-    mem_param_17164.references = NULL;
-    
-    struct memblock_device ext_mem_17177;
-    
-    ext_mem_17177.references = NULL;
-    
-    struct memblock_device ext_mem_17178;
-    
-    ext_mem_17178.references = NULL;
-    
-    struct memblock_device mem_17161;
-    
-    mem_17161.references = NULL;
-    
-    struct memblock_device mem_out_17182;
-    
-    mem_out_17182.references = NULL;
-    
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17160 = (int64_t) 8 * ni_15290;
-    bool zzero_16522 = psizze_15293 == (int64_t) 0;
-    bool nonzzero_16523 = !zzero_16522;
-    bool nonzzero_cert_16524;
-    
-    if (!nonzzero_16523) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:459:5-50\n   #2  ftSMJ.fut:458:1-459:50\n"));
-        err = FUTHARK_PROGRAM_ERROR;
-        goto cleanup;
-    }
-    
-    int64_t bytes_17171 = (int64_t) 4 * ni_15290;
-    int64_t segmap_tblock_sizze_16943;
-    
-    segmap_tblock_sizze_16943 = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16935;
-    
-    int64_t segmap_usable_groups_16944 = sdiv_up64(ni_15290, segmap_tblock_sizze_16943);
-    
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17160, "mem_17161")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
-    
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(ni_15290, segmap_tblock_sizze_16943));
-    
-    {
-        err = gpu_kernel_gather_payloads_int_GFURzisegmap_16947(ctx, segmap_usable_groups_16944, 1, 1, *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16935, 1, 1, (int64_t) 0, ni_15290, incr_15292, is_mem_17157.mem, mem_17161.mem);
-        if (err != FUTHARK_SUCCESS)
-            goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    
-    int64_t zm_lhs_16520 = add64(n_15291, psizze_15293);
-    int64_t zs_lhs_16521 = sub64(zm_lhs_16520, (int64_t) 1);
-    int64_t m_16525 = sdiv64(zs_lhs_16521, psizze_15293);
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16525);
-    int64_t segmap_tblock_sizze_16971;
-    
-    segmap_tblock_sizze_16971 = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16953;
-    
-    int64_t segmap_usable_groups_16972 = sdiv_up_safe64(ni_15290, segmap_tblock_sizze_16971);
-    bool partitioned_gather_over_array_res_16527;
-    int64_t partitioned_gather_over_array_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
-    
-    if (memblock_set_device(ctx, &mem_param_17164, &mem_17161, "mem_17161") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_param_17167, &preVals_mem_17156, "preVals_mem_17156") != 0)
-        return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_15293, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_15293, lower_bound_16535);
-        int64_t min_res_16537 = smin64(n_15291, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, n_15291);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
-        
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) n_15291, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:459:5-50\n   #2  ftSMJ.fut:458:1-459:50\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        if (memblock_alloc_device(ctx, &mem_17169, bytes_17160, "mem_17169")) {
-            err = 1;
-            goto cleanup;
-        }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17169.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17164.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15290})) != 0)
-            goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17172, bytes_17171, "mem_17172")) {
-            err = 1;
-            goto cleanup;
-        }
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "\n# SegMap");
-        
-        int32_t virt_num_tblocks_17198 = sext_i64_i32(sdiv_up64(ni_15290, segmap_tblock_sizze_16971));
-        
-        {
-            err = gpu_kernel_gather_payloads_int_GFURzisegmap_16975(ctx, segmap_usable_groups_16972, 1, 1, *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16953, 1, 1, (int64_t) 0, ni_15290, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17158.mem, mem_param_17164.mem, mem_param_17167.mem, mem_17172.mem);
-            if (err != FUTHARK_SUCCESS)
-                goto cleanup;
-        }
-        ctx->failure_is_an_option = 1;
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "");
-        
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16525);
-        
-        if (memblock_set_device(ctx, &mem_param_tmp_17192, &mem_17169, "mem_17169") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17193, &mem_17172, "mem_17172") != 0)
-            return 1;
-        
-        bool loop_while_tmp_17194 = loop_cond_16566;
-        int64_t p_tmp_17197 = tmp_16565;
-        
-        if (memblock_set_device(ctx, &mem_param_17164, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
-            return 1;
-        if (memblock_set_device(ctx, &mem_param_17167, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
-            return 1;
-        loop_while_16531 = loop_while_tmp_17194;
-        p_16534 = p_tmp_17197;
-    }
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17164, "mem_param_17164") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &ext_mem_17177, &mem_param_17167, "mem_param_17167") != 0)
-        return 1;
-    partitioned_gather_over_array_res_16527 = loop_while_16531;
-    partitioned_gather_over_array_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
-        return 1;
-    if (memblock_alloc_device(ctx, &mem_17180, bytes_17171, "mem_17180")) {
-        err = 1;
-        goto cleanup;
-    }
-    if ((err = lmad_copy_gpu2gpu_4b(ctx, 1, mem_17180.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17177.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15290})) != 0)
-        goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17180, "mem_17180") != 0)
-        return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17243, &mem_out_17182, "mem_out_17182") != 0)
-        return 1;
-    
-  cleanup:
-    {
-        if (memblock_unref_device(ctx, &mem_17180, "mem_17180") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17172, "mem_17172") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17169, "mem_17169") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17167, "mem_param_17167") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_param_17164, "mem_param_17164") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
-            return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long(struct futhark_context *ctx, struct memblock_device *mem_out_p_17244, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_14006, int64_t dz2083U_14007, int64_t incr_14008, int64_t psizze_14009)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock_device mem_17181;
-    
-    mem_17181.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17213;
-    
-    mem_param_tmp_17213.references = NULL;
-    
-    struct memblock_device mem_param_tmp_17212;
-    
-    mem_param_tmp_17212.references = NULL;
-    
-    struct memblock_device mem_17173;
-    
-    mem_17173.references = NULL;
-    
-    struct memblock_device mem_17170;
-    
-    mem_17170.references = NULL;
-    
-    struct memblock_device mem_param_17168;
-    
-    mem_param_17168.references = NULL;
-    
-    struct memblock_device mem_param_17165;
-    
-    mem_param_17165.references = NULL;
-    
-    struct memblock_device ext_mem_17178;
-    
-    ext_mem_17178.references = NULL;
-    
-    struct memblock_device ext_mem_17179;
-    
-    ext_mem_17179.references = NULL;
-    
-    struct memblock_device mem_17162;
-    
-    mem_17162.references = NULL;
-    
-    struct memblock_device mem_17160;
-    
-    mem_17160.references = NULL;
-    
-    struct memblock_device mem_out_17182;
-    
-    mem_out_17182.references = NULL;
-    
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17159 = (int64_t) 8 * niz2084U_14006;
-    bool zzero_16521 = psizze_14009 == (int64_t) 0;
-    bool nonzzero_16522 = !zzero_16521;
-    bool nonzzero_cert_16523;
-    
-    if (!nonzzero_16522) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:24:22-28\n   #1  ftSMJ.fut:434:5-41\n   #2  ftSMJ.fut:433:1-434:41\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
     int64_t segmap_tblock_sizze_16719;
     
-    segmap_tblock_sizze_16719 = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16711;
+    segmap_tblock_sizze_16719 = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16711;
     
-    int64_t segmap_usable_groups_16720 = sdiv_up64(niz2084U_14006, segmap_tblock_sizze_16719);
+    int64_t segmap_usable_groups_16720 = sdiv_up64(niz2084U_14574, segmap_tblock_sizze_16719);
     
-    if (memblock_alloc_device(ctx, &mem_17160, bytes_17159, "mem_17160")) {
+    if (memblock_alloc_device(ctx, &mem_17048, bytes_17047, "mem_17048")) {
         err = 1;
         goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "\n# SegMap");
     
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(niz2084U_14006, segmap_tblock_sizze_16719));
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(niz2084U_14574, segmap_tblock_sizze_16719));
     
     {
-        err = gpu_kernel_gather_payloads_longzisegmap_16723(ctx, segmap_usable_groups_16720, 1, 1, *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16711, 1, 1, (int64_t) 0, niz2084U_14006, incr_14008, is_mem_17156.mem, mem_17160.mem);
+        err = gpu_kernel_gather_payloads_doublezisegmap_16723(ctx, segmap_usable_groups_16720, 1, 1, *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16711, 1, 1, (int64_t) 0, niz2084U_14574, incr_14576, is_mem_17044.mem, mem_17048.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "");
     
-    int64_t zm_lhs_16519 = add64(dz2083U_14007, psizze_14009);
-    int64_t zs_lhs_16520 = sub64(zm_lhs_16519, (int64_t) 1);
-    int64_t m_16524 = sdiv64(zs_lhs_16520, psizze_14009);
+    int64_t zm_lhs_16407 = add64(dz2083U_14575, psizze_14577);
+    int64_t zs_lhs_16408 = sub64(zm_lhs_16407, (int64_t) 1);
+    int64_t m_16412 = sdiv64(zs_lhs_16408, psizze_14577);
     
-    if (memblock_alloc_device(ctx, &mem_17162, bytes_17159, "mem_17162")) {
+    if (memblock_alloc_device(ctx, &mem_17050, bytes_17047, "mem_17050")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhreplicate_i64(ctx, mem_17162, niz2084U_14006, (int64_t) 0) != 0) {
+    if (futrts_builtinzhreplicate_f64(ctx, mem_17050, niz2084U_14574, 0.0) != 0) {
         err = 1;
         goto cleanup;
     }
     
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16524);
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16412);
     int64_t segmap_tblock_sizze_16747;
     
-    segmap_tblock_sizze_16747 = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16729;
+    segmap_tblock_sizze_16747 = *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16729;
     
-    int64_t segmap_usable_groups_16748 = sdiv_up_safe64(niz2084U_14006, segmap_tblock_sizze_16747);
-    bool partitioned_gather_res_16527;
-    int64_t partitioned_gather_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
+    int64_t segmap_usable_groups_16748 = sdiv_up_safe64(niz2084U_14574, segmap_tblock_sizze_16747);
+    bool partitioned_gather_res_16415;
+    int64_t partitioned_gather_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
     
-    if (memblock_set_device(ctx, &mem_param_17165, &mem_17160, "mem_17160") != 0)
+    if (memblock_set_device(ctx, &mem_param_17053, &mem_17048, "mem_17048") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_param_17168, &mem_17162, "mem_17162") != 0)
+    if (memblock_set_device(ctx, &mem_param_17056, &mem_17050, "mem_17050") != 0)
         return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_14009, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_14009, lower_bound_16535);
-        int64_t min_res_16537 = smin64(dz2083U_14007, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, dz2083U_14007);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_14577, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_14577, lower_bound_16423);
+        int64_t min_res_16425 = smin64(dz2083U_14575, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, dz2083U_14575);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
         
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) dz2083U_14007, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:434:5-41\n   #2  ftSMJ.fut:433:1-434:41\n"));
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) dz2083U_14575, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:440:5-41\n   #2  ftSMJ.fut:439:1-440:41\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
-        if (memblock_alloc_device(ctx, &mem_17170, bytes_17159, "mem_17170")) {
+        if (memblock_alloc_device(ctx, &mem_17058, bytes_17047, "mem_17058")) {
             err = 1;
             goto cleanup;
         }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17170.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17165.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14006})) != 0)
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17058.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17053.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14574})) != 0)
             goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17173, bytes_17159, "mem_17173")) {
+        if (memblock_alloc_device(ctx, &mem_17061, bytes_17047, "mem_17061")) {
             err = 1;
             goto cleanup;
         }
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "\n# SegMap");
         
-        int32_t virt_num_tblocks_17218 = sext_i64_i32(sdiv_up64(niz2084U_14006, segmap_tblock_sizze_16747));
+        int32_t virt_num_tblocks_17106 = sext_i64_i32(sdiv_up64(niz2084U_14574, segmap_tblock_sizze_16747));
         
         {
-            err = gpu_kernel_gather_payloads_longzisegmap_16751(ctx, segmap_usable_groups_16748, 1, 1, *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16729, 1, 1, (int64_t) 0, niz2084U_14006, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17157.mem, mem_param_17165.mem, mem_param_17168.mem, mem_17173.mem);
+            err = gpu_kernel_gather_payloads_doublezisegmap_16751(ctx, segmap_usable_groups_16748, 1, 1, *ctx->tuning_params.gather_payloads_doublezisegmap_tblock_sizze_16729, 1, 1, (int64_t) 0, niz2084U_14574, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17045.mem, mem_param_17053.mem, mem_param_17056.mem, mem_17061.mem);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
@@ -11772,220 +10412,220 @@ FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long(struct futhark_context *c
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "");
         
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16524);
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16412);
         
-        if (memblock_set_device(ctx, &mem_param_tmp_17212, &mem_17170, "mem_17170") != 0)
+        if (memblock_set_device(ctx, &mem_param_tmp_17100, &mem_17058, "mem_17058") != 0)
             return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17213, &mem_17173, "mem_17173") != 0)
+        if (memblock_set_device(ctx, &mem_param_tmp_17101, &mem_17061, "mem_17061") != 0)
             return 1;
         
-        bool loop_while_tmp_17214 = loop_cond_16566;
-        int64_t p_tmp_17217 = tmp_16565;
+        bool loop_while_tmp_17102 = loop_cond_16454;
+        int64_t p_tmp_17105 = tmp_16453;
         
-        if (memblock_set_device(ctx, &mem_param_17165, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
+        if (memblock_set_device(ctx, &mem_param_17053, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
             return 1;
-        if (memblock_set_device(ctx, &mem_param_17168, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
+        if (memblock_set_device(ctx, &mem_param_17056, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
             return 1;
-        loop_while_16531 = loop_while_tmp_17214;
-        p_16534 = p_tmp_17217;
+        loop_while_16419 = loop_while_tmp_17102;
+        p_16422 = p_tmp_17105;
     }
-    if (memblock_set_device(ctx, &ext_mem_17179, &mem_param_17165, "mem_param_17165") != 0)
+    if (memblock_set_device(ctx, &ext_mem_17067, &mem_param_17053, "mem_param_17053") != 0)
         return 1;
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17168, "mem_param_17168") != 0)
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17056, "mem_param_17056") != 0)
         return 1;
-    partitioned_gather_res_16527 = loop_while_16531;
-    partitioned_gather_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
+    partitioned_gather_res_16415 = loop_while_16419;
+    partitioned_gather_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
+    if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
         return 1;
-    if (memblock_alloc_device(ctx, &mem_17181, bytes_17159, "mem_17181")) {
+    if (memblock_alloc_device(ctx, &mem_17069, bytes_17047, "mem_17069")) {
         err = 1;
         goto cleanup;
     }
-    if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17181.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17178.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14006})) != 0)
+    if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17069.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17066.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14574})) != 0)
         goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
+    if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17181, "mem_17181") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17069, "mem_17069") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17244, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17126, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17181, "mem_17181") != 0)
+        if (memblock_unref_device(ctx, &mem_17069, "mem_17069") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
+        if (memblock_unref_device(ctx, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
+        if (memblock_unref_device(ctx, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17173, "mem_17173") != 0)
+        if (memblock_unref_device(ctx, &mem_17061, "mem_17061") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17170, "mem_17170") != 0)
+        if (memblock_unref_device(ctx, &mem_17058, "mem_17058") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_17168, "mem_param_17168") != 0)
+        if (memblock_unref_device(ctx, &mem_param_17056, "mem_param_17056") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_17165, "mem_param_17165") != 0)
+        if (memblock_unref_device(ctx, &mem_param_17053, "mem_param_17053") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17179, "ext_mem_17179") != 0)
+        if (memblock_unref_device(ctx, &ext_mem_17067, "ext_mem_17067") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
+        if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
+        if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17245, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_15591, int64_t n_15592, int64_t incr_15593, int64_t psizze_15594)
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_double_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17127, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_16081, int64_t n_16082, int64_t incr_16083, int64_t psizze_16084)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17180;
+    struct memblock_device mem_17068;
     
-    mem_17180.references = NULL;
+    mem_17068.references = NULL;
     
-    struct memblock_device mem_param_tmp_17193;
+    struct memblock_device mem_param_tmp_17081;
     
-    mem_param_tmp_17193.references = NULL;
+    mem_param_tmp_17081.references = NULL;
     
-    struct memblock_device mem_param_tmp_17192;
+    struct memblock_device mem_param_tmp_17080;
     
-    mem_param_tmp_17192.references = NULL;
+    mem_param_tmp_17080.references = NULL;
     
-    struct memblock_device mem_17172;
+    struct memblock_device mem_17060;
     
-    mem_17172.references = NULL;
+    mem_17060.references = NULL;
     
-    struct memblock_device mem_17169;
+    struct memblock_device mem_17057;
     
-    mem_17169.references = NULL;
+    mem_17057.references = NULL;
     
-    struct memblock_device mem_param_17167;
+    struct memblock_device mem_param_17055;
     
-    mem_param_17167.references = NULL;
+    mem_param_17055.references = NULL;
     
-    struct memblock_device mem_param_17164;
+    struct memblock_device mem_param_17052;
     
-    mem_param_17164.references = NULL;
+    mem_param_17052.references = NULL;
     
-    struct memblock_device ext_mem_17177;
+    struct memblock_device ext_mem_17065;
     
-    ext_mem_17177.references = NULL;
+    ext_mem_17065.references = NULL;
     
-    struct memblock_device ext_mem_17178;
+    struct memblock_device ext_mem_17066;
     
-    ext_mem_17178.references = NULL;
+    ext_mem_17066.references = NULL;
     
-    struct memblock_device mem_17161;
+    struct memblock_device mem_17049;
     
-    mem_17161.references = NULL;
+    mem_17049.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17160 = (int64_t) 8 * ni_15591;
-    bool zzero_16522 = psizze_15594 == (int64_t) 0;
-    bool nonzzero_16523 = !zzero_16522;
-    bool nonzzero_cert_16524;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17048 = (int64_t) 8 * ni_16081;
+    bool zzero_16410 = psizze_16084 == (int64_t) 0;
+    bool nonzzero_16411 = !zzero_16410;
+    bool nonzzero_cert_16412;
     
-    if (!nonzzero_16523) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:462:5-50\n   #2  ftSMJ.fut:461:1-462:50\n"));
+    if (!nonzzero_16411) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:468:5-50\n   #2  ftSMJ.fut:467:1-468:50\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
     int64_t segmap_tblock_sizze_16999;
     
-    segmap_tblock_sizze_16999 = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16991;
+    segmap_tblock_sizze_16999 = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_16991;
     
-    int64_t segmap_usable_groups_17000 = sdiv_up64(ni_15591, segmap_tblock_sizze_16999);
+    int64_t segmap_usable_groups_17000 = sdiv_up64(ni_16081, segmap_tblock_sizze_16999);
     
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17160, "mem_17161")) {
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17048, "mem_17049")) {
         err = 1;
         goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "\n# SegMap");
     
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(ni_15591, segmap_tblock_sizze_16999));
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(ni_16081, segmap_tblock_sizze_16999));
     
     {
-        err = gpu_kernel_gather_payloads_long_GFURzisegmap_17003(ctx, segmap_usable_groups_17000, 1, 1, *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16991, 1, 1, (int64_t) 0, ni_15591, incr_15593, is_mem_17157.mem, mem_17161.mem);
+        err = gpu_kernel_gather_payloads_double_GFURzisegmap_17003(ctx, segmap_usable_groups_17000, 1, 1, *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_16991, 1, 1, (int64_t) 0, ni_16081, incr_16083, is_mem_17045.mem, mem_17049.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "");
     
-    int64_t zm_lhs_16520 = add64(n_15592, psizze_15594);
-    int64_t zs_lhs_16521 = sub64(zm_lhs_16520, (int64_t) 1);
-    int64_t m_16525 = sdiv64(zs_lhs_16521, psizze_15594);
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16525);
+    int64_t zm_lhs_16408 = add64(n_16082, psizze_16084);
+    int64_t zs_lhs_16409 = sub64(zm_lhs_16408, (int64_t) 1);
+    int64_t m_16413 = sdiv64(zs_lhs_16409, psizze_16084);
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16413);
     int64_t segmap_tblock_sizze_17027;
     
-    segmap_tblock_sizze_17027 = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_17009;
+    segmap_tblock_sizze_17027 = *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17009;
     
-    int64_t segmap_usable_groups_17028 = sdiv_up_safe64(ni_15591, segmap_tblock_sizze_17027);
-    bool partitioned_gather_over_array_res_16527;
-    int64_t partitioned_gather_over_array_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
+    int64_t segmap_usable_groups_17028 = sdiv_up_safe64(ni_16081, segmap_tblock_sizze_17027);
+    bool partitioned_gather_over_array_res_16415;
+    int64_t partitioned_gather_over_array_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
     
-    if (memblock_set_device(ctx, &mem_param_17164, &mem_17161, "mem_17161") != 0)
+    if (memblock_set_device(ctx, &mem_param_17052, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_param_17167, &preVals_mem_17156, "preVals_mem_17156") != 0)
+    if (memblock_set_device(ctx, &mem_param_17055, &preVals_mem_17044, "preVals_mem_17044") != 0)
         return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_15594, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_15594, lower_bound_16535);
-        int64_t min_res_16537 = smin64(n_15592, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, n_15592);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_16084, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_16084, lower_bound_16423);
+        int64_t min_res_16425 = smin64(n_16082, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, n_16082);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
         
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) n_15592, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:462:5-50\n   #2  ftSMJ.fut:461:1-462:50\n"));
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) n_16082, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:468:5-50\n   #2  ftSMJ.fut:467:1-468:50\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
-        if (memblock_alloc_device(ctx, &mem_17169, bytes_17160, "mem_17169")) {
+        if (memblock_alloc_device(ctx, &mem_17057, bytes_17048, "mem_17057")) {
             err = 1;
             goto cleanup;
         }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17169.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17164.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15591})) != 0)
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17057.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17052.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_16081})) != 0)
             goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17172, bytes_17160, "mem_17172")) {
+        if (memblock_alloc_device(ctx, &mem_17060, bytes_17048, "mem_17060")) {
             err = 1;
             goto cleanup;
         }
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "\n# SegMap");
         
-        int32_t virt_num_tblocks_17198 = sext_i64_i32(sdiv_up64(ni_15591, segmap_tblock_sizze_17027));
+        int32_t virt_num_tblocks_17086 = sext_i64_i32(sdiv_up64(ni_16081, segmap_tblock_sizze_17027));
         
         {
-            err = gpu_kernel_gather_payloads_long_GFURzisegmap_17031(ctx, segmap_usable_groups_17028, 1, 1, *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_17009, 1, 1, (int64_t) 0, ni_15591, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17158.mem, mem_param_17164.mem, mem_param_17167.mem, mem_17172.mem);
+            err = gpu_kernel_gather_payloads_double_GFURzisegmap_17031(ctx, segmap_usable_groups_17028, 1, 1, *ctx->tuning_params.gather_payloads_double_GFURzisegmap_tblock_sizze_17009, 1, 1, (int64_t) 0, ni_16081, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17046.mem, mem_param_17052.mem, mem_param_17055.mem, mem_17060.mem);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
@@ -11993,231 +10633,1591 @@ FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long_GFUR(struct futhark_conte
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "");
         
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16525);
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16413);
         
-        if (memblock_set_device(ctx, &mem_param_tmp_17192, &mem_17169, "mem_17169") != 0)
+        if (memblock_set_device(ctx, &mem_param_tmp_17080, &mem_17057, "mem_17057") != 0)
             return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17193, &mem_17172, "mem_17172") != 0)
+        if (memblock_set_device(ctx, &mem_param_tmp_17081, &mem_17060, "mem_17060") != 0)
             return 1;
         
-        bool loop_while_tmp_17194 = loop_cond_16566;
-        int64_t p_tmp_17197 = tmp_16565;
+        bool loop_while_tmp_17082 = loop_cond_16454;
+        int64_t p_tmp_17085 = tmp_16453;
         
-        if (memblock_set_device(ctx, &mem_param_17164, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
+        if (memblock_set_device(ctx, &mem_param_17052, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
             return 1;
-        if (memblock_set_device(ctx, &mem_param_17167, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
+        if (memblock_set_device(ctx, &mem_param_17055, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
             return 1;
-        loop_while_16531 = loop_while_tmp_17194;
-        p_16534 = p_tmp_17197;
+        loop_while_16419 = loop_while_tmp_17082;
+        p_16422 = p_tmp_17085;
     }
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17164, "mem_param_17164") != 0)
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17052, "mem_param_17052") != 0)
         return 1;
-    if (memblock_set_device(ctx, &ext_mem_17177, &mem_param_17167, "mem_param_17167") != 0)
+    if (memblock_set_device(ctx, &ext_mem_17065, &mem_param_17055, "mem_param_17055") != 0)
         return 1;
-    partitioned_gather_over_array_res_16527 = loop_while_16531;
-    partitioned_gather_over_array_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+    partitioned_gather_over_array_res_16415 = loop_while_16419;
+    partitioned_gather_over_array_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_alloc_device(ctx, &mem_17180, bytes_17160, "mem_17180")) {
+    if (memblock_alloc_device(ctx, &mem_17068, bytes_17048, "mem_17068")) {
         err = 1;
         goto cleanup;
     }
-    if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17180.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17177.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15591})) != 0)
+    if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17068.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17065.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_16081})) != 0)
         goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
+    if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17180, "mem_17180") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17068, "mem_17068") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17245, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17127, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17180, "mem_17180") != 0)
+        if (memblock_unref_device(ctx, &mem_17068, "mem_17068") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
+        if (memblock_unref_device(ctx, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
+        if (memblock_unref_device(ctx, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17172, "mem_17172") != 0)
+        if (memblock_unref_device(ctx, &mem_17060, "mem_17060") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17169, "mem_17169") != 0)
+        if (memblock_unref_device(ctx, &mem_17057, "mem_17057") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_17167, "mem_param_17167") != 0)
+        if (memblock_unref_device(ctx, &mem_param_17055, "mem_param_17055") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_17164, "mem_param_17164") != 0)
+        if (memblock_unref_device(ctx, &mem_param_17052, "mem_param_17052") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
+        if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short(struct futhark_context *ctx, struct memblock_device *mem_out_p_17246, struct memblock_device is_mem_17156, struct memblock_device ys_mem_17157, int64_t niz2084U_13326, int64_t dz2083U_13327, int64_t incr_13328, int64_t psizze_13329)
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_float(struct futhark_context *ctx, struct memblock_device *mem_out_p_17128, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_14234, int64_t dz2083U_14235, int64_t incr_14236, int64_t psizze_14237)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17181;
+    struct memblock_device mem_17069;
     
-    mem_17181.references = NULL;
+    mem_17069.references = NULL;
     
-    struct memblock_device mem_param_tmp_17213;
+    struct memblock_device mem_param_tmp_17101;
     
-    mem_param_tmp_17213.references = NULL;
+    mem_param_tmp_17101.references = NULL;
     
-    struct memblock_device mem_param_tmp_17212;
+    struct memblock_device mem_param_tmp_17100;
     
-    mem_param_tmp_17212.references = NULL;
+    mem_param_tmp_17100.references = NULL;
     
-    struct memblock_device mem_17173;
+    struct memblock_device mem_17061;
     
-    mem_17173.references = NULL;
+    mem_17061.references = NULL;
     
-    struct memblock_device mem_17170;
+    struct memblock_device mem_17058;
     
-    mem_17170.references = NULL;
+    mem_17058.references = NULL;
     
-    struct memblock_device mem_param_17168;
+    struct memblock_device mem_param_17056;
     
-    mem_param_17168.references = NULL;
+    mem_param_17056.references = NULL;
     
-    struct memblock_device mem_param_17165;
+    struct memblock_device mem_param_17053;
     
-    mem_param_17165.references = NULL;
+    mem_param_17053.references = NULL;
     
-    struct memblock_device ext_mem_17178;
+    struct memblock_device ext_mem_17066;
     
-    ext_mem_17178.references = NULL;
+    ext_mem_17066.references = NULL;
     
-    struct memblock_device ext_mem_17179;
+    struct memblock_device ext_mem_17067;
     
-    ext_mem_17179.references = NULL;
+    ext_mem_17067.references = NULL;
     
-    struct memblock_device mem_17162;
+    struct memblock_device mem_17050;
     
-    mem_17162.references = NULL;
+    mem_17050.references = NULL;
     
-    struct memblock_device mem_17160;
+    struct memblock_device mem_17048;
     
-    mem_17160.references = NULL;
+    mem_17048.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17159 = (int64_t) 8 * niz2084U_13326;
-    bool zzero_16521 = psizze_13329 == (int64_t) 0;
-    bool nonzzero_16522 = !zzero_16521;
-    bool nonzzero_cert_16523;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17047 = (int64_t) 8 * niz2084U_14234;
+    bool zzero_16409 = psizze_14237 == (int64_t) 0;
+    bool nonzzero_16410 = !zzero_16409;
+    bool nonzzero_cert_16411;
     
-    if (!nonzzero_16522) {
+    if (!nonzzero_16410) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:24:22-28\n   #1  ftSMJ.fut:437:5-41\n   #2  ftSMJ.fut:436:1-437:41\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_17049 = (int64_t) 4 * niz2084U_14234;
+    int64_t segmap_tblock_sizze_16663;
+    
+    segmap_tblock_sizze_16663 = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16655;
+    
+    int64_t segmap_usable_groups_16664 = sdiv_up64(niz2084U_14234, segmap_tblock_sizze_16663);
+    
+    if (memblock_alloc_device(ctx, &mem_17048, bytes_17047, "mem_17048")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "\n# SegMap");
+    
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(niz2084U_14234, segmap_tblock_sizze_16663));
+    
+    {
+        err = gpu_kernel_gather_payloads_floatzisegmap_16667(ctx, segmap_usable_groups_16664, 1, 1, *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16655, 1, 1, (int64_t) 0, niz2084U_14234, incr_14236, is_mem_17044.mem, mem_17048.mem);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "");
+    
+    int64_t zm_lhs_16407 = add64(dz2083U_14235, psizze_14237);
+    int64_t zs_lhs_16408 = sub64(zm_lhs_16407, (int64_t) 1);
+    int64_t m_16412 = sdiv64(zs_lhs_16408, psizze_14237);
+    
+    if (memblock_alloc_device(ctx, &mem_17050, bytes_17049, "mem_17050")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (futrts_builtinzhreplicate_f32(ctx, mem_17050, niz2084U_14234, 0.0F) != 0) {
+        err = 1;
+        goto cleanup;
+    }
+    
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16412);
+    int64_t segmap_tblock_sizze_16691;
+    
+    segmap_tblock_sizze_16691 = *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16673;
+    
+    int64_t segmap_usable_groups_16692 = sdiv_up_safe64(niz2084U_14234, segmap_tblock_sizze_16691);
+    bool partitioned_gather_res_16415;
+    int64_t partitioned_gather_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
+    
+    if (memblock_set_device(ctx, &mem_param_17053, &mem_17048, "mem_17048") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_param_17056, &mem_17050, "mem_17050") != 0)
+        return 1;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_14237, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_14237, lower_bound_16423);
+        int64_t min_res_16425 = smin64(dz2083U_14235, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, dz2083U_14235);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
+        
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) dz2083U_14235, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:437:5-41\n   #2  ftSMJ.fut:436:1-437:41\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        if (memblock_alloc_device(ctx, &mem_17058, bytes_17047, "mem_17058")) {
+            err = 1;
+            goto cleanup;
+        }
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17058.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17053.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14234})) != 0)
+            goto cleanup;
+        if (memblock_alloc_device(ctx, &mem_17061, bytes_17049, "mem_17061")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
+        
+        int32_t virt_num_tblocks_17106 = sext_i64_i32(sdiv_up64(niz2084U_14234, segmap_tblock_sizze_16691));
+        
+        {
+            err = gpu_kernel_gather_payloads_floatzisegmap_16695(ctx, segmap_usable_groups_16692, 1, 1, *ctx->tuning_params.gather_payloads_floatzisegmap_tblock_sizze_16673, 1, 1, (int64_t) 0, niz2084U_14234, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17045.mem, mem_param_17053.mem, mem_param_17056.mem, mem_17061.mem);
+            if (err != FUTHARK_SUCCESS)
+                goto cleanup;
+        }
+        ctx->failure_is_an_option = 1;
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16412);
+        
+        if (memblock_set_device(ctx, &mem_param_tmp_17100, &mem_17058, "mem_17058") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_tmp_17101, &mem_17061, "mem_17061") != 0)
+            return 1;
+        
+        bool loop_while_tmp_17102 = loop_cond_16454;
+        int64_t p_tmp_17105 = tmp_16453;
+        
+        if (memblock_set_device(ctx, &mem_param_17053, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_17056, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
+            return 1;
+        loop_while_16419 = loop_while_tmp_17102;
+        p_16422 = p_tmp_17105;
+    }
+    if (memblock_set_device(ctx, &ext_mem_17067, &mem_param_17053, "mem_param_17053") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17056, "mem_param_17056") != 0)
+        return 1;
+    partitioned_gather_res_16415 = loop_while_16419;
+    partitioned_gather_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
+        return 1;
+    if (memblock_alloc_device(ctx, &mem_17069, bytes_17049, "mem_17069")) {
+        err = 1;
+        goto cleanup;
+    }
+    if ((err = lmad_copy_gpu2gpu_4b(ctx, 1, mem_17069.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17066.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_14234})) != 0)
+        goto cleanup;
+    if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17069, "mem_17069") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &*mem_out_p_17128, &mem_out_17070, "mem_out_17070") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref_device(ctx, &mem_17069, "mem_17069") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17061, "mem_17061") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17058, "mem_17058") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17056, "mem_param_17056") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17053, "mem_param_17053") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17067, "ext_mem_17067") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_float_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17129, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_15780, int64_t n_15781, int64_t incr_15782, int64_t psizze_15783)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock_device mem_17068;
+    
+    mem_17068.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17081;
+    
+    mem_param_tmp_17081.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17080;
+    
+    mem_param_tmp_17080.references = NULL;
+    
+    struct memblock_device mem_17060;
+    
+    mem_17060.references = NULL;
+    
+    struct memblock_device mem_17057;
+    
+    mem_17057.references = NULL;
+    
+    struct memblock_device mem_param_17055;
+    
+    mem_param_17055.references = NULL;
+    
+    struct memblock_device mem_param_17052;
+    
+    mem_param_17052.references = NULL;
+    
+    struct memblock_device ext_mem_17065;
+    
+    ext_mem_17065.references = NULL;
+    
+    struct memblock_device ext_mem_17066;
+    
+    ext_mem_17066.references = NULL;
+    
+    struct memblock_device mem_17049;
+    
+    mem_17049.references = NULL;
+    
+    struct memblock_device mem_out_17070;
+    
+    mem_out_17070.references = NULL;
+    
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17048 = (int64_t) 8 * ni_15780;
+    bool zzero_16410 = psizze_15783 == (int64_t) 0;
+    bool nonzzero_16411 = !zzero_16410;
+    bool nonzzero_cert_16412;
+    
+    if (!nonzzero_16411) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:465:5-50\n   #2  ftSMJ.fut:464:1-465:50\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_17059 = (int64_t) 4 * ni_15780;
+    int64_t segmap_tblock_sizze_16943;
+    
+    segmap_tblock_sizze_16943 = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16935;
+    
+    int64_t segmap_usable_groups_16944 = sdiv_up64(ni_15780, segmap_tblock_sizze_16943);
+    
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17048, "mem_17049")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "\n# SegMap");
+    
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(ni_15780, segmap_tblock_sizze_16943));
+    
+    {
+        err = gpu_kernel_gather_payloads_float_GFURzisegmap_16947(ctx, segmap_usable_groups_16944, 1, 1, *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16935, 1, 1, (int64_t) 0, ni_15780, incr_15782, is_mem_17045.mem, mem_17049.mem);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "");
+    
+    int64_t zm_lhs_16408 = add64(n_15781, psizze_15783);
+    int64_t zs_lhs_16409 = sub64(zm_lhs_16408, (int64_t) 1);
+    int64_t m_16413 = sdiv64(zs_lhs_16409, psizze_15783);
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16413);
+    int64_t segmap_tblock_sizze_16971;
+    
+    segmap_tblock_sizze_16971 = *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16953;
+    
+    int64_t segmap_usable_groups_16972 = sdiv_up_safe64(ni_15780, segmap_tblock_sizze_16971);
+    bool partitioned_gather_over_array_res_16415;
+    int64_t partitioned_gather_over_array_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
+    
+    if (memblock_set_device(ctx, &mem_param_17052, &mem_17049, "mem_17049") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_param_17055, &preVals_mem_17044, "preVals_mem_17044") != 0)
+        return 1;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_15783, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_15783, lower_bound_16423);
+        int64_t min_res_16425 = smin64(n_15781, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, n_15781);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
+        
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) n_15781, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:465:5-50\n   #2  ftSMJ.fut:464:1-465:50\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        if (memblock_alloc_device(ctx, &mem_17057, bytes_17048, "mem_17057")) {
+            err = 1;
+            goto cleanup;
+        }
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17057.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17052.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15780})) != 0)
+            goto cleanup;
+        if (memblock_alloc_device(ctx, &mem_17060, bytes_17059, "mem_17060")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
+        
+        int32_t virt_num_tblocks_17086 = sext_i64_i32(sdiv_up64(ni_15780, segmap_tblock_sizze_16971));
+        
+        {
+            err = gpu_kernel_gather_payloads_float_GFURzisegmap_16975(ctx, segmap_usable_groups_16972, 1, 1, *ctx->tuning_params.gather_payloads_float_GFURzisegmap_tblock_sizze_16953, 1, 1, (int64_t) 0, ni_15780, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17046.mem, mem_param_17052.mem, mem_param_17055.mem, mem_17060.mem);
+            if (err != FUTHARK_SUCCESS)
+                goto cleanup;
+        }
+        ctx->failure_is_an_option = 1;
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16413);
+        
+        if (memblock_set_device(ctx, &mem_param_tmp_17080, &mem_17057, "mem_17057") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_tmp_17081, &mem_17060, "mem_17060") != 0)
+            return 1;
+        
+        bool loop_while_tmp_17082 = loop_cond_16454;
+        int64_t p_tmp_17085 = tmp_16453;
+        
+        if (memblock_set_device(ctx, &mem_param_17052, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_17055, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
+            return 1;
+        loop_while_16419 = loop_while_tmp_17082;
+        p_16422 = p_tmp_17085;
+    }
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17052, "mem_param_17052") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &ext_mem_17065, &mem_param_17055, "mem_param_17055") != 0)
+        return 1;
+    partitioned_gather_over_array_res_16415 = loop_while_16419;
+    partitioned_gather_over_array_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
+        return 1;
+    if (memblock_alloc_device(ctx, &mem_17068, bytes_17059, "mem_17068")) {
+        err = 1;
+        goto cleanup;
+    }
+    if ((err = lmad_copy_gpu2gpu_4b(ctx, 1, mem_17068.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17065.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15780})) != 0)
+        goto cleanup;
+    if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17068, "mem_17068") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &*mem_out_p_17129, &mem_out_17070, "mem_out_17070") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref_device(ctx, &mem_17068, "mem_17068") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17060, "mem_17060") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17057, "mem_17057") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17055, "mem_param_17055") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17052, "mem_param_17052") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_17130, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_13554, int64_t dz2083U_13555, int64_t incr_13556, int64_t psizze_13557)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock_device mem_17069;
+    
+    mem_17069.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17101;
+    
+    mem_param_tmp_17101.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17100;
+    
+    mem_param_tmp_17100.references = NULL;
+    
+    struct memblock_device mem_17061;
+    
+    mem_17061.references = NULL;
+    
+    struct memblock_device mem_17058;
+    
+    mem_17058.references = NULL;
+    
+    struct memblock_device mem_param_17056;
+    
+    mem_param_17056.references = NULL;
+    
+    struct memblock_device mem_param_17053;
+    
+    mem_param_17053.references = NULL;
+    
+    struct memblock_device ext_mem_17066;
+    
+    ext_mem_17066.references = NULL;
+    
+    struct memblock_device ext_mem_17067;
+    
+    ext_mem_17067.references = NULL;
+    
+    struct memblock_device mem_17050;
+    
+    mem_17050.references = NULL;
+    
+    struct memblock_device mem_17048;
+    
+    mem_17048.references = NULL;
+    
+    struct memblock_device mem_out_17070;
+    
+    mem_out_17070.references = NULL;
+    
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17047 = (int64_t) 8 * niz2084U_13554;
+    bool zzero_16409 = psizze_13557 == (int64_t) 0;
+    bool nonzzero_16410 = !zzero_16409;
+    bool nonzzero_cert_16411;
+    
+    if (!nonzzero_16410) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:24:22-28\n   #1  ftSMJ.fut:431:5-41\n   #2  ftSMJ.fut:430:1-431:41\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_17049 = (int64_t) 4 * niz2084U_13554;
+    int64_t segmap_tblock_sizze_16551;
+    
+    segmap_tblock_sizze_16551 = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16543;
+    
+    int64_t segmap_usable_groups_16552 = sdiv_up64(niz2084U_13554, segmap_tblock_sizze_16551);
+    
+    if (memblock_alloc_device(ctx, &mem_17048, bytes_17047, "mem_17048")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "\n# SegMap");
+    
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(niz2084U_13554, segmap_tblock_sizze_16551));
+    
+    {
+        err = gpu_kernel_gather_payloads_intzisegmap_16555(ctx, segmap_usable_groups_16552, 1, 1, *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16543, 1, 1, (int64_t) 0, niz2084U_13554, incr_13556, is_mem_17044.mem, mem_17048.mem);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "");
+    
+    int64_t zm_lhs_16407 = add64(dz2083U_13555, psizze_13557);
+    int64_t zs_lhs_16408 = sub64(zm_lhs_16407, (int64_t) 1);
+    int64_t m_16412 = sdiv64(zs_lhs_16408, psizze_13557);
+    
+    if (memblock_alloc_device(ctx, &mem_17050, bytes_17049, "mem_17050")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (futrts_builtinzhreplicate_i32(ctx, mem_17050, niz2084U_13554, 0) != 0) {
+        err = 1;
+        goto cleanup;
+    }
+    
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16412);
+    int64_t segmap_tblock_sizze_16579;
+    
+    segmap_tblock_sizze_16579 = *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16561;
+    
+    int64_t segmap_usable_groups_16580 = sdiv_up_safe64(niz2084U_13554, segmap_tblock_sizze_16579);
+    bool partitioned_gather_res_16415;
+    int64_t partitioned_gather_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
+    
+    if (memblock_set_device(ctx, &mem_param_17053, &mem_17048, "mem_17048") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_param_17056, &mem_17050, "mem_17050") != 0)
+        return 1;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_13557, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_13557, lower_bound_16423);
+        int64_t min_res_16425 = smin64(dz2083U_13555, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, dz2083U_13555);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
+        
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) dz2083U_13555, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:431:5-41\n   #2  ftSMJ.fut:430:1-431:41\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        if (memblock_alloc_device(ctx, &mem_17058, bytes_17047, "mem_17058")) {
+            err = 1;
+            goto cleanup;
+        }
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17058.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17053.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13554})) != 0)
+            goto cleanup;
+        if (memblock_alloc_device(ctx, &mem_17061, bytes_17049, "mem_17061")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
+        
+        int32_t virt_num_tblocks_17106 = sext_i64_i32(sdiv_up64(niz2084U_13554, segmap_tblock_sizze_16579));
+        
+        {
+            err = gpu_kernel_gather_payloads_intzisegmap_16583(ctx, segmap_usable_groups_16580, 1, 1, *ctx->tuning_params.gather_payloads_intzisegmap_tblock_sizze_16561, 1, 1, (int64_t) 0, niz2084U_13554, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17045.mem, mem_param_17053.mem, mem_param_17056.mem, mem_17061.mem);
+            if (err != FUTHARK_SUCCESS)
+                goto cleanup;
+        }
+        ctx->failure_is_an_option = 1;
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16412);
+        
+        if (memblock_set_device(ctx, &mem_param_tmp_17100, &mem_17058, "mem_17058") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_tmp_17101, &mem_17061, "mem_17061") != 0)
+            return 1;
+        
+        bool loop_while_tmp_17102 = loop_cond_16454;
+        int64_t p_tmp_17105 = tmp_16453;
+        
+        if (memblock_set_device(ctx, &mem_param_17053, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_17056, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
+            return 1;
+        loop_while_16419 = loop_while_tmp_17102;
+        p_16422 = p_tmp_17105;
+    }
+    if (memblock_set_device(ctx, &ext_mem_17067, &mem_param_17053, "mem_param_17053") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17056, "mem_param_17056") != 0)
+        return 1;
+    partitioned_gather_res_16415 = loop_while_16419;
+    partitioned_gather_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
+        return 1;
+    if (memblock_alloc_device(ctx, &mem_17069, bytes_17049, "mem_17069")) {
+        err = 1;
+        goto cleanup;
+    }
+    if ((err = lmad_copy_gpu2gpu_4b(ctx, 1, mem_17069.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17066.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13554})) != 0)
+        goto cleanup;
+    if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17069, "mem_17069") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &*mem_out_p_17130, &mem_out_17070, "mem_out_17070") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref_device(ctx, &mem_17069, "mem_17069") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17061, "mem_17061") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17058, "mem_17058") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17056, "mem_param_17056") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17053, "mem_param_17053") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17067, "ext_mem_17067") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_int_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17131, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_15178, int64_t n_15179, int64_t incr_15180, int64_t psizze_15181)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock_device mem_17068;
+    
+    mem_17068.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17081;
+    
+    mem_param_tmp_17081.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17080;
+    
+    mem_param_tmp_17080.references = NULL;
+    
+    struct memblock_device mem_17060;
+    
+    mem_17060.references = NULL;
+    
+    struct memblock_device mem_17057;
+    
+    mem_17057.references = NULL;
+    
+    struct memblock_device mem_param_17055;
+    
+    mem_param_17055.references = NULL;
+    
+    struct memblock_device mem_param_17052;
+    
+    mem_param_17052.references = NULL;
+    
+    struct memblock_device ext_mem_17065;
+    
+    ext_mem_17065.references = NULL;
+    
+    struct memblock_device ext_mem_17066;
+    
+    ext_mem_17066.references = NULL;
+    
+    struct memblock_device mem_17049;
+    
+    mem_17049.references = NULL;
+    
+    struct memblock_device mem_out_17070;
+    
+    mem_out_17070.references = NULL;
+    
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17048 = (int64_t) 8 * ni_15178;
+    bool zzero_16410 = psizze_15181 == (int64_t) 0;
+    bool nonzzero_16411 = !zzero_16410;
+    bool nonzzero_cert_16412;
+    
+    if (!nonzzero_16411) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:459:5-50\n   #2  ftSMJ.fut:458:1-459:50\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_17059 = (int64_t) 4 * ni_15178;
+    int64_t segmap_tblock_sizze_16831;
+    
+    segmap_tblock_sizze_16831 = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16823;
+    
+    int64_t segmap_usable_groups_16832 = sdiv_up64(ni_15178, segmap_tblock_sizze_16831);
+    
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17048, "mem_17049")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "\n# SegMap");
+    
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(ni_15178, segmap_tblock_sizze_16831));
+    
+    {
+        err = gpu_kernel_gather_payloads_int_GFURzisegmap_16835(ctx, segmap_usable_groups_16832, 1, 1, *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16823, 1, 1, (int64_t) 0, ni_15178, incr_15180, is_mem_17045.mem, mem_17049.mem);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "");
+    
+    int64_t zm_lhs_16408 = add64(n_15179, psizze_15181);
+    int64_t zs_lhs_16409 = sub64(zm_lhs_16408, (int64_t) 1);
+    int64_t m_16413 = sdiv64(zs_lhs_16409, psizze_15181);
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16413);
+    int64_t segmap_tblock_sizze_16859;
+    
+    segmap_tblock_sizze_16859 = *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16841;
+    
+    int64_t segmap_usable_groups_16860 = sdiv_up_safe64(ni_15178, segmap_tblock_sizze_16859);
+    bool partitioned_gather_over_array_res_16415;
+    int64_t partitioned_gather_over_array_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
+    
+    if (memblock_set_device(ctx, &mem_param_17052, &mem_17049, "mem_17049") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_param_17055, &preVals_mem_17044, "preVals_mem_17044") != 0)
+        return 1;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_15181, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_15181, lower_bound_16423);
+        int64_t min_res_16425 = smin64(n_15179, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, n_15179);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
+        
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) n_15179, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:459:5-50\n   #2  ftSMJ.fut:458:1-459:50\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        if (memblock_alloc_device(ctx, &mem_17057, bytes_17048, "mem_17057")) {
+            err = 1;
+            goto cleanup;
+        }
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17057.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17052.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15178})) != 0)
+            goto cleanup;
+        if (memblock_alloc_device(ctx, &mem_17060, bytes_17059, "mem_17060")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
+        
+        int32_t virt_num_tblocks_17086 = sext_i64_i32(sdiv_up64(ni_15178, segmap_tblock_sizze_16859));
+        
+        {
+            err = gpu_kernel_gather_payloads_int_GFURzisegmap_16863(ctx, segmap_usable_groups_16860, 1, 1, *ctx->tuning_params.gather_payloads_int_GFURzisegmap_tblock_sizze_16841, 1, 1, (int64_t) 0, ni_15178, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17046.mem, mem_param_17052.mem, mem_param_17055.mem, mem_17060.mem);
+            if (err != FUTHARK_SUCCESS)
+                goto cleanup;
+        }
+        ctx->failure_is_an_option = 1;
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16413);
+        
+        if (memblock_set_device(ctx, &mem_param_tmp_17080, &mem_17057, "mem_17057") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_tmp_17081, &mem_17060, "mem_17060") != 0)
+            return 1;
+        
+        bool loop_while_tmp_17082 = loop_cond_16454;
+        int64_t p_tmp_17085 = tmp_16453;
+        
+        if (memblock_set_device(ctx, &mem_param_17052, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_17055, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
+            return 1;
+        loop_while_16419 = loop_while_tmp_17082;
+        p_16422 = p_tmp_17085;
+    }
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17052, "mem_param_17052") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &ext_mem_17065, &mem_param_17055, "mem_param_17055") != 0)
+        return 1;
+    partitioned_gather_over_array_res_16415 = loop_while_16419;
+    partitioned_gather_over_array_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
+        return 1;
+    if (memblock_alloc_device(ctx, &mem_17068, bytes_17059, "mem_17068")) {
+        err = 1;
+        goto cleanup;
+    }
+    if ((err = lmad_copy_gpu2gpu_4b(ctx, 1, mem_17068.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17065.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15178})) != 0)
+        goto cleanup;
+    if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17068, "mem_17068") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &*mem_out_p_17131, &mem_out_17070, "mem_out_17070") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref_device(ctx, &mem_17068, "mem_17068") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17060, "mem_17060") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17057, "mem_17057") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17055, "mem_param_17055") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17052, "mem_param_17052") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long(struct futhark_context *ctx, struct memblock_device *mem_out_p_17132, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_13894, int64_t dz2083U_13895, int64_t incr_13896, int64_t psizze_13897)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock_device mem_17069;
+    
+    mem_17069.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17101;
+    
+    mem_param_tmp_17101.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17100;
+    
+    mem_param_tmp_17100.references = NULL;
+    
+    struct memblock_device mem_17061;
+    
+    mem_17061.references = NULL;
+    
+    struct memblock_device mem_17058;
+    
+    mem_17058.references = NULL;
+    
+    struct memblock_device mem_param_17056;
+    
+    mem_param_17056.references = NULL;
+    
+    struct memblock_device mem_param_17053;
+    
+    mem_param_17053.references = NULL;
+    
+    struct memblock_device ext_mem_17066;
+    
+    ext_mem_17066.references = NULL;
+    
+    struct memblock_device ext_mem_17067;
+    
+    ext_mem_17067.references = NULL;
+    
+    struct memblock_device mem_17050;
+    
+    mem_17050.references = NULL;
+    
+    struct memblock_device mem_17048;
+    
+    mem_17048.references = NULL;
+    
+    struct memblock_device mem_out_17070;
+    
+    mem_out_17070.references = NULL;
+    
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17047 = (int64_t) 8 * niz2084U_13894;
+    bool zzero_16409 = psizze_13897 == (int64_t) 0;
+    bool nonzzero_16410 = !zzero_16409;
+    bool nonzzero_cert_16411;
+    
+    if (!nonzzero_16410) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:24:22-28\n   #1  ftSMJ.fut:434:5-41\n   #2  ftSMJ.fut:433:1-434:41\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t segmap_tblock_sizze_16607;
+    
+    segmap_tblock_sizze_16607 = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16599;
+    
+    int64_t segmap_usable_groups_16608 = sdiv_up64(niz2084U_13894, segmap_tblock_sizze_16607);
+    
+    if (memblock_alloc_device(ctx, &mem_17048, bytes_17047, "mem_17048")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "\n# SegMap");
+    
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(niz2084U_13894, segmap_tblock_sizze_16607));
+    
+    {
+        err = gpu_kernel_gather_payloads_longzisegmap_16611(ctx, segmap_usable_groups_16608, 1, 1, *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16599, 1, 1, (int64_t) 0, niz2084U_13894, incr_13896, is_mem_17044.mem, mem_17048.mem);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "");
+    
+    int64_t zm_lhs_16407 = add64(dz2083U_13895, psizze_13897);
+    int64_t zs_lhs_16408 = sub64(zm_lhs_16407, (int64_t) 1);
+    int64_t m_16412 = sdiv64(zs_lhs_16408, psizze_13897);
+    
+    if (memblock_alloc_device(ctx, &mem_17050, bytes_17047, "mem_17050")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (futrts_builtinzhreplicate_i64(ctx, mem_17050, niz2084U_13894, (int64_t) 0) != 0) {
+        err = 1;
+        goto cleanup;
+    }
+    
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16412);
+    int64_t segmap_tblock_sizze_16635;
+    
+    segmap_tblock_sizze_16635 = *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16617;
+    
+    int64_t segmap_usable_groups_16636 = sdiv_up_safe64(niz2084U_13894, segmap_tblock_sizze_16635);
+    bool partitioned_gather_res_16415;
+    int64_t partitioned_gather_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
+    
+    if (memblock_set_device(ctx, &mem_param_17053, &mem_17048, "mem_17048") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_param_17056, &mem_17050, "mem_17050") != 0)
+        return 1;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_13897, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_13897, lower_bound_16423);
+        int64_t min_res_16425 = smin64(dz2083U_13895, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, dz2083U_13895);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
+        
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) dz2083U_13895, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:434:5-41\n   #2  ftSMJ.fut:433:1-434:41\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        if (memblock_alloc_device(ctx, &mem_17058, bytes_17047, "mem_17058")) {
+            err = 1;
+            goto cleanup;
+        }
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17058.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17053.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13894})) != 0)
+            goto cleanup;
+        if (memblock_alloc_device(ctx, &mem_17061, bytes_17047, "mem_17061")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
+        
+        int32_t virt_num_tblocks_17106 = sext_i64_i32(sdiv_up64(niz2084U_13894, segmap_tblock_sizze_16635));
+        
+        {
+            err = gpu_kernel_gather_payloads_longzisegmap_16639(ctx, segmap_usable_groups_16636, 1, 1, *ctx->tuning_params.gather_payloads_longzisegmap_tblock_sizze_16617, 1, 1, (int64_t) 0, niz2084U_13894, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17045.mem, mem_param_17053.mem, mem_param_17056.mem, mem_17061.mem);
+            if (err != FUTHARK_SUCCESS)
+                goto cleanup;
+        }
+        ctx->failure_is_an_option = 1;
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16412);
+        
+        if (memblock_set_device(ctx, &mem_param_tmp_17100, &mem_17058, "mem_17058") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_tmp_17101, &mem_17061, "mem_17061") != 0)
+            return 1;
+        
+        bool loop_while_tmp_17102 = loop_cond_16454;
+        int64_t p_tmp_17105 = tmp_16453;
+        
+        if (memblock_set_device(ctx, &mem_param_17053, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_17056, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
+            return 1;
+        loop_while_16419 = loop_while_tmp_17102;
+        p_16422 = p_tmp_17105;
+    }
+    if (memblock_set_device(ctx, &ext_mem_17067, &mem_param_17053, "mem_param_17053") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17056, "mem_param_17056") != 0)
+        return 1;
+    partitioned_gather_res_16415 = loop_while_16419;
+    partitioned_gather_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
+        return 1;
+    if (memblock_alloc_device(ctx, &mem_17069, bytes_17047, "mem_17069")) {
+        err = 1;
+        goto cleanup;
+    }
+    if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17069.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17066.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13894})) != 0)
+        goto cleanup;
+    if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17069, "mem_17069") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &*mem_out_p_17132, &mem_out_17070, "mem_out_17070") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref_device(ctx, &mem_17069, "mem_17069") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17061, "mem_17061") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17058, "mem_17058") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17056, "mem_param_17056") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17053, "mem_param_17053") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17067, "ext_mem_17067") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_long_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17133, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_15479, int64_t n_15480, int64_t incr_15481, int64_t psizze_15482)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock_device mem_17068;
+    
+    mem_17068.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17081;
+    
+    mem_param_tmp_17081.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17080;
+    
+    mem_param_tmp_17080.references = NULL;
+    
+    struct memblock_device mem_17060;
+    
+    mem_17060.references = NULL;
+    
+    struct memblock_device mem_17057;
+    
+    mem_17057.references = NULL;
+    
+    struct memblock_device mem_param_17055;
+    
+    mem_param_17055.references = NULL;
+    
+    struct memblock_device mem_param_17052;
+    
+    mem_param_17052.references = NULL;
+    
+    struct memblock_device ext_mem_17065;
+    
+    ext_mem_17065.references = NULL;
+    
+    struct memblock_device ext_mem_17066;
+    
+    ext_mem_17066.references = NULL;
+    
+    struct memblock_device mem_17049;
+    
+    mem_17049.references = NULL;
+    
+    struct memblock_device mem_out_17070;
+    
+    mem_out_17070.references = NULL;
+    
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17048 = (int64_t) 8 * ni_15479;
+    bool zzero_16410 = psizze_15482 == (int64_t) 0;
+    bool nonzzero_16411 = !zzero_16410;
+    bool nonzzero_cert_16412;
+    
+    if (!nonzzero_16411) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:462:5-50\n   #2  ftSMJ.fut:461:1-462:50\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t segmap_tblock_sizze_16887;
+    
+    segmap_tblock_sizze_16887 = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16879;
+    
+    int64_t segmap_usable_groups_16888 = sdiv_up64(ni_15479, segmap_tblock_sizze_16887);
+    
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17048, "mem_17049")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "\n# SegMap");
+    
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(ni_15479, segmap_tblock_sizze_16887));
+    
+    {
+        err = gpu_kernel_gather_payloads_long_GFURzisegmap_16891(ctx, segmap_usable_groups_16888, 1, 1, *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16879, 1, 1, (int64_t) 0, ni_15479, incr_15481, is_mem_17045.mem, mem_17049.mem);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (ctx->debugging)
+        fprintf(ctx->log, "%s\n", "");
+    
+    int64_t zm_lhs_16408 = add64(n_15480, psizze_15482);
+    int64_t zs_lhs_16409 = sub64(zm_lhs_16408, (int64_t) 1);
+    int64_t m_16413 = sdiv64(zs_lhs_16409, psizze_15482);
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16413);
+    int64_t segmap_tblock_sizze_16915;
+    
+    segmap_tblock_sizze_16915 = *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16897;
+    
+    int64_t segmap_usable_groups_16916 = sdiv_up_safe64(ni_15479, segmap_tblock_sizze_16915);
+    bool partitioned_gather_over_array_res_16415;
+    int64_t partitioned_gather_over_array_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
+    
+    if (memblock_set_device(ctx, &mem_param_17052, &mem_17049, "mem_17049") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_param_17055, &preVals_mem_17044, "preVals_mem_17044") != 0)
+        return 1;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_15482, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_15482, lower_bound_16423);
+        int64_t min_res_16425 = smin64(n_15480, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, n_15480);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
+        
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) n_15480, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:462:5-50\n   #2  ftSMJ.fut:461:1-462:50\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        if (memblock_alloc_device(ctx, &mem_17057, bytes_17048, "mem_17057")) {
+            err = 1;
+            goto cleanup;
+        }
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17057.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17052.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15479})) != 0)
+            goto cleanup;
+        if (memblock_alloc_device(ctx, &mem_17060, bytes_17048, "mem_17060")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
+        
+        int32_t virt_num_tblocks_17086 = sext_i64_i32(sdiv_up64(ni_15479, segmap_tblock_sizze_16915));
+        
+        {
+            err = gpu_kernel_gather_payloads_long_GFURzisegmap_16919(ctx, segmap_usable_groups_16916, 1, 1, *ctx->tuning_params.gather_payloads_long_GFURzisegmap_tblock_sizze_16897, 1, 1, (int64_t) 0, ni_15479, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17046.mem, mem_param_17052.mem, mem_param_17055.mem, mem_17060.mem);
+            if (err != FUTHARK_SUCCESS)
+                goto cleanup;
+        }
+        ctx->failure_is_an_option = 1;
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16413);
+        
+        if (memblock_set_device(ctx, &mem_param_tmp_17080, &mem_17057, "mem_17057") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_tmp_17081, &mem_17060, "mem_17060") != 0)
+            return 1;
+        
+        bool loop_while_tmp_17082 = loop_cond_16454;
+        int64_t p_tmp_17085 = tmp_16453;
+        
+        if (memblock_set_device(ctx, &mem_param_17052, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
+            return 1;
+        if (memblock_set_device(ctx, &mem_param_17055, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
+            return 1;
+        loop_while_16419 = loop_while_tmp_17082;
+        p_16422 = p_tmp_17085;
+    }
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17052, "mem_param_17052") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &ext_mem_17065, &mem_param_17055, "mem_param_17055") != 0)
+        return 1;
+    partitioned_gather_over_array_res_16415 = loop_while_16419;
+    partitioned_gather_over_array_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
+        return 1;
+    if (memblock_alloc_device(ctx, &mem_17068, bytes_17048, "mem_17068")) {
+        err = 1;
+        goto cleanup;
+    }
+    if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17068.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17065.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_15479})) != 0)
+        goto cleanup;
+    if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17068, "mem_17068") != 0)
+        return 1;
+    if (memblock_set_device(ctx, &*mem_out_p_17133, &mem_out_17070, "mem_out_17070") != 0)
+        return 1;
+    
+  cleanup:
+    {
+        if (memblock_unref_device(ctx, &mem_17068, "mem_17068") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17060, "mem_17060") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17057, "mem_17057") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17055, "mem_param_17055") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_param_17052, "mem_param_17052") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
+            return 1;
+    }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short(struct futhark_context *ctx, struct memblock_device *mem_out_p_17134, struct memblock_device is_mem_17044, struct memblock_device ys_mem_17045, int64_t niz2084U_13214, int64_t dz2083U_13215, int64_t incr_13216, int64_t psizze_13217)
+{
+    (void) ctx;
+    
+    int err = 0;
+    struct memblock_device mem_17069;
+    
+    mem_17069.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17101;
+    
+    mem_param_tmp_17101.references = NULL;
+    
+    struct memblock_device mem_param_tmp_17100;
+    
+    mem_param_tmp_17100.references = NULL;
+    
+    struct memblock_device mem_17061;
+    
+    mem_17061.references = NULL;
+    
+    struct memblock_device mem_17058;
+    
+    mem_17058.references = NULL;
+    
+    struct memblock_device mem_param_17056;
+    
+    mem_param_17056.references = NULL;
+    
+    struct memblock_device mem_param_17053;
+    
+    mem_param_17053.references = NULL;
+    
+    struct memblock_device ext_mem_17066;
+    
+    ext_mem_17066.references = NULL;
+    
+    struct memblock_device ext_mem_17067;
+    
+    ext_mem_17067.references = NULL;
+    
+    struct memblock_device mem_17050;
+    
+    mem_17050.references = NULL;
+    
+    struct memblock_device mem_17048;
+    
+    mem_17048.references = NULL;
+    
+    struct memblock_device mem_out_17070;
+    
+    mem_out_17070.references = NULL;
+    
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17047 = (int64_t) 8 * niz2084U_13214;
+    bool zzero_16409 = psizze_13217 == (int64_t) 0;
+    bool nonzzero_16410 = !zzero_16409;
+    bool nonzzero_cert_16411;
+    
+    if (!nonzzero_16410) {
         set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:24:22-28\n   #1  ftSMJ.fut:428:5-41\n   #2  ftSMJ.fut:427:1-428:41\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t bytes_17161 = (int64_t) 2 * niz2084U_13326;
-    int64_t segmap_tblock_sizze_16607;
+    int64_t bytes_17049 = (int64_t) 2 * niz2084U_13214;
+    int64_t segmap_tblock_sizze_16495;
     
-    segmap_tblock_sizze_16607 = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16599;
+    segmap_tblock_sizze_16495 = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16487;
     
-    int64_t segmap_usable_groups_16608 = sdiv_up64(niz2084U_13326, segmap_tblock_sizze_16607);
+    int64_t segmap_usable_groups_16496 = sdiv_up64(niz2084U_13214, segmap_tblock_sizze_16495);
     
-    if (memblock_alloc_device(ctx, &mem_17160, bytes_17159, "mem_17160")) {
+    if (memblock_alloc_device(ctx, &mem_17048, bytes_17047, "mem_17048")) {
         err = 1;
         goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "\n# SegMap");
     
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(niz2084U_13326, segmap_tblock_sizze_16607));
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(niz2084U_13214, segmap_tblock_sizze_16495));
     
     {
-        err = gpu_kernel_gather_payloads_shortzisegmap_16611(ctx, segmap_usable_groups_16608, 1, 1, *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16599, 1, 1, (int64_t) 0, niz2084U_13326, incr_13328, is_mem_17156.mem, mem_17160.mem);
+        err = gpu_kernel_gather_payloads_shortzisegmap_16499(ctx, segmap_usable_groups_16496, 1, 1, *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16487, 1, 1, (int64_t) 0, niz2084U_13214, incr_13216, is_mem_17044.mem, mem_17048.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "");
     
-    int64_t zm_lhs_16519 = add64(dz2083U_13327, psizze_13329);
-    int64_t zs_lhs_16520 = sub64(zm_lhs_16519, (int64_t) 1);
-    int64_t m_16524 = sdiv64(zs_lhs_16520, psizze_13329);
+    int64_t zm_lhs_16407 = add64(dz2083U_13215, psizze_13217);
+    int64_t zs_lhs_16408 = sub64(zm_lhs_16407, (int64_t) 1);
+    int64_t m_16412 = sdiv64(zs_lhs_16408, psizze_13217);
     
-    if (memblock_alloc_device(ctx, &mem_17162, bytes_17161, "mem_17162")) {
+    if (memblock_alloc_device(ctx, &mem_17050, bytes_17049, "mem_17050")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhreplicate_i16(ctx, mem_17162, niz2084U_13326, (int16_t) 0) != 0) {
+    if (futrts_builtinzhreplicate_i16(ctx, mem_17050, niz2084U_13214, (int16_t) 0) != 0) {
         err = 1;
         goto cleanup;
     }
     
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16524);
-    int64_t segmap_tblock_sizze_16635;
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16412);
+    int64_t segmap_tblock_sizze_16523;
     
-    segmap_tblock_sizze_16635 = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16617;
+    segmap_tblock_sizze_16523 = *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16505;
     
-    int64_t segmap_usable_groups_16636 = sdiv_up_safe64(niz2084U_13326, segmap_tblock_sizze_16635);
-    bool partitioned_gather_res_16527;
-    int64_t partitioned_gather_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
+    int64_t segmap_usable_groups_16524 = sdiv_up_safe64(niz2084U_13214, segmap_tblock_sizze_16523);
+    bool partitioned_gather_res_16415;
+    int64_t partitioned_gather_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
     
-    if (memblock_set_device(ctx, &mem_param_17165, &mem_17160, "mem_17160") != 0)
+    if (memblock_set_device(ctx, &mem_param_17053, &mem_17048, "mem_17048") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_param_17168, &mem_17162, "mem_17162") != 0)
+    if (memblock_set_device(ctx, &mem_param_17056, &mem_17050, "mem_17050") != 0)
         return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_13329, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_13329, lower_bound_16535);
-        int64_t min_res_16537 = smin64(dz2083U_13327, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, dz2083U_13327);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_13217, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_13217, lower_bound_16423);
+        int64_t min_res_16425 = smin64(dz2083U_13215, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, dz2083U_13215);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
         
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) dz2083U_13327, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:428:5-41\n   #2  ftSMJ.fut:427:1-428:41\n"));
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) dz2083U_13215, "].", "-> #0  ftbasics.fut:31:18-45\n   #1  ftSMJ.fut:428:5-41\n   #2  ftSMJ.fut:427:1-428:41\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
-        if (memblock_alloc_device(ctx, &mem_17170, bytes_17159, "mem_17170")) {
+        if (memblock_alloc_device(ctx, &mem_17058, bytes_17047, "mem_17058")) {
             err = 1;
             goto cleanup;
         }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17170.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17165.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13326})) != 0)
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17058.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17053.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13214})) != 0)
             goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17173, bytes_17161, "mem_17173")) {
+        if (memblock_alloc_device(ctx, &mem_17061, bytes_17049, "mem_17061")) {
             err = 1;
             goto cleanup;
         }
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "\n# SegMap");
         
-        int32_t virt_num_tblocks_17218 = sext_i64_i32(sdiv_up64(niz2084U_13326, segmap_tblock_sizze_16635));
+        int32_t virt_num_tblocks_17106 = sext_i64_i32(sdiv_up64(niz2084U_13214, segmap_tblock_sizze_16523));
         
         {
-            err = gpu_kernel_gather_payloads_shortzisegmap_16639(ctx, segmap_usable_groups_16636, 1, 1, *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16617, 1, 1, (int64_t) 0, niz2084U_13326, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17157.mem, mem_param_17165.mem, mem_param_17168.mem, mem_17173.mem);
+            err = gpu_kernel_gather_payloads_shortzisegmap_16527(ctx, segmap_usable_groups_16524, 1, 1, *ctx->tuning_params.gather_payloads_shortzisegmap_tblock_sizze_16505, 1, 1, (int64_t) 0, niz2084U_13214, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17045.mem, mem_param_17053.mem, mem_param_17056.mem, mem_17061.mem);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
@@ -12225,221 +12225,221 @@ FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short(struct futhark_context *
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "");
         
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16524);
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16412);
         
-        if (memblock_set_device(ctx, &mem_param_tmp_17212, &mem_17170, "mem_17170") != 0)
+        if (memblock_set_device(ctx, &mem_param_tmp_17100, &mem_17058, "mem_17058") != 0)
             return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17213, &mem_17173, "mem_17173") != 0)
+        if (memblock_set_device(ctx, &mem_param_tmp_17101, &mem_17061, "mem_17061") != 0)
             return 1;
         
-        bool loop_while_tmp_17214 = loop_cond_16566;
-        int64_t p_tmp_17217 = tmp_16565;
+        bool loop_while_tmp_17102 = loop_cond_16454;
+        int64_t p_tmp_17105 = tmp_16453;
         
-        if (memblock_set_device(ctx, &mem_param_17165, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
+        if (memblock_set_device(ctx, &mem_param_17053, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
             return 1;
-        if (memblock_set_device(ctx, &mem_param_17168, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
+        if (memblock_set_device(ctx, &mem_param_17056, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
             return 1;
-        loop_while_16531 = loop_while_tmp_17214;
-        p_16534 = p_tmp_17217;
+        loop_while_16419 = loop_while_tmp_17102;
+        p_16422 = p_tmp_17105;
     }
-    if (memblock_set_device(ctx, &ext_mem_17179, &mem_param_17165, "mem_param_17165") != 0)
+    if (memblock_set_device(ctx, &ext_mem_17067, &mem_param_17053, "mem_param_17053") != 0)
         return 1;
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17168, "mem_param_17168") != 0)
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17056, "mem_param_17056") != 0)
         return 1;
-    partitioned_gather_res_16527 = loop_while_16531;
-    partitioned_gather_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
+    partitioned_gather_res_16415 = loop_while_16419;
+    partitioned_gather_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
+    if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
         return 1;
-    if (memblock_alloc_device(ctx, &mem_17181, bytes_17161, "mem_17181")) {
+    if (memblock_alloc_device(ctx, &mem_17069, bytes_17049, "mem_17069")) {
         err = 1;
         goto cleanup;
     }
-    if ((err = lmad_copy_gpu2gpu_2b(ctx, 1, mem_17181.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17178.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13326})) != 0)
+    if ((err = lmad_copy_gpu2gpu_2b(ctx, 1, mem_17069.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17066.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {niz2084U_13214})) != 0)
         goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
+    if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17181, "mem_17181") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17069, "mem_17069") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17246, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17134, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17181, "mem_17181") != 0)
+        if (memblock_unref_device(ctx, &mem_17069, "mem_17069") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17213, "mem_param_tmp_17213") != 0)
+        if (memblock_unref_device(ctx, &mem_param_tmp_17101, "mem_param_tmp_17101") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17212, "mem_param_tmp_17212") != 0)
+        if (memblock_unref_device(ctx, &mem_param_tmp_17100, "mem_param_tmp_17100") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17173, "mem_17173") != 0)
+        if (memblock_unref_device(ctx, &mem_17061, "mem_17061") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17170, "mem_17170") != 0)
+        if (memblock_unref_device(ctx, &mem_17058, "mem_17058") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_17168, "mem_param_17168") != 0)
+        if (memblock_unref_device(ctx, &mem_param_17056, "mem_param_17056") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_17165, "mem_param_17165") != 0)
+        if (memblock_unref_device(ctx, &mem_param_17053, "mem_param_17053") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17179, "ext_mem_17179") != 0)
+        if (memblock_unref_device(ctx, &ext_mem_17067, "ext_mem_17067") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17162, "mem_17162") != 0)
+        if (memblock_unref_device(ctx, &mem_17050, "mem_17050") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17160, "mem_17160") != 0)
+        if (memblock_unref_device(ctx, &mem_17048, "mem_17048") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17247, struct memblock_device preVals_mem_17156, struct memblock_device is_mem_17157, struct memblock_device ys_mem_17158, int64_t ni_14989, int64_t n_14990, int64_t incr_14991, int64_t psizze_14992)
+FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short_GFUR(struct futhark_context *ctx, struct memblock_device *mem_out_p_17135, struct memblock_device preVals_mem_17044, struct memblock_device is_mem_17045, struct memblock_device ys_mem_17046, int64_t ni_14877, int64_t n_14878, int64_t incr_14879, int64_t psizze_14880)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17180;
+    struct memblock_device mem_17068;
     
-    mem_17180.references = NULL;
+    mem_17068.references = NULL;
     
-    struct memblock_device mem_param_tmp_17193;
+    struct memblock_device mem_param_tmp_17081;
     
-    mem_param_tmp_17193.references = NULL;
+    mem_param_tmp_17081.references = NULL;
     
-    struct memblock_device mem_param_tmp_17192;
+    struct memblock_device mem_param_tmp_17080;
     
-    mem_param_tmp_17192.references = NULL;
+    mem_param_tmp_17080.references = NULL;
     
-    struct memblock_device mem_17172;
+    struct memblock_device mem_17060;
     
-    mem_17172.references = NULL;
+    mem_17060.references = NULL;
     
-    struct memblock_device mem_17169;
+    struct memblock_device mem_17057;
     
-    mem_17169.references = NULL;
+    mem_17057.references = NULL;
     
-    struct memblock_device mem_param_17167;
+    struct memblock_device mem_param_17055;
     
-    mem_param_17167.references = NULL;
+    mem_param_17055.references = NULL;
     
-    struct memblock_device mem_param_17164;
+    struct memblock_device mem_param_17052;
     
-    mem_param_17164.references = NULL;
+    mem_param_17052.references = NULL;
     
-    struct memblock_device ext_mem_17177;
+    struct memblock_device ext_mem_17065;
     
-    ext_mem_17177.references = NULL;
+    ext_mem_17065.references = NULL;
     
-    struct memblock_device ext_mem_17178;
+    struct memblock_device ext_mem_17066;
     
-    ext_mem_17178.references = NULL;
+    ext_mem_17066.references = NULL;
     
-    struct memblock_device mem_17161;
+    struct memblock_device mem_17049;
     
-    mem_17161.references = NULL;
+    mem_17049.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17160 = (int64_t) 8 * ni_14989;
-    bool zzero_16522 = psizze_14992 == (int64_t) 0;
-    bool nonzzero_16523 = !zzero_16522;
-    bool nonzzero_cert_16524;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17048 = (int64_t) 8 * ni_14877;
+    bool zzero_16410 = psizze_14880 == (int64_t) 0;
+    bool nonzzero_16411 = !zzero_16410;
+    bool nonzzero_cert_16412;
     
-    if (!nonzzero_16523) {
+    if (!nonzzero_16411) {
         set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ftbasics.fut:43:22-28\n   #1  ftSMJ.fut:456:5-50\n   #2  ftSMJ.fut:455:1-456:50\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t bytes_17171 = (int64_t) 2 * ni_14989;
-    int64_t segmap_tblock_sizze_16887;
+    int64_t bytes_17059 = (int64_t) 2 * ni_14877;
+    int64_t segmap_tblock_sizze_16775;
     
-    segmap_tblock_sizze_16887 = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16879;
+    segmap_tblock_sizze_16775 = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16767;
     
-    int64_t segmap_usable_groups_16888 = sdiv_up64(ni_14989, segmap_tblock_sizze_16887);
+    int64_t segmap_usable_groups_16776 = sdiv_up64(ni_14877, segmap_tblock_sizze_16775);
     
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17160, "mem_17161")) {
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17048, "mem_17049")) {
         err = 1;
         goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "\n# SegMap");
     
-    int32_t virt_num_tblocks_17183 = sext_i64_i32(sdiv_up64(ni_14989, segmap_tblock_sizze_16887));
+    int32_t virt_num_tblocks_17071 = sext_i64_i32(sdiv_up64(ni_14877, segmap_tblock_sizze_16775));
     
     {
-        err = gpu_kernel_gather_payloads_short_GFURzisegmap_16891(ctx, segmap_usable_groups_16888, 1, 1, *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16879, 1, 1, (int64_t) 0, ni_14989, incr_14991, is_mem_17157.mem, mem_17161.mem);
+        err = gpu_kernel_gather_payloads_short_GFURzisegmap_16779(ctx, segmap_usable_groups_16776, 1, 1, *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16767, 1, 1, (int64_t) 0, ni_14877, incr_14879, is_mem_17045.mem, mem_17049.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "");
     
-    int64_t zm_lhs_16520 = add64(n_14990, psizze_14992);
-    int64_t zs_lhs_16521 = sub64(zm_lhs_16520, (int64_t) 1);
-    int64_t m_16525 = sdiv64(zs_lhs_16521, psizze_14992);
-    bool loop_cond_16526 = slt64((int64_t) 0, m_16525);
-    int64_t segmap_tblock_sizze_16915;
+    int64_t zm_lhs_16408 = add64(n_14878, psizze_14880);
+    int64_t zs_lhs_16409 = sub64(zm_lhs_16408, (int64_t) 1);
+    int64_t m_16413 = sdiv64(zs_lhs_16409, psizze_14880);
+    bool loop_cond_16414 = slt64((int64_t) 0, m_16413);
+    int64_t segmap_tblock_sizze_16803;
     
-    segmap_tblock_sizze_16915 = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16897;
+    segmap_tblock_sizze_16803 = *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16785;
     
-    int64_t segmap_usable_groups_16916 = sdiv_up_safe64(ni_14989, segmap_tblock_sizze_16915);
-    bool partitioned_gather_over_array_res_16527;
-    int64_t partitioned_gather_over_array_res_16530;
-    bool loop_while_16531;
-    int64_t p_16534;
+    int64_t segmap_usable_groups_16804 = sdiv_up_safe64(ni_14877, segmap_tblock_sizze_16803);
+    bool partitioned_gather_over_array_res_16415;
+    int64_t partitioned_gather_over_array_res_16418;
+    bool loop_while_16419;
+    int64_t p_16422;
     
-    if (memblock_set_device(ctx, &mem_param_17164, &mem_17161, "mem_17161") != 0)
+    if (memblock_set_device(ctx, &mem_param_17052, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_param_17167, &preVals_mem_17156, "preVals_mem_17156") != 0)
+    if (memblock_set_device(ctx, &mem_param_17055, &preVals_mem_17044, "preVals_mem_17044") != 0)
         return 1;
-    loop_while_16531 = loop_cond_16526;
-    p_16534 = (int64_t) 0;
-    while (loop_while_16531) {
-        int64_t lower_bound_16535 = mul64(psizze_14992, p_16534);
-        int64_t min_arg1_16536 = add64(psizze_14992, lower_bound_16535);
-        int64_t min_res_16537 = smin64(n_14990, min_arg1_16536);
-        int64_t j_m_i_16538 = sub64(min_res_16537, lower_bound_16535);
-        bool empty_slice_16539 = j_m_i_16538 == (int64_t) 0;
-        int64_t m_16540 = sub64(j_m_i_16538, (int64_t) 1);
-        int64_t i_p_m_t_s_16541 = add64(lower_bound_16535, m_16540);
-        bool zzero_leq_i_p_m_t_s_16542 = sle64((int64_t) 0, i_p_m_t_s_16541);
-        bool i_p_m_t_s_leq_w_16543 = slt64(i_p_m_t_s_16541, n_14990);
-        bool zzero_lte_i_16544 = sle64((int64_t) 0, lower_bound_16535);
-        bool i_lte_j_16545 = sle64(lower_bound_16535, min_res_16537);
-        bool y_16546 = i_p_m_t_s_leq_w_16543 && zzero_lte_i_16544;
-        bool y_16547 = zzero_leq_i_p_m_t_s_16542 && y_16546;
-        bool forwards_ok_16548 = i_lte_j_16545 && y_16547;
-        bool ok_or_empty_16549 = empty_slice_16539 || forwards_ok_16548;
-        bool index_certs_16550;
+    loop_while_16419 = loop_cond_16414;
+    p_16422 = (int64_t) 0;
+    while (loop_while_16419) {
+        int64_t lower_bound_16423 = mul64(psizze_14880, p_16422);
+        int64_t min_arg1_16424 = add64(psizze_14880, lower_bound_16423);
+        int64_t min_res_16425 = smin64(n_14878, min_arg1_16424);
+        int64_t j_m_i_16426 = sub64(min_res_16425, lower_bound_16423);
+        bool empty_slice_16427 = j_m_i_16426 == (int64_t) 0;
+        int64_t m_16428 = sub64(j_m_i_16426, (int64_t) 1);
+        int64_t i_p_m_t_s_16429 = add64(lower_bound_16423, m_16428);
+        bool zzero_leq_i_p_m_t_s_16430 = sle64((int64_t) 0, i_p_m_t_s_16429);
+        bool i_p_m_t_s_leq_w_16431 = slt64(i_p_m_t_s_16429, n_14878);
+        bool zzero_lte_i_16432 = sle64((int64_t) 0, lower_bound_16423);
+        bool i_lte_j_16433 = sle64(lower_bound_16423, min_res_16425);
+        bool y_16434 = i_p_m_t_s_leq_w_16431 && zzero_lte_i_16432;
+        bool y_16435 = zzero_leq_i_p_m_t_s_16430 && y_16434;
+        bool forwards_ok_16436 = i_lte_j_16433 && y_16435;
+        bool ok_or_empty_16437 = empty_slice_16427 || forwards_ok_16436;
+        bool index_certs_16438;
         
-        if (!ok_or_empty_16549) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16535, ":", (long long) min_res_16537, "] out of bounds for array of shape [", (long long) n_14990, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:456:5-50\n   #2  ftSMJ.fut:455:1-456:50\n"));
+        if (!ok_or_empty_16437) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_16423, ":", (long long) min_res_16425, "] out of bounds for array of shape [", (long long) n_14878, "].", "-> #0  ftbasics.fut:49:18-45\n   #1  ftSMJ.fut:456:5-50\n   #2  ftSMJ.fut:455:1-456:50\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
-        if (memblock_alloc_device(ctx, &mem_17169, bytes_17160, "mem_17169")) {
+        if (memblock_alloc_device(ctx, &mem_17057, bytes_17048, "mem_17057")) {
             err = 1;
             goto cleanup;
         }
-        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17169.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17164.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_14989})) != 0)
+        if ((err = lmad_copy_gpu2gpu_8b(ctx, 1, mem_17057.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, mem_param_17052.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_14877})) != 0)
             goto cleanup;
-        if (memblock_alloc_device(ctx, &mem_17172, bytes_17171, "mem_17172")) {
+        if (memblock_alloc_device(ctx, &mem_17060, bytes_17059, "mem_17060")) {
             err = 1;
             goto cleanup;
         }
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "\n# SegMap");
         
-        int32_t virt_num_tblocks_17198 = sext_i64_i32(sdiv_up64(ni_14989, segmap_tblock_sizze_16915));
+        int32_t virt_num_tblocks_17086 = sext_i64_i32(sdiv_up64(ni_14877, segmap_tblock_sizze_16803));
         
         {
-            err = gpu_kernel_gather_payloads_short_GFURzisegmap_16919(ctx, segmap_usable_groups_16916, 1, 1, *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16897, 1, 1, (int64_t) 0, ni_14989, lower_bound_16535, min_res_16537, j_m_i_16538, ys_mem_17158.mem, mem_param_17164.mem, mem_param_17167.mem, mem_17172.mem);
+            err = gpu_kernel_gather_payloads_short_GFURzisegmap_16807(ctx, segmap_usable_groups_16804, 1, 1, *ctx->tuning_params.gather_payloads_short_GFURzisegmap_tblock_sizze_16785, 1, 1, (int64_t) 0, ni_14877, lower_bound_16423, min_res_16425, j_m_i_16426, ys_mem_17046.mem, mem_param_17052.mem, mem_param_17055.mem, mem_17060.mem);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
@@ -12447,574 +12447,574 @@ FUTHARK_FUN_ATTR int futrts_entry_gather_payloads_short_GFUR(struct futhark_cont
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "");
         
-        int64_t tmp_16565 = add64((int64_t) 1, p_16534);
-        bool loop_cond_16566 = slt64(tmp_16565, m_16525);
+        int64_t tmp_16453 = add64((int64_t) 1, p_16422);
+        bool loop_cond_16454 = slt64(tmp_16453, m_16413);
         
-        if (memblock_set_device(ctx, &mem_param_tmp_17192, &mem_17169, "mem_17169") != 0)
+        if (memblock_set_device(ctx, &mem_param_tmp_17080, &mem_17057, "mem_17057") != 0)
             return 1;
-        if (memblock_set_device(ctx, &mem_param_tmp_17193, &mem_17172, "mem_17172") != 0)
+        if (memblock_set_device(ctx, &mem_param_tmp_17081, &mem_17060, "mem_17060") != 0)
             return 1;
         
-        bool loop_while_tmp_17194 = loop_cond_16566;
-        int64_t p_tmp_17197 = tmp_16565;
+        bool loop_while_tmp_17082 = loop_cond_16454;
+        int64_t p_tmp_17085 = tmp_16453;
         
-        if (memblock_set_device(ctx, &mem_param_17164, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
+        if (memblock_set_device(ctx, &mem_param_17052, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
             return 1;
-        if (memblock_set_device(ctx, &mem_param_17167, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
+        if (memblock_set_device(ctx, &mem_param_17055, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
             return 1;
-        loop_while_16531 = loop_while_tmp_17194;
-        p_16534 = p_tmp_17197;
+        loop_while_16419 = loop_while_tmp_17082;
+        p_16422 = p_tmp_17085;
     }
-    if (memblock_set_device(ctx, &ext_mem_17178, &mem_param_17164, "mem_param_17164") != 0)
+    if (memblock_set_device(ctx, &ext_mem_17066, &mem_param_17052, "mem_param_17052") != 0)
         return 1;
-    if (memblock_set_device(ctx, &ext_mem_17177, &mem_param_17167, "mem_param_17167") != 0)
+    if (memblock_set_device(ctx, &ext_mem_17065, &mem_param_17055, "mem_param_17055") != 0)
         return 1;
-    partitioned_gather_over_array_res_16527 = loop_while_16531;
-    partitioned_gather_over_array_res_16530 = p_16534;
-    if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+    partitioned_gather_over_array_res_16415 = loop_while_16419;
+    partitioned_gather_over_array_res_16418 = p_16422;
+    if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_alloc_device(ctx, &mem_17180, bytes_17171, "mem_17180")) {
+    if (memblock_alloc_device(ctx, &mem_17068, bytes_17059, "mem_17068")) {
         err = 1;
         goto cleanup;
     }
-    if ((err = lmad_copy_gpu2gpu_2b(ctx, 1, mem_17180.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17177.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_14989})) != 0)
+    if ((err = lmad_copy_gpu2gpu_2b(ctx, 1, mem_17068.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, ext_mem_17065.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {ni_14877})) != 0)
         goto cleanup;
-    if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
+    if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17180, "mem_17180") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17068, "mem_17068") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17247, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17135, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17180, "mem_17180") != 0)
+        if (memblock_unref_device(ctx, &mem_17068, "mem_17068") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17193, "mem_param_tmp_17193") != 0)
+        if (memblock_unref_device(ctx, &mem_param_tmp_17081, "mem_param_tmp_17081") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_tmp_17192, "mem_param_tmp_17192") != 0)
+        if (memblock_unref_device(ctx, &mem_param_tmp_17080, "mem_param_tmp_17080") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17172, "mem_17172") != 0)
+        if (memblock_unref_device(ctx, &mem_17060, "mem_17060") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17169, "mem_17169") != 0)
+        if (memblock_unref_device(ctx, &mem_17057, "mem_17057") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_17167, "mem_param_17167") != 0)
+        if (memblock_unref_device(ctx, &mem_param_17055, "mem_param_17055") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_param_17164, "mem_param_17164") != 0)
+        if (memblock_unref_device(ctx, &mem_param_17052, "mem_param_17052") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17177, "ext_mem_17177") != 0)
+        if (memblock_unref_device(ctx, &ext_mem_17065, "ext_mem_17065") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &ext_mem_17178, "ext_mem_17178") != 0)
+        if (memblock_unref_device(ctx, &ext_mem_17066, "ext_mem_17066") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_double(struct futhark_context *ctx, struct memblock_device *mem_out_p_17248, struct memblock_device *mem_out_p_17249, struct memblock_device *mem_out_p_17250, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12968, int64_t nS_12969, int64_t offset_R_12972, int64_t offset_S_12973, int64_t partitionsPerWindow_12974, int64_t numberOfWindows_12975, int64_t extParallelism_12976, int64_t scatter_psizze_12977)
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_double(struct futhark_context *ctx, struct memblock_device *mem_out_p_17136, struct memblock_device *mem_out_p_17137, struct memblock_device *mem_out_p_17138, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12856, int64_t nS_12857, int64_t offset_R_12860, int64_t offset_S_12861, int64_t partitionsPerWindow_12862, int64_t numberOfWindows_12863, int64_t extParallelism_12864, int64_t scatter_psizze_12865)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17161;
+    struct memblock_device mem_17049;
     
-    mem_17161.references = NULL;
+    mem_17049.references = NULL;
     
-    struct memblock_device mem_17159;
+    struct memblock_device mem_17047;
     
-    mem_17159.references = NULL;
+    mem_17047.references = NULL;
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17158 = (int64_t) 8 * nR_12968;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17046 = (int64_t) 8 * nR_12856;
     
-    if (memblock_alloc_device(ctx, &mem_17159, bytes_17158, "mem_17159")) {
+    if (memblock_alloc_device(ctx, &mem_17047, bytes_17046, "mem_17047")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17159, nR_12968, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17047, nR_12856, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17158, "mem_17161")) {
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17046, "mem_17049")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17161, nR_12968, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17049, nR_12856, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17159, "mem_17159") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17047, "mem_17047") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17183, &mem_17161, "mem_17161") != 0)
+    if (memblock_set_device(ctx, &mem_out_17071, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17184, &tR_mem_17156, "tR_mem_17156") != 0)
+    if (memblock_set_device(ctx, &mem_out_17072, &tR_mem_17044, "tR_mem_17044") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17248, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17136, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17249, &mem_out_17183, "mem_out_17183") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17137, &mem_out_17071, "mem_out_17071") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17250, &mem_out_17184, "mem_out_17184") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17138, &mem_out_17072, "mem_out_17072") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17159, "mem_17159") != 0)
+        if (memblock_unref_device(ctx, &mem_17047, "mem_17047") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17184, "mem_out_17184") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17072, "mem_out_17072") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17183, "mem_out_17183") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17071, "mem_out_17071") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_float(struct futhark_context *ctx, struct memblock_device *mem_out_p_17251, struct memblock_device *mem_out_p_17252, struct memblock_device *mem_out_p_17253, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12898, int64_t nS_12899, int64_t offset_R_12902, int64_t offset_S_12903, int64_t partitionsPerWindow_12904, int64_t numberOfWindows_12905, int64_t extParallelism_12906, int64_t scatter_psizze_12907)
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_float(struct futhark_context *ctx, struct memblock_device *mem_out_p_17139, struct memblock_device *mem_out_p_17140, struct memblock_device *mem_out_p_17141, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12797, int64_t nS_12798, int64_t offset_R_12801, int64_t offset_S_12802, int64_t partitionsPerWindow_12803, int64_t numberOfWindows_12804, int64_t extParallelism_12805, int64_t scatter_psizze_12806)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17161;
+    struct memblock_device mem_17049;
     
-    mem_17161.references = NULL;
+    mem_17049.references = NULL;
     
-    struct memblock_device mem_17159;
+    struct memblock_device mem_17047;
     
-    mem_17159.references = NULL;
+    mem_17047.references = NULL;
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17158 = (int64_t) 8 * nR_12898;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17046 = (int64_t) 8 * nR_12797;
     
-    if (memblock_alloc_device(ctx, &mem_17159, bytes_17158, "mem_17159")) {
+    if (memblock_alloc_device(ctx, &mem_17047, bytes_17046, "mem_17047")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17159, nR_12898, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17047, nR_12797, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17158, "mem_17161")) {
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17046, "mem_17049")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17161, nR_12898, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17049, nR_12797, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17159, "mem_17159") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17047, "mem_17047") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17183, &mem_17161, "mem_17161") != 0)
+    if (memblock_set_device(ctx, &mem_out_17071, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17184, &tR_mem_17156, "tR_mem_17156") != 0)
+    if (memblock_set_device(ctx, &mem_out_17072, &tR_mem_17044, "tR_mem_17044") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17251, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17139, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17252, &mem_out_17183, "mem_out_17183") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17140, &mem_out_17071, "mem_out_17071") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17253, &mem_out_17184, "mem_out_17184") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17141, &mem_out_17072, "mem_out_17072") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17159, "mem_17159") != 0)
+        if (memblock_unref_device(ctx, &mem_17047, "mem_17047") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17184, "mem_out_17184") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17072, "mem_out_17072") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17183, "mem_out_17183") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17071, "mem_out_17071") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_17254, struct memblock_device *mem_out_p_17255, struct memblock_device *mem_out_p_17256, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12758, int64_t nS_12759, int64_t offset_R_12762, int64_t offset_S_12763, int64_t partitionsPerWindow_12764, int64_t numberOfWindows_12765, int64_t extParallelism_12766, int64_t scatter_psizze_12767)
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, struct memblock_device *mem_out_p_17142, struct memblock_device *mem_out_p_17143, struct memblock_device *mem_out_p_17144, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12679, int64_t nS_12680, int64_t offset_R_12683, int64_t offset_S_12684, int64_t partitionsPerWindow_12685, int64_t numberOfWindows_12686, int64_t extParallelism_12687, int64_t scatter_psizze_12688)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17161;
+    struct memblock_device mem_17049;
     
-    mem_17161.references = NULL;
+    mem_17049.references = NULL;
     
-    struct memblock_device mem_17159;
+    struct memblock_device mem_17047;
     
-    mem_17159.references = NULL;
+    mem_17047.references = NULL;
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17158 = (int64_t) 8 * nR_12758;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17046 = (int64_t) 8 * nR_12679;
     
-    if (memblock_alloc_device(ctx, &mem_17159, bytes_17158, "mem_17159")) {
+    if (memblock_alloc_device(ctx, &mem_17047, bytes_17046, "mem_17047")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17159, nR_12758, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17047, nR_12679, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17158, "mem_17161")) {
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17046, "mem_17049")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17161, nR_12758, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17049, nR_12679, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17159, "mem_17159") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17047, "mem_17047") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17183, &mem_17161, "mem_17161") != 0)
+    if (memblock_set_device(ctx, &mem_out_17071, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17184, &tR_mem_17156, "tR_mem_17156") != 0)
+    if (memblock_set_device(ctx, &mem_out_17072, &tR_mem_17044, "tR_mem_17044") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17254, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17142, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17255, &mem_out_17183, "mem_out_17183") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17143, &mem_out_17071, "mem_out_17071") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17256, &mem_out_17184, "mem_out_17184") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17144, &mem_out_17072, "mem_out_17072") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17159, "mem_17159") != 0)
+        if (memblock_unref_device(ctx, &mem_17047, "mem_17047") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17184, "mem_out_17184") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17072, "mem_out_17072") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17183, "mem_out_17183") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17071, "mem_out_17071") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_long(struct futhark_context *ctx, struct memblock_device *mem_out_p_17257, struct memblock_device *mem_out_p_17258, struct memblock_device *mem_out_p_17259, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12828, int64_t nS_12829, int64_t offset_R_12832, int64_t offset_S_12833, int64_t partitionsPerWindow_12834, int64_t numberOfWindows_12835, int64_t extParallelism_12836, int64_t scatter_psizze_12837)
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_long(struct futhark_context *ctx, struct memblock_device *mem_out_p_17145, struct memblock_device *mem_out_p_17146, struct memblock_device *mem_out_p_17147, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12738, int64_t nS_12739, int64_t offset_R_12742, int64_t offset_S_12743, int64_t partitionsPerWindow_12744, int64_t numberOfWindows_12745, int64_t extParallelism_12746, int64_t scatter_psizze_12747)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17161;
+    struct memblock_device mem_17049;
     
-    mem_17161.references = NULL;
+    mem_17049.references = NULL;
     
-    struct memblock_device mem_17159;
+    struct memblock_device mem_17047;
     
-    mem_17159.references = NULL;
+    mem_17047.references = NULL;
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17158 = (int64_t) 8 * nR_12828;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17046 = (int64_t) 8 * nR_12738;
     
-    if (memblock_alloc_device(ctx, &mem_17159, bytes_17158, "mem_17159")) {
+    if (memblock_alloc_device(ctx, &mem_17047, bytes_17046, "mem_17047")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17159, nR_12828, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17047, nR_12738, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17158, "mem_17161")) {
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17046, "mem_17049")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17161, nR_12828, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17049, nR_12738, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17159, "mem_17159") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17047, "mem_17047") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17183, &mem_17161, "mem_17161") != 0)
+    if (memblock_set_device(ctx, &mem_out_17071, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17184, &tR_mem_17156, "tR_mem_17156") != 0)
+    if (memblock_set_device(ctx, &mem_out_17072, &tR_mem_17044, "tR_mem_17044") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17257, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17145, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17258, &mem_out_17183, "mem_out_17183") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17146, &mem_out_17071, "mem_out_17071") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17259, &mem_out_17184, "mem_out_17184") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17147, &mem_out_17072, "mem_out_17072") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17159, "mem_17159") != 0)
+        if (memblock_unref_device(ctx, &mem_17047, "mem_17047") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17184, "mem_out_17184") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17072, "mem_out_17072") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17183, "mem_out_17183") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17071, "mem_out_17071") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_short(struct futhark_context *ctx, struct memblock_device *mem_out_p_17260, struct memblock_device *mem_out_p_17261, struct memblock_device *mem_out_p_17262, struct memblock_device tR_mem_17156, struct memblock_device tS_mem_17157, int64_t nR_12688, int64_t nS_12689, int64_t offset_R_12692, int64_t offset_S_12693, int64_t partitionsPerWindow_12694, int64_t numberOfWindows_12695, int64_t extParallelism_12696, int64_t scatter_psizze_12697)
+FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_short(struct futhark_context *ctx, struct memblock_device *mem_out_p_17148, struct memblock_device *mem_out_p_17149, struct memblock_device *mem_out_p_17150, struct memblock_device tR_mem_17044, struct memblock_device tS_mem_17045, int64_t nR_12620, int64_t nS_12621, int64_t offset_R_12624, int64_t offset_S_12625, int64_t partitionsPerWindow_12626, int64_t numberOfWindows_12627, int64_t extParallelism_12628, int64_t scatter_psizze_12629)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_17161;
+    struct memblock_device mem_17049;
     
-    mem_17161.references = NULL;
+    mem_17049.references = NULL;
     
-    struct memblock_device mem_17159;
+    struct memblock_device mem_17047;
     
-    mem_17159.references = NULL;
+    mem_17047.references = NULL;
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t bytes_17158 = (int64_t) 8 * nR_12688;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t bytes_17046 = (int64_t) 8 * nR_12620;
     
-    if (memblock_alloc_device(ctx, &mem_17159, bytes_17158, "mem_17159")) {
+    if (memblock_alloc_device(ctx, &mem_17047, bytes_17046, "mem_17047")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17159, nR_12688, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17047, nR_12620, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &mem_17161, bytes_17158, "mem_17161")) {
+    if (memblock_alloc_device(ctx, &mem_17049, bytes_17046, "mem_17049")) {
         err = 1;
         goto cleanup;
     }
-    if (futrts_builtinzhiota_i64(ctx, mem_17161, nR_12688, (int64_t) 0, (int64_t) 1) != 0) {
+    if (futrts_builtinzhiota_i64(ctx, mem_17049, nR_12620, (int64_t) 0, (int64_t) 1) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_set_device(ctx, &mem_out_17182, &mem_17159, "mem_17159") != 0)
+    if (memblock_set_device(ctx, &mem_out_17070, &mem_17047, "mem_17047") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17183, &mem_17161, "mem_17161") != 0)
+    if (memblock_set_device(ctx, &mem_out_17071, &mem_17049, "mem_17049") != 0)
         return 1;
-    if (memblock_set_device(ctx, &mem_out_17184, &tR_mem_17156, "tR_mem_17156") != 0)
+    if (memblock_set_device(ctx, &mem_out_17072, &tR_mem_17044, "tR_mem_17044") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17260, &mem_out_17182, "mem_out_17182") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17148, &mem_out_17070, "mem_out_17070") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17261, &mem_out_17183, "mem_out_17183") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17149, &mem_out_17071, "mem_out_17071") != 0)
         return 1;
-    if (memblock_set_device(ctx, &*mem_out_p_17262, &mem_out_17184, "mem_out_17184") != 0)
+    if (memblock_set_device(ctx, &*mem_out_p_17150, &mem_out_17072, "mem_out_17072") != 0)
         return 1;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_17161, "mem_17161") != 0)
+        if (memblock_unref_device(ctx, &mem_17049, "mem_17049") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17159, "mem_17159") != 0)
+        if (memblock_unref_device(ctx, &mem_17047, "mem_17047") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17184, "mem_out_17184") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17072, "mem_out_17072") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17183, "mem_out_17183") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17071, "mem_out_17071") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_out_17182, "mem_out_17182") != 0)
+        if (memblock_unref_device(ctx, &mem_out_17070, "mem_out_17070") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_max_idx(struct futhark_context *ctx, int64_t *out_prim_out_17263, struct memblock_device eta_p_mem_17156, int64_t nz2080U_16272)
+FUTHARK_FUN_ATTR int futrts_entry_max_idx(struct futhark_context *ctx, int64_t *out_prim_out_17151, struct memblock_device eta_p_mem_17044, int64_t nz2080U_16160)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device segred_tmp_mem_17207;
+    struct memblock_device segred_tmp_mem_17095;
     
-    segred_tmp_mem_17207.references = NULL;
+    segred_tmp_mem_17095.references = NULL;
     
-    struct memblock_device mem_17158;
+    struct memblock_device mem_17046;
     
-    mem_17158.references = NULL;
+    mem_17046.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t prim_out_17182;
-    int64_t segred_tblock_sizze_16588;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t prim_out_17070;
+    int64_t segred_tblock_sizze_16476;
     
-    segred_tblock_sizze_16588 = *ctx->tuning_params.max_idxzisegred_tblock_sizze_16587;
+    segred_tblock_sizze_16476 = *ctx->tuning_params.max_idxzisegred_tblock_sizze_16475;
     
-    int64_t num_tblocks_16590;
-    int64_t max_num_tblocks_17183;
+    int64_t num_tblocks_16478;
+    int64_t max_num_tblocks_17071;
     
-    max_num_tblocks_17183 = *ctx->tuning_params.max_idxzisegred_num_tblocks_16589;
-    num_tblocks_16590 = sext_i64_i32(smax64((int64_t) 1, smin64(sdiv_up64(nz2080U_16272, segred_tblock_sizze_16588), max_num_tblocks_17183)));
-    if (memblock_alloc_device(ctx, &mem_17158, (int64_t) 8, "mem_17158")) {
+    max_num_tblocks_17071 = *ctx->tuning_params.max_idxzisegred_num_tblocks_16477;
+    num_tblocks_16478 = sext_i64_i32(smax64((int64_t) 1, smin64(sdiv_up64(nz2080U_16160, segred_tblock_sizze_16476), max_num_tblocks_17071)));
+    if (memblock_alloc_device(ctx, &mem_17046, (int64_t) 8, "mem_17046")) {
         err = 1;
         goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "\n# SegRed");
     
-    int64_t chunk_sizze_17184 = (int64_t) 1;
+    int64_t chunk_sizze_17072 = (int64_t) 1;
     
-    if (memblock_alloc_device(ctx, &segred_tmp_mem_17207, (int64_t) 8 * num_tblocks_16590, "segred_tmp_mem_17207")) {
+    if (memblock_alloc_device(ctx, &segred_tmp_mem_17095, (int64_t) 8 * num_tblocks_16478, "segred_tmp_mem_17095")) {
         err = 1;
         goto cleanup;
     }
     
-    int64_t num_threads_17209 = num_tblocks_16590 * segred_tblock_sizze_16588;
+    int64_t num_threads_17097 = num_tblocks_16478 * segred_tblock_sizze_16476;
     
     {
-        err = gpu_kernel_max_idxzisegred_nonseg_16595(ctx, num_tblocks_16590, 1, 1, *ctx->tuning_params.max_idxzisegred_tblock_sizze_16587, 1, 1, 8 + ((int64_t) 8 * segred_tblock_sizze_16588 + srem64((int64_t) 8 - srem64((int64_t) 8 * segred_tblock_sizze_16588, (int64_t) 8), (int64_t) 8)), nz2080U_16272, num_tblocks_16590, num_threads_17209, eta_p_mem_17156.mem, mem_17158.mem, counters_mem_17185.mem, segred_tmp_mem_17207.mem);
+        err = gpu_kernel_max_idxzisegred_nonseg_16483(ctx, num_tblocks_16478, 1, 1, *ctx->tuning_params.max_idxzisegred_tblock_sizze_16475, 1, 1, 8 + ((int64_t) 8 * segred_tblock_sizze_16476 + srem64((int64_t) 8 - srem64((int64_t) 8 * segred_tblock_sizze_16476, (int64_t) 8), (int64_t) 8)), nz2080U_16160, num_tblocks_16478, num_threads_17097, eta_p_mem_17044.mem, mem_17046.mem, counters_mem_17073.mem, segred_tmp_mem_17095.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "");
     
-    int64_t read_res_17264;
+    int64_t read_res_17152;
     
-    if ((err = gpu_scalar_from_device(ctx, &read_res_17264, mem_17158.mem, (int64_t) 0 * sizeof(int64_t), sizeof(int64_t))) != 0)
+    if ((err = gpu_scalar_from_device(ctx, &read_res_17152, mem_17046.mem, (int64_t) 0 * sizeof(int64_t), sizeof(int64_t))) != 0)
         goto cleanup;
     if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0) {
         err = 1;
         goto cleanup;
     }
     
-    int64_t defunc_0_reduce_res_16568 = read_res_17264;
+    int64_t defunc_0_reduce_res_16456 = read_res_17152;
     
-    if (memblock_unref_device(ctx, &mem_17158, "mem_17158") != 0)
+    if (memblock_unref_device(ctx, &mem_17046, "mem_17046") != 0)
         return 1;
-    prim_out_17182 = defunc_0_reduce_res_16568;
-    *out_prim_out_17263 = prim_out_17182;
+    prim_out_17070 = defunc_0_reduce_res_16456;
+    *out_prim_out_17151 = prim_out_17070;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &segred_tmp_mem_17207, "segred_tmp_mem_17207") != 0)
+        if (memblock_unref_device(ctx, &segred_tmp_mem_17095, "segred_tmp_mem_17095") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17158, "mem_17158") != 0)
+        if (memblock_unref_device(ctx, &mem_17046, "mem_17046") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_min_idx(struct futhark_context *ctx, int64_t *out_prim_out_17265, struct memblock_device eta_p_mem_17156, int64_t nz2080U_16232)
+FUTHARK_FUN_ATTR int futrts_entry_min_idx(struct futhark_context *ctx, int64_t *out_prim_out_17153, struct memblock_device eta_p_mem_17044, int64_t nz2080U_16120)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device segred_tmp_mem_17207;
+    struct memblock_device segred_tmp_mem_17095;
     
-    segred_tmp_mem_17207.references = NULL;
+    segred_tmp_mem_17095.references = NULL;
     
-    struct memblock_device mem_17158;
+    struct memblock_device mem_17046;
     
-    mem_17158.references = NULL;
+    mem_17046.references = NULL;
     
-    struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
-    int64_t prim_out_17182;
-    int64_t segred_tblock_sizze_16578;
+    struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
+    int64_t prim_out_17070;
+    int64_t segred_tblock_sizze_16466;
     
-    segred_tblock_sizze_16578 = *ctx->tuning_params.min_idxzisegred_tblock_sizze_16577;
+    segred_tblock_sizze_16466 = *ctx->tuning_params.min_idxzisegred_tblock_sizze_16465;
     
-    int64_t num_tblocks_16580;
-    int64_t max_num_tblocks_17183;
+    int64_t num_tblocks_16468;
+    int64_t max_num_tblocks_17071;
     
-    max_num_tblocks_17183 = *ctx->tuning_params.min_idxzisegred_num_tblocks_16579;
-    num_tblocks_16580 = sext_i64_i32(smax64((int64_t) 1, smin64(sdiv_up64(nz2080U_16232, segred_tblock_sizze_16578), max_num_tblocks_17183)));
-    if (memblock_alloc_device(ctx, &mem_17158, (int64_t) 8, "mem_17158")) {
+    max_num_tblocks_17071 = *ctx->tuning_params.min_idxzisegred_num_tblocks_16467;
+    num_tblocks_16468 = sext_i64_i32(smax64((int64_t) 1, smin64(sdiv_up64(nz2080U_16120, segred_tblock_sizze_16466), max_num_tblocks_17071)));
+    if (memblock_alloc_device(ctx, &mem_17046, (int64_t) 8, "mem_17046")) {
         err = 1;
         goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "\n# SegRed");
     
-    int64_t chunk_sizze_17184 = (int64_t) 1;
+    int64_t chunk_sizze_17072 = (int64_t) 1;
     
-    if (memblock_alloc_device(ctx, &segred_tmp_mem_17207, (int64_t) 8 * num_tblocks_16580, "segred_tmp_mem_17207")) {
+    if (memblock_alloc_device(ctx, &segred_tmp_mem_17095, (int64_t) 8 * num_tblocks_16468, "segred_tmp_mem_17095")) {
         err = 1;
         goto cleanup;
     }
     
-    int64_t num_threads_17209 = num_tblocks_16580 * segred_tblock_sizze_16578;
+    int64_t num_threads_17097 = num_tblocks_16468 * segred_tblock_sizze_16466;
     
     {
-        err = gpu_kernel_min_idxzisegred_nonseg_16585(ctx, num_tblocks_16580, 1, 1, *ctx->tuning_params.min_idxzisegred_tblock_sizze_16577, 1, 1, 8 + ((int64_t) 8 * segred_tblock_sizze_16578 + srem64((int64_t) 8 - srem64((int64_t) 8 * segred_tblock_sizze_16578, (int64_t) 8), (int64_t) 8)), nz2080U_16232, num_tblocks_16580, num_threads_17209, eta_p_mem_17156.mem, mem_17158.mem, counters_mem_17185.mem, segred_tmp_mem_17207.mem);
+        err = gpu_kernel_min_idxzisegred_nonseg_16473(ctx, num_tblocks_16468, 1, 1, *ctx->tuning_params.min_idxzisegred_tblock_sizze_16465, 1, 1, 8 + ((int64_t) 8 * segred_tblock_sizze_16466 + srem64((int64_t) 8 - srem64((int64_t) 8 * segred_tblock_sizze_16466, (int64_t) 8), (int64_t) 8)), nz2080U_16120, num_tblocks_16468, num_threads_17097, eta_p_mem_17044.mem, mem_17046.mem, counters_mem_17073.mem, segred_tmp_mem_17095.mem);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "");
     
-    int64_t read_res_17266;
+    int64_t read_res_17154;
     
-    if ((err = gpu_scalar_from_device(ctx, &read_res_17266, mem_17158.mem, (int64_t) 0 * sizeof(int64_t), sizeof(int64_t))) != 0)
+    if ((err = gpu_scalar_from_device(ctx, &read_res_17154, mem_17046.mem, (int64_t) 0 * sizeof(int64_t), sizeof(int64_t))) != 0)
         goto cleanup;
     if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0) {
         err = 1;
         goto cleanup;
     }
     
-    int64_t defunc_0_reduce_res_16568 = read_res_17266;
+    int64_t defunc_0_reduce_res_16456 = read_res_17154;
     
-    if (memblock_unref_device(ctx, &mem_17158, "mem_17158") != 0)
+    if (memblock_unref_device(ctx, &mem_17046, "mem_17046") != 0)
         return 1;
-    prim_out_17182 = defunc_0_reduce_res_16568;
-    *out_prim_out_17265 = prim_out_17182;
+    prim_out_17070 = defunc_0_reduce_res_16456;
+    *out_prim_out_17153 = prim_out_17070;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &segred_tmp_mem_17207, "segred_tmp_mem_17207") != 0)
+        if (memblock_unref_device(ctx, &segred_tmp_mem_17095, "segred_tmp_mem_17095") != 0)
             return 1;
-        if (memblock_unref_device(ctx, &mem_17158, "mem_17158") != 0)
+        if (memblock_unref_device(ctx, &mem_17046, "mem_17046") != 0)
             return 1;
     }
     return err;
@@ -13022,44 +13022,44 @@ FUTHARK_FUN_ATTR int futrts_entry_min_idx(struct futhark_context *ctx, int64_t *
 
 int futhark_entry_gather_payloads_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_f64_1d *in3)
 {
-    int64_t niz2084U_14686 = (int64_t) 0;
-    int64_t dz2083U_14687 = (int64_t) 0;
-    int64_t incr_14688 = (int64_t) 0;
-    int64_t psizze_14689 = (int64_t) 0;
+    int64_t niz2084U_14574 = (int64_t) 0;
+    int64_t dz2083U_14575 = (int64_t) 0;
+    int64_t incr_14576 = (int64_t) 0;
+    int64_t psizze_14577 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17157;
+    struct memblock_device ys_mem_17045;
     
-    ys_mem_17157.references = NULL;
+    ys_mem_17045.references = NULL;
     
-    struct memblock_device is_mem_17156;
+    struct memblock_device is_mem_17044;
     
-    is_mem_17156.references = NULL;
-    incr_14688 = in0;
-    psizze_14689 = in1;
-    is_mem_17156 = in2->mem;
-    niz2084U_14686 = in2->shape[0];
-    ys_mem_17157 = in3->mem;
-    dz2083U_14687 = in3->shape[0];
-    if (!(niz2084U_14686 == in2->shape[0] && dz2083U_14687 == in3->shape[0])) {
+    is_mem_17044.references = NULL;
+    incr_14576 = in0;
+    psizze_14577 = in1;
+    is_mem_17044 = in2->mem;
+    niz2084U_14574 = in2->shape[0];
+    ys_mem_17045 = in3->mem;
+    dz2083U_14575 = in3->shape[0];
+    if (!(niz2084U_14574 == in2->shape[0] && dz2083U_14575 == in3->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_double(ctx, &mem_out_17182, is_mem_17156, ys_mem_17157, niz2084U_14686, dz2083U_14687, incr_14688, psizze_14689);
+        ret = futrts_entry_gather_payloads_double(ctx, &mem_out_17070, is_mem_17044, ys_mem_17045, niz2084U_14574, dz2083U_14575, incr_14576, psizze_14577);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_f64_1d *) malloc(sizeof(struct futhark_f64_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = niz2084U_14686;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = niz2084U_14574;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13068,50 +13068,50 @@ int futhark_entry_gather_payloads_double(struct futhark_context *ctx, struct fut
 }
 int futhark_entry_gather_payloads_double_GFUR(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_f64_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_f64_1d *in4)
 {
-    int64_t ni_16193 = (int64_t) 0;
-    int64_t n_16194 = (int64_t) 0;
-    int64_t incr_16195 = (int64_t) 0;
-    int64_t psizze_16196 = (int64_t) 0;
+    int64_t ni_16081 = (int64_t) 0;
+    int64_t n_16082 = (int64_t) 0;
+    int64_t incr_16083 = (int64_t) 0;
+    int64_t psizze_16084 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17158;
+    struct memblock_device ys_mem_17046;
     
-    ys_mem_17158.references = NULL;
+    ys_mem_17046.references = NULL;
     
-    struct memblock_device is_mem_17157;
+    struct memblock_device is_mem_17045;
     
-    is_mem_17157.references = NULL;
+    is_mem_17045.references = NULL;
     
-    struct memblock_device preVals_mem_17156;
+    struct memblock_device preVals_mem_17044;
     
-    preVals_mem_17156.references = NULL;
-    incr_16195 = in0;
-    psizze_16196 = in1;
-    preVals_mem_17156 = in2->mem;
-    ni_16193 = in2->shape[0];
-    is_mem_17157 = in3->mem;
-    ni_16193 = in3->shape[0];
-    ys_mem_17158 = in4->mem;
-    n_16194 = in4->shape[0];
-    if (!(ni_16193 == in2->shape[0] && (ni_16193 == in3->shape[0] && n_16194 == in4->shape[0]))) {
+    preVals_mem_17044.references = NULL;
+    incr_16083 = in0;
+    psizze_16084 = in1;
+    preVals_mem_17044 = in2->mem;
+    ni_16081 = in2->shape[0];
+    is_mem_17045 = in3->mem;
+    ni_16081 = in3->shape[0];
+    ys_mem_17046 = in4->mem;
+    n_16082 = in4->shape[0];
+    if (!(ni_16081 == in2->shape[0] && (ni_16081 == in3->shape[0] && n_16082 == in4->shape[0]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_double_GFUR(ctx, &mem_out_17182, preVals_mem_17156, is_mem_17157, ys_mem_17158, ni_16193, n_16194, incr_16195, psizze_16196);
+        ret = futrts_entry_gather_payloads_double_GFUR(ctx, &mem_out_17070, preVals_mem_17044, is_mem_17045, ys_mem_17046, ni_16081, n_16082, incr_16083, psizze_16084);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_f64_1d *) malloc(sizeof(struct futhark_f64_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = ni_16193;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = ni_16081;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13120,44 +13120,44 @@ int futhark_entry_gather_payloads_double_GFUR(struct futhark_context *ctx, struc
 }
 int futhark_entry_gather_payloads_float(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_f32_1d *in3)
 {
-    int64_t niz2084U_14346 = (int64_t) 0;
-    int64_t dz2083U_14347 = (int64_t) 0;
-    int64_t incr_14348 = (int64_t) 0;
-    int64_t psizze_14349 = (int64_t) 0;
+    int64_t niz2084U_14234 = (int64_t) 0;
+    int64_t dz2083U_14235 = (int64_t) 0;
+    int64_t incr_14236 = (int64_t) 0;
+    int64_t psizze_14237 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17157;
+    struct memblock_device ys_mem_17045;
     
-    ys_mem_17157.references = NULL;
+    ys_mem_17045.references = NULL;
     
-    struct memblock_device is_mem_17156;
+    struct memblock_device is_mem_17044;
     
-    is_mem_17156.references = NULL;
-    incr_14348 = in0;
-    psizze_14349 = in1;
-    is_mem_17156 = in2->mem;
-    niz2084U_14346 = in2->shape[0];
-    ys_mem_17157 = in3->mem;
-    dz2083U_14347 = in3->shape[0];
-    if (!(niz2084U_14346 == in2->shape[0] && dz2083U_14347 == in3->shape[0])) {
+    is_mem_17044.references = NULL;
+    incr_14236 = in0;
+    psizze_14237 = in1;
+    is_mem_17044 = in2->mem;
+    niz2084U_14234 = in2->shape[0];
+    ys_mem_17045 = in3->mem;
+    dz2083U_14235 = in3->shape[0];
+    if (!(niz2084U_14234 == in2->shape[0] && dz2083U_14235 == in3->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_float(ctx, &mem_out_17182, is_mem_17156, ys_mem_17157, niz2084U_14346, dz2083U_14347, incr_14348, psizze_14349);
+        ret = futrts_entry_gather_payloads_float(ctx, &mem_out_17070, is_mem_17044, ys_mem_17045, niz2084U_14234, dz2083U_14235, incr_14236, psizze_14237);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_f32_1d *) malloc(sizeof(struct futhark_f32_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = niz2084U_14346;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = niz2084U_14234;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13166,50 +13166,50 @@ int futhark_entry_gather_payloads_float(struct futhark_context *ctx, struct futh
 }
 int futhark_entry_gather_payloads_float_GFUR(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_f32_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_f32_1d *in4)
 {
-    int64_t ni_15892 = (int64_t) 0;
-    int64_t n_15893 = (int64_t) 0;
-    int64_t incr_15894 = (int64_t) 0;
-    int64_t psizze_15895 = (int64_t) 0;
+    int64_t ni_15780 = (int64_t) 0;
+    int64_t n_15781 = (int64_t) 0;
+    int64_t incr_15782 = (int64_t) 0;
+    int64_t psizze_15783 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17158;
+    struct memblock_device ys_mem_17046;
     
-    ys_mem_17158.references = NULL;
+    ys_mem_17046.references = NULL;
     
-    struct memblock_device is_mem_17157;
+    struct memblock_device is_mem_17045;
     
-    is_mem_17157.references = NULL;
+    is_mem_17045.references = NULL;
     
-    struct memblock_device preVals_mem_17156;
+    struct memblock_device preVals_mem_17044;
     
-    preVals_mem_17156.references = NULL;
-    incr_15894 = in0;
-    psizze_15895 = in1;
-    preVals_mem_17156 = in2->mem;
-    ni_15892 = in2->shape[0];
-    is_mem_17157 = in3->mem;
-    ni_15892 = in3->shape[0];
-    ys_mem_17158 = in4->mem;
-    n_15893 = in4->shape[0];
-    if (!(ni_15892 == in2->shape[0] && (ni_15892 == in3->shape[0] && n_15893 == in4->shape[0]))) {
+    preVals_mem_17044.references = NULL;
+    incr_15782 = in0;
+    psizze_15783 = in1;
+    preVals_mem_17044 = in2->mem;
+    ni_15780 = in2->shape[0];
+    is_mem_17045 = in3->mem;
+    ni_15780 = in3->shape[0];
+    ys_mem_17046 = in4->mem;
+    n_15781 = in4->shape[0];
+    if (!(ni_15780 == in2->shape[0] && (ni_15780 == in3->shape[0] && n_15781 == in4->shape[0]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_float_GFUR(ctx, &mem_out_17182, preVals_mem_17156, is_mem_17157, ys_mem_17158, ni_15892, n_15893, incr_15894, psizze_15895);
+        ret = futrts_entry_gather_payloads_float_GFUR(ctx, &mem_out_17070, preVals_mem_17044, is_mem_17045, ys_mem_17046, ni_15780, n_15781, incr_15782, psizze_15783);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_f32_1d *) malloc(sizeof(struct futhark_f32_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = ni_15892;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = ni_15780;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13218,44 +13218,44 @@ int futhark_entry_gather_payloads_float_GFUR(struct futhark_context *ctx, struct
 }
 int futhark_entry_gather_payloads_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i32_1d *in3)
 {
-    int64_t niz2084U_13666 = (int64_t) 0;
-    int64_t dz2083U_13667 = (int64_t) 0;
-    int64_t incr_13668 = (int64_t) 0;
-    int64_t psizze_13669 = (int64_t) 0;
+    int64_t niz2084U_13554 = (int64_t) 0;
+    int64_t dz2083U_13555 = (int64_t) 0;
+    int64_t incr_13556 = (int64_t) 0;
+    int64_t psizze_13557 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17157;
+    struct memblock_device ys_mem_17045;
     
-    ys_mem_17157.references = NULL;
+    ys_mem_17045.references = NULL;
     
-    struct memblock_device is_mem_17156;
+    struct memblock_device is_mem_17044;
     
-    is_mem_17156.references = NULL;
-    incr_13668 = in0;
-    psizze_13669 = in1;
-    is_mem_17156 = in2->mem;
-    niz2084U_13666 = in2->shape[0];
-    ys_mem_17157 = in3->mem;
-    dz2083U_13667 = in3->shape[0];
-    if (!(niz2084U_13666 == in2->shape[0] && dz2083U_13667 == in3->shape[0])) {
+    is_mem_17044.references = NULL;
+    incr_13556 = in0;
+    psizze_13557 = in1;
+    is_mem_17044 = in2->mem;
+    niz2084U_13554 = in2->shape[0];
+    ys_mem_17045 = in3->mem;
+    dz2083U_13555 = in3->shape[0];
+    if (!(niz2084U_13554 == in2->shape[0] && dz2083U_13555 == in3->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_int(ctx, &mem_out_17182, is_mem_17156, ys_mem_17157, niz2084U_13666, dz2083U_13667, incr_13668, psizze_13669);
+        ret = futrts_entry_gather_payloads_int(ctx, &mem_out_17070, is_mem_17044, ys_mem_17045, niz2084U_13554, dz2083U_13555, incr_13556, psizze_13557);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = niz2084U_13666;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = niz2084U_13554;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13264,50 +13264,50 @@ int futhark_entry_gather_payloads_int(struct futhark_context *ctx, struct futhar
 }
 int futhark_entry_gather_payloads_int_GFUR(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i32_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_i32_1d *in4)
 {
-    int64_t ni_15290 = (int64_t) 0;
-    int64_t n_15291 = (int64_t) 0;
-    int64_t incr_15292 = (int64_t) 0;
-    int64_t psizze_15293 = (int64_t) 0;
+    int64_t ni_15178 = (int64_t) 0;
+    int64_t n_15179 = (int64_t) 0;
+    int64_t incr_15180 = (int64_t) 0;
+    int64_t psizze_15181 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17158;
+    struct memblock_device ys_mem_17046;
     
-    ys_mem_17158.references = NULL;
+    ys_mem_17046.references = NULL;
     
-    struct memblock_device is_mem_17157;
+    struct memblock_device is_mem_17045;
     
-    is_mem_17157.references = NULL;
+    is_mem_17045.references = NULL;
     
-    struct memblock_device preVals_mem_17156;
+    struct memblock_device preVals_mem_17044;
     
-    preVals_mem_17156.references = NULL;
-    incr_15292 = in0;
-    psizze_15293 = in1;
-    preVals_mem_17156 = in2->mem;
-    ni_15290 = in2->shape[0];
-    is_mem_17157 = in3->mem;
-    ni_15290 = in3->shape[0];
-    ys_mem_17158 = in4->mem;
-    n_15291 = in4->shape[0];
-    if (!(ni_15290 == in2->shape[0] && (ni_15290 == in3->shape[0] && n_15291 == in4->shape[0]))) {
+    preVals_mem_17044.references = NULL;
+    incr_15180 = in0;
+    psizze_15181 = in1;
+    preVals_mem_17044 = in2->mem;
+    ni_15178 = in2->shape[0];
+    is_mem_17045 = in3->mem;
+    ni_15178 = in3->shape[0];
+    ys_mem_17046 = in4->mem;
+    n_15179 = in4->shape[0];
+    if (!(ni_15178 == in2->shape[0] && (ni_15178 == in3->shape[0] && n_15179 == in4->shape[0]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_int_GFUR(ctx, &mem_out_17182, preVals_mem_17156, is_mem_17157, ys_mem_17158, ni_15290, n_15291, incr_15292, psizze_15293);
+        ret = futrts_entry_gather_payloads_int_GFUR(ctx, &mem_out_17070, preVals_mem_17044, is_mem_17045, ys_mem_17046, ni_15178, n_15179, incr_15180, psizze_15181);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = ni_15290;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = ni_15178;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13316,44 +13316,44 @@ int futhark_entry_gather_payloads_int_GFUR(struct futhark_context *ctx, struct f
 }
 int futhark_entry_gather_payloads_long(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3)
 {
-    int64_t niz2084U_14006 = (int64_t) 0;
-    int64_t dz2083U_14007 = (int64_t) 0;
-    int64_t incr_14008 = (int64_t) 0;
-    int64_t psizze_14009 = (int64_t) 0;
+    int64_t niz2084U_13894 = (int64_t) 0;
+    int64_t dz2083U_13895 = (int64_t) 0;
+    int64_t incr_13896 = (int64_t) 0;
+    int64_t psizze_13897 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17157;
+    struct memblock_device ys_mem_17045;
     
-    ys_mem_17157.references = NULL;
+    ys_mem_17045.references = NULL;
     
-    struct memblock_device is_mem_17156;
+    struct memblock_device is_mem_17044;
     
-    is_mem_17156.references = NULL;
-    incr_14008 = in0;
-    psizze_14009 = in1;
-    is_mem_17156 = in2->mem;
-    niz2084U_14006 = in2->shape[0];
-    ys_mem_17157 = in3->mem;
-    dz2083U_14007 = in3->shape[0];
-    if (!(niz2084U_14006 == in2->shape[0] && dz2083U_14007 == in3->shape[0])) {
+    is_mem_17044.references = NULL;
+    incr_13896 = in0;
+    psizze_13897 = in1;
+    is_mem_17044 = in2->mem;
+    niz2084U_13894 = in2->shape[0];
+    ys_mem_17045 = in3->mem;
+    dz2083U_13895 = in3->shape[0];
+    if (!(niz2084U_13894 == in2->shape[0] && dz2083U_13895 == in3->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_long(ctx, &mem_out_17182, is_mem_17156, ys_mem_17157, niz2084U_14006, dz2083U_14007, incr_14008, psizze_14009);
+        ret = futrts_entry_gather_payloads_long(ctx, &mem_out_17070, is_mem_17044, ys_mem_17045, niz2084U_13894, dz2083U_13895, incr_13896, psizze_13897);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = niz2084U_14006;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = niz2084U_13894;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13362,50 +13362,50 @@ int futhark_entry_gather_payloads_long(struct futhark_context *ctx, struct futha
 }
 int futhark_entry_gather_payloads_long_GFUR(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_i64_1d *in4)
 {
-    int64_t ni_15591 = (int64_t) 0;
-    int64_t n_15592 = (int64_t) 0;
-    int64_t incr_15593 = (int64_t) 0;
-    int64_t psizze_15594 = (int64_t) 0;
+    int64_t ni_15479 = (int64_t) 0;
+    int64_t n_15480 = (int64_t) 0;
+    int64_t incr_15481 = (int64_t) 0;
+    int64_t psizze_15482 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17158;
+    struct memblock_device ys_mem_17046;
     
-    ys_mem_17158.references = NULL;
+    ys_mem_17046.references = NULL;
     
-    struct memblock_device is_mem_17157;
+    struct memblock_device is_mem_17045;
     
-    is_mem_17157.references = NULL;
+    is_mem_17045.references = NULL;
     
-    struct memblock_device preVals_mem_17156;
+    struct memblock_device preVals_mem_17044;
     
-    preVals_mem_17156.references = NULL;
-    incr_15593 = in0;
-    psizze_15594 = in1;
-    preVals_mem_17156 = in2->mem;
-    ni_15591 = in2->shape[0];
-    is_mem_17157 = in3->mem;
-    ni_15591 = in3->shape[0];
-    ys_mem_17158 = in4->mem;
-    n_15592 = in4->shape[0];
-    if (!(ni_15591 == in2->shape[0] && (ni_15591 == in3->shape[0] && n_15592 == in4->shape[0]))) {
+    preVals_mem_17044.references = NULL;
+    incr_15481 = in0;
+    psizze_15482 = in1;
+    preVals_mem_17044 = in2->mem;
+    ni_15479 = in2->shape[0];
+    is_mem_17045 = in3->mem;
+    ni_15479 = in3->shape[0];
+    ys_mem_17046 = in4->mem;
+    n_15480 = in4->shape[0];
+    if (!(ni_15479 == in2->shape[0] && (ni_15479 == in3->shape[0] && n_15480 == in4->shape[0]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_long_GFUR(ctx, &mem_out_17182, preVals_mem_17156, is_mem_17157, ys_mem_17158, ni_15591, n_15592, incr_15593, psizze_15594);
+        ret = futrts_entry_gather_payloads_long_GFUR(ctx, &mem_out_17070, preVals_mem_17044, is_mem_17045, ys_mem_17046, ni_15479, n_15480, incr_15481, psizze_15482);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = ni_15591;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = ni_15479;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13414,44 +13414,44 @@ int futhark_entry_gather_payloads_long_GFUR(struct futhark_context *ctx, struct 
 }
 int futhark_entry_gather_payloads_short(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i16_1d *in3)
 {
-    int64_t niz2084U_13326 = (int64_t) 0;
-    int64_t dz2083U_13327 = (int64_t) 0;
-    int64_t incr_13328 = (int64_t) 0;
-    int64_t psizze_13329 = (int64_t) 0;
+    int64_t niz2084U_13214 = (int64_t) 0;
+    int64_t dz2083U_13215 = (int64_t) 0;
+    int64_t incr_13216 = (int64_t) 0;
+    int64_t psizze_13217 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17157;
+    struct memblock_device ys_mem_17045;
     
-    ys_mem_17157.references = NULL;
+    ys_mem_17045.references = NULL;
     
-    struct memblock_device is_mem_17156;
+    struct memblock_device is_mem_17044;
     
-    is_mem_17156.references = NULL;
-    incr_13328 = in0;
-    psizze_13329 = in1;
-    is_mem_17156 = in2->mem;
-    niz2084U_13326 = in2->shape[0];
-    ys_mem_17157 = in3->mem;
-    dz2083U_13327 = in3->shape[0];
-    if (!(niz2084U_13326 == in2->shape[0] && dz2083U_13327 == in3->shape[0])) {
+    is_mem_17044.references = NULL;
+    incr_13216 = in0;
+    psizze_13217 = in1;
+    is_mem_17044 = in2->mem;
+    niz2084U_13214 = in2->shape[0];
+    ys_mem_17045 = in3->mem;
+    dz2083U_13215 = in3->shape[0];
+    if (!(niz2084U_13214 == in2->shape[0] && dz2083U_13215 == in3->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_short(ctx, &mem_out_17182, is_mem_17156, ys_mem_17157, niz2084U_13326, dz2083U_13327, incr_13328, psizze_13329);
+        ret = futrts_entry_gather_payloads_short(ctx, &mem_out_17070, is_mem_17044, ys_mem_17045, niz2084U_13214, dz2083U_13215, incr_13216, psizze_13217);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_i16_1d *) malloc(sizeof(struct futhark_i16_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = niz2084U_13326;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = niz2084U_13214;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13460,50 +13460,50 @@ int futhark_entry_gather_payloads_short(struct futhark_context *ctx, struct futh
 }
 int futhark_entry_gather_payloads_short_GFUR(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i16_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_i16_1d *in4)
 {
-    int64_t ni_14989 = (int64_t) 0;
-    int64_t n_14990 = (int64_t) 0;
-    int64_t incr_14991 = (int64_t) 0;
-    int64_t psizze_14992 = (int64_t) 0;
+    int64_t ni_14877 = (int64_t) 0;
+    int64_t n_14878 = (int64_t) 0;
+    int64_t incr_14879 = (int64_t) 0;
+    int64_t psizze_14880 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device ys_mem_17158;
+    struct memblock_device ys_mem_17046;
     
-    ys_mem_17158.references = NULL;
+    ys_mem_17046.references = NULL;
     
-    struct memblock_device is_mem_17157;
+    struct memblock_device is_mem_17045;
     
-    is_mem_17157.references = NULL;
+    is_mem_17045.references = NULL;
     
-    struct memblock_device preVals_mem_17156;
+    struct memblock_device preVals_mem_17044;
     
-    preVals_mem_17156.references = NULL;
-    incr_14991 = in0;
-    psizze_14992 = in1;
-    preVals_mem_17156 = in2->mem;
-    ni_14989 = in2->shape[0];
-    is_mem_17157 = in3->mem;
-    ni_14989 = in3->shape[0];
-    ys_mem_17158 = in4->mem;
-    n_14990 = in4->shape[0];
-    if (!(ni_14989 == in2->shape[0] && (ni_14989 == in3->shape[0] && n_14990 == in4->shape[0]))) {
+    preVals_mem_17044.references = NULL;
+    incr_14879 = in0;
+    psizze_14880 = in1;
+    preVals_mem_17044 = in2->mem;
+    ni_14877 = in2->shape[0];
+    is_mem_17045 = in3->mem;
+    ni_14877 = in3->shape[0];
+    ys_mem_17046 = in4->mem;
+    n_14878 = in4->shape[0];
+    if (!(ni_14877 == in2->shape[0] && (ni_14877 == in3->shape[0] && n_14878 == in4->shape[0]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_gather_payloads_short_GFUR(ctx, &mem_out_17182, preVals_mem_17156, is_mem_17157, ys_mem_17158, ni_14989, n_14990, incr_14991, psizze_14992);
+        ret = futrts_entry_gather_payloads_short_GFUR(ctx, &mem_out_17070, preVals_mem_17044, is_mem_17045, ys_mem_17046, ni_14877, n_14878, incr_14879, psizze_14880);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_i16_1d *) malloc(sizeof(struct futhark_i16_1d))) != NULL);
-            (*out0)->mem = mem_out_17182;
-            (*out0)->shape[0] = ni_14989;
+            (*out0)->mem = mem_out_17070;
+            (*out0)->shape[0] = ni_14877;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13512,67 +13512,67 @@ int futhark_entry_gather_payloads_short_GFUR(struct futhark_context *ctx, struct
 }
 int futhark_entry_inner_SMJ_double(struct futhark_context *ctx, struct futhark_opaque_joinPairs_double **out0, const struct futhark_f64_1d *in0, const struct futhark_f64_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7)
 {
-    int64_t nR_12968 = (int64_t) 0;
-    int64_t nS_12969 = (int64_t) 0;
-    int64_t offset_R_12972 = (int64_t) 0;
-    int64_t offset_S_12973 = (int64_t) 0;
-    int64_t partitionsPerWindow_12974 = (int64_t) 0;
-    int64_t numberOfWindows_12975 = (int64_t) 0;
-    int64_t extParallelism_12976 = (int64_t) 0;
-    int64_t scatter_psizze_12977 = (int64_t) 0;
+    int64_t nR_12856 = (int64_t) 0;
+    int64_t nS_12857 = (int64_t) 0;
+    int64_t offset_R_12860 = (int64_t) 0;
+    int64_t offset_S_12861 = (int64_t) 0;
+    int64_t partitionsPerWindow_12862 = (int64_t) 0;
+    int64_t numberOfWindows_12863 = (int64_t) 0;
+    int64_t extParallelism_12864 = (int64_t) 0;
+    int64_t scatter_psizze_12865 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device tS_mem_17157;
+    struct memblock_device tS_mem_17045;
     
-    tS_mem_17157.references = NULL;
+    tS_mem_17045.references = NULL;
     
-    struct memblock_device tR_mem_17156;
+    struct memblock_device tR_mem_17044;
     
-    tR_mem_17156.references = NULL;
-    tR_mem_17156 = in0->mem;
-    nR_12968 = in0->shape[0];
-    tS_mem_17157 = in1->mem;
-    nS_12969 = in1->shape[0];
-    offset_R_12972 = in2;
-    offset_S_12973 = in3;
-    partitionsPerWindow_12974 = in4;
-    numberOfWindows_12975 = in5;
-    extParallelism_12976 = in6;
-    scatter_psizze_12977 = in7;
-    if (!(nR_12968 == in0->shape[0] && nS_12969 == in1->shape[0])) {
+    tR_mem_17044.references = NULL;
+    tR_mem_17044 = in0->mem;
+    nR_12856 = in0->shape[0];
+    tS_mem_17045 = in1->mem;
+    nS_12857 = in1->shape[0];
+    offset_R_12860 = in2;
+    offset_S_12861 = in3;
+    partitionsPerWindow_12862 = in4;
+    numberOfWindows_12863 = in5;
+    extParallelism_12864 = in6;
+    scatter_psizze_12865 = in7;
+    if (!(nR_12856 == in0->shape[0] && nS_12857 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_inner_SMJ_double(ctx, &mem_out_17182, &mem_out_17183, &mem_out_17184, tR_mem_17156, tS_mem_17157, nR_12968, nS_12969, offset_R_12972, offset_S_12973, partitionsPerWindow_12974, numberOfWindows_12975, extParallelism_12976, scatter_psizze_12977);
+        ret = futrts_entry_inner_SMJ_double(ctx, &mem_out_17070, &mem_out_17071, &mem_out_17072, tR_mem_17044, tS_mem_17045, nR_12856, nS_12857, offset_R_12860, offset_S_12861, partitionsPerWindow_12862, numberOfWindows_12863, extParallelism_12864, scatter_psizze_12865);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_opaque_joinPairs_double *) malloc(sizeof(struct futhark_opaque_joinPairs_double))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_17182;
-            (*out0)->v0->shape[0] = nR_12968;
+            (*out0)->v0->mem = mem_out_17070;
+            (*out0)->v0->shape[0] = nR_12856;
             assert(((*out0)->v1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_17183;
-            (*out0)->v1->shape[0] = nR_12968;
+            (*out0)->v1->mem = mem_out_17071;
+            (*out0)->v1->shape[0] = nR_12856;
             assert(((*out0)->v2 = (struct futhark_f64_1d *) malloc(sizeof(struct futhark_f64_1d))) != NULL);
-            (*out0)->v2->mem = mem_out_17184;
-            (*out0)->v2->shape[0] = nR_12968;
+            (*out0)->v2->mem = mem_out_17072;
+            (*out0)->v2->shape[0] = nR_12856;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13581,67 +13581,67 @@ int futhark_entry_inner_SMJ_double(struct futhark_context *ctx, struct futhark_o
 }
 int futhark_entry_inner_SMJ_float(struct futhark_context *ctx, struct futhark_opaque_joinPairs_float **out0, const struct futhark_f32_1d *in0, const struct futhark_f32_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7)
 {
-    int64_t nR_12898 = (int64_t) 0;
-    int64_t nS_12899 = (int64_t) 0;
-    int64_t offset_R_12902 = (int64_t) 0;
-    int64_t offset_S_12903 = (int64_t) 0;
-    int64_t partitionsPerWindow_12904 = (int64_t) 0;
-    int64_t numberOfWindows_12905 = (int64_t) 0;
-    int64_t extParallelism_12906 = (int64_t) 0;
-    int64_t scatter_psizze_12907 = (int64_t) 0;
+    int64_t nR_12797 = (int64_t) 0;
+    int64_t nS_12798 = (int64_t) 0;
+    int64_t offset_R_12801 = (int64_t) 0;
+    int64_t offset_S_12802 = (int64_t) 0;
+    int64_t partitionsPerWindow_12803 = (int64_t) 0;
+    int64_t numberOfWindows_12804 = (int64_t) 0;
+    int64_t extParallelism_12805 = (int64_t) 0;
+    int64_t scatter_psizze_12806 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device tS_mem_17157;
+    struct memblock_device tS_mem_17045;
     
-    tS_mem_17157.references = NULL;
+    tS_mem_17045.references = NULL;
     
-    struct memblock_device tR_mem_17156;
+    struct memblock_device tR_mem_17044;
     
-    tR_mem_17156.references = NULL;
-    tR_mem_17156 = in0->mem;
-    nR_12898 = in0->shape[0];
-    tS_mem_17157 = in1->mem;
-    nS_12899 = in1->shape[0];
-    offset_R_12902 = in2;
-    offset_S_12903 = in3;
-    partitionsPerWindow_12904 = in4;
-    numberOfWindows_12905 = in5;
-    extParallelism_12906 = in6;
-    scatter_psizze_12907 = in7;
-    if (!(nR_12898 == in0->shape[0] && nS_12899 == in1->shape[0])) {
+    tR_mem_17044.references = NULL;
+    tR_mem_17044 = in0->mem;
+    nR_12797 = in0->shape[0];
+    tS_mem_17045 = in1->mem;
+    nS_12798 = in1->shape[0];
+    offset_R_12801 = in2;
+    offset_S_12802 = in3;
+    partitionsPerWindow_12803 = in4;
+    numberOfWindows_12804 = in5;
+    extParallelism_12805 = in6;
+    scatter_psizze_12806 = in7;
+    if (!(nR_12797 == in0->shape[0] && nS_12798 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_inner_SMJ_float(ctx, &mem_out_17182, &mem_out_17183, &mem_out_17184, tR_mem_17156, tS_mem_17157, nR_12898, nS_12899, offset_R_12902, offset_S_12903, partitionsPerWindow_12904, numberOfWindows_12905, extParallelism_12906, scatter_psizze_12907);
+        ret = futrts_entry_inner_SMJ_float(ctx, &mem_out_17070, &mem_out_17071, &mem_out_17072, tR_mem_17044, tS_mem_17045, nR_12797, nS_12798, offset_R_12801, offset_S_12802, partitionsPerWindow_12803, numberOfWindows_12804, extParallelism_12805, scatter_psizze_12806);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_opaque_joinPairs_float *) malloc(sizeof(struct futhark_opaque_joinPairs_float))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_17182;
-            (*out0)->v0->shape[0] = nR_12898;
+            (*out0)->v0->mem = mem_out_17070;
+            (*out0)->v0->shape[0] = nR_12797;
             assert(((*out0)->v1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_17183;
-            (*out0)->v1->shape[0] = nR_12898;
+            (*out0)->v1->mem = mem_out_17071;
+            (*out0)->v1->shape[0] = nR_12797;
             assert(((*out0)->v2 = (struct futhark_f32_1d *) malloc(sizeof(struct futhark_f32_1d))) != NULL);
-            (*out0)->v2->mem = mem_out_17184;
-            (*out0)->v2->shape[0] = nR_12898;
+            (*out0)->v2->mem = mem_out_17072;
+            (*out0)->v2->shape[0] = nR_12797;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13650,67 +13650,67 @@ int futhark_entry_inner_SMJ_float(struct futhark_context *ctx, struct futhark_op
 }
 int futhark_entry_inner_SMJ_int(struct futhark_context *ctx, struct futhark_opaque_joinPairs_int **out0, const struct futhark_i32_1d *in0, const struct futhark_i32_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7)
 {
-    int64_t nR_12758 = (int64_t) 0;
-    int64_t nS_12759 = (int64_t) 0;
-    int64_t offset_R_12762 = (int64_t) 0;
-    int64_t offset_S_12763 = (int64_t) 0;
-    int64_t partitionsPerWindow_12764 = (int64_t) 0;
-    int64_t numberOfWindows_12765 = (int64_t) 0;
-    int64_t extParallelism_12766 = (int64_t) 0;
-    int64_t scatter_psizze_12767 = (int64_t) 0;
+    int64_t nR_12679 = (int64_t) 0;
+    int64_t nS_12680 = (int64_t) 0;
+    int64_t offset_R_12683 = (int64_t) 0;
+    int64_t offset_S_12684 = (int64_t) 0;
+    int64_t partitionsPerWindow_12685 = (int64_t) 0;
+    int64_t numberOfWindows_12686 = (int64_t) 0;
+    int64_t extParallelism_12687 = (int64_t) 0;
+    int64_t scatter_psizze_12688 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device tS_mem_17157;
+    struct memblock_device tS_mem_17045;
     
-    tS_mem_17157.references = NULL;
+    tS_mem_17045.references = NULL;
     
-    struct memblock_device tR_mem_17156;
+    struct memblock_device tR_mem_17044;
     
-    tR_mem_17156.references = NULL;
-    tR_mem_17156 = in0->mem;
-    nR_12758 = in0->shape[0];
-    tS_mem_17157 = in1->mem;
-    nS_12759 = in1->shape[0];
-    offset_R_12762 = in2;
-    offset_S_12763 = in3;
-    partitionsPerWindow_12764 = in4;
-    numberOfWindows_12765 = in5;
-    extParallelism_12766 = in6;
-    scatter_psizze_12767 = in7;
-    if (!(nR_12758 == in0->shape[0] && nS_12759 == in1->shape[0])) {
+    tR_mem_17044.references = NULL;
+    tR_mem_17044 = in0->mem;
+    nR_12679 = in0->shape[0];
+    tS_mem_17045 = in1->mem;
+    nS_12680 = in1->shape[0];
+    offset_R_12683 = in2;
+    offset_S_12684 = in3;
+    partitionsPerWindow_12685 = in4;
+    numberOfWindows_12686 = in5;
+    extParallelism_12687 = in6;
+    scatter_psizze_12688 = in7;
+    if (!(nR_12679 == in0->shape[0] && nS_12680 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_inner_SMJ_int(ctx, &mem_out_17182, &mem_out_17183, &mem_out_17184, tR_mem_17156, tS_mem_17157, nR_12758, nS_12759, offset_R_12762, offset_S_12763, partitionsPerWindow_12764, numberOfWindows_12765, extParallelism_12766, scatter_psizze_12767);
+        ret = futrts_entry_inner_SMJ_int(ctx, &mem_out_17070, &mem_out_17071, &mem_out_17072, tR_mem_17044, tS_mem_17045, nR_12679, nS_12680, offset_R_12683, offset_S_12684, partitionsPerWindow_12685, numberOfWindows_12686, extParallelism_12687, scatter_psizze_12688);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_opaque_joinPairs_int *) malloc(sizeof(struct futhark_opaque_joinPairs_int))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_17182;
-            (*out0)->v0->shape[0] = nR_12758;
+            (*out0)->v0->mem = mem_out_17070;
+            (*out0)->v0->shape[0] = nR_12679;
             assert(((*out0)->v1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_17183;
-            (*out0)->v1->shape[0] = nR_12758;
+            (*out0)->v1->mem = mem_out_17071;
+            (*out0)->v1->shape[0] = nR_12679;
             assert(((*out0)->v2 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->v2->mem = mem_out_17184;
-            (*out0)->v2->shape[0] = nR_12758;
+            (*out0)->v2->mem = mem_out_17072;
+            (*out0)->v2->shape[0] = nR_12679;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13719,67 +13719,67 @@ int futhark_entry_inner_SMJ_int(struct futhark_context *ctx, struct futhark_opaq
 }
 int futhark_entry_inner_SMJ_long(struct futhark_context *ctx, struct futhark_opaque_joinPairs_long **out0, const struct futhark_i64_1d *in0, const struct futhark_i64_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7)
 {
-    int64_t nR_12828 = (int64_t) 0;
-    int64_t nS_12829 = (int64_t) 0;
-    int64_t offset_R_12832 = (int64_t) 0;
-    int64_t offset_S_12833 = (int64_t) 0;
-    int64_t partitionsPerWindow_12834 = (int64_t) 0;
-    int64_t numberOfWindows_12835 = (int64_t) 0;
-    int64_t extParallelism_12836 = (int64_t) 0;
-    int64_t scatter_psizze_12837 = (int64_t) 0;
+    int64_t nR_12738 = (int64_t) 0;
+    int64_t nS_12739 = (int64_t) 0;
+    int64_t offset_R_12742 = (int64_t) 0;
+    int64_t offset_S_12743 = (int64_t) 0;
+    int64_t partitionsPerWindow_12744 = (int64_t) 0;
+    int64_t numberOfWindows_12745 = (int64_t) 0;
+    int64_t extParallelism_12746 = (int64_t) 0;
+    int64_t scatter_psizze_12747 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device tS_mem_17157;
+    struct memblock_device tS_mem_17045;
     
-    tS_mem_17157.references = NULL;
+    tS_mem_17045.references = NULL;
     
-    struct memblock_device tR_mem_17156;
+    struct memblock_device tR_mem_17044;
     
-    tR_mem_17156.references = NULL;
-    tR_mem_17156 = in0->mem;
-    nR_12828 = in0->shape[0];
-    tS_mem_17157 = in1->mem;
-    nS_12829 = in1->shape[0];
-    offset_R_12832 = in2;
-    offset_S_12833 = in3;
-    partitionsPerWindow_12834 = in4;
-    numberOfWindows_12835 = in5;
-    extParallelism_12836 = in6;
-    scatter_psizze_12837 = in7;
-    if (!(nR_12828 == in0->shape[0] && nS_12829 == in1->shape[0])) {
+    tR_mem_17044.references = NULL;
+    tR_mem_17044 = in0->mem;
+    nR_12738 = in0->shape[0];
+    tS_mem_17045 = in1->mem;
+    nS_12739 = in1->shape[0];
+    offset_R_12742 = in2;
+    offset_S_12743 = in3;
+    partitionsPerWindow_12744 = in4;
+    numberOfWindows_12745 = in5;
+    extParallelism_12746 = in6;
+    scatter_psizze_12747 = in7;
+    if (!(nR_12738 == in0->shape[0] && nS_12739 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_inner_SMJ_long(ctx, &mem_out_17182, &mem_out_17183, &mem_out_17184, tR_mem_17156, tS_mem_17157, nR_12828, nS_12829, offset_R_12832, offset_S_12833, partitionsPerWindow_12834, numberOfWindows_12835, extParallelism_12836, scatter_psizze_12837);
+        ret = futrts_entry_inner_SMJ_long(ctx, &mem_out_17070, &mem_out_17071, &mem_out_17072, tR_mem_17044, tS_mem_17045, nR_12738, nS_12739, offset_R_12742, offset_S_12743, partitionsPerWindow_12744, numberOfWindows_12745, extParallelism_12746, scatter_psizze_12747);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_opaque_joinPairs_long *) malloc(sizeof(struct futhark_opaque_joinPairs_long))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_17182;
-            (*out0)->v0->shape[0] = nR_12828;
+            (*out0)->v0->mem = mem_out_17070;
+            (*out0)->v0->shape[0] = nR_12738;
             assert(((*out0)->v1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_17183;
-            (*out0)->v1->shape[0] = nR_12828;
+            (*out0)->v1->mem = mem_out_17071;
+            (*out0)->v1->shape[0] = nR_12738;
             assert(((*out0)->v2 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v2->mem = mem_out_17184;
-            (*out0)->v2->shape[0] = nR_12828;
+            (*out0)->v2->mem = mem_out_17072;
+            (*out0)->v2->shape[0] = nR_12738;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13788,67 +13788,67 @@ int futhark_entry_inner_SMJ_long(struct futhark_context *ctx, struct futhark_opa
 }
 int futhark_entry_inner_SMJ_short(struct futhark_context *ctx, struct futhark_opaque_joinPairs_short **out0, const struct futhark_i16_1d *in0, const struct futhark_i16_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5, const int64_t in6, const int64_t in7)
 {
-    int64_t nR_12688 = (int64_t) 0;
-    int64_t nS_12689 = (int64_t) 0;
-    int64_t offset_R_12692 = (int64_t) 0;
-    int64_t offset_S_12693 = (int64_t) 0;
-    int64_t partitionsPerWindow_12694 = (int64_t) 0;
-    int64_t numberOfWindows_12695 = (int64_t) 0;
-    int64_t extParallelism_12696 = (int64_t) 0;
-    int64_t scatter_psizze_12697 = (int64_t) 0;
+    int64_t nR_12620 = (int64_t) 0;
+    int64_t nS_12621 = (int64_t) 0;
+    int64_t offset_R_12624 = (int64_t) 0;
+    int64_t offset_S_12625 = (int64_t) 0;
+    int64_t partitionsPerWindow_12626 = (int64_t) 0;
+    int64_t numberOfWindows_12627 = (int64_t) 0;
+    int64_t extParallelism_12628 = (int64_t) 0;
+    int64_t scatter_psizze_12629 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device mem_out_17184;
+    struct memblock_device mem_out_17072;
     
-    mem_out_17184.references = NULL;
+    mem_out_17072.references = NULL;
     
-    struct memblock_device mem_out_17183;
+    struct memblock_device mem_out_17071;
     
-    mem_out_17183.references = NULL;
+    mem_out_17071.references = NULL;
     
-    struct memblock_device mem_out_17182;
+    struct memblock_device mem_out_17070;
     
-    mem_out_17182.references = NULL;
+    mem_out_17070.references = NULL;
     
-    struct memblock_device tS_mem_17157;
+    struct memblock_device tS_mem_17045;
     
-    tS_mem_17157.references = NULL;
+    tS_mem_17045.references = NULL;
     
-    struct memblock_device tR_mem_17156;
+    struct memblock_device tR_mem_17044;
     
-    tR_mem_17156.references = NULL;
-    tR_mem_17156 = in0->mem;
-    nR_12688 = in0->shape[0];
-    tS_mem_17157 = in1->mem;
-    nS_12689 = in1->shape[0];
-    offset_R_12692 = in2;
-    offset_S_12693 = in3;
-    partitionsPerWindow_12694 = in4;
-    numberOfWindows_12695 = in5;
-    extParallelism_12696 = in6;
-    scatter_psizze_12697 = in7;
-    if (!(nR_12688 == in0->shape[0] && nS_12689 == in1->shape[0])) {
+    tR_mem_17044.references = NULL;
+    tR_mem_17044 = in0->mem;
+    nR_12620 = in0->shape[0];
+    tS_mem_17045 = in1->mem;
+    nS_12621 = in1->shape[0];
+    offset_R_12624 = in2;
+    offset_S_12625 = in3;
+    partitionsPerWindow_12626 = in4;
+    numberOfWindows_12627 = in5;
+    extParallelism_12628 = in6;
+    scatter_psizze_12629 = in7;
+    if (!(nR_12620 == in0->shape[0] && nS_12621 == in1->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_inner_SMJ_short(ctx, &mem_out_17182, &mem_out_17183, &mem_out_17184, tR_mem_17156, tS_mem_17157, nR_12688, nS_12689, offset_R_12692, offset_S_12693, partitionsPerWindow_12694, numberOfWindows_12695, extParallelism_12696, scatter_psizze_12697);
+        ret = futrts_entry_inner_SMJ_short(ctx, &mem_out_17070, &mem_out_17071, &mem_out_17072, tR_mem_17044, tS_mem_17045, nR_12620, nS_12621, offset_R_12624, offset_S_12625, partitionsPerWindow_12626, numberOfWindows_12627, extParallelism_12628, scatter_psizze_12629);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
             assert((*out0 = (struct futhark_opaque_joinPairs_short *) malloc(sizeof(struct futhark_opaque_joinPairs_short))) != NULL);
             assert(((*out0)->v0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v0->mem = mem_out_17182;
-            (*out0)->v0->shape[0] = nR_12688;
+            (*out0)->v0->mem = mem_out_17070;
+            (*out0)->v0->shape[0] = nR_12620;
             assert(((*out0)->v1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->v1->mem = mem_out_17183;
-            (*out0)->v1->shape[0] = nR_12688;
+            (*out0)->v1->mem = mem_out_17071;
+            (*out0)->v1->shape[0] = nR_12620;
             assert(((*out0)->v2 = (struct futhark_i16_1d *) malloc(sizeof(struct futhark_i16_1d))) != NULL);
-            (*out0)->v2->mem = mem_out_17184;
-            (*out0)->v2->shape[0] = nR_12688;
+            (*out0)->v2->mem = mem_out_17072;
+            (*out0)->v2->shape[0] = nR_12620;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13857,28 +13857,28 @@ int futhark_entry_inner_SMJ_short(struct futhark_context *ctx, struct futhark_op
 }
 int futhark_entry_max_idx(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0)
 {
-    int64_t nz2080U_16272 = (int64_t) 0;
-    int64_t prim_out_17182 = (int64_t) 0;
+    int64_t nz2080U_16160 = (int64_t) 0;
+    int64_t prim_out_17070 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device eta_p_mem_17156;
+    struct memblock_device eta_p_mem_17044;
     
-    eta_p_mem_17156.references = NULL;
-    eta_p_mem_17156 = in0->mem;
-    nz2080U_16272 = in0->shape[0];
-    if (!(nz2080U_16272 == in0->shape[0])) {
+    eta_p_mem_17044.references = NULL;
+    eta_p_mem_17044 = in0->mem;
+    nz2080U_16160 = in0->shape[0];
+    if (!(nz2080U_16160 == in0->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_max_idx(ctx, &prim_out_17182, eta_p_mem_17156, nz2080U_16272);
+        ret = futrts_entry_max_idx(ctx, &prim_out_17070, eta_p_mem_17044, nz2080U_16160);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
-            *out0 = prim_out_17182;
+            *out0 = prim_out_17070;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
@@ -13887,28 +13887,28 @@ int futhark_entry_max_idx(struct futhark_context *ctx, int64_t *out0, const stru
 }
 int futhark_entry_min_idx(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0)
 {
-    int64_t nz2080U_16232 = (int64_t) 0;
-    int64_t prim_out_17182 = (int64_t) 0;
+    int64_t nz2080U_16120 = (int64_t) 0;
+    int64_t prim_out_17070 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     CUDA_SUCCEED_FATAL(cuCtxPushCurrent(ctx->cu_ctx));
     
-    struct memblock_device eta_p_mem_17156;
+    struct memblock_device eta_p_mem_17044;
     
-    eta_p_mem_17156.references = NULL;
-    eta_p_mem_17156 = in0->mem;
-    nz2080U_16232 = in0->shape[0];
-    if (!(nz2080U_16232 == in0->shape[0])) {
+    eta_p_mem_17044.references = NULL;
+    eta_p_mem_17044 = in0->mem;
+    nz2080U_16120 = in0->shape[0];
+    if (!(nz2080U_16120 == in0->shape[0])) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_min_idx(ctx, &prim_out_17182, eta_p_mem_17156, nz2080U_16232);
+        ret = futrts_entry_min_idx(ctx, &prim_out_17070, eta_p_mem_17044, nz2080U_16120);
         if (ret == 0) {
-            struct memblock_device counters_mem_17185 = ctx->constants->counters_mem_17185;
+            struct memblock_device counters_mem_17073 = ctx->constants->counters_mem_17073;
             
-            *out0 = prim_out_17182;
+            *out0 = prim_out_17070;
         }
     }
     CUDA_SUCCEED_FATAL(cuCtxPopCurrent(&ctx->cu_ctx));
