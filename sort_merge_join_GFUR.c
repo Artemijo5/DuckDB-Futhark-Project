@@ -16,8 +16,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
 
-#define R_TABLE_SIZE 31*CHUNK_SIZE + 526
-#define S_TABLE_SIZE 31*CHUNK_SIZE + 526
+#define R_TABLE_SIZE 5*CHUNK_SIZE + 526
+#define S_TABLE_SIZE 21*CHUNK_SIZE + 526
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
@@ -76,7 +76,7 @@ int main() {
   duckdb_connect(db, &con);
 
   // Create tables R and S
-  /*
+//  /*
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
@@ -103,7 +103,7 @@ int main() {
   duckdb_query(con, R_init_query, NULL);
   duckdb_query(con, S_init_query, NULL);
   mylog(logfile, "Created the tables R and S.");
-  */
+//  */
 
   // Set up futhark core
   struct futhark_context_config *cfg = futhark_context_config_new();
