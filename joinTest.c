@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "duckdb.h"
+//#include "duckdb.h"
 
-#include "ftSMJ.h"
-#include "mylogger.h"
-#include "myutil.h"
-#include "smjutil.h"
+#include "ftSMJerr.h"
+//#include "mylogger.h"
+//#include "smjutil.h"
 
 int main() {
 	struct futhark_context_config *cfg = futhark_context_config_new();
