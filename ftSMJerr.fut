@@ -1,4 +1,4 @@
-type joinPairs 't = {vs: [0]t, ix: [0]i64, iy: [0]i64}
+type~ joinPairs 't = {vs: []t, ix: []i64, iy: []i64}
 
 def inner_SMJ 't [nR] [nS]
   (dummy_elem: t)
@@ -16,13 +16,13 @@ def inner_SMJ 't [nR] [nS]
 : joinPairs t =
 	let uncooked_joinPair : joinPairs t =
     {
-      vs = [],
-      ix = [],
-      iy = []
+      vs = copy tR,
+      ix = indices tR,
+      iy = indices tR
     }
   	in uncooked_joinPair
 
-type joinPairs_int = joinPairs i32
+type~ joinPairs_int = joinPairs i32
 
 entry inner_SMJ_int [nR] [nS]
   (tR: [nR]i32)
