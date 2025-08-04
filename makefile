@@ -26,3 +26,6 @@ sort_merge_join_GFTR: sort_merge_join_GFTR.c smjutil.c sortstages.c SMJstages.c 
 
 sort_merge_join_GFUR: sort_merge_join_GFUR.c smjutil.c sortstages.c SMJstages.c libftsort.so libftSMJ.so myutil.c mylogger.c libduckdb.so
 	$(CC) sort_merge_join_GFUR.c -o sort_merge_join_GFUR.o smjutil.c sortstages.c SMJstages.c libftsort.so libftSMJ.so myutil.c mylogger.c libduckdb.so $(CFLAGS)
+
+joinTest: joinTest.c smjutil.c libftsort.so libftSMJ.so myutil.c libduckdb.so
+	$(CC) joinTest.c -o joinTest.o smjutil.c libftsort.so libftSMJ.so myutil.c libduckdb.so $(CFLAGS)
