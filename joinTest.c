@@ -47,7 +47,7 @@ int main() {
 	struct futhark_opaque_joinPairs_int *joinPairs;
 	printf("Calling the join function...\n");
 	futhark_entry_inner_SMJ_int(ctx, &joinPairs, keys1_ft, keys2_ft, 0, 0,
-		2, 1, 256, 256
+		5, 1, 256, 256
 	);
 	printf("Syncing context...\n");
 	futhark_context_sync(ctx);

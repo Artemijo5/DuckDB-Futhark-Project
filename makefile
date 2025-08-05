@@ -23,11 +23,13 @@ two_pass_sort: two_pass_sort.c sortstages.c libftsort.so myutil.c mylogger.c lib
 
 sort_merge_join_GFTR: sort_merge_join_GFTR.c myutil.c smjutil.c sortstages.c SMJstages.c libftsort.so libftSMJ.so myutil.c mylogger.c libduckdb.so
 	$(CC) SMJstages.c -o libSMJstages.so smjutil.c libftSMJ.so mylogger.c libduckdb.so $(CFLAGS) -fPIC -shared
-	$(CC) sort_merge_join_GFTR.c -o sort_merge_join_GFTR.o myutil.c sortstages.c libSMJstages.so libftsort.so libftSMJ.so mylogger.c libduckdb.so $(CFLAGS)
+#	$(CC) sortstages.c -o libsortstages.so myutil.c libduckdb.so libftsort.so mylogger.c $(CFLAGS) -fPIC -shared
+	$(CC) sort_merge_join_GFTR.c -o sort_merge_join_GFTR.o libSMJstages.so libftSMJ.so mylogger.c libduckdb.so $(CFLAGS)
 
 sort_merge_join_GFUR: sort_merge_join_GFUR.c myutil.c smjutil.c sortstages.c SMJstages.c libftsort.so libftSMJ.so myutil.c mylogger.c libduckdb.so
 	$(CC) SMJstages.c -o libSMJstages.so smjutil.c libftSMJ.so mylogger.c libduckdb.so $(CFLAGS) -fPIC -shared
-	$(CC) sort_merge_join_GFUR.c -o sort_merge_join_GFUR.o myutil.c sortstages.c libSMJstages.so libftsort.so libftSMJ.so mylogger.c libduckdb.so $(CFLAGS)
+	$(CC) sortstages.c -o libsortstages.so myutil.c libduckdb.so liftsort.so mylogger.c $(CFLAGS) -fPIC -shared
+	$(CC) sort_merge_join_GFUR.c -o sort_merge_join_GFUR.o libsortstages.so libSMJstages.so libftSMJ.so mylogger.c libduckdb.so $(CFLAGS)
 
 
 
