@@ -12,6 +12,12 @@ CUDA-ftSMJ: ftSMJ.fut
 	futhark cuda ftSMJ.fut --library
 	gcc ftSMJ.c -o libftSMJ.so $(LIBFLAGS) $(CUDAFLAGS)
 
+CUDA1-ftSMJ: ftSMJ.fut
+	futhark cuda ftSMJ.fut --library
+
+CUDA2-ftSMJ: ftSMJ.fut
+	gcc ftSMJ.c -o libftSMJ.so $(LIBFLAGS) $(CUDAFLAGS)
+
 two_pass_sort: two_pass_sort.c sortstages.c libftSMJ.so myutil.c $(DEPS)
 	$(CC) two_pass_sort.c -o two_pass_sort.o sortstages.c libftSMJ.so myutil.c $(DEPS) $(CFLAGS)
 
