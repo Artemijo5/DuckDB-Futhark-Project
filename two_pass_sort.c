@@ -3,7 +3,7 @@
 #include <string.h>
 #include "duckdb.h"
 
-#include "ftsort.h"
+#include "ftSMJ.h"
 #include "mylogger.h"
 #include "myutil.h"
 #include "sortstages.h"

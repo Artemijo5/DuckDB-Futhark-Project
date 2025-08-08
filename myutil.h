@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "duckdb.h"
-#include "ftsort.h"
+#include "ftSMJ.h"
 
 #ifndef MYUTIL_H
 #define MYUTIL_H

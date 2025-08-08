@@ -8,6 +8,7 @@
 #include "ftSMJ.h"
 #include "mylogger.h"
 #include "smjutil.h"
+#include "myutil.h"
 
 void Inner_MergeJoin_GFTR(
 	idx_t CHUNK_SIZE,
@@ -368,35 +369,49 @@ void Inner_MergeJoin_GFTR(
       mylog(logfile, "Gathered S payloads.");
 
       // CREATE DATA CHUNK AND APPEND
-      duckdb_data_chunk joinCnk = duckdb_create_data_chunk(join_type_ids, (R_col_count+S_col_count-1));
-      duckdb_data_chunk_set_size(joinCnk, numPairs);
-      // Load keys
-      duckdb_vector join_kvec = duckdb_data_chunk_get_vector(joinCnk, 0);
-      void* join_kdat = duckdb_vector_get_data(join_kvec);
-      memcpy(join_kdat, joinedKeys, numPairs*colType_bytes(key_type));
-      // Proceed with payload columns - first for R
-      for(idx_t col=1; col<R_col_count; col++) {
-        duckdb_vector join_vec = duckdb_data_chunk_get_vector(joinCnk, col);
-        void* join_dat = duckdb_vector_get_data(join_vec);
-        memcpy(join_dat, Rpl[col-1], numPairs*colType_bytes(R_type_ids[col]));
+      // as loop so no individual chunk exceeds CHUNK_SIZE
+      mylog(logfile, "Preparing to load join results into database...");
+      for(idx_t appendRow=0; appendRow<numPairs; appendRow += CHUNK_SIZE) {
+        duckdb_data_chunk joinCnk = duckdb_create_data_chunk(join_type_ids, (R_col_count+S_col_count-1));
+        idx_t joinCnk_size = (numPairs-appendRow>=CHUNK_SIZE)? CHUNK_SIZE: (numPairs-appendRow);
+        duckdb_data_chunk_set_size(joinCnk, joinCnk_size);
+        // Load keys
+        duckdb_vector join_kvec = duckdb_data_chunk_get_vector(joinCnk, 0);
+        void* join_kdat = duckdb_vector_get_data(join_kvec);
+        memcpy(join_kdat, joinedKeys + appendRow*colType_bytes(key_type), joinCnk_size*colType_bytes(key_type));
+        // Proceed with payload columns - first for R
+        for(idx_t col=1; col<R_col_count; col++) {
+          duckdb_vector join_vec = duckdb_data_chunk_get_vector(joinCnk, col);
+          void* join_dat = duckdb_vector_get_data(join_vec);
+          memcpy(join_dat, Rpl[col-1] + appendRow*colType_bytes(R_type_ids[col]), joinCnk_size*colType_bytes(R_type_ids[col]));
+        }
+        // Then for S
+        for(idx_t col=1; col<S_col_count; col++) {
+          duckdb_vector join_vec = duckdb_data_chunk_get_vector(joinCnk, col + R_col_count - 1);
+          void* join_dat = duckdb_vector_get_data(join_vec);
+          memcpy(join_dat, Spl[col-1] + appendRow*colType_bytes(S_type_ids[col]), joinCnk_size*colType_bytes(S_type_ids[col]));
+        }
+
+        // Append chunk
+        if(duckdb_append_data_chunk(join_appender, joinCnk) == DuckDBError) {
+          perror("Failed to append data chunk.\n");
+          return;
+        }
+        // If quicksaves, flush right away
+        if(quicksaves) {
+          duckdb_appender_flush(join_appender);
+          mylog(logfile, "Appended a datachunk to result table.");
+        }
+        // Cleanup
+        duckdb_destroy_data_chunk(&joinCnk);
       }
-      // Then for S
-      for(idx_t col=1; col<S_col_count; col++) {
-        duckdb_vector join_vec = duckdb_data_chunk_get_vector(joinCnk, col + R_col_count - 1);
-        void* join_dat = duckdb_vector_get_data(join_vec);
-        memcpy(join_dat, Spl[col-1], numPairs*colType_bytes(S_type_ids[col]));
+      mylog(logfile, "Finished preparing datachunks for this batch.");
+      if(!quicksaves) {
+        duckdb_appender_flush(join_appender);
+        mylog(logfile, "Appended to result table.");
       }
-      mylog(logfile, "Prepared datachunk to load.");
-      // Then APPEND
-      if(duckdb_append_data_chunk(join_appender, joinCnk) == DuckDBError) {
-        perror("Failed to append data chunk.\n");
-        return;
-      }
-      if(quicksaves) duckdb_appender_flush(join_appender);
-      mylog(logfile, "Appended datachunk to result table.");
 
       // CLEANUP
-      duckdb_destroy_data_chunk(&joinCnk);
       for(idx_t col=0; col<S_col_count; col++) {
         free(Sbuff[col]);
       }
@@ -735,25 +750,36 @@ void Inner_MergeJoin_GFUR(
     mylog(logfile, "Did a gathering iteration over S.");
 
     // Append to join result table
-    duckdb_data_chunk finalCnk = duckdb_create_data_chunk(payload_ltypes, 1 + total_payload_count);
-    duckdb_data_chunk_set_size(finalCnk, id_rows);
-    // First take care of key column
-    duckdb_vector f_kvec = duckdb_data_chunk_get_vector(finalCnk, 0);
-    void* f_kdat = duckdb_vector_get_data(f_kvec);
-    memcpy(f_kdat, buffer_keys, id_rows*colType_bytes(key_type));
-    // Then payloads
-    for(idx_t col=0; col<total_payload_count; col++) {
-      duckdb_vector fvec = duckdb_data_chunk_get_vector(finalCnk, col+1);
-      void* fdat = duckdb_vector_get_data(fvec);
-      memcpy(fdat, MATERIALISED[col], id_rows*colType_bytes(payload_types[col]));
+    // loop so no individual chunk exceeds CHUNK_SIZE
+    for(idx_t appendRow=0; appendRow<id_rows; appendRow+=CHUNK_SIZE) {
+      duckdb_data_chunk finalCnk = duckdb_create_data_chunk(payload_ltypes, 1 + total_payload_count);
+      idx_t finalCnk_size = (id_rows-appendRow>=CHUNK_SIZE)? CHUNK_SIZE: id_rows-appendRow;
+      duckdb_data_chunk_set_size(finalCnk, finalCnk_size);
+      // First take care of key column
+      duckdb_vector f_kvec = duckdb_data_chunk_get_vector(finalCnk, 0);
+      void* f_kdat = duckdb_vector_get_data(f_kvec);
+      memcpy(f_kdat, buffer_keys + appendRow*colType_bytes(key_type), finalCnk_size*colType_bytes(key_type));
+      // Then payloads
+      for(idx_t col=0; col<total_payload_count; col++) {
+        duckdb_vector fvec = duckdb_data_chunk_get_vector(finalCnk, col+1);
+        void* fdat = duckdb_vector_get_data(fvec);
+        memcpy(fdat, MATERIALISED[col] + appendRow*colType_bytes(payload_types[col]), finalCnk_size*colType_bytes(payload_types[col]));
+      }
+      // Append, destroy data chunk
+      if (duckdb_append_data_chunk(final_join_appender, finalCnk) == DuckDBError) {
+        perror("Failed to append data chunk to final table.");
+        return;
+      }
+      duckdb_destroy_data_chunk(&finalCnk);
+      // Flush if quicksaves
+      if(quicksaves) {
+        duckdb_appender_flush(final_join_appender);
+      }
     }
-    // Append, flush, destroy data chunk
-    if (duckdb_append_data_chunk(final_join_appender, finalCnk) == DuckDBError) {
-      perror("Failed to append data chunk to final table.");
-      return;
+    if(!quicksaves) {
+      duckdb_appender_flush(final_join_appender);
     }
-    duckdb_appender_flush(final_join_appender);
-    duckdb_destroy_data_chunk(&finalCnk);
+    mylog(logfile, "Appended payloads to final result table.");
 
     // Cleanup
     for(idx_t col=0; col<total_payload_count; col++) {

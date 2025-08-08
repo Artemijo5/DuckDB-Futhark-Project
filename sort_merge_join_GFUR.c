@@ -75,7 +75,7 @@ int main() {
   duckdb_connect(db, &con);
 
   // Create tables R and S
-//  /*
+  /*
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
@@ -102,7 +102,7 @@ int main() {
   duckdb_query(con, R_init_query, NULL);
   duckdb_query(con, S_init_query, NULL);
   mylog(logfile, "Created the tables R and S.");
-//  */
+  */
 
   // Set up futhark core
   struct futhark_context_config *cfg = futhark_context_config_new();

@@ -221,3 +221,23 @@ def partitionFunc [n] 't
     )
     :> [upToThread-fromThread](idx_t.t, idx_t.t)
   in ret
+
+-- Returns the same as partitionFunc but allows control of max parallelism
+-- TODO can be made to strictly access certain subarrays at once, but the loop to do that will be quite convoluted in futhark
+def windowed_partitionFunc [n] 't
+  (partitionsPerWindow: idx_t.t)
+  (numberOfWindows: idx_t.t)
+  (tR: [n]t)
+  (tS: [n]t)
+  (leq: t -> t -> bool)
+  (gt: t -> t -> bool)
+ : [partitionsPerWindow*numberOfWindows](idx_t.t, idx_t.t) =
+  let totalNo = partitionsPerWindow*numberOfWindows
+  let loop_over : {iter: idx_t.t, result: [totalNo](idx_t.t, idx_t.t)}
+    = loop p = {iter=0, result = (replicate totalNo (n, n))}
+    while p.iter<numberOfWindows do
+      let start = p.iter*partitionsPerWindow
+      let end = start+partitionsPerWindow
+      let nextParts = partitionFunc (totalNo) (start) (end) tR tS (leq) (gt) :> [end-start](idx_t.t, idx_t.t)
+      in {iter = p.iter+1, result = p.result with [start:end] = nextParts}
+  in loop_over.result :> [partitionsPerWindow*numberOfWindows](idx_t.t, idx_t.t)

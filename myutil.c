@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "duckdb.h"
 #include "mylogger.h"
-#include "ftsort.h"
+#include "ftSMJ.h"
 #include <string.h>
 
 #include <limits.h> // for maximum values of integral types

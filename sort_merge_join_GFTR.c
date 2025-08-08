@@ -4,7 +4,7 @@
 #include "duckdb.h"
 
 #include "mylogger.h"
-//#include "sortstages.h"
+#include "sortstages.h"
 
 #include "ftSMJ.h"
 #include "smjutil.h"
@@ -15,8 +15,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 90*CHUNK_SIZE + 526
-#define S_TABLE_SIZE 270*CHUNK_SIZE + 526
+#define R_TABLE_SIZE 50*CHUNK_SIZE + 526
+#define S_TABLE_SIZE 50*CHUNK_SIZE + 526
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
@@ -32,7 +32,7 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER 7*CHUNK_SIZE
+#define R_JOIN_BUFFER 4*CHUNK_SIZE
 #define S_JOIN_BUFFER R_JOIN_BUFFER
 #define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
 
@@ -104,8 +104,8 @@ int main() {
   mylog(logfile, "Set up futhark context & config.");
 
   mylog(logfile, "Now sorting the tables...");
+
   // R
-/*
   two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
@@ -120,14 +120,15 @@ int main() {
     false,
     true
   );
-*/
-//Tmp
+  //Tmp
+  /*
   if(  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE R_tbl_sorted AS (SELECT * FROM R_tbl ORDER BY k);", NULL) == DuckDBError) {
 	perror("Failed to sort R_tbl.");
 	return -1;
   }
+  */
   mylog(logfile, "Sorted table R.");
-/*
+
   // S
   two_pass_sort_with_payloads(
     CHUNK_SIZE,
@@ -143,12 +144,13 @@ int main() {
     false,
     true
   );
-*/
-//Tmp
+  //Tmp
+  /*
   if ( duckdb_query(con, "CREATE OR REPLACE TEMP TABLE S_tbl_sorted AS (SELECT * FROM S_tbl ORDER BY k);", NULL) == DuckDBError) {
 	perror("Failed to sort S_tbl.");
 	return -1;
   }
+  */
   mylog(logfile, "Sorted table S.");  
 
 // ############################################################################################################
