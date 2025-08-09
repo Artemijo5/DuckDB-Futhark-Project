@@ -13,18 +13,18 @@
 #define LOGFILE "sort_merge_join_GFUR.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
+#define BUFFER_SIZE 10*512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
 
-#define R_TABLE_SIZE 5*CHUNK_SIZE + 526
-#define S_TABLE_SIZE 21*CHUNK_SIZE + 526
+#define R_TABLE_SIZE 512*CHUNK_SIZE
+#define S_TABLE_SIZE 512*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
-#define MERGE_PARTITION_SIZE 64 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
-#define RESCALE_FACTOR 5 // (arbitrarily) used to set the number of windows vs the number of partitions
+#define MERGE_PARTITION_SIZE 256 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
+#define RESCALE_FACTOR 256 // (arbitrarily) used to set the number of windows vs the number of partitions
 
 #define PAYLOAD_INDEX_BLOCK CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
-#define PAYLOAD_GATHER_BLOCK 5*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
+#define PAYLOAD_GATHER_BLOCK 10*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
@@ -35,13 +35,13 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER 3*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
-#define S_JOIN_BUFFER 3*R_JOIN_BUFFER // MUST BE CHUNK_SIZE MULTIPLE
+#define R_JOIN_BUFFER 512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
+#define S_JOIN_BUFFER R_JOIN_BUFFER // MUST BE CHUNK_SIZE MULTIPLE
 #define JOIN_TMP_TBL_NAME "R_S_joinTbl_GFUR_TMP"
 #define JOIN_TBL_NAME "R_S_joinTbl_GFUR"
 
 #define DBFILE "testdb.db"
-#define DDB_MEMSIZE "4GB"
+#define DDB_MEMSIZE "8GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
 int main() {

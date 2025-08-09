@@ -13,15 +13,15 @@
 #define LOGFILE "sort_merge_join_GFTR.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 512*CHUNK_SIZE
+#define BUFFER_SIZE 10*512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 50*CHUNK_SIZE + 526
-#define S_TABLE_SIZE 50*CHUNK_SIZE + 526
+#define R_TABLE_SIZE 512*CHUNK_SIZE
+#define S_TABLE_SIZE 8*R_TABLE_SIZE + 4*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
-#define MERGE_PARTITION_SIZE 64 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
-#define RESCALE_FACTOR 5 // (arbitrarily) used to set the number of windows vs the number of partitions
+#define MERGE_PARTITION_SIZE 256 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
+#define RESCALE_FACTOR 256 // (arbitrarily) used to set the number of windows vs the number of partitions
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
@@ -32,12 +32,12 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER 4*CHUNK_SIZE
+#define R_JOIN_BUFFER 512*CHUNK_SIZE
 #define S_JOIN_BUFFER R_JOIN_BUFFER
 #define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
 
 #define DBFILE "testdb.db"
-#define DDB_MEMSIZE "4GB"
+#define DDB_MEMSIZE "20GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
 int main() {
@@ -84,13 +84,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 1000000*random(), 10000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 100000000*random(), 10000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 1000000*random(), 10000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 100000000*random(), 10000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
@@ -157,6 +157,10 @@ int main() {
 // JOIN PHASE
 // ############################################################################################################
 
+  mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
+  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.k FROM R_tbl_sorted r JOIN S_tbl_sorted s ON (r.k == s.k));", NULL);
+
+  mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
   Inner_MergeJoin_GFTR(
     CHUNK_SIZE,
     R_JOIN_BUFFER,

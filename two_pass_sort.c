@@ -11,13 +11,13 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 3*CHUNK_SIZE
-#define TABLE_SIZE BUFFER_SIZE + 256
+#define BUFFER_SIZE CHUNK_SIZE + 100000000
+#define TABLE_SIZE BUFFER_SIZE - CHUNK_SIZE
 
-#define BLOCK_SIZE (int16_t)2048
+#define BLOCK_SIZE (int16_t)256
 
 #define DBFILE "testdb.db"
-#define DDB_MEMSIZE "2GB"
+#define DDB_MEMSIZE "20GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
 
@@ -52,7 +52,7 @@ int main() {
 	duckdb_connect(db, &con);
 
   // Create the table tbl on which the testing will be done.
-  duckdb_query(con, "CREATE OR REPLACE TABLE tbl (k BIGINT, payload1 SMALLINT, payload2 FLOAT, payload3 DOUBLE);", NULL);
+  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE tbl (k BIGINT, payload1 SMALLINT, payload2 FLOAT, payload3 DOUBLE);", NULL);
   duckdb_query(con, "setseed(0.42);", NULL);
 
   duckdb_prepared_statement init_stmt;
@@ -60,7 +60,7 @@ int main() {
     duckdb_prepare(
       con,
       //"INSERT INTO tbl (SELECT ($1 - i), 10000*random(), 10000*random() FROM range($1) t(i));",
-      "INSERT INTO tbl (SELECT 10000000*random(), 10000*random(), 10000*random(), (10000*random() + 10000) FROM range($1) t(i));",
+      "INSERT INTO tbl (SELECT 10000000000*random(), 10000*random(), 10000*random(), (10000*random() + 10000) FROM range($1) t(i));",
       &init_stmt
     ) 
     == DuckDBError
@@ -78,7 +78,30 @@ int main() {
   struct futhark_context *ctx = futhark_context_new(cfg);
   mylog(logfile, "Set up futhark context & config.");
 
-  // where the sorting happens, concentrated into an one-liner
+
+  mylog(logfile, "EXPERIMENT #1 -- duckdb-native CPU sorting (without payloads).");
+  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_withoutPL AS (SELECT k FROM tbl ORDER BY k);", NULL);
+
+  mylog(logfile, "EXPERIMENT #2 -- duckdb-native CPU sorting (with payloads).");
+  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_withPL AS (SELECT * FROM tbl ORDER BY k);", NULL);
+
+  mylog(logfile, "EXPERIMENT #3 -- GPU sorting (without payloads).");
+  two_pass_sort_without_payloads(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    BLOCK_SIZE,
+    logfile,
+    ctx,
+    con,
+    "tbl",
+    "tmp_interm",
+    "GPU_withoutPL",
+    false,
+    false,
+    true
+  );
+
+  mylog(logfile, "EXPERIMENT #4 -- GPU sorting (with payloads).");
   two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
@@ -88,10 +111,10 @@ int main() {
     con,
     "tbl",
     "tmp_interm",
-    "TPSresult",
+    "GPU_withPL",
     false,
     false,
-    false
+    true
   );
 
   // review result
