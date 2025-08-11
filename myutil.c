@@ -727,9 +727,10 @@ idx_t store_intermediate(
       return -1;
     }
     //printf("Appended %ld elements.\n", this_size);
-    duckdb_appender_flush(tmp_appender);
+    //duckdb_appender_flush(tmp_appender);
     duckdb_destroy_data_chunk(&cnk);
   }
+  duckdb_appender_flush(tmp_appender);
   // IF USING PARQUET STORAGE:
   /*
   char storagePart[100 + 2*strlen(tblName)];

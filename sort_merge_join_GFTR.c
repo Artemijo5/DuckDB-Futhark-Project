@@ -15,7 +15,7 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 10*512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 512*CHUNK_SIZE
+#define R_TABLE_SIZE 10*50*CHUNK_SIZE
 #define S_TABLE_SIZE 8*R_TABLE_SIZE + 4*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
@@ -32,7 +32,7 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER 512*CHUNK_SIZE
+#define R_JOIN_BUFFER R_TABLE_SIZE
 #define S_JOIN_BUFFER R_JOIN_BUFFER
 #define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
 

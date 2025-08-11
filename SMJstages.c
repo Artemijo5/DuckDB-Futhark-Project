@@ -235,7 +235,7 @@ void Inner_MergeJoin_GFTR(
         // ----- Deal with irrelevant chunks
         // a. If cnk.max < Rbuffer.min -> continue to next buffer
         if(compare_max_to_min(key_type, kdat, Rbuff[0], curRows, R_rowCount) < 0) {
-          mylog(logfile, "Skipping this S chunk (not reached relevant ones yet)...");
+          //mylog(logfile, "Skipping this S chunk (not reached relevant ones yet)...");
           S_curIdx += curRows;
           S_minimum_relevant_idx = S_curIdx;
           duckdb_destroy_data_chunk(&cnk);
@@ -243,17 +243,17 @@ void Inner_MergeJoin_GFTR(
         }
         // b. If Rbuffer.max < cnk.min -> break
         if(compare_max_to_min(key_type, Rbuff[0], kdat, R_rowCount, curRows) < 0) {
-          mylog(logfile, "S chunks no longer relevant, break...");
+          //mylog(logfile, "S chunks no longer relevant, break...");
           duckdb_destroy_data_chunk(&cnk);
           flag_continueWithThisR_partition = false;
           break;
         }
         // c. Chunk is relevant, proceed with buffering...
-        mylog(logfile, "Buffering this (relevant) S chunk...");
+        //mylog(logfile, "Buffering this (relevant) S chunk...");
         // d. CHECK IF IT'LL BE RELEVANT FOR NEXT R PARTITION
         int Smax_vs_Rmax = compare_maxima(key_type, kdat, Rbuff[0], curRows, R_rowCount);
         if(Smax_vs_Rmax < 0) {
-          mylog(logfile, "(This chunk will be irrelevant in the next iteration over R.)");
+          //mylog(logfile, "(This chunk will be irrelevant in the next iteration over R.)");
           S_minimum_relevant_idx += curRows;
         }
         // Copy to buffer
@@ -277,7 +277,7 @@ void Inner_MergeJoin_GFTR(
 
         // e. If cnk.max > Rbuff.max, stop buffering S chunks
         if (Smax_vs_Rmax > 0) {
-          mylog(logfile, "(This is the last relevant chunk for this partition of R)");
+          //mylog(logfile, "(This is the last relevant chunk for this partition of R)");
           flag_continueWithThisR_partition = false;
           break;
         }
@@ -405,11 +405,13 @@ void Inner_MergeJoin_GFTR(
         // Cleanup
         duckdb_destroy_data_chunk(&joinCnk);
       }
+      duckdb_appender_flush(join_appender);
+
       mylog(logfile, "Finished preparing datachunks for this batch.");
-      if(!quicksaves) {
+      /*if(!quicksaves) {
         duckdb_appender_flush(join_appender);
         mylog(logfile, "Appended to result table.");
-      }
+      }*/
 
       // CLEANUP
       for(idx_t col=0; col<S_col_count; col++) {
@@ -776,9 +778,10 @@ void Inner_MergeJoin_GFUR(
         duckdb_appender_flush(final_join_appender);
       }
     }
-    if(!quicksaves) {
+    /*if(!quicksaves) {
       duckdb_appender_flush(final_join_appender);
-    }
+    }*/
+    duckdb_appender_flush(final_join_appender);
     mylog(logfile, "Appended payloads to final result table.");
 
     // Cleanup

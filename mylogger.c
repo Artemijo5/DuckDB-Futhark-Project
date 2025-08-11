@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 #include <string.h>
 
 FILE* loginit(const char* filename, const char* header) {
@@ -13,12 +14,12 @@ FILE* loginit(const char* filename, const char* header) {
 		return NULL;
 	}
 
-	time_t now;
-   	time(&now);
+   	struct timeval now;
+   	gettimeofday(&now, NULL);
 
 	fprintf(ptr, "\n\n################################################\n");
-	fprintf(ptr, "%s : %s", ctime(&now), header);
-	fprintf(ptr, "\n################################################\n\n");
+	fprintf(ptr, "%s %ldms: %s\n", ctime(&(now.tv_sec)), (now.tv_usec/1000), header);
+	fprintf(ptr, "################################################\n\n");
 	fflush(ptr);
 
 	return ptr;
@@ -26,10 +27,10 @@ FILE* loginit(const char* filename, const char* header) {
 void mylog(FILE* logfile, const char* msg) {
 	if(!logfile) return;
 
-	time_t now;
-   	time(&now);
+   	struct timeval now;
+   	gettimeofday(&now, NULL);
 
-	fprintf(logfile, "%s : %s\n", ctime(&now), msg);
+	fprintf(logfile, "%s %ldms : %s\n", ctime(&(now.tv_sec)), (now.tv_usec/1000), msg);
 	fflush(logfile);
 }
 void logdbg(FILE* logfile, int attempt, const char* success, const char* failure) {
