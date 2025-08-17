@@ -653,6 +653,7 @@ idx_t store_intermediate(
   idx_t col_count,
   idx_t row_count,
   duckdb_type* types,
+  char** colNames,
   void** BuffersIn
 ) {
   // 0 turn types into logical_types & strings to create the table
@@ -689,10 +690,10 @@ idx_t store_intermediate(
   int queryStr_len = sprintf(queryStr, "CREATE OR REPLACE TEMP TABLE %s (", tblName);
   for(idx_t i=0; i<col_count; i++) {
     if(i<col_count-1) {
-      queryStr_len += sprintf(queryStr + queryStr_len, "x%ld %s, ", i, type_strs[i]);
+      queryStr_len += sprintf(queryStr + queryStr_len, "%s %s, ", colNames[i], type_strs[i]);
     }
     else {
-      queryStr_len += sprintf(queryStr + queryStr_len, "x%ld %s);", i, type_strs[i]);
+      queryStr_len += sprintf(queryStr + queryStr_len, "%s %s);", colNames[i], type_strs[i]);
     }
   }
   // TODO for testing

@@ -25,6 +25,7 @@ idx_t sort_Stage1_with_payloads(
 	duckdb_result res,
 	idx_t col_count,
 	duckdb_type* type_ids,
+  char** colNames,
 	idx_t *incr_idx,
   int blocked
 ) {
@@ -124,24 +125,7 @@ idx_t sort_Stage1_with_payloads(
       Buffers[col] = payloadCols[col-1];
     }
 
-    // sort key column
-    /*
-    struct futhark_i64_1d *sorted_idx_ft;
-    mylog(logfile, "Passing key column for sorting...");
-    sortKeyColumn(ctx, Buffers[0], type_ids[0], *incr_idx, blocked, block_size, &sorted_idx_ft, Buffers[0], cur_rows);
-    mylog(logfile, "Sorted key column and obtained reordered indices.");
-    
-    // Next do the payload columns
-    mylog(logfile, "Reordering payload columns...");
-    for(idx_t col=1; col<col_count; col++) {
-      orderPayloadColumn(ctx, Buffers[col], type_ids[col], *incr_idx, block_size, sorted_idx_ft, Buffers[col], cur_rows);
-      mylog(logfile, "Reordered column.");
-    }
-    futhark_free_i64_1d(ctx, sorted_idx_ft);
-    */
-
-    //mylog(logfile, "Now testing storage & retrieval.");
-    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, Buffers);
+    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, colNames, Buffers);
     if(numIntermediate == -1) {
       perror("Failed to store intermediate.\n");
       return -1;
@@ -173,6 +157,7 @@ idx_t sort_Stage1_without_payloads(
 	duckdb_connection con,
 	duckdb_result res,
 	duckdb_type type_id,
+  char** colNames,
 	idx_t *incr_idx,
   int blocked
 ) {
@@ -240,7 +225,7 @@ idx_t sort_Stage1_without_payloads(
 
     idx_t col_count = 2;
 
-    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, Buffers);
+    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, colNames, Buffers);
     if(numIntermediate == -1) {
       perror("Failed to store intermediate.\n");
       return -1;
@@ -270,6 +255,7 @@ void sort_Stage2(
 	duckdb_connection con,
 	idx_t col_count,
 	duckdb_type* type_ids,
+  char** colNames,
 	idx_t numIntermediate,
   int blocked,
   int quicksaves,
@@ -356,10 +342,10 @@ void sort_Stage2(
     sprintf(resultQueryStr, "CREATE OR REPLACE TABLE %s (", finalName);
   for(idx_t i=0; i<col_count; i++) {
     if(i<col_count-1) {
-      resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "x%ld %s, ", i, type_strs[i]);
+      resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "%s %s, ", colNames[i], type_strs[i]);
     }
     else {
-      resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "x%ld %s);", i, type_strs[i]);
+      resultQueryStr_len += sprintf(resultQueryStr + resultQueryStr_len, "%s %s);", colNames[i], type_strs[i]);
     }
   }
   // TODO for testing
@@ -722,6 +708,7 @@ void sort_Stage2_without_payloads(
 	struct futhark_context *ctx,
 	duckdb_connection con,
 	duckdb_type type_id,
+  char** colNames,
 	idx_t numIntermediate,
   int blocked,
   int quicksaves,
@@ -739,6 +726,7 @@ void sort_Stage2_without_payloads(
 		con,
 		2,
 		type_ids,
+    colNames,
 		numIntermediate,
     blocked,
     quicksaves,
@@ -768,7 +756,7 @@ void two_pass_sort_with_payloads(
   char queryStr[strlen(tblName) + 50];
   sprintf(queryStr, "SELECT * FROM %s;", tblName);
   duckdb_query(con, queryStr, &res);
-  mylog(logfile, "Obtained result from initial table.");
+  mylog(logfile, "Obtained result from initial table."); 
 
   idx_t incr_idx = 0;
   mylog(logfile, "Initialised increment at 0.");
@@ -778,7 +766,12 @@ void two_pass_sort_with_payloads(
   mylog(logfile, "Initalising info for each column...");
   for(idx_t col=0; col<col_count; col++) {
     type_ids[col] = duckdb_column_type(&res, col);
-    mylog(logfile, "Obtained column's type.");
+    //mylog(logfile, "Obtained column's type.");
+  }
+  char** colNames = malloc(col_count*sizeof(char*));
+  for(idx_t i=0; i<col_count; i++) {
+    colNames[i] = malloc(strlen(duckdb_column_name(&res, i)) + 1);
+    sprintf(colNames[i], "%s", duckdb_column_name(&res, i));
   }
 
   // STAGE 1 - SCAN TABLE, SAVE INTO LOCALLY SORTED TEMPORARY TABLES
@@ -794,6 +787,7 @@ void two_pass_sort_with_payloads(
     res,
     col_count,
     type_ids,
+    colNames,
     &incr_idx,
     blocked
   );
@@ -814,6 +808,7 @@ void two_pass_sort_with_payloads(
       con,
       col_count,
       type_ids,
+      colNames,
       numIntermediate,
       blocked,
       quicksaves,
@@ -835,6 +830,11 @@ void two_pass_sort_with_payloads(
     duckdb_query(con, finalStr, NULL);
     mylog(logfile, "Stage 2 has been skipped, as the table fit within one buffer.");
   }
+
+  for(idx_t i=0; i<col_count; i++) {
+    free(colNames[i]);
+  }
+  free(colNames);
 }
 
 void two_pass_sort_without_payloads(
@@ -857,6 +857,12 @@ void two_pass_sort_without_payloads(
   duckdb_query(con, queryStr, &res);
   mylog(logfile, "Obtained result from initial table.");
 
+  char **colNames = malloc(2*sizeof(char*));
+  colNames[0] = malloc(1 + strlen(duckdb_column_name(&res, 0)));
+  colNames[1] = malloc(7);
+  sprintf(colNames[0], "%s", duckdb_column_name(&res, 0));
+  sprintf(colNames[1], "rowIdx");
+
   idx_t incr_idx = 0;
   mylog(logfile, "Initialised increment at 0.");
 
@@ -875,6 +881,7 @@ void two_pass_sort_without_payloads(
     con,
     res,
     type_id,
+    colNames,
     &incr_idx,
     blocked
   );
@@ -894,6 +901,7 @@ void two_pass_sort_without_payloads(
       ctx,
       con,
       type_id,
+      colNames,
       numIntermediate,
       blocked,
       quicksaves,
@@ -915,4 +923,9 @@ void two_pass_sort_without_payloads(
     duckdb_query(con, finalStr, NULL);
     mylog(logfile, "Stage 2 has been skipped, as the table fit within one buffer.");
   }
+
+  for(idx_t i=0; i<2; i++) {
+    free(colNames[i]);
+  }
+  free(colNames);
 }

@@ -174,6 +174,7 @@ idx_t store_intermediate(
 	idx_t col_count,
 	idx_t row_count,
 	duckdb_type* types,
+	char** colNames,
 	void** BuffersIn
 );
 /**

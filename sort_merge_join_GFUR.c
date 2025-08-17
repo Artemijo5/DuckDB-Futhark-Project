@@ -13,9 +13,9 @@
 #define LOGFILE "sort_merge_join_GFUR.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 10*512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
+#define BUFFER_SIZE 512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
 
-#define R_TABLE_SIZE 10*50*CHUNK_SIZE
+#define R_TABLE_SIZE 50*CHUNK_SIZE
 #define S_TABLE_SIZE 8*R_TABLE_SIZE + 4*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
@@ -163,7 +163,7 @@ int main() {
     JOIN_TMP_TBL_NAME,
     JOIN_TBL_NAME,
     false,
-    false
+    true
   );
 
   // Clean-up  
