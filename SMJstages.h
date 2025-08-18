@@ -21,6 +21,8 @@ void Inner_MergeJoin_GFTR(
 	duckdb_connection con,
 	const char *sorted_R_tbl_name,
 	const char *sorted_S_tbl_name,
+	const char *R_keyName,
+	const char *S_keyName,
 	const char *Join_tbl_name,
 	int quicksaves,
 	int saveAsTempTable
@@ -43,6 +45,8 @@ void Inner_MergeJoin_GFUR(
 	const char *S_tbl_name,
 	const char *sorted_R_tbl_name,
 	const char *sorted_S_tbl_name,
+	const char *R_keyName,
+	const char *S_keyName,
 	const char *Join_temp_tbl_name,
 	const char *Join_tbl_name,
 	int quicksaves,

@@ -15,8 +15,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
 
-#define R_TABLE_SIZE 50*CHUNK_SIZE
-#define S_TABLE_SIZE 8*R_TABLE_SIZE + 4*CHUNK_SIZE
+#define R_TABLE_SIZE 10*CHUNK_SIZE
+#define S_TABLE_SIZE 8*R_TABLE_SIZE
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
@@ -28,6 +28,9 @@
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
+
+#define R_KEY "k"
+#define S_KEY "k"
 
 #define R_interm "R_tbl_interm"
 #define S_interm "S_tbl_interm"
@@ -119,6 +122,7 @@ int main() {
     ctx,
     con,
     R_TBL_NAME,
+    R_KEY,
     R_interm,
     R_SORTED_NAME,
     false,
@@ -135,6 +139,7 @@ int main() {
     ctx,
     con,
     S_TBL_NAME,
+    S_KEY,
     S_interm,
     S_SORTED_NAME,
     false,
@@ -160,10 +165,12 @@ int main() {
     S_TBL_NAME,
     R_SORTED_NAME,
     S_SORTED_NAME,
+    "k",
+    "k",
     JOIN_TMP_TBL_NAME,
     JOIN_TBL_NAME,
     false,
-    true
+    false
   );
 
   // Clean-up  

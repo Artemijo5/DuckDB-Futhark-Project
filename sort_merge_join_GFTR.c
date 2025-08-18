@@ -15,8 +15,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 50*CHUNK_SIZE
-#define S_TABLE_SIZE 8*R_TABLE_SIZE + 4*CHUNK_SIZE
+#define R_TABLE_SIZE 10*CHUNK_SIZE
+#define S_TABLE_SIZE 8*R_TABLE_SIZE
 
 #define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
@@ -25,6 +25,9 @@
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
+
+#define R_KEY "k"
+#define S_KEY "k"
 
 #define R_interm "R_tbl_interm"
 #define S_interm "S_tbl_interm"
@@ -114,6 +117,7 @@ int main() {
     ctx,
     con,
     R_TBL_NAME,
+    R_KEY,
     R_interm,
     R_SORTED_NAME,
     false,
@@ -138,6 +142,7 @@ int main() {
     ctx,
     con,
     S_TBL_NAME,
+    S_KEY,
     S_interm,
     S_SORTED_NAME,
     false,
@@ -158,7 +163,7 @@ int main() {
 // ############################################################################################################
 
   mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
-  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.k FROM R_tbl_sorted r JOIN S_tbl_sorted s ON (r.k == s.k));", NULL);
+  duckdb_query(con, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.k FROM R_tbl_sorted r JOIN S_tbl_sorted s ON (r.k == s.k));", NULL);
 
   mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
   Inner_MergeJoin_GFTR(
@@ -174,9 +179,11 @@ int main() {
     con,
     R_SORTED_NAME,
     S_SORTED_NAME,
+    "k",
+    "k",
     JOIN_TBL_NAME,
     false,
-    true
+    false
   );
   
 

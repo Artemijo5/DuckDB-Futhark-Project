@@ -11,8 +11,8 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 6*CHUNK_SIZE
-#define TABLE_SIZE BUFFER_SIZE + 13
+#define BUFFER_SIZE 16*512*CHUNK_SIZE
+#define TABLE_SIZE BUFFER_SIZE
 
 #define BLOCK_SIZE (int16_t)256
 
@@ -80,10 +80,10 @@ int main() {
 
 
   mylog(logfile, "EXPERIMENT #1 -- duckdb-native CPU sorting (without payloads).");
-  duckdb_query(con, "CREATE OR REPLACE TABLE CPU_withoutPL AS (SELECT payload2 FROM tbl ORDER BY payload2);", NULL);
+  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_withoutPL AS (SELECT k FROM tbl ORDER BY k);", NULL);
 
   mylog(logfile, "EXPERIMENT #2 -- duckdb-native CPU sorting (with payloads).");
-  duckdb_query(con, "CREATE OR REPLACE TABLE CPU_withPL AS (SELECT * FROM tbl ORDER BY payload2);", NULL);
+  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_withPL AS (SELECT * FROM tbl ORDER BY k);", NULL);
 
   mylog(logfile, "EXPERIMENT #3 -- GPU sorting (without payloads).");
   two_pass_sort_without_payloads(
@@ -94,12 +94,12 @@ int main() {
     ctx,
     con,
     "tbl",
-    "payload2",
+    "k",
     "tmp_interm",
     "GPU_withoutPL",
     false,
     false,
-    false
+    true
   );
 
   mylog(logfile, "EXPERIMENT #4 -- GPU sorting (with payloads).");
@@ -111,12 +111,12 @@ int main() {
     ctx,
     con,
     "tbl",
-    "payload2",
+    "k",
     "tmp_interm",
     "GPU_withPL",
     false,
     false,
-    false
+    true
   );
 
   // review result
