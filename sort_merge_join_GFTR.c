@@ -77,9 +77,9 @@ int main() {
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
-  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 SMALLINT, payload2 INTEGER, payload3 BIGINT);", R_TBL_NAME);
+  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 SMALLINT, payload2 BIGINT, payload3 BIGINT);", R_TBL_NAME);
   duckdb_query(con, createRtbl, NULL);
-  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 INTEGER, payload5 INTEGER, payload6 DOUBLE);", S_TBL_NAME);
+  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 BIGINT, payload5 INTEGER, payload6 DOUBLE);", S_TBL_NAME);
   duckdb_query(con, createStbl, NULL);
 
   // Create the test tables.
@@ -117,7 +117,7 @@ int main() {
     ctx,
     con,
     R_TBL_NAME,
-    R_KEY,
+    "payload2",
     R_interm,
     R_SORTED_NAME,
     false,
@@ -142,7 +142,7 @@ int main() {
     ctx,
     con,
     S_TBL_NAME,
-    S_KEY,
+    "payload4",
     S_interm,
     S_SORTED_NAME,
     false,
@@ -163,7 +163,10 @@ int main() {
 // ############################################################################################################
 
   mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
-  duckdb_query(con, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.k FROM R_tbl_sorted r JOIN S_tbl_sorted s ON (r.k == s.k));", NULL);
+  char joinQ[1000];
+  sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s);",
+    "payload4", R_SORTED_NAME, S_SORTED_NAME, "payload2", "payload4");
+  duckdb_query(con, joinQ, NULL);
 
   mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
   Inner_MergeJoin_GFTR(
@@ -179,8 +182,8 @@ int main() {
     con,
     R_SORTED_NAME,
     S_SORTED_NAME,
-    "k",
-    "k",
+    "payload2",
+    "payload4",
     JOIN_TBL_NAME,
     false,
     false
