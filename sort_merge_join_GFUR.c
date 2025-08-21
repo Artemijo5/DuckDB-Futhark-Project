@@ -13,18 +13,18 @@
 #define LOGFILE "sort_merge_join_GFUR.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 512*CHUNK_SIZE // MUST BE CHUNK_SIZE MULTIPLE
+#define BUFFER_SIZE 512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 20*CHUNK_SIZE
+#define R_TABLE_SIZE 100*CHUNK_SIZE
 #define S_TABLE_SIZE 5*R_TABLE_SIZE
 
-#define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
-#define MERGE_PARTITION_SIZE 256 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
+#define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
+#define EXT_PARALLELISM R_TABLE_SIZE // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
+#define MERGE_PARTITION_SIZE 2084 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
 #define RESCALE_FACTOR 256 // (arbitrarily) used to set the number of windows vs the number of partitions
 
-#define PAYLOAD_INDEX_BLOCK 10*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
-#define PAYLOAD_GATHER_BLOCK 5*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
+#define PAYLOAD_INDEX_BLOCK 20*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
+#define PAYLOAD_GATHER_BLOCK 10*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
 // TODO these 2 should be the same...
 
 #define R_TBL_NAME "R_tbl"
@@ -40,12 +40,12 @@
 #define S_SORTED_NAME "S_tbl_sorted"
 
 #define R_JOIN_BUFFER R_TABLE_SIZE // MUST BE CHUNK_SIZE MULTIPLE
-#define S_JOIN_BUFFER 5*R_JOIN_BUFFER // MUST BE CHUNK_SIZE MULTIPLE
+#define S_JOIN_BUFFER R_JOIN_BUFFER // MUST BE CHUNK_SIZE MULTIPLE
 #define JOIN_TMP_TBL_NAME "R_S_joinTbl_GFUR_TMP"
 #define JOIN_TBL_NAME "R_S_joinTbl_GFUR"
 
 #define DBFILE "testdb.db"
-#define DDB_MEMSIZE "4GB"
+#define DDB_MEMSIZE "20GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
 int main() {
@@ -83,9 +83,9 @@ int main() {
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
-  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 SMALLINT, payload2 INTEGER);", R_TBL_NAME);
+  sprintf(createRtbl, "CREATE OR REPLACE TEMP TABLE %s (k BIGINT, payload1 SMALLINT, payload2 INTEGER);", R_TBL_NAME);
   duckdb_query(con, createRtbl, NULL);
-  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload3 INTEGER, payload4 DOUBLE);", S_TBL_NAME);
+  sprintf(createStbl, "CREATE OR REPLACE TEMP TABLE %s (k BIGINT, payload3 INTEGER, payload4 DOUBLE);", S_TBL_NAME);
   duckdb_query(con, createStbl, NULL);
 
   // Create the test tables.
@@ -123,7 +123,7 @@ int main() {
     ctx,
     con,
     R_TBL_NAME,
-    "payload2",
+    R_KEY,
     R_interm,
     R_SORTED_NAME,
     false,
@@ -140,7 +140,7 @@ int main() {
     ctx,
     con,
     S_TBL_NAME,
-    "payload4",
+    S_KEY,
     S_interm,
     S_SORTED_NAME,
     false,
@@ -166,12 +166,12 @@ int main() {
     S_TBL_NAME,
     R_SORTED_NAME,
     S_SORTED_NAME,
-    "payload2",
-    "payload4",
+    R_KEY,
+    S_KEY,
     JOIN_TMP_TBL_NAME,
     JOIN_TBL_NAME,
     false,
-    false
+    true
   );
 
   // Clean-up  

@@ -11,7 +11,7 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 16*512*CHUNK_SIZE
+#define BUFFER_SIZE 128*512*CHUNK_SIZE
 #define TABLE_SIZE BUFFER_SIZE
 
 #define BLOCK_SIZE (int16_t)256
@@ -85,7 +85,7 @@ int main() {
   mylog(logfile, "EXPERIMENT #2 -- duckdb-native CPU sorting (with payloads).");
   duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_withPL AS (SELECT * FROM tbl ORDER BY k);", NULL);
 
-  mylog(logfile, "EXPERIMENT #3 -- GPU sorting (without payloads).");
+  mylog(logfile, "EXPERIMENT #3.a -- GPU merge-sorting (without payloads).");
   two_pass_sort_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
@@ -96,13 +96,30 @@ int main() {
     "tbl",
     "k",
     "tmp_interm",
-    "GPU_withoutPL",
+    "GPUmerge_withoutPL",
     false,
     false,
     true
   );
 
-  mylog(logfile, "EXPERIMENT #4 -- GPU sorting (with payloads).");
+  mylog(logfile, "EXPERIMENT #3.b -- GPU radix-sorting (without payloads).");
+  two_pass_sort_without_payloads(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    BLOCK_SIZE,
+    logfile,
+    ctx,
+    con,
+    "tbl",
+    "k",
+    "tmp_interm",
+    "GPUradix_withoutPL",
+    true,
+    false,
+    true
+  );
+
+  mylog(logfile, "EXPERIMENT #4.a -- GPU merge-sorting (with payloads).");
   two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
@@ -113,46 +130,28 @@ int main() {
     "tbl",
     "k",
     "tmp_interm",
-    "GPU_withPL",
+    "GPUmerge_withPL",
     false,
     false,
     true
   );
 
-  // review result
-  /*
-  printf("\n\nResults\n");
-  duckdb_result res;
-  if( duckdb_query(con, "SELECT * FROM TPSResult;", &res) == DuckDBError ) {
-    perror("Failed final query...\n");
-    return -1;
-  }
-  idx_t cc = 0; // chunk counter
-  while(true) {
-    duckdb_data_chunk cnk = duckdb_fetch_chunk(res);
-    if(!cnk) break;
-
-    duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, 0);
-    long* dat = (long*)duckdb_vector_get_data(vec);
-
-    idx_t r = duckdb_data_chunk_get_size(cnk);
-    //for(idx_t j=0; j<r; j++) {
-    //  printf("%ld, ", dat[j]);
-    //}
-      printf(
-        "Chunk %ld: first element %ld, last element %ld, number of elements %ld.\n",
-        cc,
-        dat[0],
-        dat[r-1],
-        r
-      );
-    cc++;
-
-    duckdb_destroy_data_chunk(&cnk);
-  }
-  duckdb_destroy_result(&res);
-  printf("\n\n");
-  */
+  mylog(logfile, "EXPERIMENT #4.b -- GPU radix-sorting (with payloads).");
+  two_pass_sort_with_payloads(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    BLOCK_SIZE,
+    logfile,
+    ctx,
+    con,
+    "tbl",
+    "k",
+    "tmp_interm",
+    "GPUmerge_withPL",
+    true,
+    false,
+    true
+  );
 
   // Clean-up
   futhark_context_free(ctx);

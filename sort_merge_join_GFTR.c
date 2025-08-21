@@ -15,12 +15,12 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE
 
-#define R_TABLE_SIZE 10*CHUNK_SIZE
-#define S_TABLE_SIZE 8*R_TABLE_SIZE
+#define R_TABLE_SIZE 100*CHUNK_SIZE
+#define S_TABLE_SIZE 5*R_TABLE_SIZE
 
-#define BLOCK_SIZE (int16_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define EXT_PARALLELISM 1024 // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
-#define MERGE_PARTITION_SIZE 256 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
+#define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
+#define EXT_PARALLELISM R_TABLE_SIZE // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
+#define MERGE_PARTITION_SIZE 2084 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
 #define RESCALE_FACTOR 256 // (arbitrarily) used to set the number of windows vs the number of partitions
 
 #define R_TBL_NAME "R_tbl"
@@ -77,9 +77,9 @@ int main() {
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
-  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 SMALLINT, payload2 BIGINT, payload3 BIGINT);", R_TBL_NAME);
+  sprintf(createRtbl, "CREATE OR REPLACE TEMP TABLE %s (k BIGINT, payload1 FLOAT, payload2 INTEGER, payload3 SMALLINT);", R_TBL_NAME);
   duckdb_query(con, createRtbl, NULL);
-  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 BIGINT, payload5 INTEGER, payload6 DOUBLE);", S_TBL_NAME);
+  sprintf(createStbl, "CREATE OR REPLACE TEMP TABLE %s (k BIGINT, payload4 INTEGER, payload5 SMALLINT, payload6 DOUBLE);", S_TBL_NAME);
   duckdb_query(con, createStbl, NULL);
 
   // Create the test tables.
@@ -87,13 +87,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 100000000*random(), 10000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 100000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 100000000*random(), 10000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 100000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
@@ -117,7 +117,7 @@ int main() {
     ctx,
     con,
     R_TBL_NAME,
-    "payload2",
+    R_KEY,
     R_interm,
     R_SORTED_NAME,
     false,
@@ -142,13 +142,14 @@ int main() {
     ctx,
     con,
     S_TBL_NAME,
-    "payload4",
+    S_KEY,
     S_interm,
     S_SORTED_NAME,
     false,
     false,
     true
   );
+
   //Tmp
   /*
   if ( duckdb_query(con, "CREATE OR REPLACE TEMP TABLE S_tbl_sorted AS (SELECT * FROM S_tbl ORDER BY k);", NULL) == DuckDBError) {
@@ -164,9 +165,11 @@ int main() {
 
   mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
   char joinQ[1000];
-  sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s);",
-    "payload4", R_SORTED_NAME, S_SORTED_NAME, "payload2", "payload4");
-  duckdb_query(con, joinQ, NULL);
+  sprintf(joinQ, "CREATE OR REPLACE TEMP TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
+    S_KEY, R_SORTED_NAME, S_SORTED_NAME, R_KEY, S_KEY);
+  if(duckdb_query(con, joinQ, NULL) == DuckDBError) {
+    perror("Failed to join with duckdb.");
+  }
 
   mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
   Inner_MergeJoin_GFTR(
@@ -182,11 +185,11 @@ int main() {
     con,
     R_SORTED_NAME,
     S_SORTED_NAME,
-    "payload2",
-    "payload4",
+    R_KEY,
+    S_KEY,
     JOIN_TBL_NAME,
     false,
-    false
+    true
   );
   
 
