@@ -74,6 +74,7 @@ idx_t sort_Stage1_with_payloads(
       memcpy(keyBuffer + cur_rows*colType_bytes(type_ids[keyCol_idx]), kdat, row_count*colType_bytes(type_ids[keyCol_idx]));
       // payload columns to payloadBuffer
       // TODO consider switching up the access pattern to see which one is more efficient
+	  //mylog(logfile, "Starting tranlation of payloads...");
   		for (idx_t col = 0; col < col_count; col++) {
         if(col == keyCol_idx) continue; // payloads only
         idx_t accIdx = (col < keyCol_idx)? col: col-1; // adjust index
@@ -91,6 +92,28 @@ idx_t sort_Stage1_with_payloads(
           );
         }
   		}
+	  /*
+	  void *pL_dat[col_count-1];
+	  for(idx_t col=0; col<col_count; col++) {
+		  if(col==keyCol_idx) continue;
+		  idx_t accIdx = (col<keyCol_idx)? col: col-1;
+		  duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, col);
+		  pL_dat[accIdx] = duckdb_vector_get_data(vec);
+	  }
+	  for(idx_t r=0; r<row_count; r++) {
+		  for(idx_t col=0; col<col_count; col++) {
+			  if(col==keyCol_idx) continue;
+			  idx_t accIdx = (col<keyCol_idx)? col: col-1;
+			  char *thisEntry = &((char*)pL_dat[accIdx])[r*pL_byteSizes[accIdx]];
+			  memcpy(
+				payloadBuffer + (cur_rows+r)*pL_byteSizes[accIdx] + pL_prefixSizes[accIdx],
+				thisEntry,
+				pL_byteSizes[accIdx]
+			  );
+		  }
+	  }
+	  */
+	  //mylog(logfile, "Finished tranlation of payloads.");
       
       cur_rows += row_count;
 

@@ -11,7 +11,7 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 128*512*CHUNK_SIZE
+#define BUFFER_SIZE 10*512*CHUNK_SIZE
 #define TABLE_SIZE BUFFER_SIZE
 
 #define BLOCK_SIZE (int16_t)256
@@ -85,7 +85,7 @@ int main() {
   mylog(logfile, "EXPERIMENT #2 -- duckdb-native CPU sorting (with payloads).");
   duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_withPL AS (SELECT * FROM tbl ORDER BY k);", NULL);
 
-  mylog(logfile, "EXPERIMENT #3.a -- GPU merge-sorting (without payloads).");
+  /*mylog(logfile, "EXPERIMENT #3.a -- GPU merge-sorting (without payloads).");
   two_pass_sort_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
@@ -100,9 +100,9 @@ int main() {
     false,
     false,
     true
-  );
+  );*/
 
-  mylog(logfile, "EXPERIMENT #3.b -- GPU radix-sorting (without payloads).");
+  /*mylog(logfile, "EXPERIMENT #3.b -- GPU radix-sorting (without payloads).");
   two_pass_sort_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
@@ -117,7 +117,7 @@ int main() {
     true,
     false,
     true
-  );
+  );*/
 
   mylog(logfile, "EXPERIMENT #4.a -- GPU merge-sorting (with payloads).");
   two_pass_sort_with_payloads(
@@ -136,7 +136,7 @@ int main() {
     true
   );
 
-  mylog(logfile, "EXPERIMENT #4.b -- GPU radix-sorting (with payloads).");
+  /*mylog(logfile, "EXPERIMENT #4.b -- GPU radix-sorting (with payloads).");
   two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
@@ -151,7 +151,7 @@ int main() {
     true,
     false,
     true
-  );
+  );*/
 
   // Clean-up
   futhark_context_free(ctx);
