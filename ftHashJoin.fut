@@ -1,138 +1,108 @@
 import "lib/github.com/diku-dk/sorts/radix_sort"
 import "ftbasics"
-import "ftsort"
 
-
+-- LOGIC
+-- keys are passed from C in the form of byte arrays (arrays of u8)
+-- partitioning parameters:
+-- 1. total number of bits
+-- 2. number of bits per partition
+-- 3. maximum desired depth <= ceil(total bits / partition bits)
+-- Partition data
+-- 1. starting index
+-- 2. partition depth
+-- 3. ig total bits & bits per partition as well
 -- TODO
--- the logic used is to use futhark's pre-made radix-sort (might switch to custom) and isolate desired bits
--- currently doesn't work when partitioning by only 1 bit
--- might want to fix that (might not be necessary)
+-- consider how data are passed from C (all at once or just relevant radixes?)
+-- consider how are relations partitioned (both entirely or one entirely and the other concurrently with the join? prob the former)
 
--- sortStruct & sortInfo are used to hold partition information
--- since partitioning is sorting-based, and results in a contiguous array
+type byteSeq [bytes] = [bytes]u8
 
-local def findPartitionBoundaries 'a 'int_t
-	(pXs: []a)
-	(num_bits: i32)
-	(get_bit: i32 -> a -> i32)
-	(i: i32)
-	(j: i32)
-: [](i64, idx_t.t) =
-  let radixBits = i32.min (num_bits+1-i) (j-i)
-  let numParts = i64.i32 (2**(radixBits))
-  --let fromMSB = i32.min 0 (num_bits - j + 1)
-  --let getRadix (x: a) = x * (2**fromMSB) / (2**(fromMSB+i)) -- this only works for unsigned int
-  -- could use it if first transforming to uint type...
-  -- TODO figure out *efficient* method to obtain radix
-  -- Ideas: 1. have all data in unsigned int form & bit-shift 2. use a bit mask (!)
-  let getRadix (x: a) : i32 =
-    let loop_over =
-      loop p = (0, 0)
-      while p.0<radixBits do
-        (p.0+1, i32.set_bit p.0 p.1 (get_bit (p.0+i) x))
-    in loop_over.1
-  let radixs = pXs |> map getRadix |> map (i64.i32)
-  -- based on Futhark by Example - Removing Duplicates
-  in hist (idx_t.min) (length radixs) numParts radixs (indices radixs)
-    |> zip (iota numParts)
-    |> filter (\pair -> pair.1 < (length radixs))
--- TODO make appropriate types for access from the C API
--- TODO also, consider including partitionDepth parameter for recursive partitioning
+type~ partitionInfo = {totalBytes: i32, radixSize: i32, maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 
-entry findPartitionBoundaries_short (pXs: []i16) (i: i32) (j: i32)
-	= findPartitionBoundaries pXs i16.num_bits i16.get_bit i j
-entry findPartitionBoundaries_int (pXs: []i32) (i: i32) (j: i32)
-	= findPartitionBoundaries pXs i32.num_bits i32.get_bit i j
-entry findPartitionBoundaries_long (pXs: []i64) (i: i32) (j: i32)
-	= findPartitionBoundaries pXs i64.num_bits i64.get_bit i j
-entry findPartitionBoundaries_float (pXs: []f32) (i: i32) (j: i32)
-	= findPartitionBoundaries pXs f32.num_bits f32.get_bit i j
-entry findPartitionBoundaries_double (pXs: []f64) (i: i32) (j: i32)
-	= findPartitionBoundaries pXs f64.num_bits f64.get_bit i j
+def byteSeq_getBit [b] (i: i32) (x: byteSeq [b])
+: i32 =
+  let whichByte = (i32.i64 b) - (i/u8.num_bits) - 1
+  let whichBit = i%u8.num_bits
+  in x[whichByte]
+    |> u8.get_bit whichBit
 
--- GFTR
+def getRadix [b] (i: i32) (j: i32) (x: byteSeq [b])
+: byteSeq [b] =
+  let firstByte = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
+  let lastByte = i64.i32 ((i32.i64 b) - (j/u8.num_bits) - 1)
+  let firstBit = i%u8.num_bits
+  let lastBit = j%u8.num_bits
+  let first_bitMask = u8.highest << (u8.i32 firstBit)
+  let last_bitMask = (u8.>>>) u8.highest(u8.i32 (u8.num_bits - lastBit - 1))
+  let mod_x = x
+    |> zip (iota b)
+    |> map (\(ind, v) -> if (ind<=firstByte && ind>=lastByte) then (ind, v) else (ind, 0))
+    |> map (.1)
+  let mod1_x = (copy mod_x) with [firstByte] = mod_x[firstByte] & first_bitMask
+  in (copy mod1_x) with [lastByte] = mod1_x[lastByte] & last_bitMask
 
-local def radixPartRelation [n] [b] 'a 
+
+--def analyseBits [n] [b] (xs: [n](byteSeq[b])) : [n][b*(i64.i32 u8.num_bits)]i32 =
+--  (replicate n (iota (b*(i64.i32 u8.num_bits))))
+--    |> map (map i32.i64)
+--    |> zip (iota n)
+--    |> map (\(i, vs) ->
+--      vs
+--        |> map (\v -> byteSeq_getBit v xs[i])
+--    )
+
+-- TODO find alternative solution?
+def adjustOddBits [b] (j: i32) (x: byteSeq [b])
+: byteSeq [b] =
+  let whichByte = (i32.i64 b) - (j/u8.num_bits) - 1
+  let whichBit = j%u8.num_bits
+  let bitMask = (u8.>>>) u8.highest (u8.i32 (u8.num_bits - whichBit - 1))
+  in (copy x) with [whichByte] = (x[whichByte] & bitMask)
+
+entry radixPartRelation_GFUR [n] [b]
   (block_size: i16)
-  (xs: sortStruct [n] [b] a)
-  (num_bits: i32)
-  (get_bit: i32 -> a -> i32)
+  (xs: [n](byteSeq [b]))
   (i: i32)
   (j: i32)
- : sortStruct [n] [b] a =
-  let xys : [n](a, [b]u8) = zip xs.k xs.pL
-  let part_numBits = i32.min (num_bits+1-i) (j-i)
-  let part_getBit = (\(a1: i32) -> (get_bit (a1+i)))
-  let part_xys = blocked_radix_sort_by_key block_size (.0) part_numBits part_getBit xys
-  let un_xys : ([n]a, [n][]u8) = unzip part_xys
-  in {k = un_xys.0, pL = un_xys.1}
+ : [n](byteSeq [b]) =
+  let part_numBits = j-i+1
+  let part_getBit = (\(a1: i32) -> (byteSeq_getBit (a1+i)))
+  in
+    if part_numBits%2 == 0
+    then blocked_radix_sort block_size part_numBits part_getBit  xs
+    else blocked_radix_sort_by_key block_size (adjustOddBits (j)) (part_numBits+1) part_getBit  xs
 
-entry radixPartRelation_short [n] [b]
+entry radixPartRelation_GFTR [n] [b] [pL_b]
   (block_size: i16)
-  (xs: sortStruct_short [n] [b])
+  (xs: [n](byteSeq [b]))
+  (ys: [n](byteSeq [pL_b]))
   (i: i32)
   (j: i32)
- : sortStruct_short [n] [b]
-  = radixPartRelation (block_size) (xs) (i16.num_bits) (i16.get_bit) (i) (j)
-entry radixPartRelation_int [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_int [n] [b])
-  (i: i32)
-  (j: i32)
- : sortStruct_int [n] [b]
-  = radixPartRelation (block_size) (xs) (i32.num_bits) (i32.get_bit) (i) (j)
-entry radixPartRelation_long [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_long [n] [b])
-  (i: i32)
-  (j: i32)
- : sortStruct_long [n] [b]
-  = radixPartRelation (block_size) (xs) (i64.num_bits) (i64.get_bit) (i) (j)
-entry radixPartRelation_float [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_float [n] [b])
-  (i: i32)
-  (j: i32)
- : sortStruct_float [n] [b]
-  = radixPartRelation (block_size) (xs) (f32.num_bits) (f32.get_bit) (i) (j)
-entry radixPartRelation_double [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_double [n] [b])
-  (i: i32)
-  (j: i32)
- : sortStruct_double [n] [b]
-  = radixPartRelation (block_size) (xs) (f64.num_bits) (f64.get_bit) (i) (j)
+ : ([n](byteSeq [b]), [n](byteSeq [pL_b])) =
+  let part_numBits = j-i+1
+  let part_getBit = (\(a1: i32) -> (byteSeq_getBit (a1+i)))
+  let xys = zip xs ys
+  in
+    if part_numBits%2 == 0
+    then unzip (blocked_radix_sort_by_key block_size (.0) part_numBits part_getBit xys)
+    else unzip (blocked_radix_sort_by_key block_size (\xy -> adjustOddBits (j) xy.0) (part_numBits+1) part_getBit xys)
 
--- GFUR
-
-local def radixPartColumn [n] 'a
-  (incr: idx_t.t)
-  (block_size: i16)
-  (xs: [n]a)
-  (num_bits: i32)
-  (get_bit: i32 -> a -> i32)
+entry getPartitionBounds_first [n] [b]
+  (pXs: [n](byteSeq [b]))
   (i: i32)
   (j: i32)
- : sortInfo [n] a =
-  let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
-  let part_numBits = i32.min (num_bits+1-i) (j-i)
-  let part_getBit = (\(a1: i32) -> (get_bit (a1+i)))
-  let sorted_ixs = blocked_radix_sort_by_key block_size (.1) part_numBits part_getBit ixs
-  let un_ixs = unzip sorted_ixs
-  in {is = un_ixs.0, xs = un_ixs.1}
-
-entry radixPartColumn_short [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i16) (i: i32) (j: i32)
-: sortInfo_short [n] =
-  radixPartColumn incr block_size xs (i16.num_bits) (i16.get_bit) (i) (j)
-entry radixPartColumn_int [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i32) (i: i32) (j: i32)
-: sortInfo_int [n] =
-  radixPartColumn incr block_size xs (i32.num_bits) (i32.get_bit) (i) (j)
-entry radixPartColumn_long [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i64) (i: i32) (j: i32)
-: sortInfo_long [n] =
-  radixPartColumn incr block_size xs (i64.num_bits) (i64.get_bit) (i) (j)
-entry radixPartColumn_float [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f32) (i: i32) (j: i32)
-: sortInfo_float [n] =
-  radixPartColumn incr block_size xs (f32.num_bits) (f32.get_bit) (i) (j)
-entry radixPartColumn_double [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f64) (i: i32) (j: i32)
-: sortInfo_double [n] =
-  radixPartColumn incr block_size xs (f64.num_bits) (f64.get_bit) (i) (j)
+: partitionInfo =
+  let boundIndices = (1..<n)
+    |> map (\i -> (pXs[i], pXs[i-1]))
+    |> map (\(x1, x2) -> (getRadix i j x1, getRadix i j x2))
+    |> map (\(x1, x2) -> zip x1 x2)
+    |> zip (1..<n)
+    |> filter (\(i, rs) -> any (\(r1, r2) -> r1 != r2) rs)
+    |> map (.0)
+  in {
+    totalBytes = i32.i64 b,
+    radixSize = j-i+1,
+    maxDepth = 0,
+    bounds = [0] ++ boundIndices,
+    depths = replicate (1+ (length boundIndices)) 0
+  }
