@@ -58,21 +58,13 @@ int futhark_values_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *ar
 int futhark_index_i64_1d(struct futhark_context *ctx, int64_t *out, struct futhark_i64_1d *arr, int64_t i0);
 unsigned char *futhark_values_raw_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
-struct futhark_u8_2d;
-struct futhark_u8_2d *futhark_new_u8_2d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1);
-struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, unsigned char *data, int64_t dim0, int64_t dim1);
-int futhark_free_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
-int futhark_values_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr, uint8_t *data);
-int futhark_index_u8_2d(struct futhark_context *ctx, uint8_t *out, struct futhark_u8_2d *arr, int64_t i0, int64_t i1);
-unsigned char *futhark_values_raw_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
-const int64_t *futhark_shape_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
 
 // Opaque values
 
 
 
 // Entry points
-int futhark_entry_main(struct futhark_context *ctx, struct futhark_u8_2d **out0, struct futhark_i64_1d **out1);
+int futhark_entry_main(struct futhark_context *ctx, struct futhark_i64_1d **out0);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);
@@ -2030,8 +2022,7 @@ static int futrts_cli_entry_main(struct futhark_context *ctx)
     if (end_of_input(stdin) != 0)
         futhark_panic(1, "Expected EOF on stdin after reading input for \"%s\".\n", "main");
     
-    struct futhark_u8_2d * result_0;
-    struct futhark_i64_1d * result_1;
+    struct futhark_i64_1d * result_0;
     
     if (perform_warmup) {
         int r;
@@ -2043,7 +2034,7 @@ static int futrts_cli_entry_main(struct futhark_context *ctx)
         if (profile_run)
             futhark_context_unpause_profiling(ctx);
         t_start = get_wall_time();
-        r = futhark_entry_main(ctx, &result_0, &result_1);
+        r = futhark_entry_main(ctx, &result_0);
         if (r != 0)
             futhark_panic(1, "%s", futhark_context_get_error(ctx));
         if (futhark_context_sync(ctx) != 0)
@@ -2059,8 +2050,7 @@ static int futrts_cli_entry_main(struct futhark_context *ctx)
             fprintf(runtime_file, "%lld\n", (long long) elapsed_usec);
             fflush(runtime_file);
         }
-        assert(futhark_free_u8_2d(ctx, result_0) == 0);
-        assert(futhark_free_i64_1d(ctx, result_1) == 0);
+        assert(futhark_free_i64_1d(ctx, result_0) == 0);
     }
     time_runs = 1;
     // Proper run.
@@ -2077,7 +2067,7 @@ static int futrts_cli_entry_main(struct futhark_context *ctx)
         if (profile_run)
             futhark_context_unpause_profiling(ctx);
         t_start = get_wall_time();
-        r = futhark_entry_main(ctx, &result_0, &result_1);
+        r = futhark_entry_main(ctx, &result_0);
         if (r != 0)
             futhark_panic(1, "%s", futhark_context_get_error(ctx));
         if (futhark_context_sync(ctx) != 0)
@@ -2094,8 +2084,7 @@ static int futrts_cli_entry_main(struct futhark_context *ctx)
             fflush(runtime_file);
         }
         if (run < num_runs - 1) {
-            assert(futhark_free_u8_2d(ctx, result_0) == 0);
-            assert(futhark_free_i64_1d(ctx, result_1) == 0);
+            assert(futhark_free_i64_1d(ctx, result_0) == 0);
         }
     }
     if (print_result) {
@@ -2103,22 +2092,12 @@ static int futrts_cli_entry_main(struct futhark_context *ctx)
         if (binary_output)
             set_binary_mode(stdout);
         {
-            uint8_t *arr = calloc(futhark_shape_u8_2d(ctx, result_0)[0] * futhark_shape_u8_2d(ctx, result_0)[1], u8_info.size);
+            int64_t *arr = calloc(futhark_shape_i64_1d(ctx, result_0)[0], i64_info.size);
             
             assert(arr != NULL);
-            assert(futhark_values_u8_2d(ctx, result_0, arr) == 0);
+            assert(futhark_values_i64_1d(ctx, result_0, arr) == 0);
             assert(futhark_context_sync(ctx) == 0);
-            write_array(stdout, binary_output, &u8_info, arr, futhark_shape_u8_2d(ctx, result_0), 2);
-            free(arr);
-        }
-        printf("\n");
-        {
-            int64_t *arr = calloc(futhark_shape_i64_1d(ctx, result_1)[0], i64_info.size);
-            
-            assert(arr != NULL);
-            assert(futhark_values_i64_1d(ctx, result_1, arr) == 0);
-            assert(futhark_context_sync(ctx) == 0);
-            write_array(stdout, binary_output, &i64_info, arr, futhark_shape_i64_1d(ctx, result_1), 1);
+            write_array(stdout, binary_output, &i64_info, arr, futhark_shape_i64_1d(ctx, result_0), 1);
             free(arr);
         }
         printf("\n");
@@ -2126,8 +2105,7 @@ static int futrts_cli_entry_main(struct futhark_context *ctx)
     
   print_end:
     { }
-    assert(futhark_free_u8_2d(ctx, result_0) == 0);
-    assert(futhark_free_i64_1d(ctx, result_1) == 0);
+    assert(futhark_free_i64_1d(ctx, result_0) == 0);
     return retval;
 }
 typedef int entry_point_fun(struct futhark_context *);
@@ -6253,10 +6231,10 @@ struct memblock {
 };
 struct constants {
     int dummy;
-    struct memblock ext_mem_7987;
-    struct memblock ext_mem_7988;
+    int64_t conc_tmp_11917;
+    struct memblock mem_13031;
 };
-static int8_t static_array_realtype_8010[16] = { (int8_t) 4,(int8_t) 2,(int8_t) 2,(int8_t) 1,(int8_t) 2,(int8_t) 2,(int8_t) 3,(int8_t) 5,(int8_t) 2,(int8_t) 5,(int8_t) 3,(int8_t) 1,(int8_t) 4,(int8_t) 5,(int8_t) 3,(int8_t) 7};
+static int8_t static_array_realtype_13058[16] = { (int8_t) 4,(int8_t) 2,(int8_t) 2,(int8_t) 1,(int8_t) 2,(int8_t) 2,(int8_t) 3,(int8_t) 5,(int8_t) 2,(int8_t) 5,(int8_t) 3,(int8_t) 1,(int8_t) 4,(int8_t) 5,(int8_t) 3,(int8_t) 7};
 struct tuning_params {
     int dummy;
 };
@@ -6928,7 +6906,7 @@ GEN_LMAD_COPY(8b, uint64_t)
 
 #define FUTHARK_FUN_ATTR static
 
-FUTHARK_FUN_ATTR int futrts_entry_main(struct futhark_context *ctx, struct memblock *mem_out_p_8011, struct memblock *mem_out_p_8012);
+FUTHARK_FUN_ATTR int futrts_entry_main(struct futhark_context *ctx, struct memblock *mem_out_p_13059, int64_t *out_prim_out_13060);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -6936,238 +6914,492 @@ static int init_constants(struct futhark_context *ctx)
     
     int err = 0;
     
-    #define ext_mem_7987 (ctx->constants->ext_mem_7987)
-    #define ext_mem_7988 (ctx->constants->ext_mem_7988)
+    #define conc_tmp_11917 (ctx->constants->conc_tmp_11917)
+    #define mem_13031 (ctx->constants->mem_13031)
     
-    struct memblock mem_param_tmp_7999;
+    struct memblock mem_13029;
     
-    mem_param_tmp_7999.references = NULL;
+    mem_13029.references = NULL;
     
-    struct memblock mem_param_tmp_7998;
+    struct memblock mem_13022;
     
-    mem_param_tmp_7998.references = NULL;
+    mem_13022.references = NULL;
     
-    struct memblock mem_7966;
+    struct memblock mem_13002;
     
-    mem_7966.references = NULL;
+    mem_13002.references = NULL;
     
-    struct memblock mem_7965;
+    struct memblock mem_13001;
     
-    mem_7965.references = NULL;
+    mem_13001.references = NULL;
     
-    struct memblock mem_param_7943;
+    struct memblock mem_12994;
     
-    mem_param_7943.references = NULL;
+    mem_12994.references = NULL;
     
-    struct memblock mem_param_7940;
+    struct memblock mem_12993;
     
-    mem_param_7940.references = NULL;
+    mem_12993.references = NULL;
     
-    struct memblock mem_7974;
+    struct memblock mem_param_tmp_13035;
     
-    mem_7974.references = NULL;
+    mem_param_tmp_13035.references = NULL;
     
-    struct memblock mem_7958;
+    struct memblock mem_12975;
     
-    mem_7958.references = NULL;
+    mem_12975.references = NULL;
     
-    struct memblock mem_7945;
+    struct memblock mem_12969;
     
-    mem_7945.references = NULL;
+    mem_12969.references = NULL;
     
-    struct memblock mem_7944;
+    struct memblock mem_param_12947;
     
-    mem_7944.references = NULL;
+    mem_param_12947.references = NULL;
     
-    struct memblock mem_7936;
+    struct memblock ext_mem_12992;
     
-    mem_7936.references = NULL;
+    ext_mem_12992.references = NULL;
     
-    struct memblock mem_7935;
+    struct memblock mem_12980;
     
-    mem_7935.references = NULL;
-    ext_mem_7987.references = NULL;
-    ext_mem_7988.references = NULL;
-    if (memblock_alloc(ctx, &mem_7935, (int64_t) 16, "mem_7935")) {
+    mem_12980.references = NULL;
+    
+    struct memblock mem_12962;
+    
+    mem_12962.references = NULL;
+    
+    struct memblock mem_12949;
+    
+    mem_12949.references = NULL;
+    
+    struct memblock mem_12948;
+    
+    mem_12948.references = NULL;
+    
+    struct memblock mem_12943;
+    
+    mem_12943.references = NULL;
+    mem_13031.references = NULL;
+    if (memblock_alloc(ctx, &mem_12943, (int64_t) 16, "mem_12943")) {
         err = 1;
         goto cleanup;
     }
     
-    struct memblock static_array_7995 = (struct memblock) {NULL, (unsigned char *) static_array_realtype_8010, 0, "static_array_7995"};
+    struct memblock static_array_13034 = (struct memblock) {NULL, (unsigned char *) static_array_realtype_13058, 0, "static_array_13034"};
     
-    lmad_copy_1b(ctx, 1, (uint8_t *) mem_7935.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint8_t *) static_array_7995.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 16});
-    if (memblock_alloc(ctx, &mem_7936, (int64_t) 64, "mem_7936")) {
+    lmad_copy_1b(ctx, 1, (uint8_t *) mem_12943.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint8_t *) static_array_13034.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 16});
+    if (memblock_alloc(ctx, &mem_12948, (int64_t) 32, "mem_12948")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t i_7996 = 0; i_7996 < (int64_t) 8; i_7996++) {
-        int64_t x_7997 = (int64_t) 0 + i_7996 * (int64_t) 1;
-        
-        ((int64_t *) mem_7936.mem)[i_7996] = x_7997;
-    }
-    if (memblock_alloc(ctx, &mem_7944, (int64_t) 32, "mem_7944")) {
+    if (memblock_alloc(ctx, &mem_12949, (int64_t) 32, "mem_12949")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc(ctx, &mem_7945, (int64_t) 32, "mem_7945")) {
+    if (memblock_alloc(ctx, &mem_12962, (int64_t) 64, "mem_12962")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc(ctx, &mem_7958, (int64_t) 32, "mem_7958")) {
+    if (memblock_alloc(ctx, &mem_12980, (int64_t) 2, "mem_12980")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc(ctx, &mem_7974, (int64_t) 2, "mem_7974")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_set(ctx, &mem_param_7940, &mem_7935, "mem_7935") != 0)
+    if (memblock_set(ctx, &mem_param_12947, &mem_12943, "mem_12943") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_param_7943, &mem_7936, "mem_7936") != 0)
-        return 1;
-    for (int64_t i_7481 = 0; i_7481 < (int64_t) 5; i_7481++) {
-        int32_t binop_x_7484 = sext_i64_i32(i_7481);
-        int32_t zm_rhs_7487 = sdiv32(binop_x_7484, 8);
-        int32_t zm_lhs_7488 = sub32(2, zm_rhs_7487);
-        int32_t whichByte_7489 = sub32(zm_lhs_7488, 1);
-        int32_t whichBit_7490 = smod32(binop_x_7484, 8);
-        int64_t whichByte_7491 = sext_i32_i64(whichByte_7489);
-        bool x_7492 = sle64((int64_t) 0, whichByte_7491);
-        bool y_7493 = slt64(whichByte_7491, (int64_t) 2);
-        bool bounds_check_7494 = x_7492 && y_7493;
-        bool index_certs_7495;
+    for (int64_t i_12121 = 0; i_12121 < (int64_t) 5; i_12121++) {
+        int32_t binop_x_12124 = sext_i64_i32(i_12121);
+        int32_t zm_rhs_12127 = sdiv32(binop_x_12124, 8);
+        int32_t zm_lhs_12128 = sub32(2, zm_rhs_12127);
+        int32_t whichByte_12129 = sub32(zm_lhs_12128, 1);
+        int32_t whichBit_12130 = smod32(binop_x_12124, 8);
+        int64_t whichByte_12131 = sext_i32_i64(whichByte_12129);
+        bool x_12132 = sle64((int64_t) 0, whichByte_12131);
+        bool y_12133 = slt64(whichByte_12131, (int64_t) 2);
+        bool bounds_check_12134 = x_12132 && y_12133;
+        bool index_certs_12135;
         
-        if (!bounds_check_7494) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) whichByte_7491, "] out of bounds for array of shape [", (long long) (int64_t) 2, "].", "-> #0  ftError.fut:24:6-18\n   #1  ftError.fut:44:25-43\n   #2  ftError.fut:56:39-64\n"));
+        if (!bounds_check_12134) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) whichByte_12131, "] out of bounds for array of shape [", (long long) (int64_t) 2, "].", "-> #0  ftHashJoin.fut:25:6-18\n   #1  ftHashJoin.fut:55:25-43\n   #2  ftHashJoin.fut:67:39-75\n   #3  ftHashJoin.fut:77:6-37\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
         
-        int8_t unsign_arg0_7496 = zext_i32_i8(whichBit_7490);
-        int32_t defunc_0_reduce_res_7859;
-        int32_t redout_7870 = 0;
+        int8_t unsign_arg0_12136 = zext_i32_i8(whichBit_12130);
+        int32_t defunc_0_reduce_res_12833;
+        int32_t redout_12851 = 0;
         
-        for (int64_t i_7873 = 0; i_7873 < (int64_t) 8; i_7873++) {
-            int8_t as_transformed_row_7787 = ((int8_t *) mem_param_7940.mem)[i_7873 * (int64_t) 2 + whichByte_7491];
-            int8_t unsign_arg0_7788 = ashr8(as_transformed_row_7787, unsign_arg0_7496);
-            int8_t unsign_arg0_7789 = (int8_t) 1 & unsign_arg0_7788;
-            int32_t to_i32_res_7790 = zext_i8_i32(unsign_arg0_7789);
-            int32_t lifted_lambda_res_7792 = sub32(1, to_i32_res_7790);
-            int32_t defunc_0_op_res_7510 = add32(lifted_lambda_res_7792, redout_7870);
+        for (int64_t i_12854 = 0; i_12854 < (int64_t) 8; i_12854++) {
+            int8_t as_transformed_row_12727 = ((int8_t *) mem_param_12947.mem)[i_12854 * (int64_t) 2 + whichByte_12131];
+            int8_t unsign_arg0_12728 = ashr8(as_transformed_row_12727, unsign_arg0_12136);
+            int8_t unsign_arg0_12729 = (int8_t) 1 & unsign_arg0_12728;
+            int32_t to_i32_res_12730 = zext_i8_i32(unsign_arg0_12729);
+            int32_t lifted_lambda_res_12732 = sub32(1, to_i32_res_12730);
+            int32_t defunc_0_op_res_12150 = add32(lifted_lambda_res_12732, redout_12851);
             
-            ((int32_t *) mem_7944.mem)[i_7873] = lifted_lambda_res_7792;
-            ((int32_t *) mem_7945.mem)[i_7873] = to_i32_res_7790;
+            ((int32_t *) mem_12948.mem)[i_12854] = lifted_lambda_res_12732;
+            ((int32_t *) mem_12949.mem)[i_12854] = to_i32_res_12730;
             
-            int32_t redout_tmp_8002 = defunc_0_op_res_7510;
+            int32_t redout_tmp_13037 = defunc_0_op_res_12150;
             
-            redout_7870 = redout_tmp_8002;
+            redout_12851 = redout_tmp_13037;
         }
-        defunc_0_reduce_res_7859 = redout_7870;
+        defunc_0_reduce_res_12833 = redout_12851;
         
-        int32_t inpacc_7863;
-        int32_t inpacc_7864;
-        int32_t inpacc_7726;
-        int32_t inpacc_7727;
+        int32_t inpacc_12837;
+        int32_t inpacc_12838;
+        int32_t inpacc_12664;
+        int32_t inpacc_12665;
         
-        inpacc_7726 = 0;
-        inpacc_7727 = 0;
-        for (int64_t i_7894 = 0; i_7894 < (int64_t) 8; i_7894++) {
-            int32_t x_7908 = ((int32_t *) mem_7944.mem)[i_7894];
-            int32_t x_7916 = ((int32_t *) mem_7945.mem)[i_7894];
-            int32_t defunc_0_op_res_7927 = add32(inpacc_7726, x_7908);
-            int32_t defunc_0_f_res_7928 = mul32(x_7908, defunc_0_op_res_7927);
-            int32_t defunc_0_op_res_7929 = add32(inpacc_7727, x_7916);
-            int32_t lifted_lambda_res_7930 = add32(defunc_0_reduce_res_7859, defunc_0_op_res_7929);
-            int32_t defunc_0_f_res_7931 = mul32(x_7916, lifted_lambda_res_7930);
-            int32_t defunc_0_f_res_7932 = add32(defunc_0_f_res_7928, defunc_0_f_res_7931);
-            int32_t lifted_lambda_res_7933 = sub32(defunc_0_f_res_7932, 1);
+        inpacc_12664 = 0;
+        inpacc_12665 = 0;
+        for (int64_t i_12875 = 0; i_12875 < (int64_t) 8; i_12875++) {
+            int32_t x_12915 = ((int32_t *) mem_12948.mem)[i_12875];
+            int32_t x_12923 = ((int32_t *) mem_12949.mem)[i_12875];
+            int32_t defunc_0_op_res_12934 = add32(inpacc_12664, x_12915);
+            int32_t defunc_0_f_res_12935 = mul32(x_12915, defunc_0_op_res_12934);
+            int32_t defunc_0_op_res_12936 = add32(inpacc_12665, x_12923);
+            int32_t lifted_lambda_res_12937 = add32(defunc_0_reduce_res_12833, defunc_0_op_res_12936);
+            int32_t defunc_0_f_res_12938 = mul32(x_12923, lifted_lambda_res_12937);
+            int32_t defunc_0_f_res_12939 = add32(defunc_0_f_res_12935, defunc_0_f_res_12938);
+            int32_t lifted_lambda_res_12940 = sub32(defunc_0_f_res_12939, 1);
+            int64_t i32_res_12941 = sext_i32_i64(lifted_lambda_res_12940);
             
-            ((int32_t *) mem_7958.mem)[i_7894] = lifted_lambda_res_7933;
+            ((int64_t *) mem_12962.mem)[i_12875] = i32_res_12941;
             
-            int32_t inpacc_tmp_8005 = defunc_0_op_res_7927;
-            int32_t inpacc_tmp_8006 = defunc_0_op_res_7929;
+            int32_t inpacc_tmp_13040 = defunc_0_op_res_12934;
+            int32_t inpacc_tmp_13041 = defunc_0_op_res_12936;
             
-            inpacc_7726 = inpacc_tmp_8005;
-            inpacc_7727 = inpacc_tmp_8006;
+            inpacc_12664 = inpacc_tmp_13040;
+            inpacc_12665 = inpacc_tmp_13041;
         }
-        inpacc_7863 = inpacc_7726;
-        inpacc_7864 = inpacc_7727;
-        if (memblock_alloc(ctx, &mem_7965, (int64_t) 64, "mem_7965")) {
+        inpacc_12837 = inpacc_12664;
+        inpacc_12838 = inpacc_12665;
+        if (memblock_alloc(ctx, &mem_12969, (int64_t) 16, "mem_12969")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_7965.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_param_7943.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 8});
-        if (memblock_alloc(ctx, &mem_7966, (int64_t) 16, "mem_7966")) {
-            err = 1;
-            goto cleanup;
-        }
-        lmad_copy_1b(ctx, 2, (uint8_t *) mem_7966.mem, (int64_t) 0, (int64_t []) {(int64_t) 2, (int64_t) 1}, (uint8_t *) mem_param_7940.mem, (int64_t) 0, (int64_t []) {(int64_t) 2, (int64_t) 1}, (int64_t []) {(int64_t) 8, (int64_t) 2});
-        for (int64_t write_iter_7896 = 0; write_iter_7896 < (int64_t) 8; write_iter_7896++) {
-            int32_t write_iv_7899 = ((int32_t *) mem_7958.mem)[write_iter_7896];
-            int64_t write_iv_7900 = ((int64_t *) mem_param_7943.mem)[write_iter_7896];
+        lmad_copy_1b(ctx, 2, (uint8_t *) mem_12969.mem, (int64_t) 0, (int64_t []) {(int64_t) 2, (int64_t) 1}, (uint8_t *) mem_param_12947.mem, (int64_t) 0, (int64_t []) {(int64_t) 2, (int64_t) 1}, (int64_t []) {(int64_t) 8, (int64_t) 2});
+        
+        bool partitioned_scatter_res_12190;
+        int64_t partitioned_scatter_res_12192;
+        bool loop_while_12193;
+        int64_t p_12195;
+        
+        loop_while_12193 = 1;
+        p_12195 = (int64_t) 0;
+        while (loop_while_12193) {
+            int64_t lower_bound_12196 = mul64((int64_t) 256, p_12195);
+            int64_t min_arg1_12197 = add64((int64_t) 256, lower_bound_12196);
+            int64_t min_res_12198 = smin64((int64_t) 8, min_arg1_12197);
+            int64_t j_m_i_12199 = sub64(min_res_12198, lower_bound_12196);
+            bool empty_slice_12200 = j_m_i_12199 == (int64_t) 0;
+            int64_t m_12201 = sub64(j_m_i_12199, (int64_t) 1);
+            int64_t i_p_m_t_s_12202 = add64(lower_bound_12196, m_12201);
+            bool zzero_leq_i_p_m_t_s_12203 = sle64((int64_t) 0, i_p_m_t_s_12202);
+            bool i_p_m_t_s_leq_w_12204 = slt64(i_p_m_t_s_12202, (int64_t) 8);
+            bool zzero_lte_i_12205 = sle64((int64_t) 0, lower_bound_12196);
+            bool i_lte_j_12206 = sle64(lower_bound_12196, min_res_12198);
+            bool y_12207 = i_p_m_t_s_leq_w_12204 && zzero_lte_i_12205;
+            bool y_12208 = zzero_leq_i_p_m_t_s_12203 && y_12207;
+            bool forwards_ok_12209 = i_lte_j_12206 && y_12208;
+            bool ok_or_empty_12210 = empty_slice_12200 || forwards_ok_12209;
+            bool index_certs_12211;
             
-            lmad_copy_1b(ctx, 1, (uint8_t *) mem_7974.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_param_7940.mem, (int64_t) 0 + write_iter_7896 * (int64_t) 2, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 2});
-            
-            int64_t i32_res_7799 = sext_i32_i64(write_iv_7899);
-            
-            if (sle64((int64_t) 0, i32_res_7799) && slt64(i32_res_7799, (int64_t) 8)) {
-                ((int64_t *) mem_7965.mem)[i32_res_7799] = write_iv_7900;
+            if (!ok_or_empty_12210) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lower_bound_12196, ":", (long long) min_res_12198, "] out of bounds for array of shape [", (long long) (int64_t) 8, "].", "-> #0  ftbasics.fut:72:25-56\n   #1  ftHashJoin.fut:67:39-75\n   #2  ftHashJoin.fut:77:6-37\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
             }
-            if ((sle64((int64_t) 0, i32_res_7799) && slt64(i32_res_7799, (int64_t) 8)) && (sle64((int64_t) 0, (int64_t) 0) && slt64((int64_t) 1, (int64_t) 2))) {
-                lmad_copy_1b(ctx, 1, (uint8_t *) mem_7966.mem, i32_res_7799 * (int64_t) 2, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_7974.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 2});
+            
+            int64_t bytes_12974 = (int64_t) 2 * j_m_i_12199;
+            
+            if (memblock_alloc(ctx, &mem_12975, bytes_12974, "mem_12975")) {
+                err = 1;
+                goto cleanup;
             }
+            lmad_copy_1b(ctx, 2, (uint8_t *) mem_12975.mem, (int64_t) 0, (int64_t []) {(int64_t) 2, (int64_t) 1}, (uint8_t *) mem_12969.mem, (int64_t) 0 + (int64_t) 2 * lower_bound_12196, (int64_t []) {(int64_t) 2, (int64_t) 1}, (int64_t []) {j_m_i_12199, (int64_t) 2});
+            for (int64_t write_iter_12877 = 0; write_iter_12877 < (int64_t) 8; write_iter_12877++) {
+                int64_t write_iv_12879 = ((int64_t *) mem_12962.mem)[write_iter_12877];
+                
+                lmad_copy_1b(ctx, 1, (uint8_t *) mem_12980.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_param_12947.mem, (int64_t) 0 + write_iter_12877 * (int64_t) 2, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 2});
+                
+                bool cond_12781 = sle64(lower_bound_12196, write_iv_12879);
+                bool cond_t_res_12782 = slt64(write_iv_12879, min_res_12198);
+                bool x_12783 = cond_12781 && cond_t_res_12782;
+                int64_t lifted_lambda_res_12784;
+                
+                if (x_12783) {
+                    int64_t lifted_lambda_res_t_res_12831 = sub64(write_iv_12879, lower_bound_12196);
+                    
+                    lifted_lambda_res_12784 = lifted_lambda_res_t_res_12831;
+                } else {
+                    lifted_lambda_res_12784 = (int64_t) -1;
+                }
+                if ((sle64((int64_t) 0, lifted_lambda_res_12784) && slt64(lifted_lambda_res_12784, j_m_i_12199)) && (sle64((int64_t) 0, (int64_t) 0) && slt64((int64_t) 1, (int64_t) 2))) {
+                    lmad_copy_1b(ctx, 1, (uint8_t *) mem_12975.mem, lifted_lambda_res_12784 * (int64_t) 2, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_12980.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 2});
+                }
+            }
+            
+            int64_t tmp_12221 = add64((int64_t) 1, p_12195);
+            
+            lmad_copy_1b(ctx, 2, (uint8_t *) mem_12969.mem, (int64_t) 2 * lower_bound_12196, (int64_t []) {(int64_t) 2, (int64_t) 1}, (uint8_t *) mem_12975.mem, (int64_t) 0, (int64_t []) {(int64_t) 2, (int64_t) 1}, (int64_t []) {j_m_i_12199, (int64_t) 2});
+            if (memblock_unref(ctx, &mem_12975, "mem_12975") != 0)
+                return 1;
+            
+            bool loop_cond_12228 = slt64(tmp_12221, (int64_t) 1);
+            bool loop_while_tmp_13043 = loop_cond_12228;
+            int64_t p_tmp_13045 = tmp_12221;
+            
+            loop_while_12193 = loop_while_tmp_13043;
+            p_12195 = p_tmp_13045;
         }
-        if (memblock_set(ctx, &mem_param_tmp_7998, &mem_7966, "mem_7966") != 0)
+        partitioned_scatter_res_12190 = loop_while_12193;
+        partitioned_scatter_res_12192 = p_12195;
+        if (memblock_set(ctx, &mem_param_tmp_13035, &mem_12969, "mem_12969") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_tmp_7999, &mem_7965, "mem_7965") != 0)
-            return 1;
-        if (memblock_set(ctx, &mem_param_7940, &mem_param_tmp_7998, "mem_param_tmp_7998") != 0)
-            return 1;
-        if (memblock_set(ctx, &mem_param_7943, &mem_param_tmp_7999, "mem_param_tmp_7999") != 0)
+        if (memblock_set(ctx, &mem_param_12947, &mem_param_tmp_13035, "mem_param_tmp_13035") != 0)
             return 1;
     }
-    if (memblock_set(ctx, &ext_mem_7988, &mem_param_7940, "mem_param_7940") != 0)
+    if (memblock_set(ctx, &ext_mem_12992, &mem_param_12947, "mem_param_12947") != 0)
         return 1;
-    if (memblock_set(ctx, &ext_mem_7987, &mem_param_7943, "mem_param_7943") != 0)
+    if (memblock_unref(ctx, &mem_12943, "mem_12943") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7935, "mem_7935") != 0)
+    if (memblock_unref(ctx, &mem_12948, "mem_12948") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7936, "mem_7936") != 0)
+    if (memblock_unref(ctx, &mem_12949, "mem_12949") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7944, "mem_7944") != 0)
+    if (memblock_unref(ctx, &mem_12962, "mem_12962") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7945, "mem_7945") != 0)
+    if (memblock_unref(ctx, &mem_12980, "mem_12980") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7958, "mem_7958") != 0)
+    if (memblock_alloc(ctx, &mem_12993, (int64_t) 56, "mem_12993")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_12994, (int64_t) 56, "mem_12994")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_13001, (int64_t) 2, "mem_13001")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_13002, (int64_t) 2, "mem_13002")) {
+        err = 1;
+        goto cleanup;
+    }
+    
+    int64_t discard_12899;
+    int64_t scanacc_12893 = (int64_t) 0;
+    
+    for (int64_t i_12896 = 0; i_12896 < (int64_t) 7; i_12896++) {
+        int64_t index_primexp_12911 = add64((int64_t) 1, i_12896);
+        bool x_12433 = sle64((int64_t) 0, index_primexp_12911);
+        bool y_12434 = slt64(index_primexp_12911, (int64_t) 8);
+        bool bounds_check_12435 = x_12433 && y_12434;
+        bool index_certs_12436;
+        
+        if (!bounds_check_12435) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_12911, "] out of bounds for array of shape [", (long long) (int64_t) 8, "].", "-> #0  ftHashJoin.fut:95:22-30\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftHashJoin.fut:95:8-44\n   #3  ftHashJoin.fut:125:7-37\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        bool y_12440 = slt64(i_12896, (int64_t) 8);
+        bool index_certs_12442;
+        
+        if (!y_12440) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_12896, "] out of bounds for array of shape [", (long long) (int64_t) 8, "].", "-> #0  ftHashJoin.fut:95:32-42\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftHashJoin.fut:95:8-44\n   #3  ftHashJoin.fut:125:7-37\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        for (int64_t i_12886 = 0; i_12886 < (int64_t) 2; i_12886++) {
+            int8_t eta_p_12810 = ((int8_t *) ext_mem_12992.mem)[index_primexp_12911 * (int64_t) 2 + i_12886];
+            int8_t eta_p_12811 = ((int8_t *) ext_mem_12992.mem)[i_12896 * (int64_t) 2 + i_12886];
+            bool cond_12813 = sle64(i_12886, (int64_t) 1);
+            bool cond_t_res_12814 = sle64((int64_t) 1, i_12886);
+            bool x_12815 = cond_12813 && cond_t_res_12814;
+            int8_t lifted_lambda_res_12816;
+            
+            if (x_12815) {
+                lifted_lambda_res_12816 = eta_p_12810;
+            } else {
+                lifted_lambda_res_12816 = (int8_t) 0;
+            }
+            
+            int8_t lifted_lambda_res_12821;
+            
+            if (x_12815) {
+                lifted_lambda_res_12821 = eta_p_12811;
+            } else {
+                lifted_lambda_res_12821 = (int8_t) 0;
+            }
+            ((int8_t *) mem_13001.mem)[i_12886] = lifted_lambda_res_12821;
+            ((int8_t *) mem_13002.mem)[i_12886] = lifted_lambda_res_12816;
+        }
+        
+        int8_t za_lhs_12453 = ((int8_t *) mem_13002.mem)[(int64_t) 1];
+        int8_t mod1_x_12454 = (int8_t) -1 & za_lhs_12453;
+        
+        ((int8_t *) mem_13002.mem)[(int64_t) 1] = mod1_x_12454;
+        
+        int8_t tmp_12456 = (int8_t) 31 & za_lhs_12453;
+        
+        ((int8_t *) mem_13002.mem)[(int64_t) 1] = tmp_12456;
+        
+        int8_t za_lhs_12465 = ((int8_t *) mem_13001.mem)[(int64_t) 1];
+        int8_t mod1_x_12466 = (int8_t) -1 & za_lhs_12465;
+        
+        ((int8_t *) mem_13001.mem)[(int64_t) 1] = mod1_x_12466;
+        
+        int8_t tmp_12468 = (int8_t) 31 & za_lhs_12465;
+        
+        ((int8_t *) mem_13001.mem)[(int64_t) 1] = tmp_12468;
+        
+        bool defunc_0_reduce_res_12844;
+        bool redout_12889 = 0;
+        
+        for (int64_t i_12890 = 0; i_12890 < (int64_t) 2; i_12890++) {
+            int8_t eta_p_12803 = ((int8_t *) mem_13002.mem)[i_12890];
+            int8_t eta_p_12804 = ((int8_t *) mem_13001.mem)[i_12890];
+            bool lifted_lambda_res_12805 = eta_p_12803 == eta_p_12804;
+            bool lifted_lambda_res_12806 = !lifted_lambda_res_12805;
+            bool defunc_0_op_res_12481 = lifted_lambda_res_12806 || redout_12889;
+            bool redout_tmp_13052 = defunc_0_op_res_12481;
+            
+            redout_12889 = redout_tmp_13052;
+        }
+        defunc_0_reduce_res_12844 = redout_12889;
+        
+        int64_t defunc_0_f_res_12482 = btoi_bool_i64(defunc_0_reduce_res_12844);
+        int64_t defunc_0_op_res_11871 = add64(defunc_0_f_res_12482, scanacc_12893);
+        
+        ((int64_t *) mem_12993.mem)[i_12896] = defunc_0_op_res_11871;
+        ((int64_t *) mem_12994.mem)[i_12896] = defunc_0_f_res_12482;
+        
+        int64_t scanacc_tmp_13047 = defunc_0_op_res_11871;
+        
+        scanacc_12893 = scanacc_tmp_13047;
+    }
+    discard_12899 = scanacc_12893;
+    if (memblock_unref(ctx, &ext_mem_12992, "ext_mem_12992") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7974, "mem_7974") != 0)
+    if (memblock_unref(ctx, &mem_13001, "mem_13001") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_param_tmp_7999, "mem_param_tmp_7999") != 0)
+    if (memblock_unref(ctx, &mem_13002, "mem_13002") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_param_tmp_7998, "mem_param_tmp_7998") != 0)
+    
+    int64_t x_11881 = ((int64_t *) mem_12993.mem)[(int64_t) 6];
+    int64_t m_11892 = sub64(x_11881, (int64_t) 1);
+    bool i_p_m_t_s_leq_w_11894 = slt64(m_11892, (int64_t) 7);
+    bool zzero_leq_i_p_m_t_s_11893 = sle64((int64_t) 0, m_11892);
+    bool y_11896 = zzero_leq_i_p_m_t_s_11893 && i_p_m_t_s_leq_w_11894;
+    bool i_lte_j_11895 = sle64((int64_t) 0, x_11881);
+    bool forwards_ok_11897 = i_lte_j_11895 && y_11896;
+    bool eq_x_zz_11889 = (int64_t) 0 == x_11881;
+    bool ok_or_empty_11898 = eq_x_zz_11889 || forwards_ok_11897;
+    bool index_certs_11899;
+    
+    if (!ok_or_empty_11898) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) x_11881, "] out of bounds for array of shape [", (long long) (int64_t) 7, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ftHashJoin.fut:125:7-37\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_13021 = (int64_t) 8 * x_11881;
+    
+    if (memblock_alloc(ctx, &mem_13022, bytes_13021, "mem_13022")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_13053 = 0; i_13053 < x_11881; i_13053++) {
+        int64_t x_13054 = (int64_t) 1 + i_13053 * (int64_t) 1;
+        
+        ((int64_t *) mem_13022.mem)[i_13053] = x_13054;
+    }
+    for (int64_t write_iter_12900 = 0; write_iter_12900 < (int64_t) 7; write_iter_12900++) {
+        int64_t write_iv_12902 = ((int64_t *) mem_12994.mem)[write_iter_12900];
+        int64_t write_iv_12903 = ((int64_t *) mem_12993.mem)[write_iter_12900];
+        int64_t index_primexp_12907 = add64((int64_t) 1, write_iter_12900);
+        bool cond_12369 = write_iv_12902 == (int64_t) 1;
+        int64_t lifted_lambda_res_12370;
+        
+        if (cond_12369) {
+            int64_t lifted_lambda_res_t_res_12845 = sub64(write_iv_12903, (int64_t) 1);
+            
+            lifted_lambda_res_12370 = lifted_lambda_res_t_res_12845;
+        } else {
+            lifted_lambda_res_12370 = (int64_t) -1;
+        }
+        if (sle64((int64_t) 0, lifted_lambda_res_12370) && slt64(lifted_lambda_res_12370, x_11881)) {
+            ((int64_t *) mem_13022.mem)[lifted_lambda_res_12370] = index_primexp_12907;
+        }
+    }
+    if (memblock_unref(ctx, &mem_12993, "mem_12993") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7966, "mem_7966") != 0)
+    if (memblock_unref(ctx, &mem_12994, "mem_12994") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7965, "mem_7965") != 0)
+    if (memblock_alloc(ctx, &mem_13029, (int64_t) 8, "mem_13029")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t nest_i_13056 = 0; nest_i_13056 < (int64_t) 1; nest_i_13056++) {
+        ((int64_t *) mem_13029.mem)[nest_i_13056] = (int64_t) 0;
+    }
+    conc_tmp_11917 = (int64_t) 1 + x_11881;
+    
+    int64_t bytes_13030 = (int64_t) 8 * conc_tmp_11917;
+    
+    if (memblock_alloc(ctx, &mem_13031, bytes_13030, "mem_13031")) {
+        err = 1;
+        goto cleanup;
+    }
+    
+    int64_t tmp_offs_13057 = (int64_t) 0;
+    
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_13031.mem, tmp_offs_13057, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_13029.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {(int64_t) 1});
+    tmp_offs_13057 += (int64_t) 1;
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_13031.mem, tmp_offs_13057, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_13022.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {x_11881});
+    tmp_offs_13057 += x_11881;
+    if (memblock_unref(ctx, &mem_13022, "mem_13022") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_param_7943, "mem_param_7943") != 0)
+    if (memblock_unref(ctx, &mem_13029, "mem_13029") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_param_7940, "mem_param_7940") != 0)
+    if (memblock_unref(ctx, &mem_13029, "mem_13029") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7974, "mem_7974") != 0)
+    if (memblock_unref(ctx, &mem_13022, "mem_13022") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7958, "mem_7958") != 0)
+    if (memblock_unref(ctx, &mem_13002, "mem_13002") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7945, "mem_7945") != 0)
+    if (memblock_unref(ctx, &mem_13001, "mem_13001") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7944, "mem_7944") != 0)
+    if (memblock_unref(ctx, &mem_12994, "mem_12994") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7936, "mem_7936") != 0)
+    if (memblock_unref(ctx, &mem_12993, "mem_12993") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_7935, "mem_7935") != 0)
+    if (memblock_unref(ctx, &mem_param_tmp_13035, "mem_param_tmp_13035") != 0)
         return 1;
-    #undef ext_mem_7987
-    #undef ext_mem_7988
+    if (memblock_unref(ctx, &mem_12975, "mem_12975") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_12969, "mem_12969") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_param_12947, "mem_param_12947") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_12992, "ext_mem_12992") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_12980, "mem_12980") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_12962, "mem_12962") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_12949, "mem_12949") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_12948, "mem_12948") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_12943, "mem_12943") != 0)
+        return 1;
+    #undef conc_tmp_11917
+    #undef mem_13031
     
   cleanup:
     return err;
@@ -7175,98 +7407,9 @@ static int init_constants(struct futhark_context *ctx)
 static int free_constants(struct futhark_context *ctx)
 {
     (void) ctx;
-    if (memblock_unref(ctx, &ctx->constants->ext_mem_7987, "ctx->constants->ext_mem_7987") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ctx->constants->ext_mem_7988, "ctx->constants->ext_mem_7988") != 0)
+    if (memblock_unref(ctx, &ctx->constants->mem_13031, "ctx->constants->mem_13031") != 0)
         return 1;
     return 0;
-}
-struct futhark_u8_2d {
-    struct memblock mem;
-    int64_t shape[2];
-};
-struct futhark_u8_2d *futhark_new_u8_2d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1)
-{
-    int err = 0;
-    struct futhark_u8_2d *bad = NULL;
-    struct futhark_u8_2d *arr = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d));
-    
-    if (arr == NULL)
-        return bad;
-    lock_lock(&ctx->lock);
-    arr->mem.references = NULL;
-    if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * 1, "arr->mem"))
-        err = 1;
-    arr->shape[0] = dim0;
-    arr->shape[1] = dim1;
-    if ((size_t) (dim0 * dim1) * 1 > 0)
-        memmove(arr->mem.mem + 0, (const unsigned char *) data + 0, (size_t) (dim0 * dim1) * 1);
-    lock_unlock(&ctx->lock);
-    if (err != 0) {
-        free(arr);
-        return bad;
-    }
-    return arr;
-}
-struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, unsigned char *data, int64_t dim0, int64_t dim1)
-{
-    int err = 0;
-    struct futhark_u8_2d *bad = NULL;
-    struct futhark_u8_2d *arr = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d));
-    
-    if (arr == NULL)
-        return bad;
-    lock_lock(&ctx->lock);
-    arr->mem.references = NULL;
-    arr->mem.mem = data;
-    arr->shape[0] = dim0;
-    arr->shape[1] = dim1;
-    lock_unlock(&ctx->lock);
-    return arr;
-}
-int futhark_free_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr)
-{
-    lock_lock(&ctx->lock);
-    if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
-        return 1;
-    lock_unlock(&ctx->lock);
-    free(arr);
-    return 0;
-}
-int futhark_values_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr, uint8_t *data)
-{
-    int err = 0;
-    
-    lock_lock(&ctx->lock);
-    if ((size_t) (arr->shape[0] * arr->shape[1]) * 1 > 0)
-        memmove((unsigned char *) data + 0, arr->mem.mem + 0, (size_t) (arr->shape[0] * arr->shape[1]) * 1);
-    lock_unlock(&ctx->lock);
-    return err;
-}
-int futhark_index_u8_2d(struct futhark_context *ctx, uint8_t *out, struct futhark_u8_2d *arr, int64_t i0, int64_t i1)
-{
-    int err = 0;
-    
-    if ((i0 >= 0 && i0 < arr->shape[0]) && (i1 >= 0 && i1 < arr->shape[1])) {
-        lock_lock(&ctx->lock);
-        if (1 > 0)
-            memmove((unsigned char *) out + 0, arr->mem.mem + 1 * (i0 * arr->shape[1] + i1 * 1), 1);
-        lock_unlock(&ctx->lock);
-    } else {
-        err = 1;
-        set_error(ctx, strdup("Index out of bounds."));
-    }
-    return err;
-}
-unsigned char *futhark_values_raw_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr)
-{
-    (void) ctx;
-    return arr->mem.mem;
-}
-const int64_t *futhark_shape_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr)
-{
-    (void) ctx;
-    return arr->shape;
 }
 struct futhark_i64_1d {
     struct memblock mem;
@@ -7354,67 +7497,53 @@ const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_
     return arr->shape;
 }
 
-FUTHARK_FUN_ATTR int futrts_entry_main(struct futhark_context *ctx, struct memblock *mem_out_p_8011, struct memblock *mem_out_p_8012)
+FUTHARK_FUN_ATTR int futrts_entry_main(struct futhark_context *ctx, struct memblock *mem_out_p_13059, int64_t *out_prim_out_13060)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock mem_out_7994;
+    struct memblock mem_out_13032;
     
-    mem_out_7994.references = NULL;
+    mem_out_13032.references = NULL;
     
-    struct memblock mem_out_7993;
+    int64_t conc_tmp_11917 = ctx->constants->conc_tmp_11917;
+    struct memblock mem_13031 = ctx->constants->mem_13031;
+    int64_t prim_out_13033;
     
-    mem_out_7993.references = NULL;
-    
-    struct memblock ext_mem_7987 = ctx->constants->ext_mem_7987;
-    struct memblock ext_mem_7988 = ctx->constants->ext_mem_7988;
-    
-    if (memblock_set(ctx, &mem_out_7993, &ext_mem_7988, "ext_mem_7988") != 0)
+    if (memblock_set(ctx, &mem_out_13032, &mem_13031, "mem_13031") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_7994, &ext_mem_7987, "ext_mem_7987") != 0)
+    prim_out_13033 = conc_tmp_11917;
+    if (memblock_set(ctx, &*mem_out_p_13059, &mem_out_13032, "mem_out_13032") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_8011, &mem_out_7993, "mem_out_7993") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_8012, &mem_out_7994, "mem_out_7994") != 0)
-        return 1;
+    *out_prim_out_13060 = prim_out_13033;
     
   cleanup:
     {
-        if (memblock_unref(ctx, &mem_out_7994, "mem_out_7994") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_7993, "mem_out_7993") != 0)
+        if (memblock_unref(ctx, &mem_out_13032, "mem_out_13032") != 0)
             return 1;
     }
     return err;
 }
 
-int futhark_entry_main(struct futhark_context *ctx, struct futhark_u8_2d **out0, struct futhark_i64_1d **out1)
+int futhark_entry_main(struct futhark_context *ctx, struct futhark_i64_1d **out0)
 {
+    int64_t prim_out_13033 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_7994;
+    struct memblock mem_out_13032;
     
-    mem_out_7994.references = NULL;
-    
-    struct memblock mem_out_7993;
-    
-    mem_out_7993.references = NULL;
+    mem_out_13032.references = NULL;
     if (ret == 0) {
-        ret = futrts_entry_main(ctx, &mem_out_7993, &mem_out_7994);
+        ret = futrts_entry_main(ctx, &mem_out_13032, &prim_out_13033);
         if (ret == 0) {
-            struct memblock ext_mem_7987 = ctx->constants->ext_mem_7987;
-            struct memblock ext_mem_7988 = ctx->constants->ext_mem_7988;
+            int64_t conc_tmp_11917 = ctx->constants->conc_tmp_11917;
+            struct memblock mem_13031 = ctx->constants->mem_13031;
             
-            assert((*out0 = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d))) != NULL);
-            (*out0)->mem = mem_out_7993;
-            (*out0)->shape[0] = (int64_t) 8;
-            (*out0)->shape[1] = (int64_t) 2;
-            assert((*out1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out1)->mem = mem_out_7994;
-            (*out1)->shape[0] = (int64_t) 8;
+            assert((*out0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
+            (*out0)->mem = mem_out_13032;
+            (*out0)->shape[0] = prim_out_13033;
         }
     }
     lock_unlock(&ctx->lock);

@@ -26,7 +26,7 @@ def byteSeq_getBit [b] (i: i32) (x: byteSeq [b])
     |> u8.get_bit whichBit
 
 def getRadix [b] (i: i32) (j: i32) (x: byteSeq [b])
-: byteSeq [b] =
+ : byteSeq [b] =
   let firstByte = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
   let lastByte = i64.i32 ((i32.i64 b) - (j/u8.num_bits) - 1)
   let firstBit = i%u8.num_bits
@@ -50,42 +50,40 @@ def getRadix [b] (i: i32) (j: i32) (x: byteSeq [b])
 --        |> map (\v -> byteSeq_getBit v xs[i])
 --    )
 
--- TODO find alternative solution?
--- currently needed because blocked_radix_sort for odd #bits uses 1 more bit
-def adjustOddBits [b] (j: i32) (x: byteSeq [b])
-: byteSeq [b] =
-  let whichByte = (i32.i64 b) - (j/u8.num_bits) - 1
-  let whichBit = j%u8.num_bits
-  let bitMask = (u8.>>>) u8.highest (u8.i32 (u8.num_bits - whichBit - 1))
-  in (copy x) with [whichByte] = (x[whichByte] & bitMask)
+-- based on radix-sort in futhark-by-example
+def radix_part_step [n][b] 't (block_size: idx_t.t) (xs: [n][b]u8) (pL: [n]t) (i: i32): ([n][b]u8, [n]t) =
+  let bits = map (\x -> byteSeq_getBit i x) xs
+  let bits_neg = map (1 - ) bits
+  let offs = reduce (+) 0 bits_neg
+  let idxs0 = map2 (*) bits_neg (scan (+) 0 bits_neg)
+  let idxs1 = map2 (*) bits (map (+offs) (scan (+) 0 bits))
+  let idxs2 = map2 (+) idxs0 idxs1
+  let idxs = map (\x -> x-1) idxs2
+  let xs' = partitioned_scatter block_size (copy xs) (map i64.i32 idxs) xs
+  let pL' = partitioned_scatter block_size (copy pL) (map i64.i32 idxs) pL
+  in (xs', pL')
 
-def radixPartRelation_GFUR [n] [b]
-  (block_size: i16)
+def radix_part [n][b] 't (block_size: idx_t.t) (xs: [n][b]u8) (pL: [n]t) (i: i32) (j: i32): ([n][b]u8, [n]t) =
+  loop (xs, pL) for bit in (i...j) do radix_part_step block_size xs pL bit
+
+def radixPartition_GFUR [n][b]
+  (block_size: idx_t.t)
   (xs: [n](byteSeq [b]))
+  (offset: idx_t.t)
   (i: i32)
   (j: i32)
- : [n](byteSeq [b]) =
-  let part_numBits = j-i+1
-  let part_getBit = (\(a1: i32) -> (byteSeq_getBit (a1+i)))
-  in
-    if part_numBits%2 == 0
-    then blocked_radix_sort block_size part_numBits part_getBit  xs
-    else blocked_radix_sort_by_key block_size (adjustOddBits (j)) (part_numBits+1) part_getBit  xs
+: ([n](byteSeq [b]), [n](idx_t.t)) =
+  let is = (offset..<(offset + n)) :> [n]idx_t.t
+  in radix_part block_size xs is i j
 
-def radixPartRelation_GFTR [n] [b] [pL_b]
-  (block_size: i16)
+def radixPartition_GFTR [n][b][pL_b]
+  (block_size: idx_t.t)
   (xs: [n](byteSeq [b]))
   (ys: [n](byteSeq [pL_b]))
   (i: i32)
   (j: i32)
- : ([n](byteSeq [b]), [n](byteSeq [pL_b])) =
-  let part_numBits = j-i+1
-  let part_getBit = (\(a1: i32) -> (byteSeq_getBit (a1+i)))
-  let xys = zip xs ys
-  in
-    if part_numBits%2 == 0
-    then unzip (blocked_radix_sort_by_key block_size (.0) part_numBits part_getBit xys)
-    else unzip (blocked_radix_sort_by_key block_size (\xy -> adjustOddBits (j) xy.0) (part_numBits+1) part_getBit xys)
+: ([n](byteSeq [b]), [n](byteSeq [pL_b])) =
+  radix_part block_size xs ys i j
 
 def getPartitionBounds [n] [b]
   (curDepth: i32)
@@ -117,82 +115,11 @@ def getPartitionRadix [n] [b]
   let totalRadix = i32.min (radix_size*curDepth) ((i32.i64 b)*u8.num_bits)
   in getRadix 0 (totalRadix-1) pXs[boundIdx]
 
-local type~ partitionLoopTup [b] = {iter: idx_t.t, pBounds1: []idx_t.t, pDepths1: []i32, pXs1: [](byteSeq [b])}
-
+-- Repartitioning
 -- TODO
--- this works in repl
--- doesn't compile
--- (...) remake so that it does
--- maybe use from C ??? since futhark doesn't seem to like this ...
-def reorganisePartitions_GFUR [n] [b]
-  (block_size: i16)
-  (pInfo: partitionInfo)
-  (pXs: [n](byteSeq [b]))
-  (maxPartitionSize: idx_t.t)
-  (stopAtDepth: i32)
-: ([n](byteSeq [b]), partitionInfo) =
-  let outer_loop : ([][]u8, partitionInfo, bool)
-  = loop p_outer = (pXs, pInfo, true)
-  while (p_outer.1.maxDepth < stopAtDepth && p_outer.2) do
-    let pXs0 = p_outer.0
-    let pInfo0 = p_outer.1
-    let bounds0 = pInfo0.bounds
-    let np0 = length bounds0
-    let criticalBoundIdxs = iota np0
-      |> map (\i ->
-        if i<(np0-1)
-        then (bounds0[i], bounds0[i+1])
-        else (bounds0[i], n)
-      )
-      |> zip (iota (np0))
-      |> filter (\(i, (b1, b2)) -> (b2-b1)>maxPartitionSize)
-      |> map (.0)
-    let n_cb = length criticalBoundIdxs
-    in
-      if (n_cb == 0) then (pXs0, pInfo0, false) else
-      let newDepth = pInfo0.maxDepth + 1
-      let new_i = pInfo0.radixSize*newDepth
-      let new_j = i32.min (new_i+pInfo0.radixSize-1) ((i32.i64 b)*u8.num_bits-1)
-      let piHead = copy bounds0[0:criticalBoundIdxs[0]]
-      let piDepths = copy pInfo0.depths[0:criticalBoundIdxs[0]]
-      let xHead = copy pXs0[0: bounds0[criticalBoundIdxs[0]]]
-      let loop_over : partitionLoopTup [b]
-      = loop p = {iter=0, pBounds1=piHead, pDepths1=piDepths, pXs1 = xHead}
-      while p.iter<n_cb do
-        let startIdx = bounds0[criticalBoundIdxs[p.iter]]
-        let endIdx = if (criticalBoundIdxs[p.iter]<(np0-1)) then bounds0[criticalBoundIdxs[p.iter]+1] else n
-        let nextStartIdx = if (p.iter<(n_cb-1)) then bounds0[criticalBoundIdxs[p.iter+1]] else n
-        let pXs_repartition = radixPartRelation_GFUR block_size pXs0[startIdx:endIdx] new_i new_j
-        let repartitionInfo_raw = getPartitionBounds newDepth pXs_repartition new_i new_j
-        let repartitionBounds = repartitionInfo_raw.bounds |> map (\ind -> ind + startIdx)
-        let next_Xs = pXs0[endIdx:nextStartIdx]
-        let nextBoundsFrom = if (p.iter<np0) then criticalBoundIdxs[p.iter]+1 else 0
-        let nextBoundsTo = if (p.iter<(n_cb-1)) then criticalBoundIdxs[p.iter+1] else if (p.iter<np0) then np0 else 0
-        let nextBounds = bounds0[nextBoundsFrom:nextBoundsTo]
-        in {
-          iter = p.iter+1,
-          pBounds1 = p.pBounds1 ++ repartitionBounds ++ nextBounds,
-          pDepths1 = p.pDepths1 ++ (replicate (length repartitionBounds) newDepth) ++ pInfo0.depths[nextBoundsFrom:nextBoundsTo],
-          pXs1 = p.pXs1 ++ pXs_repartition ++ next_Xs
-        }
-      in (
-        loop_over.pXs1,
-        {
-          totalBytes = pInfo0.totalBytes,
-          radixSize = pInfo0.radixSize,
-          maxDepth = newDepth,
-          bounds = loop_over.pBounds1,
-          depths = loop_over.pDepths1
-        },
-        true
-      )
-    in (outer_loop.0 :> [n][b]u8, outer_loop.1)
+-- see pre-made code in repartition.txt (...) modify that for new partitioning func
 
-def main (init_j: i32) (fin_size: i64) =
-  let xs1 = (iota 16) |> map (u8.i64) |> map (\x -> 15 - x) |> map (\x -> if (x%2 == 0) then (x+1) else (x-1))
-  let xs2 = (iota 16) |> map (u8.i64) |> map (/2)
-  let xs3 = ((iota 8) |> map (u8.i64) |> map (*2)) ++ ((iota 8) |> map (u8.i64) |> map (\x -> x*2+1)) :> [16]u8
-  let xs : [16](byteSeq [3]) = map3 (\x1 x2 x3 -> [x1, x2, x3]) xs3 xs1 xs2--xs1 xs2 (replicate 16 0)
-  let ys = radixPartRelation_GFUR 256 xs 0 init_j
-  let bs = getPartitionBounds 0 ys 0 init_j
-  in reorganisePartitions_GFUR 256 bs ys fin_size (3*16)
+def main =
+  let xs : [8](byteSeq [2]) = [[4,2],[2,1],[2,2],[3,5],[2,5],[3,1],[4,5],[3,7]]
+  let nxs = radixPartition_GFUR 256 xs 14 0 4
+  in (getPartitionBounds 1 nxs.0 0 4).bounds
