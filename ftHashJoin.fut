@@ -50,21 +50,28 @@ def getRadix [b] (i: i32) (j: i32) (x: byteSeq [b])
 --        |> map (\v -> byteSeq_getBit v xs[i])
 --    )
 
--- based on radix-sort in futhark-by-example
-def radix_part_step [n][b] 't (block_size: idx_t.t) (xs: [n][b]u8) (pL: [n]t) (i: i32): ([n][b]u8, [n]t) =
-  let bits = map (\x -> byteSeq_getBit i x) xs
-  let bits_neg = map (1 - ) bits
-  let offs = reduce (+) 0 bits_neg
-  let idxs0 = map2 (*) bits_neg (scan (+) 0 bits_neg)
-  let idxs1 = map2 (*) bits (map (+offs) (scan (+) 0 bits))
-  let idxs2 = map2 (+) idxs0 idxs1
-  let idxs = map (\x -> x-1) idxs2
-  let xs' = partitioned_scatter block_size (copy xs) (map i64.i32 idxs) xs
-  let pL' = partitioned_scatter block_size (copy pL) (map i64.i32 idxs) pL
-  in (xs', pL')
+def radix_part_step [n][b] 't 
+  (block_size: idx_t.t)
+  (xs: [n][b]u8)
+  (pL: [n]t)
+  (i: i32)
+  (j: i32)
+: ([n][b]u8, [n]t) =
+  let xps = zip xs pL
+  let xps' = radix_sort_multistep block_size i j (\bit xp -> byteSeq_getBit bit xp.0) xps
+  in unzip xps'
 
-def radix_part [n][b] 't (block_size: idx_t.t) (xs: [n][b]u8) (pL: [n]t) (i: i32) (j: i32): ([n][b]u8, [n]t) =
-  loop (xs, pL) for bit in (i...j) do radix_part_step block_size xs pL bit
+def radix_part [n][b] 't
+  (block_size: idx_t.t)
+  (xs: [n][b]u8)
+  (pL: [n]t)
+  (i: i32)
+  (j: i32)
+  (bit_step: i32)
+: ([n][b]u8, [n]t) =
+  loop (xs, pL)
+  for bit in (i..(i+bit_step)...j)
+  do radix_part_step block_size xs pL bit (i32.min j (bit+bit_step-1))
 
 def radixPartition_GFUR [n][b]
   (block_size: idx_t.t)
@@ -74,7 +81,7 @@ def radixPartition_GFUR [n][b]
   (j: i32)
 : ([n](byteSeq [b]), [n](idx_t.t)) =
   let is = (offset..<(offset + n)) :> [n]idx_t.t
-  in radix_part block_size xs is i j
+  in radix_part block_size xs is i j 2
 
 def radixPartition_GFTR [n][b][pL_b]
   (block_size: idx_t.t)
@@ -83,7 +90,7 @@ def radixPartition_GFTR [n][b][pL_b]
   (i: i32)
   (j: i32)
 : ([n](byteSeq [b]), [n](byteSeq [pL_b])) =
-  radix_part block_size xs ys i j
+  radix_part block_size xs ys i j 2
 
 def getPartitionBounds [n] [b]
   (curDepth: i32)
@@ -118,6 +125,7 @@ def getPartitionRadix [n] [b]
 -- Repartitioning
 -- TODO
 -- see pre-made code in repartition.txt (...) modify that for new partitioning func
+
 
 def main =
   let xs : [8](byteSeq [2]) = [[4,2],[2,1],[2,2],[3,5],[2,5],[3,1],[4,5],[3,7]]

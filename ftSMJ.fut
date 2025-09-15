@@ -1,6 +1,58 @@
 import "lib/github.com/diku-dk/sorts/merge_sort"
-import "lib/github.com/diku-dk/sorts/radix_sort"
 import "ftbasics"
+
+-- Sorting Functions
+
+-- 1. Radix Sort
+-- TODO make bit_step accessible from entry points
+-- TODO implement blocked algorithm like in sorts library?
+
+def my_radix_sort [n] 't
+  (block_size : idx_t.t)
+  (bit_step : i32)
+  (num_bits : i32)
+  (get_bit : i32 -> t -> i32)
+  (xs : [n]t)
+: [n]t =
+  loop xs
+  for bit in (0..bit_step..<num_bits)
+  do radix_sort_multistep block_size bit (i32.min num_bits (bit+bit_step-1)) get_bit xs
+
+-- Based on futhark sorts library radix_sort_int
+def my_radix_sort_int [n] 't
+  (block_size : idx_t.t)
+  (bit_step : i32)
+  (num_bits : i32)
+  (get_bit : i32 -> t -> i32)
+  (xs : [n]t)
+: [n]t =
+  let get_bit' i x =
+    -- Flip the most significant bit.
+    let b = get_bit i x
+    in if i == num_bits-1 then b ^ 1 else b
+  in my_radix_sort block_size bit_step num_bits get_bit' xs
+
+-- Based on futhark sorts library radix_sort_float
+def my_radix_sort_float [n] 't
+  (block_size : idx_t.t)
+  (bit_step : i32)
+  (num_bits : i32)
+  (get_bit : i32 -> t -> i32)
+  (xs : [n]t)
+: [n]t =
+  let get_bit' i x =
+    -- We flip the bit returned if:
+    --
+    -- 0) the most significant bit is set (this makes more negative
+    --    numbers sort before less negative numbers), or
+    --
+    -- 1) we are asked for the most significant bit (this makes
+    --    negative numbers sort before positive numbers).
+    let b = get_bit i x
+    in if get_bit (num_bits-1) x == 1 || i == num_bits-1
+       then b ^ 1 else b
+  in my_radix_sort block_size bit_step num_bits get_bit' xs
+
 
 -- ########################################################################################################################
 -- ########################################################################################################################
@@ -33,7 +85,7 @@ local def radixSortRelation_signed_integral [n] [b] 'a
   (get_bit: i32 -> a -> i32)
  : sortStruct [n] [b] a =
   let xys : [n](a, [b]u8) = zip xs.k xs.pL
-  let sorted_xys = blocked_radix_sort_int_by_key block_size (\xy -> xy.0) num_bits get_bit xys
+  let sorted_xys = my_radix_sort_int (i64.i16 block_size) 2 num_bits (\i xy -> get_bit i xy.0) xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
   in {k = un_xys.0, pL = un_xys.1}
 local def radixSortRelation_signed_float [n] [b] 'a 
@@ -43,7 +95,7 @@ local def radixSortRelation_signed_float [n] [b] 'a
   (get_bit: i32 -> a -> i32)
  : sortStruct [n] [b] a =
   let xys : [n](a, [b]u8) = zip xs.k xs.pL
-  let sorted_xys = blocked_radix_sort_float_by_key block_size (\xy -> xy.0) num_bits get_bit xys
+  let sorted_xys = my_radix_sort_float (i64.i16 block_size) 2 num_bits (\i xy -> get_bit i xy.0) xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
   in {k = un_xys.0, pL = un_xys.1}
 local def mergeSortRelation [n] [b] 'a
@@ -125,7 +177,7 @@ local def radixSortColumn_signed_integral [n] 'a
   (get_bit: i32 -> a -> i32)
  : sortInfo [n] a =
   let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
-  let sorted_ixs = blocked_radix_sort_int_by_key block_size (\ixs -> ixs.1) num_bits get_bit ixs
+  let sorted_ixs = my_radix_sort_int (i64.i16 block_size) 2 num_bits (\i ix -> get_bit i ix.1) ixs
   let un_ixs = unzip sorted_ixs
   in {is = un_ixs.0, xs = un_ixs.1}
 local def radixSortColumn_signed_float [n] 'a 
@@ -136,7 +188,7 @@ local def radixSortColumn_signed_float [n] 'a
   (get_bit: i32 -> a -> i32)
  : sortInfo [n] a =
   let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
-  let sorted_ixs = blocked_radix_sort_float_by_key block_size (\ixs -> ixs.1) num_bits get_bit ixs
+  let sorted_ixs = my_radix_sort_float (i64.i16 block_size) 2 num_bits (\i ix -> get_bit i ix.1) ixs
   let un_ixs = unzip sorted_ixs
   in {is = un_ixs.0, xs = un_ixs.1}
 local def mergeSortColumn [n] 'a

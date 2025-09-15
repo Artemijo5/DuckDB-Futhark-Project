@@ -39,10 +39,10 @@ def partitioned_gather [ni] [n] 'a (psize : idx_t.t) (dummy_elem: a) (xs : [n]a)
 -- | Multi-pass gather operation (better cache-locality) - uses base array rather than dummy value.
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
 -- by Bingsheng He et al.
-def partitioned_gather_over_array [ni] [n] 'a (psize : idx_t.t) (dummy_array: [ni]a) (xs : [n]a) (is : [ni]idx_t.t) =
+def partitioned_gather_over_array [ni] [n] 'a (psize : idx_t.t) (dest: [ni]a) (xs : [n]a) (is : [ni]idx_t.t) =
   let m = (n+psize-1)/psize
   let loop_over : {iter: idx_t.t, buff: [](idx_t.t, a)}
-  = loop p = {iter=0, buff = dummy_array |> zip is}
+  = loop p = {iter=0, buff = dest |> zip is}
   while p.iter<m do
     let lower_bound = p.iter * psize
     let upper_bound = idx_t.min (n) (lower_bound + psize)
@@ -98,6 +98,59 @@ def countFor 't (p: t -> bool) (xs: []t) : idx_t.t =
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
+-- Radix Sorting/Partitioning
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+
+-- | Obtains a radix (of size 1 byte at most!).
+def get_radix 't (i : i32) (j : i32) (get_bit : i32 -> t -> i32) (x : t) : u8 =
+  let y = 0
+  in
+    loop y
+    for bit in (0...(j-i))
+    do u8.set_bit bit y (get_bit (i+bit) x)
+
+-- | Performs a radix sort step, sorting over multiple bits at a time.
+-- Based on radix-sort in futhark-by-example.
+-- Substitutes the 'radix-partition' primitive, eg by doing 8 bits per step.
+-- Doing multiple bits per step vastly reduces scatter writes, though increases comparisons.
+-- Note: radix size must be 1 byte at most!
+def radix_sort_multistep [n] 't
+  (block_size : idx_t.t)
+  (i : i32)
+  (j : i32)
+  (get_bit : i32 -> t -> i32)
+  (xs : [n]t)
+-- : [n]t =
+  =
+  let ij_bits = j-i+1
+  let up_to = (1 << ij_bits) -- 2^(num_bits)
+  let offs : i64 = 0
+  let rs = xs |> map (get_radix i j get_bit)
+  let idxs : [n]i64 = replicate n 0
+  let loop_range = (0..<up_to) |> map (u8.i32)
+  let ox = loop (offs, idxs) for (num : u8) in loop_range do
+    -- "audience" ie relevant entries
+    let guanzhong = rs
+      |> map (\r -> r == num)
+      |> map (i64.bool)
+    -- addition to the offset
+    let zengjia = reduce (+) 0 guanzhong
+    -- "seats" ie indices in sorted array
+    let zuowei = map2 (*) guanzhong (map (\z -> z+offs-1) (scan (+) 0 guanzhong))
+    in (offs + zengjia, map2 (+) idxs zuowei)
+  let scatter_idxs = ox.1
+  in partitioned_scatter block_size (copy xs) scatter_idxs xs
+
+
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
 -- SMJ Partitions
 -- & Merging functions
 -- -------------------------------------------------------------------
@@ -105,6 +158,7 @@ def countFor 't (p: t -> bool) (xs: []t) : idx_t.t =
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
+-- Based on MergePath
 
 def partFunc_sequential_search [n] 't
   (a_i: idx_t.t)

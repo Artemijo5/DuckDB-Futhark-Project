@@ -11,13 +11,13 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 10*512*CHUNK_SIZE
+#define BUFFER_SIZE 2*512*CHUNK_SIZE
 #define TABLE_SIZE BUFFER_SIZE
 
 #define BLOCK_SIZE (int16_t)256
 
 #define DBFILE "testdb.db"
-#define DDB_MEMSIZE "20GB"
+#define DDB_MEMSIZE "4GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
 
@@ -85,7 +85,7 @@ int main() {
   mylog(logfile, "EXPERIMENT #2 -- duckdb-native CPU sorting (with payloads).");
   duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_withPL AS (SELECT * FROM tbl ORDER BY k);", NULL);
 
-  /*mylog(logfile, "EXPERIMENT #3.a -- GPU merge-sorting (without payloads).");
+  mylog(logfile, "EXPERIMENT #3.a -- GPU merge-sorting (without payloads).");
   two_pass_sort_without_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
@@ -100,7 +100,7 @@ int main() {
     false,
     false,
     true
-  );*/
+  );
 
   /*mylog(logfile, "EXPERIMENT #3.b -- GPU radix-sorting (without payloads).");
   two_pass_sort_without_payloads(
