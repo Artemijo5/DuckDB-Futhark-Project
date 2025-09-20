@@ -118,6 +118,9 @@ def get_radix 't (i : i32) (j : i32) (get_bit : i32 -> t -> i32) (x : t) : u8 =
 -- Substitutes the 'radix-partition' primitive, eg by doing 8 bits per step.
 -- Doing multiple bits per step vastly reduces scatter writes, though increases comparisons.
 -- Note: radix size must be 1 byte at most!
+-- TODO can maybe be done in a more efficient way?
+-- eg: find offset based on MSB, then add offset of MSB-1, etc...
+-- after the final bit, would have to make difference between indices...
 def radix_sort_multistep [n] 't
   (block_size : idx_t.t)
   (i : i32)

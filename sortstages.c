@@ -7,7 +7,8 @@
 
 #include "ftSMJ.h"
 #include "mylogger.h"
-#include "myutil.h"
+#include "sort_util.h"
+#include "db_util.h"
 
 #include <limits.h> // for maximum values of integral types
 #include <float.h> // for maximum values of floating-point types

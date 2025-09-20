@@ -5,13 +5,13 @@
 
 #include "ftSMJ.h"
 #include "mylogger.h"
-#include "myutil.h"
+#include "sort_util.h"
 #include "sortstages.h"
 
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 2*512*CHUNK_SIZE
+#define BUFFER_SIZE 10*CHUNK_SIZE
 #define TABLE_SIZE BUFFER_SIZE
 
 #define BLOCK_SIZE (int16_t)256

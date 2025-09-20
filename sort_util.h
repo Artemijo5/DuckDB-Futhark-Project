@@ -3,20 +3,8 @@
 #include "duckdb.h"
 #include "ftSMJ.h"
 
-#ifndef MYUTIL_H
-#define MYUTIL_H
-
-/** A function like sizeof, but for the duckdb types used.
- * Params:
- * type : the logical type of the data, expressed in enum duckdb_type
- */
-size_t colType_bytes(duckdb_type type);
-/** A function to allocate memory for any type of column data.
- * Params:
- * type : the logical type of the data, expressed in enum duckdb_type
- * card : the cardinality of elements to store 
- */
-void* colType_malloc(duckdb_type type, idx_t card);
+#ifndef SORT_UTIL_H
+#define SORT_UTIL_H
 
 /**
  * A function to return the index of the minimum element of an array.

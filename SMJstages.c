@@ -8,7 +8,7 @@
 #include "ftSMJ.h"
 #include "mylogger.h"
 #include "smjutil.h"
-#include "myutil.h"
+#include "db_util.h"
 
 void Inner_MergeJoin_GFTR(
 	idx_t CHUNK_SIZE,
