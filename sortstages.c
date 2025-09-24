@@ -52,6 +52,7 @@ idx_t sort_Stage1_with_payloads(
       pL_bytes += pL_byteSizes[accIdx];
       payload_types[accIdx] = type_ids[col];
     }
+    /*
     payloadBuffer = malloc(pL_bytes*buffer_size);
     mylog(logfile, "Successfully initialised buffers.");
 
@@ -93,38 +94,34 @@ idx_t sort_Stage1_with_payloads(
           );
         }
   		}
-	  /*
-	  void *pL_dat[col_count-1];
-	  for(idx_t col=0; col<col_count; col++) {
-		  if(col==keyCol_idx) continue;
-		  idx_t accIdx = (col<keyCol_idx)? col: col-1;
-		  duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, col);
-		  pL_dat[accIdx] = duckdb_vector_get_data(vec);
-	  }
-	  for(idx_t r=0; r<row_count; r++) {
-		  for(idx_t col=0; col<col_count; col++) {
-			  if(col==keyCol_idx) continue;
-			  idx_t accIdx = (col<keyCol_idx)? col: col-1;
-			  char *thisEntry = &((char*)pL_dat[accIdx])[r*pL_byteSizes[accIdx]];
-			  memcpy(
-				payloadBuffer + (cur_rows+r)*pL_byteSizes[accIdx] + pL_prefixSizes[accIdx],
-				thisEntry,
-				pL_byteSizes[accIdx]
-			  );
-		  }
-	  }
-	  */
 	  //mylog(logfile, "Finished tranlation of payloads.");
       
       cur_rows += row_count;
 
       duckdb_destroy_data_chunk(&cnk);
     }
+    */
+    int exhaustedRes;
+    idx_t cur_rows = bulk_load_chunks_GFTR(
+      chunk_size,
+      res,
+      60, // TODO make argument
+      col_count,
+      keyCol_idx,
+      type_ids,
+      keyBuffer,
+      &payloadBuffer,
+      buffer_size,
+      &exhaustedRes
+    );
+    flag = !exhaustedRes;
+
     if(!flag && cur_rows == 0) { // if table exhausted, break out of outer loop as well
       free(keyBuffer);
       free(payloadBuffer);
       break;
     }
+
     char msgbuffer[100];
     int msglen = sprintf(msgbuffer, "Finished scanning 'page' -- total of ");
     msglen += sprintf(msgbuffer + msglen, "%ld", cur_rows);
@@ -209,6 +206,7 @@ idx_t sort_Stage1_without_payloads(
     }
     mylog(logfile, "Successfully initialised buffers.");
 
+    /*
     idx_t cur_rows = 0;
 
     // iterate until result is exhausted
@@ -234,6 +232,22 @@ idx_t sort_Stage1_without_payloads(
 
       duckdb_destroy_data_chunk(&result);
     }
+    */
+    int exhaustedRes;
+    idx_t cur_rows = bulk_load_chunks_GFTR(
+      chunk_size,
+      res,
+      60, // TODO make argument
+      1,
+      0,
+      &type_id,
+      Buffer,
+      NULL,
+      buffer_size,
+      &exhaustedRes
+    );
+    flag = !exhaustedRes;
+
     if(!flag && cur_rows == 0) { // if table exhausted, break out of outer loop as well
       free(Buffer);
       break;

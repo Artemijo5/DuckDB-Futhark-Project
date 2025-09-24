@@ -19,54 +19,6 @@
 idx_t argmin(struct futhark_context *ctx, duckdb_type type, void* arr, idx_t card);
 
 /**
- * A function to fill elements of an array with the maximum value of a given type.
- * Params:
- * dest : pointer to the starting position of the desired array
- * type : the logical type of the data, expressed in enum duckdb_type
- * n : the amount of array elements to pad (NOT the number of bytes)
- */
-void max_padding(void* dest, duckdb_type type, idx_t n);
-
-/**
- * A function to transform payload columns into a byte array.
- * Elements of the same row are adjacent.
- * (Note: it's more efficient to directly store payloads as bytes, rather than transforming them with this)
- * Params:
- * outBytes : where to store the output byte array (allocated within the function)
- * pL_rowBytes : pointer to store the total number of (payload) bytes per row
- * payload_types : array of the duckdb_type types of each payload row
- * inPayloads : input payload arrays
- * pL_col_count : number of payload columns
- * row_count : number of rows
-*/
-void payloadColumnsToByteArray(
-	char** outBytes,
-	idx_t* pL_rowBytes,
-	duckdb_type* payload_types,
-	void** inPayloads,
-	idx_t pL_col_count,
-	idx_t row_count
-);
-
-/**
- * A function to transform a byte array into payload columns.
- * Elements of the same row are adjacent.
- * Params:
- * outPayloads : where to output the payloads (double pointer must be preallocated; referenced pointers are allocated within function)
- * payload_types : array of the duckdb_type types of each columns (including key column)
- * inBytes : input byte array
- * pL_col_count : number of payload columns
- * row_count : number of rows
-*/
-void payloadColumnsFromByteArray(
-	void** outPayloads,
-	duckdb_type* payload_types,
-	char* inBytes,
-	idx_t pL_col_count,
-	idx_t row_count
-);
-
-/**
  * A function to sort a relation by its key column.
  * Params:
  * ctx : pointer to the futhark context
