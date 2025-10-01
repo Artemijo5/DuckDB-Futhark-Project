@@ -190,8 +190,10 @@ idx_t bulk_load_chunks(
 	*exhaustedRes = false;
 
 	while(!(*exhaustedRes)) {
-		idx_t chunks_to_read = (capacity - CHUNK_SIZE*num_chunks < row_count)? num_chunks: (capacity - row_count)/CHUNK_SIZE;
+		idx_t remaining_space_in_buffer = (capacity - row_count)/CHUNK_SIZE;
+		idx_t chunks_to_read = (remaining_space_in_buffer > num_chunks)? num_chunks: remaining_space_in_buffer;
 		if(chunks_to_read==0) break;
+
 		duckdb_data_chunk chunks[chunks_to_read];
 		idx_t chunks_read = bulk_fetch_chunks(res, chunks_to_read, chunks);
 		if(chunks_read < chunks_to_read) *exhaustedRes = true; // Exhausted result TODO log?
@@ -308,8 +310,10 @@ idx_t bulk_load_chunks_GFTR(
   if(pL_bytes>0 && plDest) *plDest = malloc(pL_bytes * capacity); // MUST BE FREED MANUALLY !!!
 
 	while(!(*exhaustedRes)) {
-		idx_t chunks_to_read = (capacity - CHUNK_SIZE*num_chunks < row_count)? num_chunks: (capacity - row_count)/CHUNK_SIZE;
+		idx_t remaining_space_in_buffer = (capacity - row_count)/CHUNK_SIZE;
+		idx_t chunks_to_read = (remaining_space_in_buffer > num_chunks)? num_chunks: remaining_space_in_buffer;
 		if(chunks_to_read==0) break;
+
 		duckdb_data_chunk chunks[chunks_to_read];
 		idx_t chunks_read = bulk_fetch_chunks(res, chunks_to_read, chunks);
 		if(chunks_read < chunks_to_read) *exhaustedRes = true; // Exhausted result TODO log?

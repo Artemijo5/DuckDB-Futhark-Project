@@ -11,8 +11,8 @@
 #define LOGFILE "two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 128*CHUNK_SIZE
-#define TABLE_SIZE 124*CHUNK_SIZE + 12
+#define BUFFER_SIZE 2*2048*CHUNK_SIZE
+#define TABLE_SIZE BUFFER_SIZE - 12
 
 #define BLOCK_SIZE (int16_t)256
 

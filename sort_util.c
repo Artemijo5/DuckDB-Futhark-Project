@@ -597,7 +597,6 @@ idx_t store_intermediate(
   }
   // TODO for testing
   //printf("Created temporary table #%ld.\n", numInter);
-
   // 2 create an appender for the table
   duckdb_appender tmp_appender;
   if( duckdb_appender_create(con, NULL, tblName, &tmp_appender) == DuckDBError ) {
@@ -620,11 +619,15 @@ idx_t store_intermediate(
       perror("Failed to append data chunk.\n");
       return -1;
     }
+    // TODO
+    // Flush every 60 (or multiple) chunks (row group size)
+    if((1+(r/chunkSize))%300 == 0) duckdb_appender_flush(tmp_appender);
+
     //printf("Appended %ld elements.\n", this_size);
     //duckdb_appender_flush(tmp_appender);
     duckdb_destroy_data_chunk(&cnk);
   }
-  duckdb_appender_flush(tmp_appender);
+  //duckdb_appender_flush(tmp_appender);
   // IF USING PARQUET STORAGE:
   /*
   char storagePart[100 + 2*strlen(tblName)];
