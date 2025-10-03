@@ -117,6 +117,19 @@ idx_t store_intermediate(
 	char** colNames,
 	void** BuffersIn
 );
+idx_t store_intermediate_GFTR(
+	idx_t numInter,
+	const char *intermName,
+	duckdb_connection con,
+	idx_t chunkSize,
+	idx_t col_count,
+	idx_t row_count,
+	duckdb_type* types,
+	char** colNames,
+	void* key_data,
+	char* pL_data,
+	idx_t keyCol_idx
+);
 /**
  * A function that outputs a result from a stored intermediate.
  * Params:

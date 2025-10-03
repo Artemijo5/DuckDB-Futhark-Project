@@ -52,55 +52,7 @@ idx_t sort_Stage1_with_payloads(
       pL_bytes += pL_byteSizes[accIdx];
       payload_types[accIdx] = type_ids[col];
     }
-    /*
-    payloadBuffer = malloc(pL_bytes*buffer_size);
-    mylog(logfile, "Successfully initialised buffers.");
-
-    idx_t cur_rows = 0;
-
-    // iterate until result is exhausted
-  	while (buffer_size - cur_rows >= chunk_size) {
-  		duckdb_data_chunk cnk = duckdb_fetch_chunk(res);
-  		if (!cnk) {
-  			mylog(logfile, "Table has been fully processed.");
-        flag = false; // last iteration of the outer loop
-  			break;
-  		}
-  		// get the number of rows & columns from the data chunk
-  		idx_t row_count = duckdb_data_chunk_get_size(cnk);
-
-      // obtain the column vectors
-      // key column to keyBuffer
-      duckdb_vector kvec = duckdb_data_chunk_get_vector(cnk, keyCol_idx);
-      void* kdat = duckdb_vector_get_data(kvec);
-      memcpy(keyBuffer + cur_rows*colType_bytes(type_ids[keyCol_idx]), kdat, row_count*colType_bytes(type_ids[keyCol_idx]));
-      // payload columns to payloadBuffer
-      // TODO consider switching up the access pattern to see which one is more efficient
-	  //mylog(logfile, "Starting tranlation of payloads...");
-  		for (idx_t col = 0; col < col_count; col++) {
-        if(col == keyCol_idx) continue; // payloads only
-        idx_t accIdx = (col < keyCol_idx)? col: col-1; // adjust index
-  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, col);
-        void* dat = duckdb_vector_get_data(vec);
-        // iteratively add to payloadBuffer
-        idx_t this_bytes = pL_byteSizes[accIdx];
-        idx_t this_inRowPos = pL_prefixSizes[accIdx];
-        for(idx_t r=0; r<row_count; r++) {
-          char *thisEntry = &((char*)dat)[r*this_bytes];
-          memcpy(
-            payloadBuffer + (cur_rows+r)*pL_bytes + this_inRowPos,
-            thisEntry,
-            this_bytes
-          );
-        }
-  		}
-	  //mylog(logfile, "Finished tranlation of payloads.");
-      
-      cur_rows += row_count;
-
-      duckdb_destroy_data_chunk(&cnk);
-    }
-    */
+    
     int exhaustedRes;
     idx_t cur_rows = bulk_load_chunks_GFTR(
       chunk_size,
@@ -142,21 +94,20 @@ idx_t sort_Stage1_with_payloads(
       cur_rows
     );
     mylog(logfile, "Performed sorting.");
-    // Obtain payload columns from byte buffer
-    void** payloadCols = malloc((col_count-1)*sizeof(void*));
-    payloadColumnsFromByteArray(payloadCols, payload_types, payloadBuffer, (col_count-1), cur_rows);
-    mylog(logfile, "Reobtained payload columns.");
-    free(payloadBuffer);
 
-    void* Buffers[col_count];
-    Buffers[keyCol_idx] = keyBuffer;
-    for(idx_t col=0; col<col_count; col++) {
-      if(col == keyCol_idx) continue; // payloads only
-      idx_t accIdx = (col < keyCol_idx)? col: col-1; // adjust index
-      Buffers[col] = payloadCols[accIdx];
-    }
-
-    numIntermediate = store_intermediate(numIntermediate, intermName, con, chunk_size, col_count, cur_rows, type_ids, colNames, Buffers);
+    numIntermediate = store_intermediate_GFTR(
+      numIntermediate,
+      intermName,
+      con,
+      chunk_size,
+      col_count,
+      cur_rows,
+      type_ids,
+      colNames,
+      keyBuffer,
+      payloadBuffer,
+      keyCol_idx
+    );
     if(numIntermediate == -1) {
       perror("Failed to store intermediate.\n");
       return -1;
@@ -164,10 +115,7 @@ idx_t sort_Stage1_with_payloads(
     mylog(logfile, "Stored buffer as intermediate.");
     // clean-up
     free(keyBuffer);
-    for(idx_t col=1; col<col_count; col++) {
-      free(payloadCols[col-1]);
-    }
-    free(payloadCols);
+    free(payloadBuffer);
     mylog(logfile, "Freed this page's buffers.");
 
     *incr_idx += cur_rows;
@@ -894,7 +842,7 @@ void two_pass_sort_with_payloads(
   else { // if only one intermediate
     char finalStr[100 + strlen(intermName) + strlen(finalName)];
     if(saveAsTempTable) {
-      sprintf(finalStr, "CREATE OR REPLACE TEMP TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+      sprintf(finalStr, "ALTER TABLE %s0 RENAME TO %s;", intermName, finalName);
     }
     else {
       sprintf(finalStr, "CREATE OR REPLACE TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
@@ -990,9 +938,9 @@ void two_pass_sort_without_payloads(
     logdbg(logfile, (numIntermediate==0), "Note ------- table is empty.", "####### Error saving the intermediates.");
   }
   else { // if only one intermediate
-    char finalStr[100 + strlen(intermName) + strlen(finalName)];
+    char finalStr[200 + strlen(intermName) + strlen(finalName)];
     if(saveAsTempTable) {
-      sprintf(finalStr, "CREATE OR REPLACE TEMP TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);
+      sprintf(finalStr, "ALTER TABLE %s0 RENAME TO %s;", intermName, finalName);
     }
     else {
       sprintf(finalStr, "CREATE OR REPLACE TABLE %s AS (SELECT * FROM %s0);", finalName, intermName);

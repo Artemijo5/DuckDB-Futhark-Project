@@ -125,9 +125,100 @@ def getPartitionRadix [n] [b]
 -- Repartitioning
 -- TODO
 -- see pre-made code in repartition.txt (...) modify that for new partitioning func
+def deepen_step_GFUR [m] [b]
+  (block_size: i16)
+  (gather_psize: idx_t.t)
+  (radix_size: i32)
+  (curDepth: i32)
+  (xi_bufen: ([m](byteSeq [b]), [m]idx_t.t))
+  (size_thresh: idx_t.t)
+: ([m](byteSeq [b]), [m]idx_t.t, [](idx_t.t, idx_t.t)) =
+  let newDepth = curDepth+1
+  let new_i = radix_size*curDepth
+  let new_j = radix_size*(curDepth+1) - 1
+  let xi_xinbufen = radix_part
+    gather_psize
+    xi_bufen.0
+    xi_bufen.1
+    new_i
+    new_j
+    2
+  let newBounds = (getPartitionBounds newDepth xi_xinbufen.0 new_i new_j).bounds
+  let taidade = -- partitions that exceed size_thresh, represented by lb (inclusive) & ub (exlusive)
+    indices newBounds
+    |> map (\i -> (newBounds[i], if (i<(length newBounds)-1) then newBounds[i+1] else (m)))
+    |> filter (\(lb, ub) -> ub-lb > size_thresh)
+  in (xi_xinbufen.0, xi_xinbufen.1, taidade)
+
+def scan_and_deepen_GFUR [n] [b]
+  (block_size: i16)
+  (gather_psize: idx_t.t)
+  (radix_size: i32)
+  (xs: [n](byteSeq [b]))
+  (offset: idx_t.t)
+  (size_thresh: idx_t.t)
+  (max_depth: i32)
+: ([n](byteSeq [b]), [n]idx_t.t, partitionInfo) =
+  let xis = (xs, ((offset..<(offset+n)) :> [n]idx_t.t) )
+  let loop_over : {pXs: [n](byteSeq [b]), pIs: [n]idx_t.t, taidade: [](idx_t.t, idx_t.t), dp: i32}
+  = loop p = {pXs = xis.0, pIs = xis.1, taidade = [(0,n)], dp = 0}
+  while (length p.taidade > 0) && (p.dp<max_depth) do
+    -- Iterate over xis
+    -- deepen_step over taidade ranges, leave other ranges unchanged
+    let inner_loop : {xbuff: [n](byteSeq [b]), ibuff: [n]idx_t.t, new_taidade: [](idx_t.t, idx_t.t)}
+    = loop q = {xbuff = p.pXs, ibuff = p.pIs, new_taidade = []}
+    for bounds in p.taidade do
+      let m = bounds.1 - bounds.0
+      let x_bufen = q.xbuff[bounds.0:bounds.1] :> [m](byteSeq [b])
+      let i_bufen = q.ibuff[bounds.0:bounds.1] :> [m]idx_t.t
+      let res = deepen_step_GFUR block_size gather_psize radix_size p.dp (x_bufen, i_bufen) size_thresh
+      in {
+        xbuff = (copy q.xbuff) with [bounds.0:bounds.1] = res.0,
+        ibuff = (copy q.ibuff) with [bounds.0:bounds.1] = res.1,
+        new_taidade = q.new_taidade ++ (res.2 |> map (\(lb, ub) -> (lb + bounds.0, ub + bounds.0)))
+      }
+    in {
+      pXs = inner_loop.xbuff :> [n](byteSeq [b]),
+      pIs = inner_loop.ibuff :> [n]idx_t.t,
+      taidade = inner_loop.new_taidade,
+      dp = p.dp + 1
+    }
+  -- Now, recursive partition info...
+  -- TODO merge with main loop? if possible...
+  let recursive_info : partitionInfo
+  = loop p = getPartitionBounds 1 loop_over.pXs 0 (radix_size-1)
+  while (p.maxDepth < loop_over.dp) do
+    let depths = p.depths
+    let bs = p.bounds
+    let taidade = indices bs
+      |> map (\i -> (bs[i], if (i<(length bs)-1) then bs[i+1] else (n), i))
+      |> filter (\(lb, ub, i) -> ub-lb > size_thresh)
+    let inner_info : partitionInfo
+    = loop q = p
+    for bounds in taidade do
+      let m = bounds.1-bounds.0
+      let x_bufen = loop_over.pXs[bounds.0:bounds.1] :> [m](byteSeq [b])
+      let new_i = radix_size*(p.maxDepth)
+      let new_j = radix_size*(p.maxDepth+1) - 1
+      let deeper_info = getPartitionBounds (p.maxDepth+1) x_bufen new_i new_j
+      let stitch = bounds.2
+      in {
+        totalBytes = i32.i64 b,
+        radixSize = radix_size,
+        maxDepth = p.maxDepth + 1,
+        bounds = q.bounds[0:stitch] ++ (deeper_info.bounds |> map (\b -> b+bounds.0)) ++ q.bounds[stitch+1:(length q.bounds)],
+        depths = q.depths[0:stitch] ++ deeper_info.depths ++ q.depths[stitch+1:(length q.depths)]
+      }
+    in inner_info
+  in (
+    loop_over.pXs,
+    loop_over.pIs,
+    recursive_info
+  )
 
 
-def main =
+def main (max_depth : i32) =
+  let size_thresh = 2
   let xs : [8](byteSeq [2]) = [[4,2],[2,1],[2,2],[3,5],[2,5],[3,1],[4,5],[3,7]]
-  let nxs = radixPartition_GFUR 256 xs 14 0 4
-  in (getPartitionBounds 1 nxs.0 0 4).bounds
+  let res = scan_and_deepen_GFUR 256 256 4 xs 14 2 max_depth
+  in res.2.bounds

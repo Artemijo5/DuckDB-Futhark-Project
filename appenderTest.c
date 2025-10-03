@@ -17,7 +17,7 @@
 
 int main() {
 	// Initialise logger
-	FILE* logfile = loginit(LOGFILE, "Two-Pass Sort : Starting test program.");
+	FILE* logfile = loginit(LOGFILE, "appenderTest.c : Starting test program.");
 	if(LOGFILE && !logfile) {
 	  perror("Failed to initialise logger.");
 	  return -1;

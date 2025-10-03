@@ -75,7 +75,7 @@ void payloadColumnsToByteArray(
   }
   // Allocate
   *outBytes = malloc(row_count*pL_bytes);
-  // Transform
+  // Transform - strided access pattern
   for(idx_t r=0; r<row_count; r++) {
     for(idx_t col=0; col<pL_col_count; col++) {
       memcpy(
