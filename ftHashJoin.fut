@@ -125,66 +125,68 @@ def getPartitionRadix [n] [b]
 -- Repartitioning
 -- TODO
 -- see pre-made code in repartition.txt (...) modify that for new partitioning func
-def deepen_step_GFUR [m] [b]
+def deepen_step 't [m] [b]
   (block_size: i16)
   (gather_psize: idx_t.t)
   (radix_size: i32)
   (curDepth: i32)
-  (xi_bufen: ([m](byteSeq [b]), [m]idx_t.t))
+  (x_bufen: ([m](byteSeq [b]), [m]t))
   (size_thresh: idx_t.t)
-: ([m](byteSeq [b]), [m]idx_t.t, [](idx_t.t, idx_t.t)) =
+: ([m](byteSeq [b]), [m]t, [](idx_t.t, idx_t.t)) =
   let newDepth = curDepth+1
   let new_i = radix_size*curDepth
   let new_j = radix_size*(curDepth+1) - 1
-  let xi_xinbufen = radix_part
+  let x_xinbufen = radix_part
     gather_psize
-    xi_bufen.0
-    xi_bufen.1
+    x_bufen.0
+    x_bufen.1
     new_i
     new_j
     2
-  let newBounds = (getPartitionBounds newDepth xi_xinbufen.0 new_i new_j).bounds
+  let newBounds = (getPartitionBounds newDepth x_xinbufen.0 new_i new_j).bounds
   let taidade = -- partitions that exceed size_thresh, represented by lb (inclusive) & ub (exlusive)
     indices newBounds
     |> map (\i -> (newBounds[i], if (i<(length newBounds)-1) then newBounds[i+1] else (m)))
     |> filter (\(lb, ub) -> ub-lb > size_thresh)
-  in (xi_xinbufen.0, xi_xinbufen.1, taidade)
+  in (x_xinbufen.0, x_xinbufen.1, taidade)
 
-def scan_and_deepen_GFUR [n] [b]
+def partition_and_deepen 't [n] [b]
   (block_size: i16)
   (gather_psize: idx_t.t)
   (radix_size: i32)
   (xs: [n](byteSeq [b]))
+  (pL: [n]t)
   (offset: idx_t.t)
   (size_thresh: idx_t.t)
   (max_depth: i32)
-: ([n](byteSeq [b]), [n]idx_t.t, partitionInfo) =
-  let xis = (xs, ((offset..<(offset+n)) :> [n]idx_t.t) )
-  let loop_over : {pXs: [n](byteSeq [b]), pIs: [n]idx_t.t, taidade: [](idx_t.t, idx_t.t), dp: i32}
-  = loop p = {pXs = xis.0, pIs = xis.1, taidade = [(0,n)], dp = 0}
+: ([n](byteSeq [b]), [n]t, partitionInfo) =
+  let xps = (xs, pL)
+  let loop_over : {pXs: [n](byteSeq [b]), pPs: [n]t, taidade: [](idx_t.t, idx_t.t), dp: i32}
+  = loop p = {pXs = xps.0, pPs = xps.1, taidade = [(0,n)], dp = 0}
   while (length p.taidade > 0) && (p.dp<max_depth) do
     -- Iterate over xis
     -- deepen_step over taidade ranges, leave other ranges unchanged
-    let inner_loop : {xbuff: [n](byteSeq [b]), ibuff: [n]idx_t.t, new_taidade: [](idx_t.t, idx_t.t)}
-    = loop q = {xbuff = p.pXs, ibuff = p.pIs, new_taidade = []}
+    let inner_loop : {xbuff: [n](byteSeq [b]), pbuff: [n]t, new_taidade: [](idx_t.t, idx_t.t)}
+    = loop q = {xbuff = p.pXs, pbuff = p.pPs, new_taidade = []}
     for bounds in p.taidade do
       let m = bounds.1 - bounds.0
       let x_bufen = q.xbuff[bounds.0:bounds.1] :> [m](byteSeq [b])
-      let i_bufen = q.ibuff[bounds.0:bounds.1] :> [m]idx_t.t
-      let res = deepen_step_GFUR block_size gather_psize radix_size p.dp (x_bufen, i_bufen) size_thresh
+      let p_bufen = q.pbuff[bounds.0:bounds.1] :> [m]t
+      let res = deepen_step block_size gather_psize radix_size p.dp (x_bufen, p_bufen) size_thresh
       in {
         xbuff = (copy q.xbuff) with [bounds.0:bounds.1] = res.0,
-        ibuff = (copy q.ibuff) with [bounds.0:bounds.1] = res.1,
+        pbuff = (copy q.pbuff) with [bounds.0:bounds.1] = res.1,
         new_taidade = q.new_taidade ++ (res.2 |> map (\(lb, ub) -> (lb + bounds.0, ub + bounds.0)))
       }
     in {
       pXs = inner_loop.xbuff :> [n](byteSeq [b]),
-      pIs = inner_loop.ibuff :> [n]idx_t.t,
+      pPs = inner_loop.pbuff :> [n]t,
       taidade = inner_loop.new_taidade,
       dp = p.dp + 1
     }
   -- Now, recursive partition info...
   -- TODO merge with main loop? if possible...
+  -- alternatively do in join phase?
   let recursive_info : partitionInfo
   = loop p = getPartitionBounds 1 loop_over.pXs 0 (radix_size-1)
   while (p.maxDepth < loop_over.dp) do
@@ -210,15 +212,140 @@ def scan_and_deepen_GFUR [n] [b]
         depths = q.depths[0:stitch] ++ deeper_info.depths ++ q.depths[stitch+1:(length q.depths)]
       }
     in inner_info
+  let recursive_info_with_offset = {
+    totalBytes = recursive_info.totalBytes,
+    radixSize = recursive_info.radixSize,
+    maxDepth = recursive_info.maxDepth,
+    bounds = recursive_info.bounds |> map (\b -> b + offset),
+    depths = recursive_info.depths
+  }
   in (
     loop_over.pXs,
-    loop_over.pIs,
-    recursive_info
+    loop_over.pPs,
+    recursive_info_with_offset
   )
 
+def partition_and_deepen_GFTR [n] [b] [pL_b]
+  (block_size: i16)
+  (gather_psize: idx_t.t)
+  (radix_size: i32)
+  (xs: [n](byteSeq [b]))
+  (pL: [n](byteSeq [pL_b]))
+  (offset: idx_t.t)
+  (size_thresh: idx_t.t)
+  (max_depth: i32)
+: ([n](byteSeq [b]), [n](byteSeq [pL_b]), partitionInfo) =
+  partition_and_deepen block_size gather_psize radix_size xs pL offset size_thresh max_depth
+
+def partition_and_deepen_GFUR [n] [b]
+  (block_size: i16)
+  (gather_psize: idx_t.t)
+  (radix_size: i32)
+  (xs: [n](byteSeq [b]))
+  (offset: idx_t.t)
+  (size_thresh: idx_t.t)
+  (max_depth: i32)
+: ([n](byteSeq [b]), [n]idx_t.t, partitionInfo) =
+  let is = (offset..<(offset+n)) :> [n]idx_t.t
+  in partition_and_deepen block_size gather_psize radix_size xs is offset size_thresh max_depth
+
+-- ########################################################################################################################
+-- ########################################################################################################################
+-- ########################################################################################################################
+-- ########################################################################################################################
+-- ########################################################################################################################
+-- Join Code
+-- ########################################################################################################################
+-- ########################################################################################################################
+-- ########################################################################################################################
+-- ########################################################################################################################
+-- ########################################################################################################################
+
+type joinTup [n] 't = {vs: [n]t, ix: [n]idx_t.t, iy: [n]idx_t.t, cm: [n]idx_t.t}
+
+def uncooked_joinTup [nR] 't
+  (tR: [nR]t)
+  (offset_R: idx_t.t)
+: joinTup [nR] t =
+  {
+    vs = copy tR,
+    ix = idx_t.indicesWithIncrement (offset_R) (tR),
+    iy = replicate nR (-1),
+    cm = replicate nR 0
+  }
+
+def find_joinTuples [nR] [nS] 't
+  (tR: [nR]t)
+  (tS: [nS]t)
+  (offset_R: idx_t.t)
+  (offset_S: idx_t.t)
+  (extParallelism: idx_t.t)
+  (neq: t -> t -> bool)
+  (gt: t -> t -> bool)
+: joinTup [nR] t =
+  let numIter = (nR+extParallelism-1) / extParallelism
+  let pre_joinTup = uncooked_joinTup (tR) (offset_R)
+  let joinLoop : {iter: idx_t.t, result: joinTup [nR] t}
+    = loop p = {iter = 0, result = pre_joinTup}
+    while p.iter < numIter do
+      let start = p.iter*extParallelism
+      let iter_size = idx_t.min (extParallelism) (nR - start)
+      let iter_R = tR[start : start + iter_size] :> [iter_size]t
+      in -- skip if R and S do not overlap
+        let r_min = iter_R[0]
+        let r_max = iter_R[iter_size-1]
+        let s_min = if nS>0 then tS[0] else r_min
+        let s_max = if nS>0 then tS[nS-1] else r_max
+        in
+          if (r_min `gt` s_max) then {iter= numIter, result= p.result} -- S < iter_R -> break
+          else if (s_min `gt` r_max) then {iter= p.iter+1, result= p.result} -- S > iter_R -> continue
+      else -- default case
+      let ircs = zip3 (idx_t.indicesWithIncrement (offset_R+start) iter_R) (iter_R) (replicate iter_size 0)
+      let iscs = zip3 (idx_t.indicesWithIncrement (offset_S) tS) tS (replicate nS 1)
+      let ms = ircs -- TODO optimisation: if iscs below a certain size, use loop rather than reduce (?)
+        |> map (\(i, x, c) ->
+          let redTup = reduce_comm (\(i1, y1, c1) (i2, y2, c2) ->
+              if ((y1 `neq` x) || i1 < 0) && ((y2 `neq` x) || i2 < 0) then (-1, x, 0)
+              else if ((y1 `neq` x) || i1 < 0) then (i2, y2, c2)
+              else if ((y2 `neq` x) || i2 < 0) then (i1, y1, c1)
+              else (idx_t.min i1 i2, x, c1+c2)
+            )
+            (-1, x, 0)
+            iscs
+          in (redTup.0, redTup.2) -- keep only necessary info - iy & cm
+        )
+        |> unzip
+      -- TODO figure out consumption tactics...
+      let nextVs = p.result.vs
+      let nextIx = p.result.ix
+      let nextIy = (copy p.result.iy) with [start:start+iter_size] = ms.0
+      let nextCm = (copy p.result.cm) with [start:start+iter_size] = ms.1
+      in {
+        iter = p.iter+1,
+        result = {vs = nextVs, ix = nextIx, iy = nextIy, cm = nextCm}
+      }
+  in joinLoop.result
+
+-- TODO make this use binary search...
+def partitionMatchBounds [n] [pR] [pS] 't
+  (tR: [n]t)
+  (bounds_R: [pR]idx_t.t)
+  (depths_R: [pR]i32)
+  (tS: [pS]t)
+  (bounds_S: [pS]idx_t.t)
+  (depths_S: [pS]i32)
+  (partitions_S: partitionInfo)
+  (extParallelism: idx_t.t)
+  (leq: t -> t -> bool)
+  (gt : t -> t -> bool)
+: [pR](idx_t.t, idx_t.t) =
+  -- TODO binary search from here
+  replicate pR (0,pS)
+  
 
 def main (max_depth : i32) =
   let size_thresh = 2
   let xs : [8](byteSeq [2]) = [[4,2],[2,1],[2,2],[3,5],[2,5],[3,1],[4,5],[3,7]]
-  let res = scan_and_deepen_GFUR 256 256 4 xs 14 2 max_depth
-  in res.2.bounds
+  let res = partition_and_deepen_GFUR 256 256 4 xs 14 2 max_depth
+  --in res.2.bounds
+  in res
