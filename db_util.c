@@ -32,6 +32,24 @@ void* colType_malloc(duckdb_type type, idx_t card) {
   return malloc(card * ms);
 }
 
+int colType_name(duckdb_type type, char *dest_str) {
+	switch(type) {
+    case DUCKDB_TYPE_SMALLINT:
+      return sprintf(dest_str, "SMALLINT" );
+    case DUCKDB_TYPE_INTEGER:
+      return sprintf(dest_str, "INTEGER" );
+    case DUCKDB_TYPE_BIGINT:
+      return sprintf(dest_str, "BIGINT" );
+    case DUCKDB_TYPE_FLOAT:
+      return sprintf(dest_str, "FLOAT" );
+    case DUCKDB_TYPE_DOUBLE:
+      sprintf(dest_str, "DOUBLE" );
+    default:
+      perror("Invalid type.");
+      return -1;
+	}
+}
+
 void max_padding(void* dest, duckdb_type type, idx_t n) {
   for(idx_t i=0; i<n; i++) {
     switch(type) {
@@ -326,4 +344,262 @@ idx_t bulk_load_chunks_GFTR(
 		row_count += rows_buffd;
 	}
 	return row_count;
+}
+
+idx_t store_intermediate(
+  idx_t numInter,
+  const char *intermName,
+  duckdb_connection con,
+  idx_t chunkSize,
+  idx_t col_count,
+  idx_t row_count,
+  duckdb_type* types,
+  char** colNames,
+  void** BuffersIn
+) {
+  // 0 turn types into logical_types & strings to create the table
+  duckdb_logical_type ltypes[col_count];
+  char type_strs[col_count][25];
+  for(idx_t i=0; i<col_count; i++) {
+    ltypes[i] = duckdb_create_logical_type(types[i]);
+    colType_name(types[i], type_strs[i]);
+  }
+
+  // 1 create temporary table
+  char tblName[strlen(intermName) + 25];
+  sprintf(tblName, "%s%ld", intermName, numInter);
+  char queryStr[100 + 35*col_count];
+  int queryStr_len = sprintf(queryStr, "CREATE OR REPLACE TEMP TABLE %s (", tblName);
+  for(idx_t i=0; i<col_count; i++) {
+    if(i<col_count-1) {
+      queryStr_len += sprintf(queryStr + queryStr_len, "%s %s, ", colNames[i], type_strs[i]);
+    }
+    else {
+      queryStr_len += sprintf(queryStr + queryStr_len, "%s %s);", colNames[i], type_strs[i]);
+    }
+  }
+  // TODO for testing
+  //printf("%s\n", queryStr);
+  if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
+    perror("Failed to create temporary table.\n");
+    return -1;
+  }
+  // TODO for testing
+  //printf("Created temporary table #%ld.\n", numInter);
+  // 2 create an appender for the table
+  duckdb_appender tmp_appender;
+  if( duckdb_appender_create(con, NULL, tblName, &tmp_appender) == DuckDBError ) {
+    perror("Failed to create appender.\n");
+    return -1;
+  }
+  //printf("Created appender #%ld.\n", numInter);
+
+  // 3 insert the data into the table, 1 chunk at a time
+  for(idx_t r=0; r<row_count; r+=chunkSize) {
+    size_t this_size = (row_count-r > chunkSize)? chunkSize: row_count-r;
+    duckdb_data_chunk cnk = duckdb_create_data_chunk(ltypes, col_count);
+    duckdb_data_chunk_set_size(cnk, this_size);
+    for(idx_t c=0; c<col_count; c++) {
+      duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
+      void *dat = (void*)duckdb_vector_get_data(vec);
+      memcpy(dat, &((char*)BuffersIn[c])[r*colType_bytes(types[c])], this_size*colType_bytes(types[c]));
+    }
+    if(duckdb_append_data_chunk(tmp_appender, cnk) == DuckDBError) {
+      perror("Failed to append data chunk.\n");
+      return -1;
+    }
+    // TODO
+    // Flush every 60 (or multiple) chunks (row group size)
+    //if((1+(r/chunkSize))%300 == 0) duckdb_appender_flush(tmp_appender);
+
+    //printf("Appended %ld elements.\n", this_size);
+    //duckdb_appender_flush(tmp_appender);
+    duckdb_destroy_data_chunk(&cnk);
+  }
+  //duckdb_appender_flush(tmp_appender);
+  // IF USING PARQUET STORAGE:
+  /*
+  char storagePart[100 + 2*strlen(tblName)];
+  sprintf(storagePart, "COPY %s TO %s.parquet (FORMAT parquet);", tblName, tblName);
+  char clearPart[100];
+  sprintf(clearPart, "DROP TABLE %s;", tblName);
+  if(duckdb_query(con, storagePart, NULL) == DuckDBError) {
+    perror("Failed to spill intermediate result to disk.");
+    return -1;
+  }
+  if(duckdb_query(con, clearPart, NULL) == DuckDBError) {
+    perror("Failed to drop temp table.");
+    return -1;
+  }
+  */
+
+  // Cleanup
+  duckdb_appender_destroy(&tmp_appender);
+  for(int i=0; i<col_count; i++) {
+    duckdb_destroy_logical_type(&ltypes[i]);
+  }
+
+  return numInter + 1;
+}
+
+idx_t store_intermediate_GFTR(
+  idx_t numInter,
+  const char *intermName,
+  duckdb_connection con,
+  idx_t chunkSize,
+  idx_t col_count,
+  idx_t row_count,
+  duckdb_type* types,
+  char** colNames,
+  void* key_data,
+  char* pL_data,
+  idx_t keyCol_idx
+) {
+  // 0 turn types into logical_types & strings to create the table
+  duckdb_logical_type ltypes[col_count];
+  char type_strs[col_count][25];
+  for(idx_t i=0; i<col_count; i++) {
+    ltypes[i] = duckdb_create_logical_type(types[i]);
+    colType_name(types[i], type_strs[i]);
+  }
+
+  // 1 create temporary table
+  char tblName[strlen(intermName) + 25];
+  sprintf(tblName, "%s%ld", intermName, numInter);
+  char queryStr[100 + 35*col_count];
+  int queryStr_len = sprintf(queryStr, "CREATE OR REPLACE TEMP TABLE %s (", tblName);
+  for(idx_t i=0; i<col_count; i++) {
+    if(i<col_count-1) {
+      queryStr_len += sprintf(queryStr + queryStr_len, "%s %s, ", colNames[i], type_strs[i]);
+    }
+    else {
+      queryStr_len += sprintf(queryStr + queryStr_len, "%s %s);", colNames[i], type_strs[i]);
+    }
+  }
+  if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
+    perror("Failed to create temporary table.\n");
+    return -1;
+  }
+  // 2 create an appender for the table
+  duckdb_appender tmp_appender;
+  if( duckdb_appender_create(con, NULL, tblName, &tmp_appender) == DuckDBError ) {
+    perror("Failed to create appender.\n");
+    return -1;
+  }
+
+  // pre-3 : calculate payload column stuff...
+  idx_t pL_bytes = 0; // total bytes taken by payload columns altogether
+  idx_t pL_prefixSizes[col_count-1]; // bytes taken up to each column
+  for(idx_t col=0; col<col_count; col++) {
+    if(col == keyCol_idx) continue;
+    idx_t accIdx = (col < keyCol_idx)? col: col-1;
+    pL_prefixSizes[accIdx] = pL_bytes;
+    pL_bytes += colType_bytes(types[col]);
+  }
+
+  // 3 insert the data into the table, 1 chunk at a time
+  for(idx_t r=0; r<row_count; r+=chunkSize) {
+    size_t this_size = (row_count-r > chunkSize)? chunkSize: row_count-r;
+    duckdb_data_chunk cnk = duckdb_create_data_chunk(ltypes, col_count);
+    duckdb_data_chunk_set_size(cnk, this_size);
+    for(idx_t c=0; c<col_count; c++) {
+      duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
+      void *dat = (void*)duckdb_vector_get_data(vec);
+      idx_t col_size = colType_bytes(types[c]);
+      if(c == keyCol_idx) {
+        memcpy(dat, key_data + r*col_size, this_size*col_size);
+      }
+      else { // Strided access pattern for payloads
+        idx_t accIdx = (c < keyCol_idx)? c: c-1;
+        for(idx_t j=0; j<this_size; j++) {
+          memcpy(
+            dat + j*col_size,
+            pL_data + j*pL_bytes + pL_prefixSizes[accIdx],
+            col_size
+          );
+        }
+      }
+    }
+    if(duckdb_append_data_chunk(tmp_appender, cnk) == DuckDBError) {
+      perror("Failed to append data chunk.\n");
+      return -1;
+    }
+    // TODO
+    // Flush manually (?)
+    //if((1+(r/chunkSize))%20 == 0) duckdb_appender_flush(tmp_appender);
+
+    //printf("Appended %ld elements.\n", this_size);
+    //duckdb_appender_flush(tmp_appender);
+    duckdb_destroy_data_chunk(&cnk);
+  }
+  //duckdb_appender_flush(tmp_appender);
+  // IF USING PARQUET STORAGE:
+  /*
+  char storagePart[100 + 2*strlen(tblName)];
+  sprintf(storagePart, "COPY %s TO %s.parquet (FORMAT parquet);", tblName, tblName);
+  char clearPart[100];
+  sprintf(clearPart, "DROP TABLE %s;", tblName);
+  if(duckdb_query(con, storagePart, NULL) == DuckDBError) {
+    perror("Failed to spill intermediate result to disk.");
+    return -1;
+  }
+  if(duckdb_query(con, clearPart, NULL) == DuckDBError) {
+    perror("Failed to drop temp table.");
+    return -1;
+  }
+  */
+
+  // Cleanup
+  duckdb_appender_destroy(&tmp_appender);
+  for(int i=0; i<col_count; i++) {
+    duckdb_destroy_logical_type(&ltypes[i]);
+  }
+
+  return numInter + 1;
+}
+
+void prepareToFetch_intermediate(
+  idx_t numInter,
+  const char *intermName,
+  duckdb_connection con,
+  duckdb_result *result_ptr
+) {
+  char tblName[strlen(intermName) + 25];
+  // IF _NOT_ USING PARQUET STORAGE:
+  sprintf(tblName, "%s%ld", intermName, numInter);
+  // IF USING PARQUET STORAGE:
+  //sprintf(tblName, "tempholder%ld.parquet", numInter);
+  char queryStr[100];
+  sprintf(queryStr, "SELECT * FROM %s;", tblName);
+  // TODO for testing
+  //printf("%s\n", queryStr);
+  if( duckdb_query(con, queryStr, result_ptr) == DuckDBError ) {
+    perror("Failed to retrieve intermediate.");
+  }
+  // TODO better error handling
+}
+
+idx_t fetch_intermediate(
+  duckdb_result result,
+  idx_t col_count,
+  duckdb_type* types,
+  void** BuffersOut,
+  idx_t start_idx
+) {
+  duckdb_data_chunk cnk = duckdb_fetch_chunk(result);
+  if(!cnk) {
+    // Result is exhausted.
+    return 0;
+  }
+  idx_t row_count = duckdb_data_chunk_get_size(cnk);
+  // TODO bulk-buffer - also am I using this func rn?
+  for(idx_t c=0; c<col_count; c++) {
+    duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, c);
+    void* dat = duckdb_vector_get_data(vec);
+    size_t colSize = colType_bytes(types[c]);
+    char *curBuffer = (char*)BuffersOut[c];
+    memcpy(curBuffer + start_idx*colSize, dat, row_count*colSize);
+  }
+  duckdb_destroy_data_chunk(&cnk);
+  return row_count;
 }

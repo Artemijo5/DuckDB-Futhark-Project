@@ -94,49 +94,11 @@ void Inner_MergeJoin_GFTR(
   // 0.0 create strings for types
   char R_type_strs[R_col_count][25];
   for(idx_t col=0; col<R_col_count; col++) {
-    switch(R_type_ids[col]){
-      case DUCKDB_TYPE_SMALLINT:
-        sprintf( R_type_strs[col], "SMALLINT" );
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        sprintf( R_type_strs[col], "INTEGER" );
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        sprintf( R_type_strs[col], "BIGINT" );
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        sprintf( R_type_strs[col], "FLOAT" );
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        sprintf( R_type_strs[col], "DOUBLE" );
-        break;
-      default:
-        perror("Invalid type.");
-        return;
-    }
+    colType_name(R_type_ids[col], R_type_strs[col]);
   }
   char S_type_strs[S_col_count][25];
   for(idx_t col=0; col<S_col_count; col++) {
-    switch(S_type_ids[col]){
-      case DUCKDB_TYPE_SMALLINT:
-        sprintf( S_type_strs[col], "SMALLINT" );
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        sprintf( S_type_strs[col], "INTEGER" );
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        sprintf( S_type_strs[col], "BIGINT" );
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        sprintf( S_type_strs[col], "FLOAT" );
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        sprintf( S_type_strs[col], "DOUBLE" );
-        break;
-      default:
-        perror("Invalid type.");
-        return;
-    }
+    colType_name(S_type_ids[col], S_type_strs[col]);
   }
 
   // Create the Table
@@ -580,26 +542,7 @@ void Inner_MergeJoin_GFUR(
   duckdb_logical_type payload_ltypes[1+total_payload_count];
   for(idx_t col=0; col<total_payload_count+1; col++) {
     payload_ltypes[col] = duckdb_create_logical_type(payload_types[col]);
-    switch(payload_types[col]){
-      case DUCKDB_TYPE_SMALLINT:
-        sprintf( payload_type_strs[col], "SMALLINT" );
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        sprintf( payload_type_strs[col], "INTEGER" );
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        sprintf( payload_type_strs[col], "BIGINT" );
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        sprintf( payload_type_strs[col], "FLOAT" );
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        sprintf( payload_type_strs[col], "DOUBLE" );
-        break;
-      default:
-        perror("Invalid type.");
-        return;
-    }
+    colType_name(payload_types[col], payload_type_strs[col]);
   }
 
   // 1. Create FINAL (not tmp) result table & appender

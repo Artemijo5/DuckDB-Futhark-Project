@@ -8,12 +8,13 @@
 #define LOGFILE "appenderTest.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define TABLE_SIZE 16*512*CHUNK_SIZE
+#define TABLE_SIZE 32*512*CHUNK_SIZE
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "6GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
+// TODO appenders flush every <100 chunks
 
 int main() {
 	// Initialise logger

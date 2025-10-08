@@ -315,26 +315,7 @@ void sort_Stage2(
   duckdb_logical_type ltypes[col_count];
    for(idx_t i=0; i<col_count; i++) {
     ltypes[i] = duckdb_create_logical_type(type_ids[i]);
-    switch(type_ids[i]){
-      case DUCKDB_TYPE_SMALLINT:
-        sprintf( type_strs[i], "SMALLINT" );
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        sprintf( type_strs[i], "INTEGER" );
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        sprintf( type_strs[i], "BIGINT" );
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        sprintf( type_strs[i], "FLOAT" );
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        sprintf( type_strs[i], "DOUBLE" );
-        break;
-      default:
-        perror("Invalid type.");
-        return;
-    }
+    colType_name(type_ids[i], type_strs[i]);
   }
   char resultQueryStr[150 + strlen(finalName) + 35*col_count];
   int resultQueryStr_len = (saveAsTempTable)?

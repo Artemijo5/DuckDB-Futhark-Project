@@ -77,4 +77,50 @@ void gatherPayloads_GFUR(
 	idx_t numPairs
 );
 
+// TODO
+// Entirely in-memory SMJ
+// These return futhark obj's, and should be sync'd before using scalar output
+
+void sortRelationByKey_inFuthark(
+	struct futhark_context *ctx,
+	void **outKeys,
+	char *outPayloads,
+	duckdb_type key_type,
+	int blocked,
+	const int16_t block_size,
+	void* inKeys,
+	char* inPayloads,
+	idx_t pL_bytesPerRow,
+	idx_t card
+);
+void sortKeyColumn_inFuthark(
+	struct futhark_context *ctx,
+	void **outCol,
+	duckdb_type type,
+	idx_t incr,
+	int blocked,
+	const int16_t block_size,
+	struct futhark_i64_1d **outIdx,
+	void* keys,
+	idx_t card
+);
+void InnerJoin_joinKeyColumns_inFuthark(
+	struct futhark_context *ctx,
+	idx_t *numPairs,
+	void **outVs_dptr,
+	struct futhark_i64_1d **outIdx1,
+	struct futhark_i64_1d **outIdx2,
+	duckdb_type type,
+	idx_t incr1,
+	idx_t incr2,
+	void *keys1,
+	void *keys2,
+	idx_t card1,
+	idx_t card2,
+	idx_t numWindows,
+	idx_t partitionsPerWindow,
+	idx_t extParallelism,
+	idx_t scatter_psize
+);
+
 #endif
