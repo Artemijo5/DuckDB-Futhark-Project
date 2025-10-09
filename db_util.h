@@ -121,7 +121,6 @@ idx_t bulk_buffer_chunks(
  * Returns:
  * number of rows buffered
  */
-// TODO make relevance-checking version for joins (in join util rather than here ig...)
 idx_t bulk_load_chunks(
 	idx_t CHUNK_SIZE,
 	duckdb_result res,

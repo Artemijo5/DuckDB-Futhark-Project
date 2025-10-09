@@ -78,6 +78,40 @@ void gatherPayloads_GFUR(
 );
 
 // TODO
+/*
+idx_t bulk_load_chunks_withRelevance(
+	idx_t CHUNK_SIZE,
+	duckdb_result res,
+	idx_t num_chunks,
+	idx_t col_count,
+	idx_t excludeCol,
+	duckdb_type* types,
+	void** dests,
+	void* excludeDest,
+	idx_t capacity,
+	void *other_minimum,
+	void *other_maximum,
+	int is_sorted,
+	int* exhaustedRes
+);
+idx_t bulk_load_chunks_GFTR_withRelevance(
+	idx_t CHUNK_SIZE,
+	duckdb_result res,
+	idx_t num_chunks,
+	idx_t col_count,
+	idx_t keyCol,
+	duckdb_type* types,
+	void* keyDest,
+	char** plDest,
+	idx_t capacity,
+	void *other_minimum,
+	void *other_maximum,
+	int is_sorted,
+	int* exhaustedRes
+);
+*/
+
+// TODO
 // Entirely in-memory SMJ
 // These return futhark obj's, and should be sync'd before using scalar output
 
@@ -103,6 +137,18 @@ void sortKeyColumn_inFuthark(
 	struct futhark_i64_1d **outIdx,
 	void* keys,
 	idx_t card
+);
+// TODO keep payloads as futhark array coming out of sort ig...
+void gatherPayloads_GFTR(
+	struct futhark_context *ctx,
+	char *outCol,
+	idx_t payloadBytes,
+	idx_t incr,
+	const int16_t block_size,
+	struct futhark_i64_1d *gatherIs,
+	char* inCol,
+	idx_t card_columns,
+	idx_t numPairs
 );
 void InnerJoin_joinKeyColumns_inFuthark(
 	struct futhark_context *ctx,

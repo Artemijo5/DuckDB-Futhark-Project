@@ -712,6 +712,9 @@ entry gather_payloads_float (incr) (psize) (is) (ys: []f32)
 entry gather_payloads_double (incr) (psize) (is) (ys: []f64)
   = gather_payloads incr psize (0) is ys
 
+entry gather_payloads_GFTR (incr) (psize) (is) (pL_bytes: idx_t.t) (ys: [][pL_bytes]u8)
+  = gather_payloads (psize) (dummy_elem) (ys) (offset_is)
+
   -- Payload gathering (GFUR)
 
   -- | Function to gather the payload columns of a relation after the join, over an array with previously gathered values.
