@@ -793,6 +793,36 @@ void gatherPayloads_GFTR(
 	futhark_free_u8_2d(ctx, outCol_ft);
 }
 
+void gatherPayloads_GFUR_inFuthark(
+	struct futhark_context *ctx,
+	char *outCol,
+	idx_t payloadBytes,
+	idx_t sort_incr,
+	idx_t join_incr,
+	const int16_t block_size,
+	struct futhark_i64_1d *sort_gatherIs,
+	struct futhark_i64_1d *join_gatherIs,
+	char *inCol,
+	idx_t card_columns,
+	idx_t numPairs
+) {
+	// Gather indices
+	struct futhark_i64_1d *true_gatherIs;
+	futhark_entry_gather_payloads_long(ctx, &true_gatherIs, join_incr, block_size, join_gatherIs, sort_gatherIs);
+	// Gather
+	struct futhark_u8_2d *inCol_ft = futhark_new_u8_2d(ctx, inCol, card_columns, payloadBytes);
+	struct futhark_u8_2d *outCol_ft;
+	futhark_entry_gather_payloads_GFTR(ctx, &outCol_ft, sort_incr, block_size, true_gatherIs, payloadBytes, inCol_ft);
+	// Sync
+	futhark_context_sync(ctx);
+	// Unwrap
+	futhark_values_u8_2d(ctx, outCol_ft, outCol);
+	// Sync
+	futhark_context_sync(ctx);
+	// Cleanup
+	futhark_free_u8_2d(ctx, outCol_ft);
+}
+
 void sortRelationByKey_inFuthark_short(
   struct futhark_context *ctx,
   struct futhark_i16_1d **outKeys,

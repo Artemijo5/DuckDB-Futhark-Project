@@ -16,7 +16,7 @@
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
 #define R_TABLE_SIZE 10*CHUNK_SIZE
-#define S_TABLE_SIZE 20*R_TABLE_SIZE
+#define S_TABLE_SIZE 10*R_TABLE_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM R_TABLE_SIZE // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
@@ -36,7 +36,7 @@
 #define S_SORTED_NAME "S_tbl_sorted"
 
 #define R_JOIN_BUFFER R_TABLE_SIZE
-#define S_JOIN_BUFFER 2*R_JOIN_BUFFER
+#define S_JOIN_BUFFER R_JOIN_BUFFER
 #define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
 
 #define DBFILE "testdb.db"
@@ -172,7 +172,7 @@ int main() {
   }
 
   mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
-  SortMergeJoin_GFTR(
+  SortMergeJoin_GFUR(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
