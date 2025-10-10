@@ -13,10 +13,10 @@
 #define LOGFILE "sort_merge_join_GFTR.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 512*CHUNK_SIZE
+#define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 100*CHUNK_SIZE
-#define S_TABLE_SIZE 5*R_TABLE_SIZE
+#define R_TABLE_SIZE 10*CHUNK_SIZE
+#define S_TABLE_SIZE 20*R_TABLE_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define EXT_PARALLELISM R_TABLE_SIZE // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
@@ -26,8 +26,8 @@
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
 
-#define R_KEY "k"
-#define S_KEY "k"
+#define R_KEY "payload2"//"k"
+#define S_KEY "payload4"//"k"
 
 #define R_interm "R_tbl_interm"
 #define S_interm "S_tbl_interm"
@@ -36,7 +36,7 @@
 #define S_SORTED_NAME "S_tbl_sorted"
 
 #define R_JOIN_BUFFER R_TABLE_SIZE
-#define S_JOIN_BUFFER R_JOIN_BUFFER
+#define S_JOIN_BUFFER 2*R_JOIN_BUFFER
 #define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
 
 #define DBFILE "testdb.db"
@@ -165,14 +165,14 @@ int main() {
 
   mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
   char joinQ[1000];
-  sprintf(joinQ, "CREATE OR REPLACE TEMP TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
+  sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
     S_KEY, R_SORTED_NAME, S_SORTED_NAME, R_KEY, S_KEY);
   if(duckdb_query(con, joinQ, NULL) == DuckDBError) {
     perror("Failed to join with duckdb.");
   }
 
   mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
-  Inner_MergeJoin_GFTR(
+  SortMergeJoin_GFTR(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
@@ -185,11 +185,13 @@ int main() {
     con,
     R_SORTED_NAME,
     S_SORTED_NAME,
+    true,
+    true,
     R_KEY,
     S_KEY,
     JOIN_TBL_NAME,
     false,
-    true
+    false
   );
   
 

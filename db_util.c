@@ -43,7 +43,7 @@ int colType_name(duckdb_type type, char *dest_str) {
     case DUCKDB_TYPE_FLOAT:
       return sprintf(dest_str, "FLOAT" );
     case DUCKDB_TYPE_DOUBLE:
-      sprintf(dest_str, "DOUBLE" );
+      return sprintf(dest_str, "DOUBLE" );
     default:
       perror("Invalid type.");
       return -1;
@@ -219,7 +219,7 @@ idx_t bulk_load_chunks(
 		idx_t rows_buffd = bulk_buffer_chunks(
 			chunks, chunks_read, col_count, excludeCol, types, dests, excludeDest, row_count
 		);
-		if(rows_buffd % CHUNK_SIZE != 0) *exhaustedRes = true; // Exhausted result
+		//if(rows_buffd % CHUNK_SIZE != 0) *exhaustedRes = true; // Apparently this is not the case when using the WHERE clause...
 		row_count += rows_buffd;
 	}
 	return row_count;
@@ -340,7 +340,7 @@ idx_t bulk_load_chunks_GFTR(
 		idx_t rows_buffd = bulk_buffer_chunks_GFTR(
 			chunks, chunks_read, col_count, keyCol, types, pL_bytes, pL_byteSizes, pL_prefixSizes, keyDest, actual_plDest, row_count
 		);
-		if(rows_buffd % CHUNK_SIZE != 0) *exhaustedRes = true; // Exhausted result
+		//if(rows_buffd % CHUNK_SIZE != 0) *exhaustedRes = true; // Apparently this is not the case when using the WHERE clause...
 		row_count += rows_buffd;
 	}
 	return row_count;

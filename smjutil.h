@@ -26,6 +26,21 @@ int compare_max_to_min(duckdb_type type, void* arr1, void* arr2, idx_t card1, id
  */
 int compare_maxima(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t card2);
 
+/**
+ * A function to read a table with a value constraint.
+ * According to duckdb's documentation, the WHERE clause guarantees order preservation.
+ * Efficiency is guaranteed by the MIN-MAX index.
+ */
+duckdb_state selective_query(
+	duckdb_type keyType,
+	duckdb_connection con,
+	duckdb_result* res_ptr,
+	const char *tblName,
+	const char *keyColName,
+	void *minimum,
+	void *maximum
+);
+
 void InnerJoin_joinKeyColumns(
 	struct futhark_context *ctx,
 	idx_t *numPairs,
@@ -78,52 +93,18 @@ void gatherPayloads_GFUR(
 );
 
 // TODO
-/*
-idx_t bulk_load_chunks_withRelevance(
-	idx_t CHUNK_SIZE,
-	duckdb_result res,
-	idx_t num_chunks,
-	idx_t col_count,
-	idx_t excludeCol,
-	duckdb_type* types,
-	void** dests,
-	void* excludeDest,
-	idx_t capacity,
-	void *other_minimum,
-	void *other_maximum,
-	int is_sorted,
-	int* exhaustedRes
-);
-idx_t bulk_load_chunks_GFTR_withRelevance(
-	idx_t CHUNK_SIZE,
-	duckdb_result res,
-	idx_t num_chunks,
-	idx_t col_count,
-	idx_t keyCol,
-	duckdb_type* types,
-	void* keyDest,
-	char** plDest,
-	idx_t capacity,
-	void *other_minimum,
-	void *other_maximum,
-	int is_sorted,
-	int* exhaustedRes
-);
-*/
-
-// TODO
 // Entirely in-memory SMJ
 // These return futhark obj's, and should be sync'd before using scalar output
 
 void sortRelationByKey_inFuthark(
 	struct futhark_context *ctx,
 	void **outKeys,
-	char *outPayloads,
+	struct futhark_u8_2d **outPayloads,
 	duckdb_type key_type,
 	int blocked,
 	const int16_t block_size,
 	void* inKeys,
-	char* inPayloads,
+	char *inPayloads,
 	idx_t pL_bytesPerRow,
 	idx_t card
 );
@@ -138,7 +119,6 @@ void sortKeyColumn_inFuthark(
 	void* keys,
 	idx_t card
 );
-// TODO keep payloads as futhark array coming out of sort ig...
 void gatherPayloads_GFTR(
 	struct futhark_context *ctx,
 	char *outCol,
@@ -146,7 +126,7 @@ void gatherPayloads_GFTR(
 	idx_t incr,
 	const int16_t block_size,
 	struct futhark_i64_1d *gatherIs,
-	char* inCol,
+	struct futhark_u8_2d *inCol,
 	idx_t card_columns,
 	idx_t numPairs
 );

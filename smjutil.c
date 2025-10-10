@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "duckdb.h"
 #include "mylogger.h"
+#include "db_util.h"
 #include <string.h>
 
 #include "ftSMJ.h"
@@ -66,6 +67,52 @@ int compare_maxima(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t 
 			return 0;
 	}
 	return ret;
+}
+
+duckdb_state selective_query(
+	duckdb_type keyType,
+	duckdb_connection con,
+	duckdb_result* res_ptr,
+	const char *tblName,
+	const char *keyColName,
+	void *minimum,
+	void *maximum
+) {
+	char constraintStr[50 + 2*strlen(keyColName) + 10*colType_bytes(keyType)];
+	switch(keyType) {
+		case DUCKDB_TYPE_SMALLINT:
+			sprintf(constraintStr,
+				" WHERE (%s >= %d AND %s <= %d)",
+				keyColName, (int)(*((short*)minimum)), keyColName, (int)(*((short*)maximum)));
+			break;
+		case DUCKDB_TYPE_INTEGER:
+			sprintf(constraintStr,
+				"WHERE (%s >= %d AND %s <= %d)",
+				keyColName, *((int*)minimum), keyColName, *((int*)maximum));
+			break;
+		case DUCKDB_TYPE_BIGINT:
+			sprintf(constraintStr,
+				"WHERE (%s >= %ld AND %s <= %ld)",
+				keyColName, *((long*)minimum), keyColName, *((long*)maximum));
+			break;
+		case DUCKDB_TYPE_FLOAT:
+			sprintf(constraintStr,
+				"WHERE (%s >= %f AND %s <= %f)",
+				keyColName, *((float*)minimum), keyColName, *((float*)maximum));
+			break;
+		case DUCKDB_TYPE_DOUBLE:
+			sprintf(constraintStr,
+				"WHERE (%s >= %lf AND %s <= %lf)",
+				keyColName, *((double*)minimum), keyColName, *((double*)maximum));
+			break;
+		default:
+			sprintf(constraintStr, " ");// perform the query without constraints
+			break;
+	}
+	char queryStr[50 + strlen(tblName) + strlen(constraintStr)];
+	sprintf(queryStr, "SELECT * FROM %s %s;", tblName, constraintStr);
+	//printf("%s\n", queryStr);
+	return duckdb_query(con, queryStr, res_ptr);
 }
 
 void InnerJoin_joinKeyColumns_short(
@@ -729,15 +776,13 @@ void gatherPayloads_GFTR(
 	idx_t incr,
 	const int16_t block_size,
 	struct futhark_i64_1d *gatherIs,
-	char* inCol,
+	struct futhark_u8_2d *inCol,
 	idx_t card_columns,
 	idx_t numPairs
 ) {
-	// Wrap inCol into a futhark array
-	struct futhark_u8_2d *inCol_ft = futhark_new_u8_2d(ctx, inCol, card_columns, payloadBytes);
 	// Gather
 	struct futhark_u8_2d *outCol_ft;
-	futhark_entry_gather_GFTR(ctx, &outCol_ft, incr, block_size, gatherIs, inCol_ft);
+	futhark_entry_gather_payloads_GFTR(ctx, &outCol_ft, incr, block_size, gatherIs, payloadBytes, inCol);
 	// Sync
 	futhark_context_sync(ctx);
 	// Unwrap
@@ -745,14 +790,13 @@ void gatherPayloads_GFTR(
 	// Sync
 	futhark_context_sync(ctx);
 	// Cleanup
-	futhark_free_u8_2d(ctx, inCol_ft);
 	futhark_free_u8_2d(ctx, outCol_ft);
 }
 
 void sortRelationByKey_inFuthark_short(
   struct futhark_context *ctx,
   struct futhark_i16_1d **outKeys,
-  char *outPayloads,
+  struct futhark_u8_2d **outPayloads,
   int blocked,
   const int16_t block_size,
   short* inKeys,
@@ -775,19 +819,16 @@ void sortRelationByKey_inFuthark_short(
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_short(ctx, sortStruct_in);
   // Unwrap sorted output
-  struct futhark_u8_2d *outPayloads_ft;
   futhark_project_opaque_sortStruct_short_k(ctx, outKeys, sortStruct_out);
-  futhark_project_opaque_sortStruct_short_pL(ctx, &outPayloads_ft, sortStruct_out);
-  futhark_values_u8_2d(ctx, outPayloads_ft, outPayloads);
+  futhark_project_opaque_sortStruct_short_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
   futhark_context_sync(ctx);
-  futhark_free_u8_2d(ctx, outPayloads_ft);
   futhark_free_opaque_sortStruct_short(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark_int(
   struct futhark_context *ctx,
   struct futhark_i32_1d **outKeys,
-  char *outPayloads,
+  struct futhark_u8_2d **outPayloads,
   int blocked,
   const int16_t block_size,
   int* inKeys,
@@ -810,19 +851,16 @@ void sortRelationByKey_inFuthark_int(
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_int(ctx, sortStruct_in);
   // Unwrap sorted output
-  struct futhark_u8_2d *outPayloads_ft;
   futhark_project_opaque_sortStruct_int_k(ctx, outKeys, sortStruct_out);
-  futhark_project_opaque_sortStruct_int_pL(ctx, &outPayloads_ft, sortStruct_out);
-  futhark_values_u8_2d(ctx, outPayloads_ft, outPayloads);
+  futhark_project_opaque_sortStruct_int_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
   futhark_context_sync(ctx);
-  futhark_free_u8_2d(ctx, outPayloads_ft);
   futhark_free_opaque_sortStruct_int(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark_long(
   struct futhark_context *ctx,
   struct futhark_i64_1d **outKeys,
-  char *outPayloads,
+  struct futhark_u8_2d **outPayloads,
   int blocked,
   const int16_t block_size,
   long* inKeys,
@@ -845,19 +883,16 @@ void sortRelationByKey_inFuthark_long(
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_long(ctx, sortStruct_in);
   // Unwrap sorted output
-  struct futhark_u8_2d *outPayloads_ft;
   futhark_project_opaque_sortStruct_long_k(ctx, outKeys, sortStruct_out);
-  futhark_project_opaque_sortStruct_long_pL(ctx, &outPayloads_ft, sortStruct_out);
-  futhark_values_u8_2d(ctx, outPayloads_ft, outPayloads);
+  futhark_project_opaque_sortStruct_long_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
   futhark_context_sync(ctx);
-  futhark_free_u8_2d(ctx, outPayloads_ft);
   futhark_free_opaque_sortStruct_long(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark_float(
   struct futhark_context *ctx,
   struct futhark_f32_1d **outKeys,
-  char *outPayloads,
+  struct futhark_u8_2d **outPayloads,
   int blocked,
   const int16_t block_size,
   float* inKeys,
@@ -880,19 +915,16 @@ void sortRelationByKey_inFuthark_float(
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_float(ctx, sortStruct_in);
   // Unwrap sorted output
-  struct futhark_u8_2d *outPayloads_ft;
   futhark_project_opaque_sortStruct_float_k(ctx, outKeys, sortStruct_out);
-  futhark_project_opaque_sortStruct_float_pL(ctx, &outPayloads_ft, sortStruct_out);
-  futhark_values_u8_2d(ctx, outPayloads_ft, outPayloads);
+  futhark_project_opaque_sortStruct_float_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
   futhark_context_sync(ctx);
-  futhark_free_u8_2d(ctx, outPayloads_ft);
   futhark_free_opaque_sortStruct_float(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark_double(
   struct futhark_context *ctx,
   struct futhark_f64_1d **outKeys,
-  char *outPayloads,
+  struct futhark_u8_2d **outPayloads,
   int blocked,
   const int16_t block_size,
   double* inKeys,
@@ -915,19 +947,16 @@ void sortRelationByKey_inFuthark_double(
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_double(ctx, sortStruct_in);
   // Unwrap sorted output
-  struct futhark_u8_2d *outPayloads_ft;
   futhark_project_opaque_sortStruct_double_k(ctx, outKeys, sortStruct_out);
-  futhark_project_opaque_sortStruct_double_pL(ctx, &outPayloads_ft, sortStruct_out);
-  futhark_values_u8_2d(ctx, outPayloads_ft, outPayloads);
+  futhark_project_opaque_sortStruct_double_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
   futhark_context_sync(ctx);
-  futhark_free_u8_2d(ctx, outPayloads_ft);
   futhark_free_opaque_sortStruct_double(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark(
   struct futhark_context *ctx,
   void **outKeys,
-  char *outPayloads,
+  struct futhark_u8_2d **outPayloads,
   duckdb_type key_type,
   int blocked,
   const int16_t block_size,
@@ -1065,7 +1094,7 @@ void sortKeyColumn_inFuthark_double(struct futhark_context *ctx, struct futhark_
   futhark_free_opaque_sortInfo_double(ctx, sortInfo);
   futhark_free_f64_1d(ctx, x_ft);
 }
-void sortKeyColumn_inFuthark(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, int blocked, const int16_t block_size, struct futhark_i64_1d **outIdx, void* keys, idx_t card) {
+void sortKeyColumn_inFuthark(struct futhark_context *ctx, void **outCol, duckdb_type type, idx_t incr, int blocked, const int16_t block_size, struct futhark_i64_1d **outIdx, void* keys, idx_t card) {
   switch (type){
   case DUCKDB_TYPE_SMALLINT:
       sortKeyColumn_inFuthark_short(ctx, (struct futhark_i16_1d **)outCol, incr, blocked, block_size, outIdx, (short*)keys, card);
@@ -1091,7 +1120,7 @@ void sortKeyColumn_inFuthark(struct futhark_context *ctx, void *outCol, duckdb_t
 void InnerJoin_joinKeyColumns_inFuthark_short(
 	struct futhark_context *ctx,
 	idx_t *numPairs,
-	void **outVs_dptr,
+	short **outVs_dptr,
 	struct futhark_i64_1d **outIdx1,
 	struct futhark_i64_1d **outIdx2,
 	idx_t incr1,
@@ -1133,7 +1162,7 @@ void InnerJoin_joinKeyColumns_inFuthark_short(
 void InnerJoin_joinKeyColumns_inFuthark_int(
 	struct futhark_context *ctx,
 	idx_t *numPairs,
-	void **outVs_dptr,
+	int **outVs_dptr,
 	struct futhark_i64_1d **outIdx1,
 	struct futhark_i64_1d **outIdx2,
 	idx_t incr1,
@@ -1175,7 +1204,7 @@ void InnerJoin_joinKeyColumns_inFuthark_int(
 void InnerJoin_joinKeyColumns_inFuthark_long(
 	struct futhark_context *ctx,
 	idx_t *numPairs,
-	void **outVs_dptr,
+	long **outVs_dptr,
 	struct futhark_i64_1d **outIdx1,
 	struct futhark_i64_1d **outIdx2,
 	idx_t incr1,
@@ -1217,7 +1246,7 @@ void InnerJoin_joinKeyColumns_inFuthark_long(
 void InnerJoin_joinKeyColumns_inFuthark_float(
 	struct futhark_context *ctx,
 	idx_t *numPairs,
-	void **outVs_dptr,
+	float **outVs_dptr,
 	struct futhark_i64_1d **outIdx1,
 	struct futhark_i64_1d **outIdx2,
 	idx_t incr1,
@@ -1259,13 +1288,13 @@ void InnerJoin_joinKeyColumns_inFuthark_float(
 void InnerJoin_joinKeyColumns_inFuthark_double(
 	struct futhark_context *ctx,
 	idx_t *numPairs,
-	void **outVs_dptr,
+	double **outVs_dptr,
 	struct futhark_i64_1d **outIdx1,
 	struct futhark_i64_1d **outIdx2,
 	idx_t incr1,
 	idx_t incr2,
 	struct futhark_f64_1d *keys1,
-	struct futhark_f64_1d *keys2,,
+	struct futhark_f64_1d *keys2,
 	idx_t card1,
 	idx_t card2,
 	idx_t numWindows,
