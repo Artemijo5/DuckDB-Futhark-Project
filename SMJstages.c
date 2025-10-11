@@ -1072,17 +1072,23 @@ void SortMergeJoin_GFUR(
         mylog(logfile, "Join has been performed (S first).");
       }
       // Gather R's payloads
-      gatherPayloads_GFUR_inFuthark(ctx, R_payload, R_pL_bytesPerRow, 0, R_curIdx, BLOCK_SIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
+      char* gathered_R_payload = malloc(numPairs * R_pL_bytesPerRow);
+      gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, R_curIdx, BLOCK_SIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
+      futhark_free_i64_1d(ctx, idxR_ft); // no longer needed
       mylog(logfile, "Gathered R payloads.");
       void* Rpl[R_col_count-1];
-      payloadColumnsFromByteArray(Rpl, R_payloadTypes, R_payload, R_col_count-1, numPairs);
+      payloadColumnsFromByteArray(Rpl, R_payloadTypes, gathered_R_payload, R_col_count-1, numPairs);
+      free(gathered_R_payload);
       mylog(logfile, "Recovered gathered R payloads from byte array.");
 
       // Gather S's payloads
-      gatherPayloads_GFUR_inFuthark(ctx, S_payload, S_pL_bytesPerRow, 0, S_curIdx, BLOCK_SIZE, S_idx_ft, idxS_ft, S_payload, S_rowCount, numPairs);
+      char* gathered_S_payload = malloc(numPairs * S_pL_bytesPerRow);
+      gatherPayloads_GFUR_inFuthark(ctx, gathered_S_payload, S_pL_bytesPerRow, 0, S_curIdx, BLOCK_SIZE, S_idx_ft, idxS_ft, S_payload, S_rowCount, numPairs);
+      futhark_free_i64_1d(ctx, idxS_ft); // no longer needed
       mylog(logfile, "Gathered R payloads.");
       void* Spl[S_col_count-1];
-      payloadColumnsFromByteArray(Spl, S_payloadTypes, S_payload, S_col_count-1, numPairs);
+      payloadColumnsFromByteArray(Spl, S_payloadTypes, gathered_S_payload, S_col_count-1, numPairs);
+      free(gathered_S_payload);
       free(S_payload);
       futhark_free_i64_1d(ctx, S_idx_ft);
       mylog(logfile, "Recovered gathered S payloads from byte array.");
@@ -1165,8 +1171,6 @@ void SortMergeJoin_GFUR(
         free(Spl[col-1]);
       }
       free(joinedKeys);
-      futhark_free_i64_1d(ctx, idxR_ft);
-      futhark_free_i64_1d(ctx, idxS_ft);
 
       S_curIdx += S_rowCount;
     }
