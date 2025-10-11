@@ -1412,6 +1412,7 @@ void Inner_MergeJoin_GFUR(
       MATERIALISED[accIdx] = colType_malloc(payload_types[col], iter_pairs);
     }
 
+    // TODO replace this with a selective query (!)
     // Get min relevant indices - not useful since they alter the duckdb result...
     idx_t min_R_idx, max_R_idx, min_S_idx, max_S_idx;
     indexRange(ctx, &min_R_idx, &max_R_idx, buffer_R_is, iter_pairs);

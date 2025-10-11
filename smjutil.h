@@ -60,18 +60,6 @@ void InnerJoin_joinKeyColumns(
 	idx_t scatter_psize
 );
 
-void gatherPayloads(
-	struct futhark_context *ctx,
-	void *outCol,
-	duckdb_type type,
-	idx_t incr,
-	const int16_t block_size,
-	struct futhark_i64_1d *gatherIs,
-	void* inCol,
-	idx_t card_columns,
-	idx_t numPairs
-);
-
 void indexRange(
 	struct futhark_context *ctx,
 	idx_t *minIndex,

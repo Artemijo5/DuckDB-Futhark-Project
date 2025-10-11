@@ -51,6 +51,14 @@ const char *futhark_get_tuning_param_name(int);
 const char *futhark_get_tuning_param_class(int);
 
 // Arrays
+struct futhark_bool_1d;
+struct futhark_bool_1d *futhark_new_bool_1d(struct futhark_context *ctx, const bool *data, int64_t dim0);
+struct futhark_bool_1d *futhark_new_raw_bool_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
+int futhark_free_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
+int futhark_values_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr, bool *data);
+int futhark_index_bool_1d(struct futhark_context *ctx, bool *out, struct futhark_bool_1d *arr, int64_t i0);
+CUdeviceptr futhark_values_raw_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
+const int64_t *futhark_shape_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
 struct futhark_i64_1d;
 struct futhark_i64_1d *futhark_new_i64_1d(struct futhark_context *ctx, const int64_t *data, int64_t dim0);
 struct futhark_i64_1d *futhark_new_raw_i64_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
@@ -59,13 +67,21 @@ int futhark_values_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *ar
 int futhark_index_i64_1d(struct futhark_context *ctx, int64_t *out, struct futhark_i64_1d *arr, int64_t i0);
 CUdeviceptr futhark_values_raw_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
+struct futhark_u8_2d;
+struct futhark_u8_2d *futhark_new_u8_2d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1);
+struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0, int64_t dim1);
+int futhark_free_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
+int futhark_values_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr, uint8_t *data);
+int futhark_index_u8_2d(struct futhark_context *ctx, uint8_t *out, struct futhark_u8_2d *arr, int64_t i0, int64_t i1);
+CUdeviceptr futhark_values_raw_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
+const int64_t *futhark_shape_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
 
 // Opaque values
 
 
 
 // Entry points
-int futhark_entry_main(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int32_t in0);
+int futhark_entry_main(struct futhark_context *ctx, struct futhark_u8_2d **out0, struct futhark_i64_1d **out1, struct futhark_bool_1d **out2, const int32_t in0);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);
