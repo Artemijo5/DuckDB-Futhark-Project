@@ -147,6 +147,30 @@ def radix_sort_multistep [n] 't
     in (offs + zengjia, map2 (+) idxs zuowei)
   let scatter_idxs = ox.1
   in partitioned_scatter block_size (copy xs) scatter_idxs xs
+  -- TODO:
+  --let jianpu = replicate up_to 0
+  --let guanzhong = ( map2 (\r nums -> (copy nums) with [i64.u8 r] = true) rs (replicate n (replicate up_to false)) )
+  --  |> map (map i64.bool)
+  --let zuowei =
+  --  let prefix_sum = 
+  --    let zengjia = reduce (\nums1 nums2 -> map2 (+) nums1 nums2) jianpu guanzhong
+  --    in
+  --      if up_to < 5
+  --      then
+  --        loop p = jianpu
+  --        for off_i in (1..<up_to) do
+  --          p with [off_i] = p[off_i-1] + zengjia[off_i-1]
+  --      else
+  --        exscan (+) 0 zengjia
+  --  let seats = map (\zs -> map2 (\z j -> z + prefix_sum[j] - 1) zs (indices zs)) (scan (map2 (+)) jianpu guanzhong)
+  --  in map2
+  --    (\gs zs -> reduce (+) 0 (map2 (*) gs zs))
+  --    guanzhong
+  --    seats
+  --in partitioned_scatter block_size (copy xs) zuowei xs
+  
+  
+  
 
 
 -- -------------------------------------------------------------------
