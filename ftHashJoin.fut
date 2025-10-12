@@ -18,8 +18,7 @@ type byteSeq [bytes] = [bytes]u8
 
 type~ partitionInfo = {totalBytes: i32, radixSize: i32, maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 
---type radix_hashTable [rb] = {info_idx: [2**rb]idx_t.t, isDeep: [2**rb]bool} -- if idx == -1, partition is not present
-type radix_hashTable [rb] = [2**rb]idx_t.t
+type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**rb]idx_t.t} -- if idx == -1, partition is not present
 
 def byteSeq_getBit [b] (i: i32) (x: byteSeq [b])
 : i32 =
@@ -257,21 +256,26 @@ def create_hash_table_from_partitioned_set [n] [b]
   let scatter_is_withMultiplicity = is_base
     |> map (\i -> get_radix 0 (i32.i64 rs-1) (byteSeq_getBit) pXs[ x_info.bounds[i] ])
     |> map (i64.u8)
-  let is_first =
+  let is_first_last =
     if x_info.maxDepth == 1
-    then replicate m true
+    then replicate m (true, true)
     else is_base
       |> map (\i ->
         let cur_i = scatter_is_withMultiplicity[i]
         let pre_i = if i==0 then -1 else scatter_is_withMultiplicity[i-1]
-        in (cur_i != pre_i)
+        let is_first = (cur_i != pre_i)
+        let pos_i = if i==(m-1) then -1 else scatter_is_withMultiplicity[i+1]
+        let is_last = (cur_i != pos_i)
+        in (is_first, is_last)
       )
-  let scatter_is = map2 (\is_first i -> if is_first then scatter_is_withMultiplicity[i] else -1) is_first is_base
-  let partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is is_base
+  let scatter_is_first = map2 (\(is_first, _) i -> if is_first then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
+  let scatter_is_last = map2 (\(_, is_last) i -> if is_last then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
+  let first_partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is_first is_base
+  let last_partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is_last is_base
   --let isPartitionDeep = (partitioned_scatter scatter_psize (replicate (2**rs) (true, true)) scatter_is is_first_last)
   --  |> map (\(is_first, is_last) -> !(is_first && is_last))
   --in {info_idx = partitionIndices, isDeep = isPartitionDeep}
-  in partitionIndices
+  in {first_info_idx = first_partitionIndices, last_info_idx = last_partitionIndices}
 
 -- ########################################################################################################################
 -- ########################################################################################################################
@@ -307,10 +311,12 @@ def partitionMatchBounds [n] [b] [pR] [pS] 't
   (bounds_S: [pS]idx_t.t)
   (depths_R: [pR]i32)
   (depths_S: [pS]i32)
-  (ht_R : radix_hashTable [i64.i32 radix_size])
-  (ht_S : radix_hashTable [i64.i32 radix_size])
+  (ht_Rs : radix_hashTable [i64.i32 radix_size])
+  (ht_Ss : radix_hashTable [i64.i32 radix_size])
   (extParallelism: idx_t.t)
 : [](idx_t.t, idx_t.t, idx_t.t) =
+  let ht_R = ht_Rs.first_info_idx
+  let ht_S = ht_Ss.first_info_idx
   let pow2 = i64.i32 (2**radix_size)
   in (iota pow2)
     |> map (\(j: i64) ->
@@ -321,28 +327,13 @@ def partitionMatchBounds [n] [b] [pR] [pS] 't
           -- case 1 - partition not present in either of the sets -> no match
           if (rpi == -1 || spi == -1)
           then (-1, -1)
-          -- case 2 - partition present in both sets, not deep in S -> immediate match
+          -- case 2 - partition present in both sets, either of them not deep -> match with first & last match
           else if (depths_S[spi] == 1)
-          then (spi, spi)
-          -- case 3 - partition deep in S, not deep in R -> search for last match
-          else if (depths_R[rpi] == 1)
-          then
-            -- find next present partition in ht_S
-            -- the one before it is the last match
-            let next_j_inS =
-              loop p = j+1
-              while (p<(pow2) && ht_S[p] == -1)
-              do p+1
-            let last_spi = ht_S[next_j_inS] - 1
-            in (spi, last_spi)
-          -- case 4 - partition deep in both R and S -> binary search for first and last match
+          then (spi, ht_Ss.last_info_idx[j])
+          -- case 3 - partition deep in both R and S -> binary search for first and last match
           else
             let cur_R = tR[bounds_R[rpi]]
-            let next_j_inS =
-              loop p = j+1
-              while (p<(pow2) && ht_S[p] == -1)
-              do p+1
-            let last_potential_spi = ht_S[next_j_inS] - 1
+            let last_potential_spi = ht_Ss.last_info_idx[j]
             -- do binary search in range [spi, last_potential_spi]
             let init_step = idx_t.min 1 ((last_potential_spi - spi)/2)
             let bsearch_first =
