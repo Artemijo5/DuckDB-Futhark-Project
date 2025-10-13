@@ -454,12 +454,8 @@ def find_joinTuples [nR] [nS] [b]
   (tS: [nS](byteSeq [b]))
   (scatter_psize: idx_t.t)
 : joinPairs_bsq [b] =
-  let numPairs = tR
-    |> map (\rv -> tS |> countFor (\sv -> rv==sv))
-    |> idx_t.sum
   let matchmaking = loop
-    (dest_vs: [numPairs](byteSeq [b]), dest_ix: [numPairs]idx_t.t, dest_iy: [numPairs]idx_t.t, offs: idx_t.t)
-    = ((replicate numPairs (dummy_byteSeq b)), (replicate numPairs 0), (replicate numPairs 0), 0)
+    (dest_vs: [](byteSeq [b]), dest_ix: []idx_t.t, dest_iy: []idx_t.t) = ([], [], [])
     for j in (iota nS) do
       let sv = tS[j]
       let matchArr = tR |> map (\rv -> rv == sv)
@@ -472,10 +468,9 @@ def find_joinTuples [nR] [nS] [b]
       let newIy = replicate match_count j
       let newIx = partitioned_scatter scatter_psize (replicate match_count 0) scatter_idxs (iota nR)
       in (
-        (copy dest_vs) with [offs:offs+match_count] = newVs,
-        (copy dest_ix) with [offs:offs+match_count] = newIx,
-        (copy dest_iy) with [offs:offs+match_count] = newIy,
-        offs + match_count
+        dest_vs ++ newVs,
+        dest_ix ++ newIx,
+        dest_iy ++ newIy,
       )
   in {vs = matchmaking.0, ix = matchmaking.1, iy = matchmaking.2}
 
