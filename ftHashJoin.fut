@@ -20,6 +20,10 @@ type~ partitionInfo = {totalBytes: i32, radixSize: i32, maxDepth: i32, bounds: [
 
 type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**rb]idx_t.t} -- if idx == -1, partition is not present
 
+def dummy_byteSeq (b: idx_t.t)
+: byteSeq [b] =
+  replicate b 0
+
 def byteSeq_getBit [b] (i: i32) (x: byteSeq [b])
 : i32 =
   let whichByte = (i32.i64 b) - (i/u8.num_bits) - 1
@@ -48,6 +52,12 @@ def radix_eq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
   let r2 = getRadix i j x2
   in all (\(x1, x2) -> x1 == x2) (zip r1 r2)
 
+def radix_neq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
+: bool =
+  let r1 = getRadix i j x1
+  let r2 = getRadix i j x2
+  in any (\(x1, x2) -> x1 != x2) (zip r1 r2)
+
 def radix_leq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
 : bool =
   let r1 = getRadix i j x1
@@ -55,12 +65,64 @@ def radix_leq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
   let loop_over =
     loop p = {def_lt = false, def_gt = false, byte = 0}
     while (!p.def_lt && !p.def_gt && p.byte<b) do
+      let dlt = r1[p.byte] < r2[p.byte]
+      let dgt = r1[p.byte] > r2[p.byte]
+      in
       {
-        def_lt = r1[p.byte] < r2[p.byte],
-        def_gt = r1[p.byte] > r2[p.byte],
-        byte = p.byte+1
+        def_lt = dlt,
+        def_gt = dgt,
+        byte = if !(dlt || dgt) then p.byte+1 else b
       }
   in (loop_over.def_lt || (!loop_over.def_gt))
+
+def radix_lt [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
+: bool =
+  let r1 = getRadix i j x1
+  let r2 = getRadix i j x2
+  let loop_over =
+    loop p = {def_lt = false, byte = 0}
+    while (!p.def_lt && p.byte<b) do
+      let dlt = r1[p.byte] < r2[p.byte]
+      let dgt = r1[p.byte] > r2[p.byte]
+      in
+      {
+        def_lt = dlt,
+        byte = if !(dlt || dgt) then p.byte+1 else b
+      }
+  in loop_over.def_lt
+
+def radix_geq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
+: bool =
+  let r1 = getRadix i j x1
+  let r2 = getRadix i j x2
+  let loop_over =
+    loop p = {def_lt = false, def_gt = false, byte = 0}
+    while (!p.def_lt && !p.def_gt && p.byte<b) do
+      let dlt = r1[p.byte] < r2[p.byte]
+      let dgt = r1[p.byte] > r2[p.byte]
+      in
+      {
+        def_lt = dlt,
+        def_gt = dgt,
+        byte = if !(dlt || dgt) then p.byte+1 else b
+      }
+  in (loop_over.def_gt || (!loop_over.def_lt))
+
+def radix_gt [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
+: bool =
+  let r1 = getRadix i j x1
+  let r2 = getRadix i j x2
+  let loop_over =
+    loop p = {def_gt = false, byte = 0}
+    while (!p.def_gt && p.byte<b) do
+      let dlt = r1[p.byte] < r2[p.byte]
+      let dgt = r1[p.byte] > r2[p.byte]
+      in
+      {
+        def_gt = dgt,
+        byte = if !(dlt || dgt) then p.byte+1 else b
+      }
+  in loop_over.def_gt
 
 def radix_part_step [n][b] 't
   (block_size: idx_t.t)
@@ -289,26 +351,19 @@ def create_hash_table_from_partitioned_set [n] [b]
 -- ########################################################################################################################
 -- ########################################################################################################################
 
-type joinTup [n] 't = {vs: [n]t, ix: [n]idx_t.t, iy: [n]idx_t.t, cm: [n]idx_t.t}
-
-def uncooked_joinTup [nR] 't
-  (tR: [nR]t)
-  (offset_R: idx_t.t)
-: joinTup [nR] t =
-  {
-    vs = copy tR,
-    ix = idx_t.indicesWithIncrement (offset_R) (tR),
-    iy = replicate nR (-1),
-    cm = replicate nR 0
-  }
+-- | The pairs obtained from joining byteseq arrays x&y.
+-- vs : the values of each pair
+-- ix : the respective index in x
+-- iy : the respective index in y
+type~ joinPairs_bsq [b] = {vs: [](byteSeq [b]), ix: []idx_t.t, iy: []idx_t.t}
 
 -- TODO test ...
 def partitionMatchBounds [n] [b] [pR] [pS] 't
   (radix_size: i32)
   (tR : [n](byteSeq [b]))
   (tS : [n](byteSeq [b]))
-  (bounds_R: [pR]idx_t.t)
-  (bounds_S: [pS]idx_t.t)
+  (bounds_R: [pR]idx_t.t) -- without offset
+  (bounds_S: [pS]idx_t.t) -- without offset
   (depths_R: [pR]i32)
   (depths_S: [pS]i32)
   (ht_Rs : radix_hashTable [i64.i32 radix_size])
@@ -327,8 +382,8 @@ def partitionMatchBounds [n] [b] [pR] [pS] 't
           -- case 1 - partition not present in either of the sets -> no match
           if (rpi == -1 || spi == -1)
           then (-1, -1)
-          -- case 2 - partition present in both sets, either of them not deep -> match with first & last match
-          else if (depths_S[spi] == 1)
+          -- case 2 - partition present in both sets, at most one deep -> match with first & last match
+          else if (depths_R[spi] == 1 || depths_S[spi] == 1)
           then (spi, ht_Ss.last_info_idx[j])
           -- case 3 - partition deep in both R and S -> binary search for first and last match
           else
@@ -345,17 +400,22 @@ def partitionMatchBounds [n] [b] [pR] [pS] 't
                 let prev_S = if (first_spi > spi) then tS[bounds_S[first_spi-1]] else cur_S
                 let prev_depth = if (first_spi > spi) then (i32.min depths_R[rpi] depths_S[first_spi-1]) else cur_depth
                 let prev_last_bit = radix_size*prev_depth - 1
+                let next_S = if (first_spi < last_potential_spi) then tS[bounds_S[first_spi+1]] else cur_S
+                let next_depth = if (first_spi < last_potential_spi) then (i32.min depths_R[rpi] depths_S[first_spi+1]) else cur_depth
+                let next_last_bit = radix_size*next_depth - 1
                 in if
-                  (radix_eq 0 last_bit cur_R cur_S) && (first_spi==spi || !(radix_eq 0 prev_last_bit cur_R prev_S))
+                  (radix_eq 0 last_bit cur_R cur_S) && (first_spi==spi || radix_neq 0 prev_last_bit cur_R prev_S)
                 then
                   (first_spi, 0)
                 else if
-                  (radix_leq 0 last_bit cur_R cur_S)
+                  (radix_gt 0 last_bit cur_R cur_S)
                 then
                   if first_spi==last_potential_spi then (-1, 0) else
+                  if (radix_lt 0 next_last_bit cur_R next_S) then (-1, 0) else
                   (first_spi + step, idx_t.min 1 (step/2))
-                else
+                else -- radix_lt 0 cur_bit cur_R cur_S
                   if first_spi==spi then (-1, 0) else
+                  if (radix_gt 0 prev_last_bit cur_R prev_S) then (-1, 0) else
                   (first_spi - step, idx_t.min 1 (step/2))
             let bsearch_last =
               if bsearch_first.0 == -1 then (-1, 0) else
@@ -364,29 +424,64 @@ def partitionMatchBounds [n] [b] [pR] [pS] 't
                 let cur_S = tS[bounds_S[last_spi]]             
                 let cur_depth = i32.min depths_R[rpi] depths_S[last_spi]              
                 let last_bit = radix_size*cur_depth - 1
+                let prev_S = if (last_spi > spi) then tS[bounds_S[last_spi-1]] else cur_S
+                let prev_depth = if (last_spi > spi) then (i32.min depths_R[rpi] depths_S[last_spi-1]) else cur_depth
+                let prev_last_bit = radix_size*prev_depth - 1
                 let next_S = if (last_spi < last_potential_spi) then tS[bounds_S[last_spi+1]] else cur_S
                 let next_depth = if (last_spi < last_potential_spi) then (i32.min depths_R[rpi] depths_S[last_spi+1]) else cur_depth
                 let next_last_bit = radix_size*next_depth - 1
                 in if
-                  (radix_eq 0 last_bit cur_R cur_S) && (last_spi==last_potential_spi || !(radix_eq 0 next_last_bit cur_R next_S))
+                  (radix_eq 0 last_bit cur_R cur_S) && (last_spi==last_potential_spi || radix_neq 0 next_last_bit cur_R next_S)
                 then
                   (last_spi, 0)
                 else if
-                  (radix_leq 0 last_bit cur_R cur_S)
+                  (radix_gt 0 last_bit cur_R cur_S)
                 then
                   if last_spi==last_potential_spi then (-1, 0) else
+                  if (radix_lt 0 next_last_bit cur_R next_S) then (-1, 0) else
                   (last_spi + step, idx_t.min 1 (step/2))
-                else
+                else -- radix_lt 0 cur_bit cur_R cur_S
                   if last_spi==spi then (-1, 0) else
+                  if (radix_gt 0 prev_last_bit cur_R prev_S) then (-1, 0) else
                   (last_spi - step, idx_t.min 1 (step/2))
             in (bsearch_first.0, bsearch_last.0)
           in (rpi, matches.0, matches.1)
     )
     |> filter (\(_, f, l) -> (f != -1) && (l != -1))
 
+def find_joinTuples [nR] [nS] [b]
+  (tR: [nR](byteSeq [b]))
+  (tS: [nS](byteSeq [b]))
+  (scatter_psize: idx_t.t)
+: joinPairs_bsq [b] =
+  let numPairs = tR
+    |> map (\rv -> tS |> countFor (\sv -> rv==sv))
+    |> idx_t.sum
+  let matchmaking = loop
+    (dest_vs: [numPairs](byteSeq [b]), dest_ix: [numPairs]idx_t.t, dest_iy: [numPairs]idx_t.t, offs: idx_t.t)
+    = ((replicate numPairs (dummy_byteSeq b)), (replicate numPairs 0), (replicate numPairs 0), 0)
+    for j in (iota nS) do
+      let sv = tS[j]
+      let matchArr = tR |> map (\rv -> rv == sv)
+      let match_count = matchArr |> countFor (id)
+      let scatter_idxs = map2
+        (\og offs -> if og then offs else -1)
+        matchArr
+        (exscan (+) 0 (matchArr |> map (idx_t.bool)))
+      let newVs = replicate match_count sv
+      let newIy = replicate match_count j
+      let newIx = partitioned_scatter scatter_psize (replicate match_count 0) scatter_idxs (iota nR)
+      in (
+        (copy dest_vs) with [offs:offs+match_count] = newVs,
+        (copy dest_ix) with [offs:offs+match_count] = newIx,
+        (copy dest_iy) with [offs:offs+match_count] = newIy,
+        offs + match_count
+      )
+  in {vs = matchmaking.0, ix = matchmaking.1, iy = matchmaking.2}
+
 -- TODO
--- function that matches tuples
 -- function that does the join start-to-finish (...)
+-- entry points (...)
   
 
 def main (max_depth : i32) =
