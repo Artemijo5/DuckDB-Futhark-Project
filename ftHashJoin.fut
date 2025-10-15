@@ -426,12 +426,9 @@ def partitionMatchBounds [nR] [nS] [b] [pR] [pS] 't
   (bounds_S: [pS]idx_t.t) -- without offset
   (depths_R: [pR]i32)
   (depths_S: [pS]i32)
-  (ht_Rs : radix_hashTable [i64.i32 radix_size])
   (ht_Ss : radix_hashTable [i64.i32 radix_size])
 : [](idx_t.t, idx_t.t, idx_t.t) = -- returns: r partition, first s match, last s match
-  let ht_R = ht_Rs.first_info_idx
   let ht_S = ht_Ss.first_info_idx
-  let pow2 = i64.i32 (2**radix_size)
   in (indices bounds_R)
     |> map (\(rpi: i64) ->
       let j = radix_to_idx radix_size tR[bounds_R[rpi]]
@@ -592,7 +589,6 @@ entry Inner_Radix_Hash_Join [nR] [nS] [b]
   (pS : [nS](byteSeq [b]))
   (r_info : partitionInfo)
   (s_info : partitionInfo)
-  (r_hashTable : radix_hashTable [i64.i32 radix_size])
   (s_hashTable : radix_hashTable [i64.i32 radix_size])
   (scatter_psize: idx_t.t)
 : joinPairs_bsq [b] =
@@ -604,21 +600,12 @@ entry Inner_Radix_Hash_Join [nR] [nS] [b]
     s_info.bounds
     r_info.depths
     s_info.depths
-    r_hashTable
     s_hashTable
   in join_hashPartitions pR pS r_info s_info rp_matches scatter_psize
 
 -- TODO gather entry points
 -- TODO merge these with the ftSMJ ones (and all entry points actually)...
 
---def main (max_depth : i32) =
---  let size_thresh = 2
---  let xs : [](byteSeq [2]) = [[4,2],[6,12],[6,11],[2,1],[2,2],[3,16+12],[6,7],[5,12],[3,5],[2,5],[4,12],[3,1],[4,5],[4,1],[3,7]]
---  let res = partition_and_deepen_GFUR 256 256 4 xs 0 2 max_depth
---  --in res.2.bounds
---  let res_info = calc_partitions_from_partitioned_set 4 (res.ks) 0 2 max_depth
---  let hashTbl = create_hash_table_from_partitioned_set (res.ks) res_info 256
---  in (res.ks, res_info.bounds, hashTbl)
 def test (rsize : i32) (max_depth : i32) =
   let xs : [](byteSeq [2]) = [[4,2],[6,12],[6,11],[2,1],[2,2],[3,16+12],[6,7],[5,12],[3,5],[2,5],[4,12],[3,1],[4,5],[4,1],[3,7]]
   let x_res = partition_and_deepen_GFUR 256 256 rsize xs 0 2 max_depth
@@ -629,7 +616,7 @@ def test (rsize : i32) (max_depth : i32) =
   let y_res_info = calc_partitions_from_partitioned_set rsize (y_res.ks) 0 2 max_depth
   let y_hashTbl = create_hash_table_from_partitioned_set rsize (y_res.ks) y_res_info 256
   let matches = partitionMatchBounds
-    rsize x_res.ks y_res.ks x_res_info.bounds y_res_info.bounds x_res_info.depths y_res_info.depths x_hashTbl y_hashTbl
+    rsize x_res.ks y_res.ks x_res_info.bounds y_res_info.bounds x_res_info.depths y_res_info.depths y_hashTbl
   --let refined_x_hashTbl = (iota (i64.i32 (2**rsize)))
   --  |> filter (\i -> x_hashTbl.first_info_idx[i] >= 0)
   --  |> map (\i -> (i, x_hashTbl.first_info_idx[i], x_hashTbl.last_info_idx[i]) )
@@ -637,4 +624,4 @@ def test (rsize : i32) (max_depth : i32) =
   --  |> filter (\i -> y_hashTbl.first_info_idx[i] >= 0)
   --  |> map (\i -> (i, y_hashTbl.first_info_idx[i], y_hashTbl.last_info_idx[i]) )
   --in (x_res, x_res_info, y_res, y_res_info, matches)
-  in Inner_Radix_Hash_Join rsize x_res.ks y_res.ks x_res_info y_res_info x_hashTbl y_hashTbl 256
+  in Inner_Radix_Hash_Join rsize x_res.ks y_res.ks x_res_info y_res_info y_hashTbl 256

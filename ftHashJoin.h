@@ -75,9 +75,7 @@ struct futhark_opaque_partitionInfo *futhark_restore_opaque_partitionInfo(struct
 int futhark_project_opaque_partitionInfo_bounds(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_partitionInfo *obj);
 int futhark_project_opaque_partitionInfo_depths(struct futhark_context *ctx, struct futhark_i32_1d **out, const struct futhark_opaque_partitionInfo *obj);
 int futhark_project_opaque_partitionInfo_maxDepth(struct futhark_context *ctx, int32_t *out, const struct futhark_opaque_partitionInfo *obj);
-int futhark_project_opaque_partitionInfo_radixSize(struct futhark_context *ctx, int32_t *out, const struct futhark_opaque_partitionInfo *obj);
-int futhark_project_opaque_partitionInfo_totalBytes(struct futhark_context *ctx, int32_t *out, const struct futhark_opaque_partitionInfo *obj);
-int futhark_new_opaque_partitionInfo(struct futhark_context *ctx, struct futhark_opaque_partitionInfo **out, const struct futhark_i64_1d *f_bounds, const struct futhark_i32_1d *f_depths, const int32_t f_maxDepth, const int32_t f_radixSizze, const int32_t f_totalBytes);
+int futhark_new_opaque_partitionInfo(struct futhark_context *ctx, struct futhark_opaque_partitionInfo **out, const struct futhark_i64_1d *f_bounds, const struct futhark_i32_1d *f_depths, const int32_t f_maxDepth);
 int futhark_free_opaque_partitionedSet_GFTR(struct futhark_context *ctx, struct futhark_opaque_partitionedSet_GFTR *obj);
 int futhark_store_opaque_partitionedSet_GFTR(struct futhark_context *ctx, const struct futhark_opaque_partitionedSet_GFTR *obj, void **p, size_t *n);
 struct futhark_opaque_partitionedSet_GFTR *futhark_restore_opaque_partitionedSet_GFTR(struct futhark_context *ctx, const void *p);
@@ -98,9 +96,9 @@ int futhark_project_opaque_radix_hashTable_last_info_idx(struct futhark_context 
 int futhark_new_opaque_radix_hashTable(struct futhark_context *ctx, struct futhark_opaque_radix_hashTable **out, const struct futhark_i64_1d *f_first_info_idx, const struct futhark_i64_1d *f_last_info_idx);
 
 // Entry points
-int futhark_entry_Inner_Radix_Hash_Join(struct futhark_context *ctx, struct futhark_opaque_joinPairs_bsq **out0, const int32_t in0, const struct futhark_u8_2d *in1, const struct futhark_u8_2d *in2, const struct futhark_opaque_partitionInfo *in3, const struct futhark_opaque_partitionInfo *in4, const struct futhark_opaque_radix_hashTable *in5, const struct futhark_opaque_radix_hashTable *in6, const int64_t in7);
+int futhark_entry_Inner_Radix_Hash_Join(struct futhark_context *ctx, struct futhark_opaque_joinPairs_bsq **out0, const int32_t in0, const struct futhark_u8_2d *in1, const struct futhark_u8_2d *in2, const struct futhark_opaque_partitionInfo *in3, const struct futhark_opaque_partitionInfo *in4, const struct futhark_opaque_radix_hashTable *in5, const int64_t in6);
 int futhark_entry_calc_partitions_from_partitioned_set(struct futhark_context *ctx, struct futhark_opaque_partitionInfo **out0, const int32_t in0, const struct futhark_u8_2d *in1, const int64_t in2, const int64_t in3, const int32_t in4);
-int futhark_entry_create_hash_table_from_partitioned_set(struct futhark_context *ctx, struct futhark_opaque_radix_hashTable **out0, const struct futhark_u8_2d *in0, const struct futhark_opaque_partitionInfo *in1, const int64_t in2);
+int futhark_entry_create_hash_table_from_partitioned_set(struct futhark_context *ctx, struct futhark_opaque_radix_hashTable **out0, const int32_t in0, const struct futhark_u8_2d *in1, const struct futhark_opaque_partitionInfo *in2, const int64_t in3);
 int futhark_entry_partition_and_deepen_GFTR(struct futhark_context *ctx, struct futhark_opaque_partitionedSet_GFTR **out0, const int16_t in0, const int64_t in1, const int32_t in2, const struct futhark_u8_2d *in3, const struct futhark_u8_2d *in4, const int64_t in5, const int32_t in6);
 int futhark_entry_partition_and_deepen_GFUR(struct futhark_context *ctx, struct futhark_opaque_partitionedSet_GFUR **out0, const int16_t in0, const int64_t in1, const int32_t in2, const struct futhark_u8_2d *in3, const int64_t in4, const int64_t in5, const int32_t in6);
 
