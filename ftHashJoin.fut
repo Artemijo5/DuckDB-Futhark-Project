@@ -144,7 +144,7 @@ def getPartitionBounds [n] [b]
     |> map (\(x1, x2) -> (getRadix i j x1, getRadix i j x2))
     |> map (\(x1, x2) -> zip x1 x2)
     |> zip (1..<n)
-    |> filter (\(ind, rs) -> any (\(r1, r2) -> r1 != r2) rs)
+    |> filter (\(_, rs) -> any (\(r1, r2) -> r1 != r2) rs)
     |> map (.0)
   in {
     totalBytes = i32.i64 b,
@@ -269,12 +269,11 @@ entry calc_partitions_from_partitioned_set [n] [b]
   let recursive_info : (partitionInfo, bool)
   = loop p = (getPartitionBounds 1 pXs 0 (radix_size-1), true)
   while (p.0.maxDepth < max_depth && p.1) do
-    let depths = p.0.depths
     let bs = p.0.bounds
     let taidade = indices bs
       |> map (\i -> (bs[i], if (i<(length bs)-1) then bs[i+1] else (n), i))
-      |> filter (\(lb, ub, i) -> ub-lb > size_thresh)
-    let (inner_info : partitionInfo, added: idx_t.t, offs: idx_t.t)
+      |> filter (\(lb, ub, _) -> ub-lb > size_thresh)
+    let (inner_info : partitionInfo, _: idx_t.t, _: idx_t.t)
     = loop (q, ad, ox) = (p.0, 0, 0)
     for bounds in taidade do
       let m = bounds.1-bounds.0
@@ -350,10 +349,10 @@ entry create_hash_table_from_partitioned_set [n] [b]
 type~ joinPairs_bsq [b] = {vs: [](byteSeq [b]), ix: []idx_t.t, iy: []idx_t.t}
 
 -- TODO test ...
-def partitionMatchBounds [n] [b] [pR] [pS] 't
+def partitionMatchBounds [nR] [nS] [b] [pR] [pS] 't
   (radix_size: i32)
-  (tR : [n](byteSeq [b]))
-  (tS : [n](byteSeq [b]))
+  (tR : [nR](byteSeq [b]))
+  (tS : [nS](byteSeq [b]))
   (bounds_R: [pR]idx_t.t) -- without offset
   (bounds_S: [pS]idx_t.t) -- without offset
   (depths_R: [pR]i32)
@@ -520,18 +519,33 @@ def join_hashPartitions [nR] [nS] [b]
           in {vs = q.vs ++ new_q.vs, ix = q.ix ++ new_q.ix, iy = q.iy ++ new_q.iy}
       in {vs = p.vs ++ tR_matches.vs, ix = p.ix ++ tR_matches.ix, iy = p.iy ++ tR_matches.iy}
 
-    
--- TODO
--- function that does the join start-to-finish (...)
--- entry points (...)
-  
+entry Inner_Radix_Hash_Join [nR] [nS] [b]
+  (radix_size : i32)
+  (pR : [nR](byteSeq [b]))
+  (pS : [nS](byteSeq [b]))
+  (r_info : partitionInfo)
+  (s_info : partitionInfo)
+  (r_hashTable : radix_hashTable [i64.i32 radix_size])
+  (s_hashTable : radix_hashTable [i64.i32 radix_size])
+  (scatter_psize: idx_t.t)
+: joinPairs_bsq [b] =
+  let rp_matches = partitionMatchBounds
+    radix_size
+    pR
+    pS
+    r_info.bounds
+    s_info.bounds
+    r_info.depths
+    s_info.depths
+    r_hashTable
+    s_hashTable
+  in join_hashPartitions pR pS r_info s_info rp_matches scatter_psize  
 
-def main (max_depth : i32) =
-  let size_thresh = 2
-  let xs : [](byteSeq [2]) = [[4,2],[6,12],[6,11],[2,1],[2,2],[3,12],[6,7],[5,12],[3,5],[2,5],[4,12],[3,1],[4,5],[4,1],[3,7]]
-  let res = partition_and_deepen_GFUR 256 256 4 xs 0 2 max_depth
-  --in res.2.bounds
-  let res_info = calc_partitions_from_partitioned_set 4 (res.ks) 0 2 max_depth
-  let hashTbl = create_hash_table_from_partitioned_set (res.ks) res_info 256
-  in (res.ks, res_info.bounds, hashTbl)
-  --in hashTbl.isDeep
+--def main (max_depth : i32) =
+--  let size_thresh = 2
+--  let xs : [](byteSeq [2]) = [[4,2],[6,12],[6,11],[2,1],[2,2],[3,16+12],[6,7],[5,12],[3,5],[2,5],[4,12],[3,1],[4,5],[4,1],[3,7]]
+--  let res = partition_and_deepen_GFUR 256 256 4 xs 0 2 max_depth
+--  --in res.2.bounds
+--  let res_info = calc_partitions_from_partitioned_set 4 (res.ks) 0 2 max_depth
+--  let hashTbl = create_hash_table_from_partitioned_set (res.ks) res_info 256
+--  in (res.ks, res_info.bounds, hashTbl)
