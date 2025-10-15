@@ -1,18 +1,4 @@
-import "lib/github.com/diku-dk/sorts/radix_sort"
 import "ftbasics"
-
--- LOGIC
--- keys are passed from C in the form of byte arrays (arrays of u8)
--- partitioning parameters:
--- 1. total number of bits
--- 2. number of bits per partition
--- 3. maximum desired depth <= ceil(total bits / partition bits)
--- Partition data
--- 1. starting index
--- 2. partition depth
--- 3. ig total bits & bits per partition as well
--- TODO
--- consider how are relations partitioned (both entirely or one entirely and the other concurrently with the join? prob the former)
 
 type byteSeq [bytes] = [bytes]u8
 
@@ -50,13 +36,13 @@ def radix_eq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
 : bool =
   let r1 = getRadix i j x1
   let r2 = getRadix i j x2
-  in all (\(x1, x2) -> x1 == x2) (zip r1 r2)
+  in all (id) (map2 (==) r1 r2)
 
 def radix_neq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
 : bool =
   let r1 = getRadix i j x1
   let r2 = getRadix i j x2
-  in any (\(x1, x2) -> x1 != x2) (zip r1 r2)
+  in any (id) (map2 (!=) r1 r2)
 
 def radix_leq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
 : bool =
@@ -243,7 +229,10 @@ def partition_and_deepen 't [n] [b]
     loop_over.pPs
   )
 
-def partition_and_deepen_GFTR [n] [b] [pL_b]
+type partitionedSet_GFTR [n] [b] [pL_b] = {ks: [n](byteSeq [b]), pL: [n](byteSeq [pL_b])}
+type partitionedSet_GFUR [n] [b] = {ks: [n](byteSeq [b]), idx: [n]idx_t.t}
+
+entry partition_and_deepen_GFTR [n] [b] [pL_b]
   (block_size: i16)
   (gather_psize: idx_t.t)
   (radix_size: i32)
@@ -251,10 +240,12 @@ def partition_and_deepen_GFTR [n] [b] [pL_b]
   (pL: [n](byteSeq [pL_b]))
   (size_thresh: idx_t.t)
   (max_depth: i32)
-: ([n](byteSeq [b]), [n](byteSeq [pL_b])) =
-  partition_and_deepen block_size gather_psize radix_size xs pL size_thresh max_depth
+: partitionedSet_GFTR [n] [b] [pL_b] =
+  let kps =
+    partition_and_deepen block_size gather_psize radix_size xs pL size_thresh max_depth
+  in {ks = kps.0, pL = kps.1}
 
-def partition_and_deepen_GFUR [n] [b]
+entry partition_and_deepen_GFUR [n] [b]
   (block_size: i16)
   (gather_psize: idx_t.t)
   (radix_size: i32)
@@ -262,11 +253,13 @@ def partition_and_deepen_GFUR [n] [b]
   (offset: idx_t.t)
   (size_thresh: idx_t.t)
   (max_depth: i32)
-: ([n](byteSeq [b]), [n]idx_t.t) =
+: partitionedSet_GFUR [n] [b] =
   let is = (offset..<(offset+n)) :> [n]idx_t.t
-  in partition_and_deepen block_size gather_psize radix_size xs is size_thresh max_depth
+  let kis =
+    partition_and_deepen block_size gather_psize radix_size xs is size_thresh max_depth
+  in {ks = kis.0, idx = kis.1}
 
-def calc_partitions_from_partitioned_set 't [n] [b]
+entry calc_partitions_from_partitioned_set [n] [b]
   (radix_size: i32)
   (pXs: [n](byteSeq [b]))
   (offset: idx_t.t)
@@ -281,22 +274,24 @@ def calc_partitions_from_partitioned_set 't [n] [b]
     let taidade = indices bs
       |> map (\i -> (bs[i], if (i<(length bs)-1) then bs[i+1] else (n), i))
       |> filter (\(lb, ub, i) -> ub-lb > size_thresh)
-    let inner_info : partitionInfo
-    = loop q = p.0
+    let (inner_info : partitionInfo, added: idx_t.t, offs: idx_t.t)
+    = loop (q, ad, ox) = (p.0, 0, 0)
     for bounds in taidade do
       let m = bounds.1-bounds.0
       let x_bufen = pXs[bounds.0:bounds.1] :> [m](byteSeq [b])
       let new_i = radix_size*(p.0.maxDepth)
       let new_j = radix_size*(p.0.maxDepth+1) - 1
       let deeper_info = getPartitionBounds (p.0.maxDepth+1) x_bufen new_i new_j
-      let stitch = bounds.2
-      in {
+      let insert_len = length deeper_info.bounds
+      let stitch = bounds.2 + ox - ad
+      let new_q = {
         totalBytes = i32.i64 b,
         radixSize = radix_size,
         maxDepth = p.0.maxDepth + 1,
         bounds = q.bounds[0:stitch] ++ (deeper_info.bounds |> map (\b -> b+bounds.0)) ++ q.bounds[stitch+1:(length q.bounds)],
         depths = q.depths[0:stitch] ++ deeper_info.depths ++ q.depths[stitch+1:(length q.depths)]
       }
+      in (new_q, ad+1, ox + insert_len)
     in (inner_info, (length taidade) > 0)
   let recursive_info_with_offset = {
     totalBytes = recursive_info.0.totalBytes,
@@ -307,7 +302,7 @@ def calc_partitions_from_partitioned_set 't [n] [b]
   }
   in recursive_info_with_offset
 
-def create_hash_table_from_partitioned_set [n] [b]
+entry create_hash_table_from_partitioned_set [n] [b]
   (pXs : [n](byteSeq [b]))
   (x_info : partitionInfo)
   (scatter_psize : idx_t.t)
@@ -334,9 +329,6 @@ def create_hash_table_from_partitioned_set [n] [b]
   let scatter_is_last = map2 (\(_, is_last) i -> if is_last then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
   let first_partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is_first is_base
   let last_partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is_last is_base
-  --let isPartitionDeep = (partitioned_scatter scatter_psize (replicate (2**rs) (true, true)) scatter_is is_first_last)
-  --  |> map (\(is_first, is_last) -> !(is_first && is_last))
-  --in {info_idx = partitionIndices, isDeep = isPartitionDeep}
   in {first_info_idx = first_partitionIndices, last_info_idx = last_partitionIndices}
 
 -- ########################################################################################################################
@@ -368,8 +360,7 @@ def partitionMatchBounds [n] [b] [pR] [pS] 't
   (depths_S: [pS]i32)
   (ht_Rs : radix_hashTable [i64.i32 radix_size])
   (ht_Ss : radix_hashTable [i64.i32 radix_size])
-  (extParallelism: idx_t.t)
-: [](idx_t.t, idx_t.t, idx_t.t) =
+: [](idx_t.t, idx_t.t, idx_t.t) = -- returns: r partition, first s match, last s match
   let ht_R = ht_Rs.first_info_idx
   let ht_S = ht_Ss.first_info_idx
   let pow2 = i64.i32 (2**radix_size)
@@ -449,31 +440,87 @@ def partitionMatchBounds [n] [b] [pR] [pS] 't
     )
     |> filter (\(_, f, l) -> (f != -1) && (l != -1))
 
-def find_joinTuples [nR] [nS] [b]
+def do_find_joinPairs [nR] [nS] [b]
   (tR: [nR](byteSeq [b]))
   (tS: [nS](byteSeq [b]))
   (scatter_psize: idx_t.t)
 : joinPairs_bsq [b] =
-  let matchmaking = loop
+  if nR > 6 then
+    let matchmaking = loop
+      (dest_vs: [](byteSeq [b]), dest_ix: []idx_t.t, dest_iy: []idx_t.t) = ([], [], [])
+      for j in (iota nS) do
+        let sv = tS[j]
+        let matchArr = tR |> map (\rv -> all (id) (map2 (==) rv sv))
+        let match_count = matchArr |> countFor (id)
+        let scatter_idxs = map2
+          (\og offs -> if og then offs else -1)
+          matchArr
+          (exscan (+) 0 (matchArr |> map (idx_t.bool)))
+        let newVs = replicate match_count sv
+        let newIy = replicate match_count j
+        let newIx = partitioned_scatter scatter_psize (replicate match_count 0) scatter_idxs (iota nR)
+        in (
+          dest_vs ++ newVs,
+          dest_ix ++ newIx,
+          dest_iy ++ newIy,
+        )
+    in {vs = matchmaking.0, ix = matchmaking.1, iy = matchmaking.2}
+  else
+    let seq_matches = loop
     (dest_vs: [](byteSeq [b]), dest_ix: []idx_t.t, dest_iy: []idx_t.t) = ([], [], [])
-    for j in (iota nS) do
-      let sv = tS[j]
-      let matchArr = tR |> map (\rv -> rv == sv)
-      let match_count = matchArr |> countFor (id)
-      let scatter_idxs = map2
-        (\og offs -> if og then offs else -1)
-        matchArr
-        (exscan (+) 0 (matchArr |> map (idx_t.bool)))
-      let newVs = replicate match_count sv
-      let newIy = replicate match_count j
-      let newIx = partitioned_scatter scatter_psize (replicate match_count 0) scatter_idxs (iota nR)
-      in (
-        dest_vs ++ newVs,
-        dest_ix ++ newIx,
-        dest_iy ++ newIy,
-      )
-  in {vs = matchmaking.0, ix = matchmaking.1, iy = matchmaking.2}
+    for i in (iota nR) do
+      let rv = tR[i]
+      let matches =
+        loop (this_iy: []idx_t.t) = [] for j in (iota nS) do
+        let sv = tS[j]
+        in
+          if (all (id) (map2 (==) rv sv))
+          then this_iy ++ [j]
+          else this_iy
+      let match_count = length matches
+      let new_vs = replicate match_count rv
+      let new_ix = replicate match_count i
+      in (dest_vs ++ new_vs, dest_ix ++ new_ix, dest_iy ++ matches)
+    in {vs = seq_matches.0, ix = seq_matches.1, iy = seq_matches.2}
 
+def find_joinPairs [nR] [nS] [b]
+  (tR: [nR](byteSeq [b]))
+  (tS: [nS](byteSeq [b]))
+  (scatter_psize: idx_t.t)
+: joinPairs_bsq [b] =
+  if nS <= nR
+  then do_find_joinPairs tR tS scatter_psize
+  else
+    let switched = do_find_joinPairs tS tR scatter_psize
+    in {vs = switched.vs, ix = switched.iy, iy = switched.ix}
+
+def join_hashPartitions [nR] [nS] [b]
+  (pR : [nR](byteSeq [b]))
+  (pS : [nS](byteSeq [b]))
+  (r_info : partitionInfo)
+  (s_info : partitionInfo)
+  (r_partition_matches : [](idx_t.t, idx_t.t, idx_t.t))
+  (scatter_psize: idx_t.t)
+: joinPairs_bsq [b] =
+  let ir_len = length r_info.bounds
+  let is_len = length s_info.bounds
+  in
+    loop p = {vs = [], ix = [], iy = []}
+    for p_match in r_partition_matches do
+      let r_lb = r_info.bounds[p_match.0]
+      let r_ub = if (p_match.0 < ir_len-1) then r_info.bounds[p_match.0 + 1] else nR
+      let r_part = pR[r_lb:r_ub]
+      let tR_matches : joinPairs_bsq [b] =
+        loop q = {vs = [], ix = [], iy = []}
+        for s_part_ii in ((p_match.1)...(p_match.2)) do
+          let s_lb = s_info.bounds[s_part_ii]
+          let s_ub = if (s_part_ii < is_len-1) then s_info.bounds[s_part_ii+1] else nS
+          let s_part = pS[s_lb:s_ub]
+          let new_q = find_joinPairs r_part s_part scatter_psize
+          in {vs = q.vs ++ new_q.vs, ix = q.ix ++ new_q.ix, iy = q.iy ++ new_q.iy}
+      in {vs = p.vs ++ tR_matches.vs, ix = p.ix ++ tR_matches.ix, iy = p.iy ++ tR_matches.iy}
+
+    
 -- TODO
 -- function that does the join start-to-finish (...)
 -- entry points (...)
@@ -481,10 +528,10 @@ def find_joinTuples [nR] [nS] [b]
 
 def main (max_depth : i32) =
   let size_thresh = 2
-  let xs : [8](byteSeq [2]) = [[4,2],[2,1],[2,2],[3,5],[2,5],[3,1],[4,5],[3,7]]
+  let xs : [](byteSeq [2]) = [[4,2],[6,12],[6,11],[2,1],[2,2],[3,12],[6,7],[5,12],[3,5],[2,5],[4,12],[3,1],[4,5],[4,1],[3,7]]
   let res = partition_and_deepen_GFUR 256 256 4 xs 0 2 max_depth
   --in res.2.bounds
-  let res_info = calc_partitions_from_partitioned_set 4 (res.0) 0 2 max_depth
-  let hashTbl = create_hash_table_from_partitioned_set (res.0) res_info 256
-  in (res.0, res_info.bounds, hashTbl)
+  let res_info = calc_partitions_from_partitioned_set 4 (res.ks) 0 2 max_depth
+  let hashTbl = create_hash_table_from_partitioned_set (res.ks) res_info 256
+  in (res.ks, res_info.bounds, hashTbl)
   --in hashTbl.isDeep
