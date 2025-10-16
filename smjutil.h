@@ -7,26 +7,6 @@
 #define SMJUTIL_H
 
 /**
- * A function to compare the maximum element of arr1 to the minimum of arr2.
- * Both arr1 and arr2 must be sorted in increasing order!
- * Returns:
- * - if arr1.max < arr2.min, -1
- * - if arr1.max == arr2.min, 0
- * - if arr1.max > arr2.min, +1
- */
-int compare_max_to_min(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t card2);
-
-/**
- * A function to compare the maximum elements of arr1 and arr2.
- * Both arr1 and arr2 must be sorted in increasing order!
- * Returns:
- * - if arr1.max < arr2.max, -1
- * - if arr1.max == arr2.max, 0
- * - if arr1.max > arr2.max, +1
- */
-int compare_maxima(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t card2);
-
-/**
  * A function to read a table with a value constraint.
  * According to duckdb's documentation, the WHERE clause guarantees order preservation.
  * Efficiency is guaranteed by the MIN-MAX index.

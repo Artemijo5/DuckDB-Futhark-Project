@@ -9,66 +9,6 @@
 
 #include "ftRelational.h"
 
-int compare_max_to_min(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t card2) {
-	int ret = 0;
-	switch(type) {
-		case DUCKDB_TYPE_SMALLINT:
-			if (((short*)arr1)[card1-1] < ((short*)arr2)[0]) ret = -1;
-			else if (((short*)arr1)[card1-1] > ((short*)arr2)[0]) ret = +1;
-			break;
-		case DUCKDB_TYPE_INTEGER:
-			if (((int*)arr1)[card1-1] < ((int*)arr2)[0]) ret = -1;
-			else if (((int*)arr1)[card1-1] > ((int*)arr2)[0]) ret = +1;
-			break;
-		case DUCKDB_TYPE_BIGINT:
-			if (((long*)arr1)[card1-1] < ((long*)arr2)[0]) ret = -1;
-			else if (((long*)arr1)[card1-1] > ((long*)arr2)[0]) ret = +1;
-			break;
-		case DUCKDB_TYPE_FLOAT:
-			if (((float*)arr1)[card1-1] < ((float*)arr2)[0]) ret = -1;
-			else if (((float*)arr1)[card1-1] > ((float*)arr2)[0]) ret = +1;
-			break;
-		case DUCKDB_TYPE_DOUBLE:
-			if (((double*)arr1)[card1-1] < ((double*)arr2)[0]) ret = -1;
-			else if (((double*)arr1)[card1-1] > ((double*)arr2)[0]) ret = +1;
-			break;
-		default:
-			perror("compare_max_to_min: Invalid duckdb type.");
-			return 0;
-	}
-	return ret;
-}
-
-int compare_maxima(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t card2) {
-	int ret = 0;
-	switch(type) {
-		case DUCKDB_TYPE_SMALLINT:
-			if (((short*)arr1)[card1-1] < ((short*)arr2)[card2-1]) ret = -1;
-			else if (((short*)arr1)[card1-1] > ((short*)arr2)[card2-1]) ret = +1;
-			break;
-		case DUCKDB_TYPE_INTEGER:
-			if (((int*)arr1)[card1-1] < ((int*)arr2)[card2-1]) ret = -1;
-			else if (((int*)arr1)[card1-1] > ((int*)arr2)[card2-1]) ret = +1;
-			break;
-		case DUCKDB_TYPE_BIGINT:
-			if (((long*)arr1)[card1-1] < ((long*)arr2)[card2-1]) ret = -1;
-			else if (((long*)arr1)[card1-1] > ((long*)arr2)[card2-1]) ret = +1;
-			break;
-		case DUCKDB_TYPE_FLOAT:
-			if (((float*)arr1)[card1-1] < ((float*)arr2)[card2-1]) ret = -1;
-			else if (((float*)arr1)[card1-1] > ((float*)arr2)[card2-1]) ret = +1;
-			break;
-		case DUCKDB_TYPE_DOUBLE:
-			if (((double*)arr1)[card1-1] < ((double*)arr2)[card2-1]) ret = -1;
-			else if (((double*)arr1)[card1-1] > ((double*)arr2)[card2-1]) ret = +1;
-			break;
-		default:
-			perror("compare_maxima: Invalid duckdb type.");
-			return 0;
-	}
-	return ret;
-}
-
 duckdb_state selective_query(
 	duckdb_type keyType,
 	duckdb_connection con,
@@ -141,13 +81,13 @@ void InnerJoin_joinKeyColumns_short(
 	futhark_entry_inner_SMJ_short(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_i16_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_short_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_short_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_short_iy(ctx, outIdx2, joinPairs);
-	struct futhark_i16_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_short_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i16_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -188,13 +128,13 @@ void InnerJoin_joinKeyColumns_int(
 	futhark_entry_inner_SMJ_int(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_i32_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_int_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_int_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_int_iy(ctx, outIdx2, joinPairs);
-	struct futhark_i32_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_int_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i32_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -235,13 +175,13 @@ void InnerJoin_joinKeyColumns_long(
 	futhark_entry_inner_SMJ_long(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_i64_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_long_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_long_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_long_iy(ctx, outIdx2, joinPairs);
-	struct futhark_i64_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_long_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i64_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -282,13 +222,13 @@ void InnerJoin_joinKeyColumns_float(
 	futhark_entry_inner_SMJ_float(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_f32_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_float_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_float_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_float_iy(ctx, outIdx2, joinPairs);
-	struct futhark_f32_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_float_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_f32_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -329,13 +269,13 @@ void InnerJoin_joinKeyColumns_double(
 	futhark_entry_inner_SMJ_double(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_f64_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_double_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_double_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_double_iy(ctx, outIdx2, joinPairs);
-	struct futhark_f64_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_double_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_f64_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -684,7 +624,7 @@ void sortRelationByKey_inFuthark_short(
   if(blocked) futhark_entry_radixSortRelation_short(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_short(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_i16_1d(ctx, inKeys_ft);
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_short(ctx, sortStruct_in);
@@ -692,7 +632,7 @@ void sortRelationByKey_inFuthark_short(
   futhark_project_opaque_sortStruct_short_k(ctx, outKeys, sortStruct_out);
   futhark_project_opaque_sortStruct_short_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_opaque_sortStruct_short(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark_int(
@@ -716,7 +656,7 @@ void sortRelationByKey_inFuthark_int(
   if(blocked) futhark_entry_radixSortRelation_int(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_int(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_i32_1d(ctx, inKeys_ft);
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_int(ctx, sortStruct_in);
@@ -724,7 +664,7 @@ void sortRelationByKey_inFuthark_int(
   futhark_project_opaque_sortStruct_int_k(ctx, outKeys, sortStruct_out);
   futhark_project_opaque_sortStruct_int_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_opaque_sortStruct_int(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark_long(
@@ -748,7 +688,7 @@ void sortRelationByKey_inFuthark_long(
   if(blocked) futhark_entry_radixSortRelation_long(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_long(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_i64_1d(ctx, inKeys_ft);
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_long(ctx, sortStruct_in);
@@ -756,7 +696,7 @@ void sortRelationByKey_inFuthark_long(
   futhark_project_opaque_sortStruct_long_k(ctx, outKeys, sortStruct_out);
   futhark_project_opaque_sortStruct_long_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_opaque_sortStruct_long(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark_float(
@@ -780,7 +720,7 @@ void sortRelationByKey_inFuthark_float(
   if(blocked) futhark_entry_radixSortRelation_float(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_float(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_f32_1d(ctx, inKeys_ft);
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_float(ctx, sortStruct_in);
@@ -788,7 +728,7 @@ void sortRelationByKey_inFuthark_float(
   futhark_project_opaque_sortStruct_float_k(ctx, outKeys, sortStruct_out);
   futhark_project_opaque_sortStruct_float_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_opaque_sortStruct_float(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark_double(
@@ -812,7 +752,7 @@ void sortRelationByKey_inFuthark_double(
   if(blocked) futhark_entry_radixSortRelation_double(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_double(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_f64_1d(ctx, inKeys_ft);
   futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_double(ctx, sortStruct_in);
@@ -820,7 +760,7 @@ void sortRelationByKey_inFuthark_double(
   futhark_project_opaque_sortStruct_double_k(ctx, outKeys, sortStruct_out);
   futhark_project_opaque_sortStruct_double_pL(ctx, outPayloads, sortStruct_out);
   // Sync context, cleanup
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   futhark_free_opaque_sortStruct_double(ctx, sortStruct_out);
 }
 void sortRelationByKey_inFuthark(
@@ -878,7 +818,7 @@ void sortKeyColumn_inFuthark_short(struct futhark_context *ctx, struct futhark_i
   futhark_project_opaque_sortInfo_short_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_short_xs(ctx, outCol, sortInfo);
   // Sync context
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   // Free futhark objects
   futhark_free_opaque_sortInfo_short(ctx, sortInfo);
   futhark_free_i16_1d(ctx, x_ft);
@@ -899,7 +839,7 @@ void sortKeyColumn_inFuthark_int(struct futhark_context *ctx, struct futhark_i32
   futhark_project_opaque_sortInfo_int_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_int_xs(ctx, outCol, sortInfo);
   // Sync context
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   // Free futhark objects
   futhark_free_opaque_sortInfo_int(ctx, sortInfo);
   futhark_free_i32_1d(ctx, x_ft);
@@ -919,7 +859,7 @@ void sortKeyColumn_inFuthark_long(struct futhark_context *ctx, struct futhark_i6
   futhark_project_opaque_sortInfo_long_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_long_xs(ctx, outCol, sortInfo);
   // Sync context
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   // Free futhark objects
   futhark_free_opaque_sortInfo_long(ctx, sortInfo);
   futhark_free_i64_1d(ctx, x_ft);
@@ -939,7 +879,7 @@ void sortKeyColumn_inFuthark_float(struct futhark_context *ctx, struct futhark_f
   futhark_project_opaque_sortInfo_float_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_float_xs(ctx, outCol, sortInfo);
   // Sync context
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   // Free futhark objects (except indices)
   futhark_free_opaque_sortInfo_float(ctx, sortInfo);
   futhark_free_f32_1d(ctx, x_ft);
@@ -959,7 +899,7 @@ void sortKeyColumn_inFuthark_double(struct futhark_context *ctx, struct futhark_
   futhark_project_opaque_sortInfo_double_is(ctx, outIdx, sortInfo);
   futhark_project_opaque_sortInfo_double_xs(ctx, outCol, sortInfo);
   // Sync context
-  futhark_context_sync(ctx);
+  //futhark_context_sync(ctx);
   // Free futhark objects (except indices)
   futhark_free_opaque_sortInfo_double(ctx, sortInfo);
   futhark_free_f64_1d(ctx, x_ft);
@@ -1010,13 +950,13 @@ void InnerJoin_joinKeyColumns_inFuthark_short(
 	futhark_entry_inner_SMJ_short(ctx, &joinPairs, keys1, keys2, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_i16_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_short_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_short_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_short_iy(ctx, outIdx2, joinPairs);
-	struct futhark_i16_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_short_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i16_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -1052,13 +992,13 @@ void InnerJoin_joinKeyColumns_inFuthark_int(
 	futhark_entry_inner_SMJ_int(ctx, &joinPairs, keys1, keys2, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_i32_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_int_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_int_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_int_iy(ctx, outIdx2, joinPairs);
-	struct futhark_i32_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_int_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i32_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -1094,13 +1034,13 @@ void InnerJoin_joinKeyColumns_inFuthark_long(
 	futhark_entry_inner_SMJ_long(ctx, &joinPairs, keys1, keys2, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_i64_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_long_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_long_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_long_iy(ctx, outIdx2, joinPairs);
-	struct futhark_i64_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_long_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_i64_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -1136,13 +1076,13 @@ void InnerJoin_joinKeyColumns_inFuthark_float(
 	futhark_entry_inner_SMJ_float(ctx, &joinPairs, keys1, keys2, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_f32_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_float_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_float_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_float_iy(ctx, outIdx2, joinPairs);
-	struct futhark_f32_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_float_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_f32_1d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -1178,13 +1118,13 @@ void InnerJoin_joinKeyColumns_inFuthark_double(
 	futhark_entry_inner_SMJ_double(ctx, &joinPairs, keys1, keys2, incr1, incr2,
 		partitionsPerWindow, numWindows, extParallelism, scatter_psize
 	);
+	struct futhark_f64_1d *outVs_ft;
+	futhark_project_opaque_joinPairs_double_vs(ctx, &outVs_ft, joinPairs);
 	// Sync
 	futhark_context_sync(ctx);
 	// Project joinPair
 	futhark_project_opaque_joinPairs_double_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_double_iy(ctx, outIdx2, joinPairs);
-	struct futhark_f64_1d *outVs_ft;
-	futhark_project_opaque_joinPairs_double_vs(ctx, &outVs_ft, joinPairs);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_f64_1d(ctx, outVs_ft)[0];
 	// Unwrap vs

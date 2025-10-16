@@ -7,6 +7,7 @@
 #include "smjutil.h"
 
 #ifndef SMJSTAGES_H
+#define SMJSTAGES_H
 
 void Inner_MergeJoin_GFTR(
 	idx_t CHUNK_SIZE,

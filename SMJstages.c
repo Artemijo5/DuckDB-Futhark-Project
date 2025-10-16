@@ -200,8 +200,8 @@ void SortMergeJoin_GFTR(
     struct futhark_u8_2d* R_payload_ft;
     Rbuff = colType_malloc(key_type, R_JOIN_BUFFER);
 
-    char R_minimum[key_type];
-    char R_maximum[key_type];
+    char R_minimum[colType_bytes(key_type)];
+    char R_maximum[colType_bytes(key_type)];
 
     // READ R DATA INTO BUFFER
     idx_t R_rowCount = bulk_load_chunks_GFTR(
@@ -265,6 +265,7 @@ void SortMergeJoin_GFTR(
     R_payload = NULL;
 
     // get minimum and maximum elements
+    futhark_context_sync(ctx);
     switch(key_type) {
       case DUCKDB_TYPE_SMALLINT:
         futhark_index_i16_1d(ctx, (int16_t*)R_minimum, Rbuff_ft, 0);
@@ -290,7 +291,6 @@ void SortMergeJoin_GFTR(
         perror("Invalid type!");
         return;
     }
-    futhark_context_sync(ctx);
 
     logdbg(logfile, is_S_sorted, "Obtain S's sorted keys...", "Obtain S's keys...");
     duckdb_result res_Sk;
@@ -819,8 +819,8 @@ void SortMergeJoin_GFUR(
     struct futhark_i64_1d* R_idx_ft;
     Rbuff = colType_malloc(key_type, R_JOIN_BUFFER);
 
-    char R_minimum[key_type];
-    char R_maximum[key_type];
+    char R_minimum[colType_bytes(key_type)];
+    char R_maximum[colType_bytes(key_type)];
 
     // READ R DATA INTO BUFFER
     idx_t R_rowCount = bulk_load_chunks_GFTR(
@@ -886,6 +886,7 @@ void SortMergeJoin_GFUR(
     Rbuff = NULL;
 
     // get minimum and maximum elements
+    futhark_context_sync(ctx);
     switch(key_type) {
       case DUCKDB_TYPE_SMALLINT:
         futhark_index_i16_1d(ctx, (int16_t*)R_minimum, Rbuff_ft, 0);
@@ -911,7 +912,6 @@ void SortMergeJoin_GFUR(
         perror("Invalid type!");
         return;
     }
-    futhark_context_sync(ctx);
 
     logdbg(logfile, is_S_sorted, "Obtain S's sorted keys...", "Obtain S's keys...");
     duckdb_result res_Sk;
