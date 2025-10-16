@@ -6,7 +6,7 @@
 #include "mylogger.h"
 #include "sortstages.h"
 
-#include "ftSMJ.h"
+#include "ftRelational.h"
 #include "smjutil.h"
 #include "SMJstages.h"
 
@@ -26,8 +26,8 @@
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
 
-#define R_KEY "payload2"//"k"
-#define S_KEY "payload4"//"k"
+#define R_KEY "k"
+#define S_KEY "k"
 
 #define R_interm "R_tbl_interm"
 #define S_interm "S_tbl_interm"

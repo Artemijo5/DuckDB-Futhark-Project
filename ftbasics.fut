@@ -7,7 +7,7 @@ local module param_idx_t (it: integral) = {
   def bool = it.bool
   def sum = it.sum
   def indices xs = (indices xs) |> map it.i64
-  def indicesWithIncrement [n] 't (incr: i64) (xs: [n]t) : [n](it.t) =
+  def indicesWithIncrement [n] 't (incr: i64) (_: [n]t) : [n](it.t) =
     let rng : [n]i64 = (incr..<(n+incr)) :> [n]i64
     in rng |> map it.i64
 }
@@ -35,7 +35,7 @@ def partitioned_gather [ni] [n] 'a (psize : idx_t.t) (dummy_elem: a) (xs : [n]a)
       else (j, v)
     )
     in {iter = p.iter+1, buff = nextBuff}
-  in loop_over.buff |> map (\(i, v) -> v)
+  in loop_over.buff |> map (\(_, v) -> v)
 -- | Multi-pass gather operation (better cache-locality) - uses base array rather than dummy value.
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
 -- by Bingsheng He et al.
@@ -53,7 +53,7 @@ def partitioned_gather_over_array [ni] [n] 'a (psize : idx_t.t) (dest: [ni]a) (x
       else (j, v)
     )
     in {iter = p.iter+1, buff = nextBuff}
-  in loop_over.buff |> map (\(i, v) -> v)
+  in loop_over.buff |> map (\(_, v) -> v)
 -- | Multi-pass scatter operation (better cache-locality).
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
 -- by Bingsheng He et al.
@@ -79,7 +79,27 @@ def partitioned_scatter [nd] [n] 'a
   in loop_over.buff
 
 
--- TODO could make a multi-pass map (would require dummy element like partitioned_gather)
+-- | Function to gather the payload columns of a relation after the join.
+def gather_payloads [ni] [n] 't
+  (incr: idx_t.t)
+  (psize: idx_t.t)
+  (dummy_elem: t)
+  (is: [ni]idx_t.t)
+  (ys: [n]t)
+=
+  let offset_is = is |> map (\j -> j - incr)
+  in partitioned_gather (psize) (dummy_elem) (ys) (offset_is)
+
+  -- | Function to gather the payload columns of a relation after the join, over an array with previously gathered values.
+def gather_payloads_GFUR [ni] [n] 't
+  (incr: idx_t.t)
+  (psize: idx_t.t)
+  (dummy_array: [ni]t)
+  (is: [ni]idx_t.t)
+  (ys: [n]t)
+=
+  let offset_is = is |> map (\j -> j - incr)
+  in partitioned_gather_over_array (psize) (dummy_array) (ys) (offset_is)
 
 -- | Exclusive scan operation (from Futhark by Example).
 def exscan f ne xs =
@@ -92,6 +112,23 @@ def exscan f ne xs =
 -- | Function to count elements that satisfy a property.
 def countFor 't (p: t -> bool) (xs: []t) : idx_t.t =
   idx_t.sum (xs |> map (p >-> idx_t.bool))
+
+-- argmin - for getting chunk replacement priorities in 2-pass sort (maybe better left to be sequential?)
+def argmin [n] 't
+    (lt: t -> t -> bool)
+    (eq: t -> t -> bool)
+    (highest: t)
+    (ks: [n]t)
+    : idx_t.t = 
+  let ne = (n, highest)
+  let iks = ks
+    |> zip (idx_t.indices ks)
+  let min_ik = reduce_comm(\(ix, vx) (iy, vy) ->
+        if (vx `lt` vy) || ((vx `eq` vy) && (ix < iy))
+          then (ix, vx)
+          else (iy, vy)
+      ) ne iks
+  in min_ik.0
 
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
@@ -168,10 +205,6 @@ def radix_sort_multistep [n] 't
   --    guanzhong
   --    seats
   --in partitioned_scatter block_size (copy xs) zuowei xs
-  
-  
-  
-
 
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------

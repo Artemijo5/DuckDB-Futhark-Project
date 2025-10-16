@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "duckdb.h"
 
-#include "ftSMJ.h"
+#include "ftRelational.h"
 #include "mylogger.h"
 #include "sort_util.h"
 

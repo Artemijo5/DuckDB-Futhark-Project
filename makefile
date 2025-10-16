@@ -4,31 +4,31 @@ DEPS=mylogger.c libduckdb.so db_util.c
 LIBFLAGS=-fPIC -shared
 CUDAFLAGS=-lcuda -lcudart -lnvrtc
 
-C-ftSMJ: ftSMJ.fut
-	futhark c ftSMJ.fut --library
-	gcc ftSMJ.c -o libftSMJ.so $(LIBFLAGS)
+C-ftRelational: ftRelational.fut
+	futhark c ftRelational.fut --library
+	gcc ftRelational.c -o libftRelational.so $(LIBFLAGS)
 
-CUDA-ftSMJ: ftSMJ.fut
-	futhark cuda ftSMJ.fut --library
-	gcc ftSMJ.c -o libftSMJ.so $(LIBFLAGS) $(CUDAFLAGS)
+CUDA-ftRelational: ftRelational.fut
+	futhark cuda ftRelational.fut --library
+	gcc ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
 
-CUDA1-ftSMJ: ftSMJ.fut
-	futhark cuda ftSMJ.fut --library
+CUDA1-ftRelational: ftRelational.fut
+	futhark cuda ftRelational.fut --library
 
-CUDA2-ftSMJ: ftSMJ.fut
-	gcc ftSMJ.c -o libftSMJ.so $(LIBFLAGS) $(CUDAFLAGS)
+CUDA2-ftRelational: ftRelational.fut
+	gcc ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
 
-two_pass_sort: two_pass_sort.c sortstages.c libftSMJ.so sort_util.c $(DEPS)
+two_pass_sort: two_pass_sort.c sortstages.c libftRelational.so sort_util.c $(DEPS)
 	$(CC) two_pass_sort.c -o two_pass_sort.o \
-		sortstages.c libftSMJ.so sort_util.c $(DEPS) $(CFLAGS)
+		sortstages.c libftRelational.so sort_util.c $(DEPS) $(CFLAGS)
 
-sort_merge_join_GFTR: sort_merge_join_GFTR.c sort_util.c smjutil.c sortstages.c SMJstages.c libftSMJ.so $(DEPS)
+sort_merge_join_GFTR: sort_merge_join_GFTR.c sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS)
 	$(CC) sort_merge_join_GFTR.c -o sort_merge_join_GFTR.o \
-		sort_util.c smjutil.c sortstages.c SMJstages.c libftSMJ.so $(DEPS) $(CFLAGS)
+		sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS) $(CFLAGS)
 
-sort_merge_join_GFUR: sort_merge_join_GFUR.c sort_util.c smjutil.c sortstages.c SMJstages.c libftSMJ.so $(DEPS)
+sort_merge_join_GFUR: sort_merge_join_GFUR.c sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS)
 	$(CC) sort_merge_join_GFUR.c -o sort_merge_join_GFUR.o \
-		sort_util.c smjutil.c sortstages.c SMJstages.c libftSMJ.so $(DEPS) $(CFLAGS)
+		sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS) $(CFLAGS)
 
-joinTest: joinTest.c libftSMJ.so
-	$(CC) joinTest.c -o joinTest.o libftSMJ.so $(CFLAGS)
+#joinTest: joinTest.c libftRelational.so
+#	$(CC) joinTest.c -o joinTest.o libftRelational.so $(CFLAGS)

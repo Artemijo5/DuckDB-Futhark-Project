@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "duckdb.h"
-#include "ftSMJ.h"
+#include "ftRelational.h"
 
 #ifndef SORT_UTIL_H
 #define SORT_UTIL_H

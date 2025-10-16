@@ -514,7 +514,7 @@ idx_t store_intermediate_GFTR(
         for(idx_t j=0; j<this_size; j++) {
           memcpy(
             dat + j*col_size,
-            pL_data + j*pL_bytes + pL_prefixSizes[accIdx],
+            pL_data + (r+j)*pL_bytes + pL_prefixSizes[accIdx],
             col_size
           );
         }

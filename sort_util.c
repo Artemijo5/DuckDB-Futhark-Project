@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "duckdb.h"
 #include "mylogger.h"
-#include "ftSMJ.h"
+#include "ftRelational.h"
 #include <string.h>
 #include "db_util.h"
 

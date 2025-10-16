@@ -19,16 +19,15 @@ def byteSeq_getBit [b] (i: i32) (x: byteSeq [b])
 
 def getRadix [b] (i: i32) (j: i32) (x: byteSeq [b])
  : byteSeq [b] =
+  let j_ = i32.min j ((i32.i64 b)*u8.num_bits - 1) in
   let firstByte = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
-  let lastByte = i64.i32 ((i32.i64 b) - (j/u8.num_bits) - 1)
+  let lastByte_ = i64.i32 ((i32.i64 b) - (j_/u8.num_bits) - 1)
+  let lastByte = i64.min lastByte_ (b*(i64.i32 u8.num_bits) - 1)
   let firstBit = i%u8.num_bits
-  let lastBit = j%u8.num_bits
+  let lastBit = j_%u8.num_bits
   let first_bitMask = u8.highest << (u8.i32 firstBit)
   let last_bitMask = (u8.>>>) u8.highest(u8.i32 (u8.num_bits - lastBit - 1))
-  let mod_x = x
-    |> zip (iota b)
-    |> map (\(ind, v) -> if (ind<=firstByte && ind>=lastByte) then (ind, v) else (ind, 0))
-    |> map (.1)
+  let mod_x = map2 (\ind v -> if (ind<=firstByte && ind>=lastByte) then v else 0) (iota b) x
   let mod1_x = (copy mod_x) with [firstByte] = mod_x[firstByte] & first_bitMask
   in (copy mod1_x) with [lastByte] = mod1_x[lastByte] & last_bitMask
 
@@ -203,9 +202,10 @@ def radix_part [n][b] 't
   (j: i32)
   (bit_step: i32)
 : ([n][b]u8, [n]t) =
+  let j_ = i32.min j ((i32.i64 b)*u8.num_bits - 1) in
   loop (xs, pL)
-  for bit in (i..(i+bit_step)...j)
-  do radix_part_step block_size xs pL bit (i32.min j (bit+bit_step-1))
+  for bit in (i..(i+bit_step)...(j_))
+  do radix_part_step block_size xs pL bit (i32.min j_ (bit+bit_step-1))
 
 def getPartitionBounds [n] [b]
   (curDepth: i32)
@@ -304,100 +304,6 @@ def partition_and_deepen 't [n] [b]
 type partitionedSet_GFTR [n] [b] [pL_b] = {ks: [n](byteSeq [b]), pL: [n](byteSeq [pL_b])}
 type partitionedSet_GFUR [n] [b] = {ks: [n](byteSeq [b]), idx: [n]idx_t.t}
 
-entry partition_and_deepen_GFTR [n] [b] [pL_b]
-  (block_size: i16)
-  (gather_psize: idx_t.t)
-  (radix_size: i32)
-  (xs: [n](byteSeq [b]))
-  (pL: [n](byteSeq [pL_b]))
-  (size_thresh: idx_t.t)
-  (max_depth: i32)
-: partitionedSet_GFTR [n] [b] [pL_b] =
-  let kps =
-    partition_and_deepen block_size gather_psize radix_size xs pL size_thresh max_depth
-  in {ks = kps.0, pL = kps.1}
-
-entry partition_and_deepen_GFUR [n] [b]
-  (block_size: i16)
-  (gather_psize: idx_t.t)
-  (radix_size: i32)
-  (xs: [n](byteSeq [b]))
-  (offset: idx_t.t)
-  (size_thresh: idx_t.t)
-  (max_depth: i32)
-: partitionedSet_GFUR [n] [b] =
-  let is = (offset..<(offset+n)) :> [n]idx_t.t
-  let kis =
-    partition_and_deepen block_size gather_psize radix_size xs is size_thresh max_depth
-  in {ks = kis.0, idx = kis.1}
-
-entry calc_partitions_from_partitioned_set [n] [b]
-  (radix_size: i32)
-  (pXs: [n](byteSeq [b]))
-  (offset: idx_t.t)
-  (size_thresh: idx_t.t)
-  (max_depth: i32)
-: partitionInfo =
-  let recursive_info : (partitionInfo, bool)
-  = loop p = (getPartitionBounds 1 pXs 0 (radix_size-1), true)
-  while (p.0.maxDepth < max_depth && p.1) do
-    let bs = p.0.bounds
-    let taidade = indices bs
-      |> map (\i -> (bs[i], if (i<(length bs)-1) then bs[i+1] else (n), i))
-      |> filter (\(lb, ub, _) -> ub-lb > size_thresh)
-    let (inner_info : partitionInfo, _: idx_t.t, _: idx_t.t)
-    = loop (q, ad, ox) = (p.0, 0, 0)
-    for bounds in taidade do
-      let m = bounds.1-bounds.0
-      let x_bufen = pXs[bounds.0:bounds.1] :> [m](byteSeq [b])
-      let new_i = radix_size*(p.0.maxDepth)
-      let new_j = radix_size*(p.0.maxDepth+1) - 1
-      let deeper_info = getPartitionBounds (p.0.maxDepth+1) x_bufen new_i new_j
-      let insert_len = length deeper_info.bounds
-      let stitch = bounds.2 + ox - ad
-      let new_q = {
-        maxDepth = p.0.maxDepth + 1,
-        bounds = q.bounds[0:stitch] ++ (deeper_info.bounds |> map (\b -> b+bounds.0)) ++ q.bounds[stitch+1:(length q.bounds)],
-        depths = q.depths[0:stitch] ++ deeper_info.depths ++ q.depths[stitch+1:(length q.depths)]
-      }
-      in (new_q, ad+1, ox + insert_len)
-    in (inner_info, (length taidade) > 0)
-  let info_len = length recursive_info.0.bounds
-  let recursive_info_with_offset = {
-    maxDepth = recursive_info.0.maxDepth,
-    bounds = recursive_info.0.bounds |> map (\b -> b + offset) :> [info_len]idx_t.t,
-    depths = recursive_info.0.depths :> [info_len]i32
-  }
-  in recursive_info_with_offset
-
-entry create_hash_table_from_partitioned_set [n] [b]
-  (radix_size : i32)
-  (pXs : [n](byteSeq [b]))
-  (x_info : partitionInfo)
-  (scatter_psize : idx_t.t)
-: radix_hashTable [i64.i32 radix_size] =
-  let m = length x_info.bounds
-  let is_base = iota m
-  let rs = i64.i32 radix_size
-  let scatter_is_withMultiplicity = is_base
-    |> map (\i ->  radix_to_idx (i32.i64 rs) pXs[x_info.bounds[i]])
-  let is_first_last =
-    if x_info.maxDepth == 1
-    then replicate m (true, true)
-    else is_base
-      |> map (\i ->
-        let cur_i = scatter_is_withMultiplicity[i]
-        let pre_i = if i==0 then -1 else scatter_is_withMultiplicity[i-1]
-        let is_first = (cur_i != pre_i)
-        let pos_i = if i==(m-1) then -1 else scatter_is_withMultiplicity[i+1]
-        let is_last = (cur_i != pos_i)
-        in (is_first, is_last)
-      )
-  let scatter_is_first = map2 (\(is_first, _) i -> if is_first then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
-  let scatter_is_last = map2 (\(_, is_last) i -> if is_last then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
-  let first_partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is_first is_base
-  let last_partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is_last is_base
-  in {first_info_idx = first_partitionIndices, last_info_idx = last_partitionIndices}
 
 -- ########################################################################################################################
 -- ########################################################################################################################
@@ -417,7 +323,6 @@ entry create_hash_table_from_partitioned_set [n] [b]
 -- iy : the respective index in y
 type~ joinPairs_bsq [b] = {vs: [](byteSeq [b]), ix: []idx_t.t, iy: []idx_t.t}
 
--- TODO test ...
 def partitionMatchBounds [nR] [nS] [b] [pR] [pS] 't
   (radix_size: i32)
   (tR : [nR](byteSeq [b]))
@@ -582,46 +487,3 @@ def join_hashPartitions [nR] [nS] [b]
           let new_q = find_joinPairs r_part s_part r_lb s_lb scatter_psize
           in {vs = q.vs ++ new_q.vs, ix = q.ix ++ new_q.ix, iy = q.iy ++ new_q.iy}
       in {vs = p.vs ++ tR_matches.vs, ix = p.ix ++ tR_matches.ix, iy = p.iy ++ tR_matches.iy}
-
-entry Inner_Radix_Hash_Join [nR] [nS] [b]
-  (radix_size : i32)
-  (pR : [nR](byteSeq [b]))
-  (pS : [nS](byteSeq [b]))
-  (r_info : partitionInfo)
-  (s_info : partitionInfo)
-  (s_hashTable : radix_hashTable [i64.i32 radix_size])
-  (scatter_psize: idx_t.t)
-: joinPairs_bsq [b] =
-  let rp_matches = partitionMatchBounds
-    radix_size
-    pR
-    pS
-    r_info.bounds
-    s_info.bounds
-    r_info.depths
-    s_info.depths
-    s_hashTable
-  in join_hashPartitions pR pS r_info s_info rp_matches scatter_psize
-
--- TODO gather entry points
--- TODO merge these with the ftSMJ ones (and all entry points actually)...
-
-def test (rsize : i32) (max_depth : i32) =
-  let xs : [](byteSeq [2]) = [[4,2],[6,12],[6,11],[2,1],[2,2],[3,16+12],[6,7],[5,12],[3,5],[2,5],[4,12],[3,1],[4,5],[4,1],[3,7]]
-  let x_res = partition_and_deepen_GFUR 256 256 rsize xs 0 2 max_depth
-  let x_res_info = calc_partitions_from_partitioned_set rsize (x_res.ks) 0 2 max_depth
-  let x_hashTbl = create_hash_table_from_partitioned_set rsize (x_res.ks) x_res_info 256
-  let ys : [](byteSeq [2]) = [[5,2],[5,12],[4,11],[2,1],[7,2],[3,16+12],[6,7],[0,12],[3,5],[9,5],[11,12],[3,1],[3,5],[9,1],[3,7]]
-  let y_res = partition_and_deepen_GFUR 256 256 rsize ys 0 2 max_depth
-  let y_res_info = calc_partitions_from_partitioned_set rsize (y_res.ks) 0 2 max_depth
-  let y_hashTbl = create_hash_table_from_partitioned_set rsize (y_res.ks) y_res_info 256
-  let matches = partitionMatchBounds
-    rsize x_res.ks y_res.ks x_res_info.bounds y_res_info.bounds x_res_info.depths y_res_info.depths y_hashTbl
-  --let refined_x_hashTbl = (iota (i64.i32 (2**rsize)))
-  --  |> filter (\i -> x_hashTbl.first_info_idx[i] >= 0)
-  --  |> map (\i -> (i, x_hashTbl.first_info_idx[i], x_hashTbl.last_info_idx[i]) )
-  --let refined_y_hashTbl = (iota (i64.i32 (2**rsize)))
-  --  |> filter (\i -> y_hashTbl.first_info_idx[i] >= 0)
-  --  |> map (\i -> (i, y_hashTbl.first_info_idx[i], y_hashTbl.last_info_idx[i]) )
-  --in (x_res, x_res_info, y_res, y_res_info, matches)
-  in Inner_Radix_Hash_Join rsize x_res.ks y_res.ks x_res_info y_res_info y_hashTbl 256

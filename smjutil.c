@@ -7,7 +7,7 @@
 #include "db_util.h"
 #include <string.h>
 
-#include "ftSMJ.h"
+#include "ftRelational.h"
 
 int compare_max_to_min(duckdb_type type, void* arr1, void* arr2, idx_t card1, idx_t card2) {
 	int ret = 0;

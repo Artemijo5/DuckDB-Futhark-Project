@@ -4,7 +4,6 @@ import "ftbasics"
 -- Sorting Functions
 
 -- 1. Radix Sort
--- TODO make bit_step accessible from entry points
 -- TODO implement blocked algorithm like in sorts library?
 
 def my_radix_sort [n] 't
@@ -78,7 +77,7 @@ type sortStruct_long [n] [b] = sortStruct [n] [b] i64
 type sortStruct_float [n] [b] = sortStruct [n] [b] f32
 type sortStruct_double [n] [b] = sortStruct [n] [b] f64
 
-local def radixSortRelation_signed_integral [n] [b] 'a 
+def radixSortRelation_signed_integral [n] [b] 'a 
   (block_size: i16)
   (xs: sortStruct [n] [b] a)
   (num_bits: i32)
@@ -88,7 +87,7 @@ local def radixSortRelation_signed_integral [n] [b] 'a
   let sorted_xys = my_radix_sort_int (i64.i16 block_size) 2 num_bits (\i xy -> get_bit i xy.0) xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
   in {k = un_xys.0, pL = un_xys.1}
-local def radixSortRelation_signed_float [n] [b] 'a 
+def radixSortRelation_signed_float [n] [b] 'a 
   (block_size: i16)
   (xs: sortStruct [n] [b] a)
   (num_bits: i32)
@@ -98,7 +97,7 @@ local def radixSortRelation_signed_float [n] [b] 'a
   let sorted_xys = my_radix_sort_float (i64.i16 block_size) 2 num_bits (\i xy -> get_bit i xy.0) xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
   in {k = un_xys.0, pL = un_xys.1}
-local def mergeSortRelation [n] [b] 'a
+def mergeSortRelation [n] [b] 'a
   (xs: sortStruct [n] [b] a)
   (leq: a -> a -> bool)
  : sortStruct [n] [b] a =
@@ -106,53 +105,6 @@ local def mergeSortRelation [n] [b] 'a
   let sorted_xys = merge_sort_by_key (\xy -> xy.0) (leq) xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
   in {k = un_xys.0, pL = un_xys.1}
-
-entry radixSortRelation_short [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_short [n] [b])
- : sortStruct_short [n] [b]
-  = radixSortRelation_signed_integral (block_size) (xs) (i16.num_bits) (i16.get_bit)
-entry radixSortRelation_int [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_int [n] [b])
- : sortStruct_int [n] [b]
-  = radixSortRelation_signed_integral (block_size) (xs) (i32.num_bits) (i32.get_bit)
-entry radixSortRelation_long [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_long [n] [b])
- : sortStruct_long [n] [b]
-  = radixSortRelation_signed_integral (block_size) (xs) (i64.num_bits) (i64.get_bit)
-entry radixSortRelation_float [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_float [n] [b])
- : sortStruct_float [n] [b]
-  = radixSortRelation_signed_float (block_size) (xs) (f32.num_bits) (f32.get_bit)
-entry radixSortRelation_double [n] [b]
-  (block_size: i16)
-  (xs: sortStruct_double [n] [b])
- : sortStruct_double [n] [b]
-  = radixSortRelation_signed_float (block_size) (xs) (f64.num_bits) (f64.get_bit)
-
-entry mergeSortRelation_short [n] [b]
-  (xs: sortStruct_short [n] [b])
-: sortStruct_short [n] [b]
-  = mergeSortRelation (xs) (<=)
-entry mergeSortRelation_int [n] [b]
-  (xs: sortStruct_int [n] [b])
-: sortStruct_int [n] [b]
-  = mergeSortRelation (xs) (<=)
-entry mergeSortRelation_long [n] [b]
-  (xs: sortStruct_long [n] [b])
-: sortStruct_long [n] [b]
-  = mergeSortRelation (xs) (<=)
-entry mergeSortRelation_float [n] [b]
-  (xs: sortStruct_float [n] [b])
-: sortStruct_float [n] [b]
-  = mergeSortRelation (xs) (<=)
-entry mergeSortRelation_double [n] [b]
-  (xs: sortStruct_double [n] [b])
-: sortStruct_double [n] [b]
-  = mergeSortRelation (xs) (<=)
 
 -- GFUR SORTING
 
@@ -169,7 +121,7 @@ type sortInfo_float [n] = sortInfo [n] f32
 -- | Sorting information type (double)(GFUR).
 type sortInfo_double [n] = sortInfo [n] f64
 
-local def radixSortColumn_signed_integral [n] 'a
+def radixSortColumn_signed_integral [n] 'a
   (incr: idx_t.t)
   (block_size: i16)
   (xs: [n]a)
@@ -180,7 +132,7 @@ local def radixSortColumn_signed_integral [n] 'a
   let sorted_ixs = my_radix_sort_int (i64.i16 block_size) 2 num_bits (\i ix -> get_bit i ix.1) ixs
   let un_ixs = unzip sorted_ixs
   in {is = un_ixs.0, xs = un_ixs.1}
-local def radixSortColumn_signed_float [n] 'a 
+def radixSortColumn_signed_float [n] 'a 
   (incr: idx_t.t)
   (block_size: i16)
   (xs: [n]a)
@@ -191,7 +143,7 @@ local def radixSortColumn_signed_float [n] 'a
   let sorted_ixs = my_radix_sort_float (i64.i16 block_size) 2 num_bits (\i ix -> get_bit i ix.1) ixs
   let un_ixs = unzip sorted_ixs
   in {is = un_ixs.0, xs = un_ixs.1}
-local def mergeSortColumn [n] 'a
+def mergeSortColumn [n] 'a
   (incr: idx_t.t)
   (xs: [n]a)
   (leq: a -> a -> bool)
@@ -202,95 +154,8 @@ local def mergeSortColumn [n] 'a
   in {is = un_ixs.0, xs = un_ixs.1}
 
 -- Order a payload column given the reordered indices.
-local def orderByIndices [n] 't (block_size: idx_t.t) (dummy_elem: t) (is: [n](idx_t.t)) (ys: [n]t) : [n]t =
+def orderByIndices [n] 't (block_size: idx_t.t) (dummy_elem: t) (is: [n](idx_t.t)) (ys: [n]t) : [n]t =
   partitioned_gather block_size dummy_elem ys is
-
--- | Sort a column of short type (GFUR).
-entry radixSortColumn_short [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i16) : sortInfo_short [n] =
-  radixSortColumn_signed_integral incr block_size xs (i16.num_bits) (i16.get_bit)
--- | Sort a column of integer type (GFUR).
-entry radixSortColumn_int [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i32) : sortInfo_int [n] =
-  radixSortColumn_signed_integral incr block_size xs (i32.num_bits) (i32.get_bit)
--- | Sort a column of long type (GFUR).
-entry radixSortColumn_long [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i64) : sortInfo_long [n] =
-  radixSortColumn_signed_integral incr block_size xs (i64.num_bits) (i64.get_bit)
--- | Sort a column of float type (GFUR).
-entry radixSortColumn_float [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f32) : sortInfo_float [n] =
-  radixSortColumn_signed_float incr block_size xs (f32.num_bits) (f32.get_bit)
--- | Sort a column of double type (GFUR).
-entry radixSortColumn_double [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f64) : sortInfo_double [n] =
-  radixSortColumn_signed_float incr block_size xs (f64.num_bits) (f64.get_bit)
-
--- | Sort a column of short type (GFUR).
-entry mergeSortColumn_short [n] (incr: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
-  mergeSortColumn incr xs (<=)
--- | Sort a column of integer type (GFUR).
-entry mergeSortColumn_int [n] (incr: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
-  mergeSortColumn incr xs (<=)
--- | Sort a column of long type (GFUR).
-entry mergeSortColumn_long [n] (incr: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
-  mergeSortColumn incr xs (<=)
--- | Sort a column of float type (GFUR).
-entry mergeSortColumn_float [n] (incr: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
-  mergeSortColumn incr xs (<=)
--- | Sort a column of double type (GFUR).
-entry mergeSortColumn_double [n] (incr: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
-  mergeSortColumn incr xs (<=)
-
--- | Order a payload column of type short, given the reordered indices.
-entry orderByIndices_short [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i16) : [n]i16 =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
--- | Order a payload column of type int, given the reordered indices.
-entry orderByIndices_int [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i32) : [n]i32 =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
--- | Order a payload column of type long, given the reordered indices.
-entry orderByIndices_long [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i64) : [n]i64 =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
--- | Order a payload column of type float, given the reordered indices.
-entry orderByIndices_float [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f32) : [n]f32 =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
--- | Order a payload column of type double, given the reordered indices.
-entry orderByIndices_double [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f64) : [n]f64 =
-  let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
-
-
--- argmin - for getting chunk replacement priorities
-local def argmin [n] 't
-    (lt: t -> t -> bool)
-    (eq: t -> t -> bool)
-    (highest: t)
-    (ks: [n]t)
-    : idx_t.t = 
-  let ne = (n, highest)
-  let iks = ks
-    |> zip (idx_t.indices ks)
-  let min_ik = reduce_comm(\(ix, vx) (iy, vy) ->
-        if (vx `lt` vy) || ((vx `eq` vy) && (ix < iy))
-          then (ix, vx)
-          else (iy, vy)
-      ) ne iks
-  in min_ik.0
-
--- | Obtain the index of the smallest element from a list of shorts.
-entry argmin_short [n] (ks: [n]i16) : idx_t.t =
-  argmin (<) (==) (i16.highest) ks
--- | Obtain the index of the smallest element from a list of integers.
-entry argmin_int [n] (ks: [n]i32) : idx_t.t =
-  argmin (<) (==) (i32.highest) ks
--- | Obtain the index of the smallest element from a list of longs.
-entry argmin_long [n] (ks: [n]i64) : idx_t.t =
-  argmin (<) (==) (i64.highest) ks
--- | Obtain the index of the smallest element from a list of floats.
-entry argmin_float [n] (ks: [n]f32) : idx_t.t =
-  argmin (<) (==) (f32.highest) ks
--- | Obtain the index of the smallest element from a list of doubles.
-entry argmin_double [n] (ks: [n]f64) : idx_t.t =
-  argmin (<) (==) (f64.highest) ks
 
 -- ########################################################################################################################
 -- ########################################################################################################################
@@ -368,7 +233,7 @@ def find_joinTuples [nR] [nS] 't
       let ircs = zip3 (idx_t.indicesWithIncrement (offset_R+start) iter_R) (iter_R) (replicate iter_size 0)
       let iscs = zip3 (idx_t.indicesWithIncrement (offset_S) tS) tS (replicate nS 1)
       let ms = ircs -- TODO optimisation: if iscs below a certain size, use loop rather than reduce (?)
-        |> map (\(i, x, c) ->
+        |> map (\(_, x, _) ->
           let redTup = reduce_comm (\(i1, y1, c1) (i2, y2, c2) ->
               if ((y1 `neq` x) || i1 < 0) && ((y2 `neq` x) || i2 < 0) then (-1, x, 0)
               else if ((y1 `neq` x) || i1 < 0) then (i2, y2, c2)
@@ -405,7 +270,7 @@ def partitionMatchBounds [n] [np] 't
 : [np](idx_t.t, idx_t.t) =
   partitionPairs
     |> zip (indices partitionPairs)
-    |> map (\(j, (ri, si)) ->
+    |> map (\(j, (ri, _)) ->
       let r_min = tR[idx_t.min ri (n-1)]
       let ri_next = if j==np-1 then n else partitionPairs[j+1].0
       let r_max = tR[idx_t.max 0 (ri_next-1)]
@@ -554,11 +419,11 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
   (dummy_elem: t)
  =
   let zipTups = zip4 tups.vs tups.ix tups.iy tups.cm
-  let filteredTups = zipTups |> filter (\(v, ix, iy, cm) -> (cm>0))
+  let filteredTups = zipTups |> filter (\(_, _, _, cm) -> (cm>0))
   let n_filt = length filteredTups
   -- separate match counts & pair info
-  let fcm = filteredTups |> map (\(v,ix,iy,cm)->cm)
-  let fTups_minusCm = filteredTups |> map (\(v, ix, iy, cm) -> (v, ix, iy))
+  let fcm = filteredTups |> map (\(_,_,_,cm)->cm)
+  let fTups_minusCm = filteredTups |> map (\(v, ix, iy, _) -> (v, ix, iy))
   -- obtain the starting indices of each match in the output array
   let tup_index = exscan (\cm1 cm2 -> cm1+cm2) 0 fcm
   -- obtain the total number of pairs
@@ -573,7 +438,7 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
     (tup_index)
     (fTups_minusCm)
   -- find pairs with multiplicity (in ys) to minimise the following loop
-  let pairsWithMultiplicity = fcm |> zip tup_index |> filter (\(i, cm) -> cm>1)
+  let pairsWithMultiplicity = fcm |> zip tup_index |> filter (\(_, cm) -> cm>1)
   let n_mult = length pairsWithMultiplicity
   -- loop over output array for matches with multiplicity
   let loop_over : {iter: idx_t.t, buff: [](t, idx_t.t, idx_t.t)}
@@ -618,132 +483,3 @@ type~ joinPairs_long = joinPairs i64
 type~ joinPairs_float = joinPairs f32
 -- | Join pairs of type double.
 type~ joinPairs_double = joinPairs f64
-
-entry inner_SMJ_short [nR] [nS]
-  (tR: [nR]i16)
-  (tS: [nS]i16)
-  (offset_R: idx_t.t)
-  (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
-  (scatter_psize: idx_t.t)
-: joinPairs_short =
-  inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
-
-entry inner_SMJ_int [nR] [nS]
-  (tR: [nR]i32)
-  (tS: [nS]i32)
-  (offset_R: idx_t.t)
-  (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
-  (scatter_psize: idx_t.t)
-: joinPairs_int =
-  inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
-
-entry inner_SMJ_long [nR] [nS]
-  (tR: [nR]i64)
-  (tS: [nS]i64)
-  (offset_R: idx_t.t)
-  (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
-  (scatter_psize: idx_t.t)
-: joinPairs_long =
-  inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
-
-entry inner_SMJ_float [nR] [nS]
-  (tR: [nR]f32)
-  (tS: [nS]f32)
-  (offset_R: idx_t.t)
-  (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
-  (scatter_psize: idx_t.t)
-: joinPairs_float =
-  inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
-
-entry inner_SMJ_double [nR] [nS]
-  (tR: [nR]f64)
-  (tS: [nS]f64)
-  (offset_R: idx_t.t)
-  (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
-  (scatter_psize: idx_t.t)
-: joinPairs_double =
-  inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
-
--- Payload gathering (GFTR)
-
--- | Function to gather the payload columns of a relation after the join.
-def gather_payloads [ni] [n] 't
-  (incr: idx_t.t)
-  (psize: idx_t.t)
-  (dummy_elem: t)
-  (is: [ni]idx_t.t)
-  (ys: [n]t)
-=
-  let offset_is = is |> map (\j -> j - incr)
-  in partitioned_gather (psize) (dummy_elem) (ys) (offset_is)
-
-entry gather_payloads_short (incr) (psize) (is) (ys: []i16)
-  = gather_payloads incr psize (0) is ys
-
-entry gather_payloads_int (incr) (psize) (is) (ys: []i32)
-  = gather_payloads incr psize (0) is ys
-
-entry gather_payloads_long (incr) (psize) (is) (ys: []i64)
-  = gather_payloads incr psize (0) is ys
-
-entry gather_payloads_float (incr) (psize) (is) (ys: []f32)
-  = gather_payloads incr psize (0) is ys
-
-entry gather_payloads_double (incr) (psize) (is) (ys: []f64)
-  = gather_payloads incr psize (0) is ys
-
-entry gather_payloads_GFTR (incr) (psize) (is) (pL_bytes: idx_t.t) (ys: [][pL_bytes]u8)
-  = gather_payloads incr psize (replicate pL_bytes (u8.i32 0)) is ys
-
-  -- Payload gathering (GFUR)
-
-  -- | Function to gather the payload columns of a relation after the join, over an array with previously gathered values.
-def gather_payloads_GFUR [ni] [n] 't
-  (incr: idx_t.t)
-  (psize: idx_t.t)
-  (dummy_array: [ni]t)
-  (is: [ni]idx_t.t)
-  (ys: [n]t)
-=
-  let offset_is = is |> map (\j -> j - incr)
-  in partitioned_gather_over_array (psize) (dummy_array) (ys) (offset_is)
-
-entry gather_payloads_short_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i16) (is: [ni]idx_t.t) (ys: [n]i16)
-  = gather_payloads_GFUR incr psize preVals is ys
-
-entry gather_payloads_int_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i32) (is: [ni]idx_t.t) (ys: [n]i32)
-  = gather_payloads_GFUR incr psize preVals is ys
-
-entry gather_payloads_long_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i64) (is: [ni]idx_t.t) (ys: [n]i64)
-  = gather_payloads_GFUR incr psize preVals is ys
-
-entry gather_payloads_float_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f32) (is: [ni]idx_t.t) (ys: [n]f32)
-  = gather_payloads_GFUR incr psize preVals is ys
-
-entry gather_payloads_double_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f64) (is: [ni]idx_t.t) (ys: [n]f64)
-  = gather_payloads_GFUR incr psize preVals is ys
-
--- | Get the minimum index to start scanning from there.
-entry min_idx = idx_t.minimum
--- | Get the maximum index to stop scanning there.
-entry max_idx = idx_t.maximum -- TODO consider warning (...)
