@@ -8,6 +8,7 @@
 #include "ftRelational.h"
 #include "mylogger.h"
 #include "radixJoin_util.h"
+#include "smjutil.h"
 #include "db_util.h"
 
 void RadixHashJoin_GFTR(
@@ -414,6 +415,7 @@ void RadixHashJoin_GFTR(
       free(Spl_asBytes);
       mylog(logfile, "Recovered gathered S payloads from byte array.");
 
+
       // CREATE DATA CHUNK AND APPEND
       // as loop so no individual chunk exceeds CHUNK_SIZE
       // TODO revamp (...)
@@ -465,27 +467,7 @@ void RadixHashJoin_GFTR(
       }*/
 
       // CLEANUP
-
-      switch(key_type) {
-        case DUCKDB_TYPE_SMALLINT:
-          futhark_free_i16_1d(ctx, (struct futhark_i16_1d*)Sbuff_ft);
-          break;
-        case DUCKDB_TYPE_INTEGER:
-          futhark_free_i32_1d(ctx, (struct futhark_i32_1d*)Sbuff_ft);
-          break;
-        case DUCKDB_TYPE_BIGINT:
-          futhark_free_i64_1d(ctx, (struct futhark_i64_1d*)Sbuff_ft);
-          break;
-        case DUCKDB_TYPE_FLOAT:
-          futhark_free_f32_1d(ctx, (struct futhark_f32_1d*)Sbuff_ft);
-          break;
-        case DUCKDB_TYPE_DOUBLE:
-          futhark_free_f64_1d(ctx, (struct futhark_f64_1d*)Sbuff_ft);
-          break;
-        default:
-          perror("Invalid type!");
-          return;
-      }
+      futhark_free_u8_2d(ctx, Sbuff_ft);
       futhark_free_u8_2d(ctx, S_payload_ft);
       for(idx_t col=1; col<R_col_count; col++) {
         free(Rpl[col-1]);

@@ -15,8 +15,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 10*CHUNK_SIZE
-#define S_TABLE_SIZE 10*CHUNK_SIZE
+#define R_TABLE_SIZE 5*CHUNK_SIZE
+#define S_TABLE_SIZE 5*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define MAX_PARTITION_SIZE 12000
@@ -31,8 +31,8 @@
 #define R_KEY "k"
 #define S_KEY "k"
 
-#define R_JOIN_BUFFER 2*CHUNK_SIZE//R_TABLE_SIZE
-#define S_JOIN_BUFFER R_JOIN_BUFFER
+#define R_JOIN_BUFFER 5*CHUNK_SIZE//R_TABLE_SIZE
+#define S_JOIN_BUFFER 5*CHUNK_SIZE
 #define JOIN_TBL_NAME "R_S_HashJoinTbl_GFTR"
 
 #define DBFILE "testdb.db"

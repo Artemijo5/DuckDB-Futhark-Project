@@ -30,9 +30,9 @@ sort_merge_join_GFUR: sort_merge_join_GFUR.c sort_util.c smjutil.c sortstages.c 
 	$(CC) sort_merge_join_GFUR.c -o sort_merge_join_GFUR.o \
 		sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS) $(CFLAGS)
 
-radix_hash_join: radix_hash_join.c radixJoin_util.c sortstages.c RadixJoinStages.c libftRelational.so $(DEPS)
+radix_hash_join: radix_hash_join.c radixJoin_util.c RadixJoinStages.c libftRelational.so $(DEPS)
 	$(CC) radix_hash_join.c -o radix_hash_join.o \
-		sort_util.c radixJoin_util.c sortstages.c RadixJoinStages.c libftRelational.so $(DEPS) $(CFLAGS)
+		radixJoin_util.c RadixJoinStages.c libftRelational.so $(DEPS) $(CFLAGS)
 
 #joinTest: joinTest.c libftRelational.so
 #	$(CC) joinTest.c -o joinTest.o libftRelational.so $(CFLAGS)
