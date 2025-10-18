@@ -22,7 +22,7 @@
 #define MAX_PARTITION_SIZE 256
 #define SCATTER_PSIZE 12000
 
-#define RADIX_BITS 32//8
+#define RADIX_BITS 8
 #define MAX_DEPTH 4
 
 #define R_TBL_NAME "R_tbl"

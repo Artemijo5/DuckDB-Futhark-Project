@@ -139,7 +139,7 @@ void radixPartition_GFTR(
 ) {
 	// Wrap keys
 	struct futhark_u8_2d *inKeys_ft = futhark_new_u8_2d(ctx, inKeys, card, num_bytes);
-	struct futhark_u8_2d *inPayloads_ft = futhark_new_u8_2d(ctx, inPayloads, card, num_bytes);
+	struct futhark_u8_2d *inPayloads_ft = futhark_new_u8_2d(ctx, inPayloads, card, pL_bytes);
 	// Perform the partitioning
 	struct futhark_opaque_partitionedSet_GFTR *partitionRes;
 	futhark_entry_partition_and_deepen_GFTR(
@@ -227,7 +227,8 @@ void HashJoin_joinKeyColumns_inFuthark(
 	return;
 }
 
-///*
+// TODO merge these with the SMJ ones?
+
 void gatherPayloads_GFTR(
 	struct futhark_context *ctx,
 	char *outCol,
@@ -251,9 +252,7 @@ void gatherPayloads_GFTR(
 	// Cleanup
 	futhark_free_u8_2d(ctx, outCol_ft);
 }
-//*/
 
-///*
 void gatherPayloads_GFUR_inFuthark(
 	struct futhark_context *ctx,
 	char *outCol,
@@ -284,40 +283,3 @@ void gatherPayloads_GFUR_inFuthark(
 	futhark_free_u8_2d(ctx, outCol_ft);
 	futhark_free_i64_1d(ctx, true_gatherIs);
 }
-//*/
-
-/*
-void gatherPayloads_GFTR(
-	struct futhark_context *ctx,
-	char *outCol,
-	idx_t payloadBytes,
-	idx_t incr,
-	const int16_t block_size,
-	struct futhark_i64_1d *gatherIs,
-	struct futhark_u8_2d *inCol,
-	idx_t card_columns,
-	idx_t numPairs
-) {
-	idx_t dummyIdx[card_columns];
-	for(idx_t i=0; i<card_columns; i++) {
-		dummyIdx[i] = i;
-	}
-	struct futhark_i64_1d *dummyIdx_ft = futhark_new_i64_1d(ctx, dummyIdx, card_columns);
-	char dumb[card_columns*payloadBytes];
-	futhark_values_u8_2d(ctx, inCol, dumb);
-	gatherPayloads_GFUR_inFuthark(
-		ctx,
-		outCol,
-		payloadBytes,
-		0,
-		incr,
-		block_size,
-		dummyIdx_ft,
-		gatherIs,
-		dumb,
-		card_columns,
-		numPairs
-	);
-	futhark_free_i64_1d(ctx, dummyIdx_ft);
-}
-*/
