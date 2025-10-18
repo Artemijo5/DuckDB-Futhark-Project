@@ -207,13 +207,13 @@ void HashJoin_joinKeyColumns_inFuthark(
 	futhark_entry_Inner_Radix_Hash_Join(
 		ctx, &joinPairs, radix_bits, keys1, keys2, info1, info2, hash_tbl2, scatter_psize
 	);
+	// Project joinPair
 	struct futhark_u8_2d *outVs_ft;
 	futhark_project_opaque_joinPairs_bsq_vs(ctx, &outVs_ft, joinPairs);
-	// Sync
-	futhark_context_sync(ctx);
-	// Project joinPair
 	futhark_project_opaque_joinPairs_bsq_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_bsq_iy(ctx, outIdx2, joinPairs);
+	// Sync
+	futhark_context_sync(ctx);
 	// Obtain number of pairs
 	*numPairs = futhark_shape_u8_2d(ctx, outVs_ft)[0];
 	// Unwrap vs
@@ -221,15 +221,6 @@ void HashJoin_joinKeyColumns_inFuthark(
 	futhark_values_u8_2d(ctx, outVs_ft, *outVs_dptr);
 	// Sync
 	futhark_context_sync(ctx);
-	///*
-	printf("Join Phase\n");
-	for(idx_t i=0; i<*numPairs; i++) {
-		idx_t l1, l2;
-		futhark_index_i64_1d(ctx, &l1, *outIdx1, i);
-		futhark_index_i64_1d(ctx, &l2, *outIdx2, i);
-		printf("Current indices : %ld & %ld\n ", l1, l2);
-	}
-	//*/
 	// Cleanup
 	futhark_free_u8_2d(ctx, outVs_ft);
 	futhark_free_opaque_joinPairs_bsq(ctx, joinPairs);
@@ -262,6 +253,7 @@ void gatherPayloads_GFTR(
 }
 //*/
 
+///*
 void gatherPayloads_GFUR_inFuthark(
 	struct futhark_context *ctx,
 	char *outCol,
@@ -292,6 +284,7 @@ void gatherPayloads_GFUR_inFuthark(
 	futhark_free_u8_2d(ctx, outCol_ft);
 	futhark_free_i64_1d(ctx, true_gatherIs);
 }
+//*/
 
 /*
 void gatherPayloads_GFTR(
