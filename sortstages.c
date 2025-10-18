@@ -935,3 +935,81 @@ void two_pass_sort_without_payloads(
   }
   free(colNames);
 }
+
+idx_t semi_sort_with_payloads(
+  idx_t CHUNK_SIZE,
+  size_t BUFFER_SIZE,
+  const int16_t block_size,
+  FILE *logfile,
+  struct futhark_context *ctx,
+  duckdb_connection con,
+  const char* tblName,
+  const char* keyName,
+  const char* intermName,
+  int blocked,
+  int quicksaves
+) {
+  duckdb_result res;
+  char queryStr[strlen(tblName) + 50];
+  sprintf(queryStr, "SELECT * FROM %s;", tblName);
+  duckdb_query(con, queryStr, &res);
+  mylog(logfile, "Obtained result from initial table."); 
+
+  idx_t incr_idx = 0;
+  mylog(logfile, "Initialised increment at 0.");
+
+  idx_t col_count = duckdb_column_count(&res);
+  duckdb_type type_ids[col_count];
+  mylog(logfile, "Initalising info for each column...");
+  for(idx_t col=0; col<col_count; col++) {
+    type_ids[col] = duckdb_column_type(&res, col);
+    //mylog(logfile, "Obtained column's type.");
+  }
+  idx_t kc = -1; // Column index of the key column
+  char** colNames = malloc(col_count*sizeof(char*));
+  for(idx_t i=0; i<col_count; i++) {
+    colNames[i] = malloc(strlen(duckdb_column_name(&res, i)) + 1);
+    sprintf(colNames[i], "%s", duckdb_column_name(&res, i));
+
+    if(strcmp(colNames[i], keyName) == 0) kc = i;
+  }
+
+  if(kc < 0) {
+    mylog(logfile, "Invalid column name for sorting.");
+    for(idx_t i=0; i<col_count; i++) {
+      free(colNames[i]);
+    }
+    free(colNames);
+    duckdb_destroy_result(&res);
+    return 0;
+  }
+
+  // STAGE 1 - SCAN TABLE, SAVE INTO LOCALLY SORTED TEMPORARY TABLES
+  mylog(logfile, "Beginning to process pages...");
+  idx_t numIntermediate = sort_Stage1_with_payloads(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    block_size,
+    intermName,
+    logfile,
+    ctx,
+    con,
+    res,
+    col_count,
+    type_ids,
+    colNames,
+    kc,
+    &incr_idx,
+    blocked
+  );
+
+  duckdb_destroy_result(&res);
+  mylog(logfile, "Completed semi-sort.");
+
+  for(idx_t i=0; i<col_count; i++) {
+    free(colNames[i]);
+  }
+  free(colNames);
+
+  return numIntermediate;
+}

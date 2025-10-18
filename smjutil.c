@@ -601,6 +601,7 @@ void gatherPayloads_GFUR_inFuthark(
 	futhark_context_sync(ctx);
 	// Cleanup
 	futhark_free_u8_2d(ctx, outCol_ft);
+	futhark_free_i64_1d(ctx, true_gatherIs);
 }
 
 void sortRelationByKey_inFuthark_short(

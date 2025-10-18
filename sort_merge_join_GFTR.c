@@ -109,7 +109,7 @@ int main() {
   mylog(logfile, "Now sorting the tables...");
 
   // R
-  two_pass_sort_with_payloads(
+  /*two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
     BLOCK_SIZE,
@@ -123,7 +123,7 @@ int main() {
     false,
     false,
     true
-  );
+  );*/
   //Tmp
   /*
   if(  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE R_tbl_sorted AS (SELECT * FROM R_tbl ORDER BY k);", NULL) == DuckDBError) {
@@ -134,7 +134,7 @@ int main() {
   mylog(logfile, "Sorted table R.");
 
   // S
-  two_pass_sort_with_payloads(
+  /*two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
     BLOCK_SIZE,
@@ -148,6 +148,19 @@ int main() {
     false,
     false,
     true
+  );*/
+  idx_t S_tbl_num = semi_sort_with_payloads(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    BLOCK_SIZE,
+    NULL,
+    ctx,
+    con,
+    S_TBL_NAME,
+    S_KEY,
+    S_interm,
+    false,
+    false
   );
 
   //Tmp
@@ -166,13 +179,13 @@ int main() {
   mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
   char joinQ[1000];
   sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
-    S_KEY, R_SORTED_NAME, S_SORTED_NAME, R_KEY, S_KEY);
+    S_KEY, R_TBL_NAME, S_TBL_NAME, R_KEY, S_KEY);
   if(duckdb_query(con, joinQ, NULL) == DuckDBError) {
     perror("Failed to join with duckdb.");
   }
 
   mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
-  SortMergeJoin_GFTR(
+  SortMergeJoin_GFUR_with_S_semisorted(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
@@ -183,10 +196,10 @@ int main() {
     logfile,
     ctx,
     con,
-    R_SORTED_NAME,
-    S_SORTED_NAME,
-    true,
-    true,
+    R_TBL_NAME,
+    S_interm,
+    false,
+    S_tbl_num,
     R_KEY,
     S_KEY,
     JOIN_TBL_NAME,
