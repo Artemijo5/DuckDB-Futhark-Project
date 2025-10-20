@@ -87,32 +87,4 @@ void HashJoin_joinKeyColumns_inFuthark(
 	idx_t scatter_psize
 );
 
-// TODO unite with SMJ version
-void gatherPayloads_GFTR(
-	struct futhark_context *ctx,
-	char *outCol,
-	idx_t payloadBytes,
-	idx_t incr,
-	const int16_t block_size,
-	struct futhark_i64_1d *gatherIs,
-	struct futhark_u8_2d *inCol,
-	idx_t card_columns,
-	idx_t numPairs
-);
-
-// TODO unite with SMJ version
-void gatherPayloads_GFUR_inFuthark(
-	struct futhark_context *ctx,
-	char *outCol,
-	idx_t payloadBytes,
-	idx_t sort_incr,
-	idx_t join_incr,
-	const int16_t block_size,
-	struct futhark_i64_1d *sort_gatherIs,
-	struct futhark_i64_1d *join_gatherIs,
-	char *inCol,
-	idx_t card_columns,
-	idx_t numPairs
-);
-
 #endif

@@ -48,18 +48,6 @@ void indexRange(
 	idx_t count
 );
 
-void gatherPayloads_GFUR(
-	struct futhark_context *ctx,
-	void *outCol,
-	duckdb_type type,
-	idx_t incr,
-	const int16_t block_size,
-	idx_t *gatherIs,
-	void* inCol,
-	idx_t card_columns,
-	idx_t numPairs
-);
-
 // TODO
 // Entirely in-memory SMJ
 // These return futhark obj's, and should be sync'd before using scalar output
@@ -86,30 +74,6 @@ void sortKeyColumn_inFuthark(
 	struct futhark_i64_1d **outIdx,
 	void* keys,
 	idx_t card
-);
-void gatherPayloads_GFTR(
-	struct futhark_context *ctx,
-	char *outCol,
-	idx_t payloadBytes,
-	idx_t incr,
-	const int16_t block_size,
-	struct futhark_i64_1d *gatherIs,
-	struct futhark_u8_2d *inCol,
-	idx_t card_columns,
-	idx_t numPairs
-);
-void gatherPayloads_GFUR_inFuthark(
-	struct futhark_context *ctx,
-	char *outCol,
-	idx_t payloadBytes,
-	idx_t sort_incr,
-	idx_t join_incr,
-	const int16_t block_size,
-	struct futhark_i64_1d *sort_gatherIs,
-	struct futhark_i64_1d *join_gatherIs,
-	char *inCol,
-	idx_t card_columns,
-	idx_t numPairs
 );
 void InnerJoin_joinKeyColumns_inFuthark(
 	struct futhark_context *ctx,

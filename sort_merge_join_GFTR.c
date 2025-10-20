@@ -185,7 +185,7 @@ int main() {
   }
 
   mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
-  SortMergeJoin_GFUR_with_S_semisorted(
+  SortMergeJoin_GFUR(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
@@ -197,9 +197,9 @@ int main() {
     ctx,
     con,
     R_TBL_NAME,
-    S_interm,
+    S_TBL_NAME,
     false,
-    S_tbl_num,
+    false,
     R_KEY,
     S_KEY,
     JOIN_TBL_NAME,

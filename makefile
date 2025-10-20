@@ -22,17 +22,14 @@ two_pass_sort: two_pass_sort.c sortstages.c libftRelational.so sort_util.c $(DEP
 	$(CC) two_pass_sort.c -o two_pass_sort.o \
 		sortstages.c libftRelational.so sort_util.c $(DEPS) $(CFLAGS)
 
-sort_merge_join_GFTR: sort_merge_join_GFTR.c sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS)
+sort_merge_join_GFTR: sort_merge_join_GFTR.c sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS)
 	$(CC) sort_merge_join_GFTR.c -o sort_merge_join_GFTR.o \
-		sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS) $(CFLAGS)
+		sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS) $(CFLAGS)
 
-sort_merge_join_GFUR: sort_merge_join_GFUR.c sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS)
+sort_merge_join_GFUR: sort_merge_join_GFUR.c sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS)
 	$(CC) sort_merge_join_GFUR.c -o sort_merge_join_GFUR.o \
-		sort_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS) $(CFLAGS)
+		sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS) $(CFLAGS)
 
-radix_hash_join: radix_hash_join.c radixJoin_util.c RadixJoinStages.c libftRelational.so $(DEPS)
+radix_hash_join: radix_hash_join.c join_util.c radixJoin_util.c RadixJoinStages.c libftRelational.so $(DEPS)
 	$(CC) radix_hash_join.c -o radix_hash_join.o \
-		radixJoin_util.c RadixJoinStages.c libftRelational.so $(DEPS) $(CFLAGS)
-
-#joinTest: joinTest.c libftRelational.so
-#	$(CC) joinTest.c -o joinTest.o libftRelational.so $(CFLAGS)
+		radixJoin_util.c join_util.c RadixJoinStages.c libftRelational.so $(DEPS) $(CFLAGS)

@@ -7,6 +7,7 @@
 
 #include "ftRelational.h"
 #include "mylogger.h"
+#include "join_util.h"
 #include "smjutil.h"
 #include "db_util.h"
 
@@ -31,164 +32,46 @@ void SortMergeJoin_GFTR(
   int quicksaves,
   int saveAsTempTable
 ) {
-  // Read R's sorted keys
-  mylog(logfile, "Preparing for join - obtain R's sorted keys...");
+  duckdb_type key_type;
   duckdb_result res_Rk;
-  char readRq[100 + strlen(R_tbl_name)];
-  sprintf(readRq, "SELECT * FROM %s;", R_tbl_name);
-  if( duckdb_query(con, readRq, &res_Rk) == DuckDBError) {
-    perror("Failed to read R_tbl_sorted...\n");
-    return;
-  }
-  logdbg(logfile, is_R_sorted, "Obtained sorted R result.", "Obtained R result.");
-  // result info
-  idx_t R_keyCol_Idx = -1;
-  idx_t R_col_count = duckdb_column_count(&res_Rk);
-  duckdb_type R_type_ids[R_col_count];
-  for(idx_t col=0; col<R_col_count; col++) {
-    R_type_ids[col] = duckdb_column_type(&res_Rk, col);
-    if(strcmp(R_keyName, duckdb_column_name(&res_Rk, col)) == 0) R_keyCol_Idx = col;
-  }
-  mylog(logfile, "Obtained R's column & type info.");
-  // Key type
-  if(R_keyCol_Idx<0) {
-    mylog(logfile, "Invalid column for left-side table.");
-    duckdb_destroy_result(&res_Rk);
-    return;
-  }
-  duckdb_type key_type = R_type_ids[R_keyCol_Idx];
-  // ALSO OBTAIN S INFO
-  duckdb_result S_dummyRes;
-  char dummySq[100 + strlen(S_tbl_name)];
-  sprintf(dummySq, "SELECT * FROM %s LIMIT 0;", S_tbl_name);
-  if( duckdb_query(con, dummySq, &S_dummyRes) == DuckDBError) {
-    perror("Failed to obtain info for S table...\n");
-    duckdb_destroy_result(&res_Rk);
-    return;
-  }
-  idx_t S_keyCol_Idx = -1;
-  idx_t S_col_count = duckdb_column_count(&S_dummyRes);
-  duckdb_type S_type_ids[S_col_count];
-  for(idx_t col=0; col<S_col_count; col++) {
-    S_type_ids[col] = duckdb_column_type(&S_dummyRes, col);
-    if(strcmp(S_keyName, duckdb_column_name(&S_dummyRes, col)) == 0) S_keyCol_Idx = col;
-  }
-  mylog(logfile, "Obtained S's column & type info.");
-  if(S_keyCol_Idx<0) {
-    mylog(logfile, "Invalid column for right-side table.");
-    duckdb_destroy_result(&res_Rk);
-    duckdb_destroy_result(&S_dummyRes);
-    return;
-  }
-  if(S_type_ids[S_keyCol_Idx] != key_type) {
-    mylog(logfile, "Key type mismatch!!!!!");
-    duckdb_destroy_result(&res_Rk);
-    duckdb_destroy_result(&S_dummyRes);
-    return;
-  }
-
-  idx_t R_curIdx = 0;
-  idx_t S_curIdx = 0;
-
-  // ##### 0 --- Create Join Table & Appender
-
-  // 0.0 create strings for types
-  char R_type_strs[R_col_count][25];
-  for(idx_t col=0; col<R_col_count; col++) {
-    colType_name(R_type_ids[col], R_type_strs[col]);
-  }
-  char S_type_strs[S_col_count][25];
-  for(idx_t col=0; col<S_col_count; col++) {
-    colType_name(S_type_ids[col], S_type_strs[col]);
-  }
-
-  // Create the Table
-  char joinTbl_init_query[250 + strlen(Join_tbl_name) + 30 + (R_col_count-1)*35 + (S_col_count-1)*35];
-  int joinTbl_strLen = (saveAsTempTable)?
-    sprintf(
-      joinTbl_init_query,
-      "CREATE OR REPLACE TEMP TABLE %s (%s %s",
-      Join_tbl_name, duckdb_column_name(&res_Rk, 0), R_type_strs[0]
-    ):
-    sprintf(
-      joinTbl_init_query,
-      "CREATE OR REPLACE TABLE %s (%s %s",
-      Join_tbl_name, duckdb_column_name(&res_Rk, 0), R_type_strs[0]
-    );
-  for(idx_t col=1; col<R_col_count; col++) {
-    joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", %s %s",
-      duckdb_column_name(&res_Rk, col), R_type_strs[col]);
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue; // payloads only
-    // if R has a column with the same name, append _1 to the end
-    char *colName = malloc(7 + strlen(duckdb_column_name(&S_dummyRes, col)));
-    int cnlen = sprintf(colName, "%s", duckdb_column_name(&S_dummyRes, col));
-    idx_t appendNum = 1;
-    while(true) {
-      int R_has_same = false;
-      for(idx_t rcol=0; rcol<R_col_count; rcol++) {
-        R_has_same = (strcmp(colName, duckdb_column_name(&res_Rk, rcol)) == 0);
-        if(R_has_same) break;
-      }
-      if(!R_has_same) break;
-      sprintf(colName + cnlen, "_%ld", appendNum++);
-    }
-
-    joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", %s %s",
-      colName, S_type_strs[col]);
-    free(colName);
-  }
-  joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ");");
-  // EXECUTE THE QUERY TO CREATE THE TABLE
-  if (duckdb_query(con, joinTbl_init_query, NULL) == DuckDBError) {
-    perror("Failed to create Join Result Table.");
-    //printf("%s\n", joinTbl_init_query);
-    return;
-  }
-  mylog(logfile, "Created result table where join pairs will be stored.");
-
-  duckdb_destroy_result(&S_dummyRes);
-
-  // Create composite logical_type id info
-  duckdb_logical_type join_type_ids[R_col_count + S_col_count - 1];
-  for(idx_t col=0; col<R_col_count; col++) {
-    join_type_ids[col] = duckdb_create_logical_type(R_type_ids[col]);
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue; // payloads only
-    idx_t accIdx = (col<S_keyCol_Idx)? col: col-1; // adjust index
-    join_type_ids[accIdx + R_col_count] = duckdb_create_logical_type(S_type_ids[col]);
-  }
-
-  // Get payload info
-  idx_t R_pL_bytesPerRow = 0;
-  idx_t S_pL_bytesPerRow = 0;
-  duckdb_type R_payloadTypes[R_col_count-1];
-  duckdb_type S_payloadTypes[S_col_count-1];
-  for(idx_t col=0; col<R_col_count; col++) {
-    if(col==R_keyCol_Idx) continue;
-    idx_t accIdx = (col<R_keyCol_Idx)? col: col-1;
-
-    R_pL_bytesPerRow += colType_bytes(R_type_ids[col]);
-    R_payloadTypes[accIdx] = R_type_ids[col];
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue;
-    idx_t accIdx = (col<S_keyCol_Idx)? col: col-1;
-
-    S_pL_bytesPerRow += colType_bytes(S_type_ids[col]);
-    S_payloadTypes[accIdx] = S_type_ids[col];
-  }
-
-  // Create the Appender
   duckdb_appender join_appender;
-  if( duckdb_appender_create(con, NULL, Join_tbl_name, &join_appender) == DuckDBError ) {
-    perror("Failed to create appender.\n");
+  idx_t R_keyCol_Idx, S_keyCol_Idx, R_col_count, S_col_count, R_pL_bytesPerRow, S_pL_bytesPerRow;
+  duckdb_type *R_type_ids;
+  duckdb_type *S_type_ids;
+  duckdb_type *R_payloadTypes;
+  duckdb_type *S_payloadTypes;
+  duckdb_logical_type *join_type_ids;
+  int jp = join_preparation(
+    logfile,
+    con,
+    R_tbl_name,
+    S_tbl_name,
+    Join_tbl_name,
+    false,
+    R_keyName,
+    S_keyName,
+    &key_type,
+    &res_Rk,
+    &join_appender,
+    &R_keyCol_Idx,
+    &S_keyCol_Idx,
+    &R_col_count,
+    &S_col_count,
+    &R_pL_bytesPerRow,
+    &S_pL_bytesPerRow,
+    &R_type_ids,
+    &S_type_ids,
+    &R_payloadTypes,
+    &S_payloadTypes,
+    &join_type_ids,
+    saveAsTempTable
+  );
+  if(jp<0) {
+    perror("Failed in join preparation.");
     return;
   }
-
-  mylog(logfile, "Created result table and its appender.");
+  idx_t R_curIdx = 0;
+  idx_t S_curIdx = 0;  
 
   // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
@@ -583,6 +466,11 @@ void SortMergeJoin_GFTR(
     R_curIdx += R_rowCount;
   }
   duckdb_destroy_result(&res_Rk);
+  free(R_type_ids);
+  free(S_type_ids);
+  free(R_payloadTypes);
+  free(S_payloadTypes);
+  free(join_type_ids);
   duckdb_appender_flush(join_appender);
   duckdb_appender_destroy(&join_appender);
 }
@@ -650,164 +538,46 @@ void SortMergeJoin_GFUR(
   int quicksaves,
   int saveAsTempTable
 ) {
-  // Read R's sorted keys
-  mylog(logfile, "Preparing for join - obtain R's sorted keys...");
+  duckdb_type key_type;
   duckdb_result res_Rk;
-  char readRq[100 + strlen(R_tbl_name)];
-  sprintf(readRq, "SELECT * FROM %s;", R_tbl_name);
-  if( duckdb_query(con, readRq, &res_Rk) == DuckDBError) {
-    perror("Failed to read R_tbl_sorted...\n");
-    return;
-  }
-  logdbg(logfile, is_R_sorted, "Obtained sorted R result.", "Obtained R result.");
-  // result info
-  idx_t R_keyCol_Idx = -1;
-  idx_t R_col_count = duckdb_column_count(&res_Rk);
-  duckdb_type R_type_ids[R_col_count];
-  for(idx_t col=0; col<R_col_count; col++) {
-    R_type_ids[col] = duckdb_column_type(&res_Rk, col);
-    if(strcmp(R_keyName, duckdb_column_name(&res_Rk, col)) == 0) R_keyCol_Idx = col;
-  }
-  mylog(logfile, "Obtained R's column & type info.");
-  // Key type
-  if(R_keyCol_Idx<0) {
-    mylog(logfile, "Invalid column for left-side table.");
-    duckdb_destroy_result(&res_Rk);
-    return;
-  }
-  duckdb_type key_type = R_type_ids[R_keyCol_Idx];
-  // ALSO OBTAIN S INFO
-  duckdb_result S_dummyRes;
-  char dummySq[100 + strlen(S_tbl_name)];
-  sprintf(dummySq, "SELECT * FROM %s LIMIT 0;", S_tbl_name);
-  if( duckdb_query(con, dummySq, &S_dummyRes) == DuckDBError) {
-    perror("Failed to obtain info for S table...\n");
-    duckdb_destroy_result(&res_Rk);
-    return;
-  }
-  idx_t S_keyCol_Idx = -1;
-  idx_t S_col_count = duckdb_column_count(&S_dummyRes);
-  duckdb_type S_type_ids[S_col_count];
-  for(idx_t col=0; col<S_col_count; col++) {
-    S_type_ids[col] = duckdb_column_type(&S_dummyRes, col);
-    if(strcmp(S_keyName, duckdb_column_name(&S_dummyRes, col)) == 0) S_keyCol_Idx = col;
-  }
-  mylog(logfile, "Obtained S's column & type info.");
-  if(S_keyCol_Idx<0) {
-    mylog(logfile, "Invalid column for right-side table.");
-    duckdb_destroy_result(&res_Rk);
-    duckdb_destroy_result(&S_dummyRes);
-    return;
-  }
-  if(S_type_ids[S_keyCol_Idx] != key_type) {
-    mylog(logfile, "Key type mismatch!!!!!");
-    duckdb_destroy_result(&res_Rk);
-    duckdb_destroy_result(&S_dummyRes);
-    return;
-  }
-
-  idx_t R_curIdx = 0;
-  idx_t S_curIdx = 0;
-
-  // ##### 0 --- Create Join Table & Appender
-
-  // 0.0 create strings for types
-  char R_type_strs[R_col_count][25];
-  for(idx_t col=0; col<R_col_count; col++) {
-    colType_name(R_type_ids[col], R_type_strs[col]);
-  }
-  char S_type_strs[S_col_count][25];
-  for(idx_t col=0; col<S_col_count; col++) {
-    colType_name(S_type_ids[col], S_type_strs[col]);
-  }
-
-  // Create the Table
-  char joinTbl_init_query[250 + strlen(Join_tbl_name) + 30 + (R_col_count-1)*35 + (S_col_count-1)*35];
-  int joinTbl_strLen = (saveAsTempTable)?
-    sprintf(
-      joinTbl_init_query,
-      "CREATE OR REPLACE TEMP TABLE %s (%s %s",
-      Join_tbl_name, duckdb_column_name(&res_Rk, 0), R_type_strs[0]
-    ):
-    sprintf(
-      joinTbl_init_query,
-      "CREATE OR REPLACE TABLE %s (%s %s",
-      Join_tbl_name, duckdb_column_name(&res_Rk, 0), R_type_strs[0]
-    );
-  for(idx_t col=1; col<R_col_count; col++) {
-    joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", %s %s",
-      duckdb_column_name(&res_Rk, col), R_type_strs[col]);
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue; // payloads only
-    // if R has a column with the same name, append _1 to the end
-    char *colName = malloc(7 + strlen(duckdb_column_name(&S_dummyRes, col)));
-    int cnlen = sprintf(colName, "%s", duckdb_column_name(&S_dummyRes, col));
-    idx_t appendNum = 1;
-    while(true) {
-      int R_has_same = false;
-      for(idx_t rcol=0; rcol<R_col_count; rcol++) {
-        R_has_same = (strcmp(colName, duckdb_column_name(&res_Rk, rcol)) == 0);
-        if(R_has_same) break;
-      }
-      if(!R_has_same) break;
-      sprintf(colName + cnlen, "_%ld", appendNum++);
-    }
-
-    joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", %s %s",
-      colName, S_type_strs[col]);
-    free(colName);
-  }
-  joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ");");
-  // EXECUTE THE QUERY TO CREATE THE TABLE
-  if (duckdb_query(con, joinTbl_init_query, NULL) == DuckDBError) {
-    perror("Failed to create Join Result Table.");
-    //printf("%s\n", joinTbl_init_query);
-    return;
-  }
-  mylog(logfile, "Created result table where join pairs will be stored.");
-
-  duckdb_destroy_result(&S_dummyRes);
-
-  // Create composite logical_type id info
-  duckdb_logical_type join_type_ids[R_col_count + S_col_count - 1];
-  for(idx_t col=0; col<R_col_count; col++) {
-    join_type_ids[col] = duckdb_create_logical_type(R_type_ids[col]);
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue; // payloads only
-    idx_t accIdx = (col<S_keyCol_Idx)? col: col-1; // adjust index
-    join_type_ids[accIdx + R_col_count] = duckdb_create_logical_type(S_type_ids[col]);
-  }
-
-  // Get payload info
-  idx_t R_pL_bytesPerRow = 0;
-  idx_t S_pL_bytesPerRow = 0;
-  duckdb_type R_payloadTypes[R_col_count-1];
-  duckdb_type S_payloadTypes[S_col_count-1];
-  for(idx_t col=0; col<R_col_count; col++) {
-    if(col==R_keyCol_Idx) continue;
-    idx_t accIdx = (col<R_keyCol_Idx)? col: col-1;
-
-    R_pL_bytesPerRow += colType_bytes(R_type_ids[col]);
-    R_payloadTypes[accIdx] = R_type_ids[col];
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue;
-    idx_t accIdx = (col<S_keyCol_Idx)? col: col-1;
-
-    S_pL_bytesPerRow += colType_bytes(S_type_ids[col]);
-    S_payloadTypes[accIdx] = S_type_ids[col];
-  }
-
-  // Create the Appender
   duckdb_appender join_appender;
-  if( duckdb_appender_create(con, NULL, Join_tbl_name, &join_appender) == DuckDBError ) {
-    perror("Failed to create appender.\n");
+  idx_t R_keyCol_Idx, S_keyCol_Idx, R_col_count, S_col_count, R_pL_bytesPerRow, S_pL_bytesPerRow;
+  duckdb_type *R_type_ids;
+  duckdb_type *S_type_ids;
+  duckdb_type *R_payloadTypes;
+  duckdb_type *S_payloadTypes;
+  duckdb_logical_type *join_type_ids;
+  int jp = join_preparation(
+    logfile,
+    con,
+    R_tbl_name,
+    S_tbl_name,
+    Join_tbl_name,
+    false,
+    R_keyName,
+    S_keyName,
+    &key_type,
+    &res_Rk,
+    &join_appender,
+    &R_keyCol_Idx,
+    &S_keyCol_Idx,
+    &R_col_count,
+    &S_col_count,
+    &R_pL_bytesPerRow,
+    &S_pL_bytesPerRow,
+    &R_type_ids,
+    &S_type_ids,
+    &R_payloadTypes,
+    &S_payloadTypes,
+    &join_type_ids,
+    saveAsTempTable
+  );
+  if(jp<0) {
+    perror("Failed in join preparation.");
     return;
   }
-
-  mylog(logfile, "Created result table and its appender.");
+  idx_t R_curIdx = 0;
+  idx_t S_curIdx = 0;  
 
   // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
@@ -1204,6 +974,11 @@ void SortMergeJoin_GFUR(
     R_curIdx += R_rowCount;
   }
   duckdb_destroy_result(&res_Rk);
+  free(R_type_ids);
+  free(S_type_ids);
+  free(R_payloadTypes);
+  free(S_payloadTypes);
+  free(join_type_ids);
   duckdb_appender_flush(join_appender);
   duckdb_appender_destroy(&join_appender);
 }
@@ -1635,164 +1410,47 @@ void SortMergeJoin_GFTR_with_S_semisorted(
   int quicksaves,
   int saveAsTempTable
 ) {
-  // Read R's sorted keys
-  mylog(logfile, "Preparing for join - obtain R's sorted keys...");
+
+  duckdb_type key_type;
   duckdb_result res_Rk;
-  char readRq[100 + strlen(R_tbl_name)];
-  sprintf(readRq, "SELECT * FROM %s;", R_tbl_name);
-  if( duckdb_query(con, readRq, &res_Rk) == DuckDBError) {
-    perror("Failed to read R_tbl_sorted...\n");
-    return;
-  }
-  logdbg(logfile, is_R_sorted, "Obtained sorted R result.", "Obtained R result.");
-  // result info
-  idx_t R_keyCol_Idx = -1;
-  idx_t R_col_count = duckdb_column_count(&res_Rk);
-  duckdb_type R_type_ids[R_col_count];
-  for(idx_t col=0; col<R_col_count; col++) {
-    R_type_ids[col] = duckdb_column_type(&res_Rk, col);
-    if(strcmp(R_keyName, duckdb_column_name(&res_Rk, col)) == 0) R_keyCol_Idx = col;
-  }
-  mylog(logfile, "Obtained R's column & type info.");
-  // Key type
-  if(R_keyCol_Idx<0) {
-    mylog(logfile, "Invalid column for left-side table.");
-    duckdb_destroy_result(&res_Rk);
-    return;
-  }
-  duckdb_type key_type = R_type_ids[R_keyCol_Idx];
-  // ALSO OBTAIN S INFO
-  duckdb_result S_dummyRes;
-  char dummySq[100 + strlen(S_tbl_name)];
-  sprintf(dummySq, "SELECT * FROM %s0 LIMIT 0;", S_tbl_name);
-  if( duckdb_query(con, dummySq, &S_dummyRes) == DuckDBError) {
-    perror("Failed to obtain info for S table...\n");
-    duckdb_destroy_result(&res_Rk);
-    return;
-  }
-  idx_t S_keyCol_Idx = -1;
-  idx_t S_col_count = duckdb_column_count(&S_dummyRes);
-  duckdb_type S_type_ids[S_col_count];
-  for(idx_t col=0; col<S_col_count; col++) {
-    S_type_ids[col] = duckdb_column_type(&S_dummyRes, col);
-    if(strcmp(S_keyName, duckdb_column_name(&S_dummyRes, col)) == 0) S_keyCol_Idx = col;
-  }
-  mylog(logfile, "Obtained S's column & type info.");
-  if(S_keyCol_Idx<0) {
-    mylog(logfile, "Invalid column for right-side table.");
-    duckdb_destroy_result(&res_Rk);
-    duckdb_destroy_result(&S_dummyRes);
-    return;
-  }
-  if(S_type_ids[S_keyCol_Idx] != key_type) {
-    mylog(logfile, "Key type mismatch!!!!!");
-    duckdb_destroy_result(&res_Rk);
-    duckdb_destroy_result(&S_dummyRes);
-    return;
-  }
-
-  idx_t R_curIdx = 0;
-  idx_t S_curIdx = 0;
-
-  // ##### 0 --- Create Join Table & Appender
-
-  // 0.0 create strings for types
-  char R_type_strs[R_col_count][25];
-  for(idx_t col=0; col<R_col_count; col++) {
-    colType_name(R_type_ids[col], R_type_strs[col]);
-  }
-  char S_type_strs[S_col_count][25];
-  for(idx_t col=0; col<S_col_count; col++) {
-    colType_name(S_type_ids[col], S_type_strs[col]);
-  }
-
-  // Create the Table
-  char joinTbl_init_query[250 + strlen(Join_tbl_name) + 30 + (R_col_count-1)*35 + (S_col_count-1)*35];
-  int joinTbl_strLen = (saveAsTempTable)?
-    sprintf(
-      joinTbl_init_query,
-      "CREATE OR REPLACE TEMP TABLE %s (%s %s",
-      Join_tbl_name, duckdb_column_name(&res_Rk, 0), R_type_strs[0]
-    ):
-    sprintf(
-      joinTbl_init_query,
-      "CREATE OR REPLACE TABLE %s (%s %s",
-      Join_tbl_name, duckdb_column_name(&res_Rk, 0), R_type_strs[0]
-    );
-  for(idx_t col=1; col<R_col_count; col++) {
-    joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", %s %s",
-      duckdb_column_name(&res_Rk, col), R_type_strs[col]);
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue; // payloads only
-    // if R has a column with the same name, append _1 to the end
-    char *colName = malloc(7 + strlen(duckdb_column_name(&S_dummyRes, col)));
-    int cnlen = sprintf(colName, "%s", duckdb_column_name(&S_dummyRes, col));
-    idx_t appendNum = 1;
-    while(true) {
-      int R_has_same = false;
-      for(idx_t rcol=0; rcol<R_col_count; rcol++) {
-        R_has_same = (strcmp(colName, duckdb_column_name(&res_Rk, rcol)) == 0);
-        if(R_has_same) break;
-      }
-      if(!R_has_same) break;
-      sprintf(colName + cnlen, "_%ld", appendNum++);
-    }
-
-    joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", %s %s",
-      colName, S_type_strs[col]);
-    free(colName);
-  }
-  joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ");");
-  // EXECUTE THE QUERY TO CREATE THE TABLE
-  if (duckdb_query(con, joinTbl_init_query, NULL) == DuckDBError) {
-    perror("Failed to create Join Result Table.");
-    //printf("%s\n", joinTbl_init_query);
-    return;
-  }
-  mylog(logfile, "Created result table where join pairs will be stored.");
-
-  duckdb_destroy_result(&S_dummyRes);
-
-  // Create composite logical_type id info
-  duckdb_logical_type join_type_ids[R_col_count + S_col_count - 1];
-  for(idx_t col=0; col<R_col_count; col++) {
-    join_type_ids[col] = duckdb_create_logical_type(R_type_ids[col]);
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue; // payloads only
-    idx_t accIdx = (col<S_keyCol_Idx)? col: col-1; // adjust index
-    join_type_ids[accIdx + R_col_count] = duckdb_create_logical_type(S_type_ids[col]);
-  }
-
-  // Get payload info
-  idx_t R_pL_bytesPerRow = 0;
-  idx_t S_pL_bytesPerRow = 0;
-  duckdb_type R_payloadTypes[R_col_count-1];
-  duckdb_type S_payloadTypes[S_col_count-1];
-  for(idx_t col=0; col<R_col_count; col++) {
-    if(col==R_keyCol_Idx) continue;
-    idx_t accIdx = (col<R_keyCol_Idx)? col: col-1;
-
-    R_pL_bytesPerRow += colType_bytes(R_type_ids[col]);
-    R_payloadTypes[accIdx] = R_type_ids[col];
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue;
-    idx_t accIdx = (col<S_keyCol_Idx)? col: col-1;
-
-    S_pL_bytesPerRow += colType_bytes(S_type_ids[col]);
-    S_payloadTypes[accIdx] = S_type_ids[col];
-  }
-
-  // Create the Appender
   duckdb_appender join_appender;
-  if( duckdb_appender_create(con, NULL, Join_tbl_name, &join_appender) == DuckDBError ) {
-    perror("Failed to create appender.\n");
+  idx_t R_keyCol_Idx, S_keyCol_Idx, R_col_count, S_col_count, R_pL_bytesPerRow, S_pL_bytesPerRow;
+  duckdb_type *R_type_ids;
+  duckdb_type *S_type_ids;
+  duckdb_type *R_payloadTypes;
+  duckdb_type *S_payloadTypes;
+  duckdb_logical_type *join_type_ids;
+  int jp = join_preparation(
+    logfile,
+    con,
+    R_tbl_name,
+    S_tbl_name,
+    Join_tbl_name,
+    true,
+    R_keyName,
+    S_keyName,
+    &key_type,
+    &res_Rk,
+    &join_appender,
+    &R_keyCol_Idx,
+    &S_keyCol_Idx,
+    &R_col_count,
+    &S_col_count,
+    &R_pL_bytesPerRow,
+    &S_pL_bytesPerRow,
+    &R_type_ids,
+    &S_type_ids,
+    &R_payloadTypes,
+    &S_payloadTypes,
+    &join_type_ids,
+    saveAsTempTable
+  );
+  if(jp<0) {
+    perror("Failed in join preparation.");
     return;
   }
-
-  mylog(logfile, "Created result table and its appender.");
+  idx_t R_curIdx = 0;
+  idx_t S_curIdx = 0;  
 
   // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
@@ -2175,6 +1833,11 @@ void SortMergeJoin_GFTR_with_S_semisorted(
     R_curIdx += R_rowCount;
   }
   duckdb_destroy_result(&res_Rk);
+  free(R_type_ids);
+  free(S_type_ids);
+  free(R_payloadTypes);
+  free(S_payloadTypes);
+  free(join_type_ids);
   duckdb_appender_flush(join_appender);
   duckdb_appender_destroy(&join_appender);
 }
@@ -2200,164 +1863,46 @@ void SortMergeJoin_GFUR_with_S_semisorted(
   int quicksaves,
   int saveAsTempTable
 ) {
-  // Read R's sorted keys
-  mylog(logfile, "Preparing for join - obtain R's sorted keys...");
+  duckdb_type key_type;
   duckdb_result res_Rk;
-  char readRq[100 + strlen(R_tbl_name)];
-  sprintf(readRq, "SELECT * FROM %s;", R_tbl_name);
-  if( duckdb_query(con, readRq, &res_Rk) == DuckDBError) {
-    perror("Failed to read R_tbl_sorted...\n");
-    return;
-  }
-  logdbg(logfile, is_R_sorted, "Obtained sorted R result.", "Obtained R result.");
-  // result info
-  idx_t R_keyCol_Idx = -1;
-  idx_t R_col_count = duckdb_column_count(&res_Rk);
-  duckdb_type R_type_ids[R_col_count];
-  for(idx_t col=0; col<R_col_count; col++) {
-    R_type_ids[col] = duckdb_column_type(&res_Rk, col);
-    if(strcmp(R_keyName, duckdb_column_name(&res_Rk, col)) == 0) R_keyCol_Idx = col;
-  }
-  mylog(logfile, "Obtained R's column & type info.");
-  // Key type
-  if(R_keyCol_Idx<0) {
-    mylog(logfile, "Invalid column for left-side table.");
-    duckdb_destroy_result(&res_Rk);
-    return;
-  }
-  duckdb_type key_type = R_type_ids[R_keyCol_Idx];
-  // ALSO OBTAIN S INFO
-  duckdb_result S_dummyRes;
-  char dummySq[100 + strlen(S_tbl_name)];
-  sprintf(dummySq, "SELECT * FROM %s0 LIMIT 0;", S_tbl_name);
-  if( duckdb_query(con, dummySq, &S_dummyRes) == DuckDBError) {
-    perror("Failed to obtain info for S table...\n");
-    duckdb_destroy_result(&res_Rk);
-    return;
-  }
-  idx_t S_keyCol_Idx = -1;
-  idx_t S_col_count = duckdb_column_count(&S_dummyRes);
-  duckdb_type S_type_ids[S_col_count];
-  for(idx_t col=0; col<S_col_count; col++) {
-    S_type_ids[col] = duckdb_column_type(&S_dummyRes, col);
-    if(strcmp(S_keyName, duckdb_column_name(&S_dummyRes, col)) == 0) S_keyCol_Idx = col;
-  }
-  mylog(logfile, "Obtained S's column & type info.");
-  if(S_keyCol_Idx<0) {
-    mylog(logfile, "Invalid column for right-side table.");
-    duckdb_destroy_result(&res_Rk);
-    duckdb_destroy_result(&S_dummyRes);
-    return;
-  }
-  if(S_type_ids[S_keyCol_Idx] != key_type) {
-    mylog(logfile, "Key type mismatch!!!!!");
-    duckdb_destroy_result(&res_Rk);
-    duckdb_destroy_result(&S_dummyRes);
-    return;
-  }
-
-  idx_t R_curIdx = 0;
-  idx_t S_curIdx = 0;
-
-  // ##### 0 --- Create Join Table & Appender
-
-  // 0.0 create strings for types
-  char R_type_strs[R_col_count][25];
-  for(idx_t col=0; col<R_col_count; col++) {
-    colType_name(R_type_ids[col], R_type_strs[col]);
-  }
-  char S_type_strs[S_col_count][25];
-  for(idx_t col=0; col<S_col_count; col++) {
-    colType_name(S_type_ids[col], S_type_strs[col]);
-  }
-
-  // Create the Table
-  char joinTbl_init_query[250 + strlen(Join_tbl_name) + 30 + (R_col_count-1)*35 + (S_col_count-1)*35];
-  int joinTbl_strLen = (saveAsTempTable)?
-    sprintf(
-      joinTbl_init_query,
-      "CREATE OR REPLACE TEMP TABLE %s (%s %s",
-      Join_tbl_name, duckdb_column_name(&res_Rk, 0), R_type_strs[0]
-    ):
-    sprintf(
-      joinTbl_init_query,
-      "CREATE OR REPLACE TABLE %s (%s %s",
-      Join_tbl_name, duckdb_column_name(&res_Rk, 0), R_type_strs[0]
-    );
-  for(idx_t col=1; col<R_col_count; col++) {
-    joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", %s %s",
-      duckdb_column_name(&res_Rk, col), R_type_strs[col]);
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue; // payloads only
-    // if R has a column with the same name, append _1 to the end
-    char *colName = malloc(7 + strlen(duckdb_column_name(&S_dummyRes, col)));
-    int cnlen = sprintf(colName, "%s", duckdb_column_name(&S_dummyRes, col));
-    idx_t appendNum = 1;
-    while(true) {
-      int R_has_same = false;
-      for(idx_t rcol=0; rcol<R_col_count; rcol++) {
-        R_has_same = (strcmp(colName, duckdb_column_name(&res_Rk, rcol)) == 0);
-        if(R_has_same) break;
-      }
-      if(!R_has_same) break;
-      sprintf(colName + cnlen, "_%ld", appendNum++);
-    }
-
-    joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ", %s %s",
-      colName, S_type_strs[col]);
-    free(colName);
-  }
-  joinTbl_strLen += sprintf(joinTbl_init_query + joinTbl_strLen, ");");
-  // EXECUTE THE QUERY TO CREATE THE TABLE
-  if (duckdb_query(con, joinTbl_init_query, NULL) == DuckDBError) {
-    perror("Failed to create Join Result Table.");
-    //printf("%s\n", joinTbl_init_query);
-    return;
-  }
-  mylog(logfile, "Created result table where join pairs will be stored.");
-
-  duckdb_destroy_result(&S_dummyRes);
-
-  // Create composite logical_type id info
-  duckdb_logical_type join_type_ids[R_col_count + S_col_count - 1];
-  for(idx_t col=0; col<R_col_count; col++) {
-    join_type_ids[col] = duckdb_create_logical_type(R_type_ids[col]);
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue; // payloads only
-    idx_t accIdx = (col<S_keyCol_Idx)? col: col-1; // adjust index
-    join_type_ids[accIdx + R_col_count] = duckdb_create_logical_type(S_type_ids[col]);
-  }
-
-  // Get payload info
-  idx_t R_pL_bytesPerRow = 0;
-  idx_t S_pL_bytesPerRow = 0;
-  duckdb_type R_payloadTypes[R_col_count-1];
-  duckdb_type S_payloadTypes[S_col_count-1];
-  for(idx_t col=0; col<R_col_count; col++) {
-    if(col==R_keyCol_Idx) continue;
-    idx_t accIdx = (col<R_keyCol_Idx)? col: col-1;
-
-    R_pL_bytesPerRow += colType_bytes(R_type_ids[col]);
-    R_payloadTypes[accIdx] = R_type_ids[col];
-  }
-  for(idx_t col=0; col<S_col_count; col++) {
-    if(col==S_keyCol_Idx) continue;
-    idx_t accIdx = (col<S_keyCol_Idx)? col: col-1;
-
-    S_pL_bytesPerRow += colType_bytes(S_type_ids[col]);
-    S_payloadTypes[accIdx] = S_type_ids[col];
-  }
-
-  // Create the Appender
   duckdb_appender join_appender;
-  if( duckdb_appender_create(con, NULL, Join_tbl_name, &join_appender) == DuckDBError ) {
-    perror("Failed to create appender.\n");
+  idx_t R_keyCol_Idx, S_keyCol_Idx, R_col_count, S_col_count, R_pL_bytesPerRow, S_pL_bytesPerRow;
+  duckdb_type *R_type_ids;
+  duckdb_type *S_type_ids;
+  duckdb_type *R_payloadTypes;
+  duckdb_type *S_payloadTypes;
+  duckdb_logical_type *join_type_ids;
+  int jp = join_preparation(
+    logfile,
+    con,
+    R_tbl_name,
+    S_tbl_name,
+    Join_tbl_name,
+    true,
+    R_keyName,
+    S_keyName,
+    &key_type,
+    &res_Rk,
+    &join_appender,
+    &R_keyCol_Idx,
+    &S_keyCol_Idx,
+    &R_col_count,
+    &S_col_count,
+    &R_pL_bytesPerRow,
+    &S_pL_bytesPerRow,
+    &R_type_ids,
+    &S_type_ids,
+    &R_payloadTypes,
+    &S_payloadTypes,
+    &join_type_ids,
+    saveAsTempTable
+  );
+  if(jp<0) {
+    perror("Failed in join preparation.");
     return;
   }
-
-  mylog(logfile, "Created result table and its appender.");
+  idx_t R_curIdx = 0;
+  idx_t S_curIdx = 0;  
 
   // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
@@ -2742,6 +2287,11 @@ void SortMergeJoin_GFUR_with_S_semisorted(
     R_curIdx += R_rowCount;
   }
   duckdb_destroy_result(&res_Rk);
+  free(R_type_ids);
+  free(S_type_ids);
+  free(R_payloadTypes);
+  free(S_payloadTypes);
+  free(join_type_ids);
   duckdb_appender_flush(join_appender);
   duckdb_appender_destroy(&join_appender);
 }

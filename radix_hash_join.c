@@ -83,13 +83,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 10000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 100000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 10000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 100000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
@@ -115,7 +115,7 @@ int main() {
   }
 
   mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
-  RadixHashJoin_GFTR(
+  RadixHashJoin_GFUR(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
