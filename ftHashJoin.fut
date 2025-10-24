@@ -34,7 +34,7 @@ def getRadix [b] (i: i32) (j: i32) (x: byteSeq [b])
 def radix_to_idx [b] (radix_bits: i32) (bsq: byteSeq [b])
 : idx_t.t =
   map2
-    (\byte ind -> ((i64.u8 byte) * (2 ** ( ind*(i64.i32 u8.num_bits) ) ) ) )
+    (\byte ind -> ((i64.u8 byte) * (1 << (ind*(i64.i32 u8.num_bits)) ) ) )
     (getRadix 0 (radix_bits-1) bsq)
     (indices bsq |> map (\i -> b-i-1))
   |> i64.sum

@@ -189,222 +189,126 @@ def uncooked_joinTup [nR] 't
     cm = replicate nR 0
   }
 
-def merge_joinTups [n1] [n2] 't
+def overlay_joinTups [n1] [n2] 't
   (tup1 : joinTup [n1] t)
   (tup2 : joinTup [n2] t)
-: joinTup [n1+n2] t =
-  let newVs = tup1.vs ++ tup2.vs :> [n1+n2]t
-  let newIx = tup1.ix ++ tup2.ix :> [n1+n2]idx_t.t
-  let newIy = tup1.iy ++ tup2.iy :> [n1+n2]idx_t.t
-  let newCm = tup1.cm ++ tup2.cm :> [n1+n2]idx_t.t
+  (offset : idx_t.t)
+: joinTup [n1] t =
+  let newVs = tup1.vs
+  let newIx = tup1.ix
+  let newIy = (copy tup1.iy) with [offset:offset+n2] = tup2.iy
+  let newCm = (copy tup1.cm) with [offset:offset+n2] = tup2.cm
   in {vs = newVs, ix = newIx, iy = newIy, cm = newCm}
 
 -- Find matches between tuples from a partition of R and a partition of S
--- extParallelism controls the external parallelism of a nested op (map x (reduce y))
--- Note: Futhark by Example claims the compiler uses loop fission for nested parallelism
--- so it might already be doing this...
--- TODO a hist-based implementation might be more efficient
 def find_joinTuples [nR] [nS] 't
   (tR: [nR]t)
   (tS: [nS]t)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (extParallelism: idx_t.t)
-  (neq: t -> t -> bool)
+  (eq: t -> t -> bool)
   (gt: t -> t -> bool)
 : joinTup [nR] t =
-  let numIter = (nR+extParallelism-1) / extParallelism
-  let pre_joinTup = uncooked_joinTup (tR) (offset_R)
-  let joinLoop : {iter: idx_t.t, result: joinTup [nR] t}
-    = loop p = {iter = 0, result = pre_joinTup}
-    while p.iter < numIter do
-      let start = p.iter*extParallelism
-      let iter_size = idx_t.min (extParallelism) (nR - start)
-      let iter_R = tR[start : start + iter_size] :> [iter_size]t
-      in -- skip if R and S do not overlap
-        let r_min = iter_R[0]
-        let r_max = iter_R[iter_size-1]
-        let s_min = if nS>0 then tS[0] else r_min
-        let s_max = if nS>0 then tS[nS-1] else r_max
-        in
-          if (r_min `gt` s_max) then {iter= numIter, result= p.result} -- S < iter_R -> break
-          else if (s_min `gt` r_max) then {iter= p.iter+1, result= p.result} -- S > iter_R -> continue
-      else -- default case
-      let ircs = zip3 (idx_t.indicesWithIncrement (offset_R+start) iter_R) (iter_R) (replicate iter_size 0)
-      let iscs = zip3 (idx_t.indicesWithIncrement (offset_S) tS) tS (replicate nS 1)
-      let ms = ircs -- TODO optimisation: if iscs below a certain size, use loop rather than reduce (?)
-        |> map (\(_, x, _) ->
-          let redTup = reduce_comm (\(i1, y1, c1) (i2, y2, c2) ->
-              if ((y1 `neq` x) || i1 < 0) && ((y2 `neq` x) || i2 < 0) then (-1, x, 0)
-              else if ((y1 `neq` x) || i1 < 0) then (i2, y2, c2)
-              else if ((y2 `neq` x) || i2 < 0) then (i1, y1, c1)
-              else (idx_t.min i1 i2, x, c1+c2)
-            )
-            (-1, x, 0)
-            iscs
-          in (redTup.0, redTup.2) -- keep only necessary info - iy & cm
-        )
-        |> unzip
-      -- TODO figure out consumption tactics...
-      let nextVs = p.result.vs
-      let nextIx = p.result.ix
-      let nextIy = (copy p.result.iy) with [start:start+iter_size] = ms.0
-      let nextCm = (copy p.result.cm) with [start:start+iter_size] = ms.1
-      in {
-        iter = p.iter+1,
-        result = {vs = nextVs, ix = nextIx, iy = nextIy, cm = nextCm}
-      }
-  in joinLoop.result
-
--- Pass as arguments the partitions derived from windowed_partitionFunc
--- finds for each partition of tR the first and last matching partitions that can match it in tS
--- returns the indices of those partitions, as they are in partitionPairs
--- (returns np if there's a potential of continuing into the next chunk of S)
-def partitionMatchBounds [n] [np] 't
-  (tR: [n]t)
-  (tS: [n]t)
-  (partitionPairs: [np](idx_t.t, idx_t.t))
-  (extParallelism: idx_t.t)
-  (leq: t -> t -> bool)
-  (gt : t -> t -> bool)
-: [np](idx_t.t, idx_t.t) =
-  partitionPairs
-    |> zip (indices partitionPairs)
-    |> map (\(j, (ri, _)) ->
-      let r_min = tR[idx_t.min ri (n-1)]
-      let ri_next = if j==np-1 then n else partitionPairs[j+1].0
-      let r_max = tR[idx_t.max 0 (ri_next-1)]
-      -- TODO turn the following sequential searches into binary ones? or selectable
-      let firstMatch : {flag: bool, smatch: idx_t.t}
-        = loop fm = {flag=true, smatch=j}
-        while (fm.flag) do
-          let sj = idx_t.min (n-1) partitionPairs[fm.smatch].1
-          let s_min = tS[sj]
-          let si_next = if fm.smatch>=np-1 then n else partitionPairs[fm.smatch+1].1
-          let s_max = tS[idx_t.max sj (si_next-1)]
-          let s_nextMin = tS[idx_t.min (np-1) si_next]
-          let s_prevMax = tS[idx_t.max 0 (sj-1)]
+  let init_step = idx_t.max 1 (nS/2)
+  let tR_matches = tR
+    |> map (\rv ->
+      -- 2 binary searches for first and last matches in tS
+      let bsearch_first =
+        loop (first_match, step) = (0, init_step)
+        while step>0 do
+          let sv = tS[first_match]
+          let pv = if first_match==0 then sv else tS[first_match-1]
+          let nv = if first_match==nS-1 then sv else tS[first_match+1]
           in
-            if (r_min `gt` s_min)
-            then
-              if (r_min `leq` s_max)
-              then {flag=false, smatch=fm.smatch}
-              else {flag= !((r_min `leq` s_nextMin)||(fm.smatch+1>=np)), smatch=fm.smatch+1} -- break if at end OR if r_min <= s_nextMin
-            else {flag= !((s_prevMax `leq` r_min)||(fm.smatch-1<=0)), smatch=idx_t.max 0 (fm.smatch-1)}
-      let lastMatch : {flag:bool, smatch: idx_t.t}
-        = loop lm = {flag=true, smatch=j}
-        while (lm.flag && lm.smatch<np) do
-          let sj = idx_t.min (n-1) partitionPairs[lm.smatch].1
-          let s_min = tS[sj]
-          let si_next = if lm.smatch>=np-1 then n else partitionPairs[lm.smatch+1].1
-          let s_max = tS[idx_t.max sj (si_next-1)]
-          let s_nextMin = tS[idx_t.min (np-1) si_next]
-          let s_prevMax = tS[idx_t.max 0 (sj-1)]
+            if ((sv `eq` rv) && (first_match==0 || (rv `gt` pv))) -- found first match
+            then (first_match, 0)
+            else if (sv `eq` rv) -- found value range but not its beginning
+            then (first_match - step, idx_t.max 1 (step/2))
+            else if (sv `gt` rv) then
+              if (first_match==0 || (rv `gt` pv))
+              then (-1, 0)
+              else (first_match-step, idx_t.max 1 (step/2))
+            else -- if (rv `gt` sv) then
+              if (first_match==nS-1 || (nv `gt` rv))
+              then (-1, 0)
+              else (first_match+step, idx_t.max 1 (step/2))
+      let frv = bsearch_first.0
+      let init_step_last = idx_t.max 1 ((nS-frv)/2)
+      let bsearch_last = if frv == -1 then (-1, 0) else
+        loop (last_match, step) = (nS-1, init_step_last)
+        while step>0 do
+          let sv = tS[last_match]
+          let pv = if last_match==frv then sv else tS[last_match-1]
+          let nv = if last_match==nS-1 then sv else tS[last_match+1]
           in
-            if (s_max `gt` r_max)
-            then
-              if (s_min `leq` r_max)
-              then {flag=false, smatch=lm.smatch}
-              else {flag= !((s_prevMax `leq` r_max)||(lm.smatch-1<=0)), smatch= idx_t.max 0 (lm.smatch-1)} -- break if at 0 OR if s_prevMax <= r_max
-            else {flag= !((r_max `leq` s_nextMin)), smatch=lm.smatch+1}
-      in (firstMatch.smatch, lastMatch.smatch)
+            if ((sv `eq` rv) && (last_match==nS-1 || (nv `gt` rv))) -- found last match
+            then (last_match, 0)
+            else if (sv `eq` rv) -- found value range but not its end
+            then (last_match+step, idx_t.max 1 (step/2))
+            else if (sv `gt` rv) then
+              if (last_match==frv || (rv `gt` pv))
+              then (-1, 0)
+              else (last_match-step, idx_t.max 1 (step/2))
+            else -- if (rv `gt` sv) then
+              if (last_match==nS-1 || (nv `gt` rv))
+              then (-1, 0)
+              else (last_match+step, idx_t.max 1 (step/2))
+      let lrv = bsearch_last.0
+      let cm = if (lrv<0) then 0 else (lrv-frv+1)
+      in (frv, cm)
     )
-    -- spent too much time taking care of corner cases for dense arrays...
-    -- TODO tidy up & implement the extParallelism option
-    -- TODO modify so can be -1 if R_min < S_min (or R_max < S_min)
+  in {
+    vs = tR,
+    ix = idx_t.indicesWithIncrement (offset_R) (tR),
+    iy = tR_matches |> map (.0) |> map (\j -> if (j<0) then j else j + offset_S),
+    cm = tR_matches |> map (.1)
+  }
 
-def join_chunks [n] 't
-  (tR: [n]t)
-  (tS: [n]t)
-  (offset_R: idx_t.t)
-  (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
-  (neq: t -> t -> bool)
-  (leq: t -> t -> bool)
-  (gt : t -> t -> bool)
-: joinTup [n] t =
-  let parts = windowed_partitionFunc (partitionsPerWindow) (numberOfWindows) (tR) (tS) (leq) (gt)
-  let np = length parts
-  let pmbs = partitionMatchBounds (tR) (tS) (parts) (extParallelism) (leq) (gt)
-  let loop_over : {iter: idx_t.t, tups: joinTup [n] t}
-  = loop p = {iter=0, tups = uncooked_joinTup (tR) (offset_R)}
-  while p.iter<np do
-    let firstMatch = pmbs[p.iter].0
-    let lastMatch = idx_t.min (np - 1) (pmbs[p.iter].1)
-    in if (firstMatch >= np) then {iter = np, tups = p.tups} else -- break if reached the end
-    if (lastMatch < 0) then {iter = p.iter+1, tups = p.tups} else -- continue if partition smaller than S_min - code unused yet
-    let r_start = parts[p.iter].0
-    let r_end = if p.iter + 1 == np then n else parts[p.iter+1].0
-    let curR = tR[r_start:r_end] :> [r_end-r_start]t
-    let inner_loop : {curPart: idx_t.t, curTups: joinTup [r_end-r_start] t}
-    = loop dp = {curPart = firstMatch, curTups = uncooked_joinTup (curR) (offset_R + r_start)}
-    while dp.curPart <= lastMatch do
-      let s_start = parts[dp.curPart].1
-      let s_end = if dp.curPart + 1 == np then n else parts[dp.curPart+1].1
-      let curS = tS[s_start:s_end]
-      let curJoin = find_joinTuples (curR) (curS) (offset_R+r_start) (offset_S+s_start) (extParallelism) (neq) (gt)
-      let newVs = dp.curTups.vs
-      let newIx = dp.curTups.ix
-      let newIy = map2 (\alt neu -> if (alt<0) then neu else alt) (dp.curTups.iy) (curJoin.iy)
-      let newCm = map2 (+) (dp.curTups.cm) (curJoin.cm)
-      let nextTup = {vs=newVs, ix=newIx, iy=newIy, cm=newCm}
-      in {curPart=dp.curPart+1, curTups=nextTup}
-    let newIx = p.tups.ix
-    let newVs = p.tups.vs
-    let newIy_block = map2 (\alt neu -> if (alt<0) then neu else alt) (p.tups.iy[r_start:r_end]) (inner_loop.curTups.iy)
-    let newCm_block = map2 (+) (p.tups.cm[r_start:r_end]) (inner_loop.curTups.cm)
-    let newIy = (copy p.tups.iy) with [r_start:r_end] = newIy_block
-    let newCm = (copy p.tups.cm) with [r_start:r_end] = newCm_block
-    let newTups = {vs=newVs, ix=newIx, iy=newIy, cm=newCm}
-    in {iter=p.iter+1, tups=newTups}
-  in loop_over.tups
-
--- FOLLOWING FUNCTION
--- assume a single chunk of R, multiple chunks of S
--- nR serves as the max_window_size
 def mergeJoin [nR] [nS] 't
   (tR: [nR]t)
   (tS: [nS]t)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
-  (neq: t -> t -> bool)
-  (leq: t -> t -> bool)
+  (partitionSize: idx_t.t)
+  (eq: t -> t -> bool)
   (gt : t -> t -> bool)
 : joinTup [nR] t =
-  let numIter = (nR+nS-1)/nR
-  let loop_over : {iter:idx_t.t, tups: joinTup [nR] t}
-  = loop p = {iter=0, tups = uncooked_joinTup (tR) (offset_R)}
-  while p.iter < numIter do
-    let tS_start = p.iter*nR
-    let tS_end = idx_t.min (nS) (tS_start + nR)
-    let curS = tS[tS_start:tS_end]
-    in if (curS[0] `gt` tR[nR-1]) then {iter=numIter, tups=p.tups} else -- if exceeded Rmax, break
-    let curTup : joinTup [nR] t =
-      if (tS_end - tS_start) < nR then -- last chunk of S - join without partitioning...
-        -- TODO break tR into chunks equisized with last chunk of S
-        -- adjust number of windows & partitions to new size
-        -- might end up too complicated (?)
-        find_joinTuples tR curS (offset_R) (offset_S+tS_start) (extParallelism) (neq) (gt)
-      else -- default case
-        let bS = curS :> [nR]t
-        in join_chunks
-          (tR) (bS)
-          (offset_R) (offset_S+tS_start)
-          (partitionsPerWindow) (numberOfWindows) (extParallelism)
-          (neq) (leq) (gt)
-    let newVs = p.tups.vs
-    let newIx = p.tups.ix
-    let newIy = map2 (\alt neu -> if (alt<0) then neu else alt) (p.tups.iy) (curTup.iy) -- TODO change to avoid rand acc (?)
-    let newCm = map2 (+) (p.tups.cm) (curTup.cm)
-    let nextTup = {vs=newVs, ix=newIx, iy=newIy, cm=newCm}
-    let nextIter = if curS[(length curS)-1] `leq` tR[nR-1] then p.iter+1 else numIter -- break if exceeded Rmax
-    in {iter=nextIter, tups = nextTup}
-  in loop_over.tups
+  let numIter_R = (nR + partitionSize - 1)/partitionSize
+  let numIter_S = (nS + partitionSize - 1)/partitionSize
+  let loop_over_R : (idx_t.t, joinTup [nR] t, idx_t.t)
+  = loop (iter, jtup, first_relevant_in_S) = (0, uncooked_joinTup tR offset_R, 0)
+  while iter < numIter_R do
+    let tR_start = iter * partitionSize
+    let tR_end = idx_t.min (nR) (tR_start + partitionSize)
+    let cur_R = tR[tR_start:tR_end]
+    let cur_R_size = tR_end-tR_start
+    let loop_over_S : (idx_t.t, joinTup [tR_end-tR_start] t , bool, idx_t.t)
+    = loop (s_iter, s_jtup, isRelevant, minRelevant)
+      = (
+          first_relevant_in_S,
+          uncooked_joinTup cur_R (offset_R+tR_start),
+          true,
+          first_relevant_in_S
+        )
+    while (s_iter < numIter_S && isRelevant) do
+      let tS_start = s_iter * partitionSize
+      let tS_end = idx_t.min (nS) (tS_start + partitionSize)
+      let cur_S = tS[tS_start:tS_end]
+      let cur_S_size = tS_end-tS_start
+      let thisRelYet = !(cur_R[0] `gt` cur_S[cur_S_size-1])
+      let thisStillRel = !(cur_S[0] `gt` cur_R[cur_R_size-1])
+      in
+        if !thisRelYet then (s_iter+1, s_jtup, true, s_iter+1) else -- stil not relevant - skip to next
+        if !thisStillRel then (s_iter, s_jtup, thisStillRel, minRelevant) else -- already not relevant - break
+        let nextRel = !(cur_S[cur_S_size-1] `gt` cur_R[cur_R_size-1]) -- will next S be relevant? if not, break afterwards
+        let new_s_jtup = find_joinTuples cur_R cur_S (offset_R+tR_start) (offset_S+tS_start) (eq) (gt)
+        let new_s_iy = map2 (\alt neu -> if (alt<0) then neu else alt) (s_jtup.iy) (new_s_jtup.iy)
+        let new_s_cm = map2 (+) (s_jtup.cm) (new_s_jtup.cm)
+        let next_s_jtup = {vs = s_jtup.vs, ix = s_jtup.ix, iy = new_s_iy, cm = new_s_cm}
+        in (s_iter+1, next_s_jtup, nextRel, minRelevant)
+    let new_jtup = overlay_joinTups jtup loop_over_S.1 tR_start
+    in (iter+1, new_jtup, loop_over_S.3)
+  in loop_over_R.1
 
 -- | The pairs obtained from joining x&y.
 -- vs : the values of each pair
@@ -418,18 +322,17 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
   (tups: joinTup [n] t)
   (dummy_elem: t)
  =
-  let zipTups = zip4 tups.vs tups.ix tups.iy tups.cm
-  let filteredTups = zipTups |> filter (\(_, _, _, cm) -> (cm>0))
-  let n_filt = length filteredTups
+  let filtTups_idx = (iota n) |> filter (\i -> tups.cm[i]>0)
+  let n_filt = length filtTups_idx
   -- separate match counts & pair info
-  let fcm = filteredTups |> map (\(_,_,_,cm)->cm)
-  let fTups_minusCm = filteredTups |> map (\(v, ix, iy, _) -> (v, ix, iy))
+  let fcm = filtTups_idx |> map (\i -> tups.cm[i])
+  let fTups_minusCm = filtTups_idx |> map (\i -> (tups.vs[i], tups.ix[i], tups.iy[i]))
   -- obtain the starting indices of each match in the output array
   let tup_index = exscan (\cm1 cm2 -> cm1+cm2) 0 fcm
   -- obtain the total number of pairs
   let n_pairs =
-    if ((length filteredTups)>0)
-    then tup_index[(length tup_index)-1] + filteredTups[(length filteredTups)-1].3
+    if n_filt>0
+    then tup_index[(length tup_index)-1] + fcm[n_filt-1]
     else 0
   -- initialise the array
   let pairsArray = partitioned_scatter
@@ -462,15 +365,12 @@ def inner_SMJ [nR] [nS] 't
   (tS: [nS]t)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
+  (partitionSize: idx_t.t)
   (scatter_psize: idx_t.t)
-  (neq: t -> t -> bool)
-  (leq: t -> t -> bool)
+  (eq: t -> t -> bool)
   (gt : t -> t -> bool)
 =
-  let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (neq) (leq) (gt)
+  let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionSize) (eq) (gt)
   in joinTups_to_joinPairs_InnerJoin (scatter_psize) (jTups) (dummy_elem)
 
 -- | Join pairs of type short.

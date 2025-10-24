@@ -149,65 +149,55 @@ entry inner_SMJ_short [nR] [nS]
   (tS: [nS]i16)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
+  (partitionSize: idx_t.t)
   (scatter_psize: idx_t.t)
 : joinPairs_short =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
 
 entry inner_SMJ_int [nR] [nS]
   (tR: [nR]i32)
   (tS: [nS]i32)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
+  (partitionSize: idx_t.t)
   (scatter_psize: idx_t.t)
 : joinPairs_int =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
 
 entry inner_SMJ_long [nR] [nS]
   (tR: [nR]i64)
   (tS: [nS]i64)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
+  (partitionSize: idx_t.t)
   (scatter_psize: idx_t.t)
 : joinPairs_long =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
 
 entry inner_SMJ_float [nR] [nS]
   (tR: [nR]f32)
   (tS: [nS]f32)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
+  (partitionSize: idx_t.t)
   (scatter_psize: idx_t.t)
 : joinPairs_float =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
 
 entry inner_SMJ_double [nR] [nS]
   (tR: [nR]f64)
   (tS: [nS]f64)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (partitionsPerWindow: idx_t.t)
-  (numberOfWindows: idx_t.t)
-  (extParallelism: idx_t.t)
+  (partitionSize: idx_t.t)
   (scatter_psize: idx_t.t)
 : joinPairs_double =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionsPerWindow) (numberOfWindows: idx_t.t) (extParallelism) (scatter_psize) (!=) (<=) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
 
 
 -- Radix-Partitioning

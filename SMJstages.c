@@ -15,10 +15,8 @@ void SortMergeJoin_GFTR(
   idx_t CHUNK_SIZE,
   idx_t R_JOIN_BUFFER,
   idx_t S_JOIN_BUFFER,
-  int16_t BLOCK_SIZE,
-  idx_t EXT_PARALLELISM,
+  idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
-  idx_t RESCALE_FACTOR,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -73,7 +71,6 @@ void SortMergeJoin_GFTR(
   idx_t R_curIdx = 0;
   idx_t S_curIdx = 0;  
 
-  // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
   int exhaustedRes_R = false;
   while(!exhaustedRes_R) {
@@ -269,69 +266,31 @@ void SortMergeJoin_GFTR(
       void* joinedKeys;
       struct futhark_i64_1d *idxR_ft;
       struct futhark_i64_1d *idxS_ft;
-      // Calculate partition & window numbers for this size...
-      idx_t avgSize = (R_rowCount+S_rowCount + 1)/2;
-      idx_t numPartitions = (avgSize + MERGE_PARTITION_SIZE - 1) / MERGE_PARTITION_SIZE;
-      idx_t numWindows = 1;
-      // arbitrary rescaling...
-      if(numPartitions >= RESCALE_FACTOR*2) {
-        int rsFactor = RESCALE_FACTOR;
-        idx_t rescale = (numPartitions + rsFactor - 1) / rsFactor;
-        numWindows *= rescale;
-        numPartitions /= rescale;
-      }
       // #######################################################################################################
       // #######################################################################################################
       // #######################################################################################################
       // PERFORM THE JOIN
-      // Internally, left side is the smaller one
-      // (if implementing a left outer join, I'd have to subpartition the external left side instead...)
-      // TODO might want to do that anyway for "correctness" (sorted R-wise then S-wise)
       // #######################################################################################################
       // #######################################################################################################
       // #######################################################################################################
-      if (R_rowCount <= S_rowCount) {
-        InnerJoin_joinKeyColumns_inFuthark(
-          ctx,
-          &numPairs,
-          &joinedKeys, // vs
-          &idxR_ft, // R indices
-          &idxS_ft, // S indices
-          key_type,
-          R_curIdx, // R_idx
-          S_curIdx, // S_idx
-          Rbuff_ft, // R keys
-          Sbuff_ft, // S keys
-          R_rowCount, // card1
-          S_rowCount, // card2
-          numWindows,
-          numPartitions,
-          EXT_PARALLELISM,
-          BLOCK_SIZE // for multi-pass scatter
-        );
-        mylog(logfile, "Join has been performed (R first).");
-      }
-      else {
-        InnerJoin_joinKeyColumns_inFuthark(
-          ctx,
-          &numPairs,
-          &joinedKeys, // vs
-          &idxS_ft, // S indices
-          &idxR_ft, // R indices
-          key_type,
-          S_curIdx, // S_idx
-          R_curIdx, // R_idx
-          Sbuff_ft, // S keys
-          Rbuff_ft, // R keys
-          S_rowCount, // card2
-          R_rowCount, // card1
-          numWindows,
-          numPartitions,
-          EXT_PARALLELISM,
-          BLOCK_SIZE // for multi-pass scatter
-        );
-        mylog(logfile, "Join has been performed (S first).");
-      }
+      InnerJoin_joinKeyColumns_inFuthark(
+        ctx,
+        &numPairs,
+        &joinedKeys, // vs
+        &idxR_ft, // R indices
+        &idxS_ft, // S indices
+        key_type,
+        R_curIdx, // R_idx
+        S_curIdx, // S_idx
+        Rbuff_ft, // R keys
+        Sbuff_ft, // S keys
+        R_rowCount, // card1
+        S_rowCount, // card2
+        MERGE_PARTITION_SIZE,
+        BLOCK_SIZE // for multi-pass scatter
+      );
+      mylog(logfile, "Join has been performed.");
+
       // Gather R's payloads
       char* Rpl_asBytes;
       Rpl_asBytes = malloc(numPairs * R_pL_bytesPerRow);
@@ -479,10 +438,8 @@ void Inner_MergeJoin_GFTR(
 	idx_t CHUNK_SIZE,
 	idx_t R_JOIN_BUFFER,
 	idx_t S_JOIN_BUFFER,
-	int16_t BLOCK_SIZE,
-	idx_t EXT_PARALLELISM,
+	idx_t BLOCK_SIZE,
 	idx_t MERGE_PARTITION_SIZE,
-	idx_t RESCALE_FACTOR,
 	FILE *logfile,
 	struct futhark_context *ctx,
 	duckdb_connection con,
@@ -499,9 +456,7 @@ void Inner_MergeJoin_GFTR(
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
     BLOCK_SIZE,
-    EXT_PARALLELISM,
     MERGE_PARTITION_SIZE,
-    RESCALE_FACTOR,
     logfile,
     ctx,
     con,
@@ -521,10 +476,8 @@ void SortMergeJoin_GFUR(
   idx_t CHUNK_SIZE,
   idx_t R_JOIN_BUFFER,
   idx_t S_JOIN_BUFFER,
-  int16_t BLOCK_SIZE,
-  idx_t EXT_PARALLELISM,
+  idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
-  idx_t RESCALE_FACTOR,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -579,7 +532,6 @@ void SortMergeJoin_GFUR(
   idx_t R_curIdx = 0;
   idx_t S_curIdx = 0;  
 
-  // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
   int exhaustedRes_R = false;
   while(!exhaustedRes_R) {
@@ -778,69 +730,30 @@ void SortMergeJoin_GFUR(
       void* joinedKeys;
       struct futhark_i64_1d *idxR_ft;
       struct futhark_i64_1d *idxS_ft;
-      // Calculate partition & window numbers for this size...
-      idx_t avgSize = (R_rowCount+S_rowCount + 1)/2;
-      idx_t numPartitions = (avgSize + MERGE_PARTITION_SIZE - 1) / MERGE_PARTITION_SIZE;
-      idx_t numWindows = 1;
-      // arbitrary rescaling...
-      if(numPartitions >= RESCALE_FACTOR*2) {
-        int rsFactor = RESCALE_FACTOR;
-        idx_t rescale = (numPartitions + rsFactor - 1) / rsFactor;
-        numWindows *= rescale;
-        numPartitions /= rescale;
-      }
       // #######################################################################################################
       // #######################################################################################################
       // #######################################################################################################
       // PERFORM THE JOIN
-      // Internally, left side is the smaller one
-      // (if implementing a left outer join, I'd have to subpartition the external left side instead...)
-      // TODO might want to do that anyway for "correctness" (sorted R-wise then S-wise)
       // #######################################################################################################
       // #######################################################################################################
       // #######################################################################################################
-      if (R_rowCount <= S_rowCount) {
-        InnerJoin_joinKeyColumns_inFuthark(
-          ctx,
-          &numPairs,
-          &joinedKeys, // vs
-          &idxR_ft, // R indices
-          &idxS_ft, // S indices
-          key_type,
-          R_curIdx, // R_idx
-          S_curIdx, // S_idx
-          Rbuff_ft, // R keys
-          Sbuff_ft, // S keys
-          R_rowCount, // card1
-          S_rowCount, // card2
-          numWindows,
-          numPartitions,
-          EXT_PARALLELISM,
-          BLOCK_SIZE // for multi-pass scatter
-        );
-        mylog(logfile, "Join has been performed (R first).");
-      }
-      else {
-        InnerJoin_joinKeyColumns_inFuthark(
-          ctx,
-          &numPairs,
-          &joinedKeys, // vs
-          &idxS_ft, // S indices
-          &idxR_ft, // R indices
-          key_type,
-          S_curIdx, // S_idx
-          R_curIdx, // R_idx
-          Sbuff_ft, // S keys
-          Rbuff_ft, // R keys
-          S_rowCount, // card2
-          R_rowCount, // card1
-          numWindows,
-          numPartitions,
-          EXT_PARALLELISM,
-          BLOCK_SIZE // for multi-pass scatter
-        );
-        mylog(logfile, "Join has been performed (S first).");
-      }
+      InnerJoin_joinKeyColumns_inFuthark(
+        ctx,
+        &numPairs,
+        &joinedKeys, // vs
+        &idxR_ft, // R indices
+        &idxS_ft, // S indices
+        key_type,
+        R_curIdx, // R_idx
+        S_curIdx, // S_idx
+        Rbuff_ft, // R keys
+        Sbuff_ft, // S keys
+        R_rowCount, // card1
+        S_rowCount, // card2
+        MERGE_PARTITION_SIZE,
+        BLOCK_SIZE // for multi-pass scatter
+      );
+      mylog(logfile, "Join has been performed.");
       // Gather R's payloads
       char* gathered_R_payload = malloc(numPairs * R_pL_bytesPerRow);
       gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, R_curIdx, BLOCK_SIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
@@ -987,10 +900,8 @@ void Inner_MergeJoin_GFUR(
 	idx_t CHUNK_SIZE,
 	idx_t R_JOIN_BUFFER,
 	idx_t S_JOIN_BUFFER,
-	int16_t BLOCK_SIZE,
-	idx_t EXT_PARALLELISM,
+	idx_t BLOCK_SIZE,
 	idx_t MERGE_PARTITION_SIZE,
-	idx_t RESCALE_FACTOR,
 	idx_t PAYLOAD_INDEX_BLOCK,
 	idx_t PAYLOAD_GATHER_BLOCK,
 	FILE *logfile,
@@ -1012,9 +923,7 @@ void Inner_MergeJoin_GFUR(
 		R_JOIN_BUFFER,
 		S_JOIN_BUFFER,
 		BLOCK_SIZE,
-		EXT_PARALLELISM,
 		MERGE_PARTITION_SIZE,
-		RESCALE_FACTOR,
 		logfile,
 		ctx,
 		con,
@@ -1393,10 +1302,8 @@ void SortMergeJoin_GFTR_with_S_semisorted(
   idx_t CHUNK_SIZE,
   idx_t R_JOIN_BUFFER,
   idx_t S_JOIN_BUFFER,
-  int16_t BLOCK_SIZE,
-  idx_t EXT_PARALLELISM,
+  idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
-  idx_t RESCALE_FACTOR,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -1452,7 +1359,6 @@ void SortMergeJoin_GFTR_with_S_semisorted(
   idx_t R_curIdx = 0;
   idx_t S_curIdx = 0;  
 
-  // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
   int exhaustedRes_R = false;
   while(!exhaustedRes_R) {
@@ -1636,69 +1542,30 @@ void SortMergeJoin_GFTR_with_S_semisorted(
         void* joinedKeys;
         struct futhark_i64_1d *idxR_ft;
         struct futhark_i64_1d *idxS_ft;
-        // Calculate partition & window numbers for this size...
-        idx_t avgSize = (R_rowCount+S_rowCount + 1)/2;
-        idx_t numPartitions = (avgSize + MERGE_PARTITION_SIZE - 1) / MERGE_PARTITION_SIZE;
-        idx_t numWindows = 1;
-        // arbitrary rescaling...
-        if(numPartitions >= RESCALE_FACTOR*2) {
-          int rsFactor = RESCALE_FACTOR;
-          idx_t rescale = (numPartitions + rsFactor - 1) / rsFactor;
-          numWindows *= rescale;
-          numPartitions /= rescale;
-        }
         // #######################################################################################################
         // #######################################################################################################
         // #######################################################################################################
         // PERFORM THE JOIN
-        // Internally, left side is the smaller one
-        // (if implementing a left outer join, I'd have to subpartition the external left side instead...)
-        // TODO might want to do that anyway for "correctness" (sorted R-wise then S-wise)
         // #######################################################################################################
         // #######################################################################################################
         // #######################################################################################################
-        if (R_rowCount <= S_rowCount) {
-          InnerJoin_joinKeyColumns_inFuthark(
-            ctx,
-            &numPairs,
-            &joinedKeys, // vs
-            &idxR_ft, // R indices
-            &idxS_ft, // S indices
-            key_type,
-            R_curIdx, // R_idx
-            S_curIdx, // S_idx
-            Rbuff_ft, // R keys
-            Sbuff_ft, // S keys
-            R_rowCount, // card1
-            S_rowCount, // card2
-            numWindows,
-            numPartitions,
-            EXT_PARALLELISM,
-            BLOCK_SIZE // for multi-pass scatter
-          );
-          mylog(logfile, "Join has been performed (R first).");
-        }
-        else {
-          InnerJoin_joinKeyColumns_inFuthark(
-            ctx,
-            &numPairs,
-            &joinedKeys, // vs
-            &idxS_ft, // S indices
-            &idxR_ft, // R indices
-            key_type,
-            S_curIdx, // S_idx
-            R_curIdx, // R_idx
-            Sbuff_ft, // S keys
-            Rbuff_ft, // R keys
-            S_rowCount, // card2
-            R_rowCount, // card1
-            numWindows,
-            numPartitions,
-            EXT_PARALLELISM,
-            BLOCK_SIZE // for multi-pass scatter
-          );
-          mylog(logfile, "Join has been performed (S first).");
-        }
+        InnerJoin_joinKeyColumns_inFuthark(
+          ctx,
+          &numPairs,
+          &joinedKeys, // vs
+          &idxR_ft, // R indices
+          &idxS_ft, // S indices
+          key_type,
+          R_curIdx, // R_idx
+          S_curIdx, // S_idx
+          Rbuff_ft, // R keys
+          Sbuff_ft, // S keys
+          R_rowCount, // card1
+          S_rowCount, // card2
+          MERGE_PARTITION_SIZE,
+          BLOCK_SIZE // for multi-pass scatter
+        );
+        mylog(logfile, "Join has been performed.");
         // Gather R's payloads
         char* Rpl_asBytes;
         Rpl_asBytes = malloc(numPairs * R_pL_bytesPerRow);
@@ -1846,10 +1713,8 @@ void SortMergeJoin_GFUR_with_S_semisorted(
   idx_t CHUNK_SIZE,
   idx_t R_JOIN_BUFFER,
   idx_t S_JOIN_BUFFER,
-  int16_t BLOCK_SIZE,
-  idx_t EXT_PARALLELISM,
+  idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
-  idx_t RESCALE_FACTOR,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -1904,7 +1769,6 @@ void SortMergeJoin_GFUR_with_S_semisorted(
   idx_t R_curIdx = 0;
   idx_t S_curIdx = 0;  
 
-  // TODO ##### Loop over R (left table) -- for each chunk of R we will loop over S
   mylog(logfile, "Iterating over R...");
   int exhaustedRes_R = false;
   while(!exhaustedRes_R) {
@@ -2090,69 +1954,30 @@ void SortMergeJoin_GFUR_with_S_semisorted(
         void* joinedKeys;
         struct futhark_i64_1d *idxR_ft;
         struct futhark_i64_1d *idxS_ft;
-        // Calculate partition & window numbers for this size...
-        idx_t avgSize = (R_rowCount+S_rowCount + 1)/2;
-        idx_t numPartitions = (avgSize + MERGE_PARTITION_SIZE - 1) / MERGE_PARTITION_SIZE;
-        idx_t numWindows = 1;
-        // arbitrary rescaling...
-        if(numPartitions >= RESCALE_FACTOR*2) {
-          int rsFactor = RESCALE_FACTOR;
-          idx_t rescale = (numPartitions + rsFactor - 1) / rsFactor;
-          numWindows *= rescale;
-          numPartitions /= rescale;
-        }
         // #######################################################################################################
         // #######################################################################################################
         // #######################################################################################################
         // PERFORM THE JOIN
-        // Internally, left side is the smaller one
-        // (if implementing a left outer join, I'd have to subpartition the external left side instead...)
-        // TODO might want to do that anyway for "correctness" (sorted R-wise then S-wise)
         // #######################################################################################################
         // #######################################################################################################
         // #######################################################################################################
-        if (R_rowCount <= S_rowCount) {
-          InnerJoin_joinKeyColumns_inFuthark(
-            ctx,
-            &numPairs,
-            &joinedKeys, // vs
-            &idxR_ft, // R indices
-            &idxS_ft, // S indices
-            key_type,
-            R_curIdx, // R_idx
-            S_curIdx, // S_idx
-            Rbuff_ft, // R keys
-            Sbuff_ft, // S keys
-            R_rowCount, // card1
-            S_rowCount, // card2
-            numWindows,
-            numPartitions,
-            EXT_PARALLELISM,
-            BLOCK_SIZE // for multi-pass scatter
-          );
-          mylog(logfile, "Join has been performed (R first).");
-        }
-        else {
-          InnerJoin_joinKeyColumns_inFuthark(
-            ctx,
-            &numPairs,
-            &joinedKeys, // vs
-            &idxS_ft, // S indices
-            &idxR_ft, // R indices
-            key_type,
-            S_curIdx, // S_idx
-            R_curIdx, // R_idx
-            Sbuff_ft, // S keys
-            Rbuff_ft, // R keys
-            S_rowCount, // card2
-            R_rowCount, // card1
-            numWindows,
-            numPartitions,
-            EXT_PARALLELISM,
-            BLOCK_SIZE // for multi-pass scatter
-          );
-          mylog(logfile, "Join has been performed (S first).");
-        }
+        InnerJoin_joinKeyColumns_inFuthark(
+          ctx,
+          &numPairs,
+          &joinedKeys, // vs
+          &idxR_ft, // R indices
+          &idxS_ft, // S indices
+          key_type,
+          R_curIdx, // R_idx
+          S_curIdx, // S_idx
+          Rbuff_ft, // R keys
+          Sbuff_ft, // S keys
+          R_rowCount, // card1
+          S_rowCount, // card2
+          MERGE_PARTITION_SIZE,
+          BLOCK_SIZE // for multi-pass scatter
+        );
+        mylog(logfile, "Join has been performed.");
         // Gather R's payloads
         char* gathered_R_payload = malloc(numPairs * R_pL_bytesPerRow);
         gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, R_curIdx, BLOCK_SIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);

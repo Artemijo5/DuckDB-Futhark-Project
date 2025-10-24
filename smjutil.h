@@ -34,9 +34,7 @@ void InnerJoin_joinKeyColumns(
 	void *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 );
 
@@ -88,9 +86,7 @@ void InnerJoin_joinKeyColumns_inFuthark(
 	void *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 );
 

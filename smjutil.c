@@ -67,9 +67,7 @@ void InnerJoin_joinKeyColumns_short(
 	short *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
@@ -79,7 +77,7 @@ void InnerJoin_joinKeyColumns_short(
 	struct futhark_opaque_joinPairs_short *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_short(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_i16_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_short_vs(ctx, &outVs_ft, joinPairs);
@@ -114,9 +112,7 @@ void InnerJoin_joinKeyColumns_int(
 	int *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
@@ -126,7 +122,7 @@ void InnerJoin_joinKeyColumns_int(
 	struct futhark_opaque_joinPairs_int *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_int(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_i32_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_int_vs(ctx, &outVs_ft, joinPairs);
@@ -161,9 +157,7 @@ void InnerJoin_joinKeyColumns_long(
 	long *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
@@ -173,7 +167,7 @@ void InnerJoin_joinKeyColumns_long(
 	struct futhark_opaque_joinPairs_long *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_long(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_i64_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_long_vs(ctx, &outVs_ft, joinPairs);
@@ -208,9 +202,7 @@ void InnerJoin_joinKeyColumns_float(
 	float *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
@@ -220,7 +212,7 @@ void InnerJoin_joinKeyColumns_float(
 	struct futhark_opaque_joinPairs_float *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_float(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_f32_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_float_vs(ctx, &outVs_ft, joinPairs);
@@ -255,9 +247,7 @@ void InnerJoin_joinKeyColumns_double(
 	double *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Wrap keys into futhark arrays
@@ -267,7 +257,7 @@ void InnerJoin_joinKeyColumns_double(
 	struct futhark_opaque_joinPairs_double *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_double(ctx, &joinPairs, keys1_ft, keys2_ft, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_f64_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_double_vs(ctx, &outVs_ft, joinPairs);
@@ -303,40 +293,33 @@ void InnerJoin_joinKeyColumns(
 	void *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	switch (type) {
 		case DUCKDB_TYPE_SMALLINT:
 			InnerJoin_joinKeyColumns_short(ctx, numPairs, (short**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (short*)keys1, (short*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (short*)keys1, (short*)keys2, card1, card2, partitionSize, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_INTEGER:
 			InnerJoin_joinKeyColumns_int(ctx, numPairs, (int**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (int*)keys1, (int*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (int*)keys1, (int*)keys2, card1, card2, partitionSize, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_BIGINT:
 			InnerJoin_joinKeyColumns_long(ctx, numPairs, (long**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (long*)keys1, (long*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (long*)keys1, (long*)keys2, card1, card2, partitionSize, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_FLOAT:
 			InnerJoin_joinKeyColumns_float(ctx, numPairs, (float**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (float*)keys1, (float*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (float*)keys1, (float*)keys2, card1, card2, partitionSize, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_DOUBLE:
 			InnerJoin_joinKeyColumns_double(ctx, numPairs, (double**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (double*)keys1, (double*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (double*)keys1, (double*)keys2, card1, card2, partitionSize, scatter_psize
 			);
 			return;
 		default:
@@ -706,16 +689,14 @@ void InnerJoin_joinKeyColumns_inFuthark_short(
 	struct futhark_i16_1d *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Prepare output array
 	struct futhark_opaque_joinPairs_short *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_short(ctx, &joinPairs, keys1, keys2, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_i16_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_short_vs(ctx, &outVs_ft, joinPairs);
@@ -748,16 +729,14 @@ void InnerJoin_joinKeyColumns_inFuthark_int(
 	struct futhark_i32_1d *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Prepare output array
 	struct futhark_opaque_joinPairs_int *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_int(ctx, &joinPairs, keys1, keys2, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_i32_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_int_vs(ctx, &outVs_ft, joinPairs);
@@ -790,16 +769,14 @@ void InnerJoin_joinKeyColumns_inFuthark_long(
 	struct futhark_i64_1d *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Prepare output array
 	struct futhark_opaque_joinPairs_long *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_long(ctx, &joinPairs, keys1, keys2, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_i64_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_long_vs(ctx, &outVs_ft, joinPairs);
@@ -832,16 +809,14 @@ void InnerJoin_joinKeyColumns_inFuthark_float(
 	struct futhark_f32_1d *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Prepare output array
 	struct futhark_opaque_joinPairs_float *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_float(ctx, &joinPairs, keys1, keys2, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_f32_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_float_vs(ctx, &outVs_ft, joinPairs);
@@ -874,16 +849,14 @@ void InnerJoin_joinKeyColumns_inFuthark_double(
 	struct futhark_f64_1d *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	// Prepare output array
 	struct futhark_opaque_joinPairs_double *joinPairs;
 	// Do the join
 	futhark_entry_inner_SMJ_double(ctx, &joinPairs, keys1, keys2, incr1, incr2,
-		partitionsPerWindow, numWindows, extParallelism, scatter_psize
+		partitionSize, scatter_psize
 	);
 	struct futhark_f64_1d *outVs_ft;
 	futhark_project_opaque_joinPairs_double_vs(ctx, &outVs_ft, joinPairs);
@@ -917,40 +890,38 @@ void InnerJoin_joinKeyColumns_inFuthark(
 	void *keys2,
 	idx_t card1,
 	idx_t card2,
-	idx_t numWindows,
-	idx_t partitionsPerWindow,
-	idx_t extParallelism,
+	idx_t partitionSize,
 	idx_t scatter_psize
 ) {
 	switch (type) {
 		case DUCKDB_TYPE_SMALLINT:
 			InnerJoin_joinKeyColumns_inFuthark_short(ctx, numPairs, (short**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (struct futhark_i16_1d*)keys1, (struct futhark_i16_1d*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (struct futhark_i16_1d*)keys1, (struct futhark_i16_1d*)keys2, card1, card2,
+			 partitionSize, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_INTEGER:
 			InnerJoin_joinKeyColumns_inFuthark_int(ctx, numPairs, (int**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (struct futhark_i32_1d*)keys1, (struct futhark_i32_1d*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (struct futhark_i32_1d*)keys1, (struct futhark_i32_1d*)keys2, card1, card2,
+			 partitionSize, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_BIGINT:
 			InnerJoin_joinKeyColumns_inFuthark_long(ctx, numPairs, (long**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (struct futhark_i64_1d*)keys1, (struct futhark_i64_1d*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (struct futhark_i64_1d*)keys1, (struct futhark_i64_1d*)keys2, card1, card2,
+			 partitionSize, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_FLOAT:
 			InnerJoin_joinKeyColumns_inFuthark_float(ctx, numPairs, (float**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (struct futhark_f32_1d*)keys1, (struct futhark_f32_1d*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (struct futhark_f32_1d*)keys1, (struct futhark_f32_1d*)keys2, card1, card2,
+			 partitionSize, scatter_psize
 			);
 			return;
 		case DUCKDB_TYPE_DOUBLE:
 			InnerJoin_joinKeyColumns_inFuthark_double(ctx, numPairs, (double**)outVs_dptr, outIdx1, outIdx2,
-			 incr1, incr2, (struct futhark_f64_1d*)keys1, (struct futhark_f64_1d*)keys2, card1, card2,numWindows, partitionsPerWindow,
-			 extParallelism, scatter_psize
+			 incr1, incr2, (struct futhark_f64_1d*)keys1, (struct futhark_f64_1d*)keys2, card1, card2,
+			 partitionSize, scatter_psize
 			);
 			return;
 		default:
