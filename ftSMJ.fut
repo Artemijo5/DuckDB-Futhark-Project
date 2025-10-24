@@ -242,19 +242,15 @@ def find_joinTuples [nR] [nS] 't
           let nv = if last_match==nS-1 then sv else tS[last_match+1]
           in
             if ((sv `eq` rv) && (last_match==nS-1 || (nv `gt` rv))) -- found last match
-            then (last_match, 0)
+              then (last_match, 0)
             else if (sv `eq` rv) -- found value range but not its end
-            then (last_match+step, idx_t.max 1 (step/2))
-            else if (sv `gt` rv) then
-              if (last_match==frv || (rv `gt` pv))
-              then (-1, 0)
-              else (last_match-step, idx_t.max 1 (step/2))
+              then (last_match+step, idx_t.max 1 (step/2))
+            else if (sv `gt` rv)
+              then (last_match-step, idx_t.max 1 (step/2))
             else -- if (rv `gt` sv) then
-              if (last_match==nS-1 || (nv `gt` rv))
-              then (-1, 0)
-              else (last_match+step, idx_t.max 1 (step/2))
+              (last_match+step, idx_t.max 1 (step/2))
       let lrv = bsearch_last.0
-      let cm = if (lrv<0) then 0 else (lrv-frv+1)
+      let cm = if (frv<0) then 0 else (lrv-frv+1)
       in (frv, cm)
     )
   in {
@@ -335,8 +331,8 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
     then tup_index[(length tup_index)-1] + fcm[n_filt-1]
     else 0
   -- initialise the array
-  let pairsArray = partitioned_scatter
-    (psize)
+  let pairsArray = scatter -- partitioned_scatter
+    --(psize)
     (replicate n_pairs (dummy_elem, -1, -1))
     (tup_index)
     (fTups_minusCm)
@@ -344,18 +340,15 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
   let pairsWithMultiplicity = fcm |> zip tup_index |> filter (\(_, cm) -> cm>1)
   let n_mult = length pairsWithMultiplicity
   -- loop over output array for matches with multiplicity
-  let loop_over : {iter: idx_t.t, buff: [](t, idx_t.t, idx_t.t)}
-  = loop p = {iter=0, buff=pairsArray}
-  while (p.iter<n_mult) && (n_pairs>n_filt) do -- second && skips the thing if no multiplicity in pairs
-    let j = pairsWithMultiplicity[p.iter].0
-    let nj = pairsWithMultiplicity[p.iter].1
-    let newIy_block = (zip (iota nj) (replicate nj p.buff[j]))
+  let loop_over : [](t, idx_t.t, idx_t.t)
+  = loop buff = pairsArray
+  for iter in (0..<n_mult) do -- second && skips the thing if no multiplicity in pairs
+    let j = pairsWithMultiplicity[iter].0
+    let nj = pairsWithMultiplicity[iter].1
+    let newIy_block = (zip (iota nj) (replicate nj buff[j]))
       |> map (\(i, (v, ix, iy)) -> (v, ix, iy+i))
-    in {
-      iter = p.iter+1,
-      buff = (copy p.buff) with [j:j+nj] = newIy_block
-    }
-  let unzPairs = loop_over.buff |> unzip3
+    in buff with [j:j+nj] = newIy_block
+  let unzPairs = loop_over |> unzip3
   let pairs : joinPairs t = {vs=unzPairs.0, ix=unzPairs.1, iy=unzPairs.2}
   in pairs
 
