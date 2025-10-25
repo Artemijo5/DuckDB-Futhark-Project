@@ -418,6 +418,20 @@ local def find_kth_match [nS] [b]
       else (count, j+1)
   in (cj.1-1)
 
+local def find_match_if_exists [nS] [b]
+  (rv: byteSeq [b])
+  (tS: [nS](byteSeq [b]))
+: idx_t.t =
+  let cj =
+    loop (count, j) = (0, 0) while (count<1 && j<nS) do
+      if all (id) (map2 (==) rv tS[j])
+      then (count+1, j+1)
+      else (count, j+1)
+  in 
+    if ( cj.1<nS || (all (id) (map2 (==) rv tS[nS-1])) )
+    then cj.1-1
+    else -1
+
 def radix_hash_join [nR] [nS] [b]
  (radix_size : i32)
  (tR : [nR](byteSeq [b]))
@@ -473,6 +487,44 @@ def radix_hash_join [nR] [nS] [b]
       ix = r_inds |> map (.1),
       iy = s_inds
     }
+
+def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
+ (radix_size : i32)
+ (tR : [nR](byteSeq [b]))
+ (tS : [nS](byteSeq [b]))
+ (pS : partitionInfo)
+ (ht_S : radix_hashTable [i64.i32 radix_size])
+: joinPairs_bsq [b] =
+  let n_pS = length pS.bounds
+  -- tuples of: first matching partition in S, last matching partition in S
+  let fl = (iota nR)
+    |> map (\i ->
+      rv_partitionMatchBounds radix_size tR[i] tS pS.bounds pS.depths ht_S
+    )
+  let match_in_iy = map2
+    (\j (fm, lm) ->
+      let rv = tR[j]
+      let inf_s_idx = pS.bounds[fm]
+      let sup_s_idx = if lm==n_pS-1 then nS else pS.bounds[lm+1]
+      let cur_S = tS[inf_s_idx:sup_s_idx]
+      let si = find_match_if_exists rv cur_S
+      in
+        if si>0
+        then si+inf_s_idx
+        else -1
+    )
+    (iota nR)
+    fl
+  let count_pairs = countFor (>0) match_in_iy
+  let zuowei = map2
+    (\m z -> if m>0 then z else (-1))
+    match_in_iy
+    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>0 then 1 else 0)) )
+  let ix_ = scatter (replicate count_pairs (-1)) zuowei (iota nR)
+  let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
+  let vs_ = gather (dummy_byteSeq b) tR ix_
+  in {vs=vs_, ix=ix_, iy=iy_}
+  
 
 -- TODO
 -- test

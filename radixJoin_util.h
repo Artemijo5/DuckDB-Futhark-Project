@@ -85,4 +85,22 @@ void HashJoin_joinKeyColumns_inFuthark(
 	idx_t card2
 );
 
+void HashJoin_joinKeyColumns_inFuthark_with_unique_keys2(
+	struct futhark_context *ctx,
+	idx_t *numPairs,
+	char **outVs_dptr,
+	struct futhark_i64_1d **outIdx1,
+	struct futhark_i64_1d **outIdx2,
+	idx_t num_bytes,
+	int32_t radix_bits,
+	idx_t incr1,
+	idx_t incr2,
+	struct futhark_u8_2d *keys1,
+	struct futhark_u8_2d *keys2,
+	struct futhark_opaque_partitionInfo *info2,
+	struct futhark_opaque_radix_hashTable *hash_tbl2,
+	idx_t card1,
+	idx_t card2
+);
+
 #endif

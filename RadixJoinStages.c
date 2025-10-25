@@ -11,7 +11,7 @@
 #include "join_util.h"
 #include "db_util.h"
 
-void RadixHashJoin_GFTR(
+void do_RadixHashJoin_GFTR(
   idx_t CHUNK_SIZE,
   idx_t R_JOIN_BUFFER,
   idx_t S_JOIN_BUFFER,
@@ -27,6 +27,7 @@ void RadixHashJoin_GFTR(
   const char *S_tbl_name,
   int is_R_partitioned,
   int is_S_partitioned,
+  int is_R_unique,
   const char *R_keyName,
   const char *S_keyName,
   const char *Join_tbl_name,
@@ -240,23 +241,44 @@ void RadixHashJoin_GFTR(
       // #######################################################################################################
       mylog(logfile, "Performing the key join...");
       // Invert R&S because calculating info for R is cheaper...
-      HashJoin_joinKeyColumns_inFuthark(
-        ctx,
-        &numPairs,
-        &joinedKeys,
-        &idxS_ft,
-        &idxR_ft,
-        colType_bytes(key_type),
-        radix_bits,
-        0,
-        0,
-        Sbuff_ft,
-        Rbuff_ft,
-        R_pInfo,
-        R_RHT,
-        S_rowCount,
-        R_rowCount
-      );
+      if(is_R_unique) {
+        HashJoin_joinKeyColumns_inFuthark_with_unique_keys2(
+          ctx,
+          &numPairs,
+          &joinedKeys,
+          &idxS_ft,
+          &idxR_ft,
+          colType_bytes(key_type),
+          radix_bits,
+          0,
+          0,
+          Sbuff_ft,
+          Rbuff_ft,
+          R_pInfo,
+          R_RHT,
+          S_rowCount,
+          R_rowCount
+        );
+      }
+      else {
+        HashJoin_joinKeyColumns_inFuthark(
+          ctx,
+          &numPairs,
+          &joinedKeys,
+          &idxS_ft,
+          &idxR_ft,
+          colType_bytes(key_type),
+          radix_bits,
+          0,
+          0,
+          Sbuff_ft,
+          Rbuff_ft,
+          R_pInfo,
+          R_RHT,
+          S_rowCount,
+          R_rowCount
+        );
+      }
       mylog(logfile, "Performed key join.");
       
       // Gather R's payloads
@@ -365,7 +387,7 @@ void RadixHashJoin_GFTR(
   free(join_type_ids);
 }
 
-void RadixHashJoin_GFUR(
+void do_RadixHashJoin_GFUR(
   idx_t CHUNK_SIZE,
   idx_t R_JOIN_BUFFER,
   idx_t S_JOIN_BUFFER,
@@ -381,6 +403,7 @@ void RadixHashJoin_GFUR(
   const char *S_tbl_name,
   int is_R_partitioned,
   int is_S_partitioned,
+  int is_R_unique,
   const char *R_keyName,
   const char *S_keyName,
   const char *Join_tbl_name,
@@ -597,23 +620,44 @@ void RadixHashJoin_GFUR(
       // #######################################################################################################
       mylog(logfile, "Performing the key join...");
       // Invert R&S because calculating info for R is cheaper...
-      HashJoin_joinKeyColumns_inFuthark(
-        ctx,
-        &numPairs,
-        &joinedKeys,
-        &idxS_ft,
-        &idxR_ft,
-        colType_bytes(key_type),
-        radix_bits,
-        0,
-        0,
-        Sbuff_ft,
-        Rbuff_ft,
-        R_pInfo,
-        R_RHT,
-        S_rowCount,
-        R_rowCount
-      );
+      if(is_R_unique) {
+        HashJoin_joinKeyColumns_inFuthark_with_unique_keys2(
+          ctx,
+          &numPairs,
+          &joinedKeys,
+          &idxS_ft,
+          &idxR_ft,
+          colType_bytes(key_type),
+          radix_bits,
+          0,
+          0,
+          Sbuff_ft,
+          Rbuff_ft,
+          R_pInfo,
+          R_RHT,
+          S_rowCount,
+          R_rowCount
+        );
+      }
+      else {
+        HashJoin_joinKeyColumns_inFuthark(
+          ctx,
+          &numPairs,
+          &joinedKeys,
+          &idxS_ft,
+          &idxR_ft,
+          colType_bytes(key_type),
+          radix_bits,
+          0,
+          0,
+          Sbuff_ft,
+          Rbuff_ft,
+          R_pInfo,
+          R_RHT,
+          S_rowCount,
+          R_rowCount
+        );
+      }
       mylog(logfile, "Performed key join.");
 
       // Gather R's payloads
@@ -720,4 +764,156 @@ void RadixHashJoin_GFUR(
   free(join_type_ids);
   duckdb_appender_flush(join_appender);
   duckdb_appender_destroy(&join_appender);
+}
+
+void RadixHashJoin_GFTR(
+  idx_t CHUNK_SIZE,
+  idx_t R_JOIN_BUFFER,
+  idx_t S_JOIN_BUFFER,
+  int16_t BLOCK_SIZE,
+  idx_t SCATTER_PSIZE,
+  idx_t MAX_PARTITION_SIZE,
+  int32_t MAX_DEPTH,
+  FILE *logfile,
+  struct futhark_context *ctx,
+  duckdb_connection con,
+  int32_t radix_bits,
+  const char *R_tbl_name,
+  const char *S_tbl_name,
+  int is_R_partitioned,
+  int is_S_partitioned,
+  int is_R_unique,
+  int is_S_unique,
+  const char *R_keyName,
+  const char *S_keyName,
+  const char *Join_tbl_name,
+  int quicksaves,
+  int saveAsTempTable
+) {
+  if ((!is_R_unique) && is_S_unique) {
+    do_RadixHashJoin_GFTR(
+      CHUNK_SIZE,
+      S_JOIN_BUFFER,
+      R_JOIN_BUFFER,
+      BLOCK_SIZE,
+      SCATTER_PSIZE,
+      MAX_PARTITION_SIZE,
+      MAX_DEPTH,
+      logfile,
+      ctx,
+      con,
+      radix_bits,
+      S_tbl_name,
+      R_tbl_name,
+      is_S_partitioned,
+      is_R_partitioned,
+      true,
+      S_keyName,
+      R_keyName,
+      Join_tbl_name,
+      quicksaves,
+      saveAsTempTable
+    );
+  }
+  else {
+    do_RadixHashJoin_GFTR(
+      CHUNK_SIZE,
+      R_JOIN_BUFFER,
+      S_JOIN_BUFFER,
+      BLOCK_SIZE,
+      SCATTER_PSIZE,
+      MAX_PARTITION_SIZE,
+      MAX_DEPTH,
+      logfile,
+      ctx,
+      con,
+      radix_bits,
+      R_tbl_name,
+      S_tbl_name,
+      is_R_partitioned,
+      is_S_partitioned,
+      is_R_unique,
+      R_keyName,
+      S_keyName,
+      Join_tbl_name,
+      quicksaves,
+      saveAsTempTable
+    );
+  }
+}
+
+void RadixHashJoin_GFUR(
+  idx_t CHUNK_SIZE,
+  idx_t R_JOIN_BUFFER,
+  idx_t S_JOIN_BUFFER,
+  int16_t BLOCK_SIZE,
+  idx_t SCATTER_PSIZE,
+  idx_t MAX_PARTITION_SIZE,
+  int32_t MAX_DEPTH,
+  FILE *logfile,
+  struct futhark_context *ctx,
+  duckdb_connection con,
+  int32_t radix_bits,
+  const char *R_tbl_name,
+  const char *S_tbl_name,
+  int is_R_partitioned,
+  int is_S_partitioned,
+  int is_R_unique,
+  int is_S_unique,
+  const char *R_keyName,
+  const char *S_keyName,
+  const char *Join_tbl_name,
+  int quicksaves,
+  int saveAsTempTable
+) {
+  if ((!is_R_unique) && is_S_unique) {
+    do_RadixHashJoin_GFUR(
+      CHUNK_SIZE,
+      S_JOIN_BUFFER,
+      R_JOIN_BUFFER,
+      BLOCK_SIZE,
+      SCATTER_PSIZE,
+      MAX_PARTITION_SIZE,
+      MAX_DEPTH,
+      logfile,
+      ctx,
+      con,
+      radix_bits,
+      S_tbl_name,
+      R_tbl_name,
+      is_S_partitioned,
+      is_R_partitioned,
+      true,
+      S_keyName,
+      R_keyName,
+      Join_tbl_name,
+      quicksaves,
+      saveAsTempTable
+    );
+  }
+  else {
+    do_RadixHashJoin_GFUR(
+      CHUNK_SIZE,
+      R_JOIN_BUFFER,
+      S_JOIN_BUFFER,
+      BLOCK_SIZE,
+      SCATTER_PSIZE,
+      MAX_PARTITION_SIZE,
+      MAX_DEPTH,
+      logfile,
+      ctx,
+      con,
+      radix_bits,
+      R_tbl_name,
+      S_tbl_name,
+      is_R_partitioned,
+      is_S_partitioned,
+      is_R_unique,
+      R_keyName,
+      S_keyName,
+      Join_tbl_name,
+      quicksaves,
+      saveAsTempTable
+    );
+  }
 }

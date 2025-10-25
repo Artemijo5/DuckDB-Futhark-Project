@@ -73,9 +73,9 @@ int main() {
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
-  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 FLOAT, payload2 INTEGER, payload3 SMALLINT);", R_TBL_NAME);
+  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT UNIQUE, payload1 FLOAT, payload2 INTEGER, payload3 SMALLINT);", R_TBL_NAME);
   duckdb_query(con, createRtbl, NULL);
-  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 INTEGER, payload5 SMALLINT, payload6 DOUBLE);", S_TBL_NAME);
+  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT UNIQUE, payload4 INTEGER, payload5 SMALLINT, payload6 DOUBLE);", S_TBL_NAME);
   duckdb_query(con, createStbl, NULL);
 
   // Create the test tables.
@@ -85,16 +85,20 @@ int main() {
     R_init_query,
     "INSERT INTO %s (SELECT 10000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
-    R_TABLE_SIZE
+    (long)250
   );
   sprintf(
     S_init_query,
     "INSERT INTO %s (SELECT 10000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
-    S_TABLE_SIZE
+    (long)250
   );
-  duckdb_query(con, R_init_query, NULL);
-  duckdb_query(con, S_init_query, NULL);
+  for(idx_t i=0; i<(R_TABLE_SIZE+249)/250;i++) {
+    duckdb_query(con, R_init_query, NULL);
+  }
+  for(idx_t i=0; i<(S_TABLE_SIZE+249)/250;i++) {
+    duckdb_query(con, S_init_query, NULL);
+  }
   mylog(logfile, "Created the tables R and S.");
 
   // Set up futhark core
@@ -129,6 +133,8 @@ int main() {
     RADIX_BITS,
     R_TBL_NAME,
     S_TBL_NAME,
+    false,
+    false,
     false,
     false,
     R_KEY,
