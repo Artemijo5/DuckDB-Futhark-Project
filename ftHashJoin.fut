@@ -375,12 +375,10 @@ def rv_partitionMatchBounds [nR] [b] [pR]
     let fm = bsearch_first.0
     let init_step_last = idx_t.max 1 ((end_spi-fm)/2)
     let bsearch_last = if fm<0 then (-1,0) else
-      loop (heshi, step) = (end_spi, init_step) while step>0 do
+      loop (heshi, step) = (end_spi, init_step_last) while step>0 do
         let cur_depth = depths_S[heshi]
-        let prev_depth = if heshi==fm then cur_depth else depths_S[heshi-1]
         let next_depth = if heshi==end_spi then cur_depth else depths_S[heshi+1]
         let cur_S = tS[bounds_S[spi]]
-        let prev_S = if heshi==fm then cur_S else tS[bounds_S[spi-1]]
         let next_S = if heshi==end_spi then cur_S else tS[bounds_S[spi+1]]
         in
           if
@@ -397,7 +395,7 @@ def rv_partitionMatchBounds [nR] [b] [pR]
     let lm = bsearch_last.0
     in (fm,lm)
 
-def rv_findPairCount [nS] [b]
+local def rv_findPairCount [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
 : idx_t.t  =
@@ -408,7 +406,7 @@ def rv_findPairCount [nS] [b]
         else (count, j+1)
     in cj.0
 
-def find_kth_match [nS] [b]
+local def find_kth_match [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
   (k: idx_t.t)
@@ -433,7 +431,6 @@ def radix_hash_join [nR] [nS] [b]
     |> map (\i ->
       rv_partitionMatchBounds radix_size tR[i] tS pS.bounds pS.depths ht_S
     )
-  let eligible_rs = countFor (\(fm, _) -> fm>=0) fl
   let counts_per_r = map2 (\i (fm, lm) ->
       if fm<0 then 0 else
       let rv = tR[i]
@@ -445,7 +442,7 @@ def radix_hash_join [nR] [nS] [b]
     (iota nR)
     fl
   let starting_pos = 
-    map2 (\c z -> if c>0 then z else -1)
+    map2 (\c z -> if c>0 then z else (-1))
       counts_per_r
       (exscan (+) 0 counts_per_r)
   let count_pairs = idx_t.sum counts_per_r
@@ -459,7 +456,7 @@ def radix_hash_join [nR] [nS] [b]
     for iter in (0..<n_mult) do
       let (j, nj) = pairsWithMultiplicity[iter]
       let new_block = (replicate nj curBuff[j].1)
-        |> zip (iota nj)
+        |> zip ((1...nj) :> [nj]idx_t.t)
       in curBuff with [j:j+nj] = new_block
   let s_inds = r_inds
     |> map (\(k, ir) ->
@@ -468,12 +465,12 @@ def radix_hash_join [nR] [nS] [b]
       let inf_s_idx = pS.bounds[fm]
       let sup_s_idx = if lm==n_pS-1 then nS else pS.bounds[lm+1]
       let cur_S = tS[inf_s_idx:sup_s_idx]
-      in find_kth_match rv cur_S k
+      in (find_kth_match rv cur_S k) + inf_s_idx
     )
   in
     {
       vs = r_inds |> map (\(_, ir) -> tR[ir]),
-      ix = r_inds |> map (.0),
+      ix = r_inds |> map (.1),
       iy = s_inds
     }
 

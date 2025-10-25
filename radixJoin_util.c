@@ -194,21 +194,24 @@ void HashJoin_joinKeyColumns_inFuthark(
 	idx_t incr2,
 	struct futhark_u8_2d *keys1,
 	struct futhark_u8_2d *keys2,
-	struct futhark_opaque_partitionInfo *info1,
 	struct futhark_opaque_partitionInfo *info2,
 	struct futhark_opaque_radix_hashTable *hash_tbl2,
 	idx_t card1,
-	idx_t card2,
-	idx_t scatter_psize
+	idx_t card2
 ) {
 	// Prepare output array
 	struct futhark_opaque_joinPairs_bsq *joinPairs;
 	// Do the join
 	futhark_entry_Inner_Radix_Hash_Join(
-		ctx, &joinPairs, radix_bits, keys1, keys2, info1, info2, hash_tbl2, scatter_psize
+		ctx, &joinPairs, radix_bits, keys1, keys2, info2, hash_tbl2
 	);
+	// Sync
+	futhark_context_sync(ctx);
 	// Project joinPair
 	struct futhark_u8_2d *outVs_ft;
+	// TODO
+	// it seems that repartitioning causes this to segfault (with C compilation on potato pc...)
+	// WHY (?!)
 	futhark_project_opaque_joinPairs_bsq_vs(ctx, &outVs_ft, joinPairs);
 	futhark_project_opaque_joinPairs_bsq_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_bsq_iy(ctx, outIdx2, joinPairs);

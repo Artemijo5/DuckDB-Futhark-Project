@@ -152,12 +152,9 @@ def get_radix 't (i : i32) (j : i32) (get_bit : i32 -> t -> i32) (x : t) : u8 =
 
 -- | Performs a radix sort step, sorting over multiple bits at a time.
 -- Based on radix-sort in futhark-by-example.
--- Substitutes the 'radix-partition' primitive, eg by doing 8 bits per step.
+-- Substitutes the 'radix-partition' primitive.
 -- Doing multiple bits per step vastly reduces scatter writes, though increases comparisons.
 -- Note: radix size must be 1 byte at most!
--- TODO can maybe be done in a more efficient way?
--- eg: find offset based on MSB, then add offset of MSB-1, etc...
--- after the final bit, would have to make difference between indices...
 def radix_sort_multistep [n] 't
   (block_size : idx_t.t)
   (i : i32)
@@ -184,24 +181,3 @@ def radix_sort_multistep [n] 't
     in (offs + zengjia, map2 (+) idxs zuowei)
   let scatter_idxs = ox.1
   in partitioned_scatter block_size (copy xs) scatter_idxs xs
-  -- TODO:
-  --let jianpu = replicate up_to 0
-  --let guanzhong = ( map2 (\r nums -> (copy nums) with [i64.u8 r] = true) rs (replicate n (replicate up_to false)) )
-  --  |> map (map i64.bool)
-  --let zuowei =
-  --  let prefix_sum = 
-  --    let zengjia = reduce (\nums1 nums2 -> map2 (+) nums1 nums2) jianpu guanzhong
-  --    in
-  --      if up_to < 5
-  --      then
-  --        loop p = jianpu
-  --        for off_i in (1..<up_to) do
-  --          p with [off_i] = p[off_i-1] + zengjia[off_i-1]
-  --      else
-  --        exscan (+) 0 zengjia
-  --  let seats = map (\zs -> map2 (\z j -> z + prefix_sum[j] - 1) zs (indices zs)) (scan (map2 (+)) jianpu guanzhong)
-  --  in map2
-  --    (\gs zs -> reduce (+) 0 (map2 (*) gs zs))
-  --    guanzhong
-  --    seats
-  --in partitioned_scatter block_size (copy xs) zuowei xs

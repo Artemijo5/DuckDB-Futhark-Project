@@ -238,7 +238,6 @@ def find_joinTuples [nR] [nS] 't
         loop (last_match, step) = (nS-1, init_step_last)
         while step>0 do
           let sv = tS[last_match]
-          let pv = if last_match==frv then sv else tS[last_match-1]
           let nv = if last_match==nS-1 then sv else tS[last_match+1]
           in
             if ((sv `eq` rv) && (last_match==nS-1 || (nv `gt` rv))) -- found last match
@@ -314,22 +313,21 @@ def mergeJoin [nR] [nS] 't
 type~ joinPairs 't = {vs: []t, ix: []idx_t.t, iy: []idx_t.t}
 
 def joinTups_to_joinPairs_InnerJoin [n] 't
-  (psize: idx_t.t)
+--  (psize: idx_t.t)
   (tups: joinTup [n] t)
   (dummy_elem: t)
  =
-  let filtTups_idx = (iota n) |> filter (\i -> tups.cm[i]>0)
-  let n_filt = length filtTups_idx
+  let filtTups_idx = (iota n) |> map (\i -> if tups.cm[i]>0 then i else (-1))
   -- separate match counts & pair info
-  let fcm = filtTups_idx |> map (\i -> tups.cm[i])
-  let fTups_minusCm = filtTups_idx |> map (\i -> (tups.vs[i], tups.ix[i], tups.iy[i]))
+  let fcm = gather 0 tups.cm filtTups_idx
+  let fTups_minusCm = gather (dummy_elem, -1, -1) (zip3 tups.vs tups.ix tups.iy) filtTups_idx
   -- obtain the starting indices of each match in the output array
-  let tup_index = exscan (\cm1 cm2 -> cm1+cm2) 0 fcm
+  let tup_index = map2
+    (\c z -> if c>0 then z else (-1))
+    fcm
+    (exscan (\cm1 cm2 -> cm1+cm2) 0 fcm)
   -- obtain the total number of pairs
-  let n_pairs =
-    if n_filt>0
-    then tup_index[(length tup_index)-1] + fcm[n_filt-1]
-    else 0
+  let n_pairs = idx_t.sum fcm
   -- initialise the array
   let pairsArray = scatter -- partitioned_scatter
     --(psize)
@@ -364,7 +362,7 @@ def inner_SMJ [nR] [nS] 't
   (gt : t -> t -> bool)
 =
   let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionSize) (eq) (gt)
-  in joinTups_to_joinPairs_InnerJoin (scatter_psize) (jTups) (dummy_elem)
+  in joinTups_to_joinPairs_InnerJoin (jTups) (dummy_elem)
 
 -- | Join pairs of type short.
 type~ joinPairs_short = joinPairs i16

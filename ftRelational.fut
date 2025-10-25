@@ -303,18 +303,7 @@ entry Inner_Radix_Hash_Join [nR] [nS] [b]
   (radix_size : i32)
   (pR : [nR](byteSeq [b]))
   (pS : [nS](byteSeq [b]))
-  (r_info : partitionInfo)
   (s_info : partitionInfo)
   (s_hashTable : radix_hashTable [i64.i32 radix_size])
-  (scatter_psize: idx_t.t)
 : joinPairs_bsq [b] =
-  let rp_matches = partitionMatchBounds
-    radix_size
-    pR
-    pS
-    r_info.bounds
-    s_info.bounds
-    r_info.depths
-    s_info.depths
-    s_hashTable
-  in join_hashPartitions pR pS r_info s_info rp_matches scatter_psize
+  radix_hash_join radix_size pR pS s_info s_hashTable

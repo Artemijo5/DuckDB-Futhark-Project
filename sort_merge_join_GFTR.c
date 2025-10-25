@@ -15,11 +15,11 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 10*CHUNK_SIZE
+#define R_TABLE_SIZE 25*CHUNK_SIZE
 #define S_TABLE_SIZE 10*R_TABLE_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define MERGE_PARTITION_SIZE 2084 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
+#define MERGE_PARTITION_SIZE 5*2084 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"

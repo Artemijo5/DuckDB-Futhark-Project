@@ -83,6 +83,7 @@ void RadixHashJoin_GFTR(
     struct futhark_u8_2d *Rbuff_ft;
     struct futhark_u8_2d *R_payload_ft;
     struct futhark_opaque_partitionInfo *R_pInfo;
+    struct futhark_opaque_radix_hashTable *R_RHT;
 
     // READ R DATA INTO BUFFER
     idx_t R_rowCount = bulk_load_chunks_GFTR(
@@ -142,6 +143,17 @@ void RadixHashJoin_GFTR(
     );
     mylog(logfile, "Obtained R's partitionInfo.");
 
+    mylog(logfile, "Obtaining R's radix hash table...");
+    getRadixHashTable(
+      ctx,
+      &R_RHT,
+      Rbuff_ft,
+      R_pInfo,
+      radix_bits,
+      SCATTER_PSIZE
+    );
+    mylog(logfile, "Obtained R's radix hash table.");
+
     mylog(logfile, "Obtain S's keys...");
     duckdb_result res_Sk;
     // TODO construct S query to read from minimum relevant index
@@ -170,8 +182,6 @@ void RadixHashJoin_GFTR(
       char *S_payload;
       struct futhark_u8_2d *Sbuff_ft;
       struct futhark_u8_2d *S_payload_ft;
-      struct futhark_opaque_partitionInfo *S_pInfo;
-      struct futhark_opaque_radix_hashTable *S_RHT;
 
       idx_t S_rowCount = bulk_load_chunks_GFTR(
         CHUNK_SIZE,
@@ -216,29 +226,6 @@ void RadixHashJoin_GFTR(
       free(S_payload);
       S_payload = NULL;
 
-      mylog(logfile, "Obtaining S's partitionInfo...");
-      getPartitionInfo(
-        ctx,
-        &S_pInfo,
-        Sbuff_ft,
-        radix_bits,
-        MAX_PARTITION_SIZE,
-        MAX_DEPTH,
-        0
-      );
-      mylog(logfile, "Obtained S's partitionInfo.");
-
-      mylog(logfile, "Obtaining S's radix hash table...");
-      getRadixHashTable(
-        ctx,
-        &S_RHT,
-        Sbuff_ft,
-        S_pInfo,
-        radix_bits,
-        SCATTER_PSIZE
-      );
-      mylog(logfile, "Obtained S's radix hash table.");
-
       // Perform join
       idx_t numPairs = 0;
       char *joinedKeys;
@@ -252,31 +239,30 @@ void RadixHashJoin_GFTR(
       // #######################################################################################################
       // #######################################################################################################
       mylog(logfile, "Performing the key join...");
+      // Invert R&S because calculating info for R is cheaper...
       HashJoin_joinKeyColumns_inFuthark(
         ctx,
         &numPairs,
         &joinedKeys,
-        &idxR_ft,
         &idxS_ft,
+        &idxR_ft,
         colType_bytes(key_type),
         radix_bits,
         0,
         0,
-        Rbuff_ft,
         Sbuff_ft,
+        Rbuff_ft,
         R_pInfo,
-        S_pInfo,
-        S_RHT,
-        R_rowCount,
+        R_RHT,
         S_rowCount,
-        SCATTER_PSIZE
+        R_rowCount
       );
       mylog(logfile, "Performed key join.");
       
       // Gather R's payloads
       char* Rpl_asBytes;
       Rpl_asBytes = malloc(numPairs * R_pL_bytesPerRow);
-      gatherPayloads_GFTR(ctx, Rpl_asBytes, R_pL_bytesPerRow, R_curIdx, BLOCK_SIZE, idxR_ft, R_payload_ft, R_rowCount, numPairs);
+      gatherPayloads_GFTR(ctx, Rpl_asBytes, R_pL_bytesPerRow, 0, BLOCK_SIZE, idxR_ft, R_payload_ft, R_rowCount, numPairs);
       mylog(logfile, "Gathered R payloads.");
       void* Rpl[R_col_count-1];
       payloadColumnsFromByteArray(Rpl, R_payloadTypes, Rpl_asBytes, R_col_count-1, numPairs);
@@ -286,7 +272,7 @@ void RadixHashJoin_GFTR(
       // Gather S's payloads
       char* Spl_asBytes;
       Spl_asBytes = malloc(numPairs * S_pL_bytesPerRow);
-      gatherPayloads_GFTR(ctx, Spl_asBytes, S_pL_bytesPerRow, S_curIdx, BLOCK_SIZE, idxS_ft, S_payload_ft, S_rowCount, numPairs);
+      gatherPayloads_GFTR(ctx, Spl_asBytes, S_pL_bytesPerRow, 0, BLOCK_SIZE, idxS_ft, S_payload_ft, S_rowCount, numPairs);
       mylog(logfile, "Gathered S payloads.");
       void* Spl[S_col_count-1];
       payloadColumnsFromByteArray(Spl, S_payloadTypes, Spl_asBytes, S_col_count-1, numPairs);
@@ -346,8 +332,6 @@ void RadixHashJoin_GFTR(
       // CLEANUP
       futhark_free_u8_2d(ctx, Sbuff_ft);
       futhark_free_u8_2d(ctx, S_payload_ft);
-      futhark_free_opaque_partitionInfo(ctx, S_pInfo);
-      futhark_free_opaque_radix_hashTable(ctx, S_RHT);
       for(idx_t col=1; col<R_col_count; col++) {
         free(Rpl[col-1]);
       }
@@ -366,6 +350,7 @@ void RadixHashJoin_GFTR(
     futhark_free_u8_2d(ctx, Rbuff_ft);
     futhark_free_u8_2d(ctx, R_payload_ft);
     futhark_free_opaque_partitionInfo(ctx, R_pInfo);
+    futhark_free_opaque_radix_hashTable(ctx, R_RHT);
     duckdb_destroy_result(&res_Sk);
 
     R_curIdx += R_rowCount;
@@ -452,6 +437,7 @@ void RadixHashJoin_GFUR(
     struct futhark_u8_2d *Rbuff_ft;
     struct futhark_i64_1d *R_idx_ft;
     struct futhark_opaque_partitionInfo *R_pInfo;
+    struct futhark_opaque_radix_hashTable *R_RHT;
 
     // READ R DATA INTO BUFFER
     idx_t R_rowCount = bulk_load_chunks_GFTR(
@@ -513,6 +499,17 @@ void RadixHashJoin_GFUR(
     );
     mylog(logfile, "Obtained R's partitionInfo.");
 
+    mylog(logfile, "Obtaining R's radix hash table...");
+      getRadixHashTable(
+        ctx,
+        &R_RHT,
+        Rbuff_ft,
+        R_pInfo,
+        radix_bits,
+        SCATTER_PSIZE
+      );
+      mylog(logfile, "Obtained R's radix hash table.");
+
     mylog(logfile, "Obtain S's keys...");
     duckdb_result res_Sk;
     // TODO construct S query to read from minimum relevant index
@@ -540,8 +537,6 @@ void RadixHashJoin_GFUR(
       char *S_payload;
       struct futhark_u8_2d *Sbuff_ft;
       struct futhark_i64_1d *S_idx_ft;
-      struct futhark_opaque_partitionInfo *S_pInfo;
-      struct futhark_opaque_radix_hashTable *S_RHT;
 
       idx_t S_rowCount = bulk_load_chunks_GFTR(
         CHUNK_SIZE,
@@ -588,29 +583,6 @@ void RadixHashJoin_GFUR(
       free(Sbuff);
       Sbuff = NULL;
 
-      mylog(logfile, "Obtaining S's partitionInfo...");
-      getPartitionInfo(
-        ctx,
-        &S_pInfo,
-        Sbuff_ft,
-        radix_bits,
-        MAX_PARTITION_SIZE,
-        MAX_DEPTH,
-        0
-      );
-      mylog(logfile, "Obtained S's partitionInfo.");
-
-      mylog(logfile, "Obtaining S's radix hash table...");
-      getRadixHashTable(
-        ctx,
-        &S_RHT,
-        Sbuff_ft,
-        S_pInfo,
-        radix_bits,
-        SCATTER_PSIZE
-      );
-      mylog(logfile, "Obtained S's radix hash table.");
-
       // Perform join
       idx_t numPairs = 0;
       char *joinedKeys;
@@ -624,30 +596,29 @@ void RadixHashJoin_GFUR(
       // #######################################################################################################
       // #######################################################################################################
       mylog(logfile, "Performing the key join...");
+      // Invert R&S because calculating info for R is cheaper...
       HashJoin_joinKeyColumns_inFuthark(
         ctx,
         &numPairs,
         &joinedKeys,
-        &idxR_ft,
         &idxS_ft,
+        &idxR_ft,
         colType_bytes(key_type),
         radix_bits,
         0,
         0,
-        Rbuff_ft,
         Sbuff_ft,
+        Rbuff_ft,
         R_pInfo,
-        S_pInfo,
-        S_RHT,
-        R_rowCount,
+        R_RHT,
         S_rowCount,
-        SCATTER_PSIZE
+        R_rowCount
       );
       mylog(logfile, "Performed key join.");
 
       // Gather R's payloads
       char* gathered_R_payload = malloc(numPairs * R_pL_bytesPerRow);
-      gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, R_curIdx, BLOCK_SIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
+      gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, 0, BLOCK_SIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
       futhark_free_i64_1d(ctx, idxR_ft); // no longer needed
       mylog(logfile, "Gathered R payloads.");
       void* Rpl[R_col_count-1];
@@ -657,7 +628,7 @@ void RadixHashJoin_GFUR(
 
       // Gather S's payloads
       char* gathered_S_payload = malloc(numPairs * S_pL_bytesPerRow);
-      gatherPayloads_GFUR_inFuthark(ctx, gathered_S_payload, S_pL_bytesPerRow, 0, S_curIdx, BLOCK_SIZE, S_idx_ft, idxS_ft, S_payload, S_rowCount, numPairs);
+      gatherPayloads_GFUR_inFuthark(ctx, gathered_S_payload, S_pL_bytesPerRow, 0, 0, BLOCK_SIZE, S_idx_ft, idxS_ft, S_payload, S_rowCount, numPairs);
       futhark_free_i64_1d(ctx, idxS_ft); // no longer needed
       mylog(logfile, "Gathered S payloads.");
       void* Spl[S_col_count-1];
@@ -719,8 +690,6 @@ void RadixHashJoin_GFUR(
 
       // CLEANUP
       futhark_free_u8_2d(ctx, Sbuff_ft);
-      futhark_free_opaque_partitionInfo(ctx, S_pInfo);
-      futhark_free_opaque_radix_hashTable(ctx, S_RHT);
       for(idx_t col=1; col<R_col_count; col++) {
         free(Rpl[col-1]);
       }
@@ -736,6 +705,7 @@ void RadixHashJoin_GFUR(
 
     futhark_free_u8_2d(ctx, Rbuff_ft);
     futhark_free_opaque_partitionInfo(ctx, R_pInfo);
+    futhark_free_opaque_radix_hashTable(ctx, R_RHT);
     futhark_free_i64_1d(ctx, R_idx_ft);
     free(R_payload);
     duckdb_destroy_result(&res_Sk);

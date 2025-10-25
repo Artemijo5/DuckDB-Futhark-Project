@@ -79,12 +79,10 @@ void HashJoin_joinKeyColumns_inFuthark(
 	idx_t incr2,
 	struct futhark_u8_2d *keys1,
 	struct futhark_u8_2d *keys2,
-	struct futhark_opaque_partitionInfo *info1,
 	struct futhark_opaque_partitionInfo *info2,
 	struct futhark_opaque_radix_hashTable *hash_tbl2,
 	idx_t card1,
-	idx_t card2,
-	idx_t scatter_psize
+	idx_t card2
 );
 
 #endif
