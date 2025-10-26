@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <float.h>
 
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <nvrtc.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,6 +27,22 @@ int futhark_context_config_set_tuning_param(struct futhark_context_config *cfg, 
 struct futhark_context;
 struct futhark_context *futhark_context_new(struct futhark_context_config *cfg);
 void futhark_context_free(struct futhark_context *cfg);
+void futhark_context_config_set_default_thread_block_size(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_grid_size(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_group_size(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_num_groups(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_tile_size(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_reg_tile_size(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_registers(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_cache(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_default_threshold(struct futhark_context_config *cfg, int size);
+void futhark_context_config_set_unified_memory(struct futhark_context_config *cfg, int flag);
+void futhark_context_config_add_nvrtc_option(struct futhark_context_config *cfg, const char *opt);
+void futhark_context_config_set_device(struct futhark_context_config *cfg, const char *s);
+const char *futhark_context_config_get_program(struct futhark_context_config *cfg);
+void futhark_context_config_set_program(struct futhark_context_config *cfg, const char *s);
+void futhark_context_config_dump_ptx_to(struct futhark_context_config *cfg, const char *s);
+void futhark_context_config_load_ptx_from(struct futhark_context_config *cfg, const char *s);
 void futhark_context_config_set_debugging(struct futhark_context_config *cfg, int flag);
 void futhark_context_config_set_profiling(struct futhark_context_config *cfg, int flag);
 void futhark_context_config_set_logging(struct futhark_context_config *cfg, int flag);
@@ -33,51 +53,51 @@ const char *futhark_get_tuning_param_class(int);
 // Arrays
 struct futhark_f32_1d;
 struct futhark_f32_1d *futhark_new_f32_1d(struct futhark_context *ctx, const float *data, int64_t dim0);
-struct futhark_f32_1d *futhark_new_raw_f32_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
+struct futhark_f32_1d *futhark_new_raw_f32_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
 int futhark_free_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr);
 int futhark_values_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr, float *data);
 int futhark_index_f32_1d(struct futhark_context *ctx, float *out, struct futhark_f32_1d *arr, int64_t i0);
-unsigned char *futhark_values_raw_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr);
+CUdeviceptr futhark_values_raw_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr);
 const int64_t *futhark_shape_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr);
 struct futhark_f64_1d;
 struct futhark_f64_1d *futhark_new_f64_1d(struct futhark_context *ctx, const double *data, int64_t dim0);
-struct futhark_f64_1d *futhark_new_raw_f64_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
+struct futhark_f64_1d *futhark_new_raw_f64_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
 int futhark_free_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr);
 int futhark_values_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr, double *data);
 int futhark_index_f64_1d(struct futhark_context *ctx, double *out, struct futhark_f64_1d *arr, int64_t i0);
-unsigned char *futhark_values_raw_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr);
+CUdeviceptr futhark_values_raw_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr);
 const int64_t *futhark_shape_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr);
 struct futhark_i16_1d;
 struct futhark_i16_1d *futhark_new_i16_1d(struct futhark_context *ctx, const int16_t *data, int64_t dim0);
-struct futhark_i16_1d *futhark_new_raw_i16_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
+struct futhark_i16_1d *futhark_new_raw_i16_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
 int futhark_free_i16_1d(struct futhark_context *ctx, struct futhark_i16_1d *arr);
 int futhark_values_i16_1d(struct futhark_context *ctx, struct futhark_i16_1d *arr, int16_t *data);
 int futhark_index_i16_1d(struct futhark_context *ctx, int16_t *out, struct futhark_i16_1d *arr, int64_t i0);
-unsigned char *futhark_values_raw_i16_1d(struct futhark_context *ctx, struct futhark_i16_1d *arr);
+CUdeviceptr futhark_values_raw_i16_1d(struct futhark_context *ctx, struct futhark_i16_1d *arr);
 const int64_t *futhark_shape_i16_1d(struct futhark_context *ctx, struct futhark_i16_1d *arr);
 struct futhark_i32_1d;
 struct futhark_i32_1d *futhark_new_i32_1d(struct futhark_context *ctx, const int32_t *data, int64_t dim0);
-struct futhark_i32_1d *futhark_new_raw_i32_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
+struct futhark_i32_1d *futhark_new_raw_i32_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
 int futhark_free_i32_1d(struct futhark_context *ctx, struct futhark_i32_1d *arr);
 int futhark_values_i32_1d(struct futhark_context *ctx, struct futhark_i32_1d *arr, int32_t *data);
 int futhark_index_i32_1d(struct futhark_context *ctx, int32_t *out, struct futhark_i32_1d *arr, int64_t i0);
-unsigned char *futhark_values_raw_i32_1d(struct futhark_context *ctx, struct futhark_i32_1d *arr);
+CUdeviceptr futhark_values_raw_i32_1d(struct futhark_context *ctx, struct futhark_i32_1d *arr);
 const int64_t *futhark_shape_i32_1d(struct futhark_context *ctx, struct futhark_i32_1d *arr);
 struct futhark_i64_1d;
 struct futhark_i64_1d *futhark_new_i64_1d(struct futhark_context *ctx, const int64_t *data, int64_t dim0);
-struct futhark_i64_1d *futhark_new_raw_i64_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
+struct futhark_i64_1d *futhark_new_raw_i64_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
 int futhark_free_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 int futhark_values_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr, int64_t *data);
 int futhark_index_i64_1d(struct futhark_context *ctx, int64_t *out, struct futhark_i64_1d *arr, int64_t i0);
-unsigned char *futhark_values_raw_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
+CUdeviceptr futhark_values_raw_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 struct futhark_u8_2d;
 struct futhark_u8_2d *futhark_new_u8_2d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1);
-struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, unsigned char *data, int64_t dim0, int64_t dim1);
+struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0, int64_t dim1);
 int futhark_free_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
 int futhark_values_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr, uint8_t *data);
 int futhark_index_u8_2d(struct futhark_context *ctx, uint8_t *out, struct futhark_u8_2d *arr, int64_t i0, int64_t i1);
-unsigned char *futhark_values_raw_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
+CUdeviceptr futhark_values_raw_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
 const int64_t *futhark_shape_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
 
 // Opaque values
@@ -272,8 +292,8 @@ int futhark_entry_orderByIndices_float(struct futhark_context *ctx, struct futha
 int futhark_entry_orderByIndices_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i32_1d *in3);
 int futhark_entry_orderByIndices_long(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3);
 int futhark_entry_orderByIndices_short(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i16_1d *in3);
-int futhark_entry_partition_and_deepen_GFTR(struct futhark_context *ctx, struct futhark_opaque_partitionedSet_GFTR **out0, const int16_t in0, const int64_t in1, const int32_t in2, const struct futhark_u8_2d *in3, const struct futhark_u8_2d *in4, const int64_t in5, const int32_t in6);
-int futhark_entry_partition_and_deepen_GFUR(struct futhark_context *ctx, struct futhark_opaque_partitionedSet_GFUR **out0, const int16_t in0, const int64_t in1, const int32_t in2, const struct futhark_u8_2d *in3, const int64_t in4, const int64_t in5, const int32_t in6);
+int futhark_entry_partition_and_deepen_GFTR(struct futhark_context *ctx, struct futhark_opaque_partitionedSet_GFTR **out0, const int16_t in0, const int64_t in1, const int32_t in2, const struct futhark_u8_2d *in3, const struct futhark_u8_2d *in4, const int64_t in5, const int32_t in6, const int32_t in7);
+int futhark_entry_partition_and_deepen_GFUR(struct futhark_context *ctx, struct futhark_opaque_partitionedSet_GFUR **out0, const int16_t in0, const int64_t in1, const int32_t in2, const struct futhark_u8_2d *in3, const int64_t in4, const int64_t in5, const int32_t in6, const int32_t in7);
 int futhark_entry_radixSortColumn_double(struct futhark_context *ctx, struct futhark_opaque_sortInfo_double **out0, const int64_t in0, const int16_t in1, const struct futhark_f64_1d *in2);
 int futhark_entry_radixSortColumn_float(struct futhark_context *ctx, struct futhark_opaque_sortInfo_float **out0, const int64_t in0, const int16_t in1, const struct futhark_f32_1d *in2);
 int futhark_entry_radixSortColumn_int(struct futhark_context *ctx, struct futhark_opaque_sortInfo_int **out0, const int64_t in0, const int16_t in1, const struct futhark_i32_1d *in2);
@@ -294,7 +314,7 @@ void futhark_context_pause_profiling(struct futhark_context *ctx);
 void futhark_context_unpause_profiling(struct futhark_context *ctx);
 char *futhark_context_report(struct futhark_context *ctx);
 int futhark_context_clear_caches(struct futhark_context *ctx);
-#define FUTHARK_BACKEND_c
+#define FUTHARK_BACKEND_cuda
 #define FUTHARK_SUCCESS 0
 #define FUTHARK_PROGRAM_ERROR 2
 #define FUTHARK_OUT_OF_MEMORY 3

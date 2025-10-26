@@ -4,7 +4,7 @@ type byteSeq [bytes] = [bytes]u8
 
 type~ partitionInfo = {maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 
--- TODO use option type
+-- TODO consider using Option type here (?)
 type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**rb]idx_t.t} -- if idx == -1, partition is not present
 
 def dummy_byteSeq (b: idx_t.t)
@@ -257,6 +257,7 @@ def deepen_step 't [m] [b]
   (curDepth: i32)
   (x_bufen: ([m](byteSeq [b]), [m]t))
   (size_thresh: idx_t.t)
+  (bit_step: i32)
 : ([m](byteSeq [b]), [m]t, [](idx_t.t, idx_t.t)) =
   let newDepth = curDepth+1
   let new_i = radix_size*curDepth
@@ -267,7 +268,7 @@ def deepen_step 't [m] [b]
     x_bufen.1
     new_i
     new_j
-    2
+    bit_step
   let newBounds = (getPartitionBounds newDepth x_xinbufen.0 new_i new_j).bounds
   let taidade = -- partitions that exceed size_thresh, represented by lb (inclusive) & ub (exlusive)
     indices newBounds
@@ -283,6 +284,7 @@ def partition_and_deepen 't [n] [b]
   (pL: [n]t)
   (size_thresh: idx_t.t)
   (max_depth: i32)
+  (bit_step: i32)
 : ([n](byteSeq [b]), [n]t) =
   let xps = (xs, pL)
   let loop_over : {pXs: [n](byteSeq [b]), pPs: [n]t, taidade: [](idx_t.t, idx_t.t), dp: i32}
@@ -296,7 +298,7 @@ def partition_and_deepen 't [n] [b]
       let m = bounds.1 - bounds.0
       let x_bufen = q.xbuff[bounds.0:bounds.1] :> [m](byteSeq [b])
       let p_bufen = q.pbuff[bounds.0:bounds.1] :> [m]t
-      let res = deepen_step block_size gather_psize radix_size p.dp (x_bufen, p_bufen) size_thresh
+      let res = deepen_step block_size gather_psize radix_size p.dp (x_bufen, p_bufen) size_thresh bit_step
       in {
         xbuff = (copy q.xbuff) with [bounds.0:bounds.1] = res.0,
         pbuff = (copy q.pbuff) with [bounds.0:bounds.1] = res.1,

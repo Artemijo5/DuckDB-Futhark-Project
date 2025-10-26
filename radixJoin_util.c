@@ -103,6 +103,7 @@ void radixPartition_GFUR(
 	idx_t num_bytes,
 	int32_t radix_bits,
 	int32_t max_depth,
+	int32_t bit_step,
 	idx_t size_thresh,
 	idx_t offset,
 	idx_t scatter_psize
@@ -112,7 +113,8 @@ void radixPartition_GFUR(
 	// Perform the partitioning
 	struct futhark_opaque_partitionedSet_GFUR *partitionRes;
 	futhark_entry_partition_and_deepen_GFUR(
-		ctx, &partitionRes, (int16_t)scatter_psize, scatter_psize, radix_bits, inKeys_ft, offset, size_thresh, max_depth
+		ctx, &partitionRes, (int16_t)scatter_psize, scatter_psize, radix_bits, inKeys_ft, offset,
+		size_thresh, max_depth, bit_step
 	);
 	// Project fields
 	futhark_project_opaque_partitionedSet_GFUR_ks(ctx, outCol, partitionRes);
@@ -134,6 +136,7 @@ void radixPartition_GFTR(
 	idx_t pL_bytes,
 	int32_t radix_bits,
 	int32_t max_depth,
+	int32_t bit_step,
 	idx_t size_thresh,
 	idx_t scatter_psize
 ) {
@@ -143,7 +146,8 @@ void radixPartition_GFTR(
 	// Perform the partitioning
 	struct futhark_opaque_partitionedSet_GFTR *partitionRes;
 	futhark_entry_partition_and_deepen_GFTR(
-		ctx, &partitionRes, (int16_t)scatter_psize, scatter_psize, radix_bits, inKeys_ft, inPayloads_ft, size_thresh, max_depth
+		ctx, &partitionRes, (int16_t)scatter_psize, scatter_psize, radix_bits, inKeys_ft, inPayloads_ft,
+		size_thresh, max_depth, bit_step
 	);
 	// Project fields
 	futhark_project_opaque_partitionedSet_GFTR_ks(ctx, outKeys, partitionRes);

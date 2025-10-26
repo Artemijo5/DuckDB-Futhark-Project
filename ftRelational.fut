@@ -210,9 +210,10 @@ entry partition_and_deepen_GFTR [n] [b] [pL_b]
   (pL: [n](byteSeq [pL_b]))
   (size_thresh: idx_t.t)
   (max_depth: i32)
+  (bit_step: i32)
 : partitionedSet_GFTR [n] [b] [pL_b] =
   let kps =
-    partition_and_deepen block_size gather_psize radix_size xs pL size_thresh max_depth
+    partition_and_deepen block_size gather_psize radix_size xs pL size_thresh max_depth bit_step
   in {ks = kps.0, pL = kps.1}
 
 entry partition_and_deepen_GFUR [n] [b]
@@ -223,10 +224,11 @@ entry partition_and_deepen_GFUR [n] [b]
   (offset: idx_t.t)
   (size_thresh: idx_t.t)
   (max_depth: i32)
+  (bit_step: i32)
 : partitionedSet_GFUR [n] [b] =
   let is = (offset..<(offset+n)) :> [n]idx_t.t
   let kis =
-    partition_and_deepen block_size gather_psize radix_size xs is size_thresh max_depth
+    partition_and_deepen block_size gather_psize radix_size xs is size_thresh max_depth bit_step
   in {ks = kis.0, idx = kis.1}
 
 entry calc_partitions_from_partitioned_set [n] [b]

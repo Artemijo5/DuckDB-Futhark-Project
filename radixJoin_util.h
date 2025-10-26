@@ -28,6 +28,7 @@ void radixPartition_GFUR(
 	idx_t num_bytes,
 	int32_t radix_bits,
 	int32_t max_depth,
+	int32_t bit_step,
 	idx_t size_thresh,
 	idx_t offset,
 	idx_t scatter_psize
@@ -44,6 +45,7 @@ void radixPartition_GFTR(
 	idx_t pL_bytes,
 	int32_t radix_bits,
 	int32_t max_depth,
+	int32_t bit_step,
 	idx_t size_thresh,
 	idx_t scatter_psize
 );

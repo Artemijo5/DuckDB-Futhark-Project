@@ -15,8 +15,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 10*CHUNK_SIZE
-#define S_TABLE_SIZE 50*CHUNK_SIZE
+#define R_TABLE_SIZE 4*CHUNK_SIZE
+#define S_TABLE_SIZE 5*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define MAX_PARTITION_SIZE 1024
@@ -71,7 +71,7 @@ int main() {
   duckdb_connect(db, &con);
 
   // Create tables R and S
-  /*
+  ///*
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
@@ -98,7 +98,7 @@ int main() {
   duckdb_query(con, R_init_query, NULL);
   duckdb_query(con, S_init_query, NULL);
   mylog(logfile, "Created the tables R and S.");
-  */
+  //*/
 
   /*
   duckdb_query(con, "setseed(0.42);", NULL);
@@ -164,6 +164,7 @@ int main() {
     ctx,
     con,
     RADIX_BITS,
+    2, // bit step
     R_TBL_NAME,
     S_TBL_NAME,
     false,

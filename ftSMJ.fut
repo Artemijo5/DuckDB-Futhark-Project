@@ -66,7 +66,6 @@ def my_radix_sort_float [n] 't
 -- ########################################################################################################################
 
 -- GFTR SORTING
--- TODO see ftError.fut
 
 -- | Type used to sort a key column (GFTR), simultaneously transforming the payloads (stored as a byte array).
 type sortStruct [n] [b] 'a = {k: [n]a, pL: [n][b]u8}
