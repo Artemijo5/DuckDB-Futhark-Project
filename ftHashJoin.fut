@@ -4,6 +4,7 @@ type byteSeq [bytes] = [bytes]u8
 
 type~ partitionInfo = {maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 
+-- TODO use option type
 type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**rb]idx_t.t} -- if idx == -1, partition is not present
 
 def dummy_byteSeq (b: idx_t.t)
@@ -33,11 +34,13 @@ def getRadix [b] (i: i32) (j: i32) (x: byteSeq [b])
 
 def radix_to_idx [b] (radix_bits: i32) (bsq: byteSeq [b])
 : idx_t.t =
-  map2
-    (\byte ind -> ((i64.u8 byte) * (1 << (ind*(i64.i32 u8.num_bits)) ) ) )
-    (getRadix 0 (radix_bits-1) bsq)
-    (indices bsq |> map (\i -> b-i-1))
-  |> i64.sum
+  let rdx = getRadix 0 (radix_bits-1) bsq
+  let radix_bytes = i64.i32 ((radix_bits + u8.num_bits - 1)/(u8.num_bits))
+  in
+    loop y : idx_t.t = 0
+    for j in (0..<radix_bytes) do
+      let r = (i64.u8 rdx[b-j-1]) << (j*(i64.i32 u8.num_bits))
+      in y | r
 
 def byteSeq_eq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
 : bool =
@@ -339,23 +342,23 @@ def rv_partitionMatchBounds [nR] [b] [pR]
   (bounds_S: [pR]idx_t.t)
   (depths_S: [pR]i32)
   (ht_S: radix_hashTable [i64.i32 radix_size])
-: (idx_t.t, idx_t.t) = -- returns: first matching partition, last matching partition
+: idx_t.t = -- returns matching partition in S if there is one, otherwise -1
   let j = radix_to_idx radix_size rv
   let spi = ht_S.first_info_idx[j]
   in
-    if spi < 0 then (-1,-1) else
-    if depths_S[spi] == 1 then (spi, spi) else
+    if spi < 0 then (-1) else
+    if depths_S[spi] == 1 then (spi) else
     -- binary search for first and last matching partitions
     let end_spi = ht_S.last_info_idx[j]
     let init_step = idx_t.max 1 ((end_spi-spi)/2)
-    let bsearch_first =
+    let bsearch =
       loop (heshi, step) = (spi, init_step) while step>0 do
         let cur_depth = depths_S[heshi]
         let prev_depth = if heshi==spi then cur_depth else depths_S[heshi-1]
         let next_depth = if heshi==end_spi then cur_depth else depths_S[heshi+1]
-        let cur_S = tS[bounds_S[spi]]
-        let prev_S = if heshi==spi then cur_S else tS[bounds_S[spi-1]]
-        let next_S = if heshi==end_spi then cur_S else tS[bounds_S[spi+1]]
+        let cur_S = tS[bounds_S[heshi]]
+        let prev_S = if heshi==spi then cur_S else tS[bounds_S[heshi-1]]
+        let next_S = if heshi==end_spi then cur_S else tS[bounds_S[heshi+1]]
         in
           if
             (radix_eq radix_size cur_depth rv cur_S)
@@ -372,28 +375,7 @@ def rv_partitionMatchBounds [nR] [b] [pR]
             if (heshi == end_spi || radix_lt radix_size next_depth rv next_S)
             then (-1, 0)
             else (heshi+step, idx_t.max 1 (step/2))
-    let fm = bsearch_first.0
-    let init_step_last = idx_t.max 1 ((end_spi-fm)/2)
-    let bsearch_last = if fm<0 then (-1,0) else
-      loop (heshi, step) = (end_spi, init_step_last) while step>0 do
-        let cur_depth = depths_S[heshi]
-        let next_depth = if heshi==end_spi then cur_depth else depths_S[heshi+1]
-        let cur_S = tS[bounds_S[spi]]
-        let next_S = if heshi==end_spi then cur_S else tS[bounds_S[spi+1]]
-        in
-          if
-            (radix_eq radix_size cur_depth rv cur_S)
-            &&
-            (heshi == end_spi || radix_neq radix_size next_depth rv next_S)
-          then (heshi, 0) -- found last match
-          else if (radix_eq radix_size cur_depth rv cur_S) -- found match range but not last
-            then (heshi+step, idx_t.max 1 (step/2))
-          else if (radix_lt radix_size cur_depth rv cur_S)
-            then (heshi-step, idx_t.max 1 (step/2))
-          else -- if (radix_gt radix_size cur_depth rv cur_S) then
-            (heshi+step, idx_t.max 1 (step/2))
-    let lm = bsearch_last.0
-    in (fm,lm)
+    in bsearch.0
 
 local def rv_findPairCount [nS] [b]
   (rv: byteSeq [b])
@@ -441,20 +423,23 @@ def radix_hash_join [nR] [nS] [b]
 : joinPairs_bsq [b] =
   let n_pS = length pS.bounds
   -- tuples of: first matching partition in S, last matching partition in S
-  let fl = (iota nR)
+  let heshi = (iota nR)
     |> map (\i ->
       rv_partitionMatchBounds radix_size tR[i] tS pS.bounds pS.depths ht_S
     )
-  let counts_per_r = map2 (\i (fm, lm) ->
+  let counts_per_r = map2 (\i fm ->
       if fm<0 then 0 else
       let rv = tR[i]
-      let inf_s_idx = pS.bounds[fm]
-      let sup_s_idx = if lm==n_pS-1 then nS else pS.bounds[lm+1]
+      let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
+      let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
       let cur_S = tS[inf_s_idx:sup_s_idx]
-      in rv_findPairCount rv cur_S
+      in 
+        if fm >= 0
+        then rv_findPairCount rv cur_S
+        else 0
     )
     (iota nR)
-    fl
+    heshi
   let starting_pos = 
     map2 (\c z -> if c>0 then z else (-1))
       counts_per_r
@@ -475,9 +460,9 @@ def radix_hash_join [nR] [nS] [b]
   let s_inds = r_inds
     |> map (\(k, ir) ->
       let rv = tR[ir]
-      let (fm,lm) = fl[ir]
+      let fm = heshi[ir]
       let inf_s_idx = pS.bounds[fm]
-      let sup_s_idx = if lm==n_pS-1 then nS else pS.bounds[lm+1]
+      let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
       let cur_S = tS[inf_s_idx:sup_s_idx]
       in (find_kth_match rv cur_S k) + inf_s_idx
     )
@@ -497,15 +482,15 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
 : joinPairs_bsq [b] =
   let n_pS = length pS.bounds
   -- tuples of: first matching partition in S, last matching partition in S
-  let fl = (iota nR)
+  let heshi = (iota nR)
     |> map (\i ->
       rv_partitionMatchBounds radix_size tR[i] tS pS.bounds pS.depths ht_S
     )
   let match_in_iy = map2
-    (\j (fm, lm) ->
+    (\j fm ->
       let rv = tR[j]
-      let inf_s_idx = pS.bounds[fm]
-      let sup_s_idx = if lm==n_pS-1 then nS else pS.bounds[lm+1]
+      let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
+      let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
       let cur_S = tS[inf_s_idx:sup_s_idx]
       let si = find_match_if_exists rv cur_S
       in
@@ -514,7 +499,7 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
         else -1
     )
     (iota nR)
-    fl
+    heshi
   let count_pairs = countFor (>0) match_in_iy
   let zuowei = map2
     (\m z -> if m>0 then z else (-1))

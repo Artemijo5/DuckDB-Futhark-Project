@@ -205,13 +205,8 @@ void HashJoin_joinKeyColumns_inFuthark(
 	futhark_entry_Inner_Radix_Hash_Join(
 		ctx, &joinPairs, radix_bits, keys1, keys2, info2, hash_tbl2
 	);
-	// Sync
-	futhark_context_sync(ctx);
 	// Project joinPair
 	struct futhark_u8_2d *outVs_ft;
-	// TODO
-	// it seems that repartitioning causes this to segfault (with C compilation on potato pc...)
-	// WHY (?!)
 	futhark_project_opaque_joinPairs_bsq_vs(ctx, &outVs_ft, joinPairs);
 	futhark_project_opaque_joinPairs_bsq_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_bsq_iy(ctx, outIdx2, joinPairs);
@@ -253,13 +248,8 @@ void HashJoin_joinKeyColumns_inFuthark_with_unique_keys2(
 	futhark_entry_Inner_Radix_Hash_Join_with_right_keys_unique(
 		ctx, &joinPairs, radix_bits, keys1, keys2, info2, hash_tbl2
 	);
-	// Sync
-	futhark_context_sync(ctx);
 	// Project joinPair
 	struct futhark_u8_2d *outVs_ft;
-	// TODO
-	// it seems that repartitioning causes this to segfault (with C compilation on potato pc...)
-	// WHY (?!)
 	futhark_project_opaque_joinPairs_bsq_vs(ctx, &outVs_ft, joinPairs);
 	futhark_project_opaque_joinPairs_bsq_ix(ctx, outIdx1, joinPairs);
 	futhark_project_opaque_joinPairs_bsq_iy(ctx, outIdx2, joinPairs);

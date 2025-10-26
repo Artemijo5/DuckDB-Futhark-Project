@@ -15,15 +15,16 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 5*CHUNK_SIZE
-#define S_TABLE_SIZE 10*CHUNK_SIZE
+#define R_TABLE_SIZE 10*CHUNK_SIZE
+#define S_TABLE_SIZE 50*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define MAX_PARTITION_SIZE 4//R_TABLE_SIZE // WHY DOES THIS CAUSE SEGFAULTS IN JOIN IF NOTABLY SMALLER THAN MAX_SIZE (?!)
+#define MAX_PARTITION_SIZE 1024
 #define SCATTER_PSIZE 12000
 
 #define RADIX_BITS 16
-#define MAX_DEPTH 1
+// TODO for some reason partitioning "all the way through" causes some result tuples to be omitted (?!)
+#define MAX_DEPTH 3
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
@@ -31,8 +32,8 @@
 #define R_KEY "k"
 #define S_KEY "k"
 
-#define R_JOIN_BUFFER 3*CHUNK_SIZE
-#define S_JOIN_BUFFER 5*CHUNK_SIZE
+#define R_JOIN_BUFFER 5*CHUNK_SIZE
+#define S_JOIN_BUFFER 25*CHUNK_SIZE
 #define JOIN_TBL_NAME "R_S_HashJoinTbl_GFTR"
 
 #define DBFILE "testdb.db"
@@ -70,6 +71,36 @@ int main() {
   duckdb_connect(db, &con);
 
   // Create tables R and S
+  /*
+  duckdb_query(con, "setseed(0.42);", NULL);
+  char createRtbl[1000 + strlen(R_TBL_NAME)];
+  char createStbl[1000 + strlen(S_TBL_NAME)];
+  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 FLOAT, payload2 INTEGER, payload3 SMALLINT);", R_TBL_NAME);
+  duckdb_query(con, createRtbl, NULL);
+  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 INTEGER, payload5 SMALLINT, payload6 DOUBLE);", S_TBL_NAME);
+  duckdb_query(con, createStbl, NULL);
+
+  // Create the test tables.
+  char R_init_query[1000 + strlen(R_TBL_NAME)];
+  char S_init_query[1000 + strlen(S_TBL_NAME)];
+  sprintf(
+    R_init_query,
+    "INSERT INTO %s (SELECT 100000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    R_TBL_NAME,
+    R_TABLE_SIZE
+  );
+  sprintf(
+    S_init_query,
+    "INSERT INTO %s (SELECT 100000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    S_TBL_NAME,
+    S_TABLE_SIZE
+  );
+  duckdb_query(con, R_init_query, NULL);
+  duckdb_query(con, S_init_query, NULL);
+  mylog(logfile, "Created the tables R and S.");
+  */
+
+  /*
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
@@ -100,6 +131,8 @@ int main() {
     duckdb_query(con, S_init_query, NULL);
   }
   mylog(logfile, "Created the tables R and S.");
+  */
+
 
   // Set up futhark core
   struct futhark_context_config *cfg = futhark_context_config_new();
