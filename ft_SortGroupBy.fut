@@ -17,7 +17,7 @@ def grouped_reduce [n] [group_no] 't
 			let this_pad = max_size - group_sizes[gi]
 			in (xs[this_inf:this_sup] ++ (replicate this_pad ne)) :> [max_size]t
 		)
-	in map (\gxs -> reduce f ne gxs) regularised_xs
+	in map (\gxs -> reduce_comm f ne gxs) regularised_xs
 
 def grouped_all [n] [group_no] 't
 	(group_idx : [group_no]idx_t.t)
@@ -155,9 +155,9 @@ module type aggrCol = {
 		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> t -> [n]t -> [group_no]bool
 
 	val minimum [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]bool
+		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
 	val maximum [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]bool
+		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
 }
 module type aggrNumericCol = {
 	include aggrCol
@@ -183,69 +183,82 @@ module mk_aggrCol_from_numeric (N: numeric) : aggrNumericCol with t = N.t = {
 	def lowest  : t = N.lowest
 	def highest : t = N.highest
 
-	def (!=) = (N.!=)
-	def (>=) = (N.>=)
-	def (<=) = (N.<=)
-	def (<) = (N.<)
-	def (>) = (N.>)
+	def eq  = (N.==)
+	def neq = (N.!=)
+	def geq = (N.>=)
+	def leq = (N.<=)
+	def gt  = (N.>)
+	def lt  = (N.<)
 
-	def (+) = (N.+)
-	def (-) = (N.-)
-	def (*) = (N.*)
-	def (/) = (N./)
+	def plus  = (N.+)
+	def minus = (N.-)
+	def times = (N.*)
+	def over  = (N./)
 
 	def zero = N.i64 0
 	def one = N.i64 1
 	def two = N.i64 2
 
-	def midpoint (a:t) (b:t) : t = (a + b) / two
+	def midpoint (a:t) (b:t) : t = (a `plus` b) `over` two
 
 	-- Entry Points
 
 	def contains (group_idx) (group_sizes) (v) (xs)
-		= !(grouped_all group_idx group_sizes (\x -> x != v) v xs)
+		= grouped_any group_idx group_sizes (\x -> x `eq` v) (if (v`neq`zero) then zero else one) xs
+		
 	def withinClosedInterval (group_idx) (group_sizes) (lo) (hi) (xs)
-		= grouped_all group_idx group_sizes (\x -> x>=lo && x <=hi) lo xs
+		= grouped_all group_idx group_sizes (\x -> (x`geq`lo) && (x`leq`hi)) lo xs
 	def withinOpenInterval (group_idx) (group_sizes) (lo) (hi) (xs)
-		= grouped_all group_idx group_sizes (\x -> x>lo && x <hi) (midpoint lo hi) xs
+		= grouped_all group_idx group_sizes (\x -> (x`gt`lo) && (x`lt`hi)) (midpoint lo hi) xs
 
 	def all_gt (group_idx) (group_sizes) (v) (xs)
-		= grouped_all group_idx group_sizes (\x -> x > v) v xs
+		= grouped_all group_idx group_sizes (\x -> x `gt` v) v xs
 	def all_geq (group_idx) (group_sizes) (v) (xs)
-		= grouped_all group_idx group_sizes (\x -> x >= v) v xs
+		= grouped_all group_idx group_sizes (\x -> x `geq` v) v xs
 	def all_lt (group_idx) (group_sizes) (v) (xs)
-		= grouped_all group_idx group_sizes (\x -> x < v) v xs
+		= grouped_all group_idx group_sizes (\x -> x `lt` v) v xs
 	def all_leq (group_idx) (group_sizes) (v) (xs)
-		= grouped_all group_idx group_sizes (\x -> x <= v) v xs
+		= grouped_all group_idx group_sizes (\x -> x `leq` v) v xs
 
 	def minimum (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (\x1 x2 -> if x1<x2 then x1 else x2) highest xs
+		= grouped_reduce group_idx group_sizes (\x1 x2 -> if (x1`lt`x2) then x1 else x2) highest xs
 	def maximum (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (\x1 x2 -> if x1>x2 then x1 else x2) lowest xs
+		= grouped_reduce group_idx group_sizes (\x1 x2 -> if (x1`gt`x2) then x1 else x2) lowest xs
 
 	def sum (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (+) zero xs
+		= grouped_reduce group_idx group_sizes (plus) zero xs
 	def prod (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (*) one xs
+		= grouped_reduce group_idx group_sizes (times) one xs
 	def sq_sum (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (+) zero (xs |> map (\x -> x*x))
+		= grouped_reduce group_idx group_sizes (plus) zero (xs |> map (\x -> x`times`x))
 
 	def mean (group_idx) (group_sizes) (xs) =
 		let grouped_sums = sum group_idx group_sizes xs
-		in map2 (\svm size -> if size==0 then 0 else svm / (N.i64 size)) grouped_sums group_sizes
+		in map2 (\svm size -> if size==0 then zero else (svm `over` (N.i64 size))) grouped_sums group_sizes
 	def var (group_idx) (group_sizes) (xs) =
-		let mean = sum group_idx group_sizes xs
-		let sq_mean = map2
-			(\svm size -> if size==0 then 0 else svm / (N.i64 size))
-			(sq_sum group_idx group_sizes xs)
-			group_sizes
-		in map2 (\xsq mu -> xsq - (mu*mu)) sq_mean mean
+		let sums = sum group_idx group_sizes xs
+		let sq_sums = sq_sum group_idx group_sizes xs
+		in map3
+			(\sq mu sz_ -> 
+				let sz = if sz_>0 then (N.i64 sz_) else one
+				in (sq `minus` ((mu`times`mu)`over`sz))`over`sz
+			)
+			sq_sums sums group_sizes
 	def cov (group_idx) (group_sizes) (xs) (ys) =
-		let mean_x = sum group_idx group_sizes xs
-		let mean_y = sum group_idx group_sizes ys
-		let mean_xy = map2
-			(\svm size -> if size==0 then 0 else svm / (N.i64 size))
-			(sq_sum group_idx group_sizes (map2 (*) xs ys))
-			group_sizes
-		in map3 (\xy mu_x mu_y -> xy - mu_x*mu_y) mean_xy mean_x mean_y
+		let sums_x = sum group_idx group_sizes xs
+		let sums_y = sum group_idx group_sizes ys
+		let sums_xy = sum group_idx group_sizes (map2 (times) xs ys)
+		in map4
+			(\xy mu_x mu_y sz_ -> 
+				let sz = if sz_>0 then (N.i64 sz_) else one
+				in (xy `minus` ((mu_x`times`mu_y)`over`sz))`over`sz
+			)
+			sums_xy sums_x sums_y group_sizes
 }
+
+module GroupedAggregator_short  = mk_aggrCol_from_numeric i16
+module GroupedAggregator_int    = mk_aggrCol_from_numeric i32
+module GroupedAggregator_long   = mk_aggrCol_from_numeric i64
+module GroupedAggregator_float  = mk_aggrCol_from_numeric f32
+module GroupedAggregator_double = mk_aggrCol_from_numeric f64
+
