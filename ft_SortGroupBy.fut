@@ -2,60 +2,37 @@ import "ftbasics"
 
 -- Abstract Grouped Aggregations
 
-def grouped_reduce [n] [group_no] 't
-	(group_idx : [group_no]idx_t.t)
-	(group_sizes : [group_no]idx_t.t)
+local def grouped_reduce [n] 't
+	(group_no : idx_t.t)
+	(group_by_idx : [n]idx_t.t)
 	(f : t -> t -> t)
 	(ne : t)
 	(xs : [n]t)
 : [group_no]t =
-	let max_size = idx_t.maximum group_sizes
-	let regularised_xs = (iota group_no)
-		|> map (\gi ->
-			let this_inf = group_idx[gi]
-			let this_sup = this_inf + group_sizes[gi]
-			let this_pad = max_size - group_sizes[gi]
-			in (xs[this_inf:this_sup] ++ (replicate this_pad ne)) :> [max_size]t
-		)
-	in map (\gxs -> reduce_comm f ne gxs) regularised_xs
+	hist f ne group_no group_by_idx xs
 
-def grouped_all [n] [group_no] 't
-	(group_idx : [group_no]idx_t.t)
-	(group_sizes : [group_no]idx_t.t)
+local def grouped_all [n] 't
+	(group_no : idx_t.t)
+	(group_by_idx : [n]idx_t.t)
 	(f : t -> bool)
-	(true_el : t)
 	(xs : [n]t)
 : [group_no]bool =
-	let max_size = idx_t.maximum group_sizes
-	let regularised_xs = (iota group_no)
-		|> map (\gi ->
-			let this_inf = group_idx[gi]
-			let this_sup = this_inf + group_sizes[gi]
-			let this_pad = max_size - group_sizes[gi]
-			in (xs[this_inf:this_sup] ++ (replicate this_pad true_el)) :> [max_size]t
-		)
-	in map (all f) regularised_xs
+	let fxs = map f xs
+	in grouped_reduce group_no group_by_idx (&&) (true) fxs
 
-def grouped_any [n] [group_no] 't
-	(group_idx : [group_no]idx_t.t)
-	(group_sizes : [group_no]idx_t.t)
+local def grouped_any [n] 't
+	(group_no : idx_t.t)
+	(group_by_idx : [n]idx_t.t)
 	(f : t -> bool)
-	(false_el : t)
 	(xs : [n]t)
 : [group_no]bool =
-	let max_size = idx_t.maximum group_sizes
-	let regularised_xs = (iota group_no)
-		|> map (\gi ->
-			let this_inf = group_idx[gi]
-			let this_sup = this_inf + group_sizes[gi]
-			let this_pad = max_size - group_sizes[gi]
-			in (xs[this_inf:this_sup] ++ (replicate this_pad false_el)) :> [max_size]t
-		)
-	in map (any f) regularised_xs
+	let fxs = map f xs
+	in grouped_reduce group_no group_by_idx (||) (false) fxs
 
 -- Functions to Find Group Ranges
 
-def find_known_keys [n] [key_no] 't
+-- Good idea to filter this afterwards
+def sortgroup_find_known_key_counts [n] [key_no] 't
 	(k_ids : [key_no]t)
 	(sorted_ks : [n]t)
 	(eq : t -> t -> bool)
@@ -106,7 +83,7 @@ def find_known_keys [n] [key_no] 't
 		)
 		|> unzip
 
-def find_unknown_keys [n] 't
+def sortgroup_find_unknown_key_counts [n] 't
 	(sorted_ks : [n]t)
 	(eq : t -> t -> bool)
 : ([]idx_t.t, []idx_t.t) = -- returns index & size of each group
@@ -130,124 +107,142 @@ def find_unknown_keys [n] 't
 		)
 	in (bounds, sizes)
 
--- Aggregation Modules
--- TODO "cannot combine type" ... maybe better left as bare functions?
+-- TODO this could be done with map and binary search
+def sortgroup_partitionByIndex [group_no]
+	(group_idx: [group_no]idx_t.t)
+	(group_sizes: [group_no]idx_t.t)
+	(len: idx_t.t)
+: [len]idx_t.t =
+	loop buff = (replicate len (-1))
+	for j in (iota group_no) do
+		let zuowei = group_idx[j]
+		let xiaoda = group_sizes[j]
+		in buff with [zuowei:zuowei+xiaoda] = replicate xiaoda j
+		
 
--- can also be used with strings (?)
-module type aggrCol = {
+-- Aggregation Modules
+
+local module type aggrCol = {
 	type t
 
-	val contains [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> t -> [n]t -> [group_no]bool
+	val contains [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> t -> [n]t -> [group_no]bool
 
-	val withinClosedInterval [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> t -> t -> [n]t -> [group_no]bool
-	val withinOpenInterval [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> t -> t -> [n]t -> [group_no]bool
+	val hasInClosedInterval [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> t -> t -> [n]t -> [group_no]bool
+	val hasInOpenInterval [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> t -> t -> [n]t -> [group_no]bool
 
-	val all_gt [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> t -> [n]t -> [group_no]bool
-	val all_geq [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> t -> [n]t -> [group_no]bool
-	val all_lt [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> t -> [n]t -> [group_no]bool
-	val all_leq [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> t -> [n]t -> [group_no]bool
+	val withinClosedInterval [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> t -> t -> [n]t -> [group_no]bool
+	val withinOpenInterval [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> t -> t -> [n]t -> [group_no]bool
 
-	val minimum [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
-	val maximum [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
+	val all_gt [n]
+		: (group_no : idx_t.t) -> ([n]idx_t.t) -> t -> [n]t -> [group_no]bool
+	val all_geq [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> t -> [n]t -> [group_no]bool
+	val all_lt [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> t -> [n]t -> [group_no]bool
+	val all_leq [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> t -> [n]t -> [group_no]bool
+
+	val minimum [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> [n]t -> [group_no]t
+	val maximum [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> [n]t -> [group_no]t
 }
-module type aggrNumericCol = {
+local module type aggrNumericCol = {
 	include aggrCol
 
-	val sum [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
-	val prod [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
-	val sq_sum [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
+	val sum [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> [n]t -> [group_no]t
+	val prod [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> [n]t -> [group_no]t
+	val sq_sum [n]
+		: (group_no : idx_t.t)  -> ([n]idx_t.t) -> [n]t -> [group_no]t
 
 	val mean [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
+		: ([n]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
 	val var [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
+		: ([n]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [group_no]t
 	val cov [n] [group_no]
-		: ([group_no]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [n]t -> [group_no]t
+		: ([n]idx_t.t)  -> ([group_no]idx_t.t) -> [n]t -> [n]t -> [group_no]t
 }
 
-module mk_aggrCol_from_numeric (N: numeric) : aggrNumericCol with t = N.t = {
+local module mk_aggrCol_from_numeric (N: numeric) : aggrNumericCol with t = N.t = {
 	type t = N.t
 
-	def lowest  : t = N.lowest
-	def highest : t = N.highest
+	local def lowest  : t = N.lowest
+	local def highest : t = N.highest
 
-	def eq  = (N.==)
-	def neq = (N.!=)
-	def geq = (N.>=)
-	def leq = (N.<=)
-	def gt  = (N.>)
-	def lt  = (N.<)
+	local def eq  = (N.==)
+	local def neq = (N.!=)
+	local def geq = (N.>=)
+	local def leq = (N.<=)
+	local def gt  = (N.>)
+	local def lt  = (N.<)
 
-	def plus  = (N.+)
-	def minus = (N.-)
-	def times = (N.*)
-	def over  = (N./)
+	local def plus  = (N.+)
+	local def minus = (N.-)
+	local def times = (N.*)
+	local def over  = (N./)
 
-	def zero = N.i64 0
-	def one = N.i64 1
-	def two = N.i64 2
-
-	def midpoint (a:t) (b:t) : t = (a `plus` b) `over` two
+	local def zero = N.i64 0
+	local def one  = N.i64 1
 
 	-- Entry Points
 
-	def contains (group_idx) (group_sizes) (v) (xs)
-		= grouped_any group_idx group_sizes (\x -> x `eq` v) (if (v`neq`zero) then zero else one) xs
-		
-	def withinClosedInterval (group_idx) (group_sizes) (lo) (hi) (xs)
-		= grouped_all group_idx group_sizes (\x -> (x`geq`lo) && (x`leq`hi)) lo xs
-	def withinOpenInterval (group_idx) (group_sizes) (lo) (hi) (xs)
-		= grouped_all group_idx group_sizes (\x -> (x`gt`lo) && (x`lt`hi)) (midpoint lo hi) xs
+	def contains (group_no) (grouped_idxs) (v) (xs)
+		= grouped_any group_no grouped_idxs (\x -> x `eq` v) xs
+	
+	def hasInClosedInterval (group_no) (grouped_idxs) (lo) (hi) (xs)
+		= grouped_any group_no grouped_idxs (\x -> (x`geq`lo) && (x`leq`hi)) xs
+	def hasInOpenInterval (group_no) (grouped_idxs) (lo) (hi) (xs)
+		= grouped_any group_no grouped_idxs (\x -> (x`gt`lo) && (x`lt`hi)) xs
 
-	def all_gt (group_idx) (group_sizes) (v) (xs)
-		= grouped_all group_idx group_sizes (\x -> x `gt` v) v xs
-	def all_geq (group_idx) (group_sizes) (v) (xs)
-		= grouped_all group_idx group_sizes (\x -> x `geq` v) v xs
-	def all_lt (group_idx) (group_sizes) (v) (xs)
-		= grouped_all group_idx group_sizes (\x -> x `lt` v) v xs
-	def all_leq (group_idx) (group_sizes) (v) (xs)
-		= grouped_all group_idx group_sizes (\x -> x `leq` v) v xs
+	def withinClosedInterval (group_no) (grouped_idxs) (lo) (hi) (xs)
+		= grouped_all group_no grouped_idxs (\x -> (x`geq`lo) && (x`leq`hi)) xs
+	def withinOpenInterval (group_no) (grouped_idxs) (lo) (hi) (xs)
+		= grouped_all group_no grouped_idxs (\x -> (x`gt`lo) && (x`lt`hi)) xs
 
-	def minimum (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (\x1 x2 -> if (x1`lt`x2) then x1 else x2) highest xs
-	def maximum (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (\x1 x2 -> if (x1`gt`x2) then x1 else x2) lowest xs
+	def all_gt (group_no) (grouped_idxs) (v) (xs)
+		= grouped_all group_no grouped_idxs (\x -> x `gt` v) xs
+	def all_geq (group_no) (grouped_idxs) (v) (xs)
+		= grouped_all group_no grouped_idxs (\x -> x `geq` v) xs
+	def all_lt (group_no) (grouped_idxs) (v) (xs)
+		= grouped_all group_no grouped_idxs (\x -> x `lt` v) xs
+	def all_leq (group_no) (grouped_idxs) (v) (xs)
+		= grouped_all group_no grouped_idxs (\x -> x `leq` v) xs
 
-	def sum (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (plus) zero xs
-	def prod (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (times) one xs
-	def sq_sum (group_idx) (group_sizes) (xs)
-		= grouped_reduce group_idx group_sizes (plus) zero (xs |> map (\x -> x`times`x))
+	def minimum (group_no) (grouped_idxs) (xs)
+		= grouped_reduce group_no grouped_idxs (\x1 x2 -> if (x1`lt`x2) then x1 else x2) highest xs
+	def maximum (group_no) (grouped_idxs) (xs)
+		= grouped_reduce group_no grouped_idxs (\x1 x2 -> if (x1`gt`x2) then x1 else x2) lowest xs
 
-	def mean (group_idx) (group_sizes) (xs) =
-		let grouped_sums = sum group_idx group_sizes xs
+	def sum (group_no) (grouped_idxs) (xs)
+		= grouped_reduce group_no grouped_idxs (plus) zero xs
+	def prod (group_no) (grouped_idxs) (xs)
+		= grouped_reduce group_no grouped_idxs (times) one xs
+	def sq_sum (group_no) (grouped_idxs) (xs)
+		= grouped_reduce group_no grouped_idxs (plus) zero (xs |> map (\x -> x`times`x))
+
+	def mean [group_no] (grouped_idxs) (group_sizes: [group_no]idx_t.t) (xs) =
+		let grouped_sums = sum group_no grouped_idxs xs
 		in map2 (\svm size -> if size==0 then zero else (svm `over` (N.i64 size))) grouped_sums group_sizes
-	def var (group_idx) (group_sizes) (xs) =
-		let sums = sum group_idx group_sizes xs
-		let sq_sums = sq_sum group_idx group_sizes xs
+	def var [group_no] (grouped_idxs) (group_sizes: [group_no]idx_t.t) (xs) =
+		let sums = sum group_no grouped_idxs xs
+		let sq_sums = sq_sum group_no grouped_idxs xs
 		in map3
 			(\sq mu sz_ -> 
 				let sz = if sz_>0 then (N.i64 sz_) else one
 				in (sq `minus` ((mu`times`mu)`over`sz))`over`sz
 			)
 			sq_sums sums group_sizes
-	def cov (group_idx) (group_sizes) (xs) (ys) =
-		let sums_x = sum group_idx group_sizes xs
-		let sums_y = sum group_idx group_sizes ys
-		let sums_xy = sum group_idx group_sizes (map2 (times) xs ys)
+	def cov [group_no] (grouped_idxs) (group_sizes: [group_no]idx_t.t) (xs) (ys) =
+		let sums_x = sum group_no grouped_idxs xs
+		let sums_y = sum group_no grouped_idxs ys
+		let sums_xy = sum group_no grouped_idxs (map2 (times) xs ys)
 		in map4
 			(\xy mu_x mu_y sz_ -> 
 				let sz = if sz_>0 then (N.i64 sz_) else one

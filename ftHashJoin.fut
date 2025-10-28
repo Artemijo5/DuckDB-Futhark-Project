@@ -379,7 +379,7 @@ def rv_partitionMatchBounds [nR] [b] [pR]
             else (heshi+step, idx_t.max 1 (step/2))
     in bsearch.0
 
-local def rv_findPairCount [nS] [b]
+def rv_findPairCount [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
 : idx_t.t  =
@@ -390,7 +390,7 @@ local def rv_findPairCount [nS] [b]
         else (count, j+1)
     in cj.0
 
-local def find_kth_match [nS] [b]
+def rv_find_kth_match [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
   (k: idx_t.t)
@@ -402,7 +402,7 @@ local def find_kth_match [nS] [b]
       else (count, j+1)
   in (cj.1-1)
 
-local def find_match_if_exists [nS] [b]
+def rv_find_match_if_exists [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
 : idx_t.t =
@@ -466,7 +466,7 @@ def radix_hash_join [nR] [nS] [b]
       let inf_s_idx = pS.bounds[fm]
       let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
       let cur_S = tS[inf_s_idx:sup_s_idx]
-      in (find_kth_match rv cur_S k) + inf_s_idx
+      in (rv_find_kth_match rv cur_S k) + inf_s_idx
     )
   in
     {
@@ -494,7 +494,7 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
       let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
       let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
       let cur_S = tS[inf_s_idx:sup_s_idx]
-      let si = find_match_if_exists rv cur_S
+      let si = rv_find_match_if_exists rv cur_S
       in
         if si>0
         then si+inf_s_idx
@@ -517,18 +517,6 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
 -- test
 -- finalise implementation
 -- and create special case for s primary key relation...
-
-
-
-
-
-
-
-
-
-
-
-
 
 def do_find_joinPairs [nR] [nS] [b]
   (tR: [nR](byteSeq [b]))
