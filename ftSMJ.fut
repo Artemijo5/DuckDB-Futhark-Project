@@ -200,6 +200,7 @@ def overlay_joinTups [n1] [n2] 't
   in {vs = newVs, ix = newIx, iy = newIy, cm = newCm}
 
 -- Find matches between tuples from a partition of R and a partition of S
+-- NOTE : rv is at the left side of all comparisons
 def find_joinTuples [nR] [nS] 't
   (tR: [nR]t)
   (tS: [nS]t)
@@ -207,6 +208,7 @@ def find_joinTuples [nR] [nS] 't
   (offset_S: idx_t.t)
   (eq: t -> t -> bool)
   (gt: t -> t -> bool)
+  (lt: t -> t -> bool)
 : joinTup [nR] t =
   let init_step = idx_t.max 1 (nS/2)
   let tR_matches = tR
@@ -219,16 +221,16 @@ def find_joinTuples [nR] [nS] 't
           let pv = if first_match==0 then sv else tS[first_match-1]
           let nv = if first_match==nS-1 then sv else tS[first_match+1]
           in
-            if ((sv `eq` rv) && (first_match==0 || (rv `gt` pv))) -- found first match
+            if ((rv `eq` sv) && (first_match==0 || (rv `gt` pv))) -- found first match
             then (first_match, 0)
-            else if (sv `eq` rv) -- found value range but not its beginning
+            else if (rv `eq` sv) -- found value range but not its beginning
             then (first_match - step, idx_t.max 1 (step/2))
-            else if (sv `gt` rv) then
+            else if (rv `lt` sv) then
               if (first_match==0 || (rv `gt` pv))
               then (-1, 0)
               else (first_match-step, idx_t.max 1 (step/2))
             else -- if (rv `gt` sv) then
-              if (first_match==nS-1 || (nv `gt` rv))
+              if (first_match==nS-1 || (rv `lt` nv))
               then (-1, 0)
               else (first_match+step, idx_t.max 1 (step/2))
       let frv = bsearch_first.0
@@ -239,11 +241,11 @@ def find_joinTuples [nR] [nS] 't
           let sv = tS[last_match]
           let nv = if last_match==nS-1 then sv else tS[last_match+1]
           in
-            if ((sv `eq` rv) && (last_match==nS-1 || (nv `gt` rv))) -- found last match
+            if ((rv `eq` sv) && (last_match==nS-1 || (rv `lt` nv))) -- found last match
               then (last_match, 0)
-            else if (sv `eq` rv) -- found value range but not its end
+            else if (rv `eq` sv) -- found value range but not its end
               then (last_match+step, idx_t.max 1 (step/2))
-            else if (sv `gt` rv)
+            else if (rv `lt` sv)
               then (last_match-step, idx_t.max 1 (step/2))
             else -- if (rv `gt` sv) then
               (last_match+step, idx_t.max 1 (step/2))
@@ -258,6 +260,7 @@ def find_joinTuples [nR] [nS] 't
     cm = tR_matches |> map (.1)
   }
 
+-- NOTE : R is at the left side of all comparisons
 def mergeJoin [nR] [nS] 't
   (tR: [nR]t)
   (tS: [nS]t)
@@ -266,6 +269,7 @@ def mergeJoin [nR] [nS] 't
   (partitionSize: idx_t.t)
   (eq: t -> t -> bool)
   (gt : t -> t -> bool)
+  (lt : t -> t -> bool)
 : joinTup [nR] t =
   let numIter_R = (nR + partitionSize - 1)/partitionSize
   let numIter_S = (nS + partitionSize - 1)/partitionSize
@@ -290,12 +294,12 @@ def mergeJoin [nR] [nS] 't
       let cur_S = tS[tS_start:tS_end]
       let cur_S_size = tS_end-tS_start
       let thisRelYet = !(cur_R[0] `gt` cur_S[cur_S_size-1])
-      let thisStillRel = !(cur_S[0] `gt` cur_R[cur_R_size-1])
+      let thisStillRel = !(cur_R[cur_R_size-1] `lt` cur_S[0])
       in
         if !thisRelYet then (s_iter+1, s_jtup, true, s_iter+1) else -- stil not relevant - skip to next
         if !thisStillRel then (s_iter, s_jtup, thisStillRel, minRelevant) else -- already not relevant - break
-        let nextRel = !(cur_S[cur_S_size-1] `gt` cur_R[cur_R_size-1]) -- will next S be relevant? if not, break afterwards
-        let new_s_jtup = find_joinTuples cur_R cur_S (offset_R+tR_start) (offset_S+tS_start) (eq) (gt)
+        let nextRel = !(cur_R[cur_R_size-1] `lt` cur_S[cur_S_size-1]) -- will next S be relevant? if not, break afterwards
+        let new_s_jtup = find_joinTuples cur_R cur_S (offset_R+tR_start) (offset_S+tS_start) (eq) (gt) (lt)
         let new_s_iy = map2 (\alt neu -> if (alt<0) then neu else alt) (s_jtup.iy) (new_s_jtup.iy)
         let new_s_cm = map2 (+) (s_jtup.cm) (new_s_jtup.cm)
         let next_s_jtup = {vs = s_jtup.vs, ix = s_jtup.ix, iy = new_s_iy, cm = new_s_cm}
@@ -349,6 +353,7 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
   let pairs : joinPairs t = {vs=unzPairs.0, ix=unzPairs.1, iy=unzPairs.2}
   in pairs
 
+-- NOTE : R is at the left side of all comparisons
 def inner_SMJ [nR] [nS] 't
   (dummy_elem: t)
   (tR: [nR]t)
@@ -359,8 +364,9 @@ def inner_SMJ [nR] [nS] 't
   (scatter_psize: idx_t.t)
   (eq: t -> t -> bool)
   (gt : t -> t -> bool)
+  (lt : t -> t -> bool)
 =
-  let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionSize) (eq) (gt)
+  let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionSize) (eq) (gt) (lt)
   in joinTups_to_joinPairs_InnerJoin (jTups) (dummy_elem)
 
 -- | Join pairs of type short.

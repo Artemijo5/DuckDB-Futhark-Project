@@ -153,7 +153,7 @@ entry inner_SMJ_short [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_short =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 entry inner_SMJ_int [nR] [nS]
   (tR: [nR]i32)
@@ -164,7 +164,7 @@ entry inner_SMJ_int [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_int =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 entry inner_SMJ_long [nR] [nS]
   (tR: [nR]i64)
@@ -175,7 +175,7 @@ entry inner_SMJ_long [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_long =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 entry inner_SMJ_float [nR] [nS]
   (tR: [nR]f32)
@@ -186,7 +186,7 @@ entry inner_SMJ_float [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_float =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 entry inner_SMJ_double [nR] [nS]
   (tR: [nR]f64)
@@ -197,7 +197,7 @@ entry inner_SMJ_double [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_double =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>)
+    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 
 -- Radix-Partitioning
