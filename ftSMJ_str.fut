@@ -98,12 +98,12 @@ let sort_str [n] [total_len] 't
 	(str_content : [total_len]u8)
 	(str_idx : [n]idx_t.t)
 	(ys : [n]t)
-	(dummy_pL : t)
 	(psize : idx_t.t)
 : ([total_len]u8, [n]idx_t.t, [n]t) =
 	let str_leq : idx_t.t -> idx_t.t -> bool
 		= (\i1 i2 -> (str_cmp_in_content str_content str_idx i1 i2 char_cmp)<=0)
-	let sorted_idxs = merge_sort (str_leq) (iota n)
+	let (sorted_idxs, sorted_ys) = (merge_sort (\(i1, _) (i2, _) -> str_leq i1 i2) (zip (iota n) ys))
+		|> unzip
 	let (sorted_str_con, sorted_str_idx) =
 		let sorted_str_lens = 
 			let lens = (iota n)
@@ -125,8 +125,7 @@ let sort_str [n] [total_len] 't
 					in partitioned_gather psize 0 unsorted_chars sorted_idxs
 				in scatter (copy buff) scatter_idxs scatter_chars
 		in (new_con, zuowei)
-	let gathered_ys = partitioned_gather psize dummy_pL ys sorted_idxs
-	in (sorted_str_con, sorted_str_idx, gathered_ys)	
+	in (sorted_str_con, sorted_str_idx, sorted_ys)	
 
 -- after this is called, still need to gather strings from r using vs
 let smj_str [n1] [n2] [total_len1] [total_len2] 't
