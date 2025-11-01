@@ -90,7 +90,7 @@ let gather_str [n] [ni] [total_len] 't
 				let raw_chars = (iota n)
 					|> map (\i -> get_kth_char str_content str_idx i j)
 				in partitioned_gather psize 0 raw_chars gather_is
-			in scatter (copy buff) scatter_idxs scatter_chars
+			in scatter buff scatter_idxs scatter_chars
 	in (new_con, zuowei)
 
 let sort_str [n] [total_len] 't
@@ -125,7 +125,7 @@ let sort_str [n] [total_len] 't
 					in partitioned_gather psize 0 unsorted_chars sorted_idxs
 				in scatter (copy buff) scatter_idxs scatter_chars
 		in (new_con, zuowei)
-	in (sorted_str_con, sorted_str_idx, sorted_ys)	
+	in (sorted_str_con, sorted_str_idx, sorted_ys)
 
 -- after this is called, still need to gather strings from r using vs
 let smj_str [n1] [n2] [total_len1] [total_len2] 't

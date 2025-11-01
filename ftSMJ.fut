@@ -337,18 +337,23 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
     (replicate n_pairs (dummy_elem, -1, -1))
     (tup_index)
     (fTups_minusCm)
-  -- find pairs with multiplicity (in ys) to minimise the following loop
-  let pairsWithMultiplicity = fcm |> zip tup_index |> filter (\(_, cm) -> cm>1)
-  let n_mult = length pairsWithMultiplicity
-  -- loop over output array for matches with multiplicity
+  let pairsWithMultiplicity = fcm
+    |> zip tup_index
+    |> filter (\(_,cm) -> cm>1)
+  -- TODO test
+  let max_mult = pairsWithMultiplicity
+    |> map (\(_,cm) -> cm)
+    |> maximum
   let loop_over : [](t, idx_t.t, idx_t.t)
   = loop buff = pairsArray
-  for iter in (0..<n_mult) do -- second && skips the thing if no multiplicity in pairs
-    let j = pairsWithMultiplicity[iter].0
-    let nj = pairsWithMultiplicity[iter].1
-    let newIy_block = (zip (iota nj) (replicate nj buff[j]))
-      |> map (\(i, (v, ix, iy)) -> (v, ix, iy+i))
-    in buff with [j:j+nj] = newIy_block
+  for iter in (1..<max_mult) do
+    let this_scatter_idxs = (indices tup_index)
+      |> map (\i ->
+        if fcm[i]>iter
+        then tup_index[i]+iter
+        else (-1)
+      )
+    in scatter buff this_scatter_idxs (fTups_minusCm |> map (\(v,ri,si) -> (v,ri,si+iter)))
   let unzPairs = loop_over |> unzip3
   let pairs : joinPairs t = {vs=unzPairs.0, ix=unzPairs.1, iy=unzPairs.2}
   in pairs

@@ -21,7 +21,7 @@ local def do_find_key_counts [n] [key_no] [part_no] [b]
 			let inf_ks = part_bounds[part]
 			let sup_ks = if part==part_no-1 then n else part_bounds[part+1]
 			let cur_ks = part_ks[inf_ks:sup_ks]
-			let count =  rv_findPairCount k cur_ks
+			let (count,_) =  rv_findPairCount k cur_ks
 			in (part, count)
 		)
 

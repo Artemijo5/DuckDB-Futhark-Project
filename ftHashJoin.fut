@@ -382,13 +382,13 @@ def rv_partitionMatchBounds [nR] [b] [pR]
 def rv_findPairCount [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
-: idx_t.t  =
-    let cj =
-      loop (count, j) = (0, 0) while j<nS do
-        if all (id) (map2 (==) rv tS[j])
-        then (count+1, j+1)
-        else (count, j+1)
-    in cj.0
+: (idx_t.t, idx_t.t)  = -- returns pair count & index of first match
+  let cj =
+    loop (count, j, i0) = (0, 0, -1) while j<nS do
+      if all (id) (map2 (==) rv tS[j])
+      then (count+1, j+1, if i0<0 then j else i0)
+      else (count, j+1, i0)
+  in (cj.0, cj.2)
 
 def rv_find_kth_match [nS] [b]
   (rv: byteSeq [b])
@@ -429,19 +429,24 @@ def radix_hash_join [nR] [nS] [b]
     |> map (\i ->
       rv_partitionMatchBounds radix_size tR[i] tS pS.bounds pS.depths ht_S
     )
-  let counts_per_r = map2 (\i fm ->
-      if fm<0 then 0 else
-      let rv = tR[i]
-      let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
-      let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
-      let cur_S = tS[inf_s_idx:sup_s_idx]
-      in 
-        if fm >= 0
-        then rv_findPairCount rv cur_S
-        else 0
+  let (counts_per_r, first_match_per_r) = unzip
+    (
+      map2 (\i fm ->
+          if fm<0 then 0 else
+          let rv = tR[i]
+          let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
+          let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
+          let cur_S = tS[inf_s_idx:sup_s_idx]
+          in 
+            if fm >= 0
+            then 
+              let (cm, mi) = rv_findPairCount rv cur_S
+              in (cm, mi+inf_s_idx)
+            else (0,-1)
+        )
+        (iota nR)
+        heshi
     )
-    (iota nR)
-    heshi
   let starting_pos = 
     map2 (\c z -> if c>0 then z else (-1))
       counts_per_r
@@ -450,23 +455,29 @@ def radix_hash_join [nR] [nS] [b]
   let pairsWithMultiplicity = counts_per_r
     |> zip starting_pos
     |> filter (\(_, c) -> c>1)
-  let n_mult = length pairsWithMultiplicity
+  let max_mult = pairsWithMultiplicity
+    |> map (\(_,c) -> c)
+    |> maximum
+  -- TODO test
   let r_inds : [count_pairs](idx_t.t, idx_t.t)
-    = loop curBuff = scatter (replicate count_pairs 0) starting_pos (iota nR)
-      |> zip (replicate count_pairs 1)
-    for iter in (0..<n_mult) do
-      let (j, nj) = pairsWithMultiplicity[iter]
-      let new_block = (replicate nj curBuff[j].1)
-        |> zip ((1...nj) :> [nj]idx_t.t)
-      in curBuff with [j:j+nj] = new_block
+    = loop curBuff = (scatter (replicate count_pairs 0) starting_pos (iota nR))
+      |> zip (replicate count_pairs (1))
+    for iter in (1..<max_mult) do
+      let this_scatter_idxs = iota nR
+        |> map (\i ->
+          if counts_per_r[i]<=j
+          then (-1)
+          else (starting_pos[i]+j)
+        )
+      in scatter curBuff this_scatter_idxs (zip (replicate nR (j+1)) (iota nR))
   let s_inds = r_inds
     |> map (\(k, ir) ->
       let rv = tR[ir]
       let fm = heshi[ir]
-      let inf_s_idx = pS.bounds[fm]
+      let inf_s_idx = first_match_per_r[ir]
       let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
       let cur_S = tS[inf_s_idx:sup_s_idx]
-      in (rv_find_kth_match rv cur_S k) + inf_s_idx
+      in (rv_find_kth_match rv cur_S k ) + inf_s_idx
     )
   in
     {
@@ -511,12 +522,7 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
   in {vs=vs_, ix=ix_, iy=iy_}
-  
 
--- TODO
--- test
--- finalise implementation
--- and create special case for s primary key relation...
 
 def do_find_joinPairs [nR] [nS] [b]
   (tR: [nR](byteSeq [b]))
