@@ -10,6 +10,9 @@ def str_hashFunc [total_len] [n]
 	(content_bytes : idx_t.t)
 	(len_range_per_bucket : idx_t.t)
 	(merge_chars : idx_t.t) -- maybe a good idea for 2? probably not for more though...
+	(from_subdiv : idx_t.t)
+	(num_subdiv : idx_t.t)
+	(case_sens : bool)
 	(str_content:[total_len]u8)
 	(str_idx:[n]idx_t.t)
 	(i:idx_t.t)
@@ -30,7 +33,10 @@ def str_hashFunc [total_len] [n]
 			let j = content_bytes-j_-1
 			in loop ch=0 for k_ in (iota merge_chars) do
 				let k = merge_chars-k_-1
-				let this_char = get_kth_char str_content str_idx i ((i_len_/2) + j*merge_chars + k)
+				let this_char_ = get_kth_char str_content str_idx i ((from_subdiv*i_len_/num_subdiv) + j*merge_chars + k)
+				let this_char = if merge_chars>1 && case_sens && this_char_>=97
+					then this_char_+1
+					else this_char_
 				let filler = (this_char & bitmask) << ( u8.i32 ( (i32.i64 k) * (u8.num_bits - (u8.num_bits / mc)) ) )
 				in ch + filler
 		)
@@ -40,6 +46,9 @@ def get_hashed_strs
 	(len_bytes : idx_t.t)
 	(content_bytes : idx_t.t)
 	(len_range_per_bucket : idx_t.t)
+	(from_subdiv : idx_t.t)
+	(num_subdiv : idx_t.t)
+	(case_sens : bool)
 	(merge_chars : idx_t.t)
 	(str_info : strInfo)
 : str_hash_info [content_bytes + len_bytes] =
@@ -48,6 +57,7 @@ def get_hashed_strs
 			let hv = str_hashFunc
 				len_bytes content_bytes
 				len_range_per_bucket merge_chars
+				from_subdiv num_subdiv case_sens
 				str_info.str_content str_info.str_idx
 				j
 			in (j, hv)
