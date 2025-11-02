@@ -432,7 +432,7 @@ def radix_hash_join [nR] [nS] [b]
   let (counts_per_r, first_match_per_r) = unzip
     (
       map2 (\i fm ->
-          if fm<0 then 0 else
+          if fm<0 then (0,-1) else
           let rv = tR[i]
           let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
           let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
@@ -457,7 +457,7 @@ def radix_hash_join [nR] [nS] [b]
     |> filter (\(_, c) -> c>1)
   let max_mult = pairsWithMultiplicity
     |> map (\(_,c) -> c)
-    |> maximum
+    |> idx_t.maximum
   -- TODO test
   let r_inds : [count_pairs](idx_t.t, idx_t.t)
     = loop curBuff = (scatter (replicate count_pairs 0) starting_pos (iota nR))
@@ -465,11 +465,11 @@ def radix_hash_join [nR] [nS] [b]
     for iter in (1..<max_mult) do
       let this_scatter_idxs = iota nR
         |> map (\i ->
-          if counts_per_r[i]<=j
+          if counts_per_r[i]<=iter
           then (-1)
-          else (starting_pos[i]+j)
+          else (starting_pos[i]+iter)
         )
-      in scatter curBuff this_scatter_idxs (zip (replicate nR (j+1)) (iota nR))
+      in scatter (copy curBuff) this_scatter_idxs (zip (replicate nR (iter+1)) (iota nR))
   let s_inds = r_inds
     |> map (\(k, ir) ->
       let rv = tR[ir]
@@ -523,6 +523,7 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
   let vs_ = gather (dummy_byteSeq b) tR ix_
   in {vs=vs_, ix=ix_, iy=iy_}
 
+-- TODO do I need the code below here ?
 
 def do_find_joinPairs [nR] [nS] [b]
   (tR: [nR](byteSeq [b]))
@@ -544,7 +545,7 @@ def do_find_joinPairs [nR] [nS] [b]
           (exscan (+) 0 (matchArr |> map (idx_t.bool)))
         let newVs = replicate match_count sv
         let newIy = replicate match_count j
-        let newIx = partitioned_scatter scatter_psize (replicate match_count 0) scatter_idxs (iota nR)
+        let newIx = scatter (replicate match_count 0) scatter_idxs (iota nR)
         in (
           dest_vs ++ newVs,
           dest_ix ++ newIx,

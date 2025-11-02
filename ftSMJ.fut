@@ -353,7 +353,7 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
         then tup_index[i]+iter
         else (-1)
       )
-    in scatter buff this_scatter_idxs (fTups_minusCm |> map (\(v,ri,si) -> (v,ri,si+iter)))
+    in scatter (copy buff) this_scatter_idxs (fTups_minusCm |> map (\(v,ri,si) -> (v,ri,si+iter)))
   let unzPairs = loop_over |> unzip3
   let pairs : joinPairs t = {vs=unzPairs.0, ix=unzPairs.1, iy=unzPairs.2}
   in pairs
