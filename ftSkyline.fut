@@ -254,8 +254,8 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 				let (id2, m2) = get_id_measure_from_coords skB x2
 				in (id1<=id2)
 			)
-	let sorted_xys_ = 
-		merge_sort (\(x1,_) (x2,_) -> part_leq x1 x2) (zip xs ys)
+	let sorted_xys_ = merge_sort (\(x1,_) (x2,_) -> part_leq x1 x2) (zip xs ys)
+	-- TODO scatter by id offset if !use_measure_for_sorting ?
 	let isPartitionDominated =
 		let count_per_grid_part =
 			let grid_part_by_idx = sorted_xys_

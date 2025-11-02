@@ -12,6 +12,7 @@ int join_preparation(
 	const char* R_tbl_name,
 	const char* S_tbl_name,
 	const char* Join_tbl_name,
+	int is_R_semisorted,
 	int is_S_semisorted,
 	const char* R_keyName,
 	const char* S_keyName,

@@ -78,7 +78,7 @@ def smj_str
 : joinPairs_str =
 	let jp = do_smj_str
 		char_cmp
-		str_info1.str_contenr str_info1.str_idx
+		str_info1.str_content str_info1.str_idx
 		str_info2.str_content str_info2.str_idx
 		offset_R
 		offset_S

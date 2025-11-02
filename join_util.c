@@ -15,6 +15,7 @@ int join_preparation(
 	const char* R_tbl_name,
 	const char* S_tbl_name,
 	const char* Join_tbl_name,
+	int is_R_semisorted,
 	int is_S_semisorted,
 	const char* R_keyName,
 	const char* S_keyName,
@@ -38,7 +39,12 @@ int join_preparation(
   mylog(logfile, "Preparing for join - obtain R's sorted keys...");
   duckdb_result res_Rk;
   char readRq[100 + strlen(R_tbl_name)];
-  sprintf(readRq, "SELECT * FROM %s;", R_tbl_name);
+  if(is_R_semisorted) {
+  	sprintf(readRq, "SELECT * FROM %s0 LIMIT 0;", R_tbl_name);
+  }
+  else {
+  	sprintf(readRq, "SELECT * FROM %s;", R_tbl_name);
+  }
   if( duckdb_query(con, readRq, &res_Rk) == DuckDBError) {
     perror("Failed to read R_tbl_sorted...\n");
     return -1;
@@ -59,7 +65,7 @@ int join_preparation(
     duckdb_destroy_result(&res_Rk);
     return -1;
   }
-  *out_res_R = res_Rk;
+  if(!is_R_semisorted) *out_res_R = res_Rk;
   *key_type = (*R_type_ids)[*R_keyCol_Idx];
   // ALSO OBTAIN S INFO
   duckdb_result S_dummyRes;
@@ -156,6 +162,7 @@ int join_preparation(
   }
   mylog(logfile, "Created result table where join pairs will be stored.");
 
+  if (is_R_semisorted) duckdb_destroy_result(&res_Rk);
   duckdb_destroy_result(&S_dummyRes);
 
   // Create composite logical_type id info
