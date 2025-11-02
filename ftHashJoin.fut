@@ -455,9 +455,12 @@ def radix_hash_join [nR] [nS] [b]
   let pairsWithMultiplicity = counts_per_r
     |> zip starting_pos
     |> filter (\(_, c) -> c>1)
-  let max_mult = pairsWithMultiplicity
-    |> map (\(_,c) -> c)
-    |> idx_t.maximum
+  let max_mult =
+    if (length pairsWithMultiplicity > 0)
+    then pairsWithMultiplicity
+      |> map (\(_,c) -> c)
+      |> idx_t.maximum
+    else 0
   -- TODO test
   let r_inds : [count_pairs](idx_t.t, idx_t.t)
     = loop curBuff = (scatter (replicate count_pairs 0) starting_pos (iota nR))
@@ -522,89 +525,3 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
   in {vs=vs_, ix=ix_, iy=iy_}
-
--- TODO do I need the code below here ?
-
-def do_find_joinPairs [nR] [nS] [b]
-  (tR: [nR](byteSeq [b]))
-  (tS: [nS](byteSeq [b]))
-  (offset_R : idx_t.t)
-  (offset_S : idx_t.t)
-  (scatter_psize: idx_t.t)
-: joinPairs_bsq [b] =
-  if nR > 6 then
-    let matchmaking = loop
-      (dest_vs: [](byteSeq [b]), dest_ix: []idx_t.t, dest_iy: []idx_t.t) = ([], [], [])
-      for j in (iota nS) do
-        let sv = tS[j]
-        let matchArr = tR |> map (\rv -> all (id) (map2 (==) rv sv))
-        let match_count = matchArr |> countFor (id)
-        let scatter_idxs = map2
-          (\og offs -> if og then offs else -1)
-          matchArr
-          (exscan (+) 0 (matchArr |> map (idx_t.bool)))
-        let newVs = replicate match_count sv
-        let newIy = replicate match_count j
-        let newIx = scatter (replicate match_count 0) scatter_idxs (iota nR)
-        in (
-          dest_vs ++ newVs,
-          dest_ix ++ newIx,
-          dest_iy ++ newIy,
-        )
-    in {vs = matchmaking.0, ix = matchmaking.1 |> map (\ind -> ind + offset_R), iy = matchmaking.2 |> map (\ind -> ind + offset_S)}
-  else
-    let seq_matches = loop
-    (dest_vs: [](byteSeq [b]), dest_ix: []idx_t.t, dest_iy: []idx_t.t) = ([], [], [])
-    for i in (iota nR) do
-      let rv = tR[i]
-      let matches =
-        loop (this_iy: []idx_t.t) = [] for j in (iota nS) do
-        let sv = tS[j]
-        in
-          if (all (id) (map2 (==) rv sv))
-          then this_iy ++ [j]
-          else this_iy
-      let match_count = length matches
-      let new_vs = replicate match_count rv
-      let new_ix = replicate match_count i
-      in (dest_vs ++ new_vs, dest_ix ++ new_ix, dest_iy ++ matches)
-    in {vs = seq_matches.0, ix = seq_matches.1 |> map (\ind -> ind + offset_R), iy = seq_matches.2 |> map (\ind -> ind + offset_S)}
-
-def find_joinPairs [nR] [nS] [b]
-  (tR: [nR](byteSeq [b]))
-  (tS: [nS](byteSeq [b]))
-  (offset_R : idx_t.t)
-  (offset_S : idx_t.t)
-  (scatter_psize: idx_t.t)
-: joinPairs_bsq [b] =
-  if nS <= nR
-  then do_find_joinPairs tR tS offset_R offset_S scatter_psize
-  else
-    let switched = do_find_joinPairs tS tR offset_S offset_R scatter_psize
-    in {vs = switched.vs, ix = switched.iy, iy = switched.ix}
-
-def join_hashPartitions [nR] [nS] [b]
-  (pR : [nR](byteSeq [b]))
-  (pS : [nS](byteSeq [b]))
-  (r_info : partitionInfo)
-  (s_info : partitionInfo)
-  (r_partition_matches : [](idx_t.t, idx_t.t, idx_t.t))
-  (scatter_psize: idx_t.t)
-: joinPairs_bsq [b] =
-  let ir_len = length r_info.bounds
-  let is_len = length s_info.bounds
-  in
-    loop p = {vs = [], ix = [], iy = []}
-    for p_match in r_partition_matches do
-      let r_lb = r_info.bounds[p_match.0]
-      let r_ub = if (p_match.0 < ir_len-1) then r_info.bounds[p_match.0 + 1] else nR
-      let r_part = pR[r_lb:r_ub]
-      let tR_matches : joinPairs_bsq [b] =
-        loop q = {vs = [], ix = [], iy = []}
-        for s_part_ii in ((p_match.1)...(p_match.2)) do
-          let s_lb = s_info.bounds[s_part_ii]
-          let s_ub = if (s_part_ii < is_len-1) then s_info.bounds[s_part_ii+1] else nS
-          let s_part = pS[s_lb:s_ub]
-          let new_q = find_joinPairs r_part s_part r_lb s_lb scatter_psize
-          in {vs = q.vs ++ new_q.vs, ix = q.ix ++ new_q.ix, iy = q.iy ++ new_q.iy}
-      in {vs = p.vs ++ tR_matches.vs, ix = p.ix ++ tR_matches.ix, iy = p.iy ++ tR_matches.iy}

@@ -341,9 +341,12 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
     |> zip tup_index
     |> filter (\(_,cm) -> cm>1)
   -- TODO test
-  let max_mult = pairsWithMultiplicity
-    |> map (\(_,cm) -> cm)
-    |> maximum
+  let max_mult =
+    if (length pairsWithMultiplicity > 0)
+    then pairsWithMultiplicity
+      |> map (\(_,cm) -> cm)
+      |> idx_t.maximum
+    else 0
   let loop_over : [](t, idx_t.t, idx_t.t)
   = loop buff = pairsArray
   for iter in (1..<max_mult) do

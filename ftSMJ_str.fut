@@ -6,7 +6,7 @@ import "ftSMJ"
 -- TODO entry points
 -- probably make a content+idx record type
 
-let sort_str [n] [total_len] 't
+def do_sort_str [n] [total_len] 't
 	(char_cmp : u8 -> u8 -> i32)
 	(str_content : [total_len]u8)
 	(str_idx : [n]idx_t.t)
@@ -41,7 +41,7 @@ let sort_str [n] [total_len] 't
 	in (sorted_str_con, sorted_str_idx, sorted_ys)
 
 -- after this is called, still need to gather strings from r using vs
-let smj_str [n1] [n2] [total_len1] [total_len2] 't
+def do_smj_str [n1] [n2] [total_len1] [total_len2] 't
 	(char_cmp : u8 -> u8 -> i32)
 	(str_content1 : [total_len1]u8)
 	(str_idx1 : [n1]idx_t.t)
@@ -64,3 +64,25 @@ let smj_str [n1] [n2] [total_len1] [total_len2] 't
 		= (\i1 i2 -> (str_cmp_across_contents str_content1 str_idx1 str_content2 str_idx2 i1 i2 char_cmp)<0)
 	in
 		inner_SMJ (-1) (iota n1) (iota n2) offset_R offset_S partitionSize scatter_psize (str_eq) (str_gt) (str_lt)
+
+-- TODO entry points for sort...
+
+def smj_str
+	(char_cmp : u8 -> u8 -> i32)
+	(str_info1 : strInfo)
+	(str_info2 : strInfo)
+	(offset_R : idx_t.t)
+	(offset_S : idx_t.t)
+	(partitionSize: idx_t.t)
+	(scatter_psize: idx_t.t)
+: joinPairs_str =
+	let jp = do_smj_str
+		char_cmp
+		str_info1.str_contenr str_info1.str_idx
+		str_info2.str_content str_info2.str_idx
+		offset_R
+		offset_S
+		partitionSize
+		scatter_psize
+	let jp_str = gather_str scatter_psize jp.ix str_info1
+	in {str_info = jp_str, ix = jp.ix, iy = jp.iy}
