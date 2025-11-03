@@ -26,21 +26,19 @@ The remainder are testing applications that process data from duckdb through the
 The purpose of this project is to implement some GPU-accelerated database algorithms, using the tools DuckDB and The Futhark Programming Language. 
 
 Former literature on GPU-accelerated database algorithms tends to assume control of low-level parameters, such as utilisation of each level of GPU cache, etc.
-Futhark is a relatively high-level, functional programming language, and leaves much of hardware optimisation to the compiler; thus different techniques from prior work may need to be employed.
+Futhark is a relatively high-level, functional programming language, and leaves much of hardware optimisation to the compiler; thus different techniques from prior work may need to be employed. DuckDB also requires adopting appropriate workflows with the data outside the GPU.
 
 Algorithms currently implemented (still might be optimised):
 - Relational Table Sorting (one-pass or two-pass)
-- Sort-Merge Join (GFUR and GFTR - see https://arxiv.org/abs/2312.00720)
-Algorithms planned:
-- Radix Partitioning
-- Hash Join based on radix partitioning (see https://arxiv.org/abs/2312.00720)
-- Group by algoritms (see https://arxiv.org/abs/2312.00720)
-- Possibly: AMS sketches
-- Possibly: Density-Based Clustering (essentially a GPU-based metric distance index)
+- Relational Joins (SMJ, Radix Hash Join - based on https://arxiv.org/abs/2312.00720 and references)
+Algorithms currently being implemented:
+- Group-by Algorithms (based on https://arxiv.org/abs/2312.00720 and references)
+- Extensions of Sorting to String data
+- Skyline Queries
 
 Other tasks planned:
 - containerise applications with docker and nvidia-ctk
-- make applications callable directly from DuckDB (will require maintaining the futhark context throughout the duckdb connection)
+- make applications callable directly from DuckDB (if possible - alternatively maybe a simple CLI)
 
 -----------------------------------------
 Tools used:

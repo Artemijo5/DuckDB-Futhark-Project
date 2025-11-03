@@ -10,22 +10,16 @@
 #include "smjutil.h"
 #include "SMJstages.h"
 
-#define LOGFILE "sort_merge_join_GFUR.log.txt"
+#define LOGFILE "sort_merge_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 512*CHUNK_SIZE
+#define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 10*CHUNK_SIZE
+#define R_TABLE_SIZE 25*CHUNK_SIZE
 #define S_TABLE_SIZE 10*R_TABLE_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define EXT_PARALLELISM R_TABLE_SIZE // decides the "upper bound" of external threads in some nested parallel operations (possibly redudant)
-#define MERGE_PARTITION_SIZE 2084 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
-#define RESCALE_FACTOR 256 // (arbitrarily) used to set the number of windows vs the number of partitions
-
-#define PAYLOAD_INDEX_BLOCK 20*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
-#define PAYLOAD_GATHER_BLOCK 10*CHUNK_SIZE // Materialisation Phase -- MUST BE CHUNK_SIZE MULTIPLE
-// TODO these 2 should be the same...
+#define MERGE_PARTITION_SIZE 5*2084 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
@@ -39,10 +33,9 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER R_TABLE_SIZE // MUST BE CHUNK_SIZE MULTIPLE
-#define S_JOIN_BUFFER R_JOIN_BUFFER // MUST BE CHUNK_SIZE MULTIPLE
-#define JOIN_TMP_TBL_NAME "R_S_joinTbl_GFUR_TMP"
-#define JOIN_TBL_NAME "R_S_joinTbl_GFUR"
+#define R_JOIN_BUFFER R_TABLE_SIZE
+#define S_JOIN_BUFFER R_JOIN_BUFFER
+#define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "20GB"
@@ -50,7 +43,7 @@
 
 int main() {
   // Initialise logger
-  FILE* logfile = loginit(LOGFILE, "GFUR SMJ: Starting test program...");
+  FILE* logfile = loginit(LOGFILE, "Sort Merge Join: Starting test program...");
   if(LOGFILE && !logfile) {
     perror("Failed to initialise logger.");
     return -1;
@@ -79,34 +72,32 @@ int main() {
   duckdb_connect(db, &con);
 
   // Create tables R and S
-  /*
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
   char createStbl[1000 + strlen(S_TBL_NAME)];
-  sprintf(createRtbl, "CREATE OR REPLACE TEMP TABLE %s (k BIGINT, payload1 SMALLINT, payload2 INTEGER);", R_TBL_NAME);
+  sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 FLOAT, payload2 INTEGER, payload3 SMALLINT);", R_TBL_NAME);
   duckdb_query(con, createRtbl, NULL);
-  sprintf(createStbl, "CREATE OR REPLACE TEMP TABLE %s (k BIGINT, payload3 INTEGER, payload4 DOUBLE);", S_TBL_NAME);
+  sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 INTEGER, payload5 SMALLINT, payload6 DOUBLE);", S_TBL_NAME);
   duckdb_query(con, createStbl, NULL);
 
   // Create the test tables.
   char R_init_query[1000 + strlen(R_TBL_NAME)];
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
-  	R_init_query,
-  	"INSERT INTO %s (SELECT 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    R_init_query,
+    "INSERT INTO %s (SELECT 100000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
-  	R_TABLE_SIZE
+    R_TABLE_SIZE
   );
   sprintf(
-  	S_init_query,
-  	"INSERT INTO %s (SELECT 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    S_init_query,
+    "INSERT INTO %s (SELECT 100000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
-  	S_TABLE_SIZE
+    S_TABLE_SIZE
   );
   duckdb_query(con, R_init_query, NULL);
   duckdb_query(con, S_init_query, NULL);
   mylog(logfile, "Created the tables R and S.");
-  */
 
   // Set up futhark core
   struct futhark_context_config *cfg = futhark_context_config_new();
@@ -114,8 +105,9 @@ int main() {
   mylog(logfile, "Set up futhark context & config.");
 
   mylog(logfile, "Now sorting the tables...");
+
   // R
-  two_pass_sort_without_payloads(
+  /*two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
     BLOCK_SIZE,
@@ -129,10 +121,18 @@ int main() {
     false,
     false,
     true
-  );
-  mylog(logfile, "Sorted table R.");
+  );*/
+  //Tmp
+  /*
+  if(  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE R_tbl_sorted AS (SELECT * FROM R_tbl ORDER BY k);", NULL) == DuckDBError) {
+	perror("Failed to sort R_tbl.");
+	return -1;
+  }
+  */
+  //mylog(logfile, "Sorted table R.");
+
   // S
-  two_pass_sort_without_payloads(
+  /*two_pass_sort_with_payloads(
     CHUNK_SIZE,
     BUFFER_SIZE,
     BLOCK_SIZE,
@@ -146,31 +146,80 @@ int main() {
     false,
     false,
     true
-  );
-  mylog(logfile, "Sorted table S.");
+  );*/
 
-  Inner_MergeJoin_GFUR(
+  //Tmp
+  /*
+  if ( duckdb_query(con, "CREATE OR REPLACE TEMP TABLE S_tbl_sorted AS (SELECT * FROM S_tbl ORDER BY k);", NULL) == DuckDBError) {
+	perror("Failed to sort S_tbl.");
+	return -1;
+  }
+  */
+  //mylog(logfile, "Sorted table S.");
+
+  // Semisorts
+  /*
+  idx_t R_tbl_num = semi_sort_with_payloads(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    BLOCK_SIZE,
+    NULL,
+    ctx,
+    con,
+    R_TBL_NAME,
+    R_KEY,
+    R_interm,
+    false,
+    false
+  );
+  idx_t S_tbl_num = semi_sort_with_payloads(
+    CHUNK_SIZE,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    NULL,
+    ctx,
+    con,
+    S_TBL_NAME,
+    S_KEY,
+    S_interm,
+    false,
+    false
+  );
+  */
+
+// ############################################################################################################
+// JOIN PHASE
+// ############################################################################################################
+
+  mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
+  char joinQ[1000];
+  sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
+    S_KEY, R_TBL_NAME, S_TBL_NAME, R_KEY, S_KEY);
+  if(duckdb_query(con, joinQ, NULL) == DuckDBError) {
+    perror("Failed to join with duckdb.");
+  }
+
+  mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
+  SortMergeJoin_GFTR(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
     BLOCK_SIZE,
     MERGE_PARTITION_SIZE,
-    PAYLOAD_INDEX_BLOCK,
-    PAYLOAD_GATHER_BLOCK,
     logfile,
     ctx,
     con,
     R_TBL_NAME,
     S_TBL_NAME,
-    R_SORTED_NAME,
-    S_SORTED_NAME,
+    false,
+    false,
     R_KEY,
     S_KEY,
-    JOIN_TMP_TBL_NAME,
     JOIN_TBL_NAME,
     false,
     false
   );
+  
 
   // Clean-up  
   futhark_context_free(ctx);

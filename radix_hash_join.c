@@ -10,13 +10,13 @@
 #include "radixJoin_util.h"
 #include "RadixJoinStages.h"
 
-#define LOGFILE "radix_hash_join_GFTR.log.txt"
+#define LOGFILE "radix_hash_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 4*CHUNK_SIZE
-#define S_TABLE_SIZE 5*CHUNK_SIZE
+#define R_TABLE_SIZE 10*CHUNK_SIZE
+#define S_TABLE_SIZE 50*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define MAX_PARTITION_SIZE 1024
@@ -42,7 +42,7 @@
 
 int main() {
   // Initialise logger
-  FILE* logfile = loginit(LOGFILE, "GFTR SMJ: Starting test program...");
+  FILE* logfile = loginit(LOGFILE, "Radix Hash Join: Starting test program...");
   if(LOGFILE && !logfile) {
     perror("Failed to initialise logger.");
     return -1;

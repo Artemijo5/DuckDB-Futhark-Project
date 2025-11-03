@@ -1036,8 +1036,6 @@ idx_t semi_sort_without_payloads(
   }
   mylog(logfile, "Obtained result from initial table.");
 
-  idx_t col_count = duckdb_column_count(&res);
-
   char **colNames = malloc(2*sizeof(char*));
   colNames[0] = malloc(1+strlen(keyName));
   colNames[1] = malloc(7);
