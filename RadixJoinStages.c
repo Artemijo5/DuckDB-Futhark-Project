@@ -68,6 +68,7 @@ void do_RadixHashJoin_GFTR(
     &R_payloadTypes,
     &S_payloadTypes,
     &join_type_ids,
+    false,
     saveAsTempTable
   );
   if(jp<0) {
@@ -448,6 +449,7 @@ void do_RadixHashJoin_GFUR(
     &R_payloadTypes,
     &S_payloadTypes,
     &join_type_ids,
+    false,
     saveAsTempTable
   );
   if(jp<0) {

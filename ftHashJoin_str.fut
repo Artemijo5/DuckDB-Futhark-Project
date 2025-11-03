@@ -34,8 +34,8 @@ def str_hashFunc [total_len] [n]
 			in loop ch=0 for k_ in (iota merge_chars) do
 				let k = merge_chars-k_-1
 				let this_char_ = get_kth_char str_content str_idx i ((from_subdiv*i_len_/num_subdiv) + j*merge_chars + k)
-				let this_char = if merge_chars>1 && case_sens && this_char_>=97
-					then this_char_+1
+				let this_char = if merge_chars>1 && case_sens && this_char_>=97 && this_char<=122
+					then (if this_char_ & 1 == 0 then this_char_-1 else this_char_+1)
 					else this_char_
 				let filler = (this_char & bitmask) << ( u8.i32 ( (i32.i64 k) * (u8.num_bits - (u8.num_bits / mc)) ) )
 				in ch + filler

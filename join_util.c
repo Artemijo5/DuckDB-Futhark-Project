@@ -33,6 +33,7 @@ int join_preparation(
 	duckdb_type **R_payloadTypes,
 	duckdb_type **S_payloadTypes,
 	duckdb_logical_type **join_type_ids,
+	int is_in_GFUR,
 	int saveAsTempTable
 ) {
   // Read R's sorted keys
@@ -65,7 +66,7 @@ int join_preparation(
     duckdb_destroy_result(&res_Rk);
     return -1;
   }
-  if(!is_R_semisorted) *out_res_R = res_Rk;
+  if(!is_R_semisorted && !is_in_GFUR) *out_res_R = res_Rk;
   *key_type = (*R_type_ids)[*R_keyCol_Idx];
   // ALSO OBTAIN S INFO
   duckdb_result S_dummyRes;

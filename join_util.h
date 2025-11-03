@@ -30,6 +30,7 @@ int join_preparation(
 	duckdb_type **R_payloadTypes,
 	duckdb_type **S_payloadTypes,
 	duckdb_logical_type **join_type_ids,
+	int is_in_GFUR,
 	int saveAsTempTable
 );
 

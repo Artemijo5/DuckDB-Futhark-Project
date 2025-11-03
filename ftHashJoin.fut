@@ -460,7 +460,7 @@ def radix_hash_join [nR] [nS] [b]
     then pairsWithMultiplicity
       |> map (\(_,c) -> c)
       |> idx_t.maximum
-    else 0
+    else 1
   -- TODO test
   let r_inds : [count_pairs](idx_t.t, idx_t.t)
     = loop curBuff = (scatter (replicate count_pairs 0) starting_pos (iota nR))

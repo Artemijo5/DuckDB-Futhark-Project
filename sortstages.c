@@ -1013,3 +1013,67 @@ idx_t semi_sort_with_payloads(
 
   return numIntermediate;
 }
+
+idx_t semi_sort_without_payloads(
+  idx_t CHUNK_SIZE,
+  size_t BUFFER_SIZE,
+  const int16_t block_size,
+  FILE *logfile,
+  struct futhark_context *ctx,
+  duckdb_connection con,
+  const char* tblName,
+  const char* keyName,
+  const char* intermName,
+  int blocked,
+  int quicksaves
+) {
+  duckdb_result res;
+  char queryStr[strlen(tblName) + 50];
+  sprintf(queryStr, "SELECT %s FROM %s;", keyName, tblName);
+  if(duckdb_query(con, queryStr, &res) == DuckDBError) {
+    mylog(logfile, "Failed to obtain result from initial table.");
+    return 0;
+  }
+  mylog(logfile, "Obtained result from initial table.");
+
+  idx_t col_count = duckdb_column_count(&res);
+
+  char **colNames = malloc(2*sizeof(char*));
+  colNames[0] = malloc(1+strlen(keyName));
+  colNames[1] = malloc(7);
+  sprintf(colNames[0], "%s", keyName);
+  sprintf(colNames[1], "rowIdx");
+
+  idx_t incr_idx = 0;
+  mylog(logfile, "Initialised increment at 0.");
+
+  duckdb_type type_id = duckdb_column_type(&res, 0);
+  mylog(logfile, "Obtained key column's type.");
+
+  // STAGE 1 - SCAN TABLE, SAVE INTO LOCALLY SORTED TEMPORARY TABLES
+  mylog(logfile, "Beginning to process pages...");
+  idx_t numIntermediate = sort_Stage1_without_payloads(
+    CHUNK_SIZE,
+    BUFFER_SIZE,
+    block_size,
+    intermName,
+    logfile,
+    ctx,
+    con,
+    res,
+    type_id,
+    colNames,
+    &incr_idx,
+    blocked
+  );
+
+  duckdb_destroy_result(&res);
+  mylog(logfile, "Completed semi-sort.");
+
+  for(idx_t i=0; i<2; i++) {
+    free(colNames[i]);
+  }
+  free(colNames);
+
+  return numIntermediate;
+}

@@ -346,7 +346,7 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
     then pairsWithMultiplicity
       |> map (\(_,cm) -> cm)
       |> idx_t.maximum
-    else 0
+    else 1
   let loop_over : [](t, idx_t.t, idx_t.t)
   = loop buff = pairsArray
   for iter in (1..<max_mult) do

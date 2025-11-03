@@ -129,7 +129,7 @@ int main() {
 	return -1;
   }
   */
-  mylog(logfile, "Sorted table R.");
+  //mylog(logfile, "Sorted table R.");
 
   // S
   /*two_pass_sort_with_payloads(
@@ -147,9 +147,34 @@ int main() {
     false,
     true
   );*/
-  idx_t S_tbl_num = semi_sort_with_payloads(
+
+  //Tmp
+  /*
+  if ( duckdb_query(con, "CREATE OR REPLACE TEMP TABLE S_tbl_sorted AS (SELECT * FROM S_tbl ORDER BY k);", NULL) == DuckDBError) {
+	perror("Failed to sort S_tbl.");
+	return -1;
+  }
+  */
+  //mylog(logfile, "Sorted table S.");
+
+  // Semisorts
+  /*
+  idx_t R_tbl_num = semi_sort_with_payloads(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
+    BLOCK_SIZE,
+    NULL,
+    ctx,
+    con,
+    R_TBL_NAME,
+    R_KEY,
+    R_interm,
+    false,
+    false
+  );
+  idx_t S_tbl_num = semi_sort_with_payloads(
+    CHUNK_SIZE,
+    S_JOIN_BUFFER,
     BLOCK_SIZE,
     NULL,
     ctx,
@@ -160,15 +185,7 @@ int main() {
     false,
     false
   );
-
-  //Tmp
-  /*
-  if ( duckdb_query(con, "CREATE OR REPLACE TEMP TABLE S_tbl_sorted AS (SELECT * FROM S_tbl ORDER BY k);", NULL) == DuckDBError) {
-	perror("Failed to sort S_tbl.");
-	return -1;
-  }
   */
-  mylog(logfile, "Sorted table S.");  
 
 // ############################################################################################################
 // JOIN PHASE

@@ -12242,7 +12242,7 @@ FUTHARK_FUN_ATTR int futrts_entry_Inner_Radix_Hash_Join(struct futhark_context *
         defunc_0_reduce_res_133012 = redout_133124;
         max_mult_123937 = defunc_0_reduce_res_133012;
     } else {
-        max_mult_123937 = (int64_t) 0;
+        max_mult_123937 = (int64_t) 1;
     }
     
     int64_t bytes_133342 = (int64_t) 8 * defunc_res_133031;
@@ -19703,7 +19703,7 @@ FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_double(struct futhark_context *ctx, 
         defunc_0_reduce_res_129517 = redout_133098;
         max_mult_122576 = defunc_0_reduce_res_129517;
     } else {
-        max_mult_122576 = (int64_t) 0;
+        max_mult_122576 = (int64_t) 1;
     }
     
     bool bounds_invalid_upwards_122582 = slt64(max_mult_122576, (int64_t) 1);
@@ -21229,7 +21229,7 @@ FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_float(struct futhark_context *ctx, s
         defunc_0_reduce_res_129517 = redout_133098;
         max_mult_122576 = defunc_0_reduce_res_129517;
     } else {
-        max_mult_122576 = (int64_t) 0;
+        max_mult_122576 = (int64_t) 1;
     }
     
     bool bounds_invalid_upwards_122582 = slt64(max_mult_122576, (int64_t) 1);
@@ -22755,7 +22755,7 @@ FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_int(struct futhark_context *ctx, str
         defunc_0_reduce_res_129517 = redout_133098;
         max_mult_122576 = defunc_0_reduce_res_129517;
     } else {
-        max_mult_122576 = (int64_t) 0;
+        max_mult_122576 = (int64_t) 1;
     }
     
     bool bounds_invalid_upwards_122582 = slt64(max_mult_122576, (int64_t) 1);
@@ -24277,7 +24277,7 @@ FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_long(struct futhark_context *ctx, st
         defunc_0_reduce_res_129517 = redout_133098;
         max_mult_122576 = defunc_0_reduce_res_129517;
     } else {
-        max_mult_122576 = (int64_t) 0;
+        max_mult_122576 = (int64_t) 1;
     }
     
     bool bounds_invalid_upwards_122582 = slt64(max_mult_122576, (int64_t) 1);
@@ -25803,7 +25803,7 @@ FUTHARK_FUN_ATTR int futrts_entry_inner_SMJ_short(struct futhark_context *ctx, s
         defunc_0_reduce_res_129517 = redout_133098;
         max_mult_122576 = defunc_0_reduce_res_129517;
     } else {
-        max_mult_122576 = (int64_t) 0;
+        max_mult_122576 = (int64_t) 1;
     }
     
     bool bounds_invalid_upwards_122582 = slt64(max_mult_122576, (int64_t) 1);

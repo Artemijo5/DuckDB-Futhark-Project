@@ -106,4 +106,18 @@ idx_t semi_sort_with_payloads(
   int quicksaves
 );
 
+idx_t semi_sort_without_payloads(
+  idx_t CHUNK_SIZE,
+  size_t BUFFER_SIZE,
+  const int16_t block_size,
+  FILE *logfile,
+  struct futhark_context *ctx,
+  duckdb_connection con,
+  const char* tblName,
+  const char* keyName,
+  const char* intermName,
+  int blocked,
+  int quicksaves
+);
+
 #endif
