@@ -11,16 +11,17 @@ import "ftbasics"
 -- test everything...
 -- and then entry points ig...
 
-type skylineBase [dim] 't = {
+type^ skylineBase [dim] 't = {
+-- will need to be constructed IN entry point...
 	grid_partitions_per_dim : [dim]idx_t.t,
 	angle_partitions_per_dim : [dim-1]idx_t.t,
 	grid_part_prefix_sum : [dim]idx_t.t,
 	angle_part_prefix_sum : [dim-1]idx_t.t,
-	total_grid_no = idx_t.t,
-	total_angle_no = idx_t.t,
-	total_part_no = idx_t.t,
-	start_of_grid_partition = [total_grid_no][dim]t,
-	grid_part_size_per_dim = [dim]t,
+	total_grid_no : idx_t.t,
+	total_angle_no : idx_t.t,
+	total_part_no : idx_t.t,
+	start_of_grid_partition : [][dim]t,
+	grid_part_size_per_dim : [dim]t,
 	plus : t -> t -> t,
 	minus : t -> t -> t,
 	times : t -> t -> t,
@@ -32,17 +33,15 @@ type skylineBase [dim] 't = {
 	to_f64 : t -> f64
 }
 type~ skylineInfo [dim] 't 'pL_t = {
-	base : skylineBase [dim] t,
 	xys : []([dim]t, pL_t),
-	part_idx : [base.total_part_no]idx_t.t,
-	isPartitionDominated : [base.total_grid_no]bool,
+	part_idx : []idx_t.t,
+	isPartitionDominated : []bool,
 }
 
 def dummy_skylineInfo [dim] 't 'pL_t
 	(skB : skylineBase [dim] t)
 	(_ : ([dim]t, pL_t)) -- dummy elem
-: dummy_skylineInfo [dim] t pL_t = {
-	base = skB,
+: skylineInfo [dim] t pL_t = {
 	xys = [],
 	part_idx = replicate skB.total_part_no 0,
 	isPartitionDominated = replicate skB.total_grid_no false,
@@ -53,7 +52,7 @@ local def do_mk_skylineBase [dim] 't
 	(max_per_dim : [dim]t)
 	(partitionSizePerDim : [dim]t)
 	(grid_partitions_per_dim : [dim]idx_t.t)
-	(angle_partitions_per_dim : [dim]idx_t.t)
+	(angle_partitions_per_dim : [dim-1]idx_t.t)
 	(plus : t -> t -> t)
 	(minus : t -> t -> t)
 	(times : t -> t -> t)
@@ -63,7 +62,7 @@ local def do_mk_skylineBase [dim] 't
 	(from_i64 : i64 -> t)
 	(to_i64 : t -> i64)
 	(to_f64 : t -> f64)
-: skylineBase [dim] =
+: skylineBase [dim] t =
 	let total_grid_no = i64.product grid_partitions_per_dim
 	let total_angle_no = i64.product angle_partitions_per_dim
 	let total_part_no = total_grid_no*total_angle_no
@@ -71,11 +70,11 @@ local def do_mk_skylineBase [dim] 't
 	let ang_prefix = exscan (*) 1 angle_partitions_per_dim
 	let start_points = (iota total_grid_no)
 		|> map (\grid_id ->
-			(iota total_grid_no)
+			(iota dim)
 				|> map (\i ->
 					let perDim = grid_partitions_per_dim[i]
 					let preDim = grid_prefix[i]
-					let dim_id = from_i64 ((id_per_dim / preDim)%perDim)
+					let dim_id = from_i64 ((grid_id / preDim)%perDim)
 					in min_per_dim[i] `plus` (dim_id`times`partitionSizePerDim[i])
 				)
 		)
@@ -104,7 +103,7 @@ def mk_skylineBase_from_grid [dim] 't
 	(min_per_dim : [dim]t)
 	(max_per_dim : [dim]t)
 	(grid_partitions_per_dim : [dim]idx_t.t)
-	(angle_partitions_per_dim : [dim]idx_t.t)
+	(angle_partitions_per_dim : [dim-1]idx_t.t)
 	(plus : t -> t -> t)
 	(minus : t -> t -> t)
 	(times : t -> t -> t)
@@ -114,7 +113,7 @@ def mk_skylineBase_from_grid [dim] 't
 	(from_i64 : i64 -> t)
 	(to_i64 : t -> i64)
 	(to_f64 : t -> f64)
-: skylineBase [dim] =
+: skylineBase [dim] t =
 	let grid_per_dim = map (from_i64) grid_partitions_per_dim
 	let partitionSizePerDim = map3
 		(\m M n ->
@@ -125,13 +124,13 @@ def mk_skylineBase_from_grid [dim] 't
 		grid_per_dim
 	in do_mk_skylineBase
 		min_per_dim max_per_dim partitionSizePerDim grid_partitions_per_dim angle_partitions_per_dim
-		(plus) (minus) (times) (over) (from_i64) (to_i64)
+		(plus) (minus) (times) (over) (skyline_lt) (skyline_leq) (from_i64) (to_i64) (to_f64)
 
 def mk_skylineBase_from_boundaries [dim] 't
 	(min_per_dim : [dim]t)
 	(max_per_dim : [dim]t)
 	(partitionSizePerDim : [dim]t)
-	(angle_partitions_per_dim : [dim]idx_t.t)
+	(angle_partitions_per_dim : [dim-1]idx_t.t)
 	(plus : t -> t -> t)
 	(minus : t -> t -> t)
 	(times : t -> t -> t)
@@ -141,7 +140,7 @@ def mk_skylineBase_from_boundaries [dim] 't
 	(from_i64 : i64 -> t)
 	(to_i64 : t -> i64)
 	(to_f64 : t -> f64)
-: skylineBase [dim] =
+: skylineBase [dim] t =
 	let grid_per_dim = map3
 		(\m M s ->
 			(M`minus`m)`over`s
@@ -152,8 +151,7 @@ def mk_skylineBase_from_boundaries [dim] 't
 	let grid_partitions_per_dim = map (to_i64) grid_per_dim
 	in do_mk_skylineBase
 		min_per_dim max_per_dim partitionSizePerDim grid_partitions_per_dim angle_partitions_per_dim
-		(plus) (minus) (times) (over) (from_i64) (to_i64)
-
+		(plus) (minus) (times) (over) (skyline_lt) (skyline_leq) (from_i64) (to_i64) (to_f64)
 
 def get_id_from_grid_angle [dim] 't
 	(skB : skylineBase [dim] t)
@@ -181,7 +179,7 @@ def cartesian_to_spherical [dim] 't
 		for j in (iota (dim-1)) do
 			let this_x = fc[j]
 			let this_y = f64.sqrt (foldl (+) 0 (map (\x -> x*x) fc[(j+1):dim]))
-			let new_phi = f64.atan2(this_y,this_x)
+			let new_phi = f64.atan2 this_y this_x
 		in p with [j] = new_phi
 	in (r, phis)
 
@@ -204,23 +202,23 @@ def get_grid_angle_measure_from_coords [dim] 't
 	-- get grid id
 	let g = get_grid_id_from_coords skB coords
 	-- get angle id
-	let dists_g = map2 (skB.minus) coords skB.start_of_grid_partition[g]
-	let (measure, angles) = cartesian_to_spherical skB dists_g (to_f64)
-	let base_angles = skB.grid_partitions_per_dim
-		|> map (\na -> 
-			if na == 1
-			then (-1.0)
-			else f64.floor ((pi / 2.0) / (f64.i64 na)))
+	let dists_g = map2 (skB.minus) coords skB.start_of_grid_partition[0]
+	let (measure, angles) = cartesian_to_spherical skB dists_g
+	let corner_angles = (iota dim)
+	-- TODO fix from here on - 
+		|> map (\i -> (copy g) with [i] = map2 (skB.plus) skB.start_of_grid_partition[i] skB.grid_part_size_per_dim[i])
+		|> map (\corn -> map2 (skB.minus) corn skB.start_of_grid_partition[0])
+		|> map (\corn -> (cartesian_to_spherical skB corn).1)
 	let anglePart_ = map3
-		(\a ba pf ->
-			let i_ = (i64.f64 (a/ba))*pf
+		(\a ca pf ->
+			let i_ = (i64.f64 (a/ca))*pf
 			in
 				if i_ < 0 then 0
 				else if i_ >= skB.total_angle_no then (skB.total_angle_no-1)
 				else i_
 		)
 		angles
-		base_angles
+		corner_angles
 		skB.angle_part_prefix_sum
 	let a = foldl (+) 0 anglePart_
 	-- returns
@@ -238,7 +236,7 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
 	(use_measure_for_sorting : bool)
-	(previous_dominance : [skB.total_grid_no]bool)
+	(previous_dominance : []bool)
 : skylineInfo [dim] t pL_t =
 	let part_leq : [dim]t -> [dim]t -> bool =
 		if use_measure_for_sorting
@@ -265,13 +263,12 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 			in hist (+) 0 skB.total_grid_no grid_part_by_idx (replicate n 1)
 		in skB.start_of_grid_partition
 			|> map (\this_o ->
-				let loop_over = 
-					loop (isDomd, j) = (false, 0)
-					while !isDomd && j<skB.total_grid_no do
-						let o_j = skB.start_of_grid_partition[j]
-						let count_j = count_per_grid_part[j]
-						let domd = (count_j>0 && all (map2 (skB.skyline_lt) this_o o_j))
-						in (domd, j+1)
+				loop (isDomd, j) = (false, 0)
+				while !isDomd && j<skB.total_grid_no do
+					let o_j = skB.start_of_grid_partition[j]
+					let count_j = count_per_grid_part[j]
+					let domd = (count_j>0 && all (map2 (skB.skyline_lt) this_o o_j))
+					in (domd, j+1)
 			)
 			|> zip previous_dominance
 			|> map (\(alt,neu) -> alt || neu)
@@ -288,36 +285,36 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 		let counts = hist (+) 0 skB.total_part_no part_by_idx (replicate n 1)
 		in exscan (+) 0 counts
 	in {
-		base = skB,
 		xys = sorted_xys,
 		part_idx = zuowei,
 		isPartitionDominated = isPartitionDominated,
 	}
 
-def sort_for_Skyline_without_previous_windowing
-	(skB) (xs) (ys) (use_measure_for_sorting)
+def sort_for_Skyline_without_previous_windowing [dim]
+	(skB: skylineBase [dim]) (xs) (ys) (use_measure_for_sorting)
 = sort_for_Skyline
-	skB xs ys use_measure_for_sorting (replicate skB.total_grid_no false)
+	skB xs ys use_measure_for_sorting (replicate total_grid_no false)
 
 def calc_local_Skyline [dim] 't 'pL_t
+	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 : skylineInfo [dim] t pL_t =
 	let filt_idx = (indices skI.xys)
 		|> map (\i ->
 			let this_x = skI.xys[i].0
-			let (g, a, _) = get_grid_angle_measure_from_coords skI.base this_x
+			let (g, a, _) = get_grid_angle_measure_from_coords skB this_x
 			in if skI.isPartitionDominated[g] then (-1) else
-			let p_id = get_id_from_grid_angle skI.base g a
+			let p_id = get_id_from_grid_angle skB g a
 			let start_idx = skI.part_idx[j]
-			let end_idx = if j==skI.base.total_part_no-1 then n else skI.part_idx[j+1]
+			let end_idx = if j==skB.total_part_no-1 then n else skI.part_idx[j+1]
 			let loop_over =
 				loop (isElimd, j) = (false, start_idx)
 				while !isElimd && j<end_idx do
 					let cmp_x = skI.xs[j].0
 					let elimd =
-						(all (map2 (skI.base.skyline_leq) this_x cmp_x))
+						(all (map2 (skB.skyline_leq) this_x cmp_x))
 						&&
-						(any (map2 (skI.base.skyline_lt) this_x cmp_x))
+						(any (map2 (skB.skyline_lt) this_x cmp_x))
 					in (elimd, j+1)
 			in
 				if loop_over.0
@@ -329,12 +326,11 @@ def calc_local_Skyline [dim] 't 'pL_t
 	let zuowei =
 		let skyline_parts = skyline_xys
 			|> map (\(x,_) ->
-				(get_id_measure_from_coords skI.base x).0
+				(get_id_measure_from_coords skB x).0
 			)
-		let counts = hist (+) 0 skI.base.total_part_no skyline_parts (replicate (length skyline_parts) 1)
+		let counts = hist (+) 0 skB.total_part_no skyline_parts (replicate (length skyline_parts) 1)
 		in exscan (+) 0 counts
 	in {
-		base = skI.base,
 		xys = skyline_xys,
 		part_idx = zuowei,
 		isPartitionDominated = skI.isPartitionDominated
@@ -343,6 +339,7 @@ def calc_local_Skyline [dim] 't 'pL_t
 -- this can only be used on skylines with the same base
 -- otherwise will have to manually combine their xys, re-sort, etc...
 def merge_Skylines_5 [dim] 't 'pL_t
+	(skB : skylineBase [dim] t)
 	(skI1 : skylineInfo [dim] t pL_t)
 	(skI2 : skylineInfo [dim] t pL_t)
 	(skI3 : skylineInfo [dim] t pL_t)
@@ -350,7 +347,6 @@ def merge_Skylines_5 [dim] 't 'pL_t
 	(skI5 : skylineInfo [dim] t pL_t)
 	(dummy_elem : ([dim]t, pL_t))
 : skylineInfo [dim] t pL_t =
-	let skB = skI1.base
 	let partDominated = map5
 		(\pd1 pd2 pd3 pd4 pd5 -> pd1 || pd2 || pd3 || pd4 || pd5)
 		skI1.isPartitionDominated
@@ -371,7 +367,7 @@ def merge_Skylines_5 [dim] 't 'pL_t
 			(length skI4.xys) +
 			(length skI5.xys)
 		let scatter_idx_base =
-			in loop sc_is = (replicate 5 (replicate skI.base.total_part_no 0)) for j in (iota 5) do
+			loop sc_is = (replicate 5 (replicate skB.total_part_no 0)) for j in (iota 5) do
 				let new_isb =
 					if j==0
 					then total_indices
@@ -430,53 +426,53 @@ def merge_Skylines_5 [dim] 't 'pL_t
 	--	let counts = hist (+) 0 skB.total_part_no skyline_parts (replicate (length skyline_parts) 1)
 	--	in exscan (+) 0 counts
 	in {
-		base = skB,
 		xys = new_xys,
 		part_idx = total_indices,
 		isPartitionDominated = partDominated
 	}
 
-def merge_Skylines_4 (skI1) (skI2) (skI3) (skI4) (dummy_elem) =
-	let dummy_SL = dummy_skylineInfo skI1.base dummy_elem skI1.skyline_lt skI1.skyline_leq
-	in merge_Skylines_5 skI1 skI2 skI3 skI4 dummy_SL (minus) (over) (to_i64) (to_f64) (dummy_elem)
+def merge_Skylines_4 (skB) (skI1) (skI2) (skI3) (skI4) (dummy_elem) =
+	let dummy_SL = dummy_skylineInfo skB dummy_elem skI1.skyline_lt skI1.skyline_leq
+	in merge_Skylines_5 skB skI1 skI2 skI3 skI4 dummy_SL (minus) (over) (to_i64) (to_f64) (dummy_elem)
 
-def merge_Skylines_3 (skI1) (skI2) (skI3) (dummy_elem) =
-	let dummy_SL = dummy_skylineInfo skI1.base dummy_elem skI1.skyline_lt skI1.skyline_leq
-	in merge_Skylines_4 skI1 skI2 skI3 dummy_SL (minus) (over) (to_i64) (to_f64) (dummy_elem)
+def merge_Skylines_3 (skB) (skI1) (skI2) (skI3) (dummy_elem) =
+	let dummy_SL = dummy_skylineInfo skB dummy_elem skI1.skyline_lt skI1.skyline_leq
+	in merge_Skylines_4 skB skI1 skI2 skI3 dummy_SL (minus) (over) (to_i64) (to_f64) (dummy_elem)
 
-def merge_Skylines_2 (skI1) (skI2) (dummy_elem) =
-	let dummy_SL = dummy_skylineInfo skI1.base dummy_elem skI1.skyline_lt skI1.skyline_leq
-	in merge_Skylines_3 skI1 skI2 dummy_SL (minus) (over) (to_i64) (to_f64) (dummy_elem)
+def merge_Skylines_2 (skB) (skI1) (skI2) (dummy_elem) =
+	let dummy_SL = dummy_skylineInfo skB dummy_elem skI1.skyline_lt skI1.skyline_leq
+	in merge_Skylines_3 skB skI1 skI2 dummy_SL (minus) (over) (to_i64) (to_f64) (dummy_elem)
 
 def intermediate_SkylineInfo [dim] 't 'pL_t
+	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 	(subdiv : idx_t.t)
-: skylineInfo [dim] t pL_t =
+: (skylineBase [dim], skylineInfo [dim]) t pL_t =
 	-- 1. calculate dimensions to omit
 	let (first_dim, subdiv_) =
 		loop (d,sd) = (0,subdiv,1) while (d<dim && sd>1) do
-			let d_parts = skI.base.grid_partitions_per_dim[d] in
+			let d_parts = skB.grid_partitions_per_dim[d] in
 			if d_parts>sd then (d,1)
 			else (d+1, (sd+d_parts-1)/d_parts,d_parts)
 	let new_grid_parts_per_dim = (iota dim)
 		|> map (\i ->
 			if i<first_dim then 1
-			else if i==first_dim then skI.base.grid_partitions_per_dim[i]/subdiv_
-			else skI.base.grid_partitions_per_dim[i]
+			else if i==first_dim then skB.grid_partitions_per_dim[i]/subdiv_
+			else skB.grid_partitions_per_dim[i]
 		)
 	let new_grid_part_size_per_dim = (iota dim)
 		|> map (\i ->
 			if i < first_dim
-				then (skI.base.grid_part_size_per_dim[i] `times` skI.base.grid_partitions_per_dim[i])
+				then (skB.grid_part_size_per_dim[i] `times` skB.grid_partitions_per_dim[i])
 			else if i==first_dim
-				then (skI.base.grid_part_size_per_dim[i] `times` (from_i64 subdiv_))
+				then (skB.grid_part_size_per_dim[i] `times` (from_i64 subdiv_))
 			else
-				skI.base.grid_part_size_per_dim[i]
+				skB.grid_part_size_per_dim[i]
 			)
-	let new_grid_part_starts = skI.base.total_grid_no
-		|> zip (iota skI.base.total_grid_no)
+	let new_grid_part_starts = skB.total_grid_no
+		|> zip (iota skB.total_grid_no)
 		|> filter (\(i,_) -> 
-			(i % (skI.base.grid_part_prefix_sum[first_dim]*subdiv_) != 0)
+			(i % (skB.grid_part_prefix_sum[first_dim]*subdiv_) != 0)
 		)
 		|> map (.1)
 	let new_grid_total = length new_grid_part_starts
@@ -490,21 +486,20 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 		total_part_no = new_grid_total,
 		start_of_grid_partition = new_grid_part_starts,
 		grid_part_size_per_dim = new_grid_part_size_per_dim,
-		plus=skI.base.plus, minus=skI.base.minus, times=skI.base.times, over=skI.base.over,
-		skyline_lt=skI.base.skyline_lt, skyline_leq=skI.base.skyline_leq,
-		from_i64=skI.base.from_i64, to_i64=skI.base.to_i64, to_f64=skI.base.to_f64
+		plus=skB.plus, minus=skB.minus, times=skB.times, over=skB.over,
+		skyline_lt=skB.skyline_lt, skyline_leq=skB.skyline_leq,
+		from_i64=skB.from_i64, to_i64=skB.to_i64, to_f64=skB.to_f64
 	}
-	let new_part_idx = skI.base_total_grid_no
-		|> zip (iota skI.base.total_grid_no)
+	let new_part_idx = skB.total_grid_no
+		|> zip (iota skB.total_grid_no)
 		|> filter (\(i,_) -> 
-			(i % (skI.base.grid_part_prefix_sum[first_dim]*subdiv_) != 0)
+			(i % (skB.grid_part_prefix_sum[first_dim]*subdiv_) != 0)
 		)
 		|> map (.1) :> [new_skB.total_part_no]idx_t.t
 	in {
-		base = new_skB,
 		xys = skI.xys,
 		part_idx = new_part_idx,
-		isPartitionDominated = replicate new_skB.total_grid_no false
+		isPartitionDominated = replicate skB.total_grid_no false
 	}
 
 def calc_intermediate_skyline [dim] 't 'pL_t
@@ -512,7 +507,7 @@ def calc_intermediate_skyline [dim] 't 'pL_t
 	(subdiv : idx_t.t)
 	(size_thresh : idx_t.t)
 : skylineInfo [dim] t pL_t =
-	let last_sd = (skI.base.total_grid_no+subdiv-1)/subdiv
+	let last_sd = (skB.total_grid_no+subdiv-1)/subdiv
 	let (intermediate_skI,_) =
 		loop (sd_skI,sd) = (skI,subdiv)
 		while (sd<last_sd && (length sd_skI.xys)>size_thresh) do
