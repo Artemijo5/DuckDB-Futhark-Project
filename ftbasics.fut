@@ -74,6 +74,7 @@ def partitioned_scatter [nd] [n] 'a
 
 -- | Function to gather the payload columns of a relation after the join.
 def gather_payloads [ni] [n] 't
+  (num_bits: i32)
   (incr: idx_t.t)
   (psize: idx_t.t)
   (dummy_elem: t)
@@ -81,10 +82,11 @@ def gather_payloads [ni] [n] 't
   (ys: [n]t)
 =
   let offset_is = is |> map (\j -> j - incr)
-  in partitioned_gather (psize) (dummy_elem) (ys) (offset_is)
+  in partitioned_gather (num_bits) (psize) (dummy_elem) (ys) (offset_is)
 
   -- | Function to gather the payload columns of a relation after the join, over an array with previously gathered values.
 def gather_payloads_GFUR [ni] [n] 't
+  (n_bits: i32)
   (incr: idx_t.t)
   (psize: idx_t.t)
   (dummy_array: [ni]t)
@@ -92,7 +94,7 @@ def gather_payloads_GFUR [ni] [n] 't
   (ys: [n]t)
 =
   let offset_is = is |> map (\j -> j - incr)
-  in partitioned_gather_over_array (psize) (dummy_array) (ys) (offset_is)
+  in partitioned_gather_over_array (n_bits) (psize) (dummy_array) (ys) (offset_is)
 
 -- | Exclusive scan operation (from Futhark by Example).
 def exscan f ne xs =
@@ -152,6 +154,7 @@ def radix_sort_multistep [n] 't
   (block_size : idx_t.t)
   (i : i32)
   (j : i32)
+  (num_bits : i32)
   (get_bit : i32 -> t -> i32)
   (xs : [n]t)
 -- : [n]t =
@@ -173,4 +176,4 @@ def radix_sort_multistep [n] 't
     let zuowei = map2 (*) guanzhong (map (\z -> z+offs-1) (scan (+) 0 guanzhong))
     in (offs + zengjia, map2 (+) idxs zuowei)
   let scatter_idxs = ox.1
-  in partitioned_scatter block_size (copy xs) scatter_idxs xs
+  in partitioned_scatter num_bits block_size (copy xs) scatter_idxs xs

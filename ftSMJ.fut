@@ -15,7 +15,7 @@ def my_radix_sort [n] 't
 : [n]t =
   loop xs
   for bit in (0..bit_step..<num_bits)
-  do radix_sort_multistep block_size bit (i32.min num_bits (bit+bit_step-1)) get_bit xs
+  do radix_sort_multistep block_size bit num_bits (i32.min num_bits (bit+bit_step-1)) get_bit xs
 
 -- Based on futhark sorts library radix_sort_int
 def my_radix_sort_int [n] 't
@@ -153,8 +153,8 @@ def mergeSortColumn [n] 'a
   in {is = un_ixs.0, xs = un_ixs.1}
 
 -- Order a payload column given the reordered indices.
-def orderByIndices [n] 't (block_size: idx_t.t) (dummy_elem: t) (is: [n](idx_t.t)) (ys: [n]t) : [n]t =
-  partitioned_gather block_size dummy_elem ys is
+def orderByIndices [n] 't (n_bits: i32) (block_size: idx_t.t) (dummy_elem: t) (is: [n](idx_t.t)) (ys: [n]t) : [n]t =
+  partitioned_gather n_bits block_size dummy_elem ys is
 
 -- ########################################################################################################################
 -- ########################################################################################################################

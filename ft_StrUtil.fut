@@ -78,7 +78,7 @@ def do_gather_str [n] [ni] [total_len]
 	let gather_lens = 
 		let all_lens = (iota n)
 			|> map (\i -> get_str_len total_len str_idx i)
-		in partitioned_gather psize 0 all_lens gather_is
+		in partitioned_gather i64.num_bits psize 0 all_lens gather_is
 	let zuowei = exscan (+) 0 gather_lens
 	let output_size = idx_t.sum gather_lens
 	let max_len = idx_t.maximum gather_lens
@@ -93,7 +93,7 @@ def do_gather_str [n] [ni] [total_len]
 			let scatter_chars =
 				let raw_chars = (iota n)
 					|> map (\i -> get_kth_char str_content str_idx i j)
-				in partitioned_gather psize 0 raw_chars gather_is
+				in partitioned_gather u8.num_bits psize 0 raw_chars gather_is
 			in scatter (copy buff) scatter_idxs scatter_chars
 	in (new_con, zuowei)
 

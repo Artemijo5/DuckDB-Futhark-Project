@@ -206,7 +206,8 @@ def radix_part_step [n][b] 't
   (j: i32)
 : ([n][b]u8, [n]t) =
   let xps = zip xs pL
-  let xps' = radix_sort_multistep block_size i j (\bit xp -> byteSeq_getBit bit xp.0) xps
+  let xps' = radix_sort_multistep
+    block_size i j ((i32.i64 b)*u8.num_bits) (\bit xp -> byteSeq_getBit bit xp.0) xps
   in unzip xps'
 
 def radix_part [n][b] 't

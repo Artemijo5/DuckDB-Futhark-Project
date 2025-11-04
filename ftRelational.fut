@@ -24,44 +24,44 @@ entry max_idx = idx_t.maximum
 
 entry orderByIndices_short [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i16) : [n]i16 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
+  in orderByIndices i16.num_bits block_size (0) offset_is ys
 entry orderByIndices_int [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i32) : [n]i32 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
+  in orderByIndices i32.num_bits block_size (0) offset_is ys
 entry orderByIndices_long [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]i64) : [n]i64 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
+  in orderByIndices i64.num_bits block_size (0) offset_is ys
 entry orderByIndices_float [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f32) : [n]f32 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
+  in orderByIndices f32.num_bits block_size (0) offset_is ys
 entry orderByIndices_double [n] (incr: idx_t.t) (block_size: idx_t.t) (is: [n](idx_t.t)) (ys: [n]f64) : [n]f64 =
   let offset_is : [n](idx_t.t) = is |> map (\j -> j - incr)
-  in orderByIndices block_size (0) offset_is ys
+  in orderByIndices f64.num_bits block_size (0) offset_is ys
 
 entry gather_payloads_short (incr) (psize) (is) (ys: []i16)
-  = gather_payloads incr psize (0) is ys
+  = gather_payloads i16.num_bits incr psize (0) is ys
 entry gather_payloads_int (incr) (psize) (is) (ys: []i32)
-  = gather_payloads incr psize (0) is ys
+  = gather_payloads i32.num_bits incr psize (0) is ys
 entry gather_payloads_long (incr) (psize) (is) (ys: []i64)
-  = gather_payloads incr psize (0) is ys
+  = gather_payloads i64.num_bits incr psize (0) is ys
 entry gather_payloads_float (incr) (psize) (is) (ys: []f32)
-  = gather_payloads incr psize (0) is ys
+  = gather_payloads f32.num_bits incr psize (0) is ys
 entry gather_payloads_double (incr) (psize) (is) (ys: []f64)
-  = gather_payloads incr psize (0) is ys
+  = gather_payloads f64.num_bits incr psize (0) is ys
 
 entry gather_payloads_GFTR (incr) (psize) (is) (pL_bytes: idx_t.t) (ys: [][pL_bytes]u8)
-  = gather_payloads incr psize (replicate pL_bytes (u8.i32 0)) is ys
+  = gather_payloads ((i32.i64 pL_bytes)*u8.num_bits) incr psize (replicate pL_bytes (u8.i32 0)) is ys
 
 entry gather_payloads_short_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i16) (is: [ni]idx_t.t) (ys: [n]i16)
-  = gather_payloads_GFUR incr psize preVals is ys
+  = gather_payloads_GFUR i16.num_bits incr psize preVals is ys
 entry gather_payloads_int_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i32) (is: [ni]idx_t.t) (ys: [n]i32)
-  = gather_payloads_GFUR incr psize preVals is ys
+  = gather_payloads_GFUR i32.num_bits incr psize preVals is ys
 entry gather_payloads_long_GFUR [ni] [n] (incr) (psize) (preVals: [ni]i64) (is: [ni]idx_t.t) (ys: [n]i64)
-  = gather_payloads_GFUR incr psize preVals is ys
+  = gather_payloads_GFUR i64.num_bits incr psize preVals is ys
 entry gather_payloads_float_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f32) (is: [ni]idx_t.t) (ys: [n]f32)
-  = gather_payloads_GFUR incr psize preVals is ys
+  = gather_payloads_GFUR f32.num_bits incr psize preVals is ys
 entry gather_payloads_double_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f64) (is: [ni]idx_t.t) (ys: [n]f64)
-  = gather_payloads_GFUR incr psize preVals is ys
+  = gather_payloads_GFUR f64.num_bits incr psize preVals is ys
 
 -- Sorting
 
@@ -295,8 +295,10 @@ entry create_hash_table_from_partitioned_set [n] [b]
       )
   let scatter_is_first = map2 (\(is_first, _) i -> if is_first then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
   let scatter_is_last = map2 (\(_, is_last) i -> if is_last then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
-  let first_partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is_first is_base
-  let last_partitionIndices = partitioned_scatter scatter_psize (replicate (2**rs) (-1)) scatter_is_last is_base
+  let first_partitionIndices = partitioned_scatter
+    i64.num_bits scatter_psize (replicate (2**rs) (-1)) scatter_is_first is_base
+  let last_partitionIndices = partitioned_scatter
+    i64.num_bits scatter_psize (replicate (2**rs) (-1)) scatter_is_last is_base
   in {first_info_idx = first_partitionIndices, last_info_idx = last_partitionIndices}
 
 -- Radix-Hash Partitioned Join
