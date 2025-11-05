@@ -383,9 +383,11 @@ def rv_partitionMatchBounds [nR] [b] [pR]
 def rv_findPairCount [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
+  (inf: idx_t.t)
+  (sup: idx_t.t)
 : (idx_t.t, idx_t.t)  = -- returns pair count & index of first match
   let cj =
-    loop (count, j, i0) = (0, 0, -1) while j<nS do
+    loop (count, j, i0) = (0, inf, -1) while j<sup do
       if foldl (&&) (true) (map2 (==) rv tS[j])
       then (count+1, j+1, if i0<0 then j else i0)
       else (count, j+1, i0)
@@ -394,27 +396,31 @@ def rv_findPairCount [nS] [b]
 def rv_find_kth_match [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
+  (inf: idx_t.t)
+  (sup: idx_t.t)
   (k: idx_t.t)
 : idx_t.t =
   let cj =
-    loop (count, j) = (0, 0) while (count<k && j<nS) do
+    loop (count, j) = (0, inf) while (count<k && j<sup) do
       if foldl (&&) (true) (map2 (==) rv tS[j])
       then (count+1, j+1)
       else (count, j+1)
-  in (cj.1-1)
+  in (cj.1-1-inf)
 
 def rv_find_match_if_exists [nS] [b]
   (rv: byteSeq [b])
   (tS: [nS](byteSeq [b]))
+  (inf: idx_t.t)
+  (sup: idx_t.t)
 : idx_t.t =
   let cj =
-    loop (count, j) = (0, 0) while (count<1 && j<nS) do
+    loop (count, j) = (0, inf) while (count<1 && j<sup) do
       if foldl (&&) (true) (map2 (==) rv tS[j])
       then (count+1, j+1)
       else (count, j+1)
   in 
     if ( cj.1<nS || (foldl (&&) (true) (map2 (==) rv tS[nS-1])) )
-    then cj.1-1
+    then (cj.1-1-inf)
     else -1
 
 def radix_hash_join [nR] [nS] [b]
@@ -437,11 +443,10 @@ def radix_hash_join [nR] [nS] [b]
           let rv = tR[i]
           let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
           let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
-          let cur_S = tS[inf_s_idx:sup_s_idx]
           in 
             if fm >= 0
             then 
-              let (cm, mi) = rv_findPairCount rv cur_S
+              let (cm, mi) = rv_findPairCount rv tS inf_s_idx sup_s_idx
               in (cm, mi+inf_s_idx)
             else (0,-1)
         )
@@ -480,8 +485,7 @@ def radix_hash_join [nR] [nS] [b]
       let fm = heshi[ir]
       let inf_s_idx = first_match_per_r[ir]
       let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
-      let cur_S = tS[inf_s_idx:sup_s_idx]
-      in (rv_find_kth_match rv cur_S k ) + inf_s_idx
+      in (rv_find_kth_match rv tS inf_s_idx sup_s_idx k ) + inf_s_idx
     )
   in
     {
@@ -508,8 +512,7 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
       let rv = tR[j]
       let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
       let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
-      let cur_S = tS[inf_s_idx:sup_s_idx]
-      let si = rv_find_match_if_exists rv cur_S
+      let si = rv_find_match_if_exists rv tS inf_s_idx sup_s_idx
       in
         if si>0
         then si+inf_s_idx

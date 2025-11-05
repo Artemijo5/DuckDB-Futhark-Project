@@ -65,82 +65,82 @@ entry gather_payloads_double_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f64) (is
 
 -- Sorting
 
-	-- ------------------------------------------------------
-	-- GFTR
-	-- ------------------------------------------------------
+  -- ------------------------------------------------------
+  -- GFTR
+  -- ------------------------------------------------------
 
-	entry radixSortRelation_short [n] [b]
-	  (block_size: idx_t.t)
-	  (xs: sortStruct_short [n] [b])
-	 : sortStruct_short [n] [b]
-	  = radixSortRelation_signed_integral (block_size) (xs) (i16.num_bits) (i16.get_bit)
-	entry radixSortRelation_int [n] [b]
-	  (block_size: idx_t.t)
-	  (xs: sortStruct_int [n] [b])
-	 : sortStruct_int [n] [b]
-	  = radixSortRelation_signed_integral (block_size) (xs) (i32.num_bits) (i32.get_bit)
-	entry radixSortRelation_long [n] [b]
-	  (block_size: idx_t.t)
-	  (xs: sortStruct_long [n] [b])
-	 : sortStruct_long [n] [b]
-	  = radixSortRelation_signed_integral (block_size) (xs) (i64.num_bits) (i64.get_bit)
-	entry radixSortRelation_float [n] [b]
-	  (block_size: idx_t.t)
-	  (xs: sortStruct_float [n] [b])
-	 : sortStruct_float [n] [b]
-	  = radixSortRelation_signed_float (block_size) (xs) (f32.num_bits) (f32.get_bit)
-	entry radixSortRelation_double [n] [b]
-	  (block_size: idx_t.t)
-	  (xs: sortStruct_double [n] [b])
-	 : sortStruct_double [n] [b]
-	  = radixSortRelation_signed_float (block_size) (xs) (f64.num_bits) (f64.get_bit)
+  entry radixSortRelation_short [n] [b]
+    (block_size: idx_t.t)
+    (xs: sortStruct_short [n] [b])
+   : sortStruct_short [n] [b]
+    = radixSortRelation_signed_integral (block_size) (xs) (i16.num_bits) (i16.get_bit)
+  entry radixSortRelation_int [n] [b]
+    (block_size: idx_t.t)
+    (xs: sortStruct_int [n] [b])
+   : sortStruct_int [n] [b]
+    = radixSortRelation_signed_integral (block_size) (xs) (i32.num_bits) (i32.get_bit)
+  entry radixSortRelation_long [n] [b]
+    (block_size: idx_t.t)
+    (xs: sortStruct_long [n] [b])
+   : sortStruct_long [n] [b]
+    = radixSortRelation_signed_integral (block_size) (xs) (i64.num_bits) (i64.get_bit)
+  entry radixSortRelation_float [n] [b]
+    (block_size: idx_t.t)
+    (xs: sortStruct_float [n] [b])
+   : sortStruct_float [n] [b]
+    = radixSortRelation_signed_float (block_size) (xs) (f32.num_bits) (f32.get_bit)
+  entry radixSortRelation_double [n] [b]
+    (block_size: idx_t.t)
+    (xs: sortStruct_double [n] [b])
+   : sortStruct_double [n] [b]
+    = radixSortRelation_signed_float (block_size) (xs) (f64.num_bits) (f64.get_bit)
 
-	entry mergeSortRelation_short [n] [b]
-	  (xs: sortStruct_short [n] [b])
-	: sortStruct_short [n] [b]
-	  = mergeSortRelation (xs) (<=)
-	entry mergeSortRelation_int [n] [b]
-	  (xs: sortStruct_int [n] [b])
-	: sortStruct_int [n] [b]
-	  = mergeSortRelation (xs) (<=)
-	entry mergeSortRelation_long [n] [b]
-	  (xs: sortStruct_long [n] [b])
-	: sortStruct_long [n] [b]
-	  = mergeSortRelation (xs) (<=)
-	entry mergeSortRelation_float [n] [b]
-	  (xs: sortStruct_float [n] [b])
-	: sortStruct_float [n] [b]
-	  = mergeSortRelation (xs) (<=)
-	entry mergeSortRelation_double [n] [b]
-	  (xs: sortStruct_double [n] [b])
-	: sortStruct_double [n] [b]
-	  = mergeSortRelation (xs) (<=)
+  entry mergeSortRelation_short [n] [b]
+    (xs: sortStruct_short [n] [b])
+  : sortStruct_short [n] [b]
+    = mergeSortRelation (xs) (<=)
+  entry mergeSortRelation_int [n] [b]
+    (xs: sortStruct_int [n] [b])
+  : sortStruct_int [n] [b]
+    = mergeSortRelation (xs) (<=)
+  entry mergeSortRelation_long [n] [b]
+    (xs: sortStruct_long [n] [b])
+  : sortStruct_long [n] [b]
+    = mergeSortRelation (xs) (<=)
+  entry mergeSortRelation_float [n] [b]
+    (xs: sortStruct_float [n] [b])
+  : sortStruct_float [n] [b]
+    = mergeSortRelation (xs) (<=)
+  entry mergeSortRelation_double [n] [b]
+    (xs: sortStruct_double [n] [b])
+  : sortStruct_double [n] [b]
+    = mergeSortRelation (xs) (<=)
 
-	-- ------------------------------------------------------
-	-- GFUR
-	-- ------------------------------------------------------
+  -- ------------------------------------------------------
+  -- GFUR
+  -- ------------------------------------------------------
 
-	entry radixSortColumn_short [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
-	  radixSortColumn_signed_integral incr block_size xs (i16.num_bits) (i16.get_bit)
-	entry radixSortColumn_int [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
-	  radixSortColumn_signed_integral incr block_size xs (i32.num_bits) (i32.get_bit)
-	entry radixSortColumn_long [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
-	  radixSortColumn_signed_integral incr block_size xs (i64.num_bits) (i64.get_bit)
-	entry radixSortColumn_float [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
-	  radixSortColumn_signed_float incr block_size xs (f32.num_bits) (f32.get_bit)
-	entry radixSortColumn_double [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
-	  radixSortColumn_signed_float incr block_size xs (f64.num_bits) (f64.get_bit)
+  entry radixSortColumn_short [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
+    radixSortColumn_signed_integral incr block_size xs (i16.num_bits) (i16.get_bit)
+  entry radixSortColumn_int [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
+    radixSortColumn_signed_integral incr block_size xs (i32.num_bits) (i32.get_bit)
+  entry radixSortColumn_long [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
+    radixSortColumn_signed_integral incr block_size xs (i64.num_bits) (i64.get_bit)
+  entry radixSortColumn_float [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
+    radixSortColumn_signed_float incr block_size xs (f32.num_bits) (f32.get_bit)
+  entry radixSortColumn_double [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
+    radixSortColumn_signed_float incr block_size xs (f64.num_bits) (f64.get_bit)
 
-	entry mergeSortColumn_short [n] (incr: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
-	  mergeSortColumn incr xs (<=)
-	entry mergeSortColumn_int [n] (incr: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
-	  mergeSortColumn incr xs (<=)
-	entry mergeSortColumn_long [n] (incr: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
-	  mergeSortColumn incr xs (<=)
-	entry mergeSortColumn_float [n] (incr: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
-	  mergeSortColumn incr xs (<=)
-	entry mergeSortColumn_double [n] (incr: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
-	  mergeSortColumn incr xs (<=)
+  entry mergeSortColumn_short [n] (incr: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
+    mergeSortColumn incr xs (<=)
+  entry mergeSortColumn_int [n] (incr: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
+    mergeSortColumn incr xs (<=)
+  entry mergeSortColumn_long [n] (incr: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
+    mergeSortColumn incr xs (<=)
+  entry mergeSortColumn_float [n] (incr: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
+    mergeSortColumn incr xs (<=)
+  entry mergeSortColumn_double [n] (incr: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
+    mergeSortColumn incr xs (<=)
 
 -- SMJ
 

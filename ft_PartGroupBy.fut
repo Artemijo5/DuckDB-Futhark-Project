@@ -20,8 +20,7 @@ local def do_find_key_counts [n] [key_no] [part_no] [b]
 			in if part<0 then (-1,0) else
 			let inf_ks = part_bounds[part]
 			let sup_ks = if part==part_no-1 then n else part_bounds[part+1]
-			let cur_ks = part_ks[inf_ks:sup_ks]
-			let (count,_) =  rv_findPairCount k cur_ks
+			let (count,_) =  rv_findPairCount k part_ks inf_ks sup_ks
 			in (part, count)
 		)
 
@@ -70,7 +69,7 @@ def partgroup_partitionByIndex [n] [group_no] [b]
 	(ks : [n](byteSeq [b]))
 : [n]idx_t.t =
 	ks |> map (\k ->
-		rv_find_match_if_exists k group_ks
+		rv_find_match_if_exists k group_ks 0 n
 	)
 
 -- are the following needed anywhere?

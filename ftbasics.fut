@@ -28,11 +28,13 @@ def partitioned_gather_over_array [ni] [n] 'a
   in loop buff = dest for j in (iota max_iter) do
     let inf = j*psize_
     let sup = idx_t.min n (inf + psize_)
-    in (iota ni) |> map (\j ->
-      if (inf<=is[j] && sup>is[j])
-      then xs[is[j]]
-      else buff[j]
-    )
+    in buff
+      |> zip (is)
+      |> map (\(j,v) ->
+        if (inf<=j && sup>j)
+        then xs[j]
+        else v
+      )
 -- | Multi-pass gather operation (better cache-locality).
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
 -- by Bingsheng He et al.
