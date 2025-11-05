@@ -15,8 +15,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 10*CHUNK_SIZE
-#define S_TABLE_SIZE 50*CHUNK_SIZE
+#define R_TABLE_SIZE CHUNK_SIZE
+#define S_TABLE_SIZE CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define MAX_PARTITION_SIZE 1024

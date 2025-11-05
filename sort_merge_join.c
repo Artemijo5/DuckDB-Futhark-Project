@@ -15,10 +15,10 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 1*CHUNK_SIZE
-#define S_TABLE_SIZE 1*R_TABLE_SIZE
+#define R_TABLE_SIZE 2*CHUNK_SIZE
+#define S_TABLE_SIZE 4*CHUNK_SIZE
 
-#define BLOCK_SIZE (idx_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
+#define BLOCK_SIZE (idx_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define MERGE_PARTITION_SIZE 5*BLOCK_SIZE // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
 
 #define R_TBL_NAME "R_tbl"
@@ -33,8 +33,8 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER R_TABLE_SIZE
-#define S_JOIN_BUFFER R_JOIN_BUFFER
+#define R_JOIN_BUFFER 1*CHUNK_SIZE
+#define S_JOIN_BUFFER 1*CHUNK_SIZE
 #define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
 
 #define DBFILE "testdb.db"
@@ -123,12 +123,12 @@ int main() {
     true
   );*/
   //Tmp
-  /*
+  ///*
   if(  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE R_tbl_sorted AS (SELECT * FROM R_tbl ORDER BY k);", NULL) == DuckDBError) {
 	perror("Failed to sort R_tbl.");
 	return -1;
   }
-  */
+  //*/
   //mylog(logfile, "Sorted table R.");
 
   // S
@@ -149,12 +149,12 @@ int main() {
   );*/
 
   //Tmp
-  /*
+  ///*
   if ( duckdb_query(con, "CREATE OR REPLACE TEMP TABLE S_tbl_sorted AS (SELECT * FROM S_tbl ORDER BY k);", NULL) == DuckDBError) {
 	perror("Failed to sort S_tbl.");
 	return -1;
   }
-  */
+  //*/
   //mylog(logfile, "Sorted table S.");
 
   // Semisorts
@@ -205,9 +205,9 @@ int main() {
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
     BLOCK_SIZE,
-    MERGE_PARTITION_SIZE,
-    false,
+    R_JOIN_BUFFER,
     (R_TABLE_SIZE+S_TABLE_SIZE)*sizeof(long),
+    false,
     logfile,
     ctx,
     con,

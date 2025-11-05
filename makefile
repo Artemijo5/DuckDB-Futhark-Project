@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-I.
-DEPS=mylogger.c libduckdb.so db_util.c
+DEPS=mylogger.c libduckdb.so db_util.c libftRelational.so
 LIBFLAGS=-fPIC -shared
 CUDAFLAGS=-lcuda -lcudart -lnvrtc
 
@@ -18,14 +18,14 @@ CUDA1-ftRelational: ftRelational.fut
 CUDA2-ftRelational: ftRelational.fut
 	gcc ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
 
-two_pass_sort: two_pass_sort.c sortstages.c libftRelational.so sort_util.c $(DEPS)
+two_pass_sort: two_pass_sort.c sortstages.c sort_util.c $(DEPS)
 	$(CC) two_pass_sort.c -o two_pass_sort.o \
-		sortstages.c libftRelational.so sort_util.c $(DEPS) $(CFLAGS)
+		sortstages.c sort_util.c $(DEPS) $(CFLAGS)
 
-sort_merge_join: sort_merge_join.c sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS)
-	$(CC) sort_merge_join.c -o sort_merge_join_GFTR.o \
-		sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c libftRelational.so $(DEPS) $(CFLAGS)
+sort_merge_join: sort_merge_join.c sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c $(DEPS)
+	$(CC) sort_merge_join.c -o sort_merge_join.o \
+		sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c $(DEPS) $(CFLAGS)
 
-radix_hash_join: radix_hash_join.c join_util.c radixJoin_util.c RadixJoinStages.c libftRelational.so $(DEPS)
+radix_hash_join: radix_hash_join.c join_util.c radixJoin_util.c RadixJoinStages.c $(DEPS)
 	$(CC) radix_hash_join.c -o radix_hash_join.o \
-		radixJoin_util.c join_util.c RadixJoinStages.c libftRelational.so $(DEPS) $(CFLAGS)
+		radixJoin_util.c join_util.c RadixJoinStages.c $(DEPS) $(CFLAGS)
