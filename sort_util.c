@@ -57,7 +57,7 @@ void sortRelationByKey_short(
   short *outKeys,
   char *outPayloads,
   int blocked,
-  const int16_t block_size,
+  idx_t block_size,
   short* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
@@ -95,7 +95,7 @@ void sortRelationByKey_int(
   int *outKeys,
   char *outPayloads,
   int blocked,
-  const int16_t block_size,
+  idx_t block_size,
   int* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
@@ -133,7 +133,7 @@ void sortRelationByKey_long(
   long *outKeys,
   char *outPayloads,
   int blocked,
-  const int16_t block_size,
+  idx_t block_size,
   long* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
@@ -171,7 +171,7 @@ void sortRelationByKey_float(
   float *outKeys,
   char *outPayloads,
   int blocked,
-  const int16_t block_size,
+  idx_t block_size,
   float* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
@@ -209,7 +209,7 @@ void sortRelationByKey_double(
   double *outKeys,
   char *outPayloads,
   int blocked,
-  const int16_t block_size,
+  idx_t block_size,
   double* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
@@ -248,7 +248,7 @@ void sortRelationByKey(
   char *outPayloads,
   duckdb_type key_type,
   int blocked,
-  const int16_t block_size,
+  idx_t block_size,
   void* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
@@ -282,7 +282,7 @@ void sortRelationByKey(
   }
 }
 
-void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, int blocked, const int16_t block_size, struct futhark_i64_1d **outIdx, short* keys, idx_t card) {
+void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, short* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_i16_1d *x_ft = futhark_new_i16_1d(ctx, keys, card);
   // Sort x_ft
@@ -308,7 +308,7 @@ void sortKeyColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr,
   futhark_free_opaque_sortInfo_short(ctx, sortInfo);
   futhark_free_i16_1d(ctx, x_ft);
 }
-void sortKeyColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, int blocked, const int16_t block_size, struct futhark_i64_1d **outIdx, int* keys, idx_t card) {
+void sortKeyColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, int* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_i32_1d *x_ft = futhark_new_i32_1d(ctx, keys, card);
   // Sort x_ft
@@ -334,7 +334,7 @@ void sortKeyColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, int
   futhark_free_opaque_sortInfo_int(ctx, sortInfo);
   futhark_free_i32_1d(ctx, x_ft);
 }
-void sortKeyColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, int blocked, const int16_t block_size, struct futhark_i64_1d **outIdx, long* keys, idx_t card) {
+void sortKeyColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, long* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_i64_1d *x_ft = futhark_new_i64_1d(ctx, keys, card);
   // Sort x_ft
@@ -360,7 +360,7 @@ void sortKeyColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, i
   futhark_free_opaque_sortInfo_long(ctx, sortInfo);
   futhark_free_i64_1d(ctx, x_ft);
 }
-void sortKeyColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr, int blocked, const int16_t block_size, struct futhark_i64_1d **outIdx, float* keys, idx_t card) {
+void sortKeyColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, float* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_f32_1d *x_ft = futhark_new_f32_1d(ctx, keys, card);
   // Sort x_ft
@@ -386,7 +386,7 @@ void sortKeyColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr,
   futhark_free_opaque_sortInfo_float(ctx, sortInfo);
   futhark_free_f32_1d(ctx, x_ft);
 }
-void sortKeyColumn_double(struct futhark_context *ctx, double *outCol, idx_t incr, int blocked, const int16_t block_size, struct futhark_i64_1d **outIdx, double* keys, idx_t card) {
+void sortKeyColumn_double(struct futhark_context *ctx, double *outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, double* keys, idx_t card) {
   // Wrap x into a futhark array x_ft
   struct futhark_f64_1d *x_ft = futhark_new_f64_1d(ctx, keys, card);
   // Sort x_ft
@@ -412,7 +412,7 @@ void sortKeyColumn_double(struct futhark_context *ctx, double *outCol, idx_t inc
   futhark_free_opaque_sortInfo_double(ctx, sortInfo);
   futhark_free_f64_1d(ctx, x_ft);
 }
-void sortKeyColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, int blocked, const int16_t block_size, struct futhark_i64_1d **outIdx, void* keys, idx_t card) {
+void sortKeyColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, void* keys, idx_t card) {
   switch (type){
   case DUCKDB_TYPE_SMALLINT:
       sortKeyColumn_short(ctx, (short*)outCol, incr, blocked, block_size, outIdx, (short*)keys, card);
@@ -435,7 +435,7 @@ void sortKeyColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, 
   }
 }
 
-void orderPayloadColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d *orderBy, short* inCol, idx_t card) {
+void orderPayloadColumn_short(struct futhark_context *ctx, short *outCol, idx_t incr, idx_t block_size, struct futhark_i64_1d *orderBy, short* inCol, idx_t card) {
   // Wrap y into a futhark array y_ft
   struct futhark_i16_1d *y_ft = futhark_new_i16_1d(ctx, inCol, card);
   // Reorder y_ft according to orderBy
@@ -451,7 +451,7 @@ void orderPayloadColumn_short(struct futhark_context *ctx, short *outCol, idx_t 
   futhark_free_i16_1d(ctx, sorted_y_ft);
   futhark_free_i16_1d(ctx, y_ft);
 }
-void orderPayloadColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d *orderBy, int* inCol, idx_t card) {
+void orderPayloadColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr, idx_t block_size, struct futhark_i64_1d *orderBy, int* inCol, idx_t card) {
   // Wrap y into a futhark array y_ft
   struct futhark_i32_1d *y_ft = futhark_new_i32_1d(ctx, inCol, card);
   // Reorder y_ft according to orderBy
@@ -467,7 +467,7 @@ void orderPayloadColumn_int(struct futhark_context *ctx, int *outCol, idx_t incr
   futhark_free_i32_1d(ctx, sorted_y_ft);
   futhark_free_i32_1d(ctx, y_ft);
 }
-void orderPayloadColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d *orderBy, long* inCol, idx_t card) {
+void orderPayloadColumn_long(struct futhark_context *ctx, long *outCol, idx_t incr, idx_t block_size, struct futhark_i64_1d *orderBy, long* inCol, idx_t card) {
   // Wrap y into a futhark array y_ft
   struct futhark_i64_1d *y_ft = futhark_new_i64_1d(ctx, inCol, card);
   // Reorder y_ft according to orderBy
@@ -483,7 +483,7 @@ void orderPayloadColumn_long(struct futhark_context *ctx, long *outCol, idx_t in
   futhark_free_i64_1d(ctx, sorted_y_ft);
   futhark_free_i64_1d(ctx, y_ft);
 }
-void orderPayloadColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d *orderBy, float* inCol, idx_t card) {
+void orderPayloadColumn_float(struct futhark_context *ctx, float *outCol, idx_t incr, idx_t block_size, struct futhark_i64_1d *orderBy, float* inCol, idx_t card) {
   // Wrap y into a futhark array y_ft
   struct futhark_f32_1d *y_ft = futhark_new_f32_1d(ctx, inCol, card);
   // Reorder y_ft according to orderBy
@@ -499,7 +499,7 @@ void orderPayloadColumn_float(struct futhark_context *ctx, float *outCol, idx_t 
   futhark_free_f32_1d(ctx, sorted_y_ft);
   futhark_free_f32_1d(ctx, y_ft);
 }
-void orderPayloadColumn_double(struct futhark_context *ctx, double *outCol, idx_t incr, const int16_t block_size, struct futhark_i64_1d *orderBy, double* inCol, idx_t card) {
+void orderPayloadColumn_double(struct futhark_context *ctx, double *outCol, idx_t incr, idx_t block_size, struct futhark_i64_1d *orderBy, double* inCol, idx_t card) {
   // Wrap y into a futhark array y_ft
   struct futhark_f64_1d *y_ft = futhark_new_f64_1d(ctx, inCol, card);
   // Reorder y_ft according to orderBy
@@ -515,7 +515,7 @@ void orderPayloadColumn_double(struct futhark_context *ctx, double *outCol, idx_
   futhark_free_f64_1d(ctx, sorted_y_ft);
   futhark_free_f64_1d(ctx, y_ft);
 }
-void orderPayloadColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, const int16_t block_size, struct futhark_i64_1d *orderBy, void* inCol, idx_t card) {
+void orderPayloadColumn(struct futhark_context *ctx, void *outCol, duckdb_type type, idx_t incr, idx_t block_size, struct futhark_i64_1d *orderBy, void* inCol, idx_t card) {
   switch (type){
     case DUCKDB_TYPE_SMALLINT:
       orderPayloadColumn_short(ctx, (short*)outCol, incr, block_size, orderBy, (short*)inCol, card);

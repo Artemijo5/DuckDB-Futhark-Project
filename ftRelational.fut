@@ -70,27 +70,27 @@ entry gather_payloads_double_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f64) (is
 	-- ------------------------------------------------------
 
 	entry radixSortRelation_short [n] [b]
-	  (block_size: i16)
+	  (block_size: idx_t.t)
 	  (xs: sortStruct_short [n] [b])
 	 : sortStruct_short [n] [b]
 	  = radixSortRelation_signed_integral (block_size) (xs) (i16.num_bits) (i16.get_bit)
 	entry radixSortRelation_int [n] [b]
-	  (block_size: i16)
+	  (block_size: idx_t.t)
 	  (xs: sortStruct_int [n] [b])
 	 : sortStruct_int [n] [b]
 	  = radixSortRelation_signed_integral (block_size) (xs) (i32.num_bits) (i32.get_bit)
 	entry radixSortRelation_long [n] [b]
-	  (block_size: i16)
+	  (block_size: idx_t.t)
 	  (xs: sortStruct_long [n] [b])
 	 : sortStruct_long [n] [b]
 	  = radixSortRelation_signed_integral (block_size) (xs) (i64.num_bits) (i64.get_bit)
 	entry radixSortRelation_float [n] [b]
-	  (block_size: i16)
+	  (block_size: idx_t.t)
 	  (xs: sortStruct_float [n] [b])
 	 : sortStruct_float [n] [b]
 	  = radixSortRelation_signed_float (block_size) (xs) (f32.num_bits) (f32.get_bit)
 	entry radixSortRelation_double [n] [b]
-	  (block_size: i16)
+	  (block_size: idx_t.t)
 	  (xs: sortStruct_double [n] [b])
 	 : sortStruct_double [n] [b]
 	  = radixSortRelation_signed_float (block_size) (xs) (f64.num_bits) (f64.get_bit)
@@ -120,15 +120,15 @@ entry gather_payloads_double_GFUR [ni] [n] (incr) (psize) (preVals: [ni]f64) (is
 	-- GFUR
 	-- ------------------------------------------------------
 
-	entry radixSortColumn_short [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i16) : sortInfo_short [n] =
+	entry radixSortColumn_short [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
 	  radixSortColumn_signed_integral incr block_size xs (i16.num_bits) (i16.get_bit)
-	entry radixSortColumn_int [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i32) : sortInfo_int [n] =
+	entry radixSortColumn_int [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i32) : sortInfo_int [n] =
 	  radixSortColumn_signed_integral incr block_size xs (i32.num_bits) (i32.get_bit)
-	entry radixSortColumn_long [n] (incr: idx_t.t) (block_size: i16) (xs: [n]i64) : sortInfo_long [n] =
+	entry radixSortColumn_long [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]i64) : sortInfo_long [n] =
 	  radixSortColumn_signed_integral incr block_size xs (i64.num_bits) (i64.get_bit)
-	entry radixSortColumn_float [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f32) : sortInfo_float [n] =
+	entry radixSortColumn_float [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]f32) : sortInfo_float [n] =
 	  radixSortColumn_signed_float incr block_size xs (f32.num_bits) (f32.get_bit)
-	entry radixSortColumn_double [n] (incr: idx_t.t) (block_size: i16) (xs: [n]f64) : sortInfo_double [n] =
+	entry radixSortColumn_double [n] (incr: idx_t.t) (block_size: idx_t.t) (xs: [n]f64) : sortInfo_double [n] =
 	  radixSortColumn_signed_float incr block_size xs (f64.num_bits) (f64.get_bit)
 
 	entry mergeSortColumn_short [n] (incr: idx_t.t) (xs: [n]i16) : sortInfo_short [n] =
@@ -153,7 +153,7 @@ entry inner_SMJ_short [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_short =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
+    (i16.num_bits) (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 entry inner_SMJ_int [nR] [nS]
   (tR: [nR]i32)
@@ -164,7 +164,7 @@ entry inner_SMJ_int [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_int =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
+    (i32.num_bits) (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 entry inner_SMJ_long [nR] [nS]
   (tR: [nR]i64)
@@ -175,7 +175,7 @@ entry inner_SMJ_long [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_long =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
+    (i64.num_bits) (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 entry inner_SMJ_float [nR] [nS]
   (tR: [nR]f32)
@@ -186,7 +186,7 @@ entry inner_SMJ_float [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_float =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
+    (f32.num_bits) (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 entry inner_SMJ_double [nR] [nS]
   (tR: [nR]f64)
@@ -197,7 +197,7 @@ entry inner_SMJ_double [nR] [nS]
   (scatter_psize: idx_t.t)
 : joinPairs_double =
   inner_SMJ
-    (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
+    (f64.num_bits) (0) (tR) (tS) (offset_R) (offset_S) (partitionSize) (scatter_psize) (==) (>) (<)
 
 
 -- Radix-Partitioning

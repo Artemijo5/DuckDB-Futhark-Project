@@ -23,7 +23,7 @@ def gather 't [ni] [n] (dummy_elem: t) (xs: [n]t) (is: [ni](idx_t.t)) =
 def partitioned_gather_over_array [ni] [n] 'a
   (n_bits : i32) (psize : idx_t.t) (dest: [ni]a) (xs : [n]a) (is : [ni]idx_t.t)
 =
-  let psize_ = psize / (i64.i32 ((n_bits + i64.num_bits) / u8.num_bits))
+  let psize_ = psize / (i64.i32 ((n_bits + i64.num_bits + u8.num_bits - 1)/u8.num_bits))
   let m = (n+psize_-1)/psize_
   let loop_over : {iter: idx_t.t, buff: [](idx_t.t, a)}
   = loop p = {iter=0, buff = dest |> zip is}
@@ -55,7 +55,7 @@ def partitioned_scatter [nd] [n] 'a
   (is: [n]idx_t.t)
   (vs: [n]a)
 : *[]a =
-  let psize_ = psize / (i64.i32 ((n_bits) / u8.num_bits))
+  let psize_ = psize / (i64.i32 ((n_bits + u8.num_bits - 1)/ u8.num_bits))
   let m = (n+psize_-1)/psize_
   let loop_over : {iter: idx_t.t, buff: [nd]a}
   = loop p = {iter=0, buff = dest}

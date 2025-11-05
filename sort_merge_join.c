@@ -15,11 +15,11 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 25*CHUNK_SIZE
-#define S_TABLE_SIZE 10*R_TABLE_SIZE
+#define R_TABLE_SIZE 1*CHUNK_SIZE
+#define S_TABLE_SIZE 1*R_TABLE_SIZE
 
-#define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define MERGE_PARTITION_SIZE 5*2084 // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
+#define BLOCK_SIZE (idx_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
+#define MERGE_PARTITION_SIZE 5*BLOCK_SIZE // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
@@ -85,13 +85,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 100000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 100000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 100000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 100000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
@@ -206,6 +206,8 @@ int main() {
     S_JOIN_BUFFER,
     BLOCK_SIZE,
     MERGE_PARTITION_SIZE,
+    false,
+    (R_TABLE_SIZE+S_TABLE_SIZE)*sizeof(long),
     logfile,
     ctx,
     con,

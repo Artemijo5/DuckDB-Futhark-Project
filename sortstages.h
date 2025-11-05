@@ -28,7 +28,7 @@
 void two_pass_sort_with_payloads(
   idx_t CHUNK_SIZE,
   size_t BUFFER_SIZE,
-  const int16_t block_size,
+  idx_t block_size,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -61,7 +61,7 @@ void two_pass_sort_with_payloads(
 void two_pass_sort_without_payloads(
   idx_t CHUNK_SIZE,
   size_t BUFFER_SIZE,
-  const int16_t block_size,
+  idx_t block_size,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -95,7 +95,7 @@ void two_pass_sort_without_payloads(
 idx_t semi_sort_with_payloads(
   idx_t CHUNK_SIZE,
   size_t BUFFER_SIZE,
-  const int16_t block_size,
+  idx_t block_size,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -109,7 +109,7 @@ idx_t semi_sort_with_payloads(
 idx_t semi_sort_without_payloads(
   idx_t CHUNK_SIZE,
   size_t BUFFER_SIZE,
-  const int16_t block_size,
+  idx_t block_size,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,

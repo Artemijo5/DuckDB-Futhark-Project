@@ -48,7 +48,7 @@ def byteSeq_eq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
   let r2 = getRadix i j x2
   let fb = i64.i32 ((i32.i64 b) - (j/u8.num_bits) - 1)
   let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
-  in all (id) (map2 (==) r1[fb:lb+1] r2[fb:lb+1])
+  in foldl (&&) (true) (map2 (==) r1[fb:lb+1] r2[fb:lb+1])
 
 def byteSeq_neq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
 : bool =
@@ -56,7 +56,7 @@ def byteSeq_neq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
   let r2 = getRadix i j x2
   let fb = i64.i32 ((i32.i64 b) - (j/u8.num_bits) - 1)
   let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
-  in any (id) (map2 (!=) r1[fb:lb+1] r2[fb:lb+1])
+  in foldl (||) (false) (map2 (!=) r1[fb:lb+1] r2[fb:lb+1])
 
 def byteSeq_leq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
 : bool =
@@ -234,7 +234,7 @@ def getPartitionBounds [n] [b]
     |> map (\(x1, x2) -> (getRadix i j x1, getRadix i j x2))
     |> map (\(x1, x2) -> zip x1 x2)
     |> zip (1..<n)
-    |> filter (\(_, rs) -> any (\(r1, r2) -> r1 != r2) rs)
+    |> filter (\(_, rs) -> foldl (||) (false) (rs |> map (\(r1, r2) -> r1 != r2)))
     |> map (.0)
   in {
     maxDepth = curDepth,
@@ -386,7 +386,7 @@ def rv_findPairCount [nS] [b]
 : (idx_t.t, idx_t.t)  = -- returns pair count & index of first match
   let cj =
     loop (count, j, i0) = (0, 0, -1) while j<nS do
-      if all (id) (map2 (==) rv tS[j])
+      if foldl (&&) (true) (map2 (==) rv tS[j])
       then (count+1, j+1, if i0<0 then j else i0)
       else (count, j+1, i0)
   in (cj.0, cj.2)
@@ -398,7 +398,7 @@ def rv_find_kth_match [nS] [b]
 : idx_t.t =
   let cj =
     loop (count, j) = (0, 0) while (count<k && j<nS) do
-      if all (id) (map2 (==) rv tS[j])
+      if foldl (&&) (true) (map2 (==) rv tS[j])
       then (count+1, j+1)
       else (count, j+1)
   in (cj.1-1)
@@ -409,11 +409,11 @@ def rv_find_match_if_exists [nS] [b]
 : idx_t.t =
   let cj =
     loop (count, j) = (0, 0) while (count<1 && j<nS) do
-      if all (id) (map2 (==) rv tS[j])
+      if foldl (&&) (true) (map2 (==) rv tS[j])
       then (count+1, j+1)
       else (count, j+1)
   in 
-    if ( cj.1<nS || (all (id) (map2 (==) rv tS[nS-1])) )
+    if ( cj.1<nS || (foldl (&&) (true) (map2 (==) rv tS[nS-1])) )
     then cj.1-1
     else -1
 

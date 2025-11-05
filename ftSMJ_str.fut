@@ -63,7 +63,7 @@ def do_smj_str [n1] [n2] [total_len1] [total_len2] 't
 	let str_lt : idx_t.t -> idx_t.t -> bool
 		= (\i1 i2 -> (str_cmp_across_contents str_content1 str_idx1 str_content2 str_idx2 i1 i2 char_cmp)<0)
 	in
-		inner_SMJ (-1) (iota n1) (iota n2) offset_R offset_S partitionSize scatter_psize (str_eq) (str_gt) (str_lt)
+		inner_SMJ (i64.num_bits) (-1) (iota n1) (iota n2) offset_R offset_S partitionSize scatter_psize (str_eq) (str_gt) (str_lt)
 
 -- TODO entry points for sort...
 
@@ -84,5 +84,5 @@ def smj_str
 		offset_S
 		partitionSize
 		scatter_psize
-	let jp_str = gather_str scatter_psize jp.ix str_info1
+	let jp_str = gather_str scatter_psize jp.vs str_info1
 	in {str_info = jp_str, ix = jp.ix, iy = jp.iy}

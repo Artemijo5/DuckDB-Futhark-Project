@@ -56,7 +56,7 @@ void sortRelationByKey_inFuthark(
 	struct futhark_u8_2d **outPayloads,
 	duckdb_type key_type,
 	int blocked,
-	const int16_t block_size,
+	idx_t block_size,
 	void* inKeys,
 	char *inPayloads,
 	idx_t pL_bytesPerRow,
@@ -68,7 +68,7 @@ void sortKeyColumn_inFuthark(
 	duckdb_type type,
 	idx_t incr,
 	int blocked,
-	const int16_t block_size,
+	idx_t block_size,
 	struct futhark_i64_1d **outIdx,
 	void* keys,
 	idx_t card

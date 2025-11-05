@@ -77,23 +77,23 @@ type sortStruct_float [n] [b] = sortStruct [n] [b] f32
 type sortStruct_double [n] [b] = sortStruct [n] [b] f64
 
 def radixSortRelation_signed_integral [n] [b] 'a 
-  (block_size: i16)
+  (block_size: idx_t.t)
   (xs: sortStruct [n] [b] a)
   (num_bits: i32)
   (get_bit: i32 -> a -> i32)
  : sortStruct [n] [b] a =
   let xys : [n](a, [b]u8) = zip xs.k xs.pL
-  let sorted_xys = my_radix_sort_int (i64.i16 block_size) 2 num_bits (\i xy -> get_bit i xy.0) xys
+  let sorted_xys = my_radix_sort_int block_size 2 num_bits (\i xy -> get_bit i xy.0) xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
   in {k = un_xys.0, pL = un_xys.1}
 def radixSortRelation_signed_float [n] [b] 'a 
-  (block_size: i16)
+  (block_size: idx_t.t)
   (xs: sortStruct [n] [b] a)
   (num_bits: i32)
   (get_bit: i32 -> a -> i32)
  : sortStruct [n] [b] a =
   let xys : [n](a, [b]u8) = zip xs.k xs.pL
-  let sorted_xys = my_radix_sort_float (i64.i16 block_size) 2 num_bits (\i xy -> get_bit i xy.0) xys
+  let sorted_xys = my_radix_sort_float block_size 2 num_bits (\i xy -> get_bit i xy.0) xys
   let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
   in {k = un_xys.0, pL = un_xys.1}
 def mergeSortRelation [n] [b] 'a
@@ -122,24 +122,24 @@ type sortInfo_double [n] = sortInfo [n] f64
 
 def radixSortColumn_signed_integral [n] 'a
   (incr: idx_t.t)
-  (block_size: i16)
+  (block_size: idx_t.t)
   (xs: [n]a)
   (num_bits: i32)
   (get_bit: i32 -> a -> i32)
  : sortInfo [n] a =
   let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
-  let sorted_ixs = my_radix_sort_int (i64.i16 block_size) 2 num_bits (\i ix -> get_bit i ix.1) ixs
+  let sorted_ixs = my_radix_sort_int block_size 2 num_bits (\i ix -> get_bit i ix.1) ixs
   let un_ixs = unzip sorted_ixs
   in {is = un_ixs.0, xs = un_ixs.1}
 def radixSortColumn_signed_float [n] 'a 
   (incr: idx_t.t)
-  (block_size: i16)
+  (block_size: idx_t.t)
   (xs: [n]a)
   (num_bits: i32)
   (get_bit: i32 -> a -> i32)
  : sortInfo [n] a =
   let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
-  let sorted_ixs = my_radix_sort_float (i64.i16 block_size) 2 num_bits (\i ix -> get_bit i ix.1) ixs
+  let sorted_ixs = my_radix_sort_float block_size 2 num_bits (\i ix -> get_bit i ix.1) ixs
   let un_ixs = unzip sorted_ixs
   in {is = un_ixs.0, xs = un_ixs.1}
 def mergeSortColumn [n] 'a
@@ -262,15 +262,17 @@ def find_joinTuples [nR] [nS] 't
 
 -- NOTE : R is at the left side of all comparisons
 def mergeJoin [nR] [nS] 't
+  (n_bits: i32)
   (tR: [nR]t)
   (tS: [nS]t)
   (offset_R: idx_t.t)
   (offset_S: idx_t.t)
-  (partitionSize: idx_t.t)
+  (partitionSize_: idx_t.t)
   (eq: t -> t -> bool)
   (gt : t -> t -> bool)
   (lt : t -> t -> bool)
 : joinTup [nR] t =
+  let partitionSize = partitionSize_ / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits))
   let numIter_R = (nR + partitionSize - 1)/partitionSize
   let numIter_S = (nS + partitionSize - 1)/partitionSize
   let loop_over_R : (idx_t.t, joinTup [nR] t, idx_t.t)
@@ -363,6 +365,7 @@ def joinTups_to_joinPairs_InnerJoin [n] 't
 
 -- NOTE : R is at the left side of all comparisons
 def inner_SMJ [nR] [nS] 't
+  (n_bits : i32)
   (dummy_elem: t)
   (tR: [nR]t)
   (tS: [nS]t)
@@ -374,7 +377,7 @@ def inner_SMJ [nR] [nS] 't
   (gt : t -> t -> bool)
   (lt : t -> t -> bool)
 =
-  let jTups = mergeJoin (tR) (tS) (offset_R) (offset_S) (partitionSize) (eq) (gt) (lt)
+  let jTups = mergeJoin (n_bits) (tR) (tS) (offset_R) (offset_S) (partitionSize) (eq) (gt) (lt)
   in joinTups_to_joinPairs_InnerJoin (jTups) (dummy_elem)
 
 -- | Join pairs of type short.

@@ -17,6 +17,8 @@ void SortMergeJoin_GFTR(
   idx_t S_JOIN_BUFFER,
   idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
+  idx_t GATHER_PSIZE,
+  int radix_sort,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -109,8 +111,8 @@ void SortMergeJoin_GFTR(
         &Rbuff_ft,
         &R_payload_ft,
         key_type,
-        false, // TODO argument
-        256, // TODO
+        radix_sort,
+        BLOCK_SIZE,
         Rbuff,
         R_payload,
         R_pL_bytesPerRow,
@@ -226,8 +228,8 @@ void SortMergeJoin_GFTR(
           &Sbuff_ft,
           &S_payload_ft,
           key_type,
-          false, // TODO argument
-          256, // TODO
+          radix_sort,
+          BLOCK_SIZE,
           Sbuff,
           S_payload,
           S_pL_bytesPerRow,
@@ -296,7 +298,7 @@ void SortMergeJoin_GFTR(
       // Gather R's payloads
       char* Rpl_asBytes;
       Rpl_asBytes = malloc(numPairs * R_pL_bytesPerRow);
-      gatherPayloads_GFTR(ctx, Rpl_asBytes, R_pL_bytesPerRow, R_curIdx, BLOCK_SIZE, idxR_ft, R_payload_ft, R_rowCount, numPairs);
+      gatherPayloads_GFTR(ctx, Rpl_asBytes, R_pL_bytesPerRow, R_curIdx, GATHER_PSIZE, idxR_ft, R_payload_ft, R_rowCount, numPairs);
       mylog(logfile, "Gathered R payloads.");
       void* Rpl[R_col_count-1];
       payloadColumnsFromByteArray(Rpl, R_payloadTypes, Rpl_asBytes, R_col_count-1, numPairs);
@@ -306,7 +308,7 @@ void SortMergeJoin_GFTR(
       // Gather S's payloads
       char* Spl_asBytes;
       Spl_asBytes = malloc(numPairs * S_pL_bytesPerRow);
-      gatherPayloads_GFTR(ctx, Spl_asBytes, S_pL_bytesPerRow, S_curIdx, BLOCK_SIZE, idxS_ft, S_payload_ft, S_rowCount, numPairs);
+      gatherPayloads_GFTR(ctx, Spl_asBytes, S_pL_bytesPerRow, S_curIdx, GATHER_PSIZE, idxS_ft, S_payload_ft, S_rowCount, numPairs);
       mylog(logfile, "Gathered S payloads.");
       void* Spl[S_col_count-1];
       payloadColumnsFromByteArray(Spl, S_payloadTypes, Spl_asBytes, S_col_count-1, numPairs);
@@ -442,6 +444,8 @@ void Inner_MergeJoin_GFTR(
 	idx_t S_JOIN_BUFFER,
 	idx_t BLOCK_SIZE,
 	idx_t MERGE_PARTITION_SIZE,
+  idx_t GATHER_PSIZE,
+  int radix_sort,
 	FILE *logfile,
 	struct futhark_context *ctx,
 	duckdb_connection con,
@@ -459,6 +463,8 @@ void Inner_MergeJoin_GFTR(
     S_JOIN_BUFFER,
     BLOCK_SIZE,
     MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
+    radix_sort,
     logfile,
     ctx,
     con,
@@ -480,6 +486,8 @@ void SortMergeJoin_GFUR(
   idx_t S_JOIN_BUFFER,
   idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
+  idx_t GATHER_PSIZE,
+  int radix_sort,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -572,8 +580,8 @@ void SortMergeJoin_GFUR(
         &Rbuff_ft,
         key_type,
         0,
-        false, // TODO argument
-        256, // TODO
+        radix_sort, // TODO argument
+        BLOCK_SIZE, // TODO
         &R_idx_ft,
         Rbuff,
         R_rowCount
@@ -690,8 +698,8 @@ void SortMergeJoin_GFUR(
           &Sbuff_ft,
           key_type,
           0,
-          false, // TODO argument
-          256, // TODO
+          radix_sort, // TODO argument
+          BLOCK_SIZE, // TODO
           &S_idx_ft,
           Sbuff,
           S_rowCount
@@ -760,7 +768,7 @@ void SortMergeJoin_GFUR(
       mylog(logfile, "Join has been performed.");
       // Gather R's payloads
       char* gathered_R_payload = malloc(numPairs * R_pL_bytesPerRow);
-      gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, R_curIdx, BLOCK_SIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
+      gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, R_curIdx, GATHER_PSIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
       futhark_free_i64_1d(ctx, idxR_ft); // no longer needed
       mylog(logfile, "Gathered R payloads.");
       void* Rpl[R_col_count-1];
@@ -770,7 +778,7 @@ void SortMergeJoin_GFUR(
 
       // Gather S's payloads
       char* gathered_S_payload = malloc(numPairs * S_pL_bytesPerRow);
-      gatherPayloads_GFUR_inFuthark(ctx, gathered_S_payload, S_pL_bytesPerRow, 0, S_curIdx, BLOCK_SIZE, S_idx_ft, idxS_ft, S_payload, S_rowCount, numPairs);
+      gatherPayloads_GFUR_inFuthark(ctx, gathered_S_payload, S_pL_bytesPerRow, 0, S_curIdx, GATHER_PSIZE, S_idx_ft, idxS_ft, S_payload, S_rowCount, numPairs);
       futhark_free_i64_1d(ctx, idxS_ft); // no longer needed
       mylog(logfile, "Gathered R payloads.");
       void* Spl[S_col_count-1];
@@ -906,8 +914,8 @@ void Inner_MergeJoin_GFUR(
 	idx_t S_JOIN_BUFFER,
 	idx_t BLOCK_SIZE,
 	idx_t MERGE_PARTITION_SIZE,
-	idx_t PAYLOAD_INDEX_BLOCK,
-	idx_t PAYLOAD_GATHER_BLOCK,
+	idx_t GATHER_PSIZE,
+  int radix_sort,
 	FILE *logfile,
 	struct futhark_context *ctx,
 	duckdb_connection con,
@@ -928,6 +936,8 @@ void Inner_MergeJoin_GFUR(
     S_JOIN_BUFFER,
     BLOCK_SIZE,
     MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
+    radix_sort,
     logfile,
     ctx,
     con,
@@ -982,6 +992,8 @@ void SortMergeJoin_GFTR_with_S_semisorted(
   idx_t S_JOIN_BUFFER,
   idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
+  idx_t GATHER_PSIZE,
+  int radix_sort,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -1075,8 +1087,8 @@ void SortMergeJoin_GFTR_with_S_semisorted(
         &Rbuff_ft,
         &R_payload_ft,
         key_type,
-        false, // TODO argument
-        256, // TODO
+        radix_sort, // TODO argument
+        BLOCK_SIZE, // TODO
         Rbuff,
         R_payload,
         R_pL_bytesPerRow,
@@ -1249,7 +1261,7 @@ void SortMergeJoin_GFTR_with_S_semisorted(
         // Gather R's payloads
         char* Rpl_asBytes;
         Rpl_asBytes = malloc(numPairs * R_pL_bytesPerRow);
-        gatherPayloads_GFTR(ctx, Rpl_asBytes, R_pL_bytesPerRow, R_curIdx, BLOCK_SIZE, idxR_ft, R_payload_ft, R_rowCount, numPairs);
+        gatherPayloads_GFTR(ctx, Rpl_asBytes, R_pL_bytesPerRow, R_curIdx, GATHER_PSIZE, idxR_ft, R_payload_ft, R_rowCount, numPairs);
         mylog(logfile, "Gathered R payloads.");
         void* Rpl[R_col_count-1];
         payloadColumnsFromByteArray(Rpl, R_payloadTypes, Rpl_asBytes, R_col_count-1, numPairs);
@@ -1259,7 +1271,7 @@ void SortMergeJoin_GFTR_with_S_semisorted(
         // Gather S's payloads
         char* Spl_asBytes;
         Spl_asBytes = malloc(numPairs * S_pL_bytesPerRow);
-        gatherPayloads_GFTR(ctx, Spl_asBytes, S_pL_bytesPerRow, S_curIdx, BLOCK_SIZE, idxS_ft, S_payload_ft, S_rowCount, numPairs);
+        gatherPayloads_GFTR(ctx, Spl_asBytes, S_pL_bytesPerRow, S_curIdx, GATHER_PSIZE, idxS_ft, S_payload_ft, S_rowCount, numPairs);
         mylog(logfile, "Gathered S payloads.");
         void* Spl[S_col_count-1];
         payloadColumnsFromByteArray(Spl, S_payloadTypes, Spl_asBytes, S_col_count-1, numPairs);
@@ -1395,6 +1407,8 @@ void SortMergeJoin_GFUR_with_S_semisorted(
   idx_t S_JOIN_BUFFER,
   idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
+  idx_t GATHER_PSIZE,
+  int radix_sort,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -1487,8 +1501,8 @@ void SortMergeJoin_GFUR_with_S_semisorted(
         &Rbuff_ft,
         key_type,
         0,
-        false, // TODO argument
-        256, // TODO
+        radix_sort, // TODO argument
+        BLOCK_SIZE, // TODO
         &R_idx_ft,
         Rbuff,
         R_rowCount
@@ -1662,7 +1676,7 @@ void SortMergeJoin_GFUR_with_S_semisorted(
         mylog(logfile, "Join has been performed.");
         // Gather R's payloads
         char* gathered_R_payload = malloc(numPairs * R_pL_bytesPerRow);
-        gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, R_curIdx, BLOCK_SIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
+        gatherPayloads_GFUR_inFuthark(ctx, gathered_R_payload, R_pL_bytesPerRow, 0, R_curIdx, GATHER_PSIZE, R_idx_ft, idxR_ft, R_payload, R_rowCount, numPairs);
         futhark_free_i64_1d(ctx, idxR_ft); // no longer needed
         mylog(logfile, "Gathered R payloads.");
         void* Rpl[R_col_count-1];
@@ -1672,7 +1686,7 @@ void SortMergeJoin_GFUR_with_S_semisorted(
 
         // Gather S's payloads
         char* gathered_S_payload = malloc(numPairs * S_pL_bytesPerRow);
-        gatherPayloads_GFUR_inFuthark(ctx, gathered_S_payload, S_pL_bytesPerRow, 0, S_curIdx, BLOCK_SIZE, S_idx_ft, idxS_ft, S_payload, S_rowCount, numPairs);
+        gatherPayloads_GFUR_inFuthark(ctx, gathered_S_payload, S_pL_bytesPerRow, 0, S_curIdx, GATHER_PSIZE, S_idx_ft, idxS_ft, S_payload, S_rowCount, numPairs);
         futhark_free_i64_1d(ctx, idxS_ft); // no longer needed
         mylog(logfile, "Gathered R payloads.");
         void* Spl[S_col_count-1];
@@ -1813,6 +1827,7 @@ void MergeJoin_GFTR_semisorted(
   idx_t S_JOIN_BUFFER,
   idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
+  idx_t GATHER_PSIZE,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -2072,7 +2087,7 @@ void MergeJoin_GFTR_semisorted(
           // Gather R's payloads
           char* Rpl_asBytes;
           Rpl_asBytes = malloc(numPairs * R_pL_bytesPerRow);
-          gatherPayloads_GFTR(ctx, Rpl_asBytes, R_pL_bytesPerRow, R_curIdx, BLOCK_SIZE, idxR_ft, R_payload_ft, R_rowCount, numPairs);
+          gatherPayloads_GFTR(ctx, Rpl_asBytes, R_pL_bytesPerRow, R_curIdx, GATHER_PSIZE, idxR_ft, R_payload_ft, R_rowCount, numPairs);
           mylog(logfile, "Gathered R payloads.");
           void* Rpl[R_col_count-1];
           payloadColumnsFromByteArray(Rpl, R_payloadTypes, Rpl_asBytes, R_col_count-1, numPairs);
@@ -2082,7 +2097,7 @@ void MergeJoin_GFTR_semisorted(
           // Gather S's payloads
           char* Spl_asBytes;
           Spl_asBytes = malloc(numPairs * S_pL_bytesPerRow);
-          gatherPayloads_GFTR(ctx, Spl_asBytes, S_pL_bytesPerRow, S_curIdx, BLOCK_SIZE, idxS_ft, S_payload_ft, S_rowCount, numPairs);
+          gatherPayloads_GFTR(ctx, Spl_asBytes, S_pL_bytesPerRow, S_curIdx, GATHER_PSIZE, idxS_ft, S_payload_ft, S_rowCount, numPairs);
           mylog(logfile, "Gathered S payloads.");
           void* Spl[S_col_count-1];
           payloadColumnsFromByteArray(Spl, S_payloadTypes, Spl_asBytes, S_col_count-1, numPairs);
@@ -2220,8 +2235,7 @@ void MergeJoin_GFUR_semisorted(
   idx_t S_JOIN_BUFFER,
   idx_t BLOCK_SIZE,
   idx_t MERGE_PARTITION_SIZE,
-  idx_t PAYLOAD_INDEX_BLOCK,
-  idx_t PAYLOAD_GATHER_BLOCK,
+  idx_t GATHER_PSIZE,
   FILE *logfile,
   struct futhark_context *ctx,
   duckdb_connection con,
@@ -2244,6 +2258,7 @@ void MergeJoin_GFUR_semisorted(
     S_JOIN_BUFFER,
     BLOCK_SIZE,
     MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
     logfile,
     ctx,
     con,

@@ -163,7 +163,7 @@ def get_grid_angle_measure_from_coords [dim] 't
 	-- get grid id
 	let g = get_grid_id_from_coords skOp skB coords
 	-- get angle id
-	let dists_g = map2 (skOp.minus) coords skB.start_of_grid_partition[0]
+	let dists_g = map2 (skOp.minus) coords skB.start_of_grid_partition[g]
 	let (measure, angles) = cartesian_to_spherical skOp dists_g
 	let base_angles = iota (dim-1)
 		|> map (\i -> (f64.pi/2.0) / (f64.i64 skB.angle_partitions_per_dim[i]) )
@@ -172,7 +172,7 @@ def get_grid_angle_measure_from_coords [dim] 't
 			let i_ = (i64.f64 (a/ba))*pf
 			in
 				if i_ < 0 then 0
-				else if i_ >= skB.total_angle_no then (skB.total_angle_no-1)
+				else if i_ >= pf then (pf-1)
 				else i_
 		)
 		angles
@@ -222,7 +222,7 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 					while !isDomd && j<skB.total_grid_no do
 						let o_j = skB.start_of_grid_partition[j]
 						let count_j = count_per_grid_part[j]
-						let domd = (count_j>0 && all (id) (map2 (skOp.skyline_lt) this_o o_j))
+						let domd = (count_j>0 && foldl (&&) (true) (map2 (skOp.skyline_lt) this_o o_j))
 						in (domd, j+1)
 				in isD
 			)
@@ -278,7 +278,7 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 					while !isDomd && j<skB.total_grid_no do
 						let o_j = skB.start_of_grid_partition[j]
 						let count_j = count_per_grid_part[j]
-						let domd = (count_j>0 && all (id) (map2 (skOp.skyline_lt) this_o o_j))
+						let domd = (count_j>0 && foldl (&&) (true) (map2 (skOp.skyline_lt) this_o o_j))
 						in (domd, j+1)
 				in isD
 			)
@@ -322,9 +322,9 @@ def calc_local_Skyline [dim] 't 'pL_t
 				while !isElimd && j<end_idx do
 					let cmp_x = skI.xys[j].0
 					let elimd =
-						(all (id) (map2 (skOp.skyline_leq) this_x cmp_x))
+						(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
 						&&
-						(any (id) (map2 (skOp.skyline_lt) this_x cmp_x))
+						(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
 					in (elimd, j+1)
 			in
 				if loop_over.0
@@ -585,9 +585,9 @@ def calc_global_Skyline [dim] 't 'pL_t
 				while !isElimd && j<n do
 					let cmp_x = skI.xys[j].0
 					let elimd =
-						(all (id) (map2 (skOp.skyline_leq) this_x cmp_x))
+						(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
 						&&
-						(any (id) (map2 (skOp.skyline_lt) this_x cmp_x))
+						(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
 					in (elimd, j+1)
 			in
 				if loop_over.0

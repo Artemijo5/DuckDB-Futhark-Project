@@ -38,7 +38,7 @@ void sortRelationByKey(
 	char *outPayloads,
 	duckdb_type key_type,
 	int blocked,
-	const int16_t block_size,
+	idx_t block_size,
 	void* inKeys,
 	char* inPayloads,
 	idx_t pL_bytesPerRow,
@@ -64,7 +64,7 @@ void sortKeyColumn(
 	duckdb_type type,
 	idx_t incr,
 	int blocked,
-	const int16_t block_size,
+	idx_t block_size,
 	struct futhark_i64_1d **outIdx,
 	void* keys,
 	idx_t card
@@ -86,7 +86,7 @@ void orderPayloadColumn(
 	void *outCol,
 	duckdb_type type,
 	idx_t incr,
-	const int16_t block_size,
+	idx_t block_size,
 	struct futhark_i64_1d *orderBy,
 	void* inCol,
 	idx_t card

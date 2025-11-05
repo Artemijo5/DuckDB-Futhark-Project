@@ -14,7 +14,7 @@
 #define BUFFER_SIZE 256*CHUNK_SIZE
 #define TABLE_SIZE BUFFER_SIZE - 12
 
-#define BLOCK_SIZE (int16_t)256
+#define BLOCK_SIZE (idx_t)2048
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "4GB"
