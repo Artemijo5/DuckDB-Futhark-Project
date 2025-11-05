@@ -15,30 +15,37 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE CHUNK_SIZE
-#define S_TABLE_SIZE CHUNK_SIZE
+#define R_TABLE_SIZE 2*CHUNK_SIZE
+#define S_TABLE_SIZE 4*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define MAX_PARTITION_SIZE 1024
-#define SCATTER_PSIZE 12000
+#define SCATTER_PSIZE 32000
 
 #define RADIX_BITS 16
 // TODO for some reason partitioning "all the way through" causes some result tuples to be omitted (?!)
 #define MAX_DEPTH 3
 
-#define R_TBL_NAME "R_tbl"
-#define S_TBL_NAME "S_tbl"
+#define R_TBL_NAME "R2_tbl"
+#define S_TBL_NAME "S2_tbl"
+
+#define R_interm "R_tbl_interm"
+#define S_interm "S_tbl_interm"
+#define R_interm_without "R_tbl_interm_wo"
+#define S_interm_without "S_tbl_interm_wo"
 
 #define R_KEY "k"
 #define S_KEY "k"
 
-#define R_JOIN_BUFFER 5*CHUNK_SIZE
-#define S_JOIN_BUFFER 25*CHUNK_SIZE
+#define R_JOIN_BUFFER 1*CHUNK_SIZE
+#define S_JOIN_BUFFER 2*CHUNK_SIZE
 #define JOIN_TBL_NAME "R_S_HashJoinTbl_GFTR"
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "20GB"
 #define DDB_TEMPDIR "tps_tempdir"
+
+#define VERBOSE false
 
 int main() {
   // Initialise logger
@@ -47,6 +54,7 @@ int main() {
     perror("Failed to initialise logger.");
     return -1;
   }
+  FILE* func_logfile = (VERBOSE)? logfile: NULL;
 
   // DuckDB initialisation
   duckdb_database db;
@@ -70,6 +78,11 @@ int main() {
 
   duckdb_connect(db, &con);
 
+  // Set up futhark core
+  struct futhark_context_config *cfg = futhark_context_config_new();
+  struct futhark_context *ctx = futhark_context_new(cfg);
+  mylog(logfile, "Set up futhark context & config.");
+
   // Create tables R and S
   ///*
   duckdb_query(con, "setseed(0.42);", NULL);
@@ -85,13 +98,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 100000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 3000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 100000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 3000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
@@ -133,11 +146,79 @@ int main() {
   mylog(logfile, "Created the tables R and S.");
   */
 
-
-  // Set up futhark core
-  struct futhark_context_config *cfg = futhark_context_config_new();
-  struct futhark_context *ctx = futhark_context_new(cfg);
-  mylog(logfile, "Set up futhark context & config.");
+  mylog(logfile, "Semi-partitioning tables...");
+  idx_t R_num_tbl = radix_semiPartition_GFTR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER+S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    SCATTER_PSIZE,
+    MAX_PARTITION_SIZE,
+    MAX_DEPTH,
+    NULL,
+    RADIX_BITS,
+    2,
+    ctx,
+    con,
+    R_TBL_NAME,
+    R_KEY,
+    R_interm,
+    false
+  );
+  mylog(logfile, "Semi-partitioned R (with payloads).");
+  idx_t S_num_tbl = radix_semiPartition_GFTR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER+S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    SCATTER_PSIZE,
+    MAX_PARTITION_SIZE,
+    MAX_DEPTH,
+    NULL,
+    RADIX_BITS,
+    2,
+    ctx,
+    con,
+    S_TBL_NAME,
+    S_KEY,
+    S_interm,
+    false
+  );
+  mylog(logfile, "Semi-partitioned S (with payloads).");
+  idx_t R_num_tbl_wo = radix_semiPartition_GFUR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER+S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    SCATTER_PSIZE,
+    MAX_PARTITION_SIZE,
+    MAX_DEPTH,
+    NULL,
+    RADIX_BITS,
+    2,
+    ctx,
+    con,
+    R_TBL_NAME,
+    R_KEY,
+    R_interm_without,
+    false
+  );
+  mylog(logfile, "Semi-partitioned R (without payloads).");
+  idx_t S_num_tbl_wo = radix_semiPartition_GFUR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER+S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    SCATTER_PSIZE,
+    MAX_PARTITION_SIZE,
+    MAX_DEPTH,
+    NULL,
+    RADIX_BITS,
+    2,
+    ctx,
+    con,
+    S_TBL_NAME,
+    S_KEY,
+    S_interm_without,
+    false
+  );
+  mylog(logfile, "Semi-partitioned S (without payloads).");
 
 // ############################################################################################################
 // JOIN PHASE
@@ -145,13 +226,13 @@ int main() {
 
   mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
   char joinQ[1000];
-  sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
+  sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes_RHJ AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
     S_KEY, R_TBL_NAME, S_TBL_NAME, R_KEY, S_KEY);
   if(duckdb_query(con, joinQ, NULL) == DuckDBError) {
     perror("Failed to join with duckdb.");
   }
 
-  mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
+  mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) radix-hash join. ----------------------------------------");
   RadixHashJoin_GFTR(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
@@ -160,7 +241,7 @@ int main() {
     SCATTER_PSIZE,
     MAX_PARTITION_SIZE,
     MAX_DEPTH,
-    logfile,
+    func_logfile,
     ctx,
     con,
     RADIX_BITS,
@@ -173,10 +254,87 @@ int main() {
     false,
     R_KEY,
     S_KEY,
-    JOIN_TBL_NAME,
+    "GPU_RHJ_GFTR",
     false,
     false
-  );  
+  );
+  mylog(logfile, "EXPERIMENT #3 -- GPU-based (GFUR) radix-hash join. ----------------------------------------");
+  RadixHashJoin_GFUR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    SCATTER_PSIZE,
+    MAX_PARTITION_SIZE,
+    MAX_DEPTH,
+    func_logfile,
+    ctx,
+    con,
+    RADIX_BITS,
+    2, // bit step
+    R_TBL_NAME,
+    S_TBL_NAME,
+    false,
+    false,
+    false,
+    false,
+    R_KEY,
+    S_KEY,
+    "GPU_RHJ_GFUR",
+    false,
+    false
+  );
+  mylog(logfile, "EXPERIMENT #4 -- GPU-based (GFTR) radix-hash join (from Semi-partitioned). ---------------------");
+  RadixHashJoin_semisorted_GFTR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    SCATTER_PSIZE,
+    MAX_PARTITION_SIZE,
+    MAX_DEPTH,
+    func_logfile,
+    ctx,
+    con,
+    RADIX_BITS,
+    2,
+    R_interm,
+    S_interm,
+    R_num_tbl,
+    S_num_tbl,
+    R_KEY,
+    S_KEY,
+    "GPU_RHJ_GFTR_semipart",
+    false,
+    false
+  );
+  mylog(logfile, "EXPERIMENT #5 -- GPU-based (GFUR) radix-hash join (from Semi-partitioned). ---------------------");
+  RadixHashJoin_semisorted_GFUR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    SCATTER_PSIZE,
+    MAX_PARTITION_SIZE,
+    MAX_DEPTH,
+    func_logfile,
+    ctx,
+    con,
+    RADIX_BITS,
+    2,
+    R_TBL_NAME,
+    S_TBL_NAME,
+    R_interm_without,
+    S_interm_without,
+    R_num_tbl_wo,
+    S_num_tbl_wo,
+    R_KEY,
+    S_KEY,
+    "GPU_RHJ_GFUR_semipart_TMP",
+    "GPU_RHJ_GFUR_semipart",
+    false,
+    false
+  );
 
   // Clean-up  
   futhark_context_free(ctx);

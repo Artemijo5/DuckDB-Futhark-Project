@@ -15,11 +15,12 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 2*CHUNK_SIZE
-#define S_TABLE_SIZE 4*CHUNK_SIZE
+#define R_TABLE_SIZE 50*CHUNK_SIZE
+#define S_TABLE_SIZE 100*CHUNK_SIZE
 
-#define BLOCK_SIZE (idx_t)256 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define MERGE_PARTITION_SIZE 5*BLOCK_SIZE // average size of each partition in ONE array (half the size of co-partitions by Merge Path)
+#define BLOCK_SIZE (idx_t)128000 // TODO segfault (...)
+#define MERGE_PARTITION_SIZE (idx_t)64000
+#define GATHER_PSIZE (idx_t)32000 // TODO segfault when too large (might be laptop issue...)
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
@@ -29,17 +30,20 @@
 
 #define R_interm "R_tbl_interm"
 #define S_interm "S_tbl_interm"
+#define R_interm_without "R_tbl_interm_wo"
+#define S_interm_without "S_tbl_interm_wo"
 
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER CHUNK_SIZE
-#define S_JOIN_BUFFER 2*CHUNK_SIZE
-#define JOIN_TBL_NAME "R_S_joinTbl_SMJ"
+#define R_JOIN_BUFFER 25*CHUNK_SIZE
+#define S_JOIN_BUFFER 50*CHUNK_SIZE
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "20GB"
 #define DDB_TEMPDIR "tps_tempdir"
+
+#define VERBOSE false
 
 int main() {
   // Initialise logger
@@ -48,6 +52,7 @@ int main() {
     perror("Failed to initialise logger.");
     return -1;
   }
+  FILE* func_logfile = (VERBOSE)? logfile: NULL;
 
   // DuckDB initialisation
   duckdb_database db;
@@ -85,13 +90,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 1000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 2000000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 1000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 2000000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
@@ -104,64 +109,12 @@ int main() {
   struct futhark_context *ctx = futhark_context_new(cfg);
   mylog(logfile, "Set up futhark context & config.");
 
-  mylog(logfile, "Now sorting the tables...");
-
-  // R
-  /*two_pass_sort_with_payloads(
-    CHUNK_SIZE,
-    BUFFER_SIZE,
-    BLOCK_SIZE,
-    NULL,
-    ctx,
-    con,
-    R_TBL_NAME,
-    R_KEY,
-    R_interm,
-    R_SORTED_NAME,
-    false,
-    false,
-    true
-  );*/
-  //Tmp
-  ///*
-  if(  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE R_tbl_sorted AS (SELECT * FROM R_tbl ORDER BY k);", NULL) == DuckDBError) {
-	perror("Failed to sort R_tbl.");
-	return -1;
-  }
-  //*/
-  //mylog(logfile, "Sorted table R.");
-
-  // S
-  /*two_pass_sort_with_payloads(
-    CHUNK_SIZE,
-    BUFFER_SIZE,
-    BLOCK_SIZE,
-    NULL,
-    ctx,
-    con,
-    S_TBL_NAME,
-    S_KEY,
-    S_interm,
-    S_SORTED_NAME,
-    false,
-    false,
-    true
-  );*/
-
-  //Tmp
-  ///*
-  if ( duckdb_query(con, "CREATE OR REPLACE TEMP TABLE S_tbl_sorted AS (SELECT * FROM S_tbl ORDER BY k);", NULL) == DuckDBError) {
-	perror("Failed to sort S_tbl.");
-	return -1;
-  }
-  //*/
-  //mylog(logfile, "Sorted table S.");
-
   // Semisorts
-  /*
+  ///*
+  mylog(logfile, "Semi-sorting tables...");
   idx_t R_tbl_num = semi_sort_with_payloads(
     CHUNK_SIZE,
-    R_JOIN_BUFFER,
+    R_JOIN_BUFFER+S_JOIN_BUFFER,
     BLOCK_SIZE,
     NULL,
     ctx,
@@ -172,9 +125,10 @@ int main() {
     false,
     false
   );
+  mylog(logfile, "Semi-sorted R (with payloads).");
   idx_t S_tbl_num = semi_sort_with_payloads(
     CHUNK_SIZE,
-    S_JOIN_BUFFER,
+    R_JOIN_BUFFER+S_JOIN_BUFFER,
     BLOCK_SIZE,
     NULL,
     ctx,
@@ -185,13 +139,42 @@ int main() {
     false,
     false
   );
-  */
+  mylog(logfile, "Semi-sorted S (with payloads).");
+  idx_t R_tbl_num_without = semi_sort_without_payloads(
+    CHUNK_SIZE,
+    2*(R_JOIN_BUFFER+S_JOIN_BUFFER),
+    BLOCK_SIZE,
+    NULL,
+    ctx,
+    con,
+    R_TBL_NAME,
+    R_KEY,
+    R_interm_without,
+    false,
+    false
+  );
+  mylog(logfile, "Semi-sorted R (without payloads).");
+  idx_t S_tbl_num_without = semi_sort_without_payloads(
+    CHUNK_SIZE,
+    2*(R_JOIN_BUFFER+S_JOIN_BUFFER),
+    BLOCK_SIZE,
+    NULL,
+    ctx,
+    con,
+    S_TBL_NAME,
+    S_KEY,
+    S_interm_without,
+    false,
+    false
+  );
+  mylog(logfile, "Semi-sorted S (without payloads).");
+  //*/
 
 // ############################################################################################################
 // JOIN PHASE
 // ############################################################################################################
 
-  mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
+  mylog(logfile, "EXPERIMENT #1 -- CPU-base join.");
   char joinQ[1000];
   sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
     S_KEY, R_TBL_NAME, S_TBL_NAME, R_KEY, S_KEY);
@@ -199,16 +182,16 @@ int main() {
     perror("Failed to join with duckdb.");
   }
 
-  mylog(logfile, "EXPERIMENT #2 -- GPU-based (GFTR) join.");
+  mylog(logfile, "EXPERIMENT #2.a -- GPU-based (GFTR) SMJ (with merge sort)----------------------------------------------------");
   SortMergeJoin_GFTR(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
     BLOCK_SIZE,
-    R_JOIN_BUFFER*sizeof(long),
-    20*sizeof(long),
+    MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
     false,
-    logfile,
+    func_logfile,
     ctx,
     con,
     R_TBL_NAME,
@@ -217,11 +200,121 @@ int main() {
     false,
     R_KEY,
     S_KEY,
-    JOIN_TBL_NAME,
+    "GPU_SMJ_GFTR_mergeSort",
     false,
     false
   );
-  
+  /*mylog(logfile, "EXPERIMENT #2.b -- GPU-based (GFTR) SMJ (with radix sort)----------------------------------------------------");
+  SortMergeJoin_GFTR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
+    true,
+    func_logfile,
+    ctx,
+    con,
+    R_TBL_NAME,
+    S_TBL_NAME,
+    false,
+    false,
+    R_KEY,
+    S_KEY,
+    "GPU_SMJ_GFTR_radixSort",
+    false,
+    false
+  );*/
+  mylog(logfile, "EXPERIMENT #3.a -- GPU-based (GFUR) SMJ (with merge sort)----------------------------------------------------");
+  SortMergeJoin_GFUR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
+    false,
+    func_logfile,
+    ctx,
+    con,
+    R_TBL_NAME,
+    S_TBL_NAME,
+    false,
+    false,
+    R_KEY,
+    S_KEY,
+    "GPU_SMJ_GFUR_mergeSort",
+    false,
+    false
+  );
+  /*mylog(logfile, "EXPERIMENT #3.b -- GPU-based (GFUR) SMJ (with radix sort)----------------------------------------------------");
+  SortMergeJoin_GFUR(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
+    true,
+    func_logfile,
+    ctx,
+    con,
+    R_TBL_NAME,
+    S_TBL_NAME,
+    false,
+    false,
+    R_KEY,
+    S_KEY,
+    "GPU_SMJ_GFUR_radixSort",
+    false,
+    false
+  );*/
+  mylog(logfile, "EXPERIMENT #4 -- GPU-based (GFTR) SMJ (from semisorted)----------------------------------------------------");
+  MergeJoin_GFTR_semisorted(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
+    func_logfile,
+    ctx,
+    con,
+    R_interm,
+    S_interm,
+    R_tbl_num,
+    S_tbl_num,
+    R_KEY,
+    S_KEY,
+    "GPU_SMJ_GFTR_semisorted",
+    false,
+    false
+  );
+  mylog(logfile, "EXPERIMENT #5 -- GPU-based (GFUR) SMJ (from semisorted)----------------------------------------------------");
+  MergeJoin_GFUR_semisorted(
+    CHUNK_SIZE,
+    R_JOIN_BUFFER,
+    S_JOIN_BUFFER,
+    BLOCK_SIZE,
+    MERGE_PARTITION_SIZE,
+    GATHER_PSIZE,
+    func_logfile,
+    ctx,
+    con,
+    R_TBL_NAME,
+    S_TBL_NAME,
+    R_interm_without,
+    S_interm_without,
+    R_tbl_num_without,
+    S_tbl_num_without,
+    R_KEY,
+    S_KEY,
+    "GPU_SMJ_GFUR_semisorted_TMP",
+    "GPU_SMJ_GFUR_semisorted",
+    false,
+    false
+  );
 
   // Clean-up  
   futhark_context_free(ctx);

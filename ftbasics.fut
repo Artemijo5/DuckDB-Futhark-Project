@@ -23,21 +23,16 @@ def gather 't [ni] [n] (dummy_elem: t) (xs: [n]t) (is: [ni](idx_t.t)) =
 def partitioned_gather_over_array [ni] [n] 'a
   (n_bits : i32) (psize : idx_t.t) (dest: [ni]a) (xs : [n]a) (is : [ni]idx_t.t)
 =
-  let psize_ = psize / (i64.i32 ((n_bits + i64.num_bits + u8.num_bits - 1)/u8.num_bits))
-  let m = (n+psize_-1)/psize_
-  let loop_over : {iter: idx_t.t, buff: [](idx_t.t, a)}
-  = loop p = {iter=0, buff = dest |> zip is}
-  while p.iter<m do
-    let lower_bound = p.iter * psize_
-    let upper_bound = idx_t.min (n) (lower_bound + psize_)
-    let cur_xs = xs[lower_bound:upper_bound]
-    let nextBuff = p.buff |> map (\(j, v) ->
-      if (j>=lower_bound && j<upper_bound)
-      then (j, cur_xs[j-lower_bound])
-      else (j, v)
+  let psize_ = psize / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits) )
+  let max_iter = (n+psize_-1) / psize_
+  in loop buff = dest for j in (iota max_iter) do
+    let inf = j*psize_
+    let sup = idx_t.min n (inf + psize_)
+    in (iota ni) |> map (\j ->
+      if (inf<=is[j] && sup>is[j])
+      then xs[is[j]]
+      else buff[j]
     )
-    in {iter = p.iter+1, buff = nextBuff}
-  in loop_over.buff |> map (\(_, v) -> v)
 -- | Multi-pass gather operation (better cache-locality).
 -- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
 -- by Bingsheng He et al.
@@ -55,21 +50,13 @@ def partitioned_scatter [nd] [n] 'a
   (is: [n]idx_t.t)
   (vs: [n]a)
 : *[]a =
-  let psize_ = psize / (i64.i32 ((n_bits + u8.num_bits - 1)/ u8.num_bits))
-  let m = (n+psize_-1)/psize_
-  let loop_over : {iter: idx_t.t, buff: [nd]a}
-  = loop p = {iter=0, buff = dest}
-  while p.iter < m do
-    let lower_bound = p.iter * psize_
-    let upper_bound = idx_t.min (nd) (lower_bound + psize_)
-    let cur_dest = copy p.buff[lower_bound:upper_bound] -- TODO copy needed?
-    let cur_is = is |> map (\i ->
-      if (i >= lower_bound && i < upper_bound)
-      then (i-lower_bound)
-      else -1
-    )
-    in {iter=p.iter+1, buff = p.buff with [lower_bound:upper_bound] = scatter cur_dest cur_is vs}
-  in loop_over.buff
+  let psize_ = psize / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits) )
+  let max_iter = (n+psize_-1) / psize_
+  in loop buff = dest for j in (iota max_iter) do
+    let inf = j*psize_
+    let sup = idx_t.min n (inf + psize_)
+    let shifted_is = is |> map (\i -> i-inf)
+    in buff with [inf:sup] = scatter (copy buff[inf:sup]) shifted_is vs
 
 
 -- | Function to gather the payload columns of a relation after the join.

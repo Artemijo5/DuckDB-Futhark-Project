@@ -2273,9 +2273,7 @@ void MergeJoin_GFUR_semisorted(
     quicksaves,
     true
   );
-  // TODO could use my own joins instead of queries?
-  // altho that would complicate things with rowid...
-  // - first joins could be done with duckdb, final one with futhark...
+  // TODO omits a few tuples at the end (...)
   char final_Query[
     2500 + 
     strlen(Join_tbl_name) + 

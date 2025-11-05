@@ -1166,16 +1166,16 @@ idx_t radix_semiPartition_GFUR(
     mylog(logfile, "Performed partitioning.");
     total_read+=cur_rows;
 
-    void *Buffers[2] = {keyBuffer, (void*)idxBuffer};
+    //void *Buffers[2] = {keyBuffer, (void*)idxBuffer};
     duckdb_type type_ids[2] = {key_type, DUCKDB_TYPE_BIGINT};
 
     char *colNames[2];
     colNames[0] = malloc(1+strlen(keyName));
     colNames[1] = malloc(7);
-    memcpy(colNames[1], keyName, 1+strlen(keyName));
+    memcpy(colNames[0], keyName, 1+strlen(keyName));
     memcpy(colNames[1], "rowIdx", 7);
 
-    numInterm = store_intermediate(
+    numInterm = store_intermediate_GFTR(
       numInterm,
       intermName,
       con,
@@ -1184,7 +1184,9 @@ idx_t radix_semiPartition_GFUR(
       cur_rows,
       type_ids,
       colNames,
-      Buffers
+      keyBuffer,
+      idxBuffer,
+      0
     );
     if(numInterm == -1) {
       perror("Failed to store intermediate.\n");
