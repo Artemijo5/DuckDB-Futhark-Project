@@ -33,9 +33,9 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER 1*CHUNK_SIZE
-#define S_JOIN_BUFFER 1*CHUNK_SIZE
-#define JOIN_TBL_NAME "R_S_joinTbl_GFTR"
+#define R_JOIN_BUFFER CHUNK_SIZE
+#define S_JOIN_BUFFER 2*CHUNK_SIZE
+#define JOIN_TBL_NAME "R_S_joinTbl_SMJ"
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "20GB"
@@ -85,13 +85,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 100000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 1000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 100000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 1000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
@@ -205,8 +205,8 @@ int main() {
     R_JOIN_BUFFER,
     S_JOIN_BUFFER,
     BLOCK_SIZE,
-    R_JOIN_BUFFER,
-    (R_TABLE_SIZE+S_TABLE_SIZE)*sizeof(long),
+    R_JOIN_BUFFER*sizeof(long),
+    20*sizeof(long),
     false,
     logfile,
     ctx,

@@ -279,8 +279,7 @@ void SortMergeJoin_GFTR(
       // #######################################################################################################
       // #######################################################################################################
       mylog(logfile, "Performing the key join...");
-      // Invert R&S because calculating info for R is cheaper...
-      InnerJoin_joinKeyColumns(
+      InnerJoin_joinKeyColumns_inFuthark(
         ctx,
         &numPairs,
         &joinedKeys,
