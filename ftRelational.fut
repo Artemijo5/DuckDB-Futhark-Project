@@ -303,14 +303,14 @@ entry create_hash_table_from_partitioned_set [n] [b]
 
 -- Radix-Hash Partitioned Join
 
-entry Inner_Radix_Hash_Join [nR] [nS] [b]
-  (radix_size : i32)
-  (pR : [nR](byteSeq [b]))
-  (pS : [nS](byteSeq [b]))
-  (s_info : partitionInfo)
-  (s_hashTable : radix_hashTable [i64.i32 radix_size])
-: joinPairs_bsq [b] =
-  radix_hash_join radix_size pR pS s_info s_hashTable
+--entry Inner_Radix_Hash_Join [nR] [nS] [b]
+--  (radix_size : i32)
+--  (pR : [nR](byteSeq [b]))
+--  (pS : [nS](byteSeq [b]))
+--  (s_info : partitionInfo)
+--  (s_hashTable : radix_hashTable [i64.i32 radix_size])
+-- : joinPairs_bsq [b] =
+--  radix_hash_join radix_size pR pS s_info s_hashTable
 
 entry Inner_Radix_Hash_Join_with_right_keys_unique [nR] [nS] [b]
   (radix_size : i32)

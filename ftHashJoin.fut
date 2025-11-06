@@ -388,9 +388,13 @@ def rv_findPairCount [nS] [b]
 : (idx_t.t, idx_t.t)  = -- returns pair count & index of first match
   let cj =
     loop (count, j, i0) = (0, inf, -1) while j<sup do
-      if foldl (&&) (true) (map2 (==) rv tS[j])
-      then (count+1, j+1, if i0<0 then j else i0)
-      else (count, j+1, i0)
+      --if foldl (&&) (true) (seqmap2 (false) (==) rv tS[j]) -- CUDA compiler doesn't like this for some reason...
+      let is_eq = loop y=true for i in (iota b) do
+        y && (rv[i] == tS[j][i])
+      in
+        if (is_eq)
+        then (count+1, j+1, if i0<0 then j else i0)
+        else (count, j+1, i0)
   in (cj.0, cj.2)
 
 def rv_find_kth_match [nS] [b]
@@ -402,9 +406,13 @@ def rv_find_kth_match [nS] [b]
 : idx_t.t =
   let cj =
     loop (count, j) = (0, inf) while (count<k && j<sup) do
-      if foldl (&&) (true) (map2 (==) rv tS[j])
-      then (count+1, j+1)
-      else (count, j+1)
+      --if foldl (&&) (true) (seqmap2 (false) (==) rv tS[j]) -- CUDA compiler doesn't like this for some reason...
+      let is_eq = loop y=true for i in (iota b) do
+        y && (rv[i] == tS[j][i])
+      in
+        if (is_eq)
+        then (count+1, j+1)
+        else (count, j+1)
   in (cj.1-1-inf)
 
 def rv_find_match_if_exists [nS] [b]
@@ -415,13 +423,23 @@ def rv_find_match_if_exists [nS] [b]
 : idx_t.t =
   let cj =
     loop (count, j) = (0, inf) while (count<1 && j<sup) do
-      if foldl (&&) (true) (map2 (==) rv tS[j])
-      then (count+1, j+1)
-      else (count, j+1)
+      --if foldl (&&) (true) (seqmap2 (false) (==) rv tS[j]) -- CUDA compiler doesn't like this for some reason...
+      --let is_eq = loop y=true for i in (iota b) do
+      --  y && (rv[i] == tS[j][i])
+      let is_eq = (rv[0] == tS[j][0])
+      in
+        if (false)
+        then (count+1, j+1)
+        else (count, j+1)
   in 
-    if ( cj.1<nS || (foldl (&&) (true) (map2 (==) rv tS[nS-1])) )
-    then (cj.1-1-inf)
-    else -1
+    --if ( cj.1<nS || (foldl (&&) (true) (seqmap2 (false) (==) rv tS[nS-1])) ) -- CUDA compiler doesn't like this for some reason...
+    --let is_eq_last = loop y=false for i in (iota b) do
+    --  y && (rv[i] == tS[nS-1][i])
+    let is_eq_last = false
+    in
+      if (cj.1<nS || is_eq_last)
+      then (cj.1-1-inf)
+      else -1
 
 def radix_hash_join [nR] [nS] [b]
  (radix_size : i32)
@@ -503,23 +521,45 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
 : joinPairs_bsq [b] =
   let n_pS = length pS.bounds
   -- tuples of: first matching partition in S, last matching partition in S
-  let heshi = (iota nR)
-    |> map (\i ->
-      rv_partitionMatchBounds radix_size tR[i] tS pS.bounds pS.depths ht_S
-    )
-  let match_in_iy = map2
-    (\j fm ->
-      let rv = tR[j]
-      let inf_s_idx = if fm >= 0 then pS.bounds[fm] else 0
-      let sup_s_idx = if fm==n_pS-1 then nS else pS.bounds[fm+1]
-      let si = rv_find_match_if_exists rv tS inf_s_idx sup_s_idx
-      in
-        if si>0
-        then si+inf_s_idx
-        else -1
-    )
-    (iota nR)
-    heshi
+  --let heshi = tR |> map (\rv ->
+  --    rv_partitionMatchBounds radix_size rv tS pS.bounds pS.depths ht_S
+  --  )
+  -- (...)
+
+  -- TODO
+  -- ok, solutions in mind...
+  -- 1. type-dependent entry points (easier?) -> try this one first (!)
+  -- will need funcs to convert each type to a byteSeq
+  -- will need Str hash keys to fall into conventional types
+  -- will restrict to conventional types
+  -- 2. invert the nested loop (?)
+  -- would be done as
+  -- take a segment of R
+  -- find minimum and maximum partition matches
+  -- take that part of S
+  -- run the following loop
+  -- combine...
+  -- this might make it a mess for multiple matches tho (the part where I retrieve them? except if not...)
+  -- maybe also segment the S part so as to fit in threshold...
+  -- do this FROM NOVEMBER 10TH FORWARD
+  -- maybe try both... idk
+  -- loop inversion might be needed in Skyline...
+  -- span should be the same anyway (...)
+  -- ...
+  -- ig try both, and if both work I can compare them (!)
+
+  let (_,match_in_iy,_) =
+    loop (j,matches,countFound) = (0,replicate nR (-1),0) while (countFound<nR && j<nR) do
+      let new_matches = map2
+        (\m eq->
+          if (m<0) && eq
+          then j
+          else m
+        )
+        matches
+        (tR |> map (\rv -> foldl (&&) true (seqmap2 (false) (==) rv tS[j])))
+      let new_count = countFor (>=0) new_matches
+      in (j+1,new_matches,new_count)
   let count_pairs = countFor (>0) match_in_iy
   let zuowei = map2
     (\m z -> if m>0 then z else (-1))

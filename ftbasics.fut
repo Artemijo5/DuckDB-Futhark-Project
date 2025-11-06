@@ -114,6 +114,34 @@ def argmin [n] 't
       ) ne iks
   in min_ik.0
 
+-- sequential map function - needed at a place for hash join
+def seqmap [n] 't 'ot
+  (dummy_elem : ot)
+  (f : t -> ot)
+  (xs: [n]t)
+: [n]ot =
+  loop buff = (replicate n dummy_elem) for j in (iota n) do
+    buff with [j] = f xs[j]
+
+def seqmap2 [n] 't1 't2 'ot
+  (dummy_elem : ot)
+  (f : t1 -> t2 -> ot)
+  (xs: [n]t1)
+  (ys: [n]t2)
+: [n]ot =
+  loop buff = (replicate n dummy_elem) for j in (iota n) do
+    buff with [j] = f xs[j] ys[j]
+
+def seqmap3 [n] 't1 't2 't3 'ot
+  (dummy_elem : ot)
+  (f : t1 -> t2 -> t3 -> ot)
+  (xs: [n]t1)
+  (ys: [n]t2)
+  (zs: [n]t3)
+: [n]ot =
+  loop buff = (replicate n dummy_elem) for j in (iota n) do
+    buff with [j] = f xs[j] ys[j] zs[j]
+
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
