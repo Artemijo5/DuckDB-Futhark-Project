@@ -338,23 +338,64 @@ type partitionedSet_GFUR [n] [b] = {ks: [n](byteSeq [b]), idx: [n]idx_t.t}
 -- iy : the respective index in y
 type~ joinPairs_bsq [b] = {vs: [](byteSeq [b]), ix: []idx_t.t, iy: []idx_t.t}
 
-def rv_partitionMatchBounds [nR] [b] [pR]
+def byteSeq_to_prim [b] 't
+  (x : byteSeq [b])
+  (zero : t)
+  (from_u8: u8 -> t)
+  (shift_left : t -> i32 -> t)
+  (bitwise_or : t -> t -> t)
+: t =
+  loop y : t = zero
+  for j in (iota b) do
+    let r = (from_u8 x[b-j-1]) `shift_left` ((i32.i64 j) * u8.num_bits)
+    in y `bitwise_or` r
+def byteSeq_to_u8 x
+  = byteSeq_to_prim x 0 (id) (\bits shift -> bits << (u8.i32 shift)) (u8.|)
+def byteSeq_to_u16 x
+  = byteSeq_to_prim x 0 (u16.u8) (\bits shift -> bits << (u16.i32 shift)) (u16.|)
+def byteSeq_to_u32 x
+  = byteSeq_to_prim x 0 (u32.u8) (\bits shift -> bits << (u32.i32 shift)) (u32.|)
+def byteSeq_to_u64 x
+  = byteSeq_to_prim x 0 (u64.u8) (\bits shift -> bits << (u64.i32 shift)) (u64.|)
+
+def prim_get_radix 't
+  (radix_bits : i32)
+  (x : t)
+  (modulo_pow2 : t -> u32 -> t)
+: t =
+  let asPow : u32 = (1 << (u32.i32 radix_bits))
+  in x `modulo_pow2` asPow
+def u8_get_radix radix_bits x
+  = prim_get_radix radix_bits x (\bits moj -> bits & (u8.u32 (moj-1)))
+def u16_get_radix radix_bits x
+  = prim_get_radix radix_bits x (\bits moj -> bits & (u16.u32 (moj-1)))
+def u32_get_radix radix_bits x
+  = prim_get_radix radix_bits x (\bits moj -> bits & (moj-1))
+def u64_get_radix radix_bits x
+  = prim_get_radix radix_bits x (\bits moj -> bits & (u64.u32 (moj-1)))
+
+def rv_partitionMatchBounds [nR] [pR] 't
+  (as_index_ : t -> i64)
+  (get_radix_ : i32 -> t -> t)
+  (eq : t -> t -> bool)
+  (gt : t -> t -> bool)
+  (lt : t -> t -> bool)
   (radix_size: i32)
-  (rv: byteSeq [b])
-  (tS: [nR](byteSeq [b]))
+  (rv: t)
+  (tS: [nR]t)
   (bounds_S: [pR]idx_t.t)
   (depths_S: [pR]i32)
   (ht_S: radix_hashTable [i64.i32 radix_size])
-: idx_t.t = -- returns matching partition in S if there is one, otherwise -1
-  let j = radix_to_idx radix_size rv
+:idx_t.t =
+  let j = as_index_ (get_radix_ radix_size rv)
   let spi = ht_S.first_info_idx[j]
   in
     if spi < 0 then (-1) else
     if depths_S[spi] == 1 then (spi) else
-    -- binary search for first and last matching partitions
+    -- binary search for matching partition
     let end_spi = ht_S.last_info_idx[j]
     let init_step = idx_t.max 1 ((end_spi-spi)/2)
-    let bsearch =
+    let (bsearch,_) =
       loop (heshi, step) = (spi, init_step) while step>0 do
         let cur_depth = depths_S[heshi]
         let prev_depth = if heshi==spi then cur_depth else depths_S[heshi-1]
@@ -364,21 +405,34 @@ def rv_partitionMatchBounds [nR] [b] [pR]
         let next_S = if heshi==end_spi then cur_S else tS[bounds_S[heshi+1]]
         in
           if
-            (radix_eq radix_size cur_depth rv cur_S)
-            &&
-            (heshi == spi || radix_neq radix_size prev_depth rv prev_S)
-          then (heshi, 0) -- found first match
-          else if (radix_eq radix_size cur_depth rv cur_S) -- found match range but not first
-          then (heshi-step, idx_t.max 1 (step/2))
-          else if (radix_lt radix_size cur_depth rv cur_S) then
-            if (heshi == spi || radix_gt radix_size prev_depth rv prev_S)
+            ((get_radix_ (radix_size*cur_depth) rv) `eq` (get_radix_ (radix_size*cur_depth) cur_S))
+          then (heshi, 0) -- found match
+          else if ((get_radix_ (radix_size*cur_depth) rv) `lt` (get_radix_ (radix_size*cur_depth) cur_S))  then
+            if (heshi==spi || ((get_radix_ (radix_size*prev_depth) rv) `gt` (get_radix_ (radix_size*prev_depth) prev_S)))
             then (-1, 0)
             else (heshi-step, idx_t.max 1 (step/2))
           else -- if (radix_gt radix_size cur_depth rv cur_S) then
-            if (heshi == end_spi || radix_lt radix_size next_depth rv next_S)
+            if (heshi==end_spi || ((get_radix_ (radix_size*next_depth) rv) `lt` (get_radix_ (radix_size*next_depth) next_S)))
             then (-1, 0)
             else (heshi+step, idx_t.max 1 (step/2))
-    in bsearch.0
+    in bsearch
+
+def u8_rv_partitionMatchBounds  rv tS bounds_S depths_S ht_S =
+  let this_as_index = (i64.u8)
+  let this_get_radix = (u8_get_radix)
+  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (==) (>) (<) rv tS bounds_S depths_S ht_S
+def u16_rv_partitionMatchBounds rv tS bounds_S depths_S ht_S =
+  let this_as_index = (i64.u16)
+  let this_get_radix = (u16_get_radix)
+  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (==) (>) (<) rv tS bounds_S depths_S ht_S
+def u32_rv_partitionMatchBounds rv tS bounds_S depths_S ht_S =
+  let this_as_index = (i64.u32)
+  let this_get_radix = (u32_get_radix)
+  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (==) (>) (<) rv tS bounds_S depths_S ht_S
+def u64_rv_partitionMatchBounds rv tS bounds_S depths_S ht_S =
+  let this_as_index = (i64.u64)
+  let this_get_radix = (u64_get_radix)
+  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (==) (>) (<) rv tS bounds_S depths_S ht_S
 
 def rv_findPairCount [nS] [b]
   (rv: byteSeq [b])
@@ -452,7 +506,8 @@ def radix_hash_join [nR] [nS] [b]
   -- tuples of: first matching partition in S, last matching partition in S
   let heshi = (iota nR)
     |> map (\i ->
-      rv_partitionMatchBounds radix_size tR[i] tS pS.bounds pS.depths ht_S
+      --rv_partitionMatchBounds radix_size tR[i] tS pS.bounds pS.depths ht_S
+      0
     )
   let (counts_per_r, first_match_per_r) = unzip
     (
@@ -512,54 +567,27 @@ def radix_hash_join [nR] [nS] [b]
       iy = s_inds
     }
 
-def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
- (radix_size : i32)
- (tR : [nR](byteSeq [b]))
- (tS : [nS](byteSeq [b]))
- (pS : partitionInfo)
- (ht_S : radix_hashTable [i64.i32 radix_size])
+def radix_hash_join_with_S_keys_unique_u8 [nR] [nS] [b]
+  (radix_size : i32)
+  (tR : [nR](byteSeq [b]))
+  (tS : [nS](byteSeq [b]))
+  (pS : partitionInfo)
+  (ht_S : radix_hashTable [i64.i32 radix_size])
 : joinPairs_bsq [b] =
+  let tR_int = tR |> map (byteSeq_to_u8)
+  let tS_int = tS |> map (byteSeq_to_u8)
   let n_pS = length pS.bounds
-  -- tuples of: first matching partition in S, last matching partition in S
-  --let heshi = tR |> map (\rv ->
-  --    rv_partitionMatchBounds radix_size rv tS pS.bounds pS.depths ht_S
-  --  )
-  -- (...)
-
-  -- TODO
-  -- ok, solutions in mind...
-  -- 1. type-dependent entry points (easier?) -> try this one first (!)
-  -- will need funcs to convert each type to a byteSeq
-  -- will need Str hash keys to fall into conventional types
-  -- will restrict to conventional types
-  -- 2. invert the nested loop (?)
-  -- would be done as
-  -- take a segment of R
-  -- find minimum and maximum partition matches
-  -- take that part of S
-  -- run the following loop
-  -- combine...
-  -- this might make it a mess for multiple matches tho (the part where I retrieve them? except if not...)
-  -- maybe also segment the S part so as to fit in threshold...
-  -- do this FROM NOVEMBER 10TH FORWARD
-  -- maybe try both... idk
-  -- loop inversion might be needed in Skyline...
-  -- span should be the same anyway (...)
-  -- ...
-  -- ig try both, and if both work I can compare them (!)
-
-  let (_,match_in_iy,_) =
-    loop (j,matches,countFound) = (0,replicate nR (-1),0) while (countFound<nR && j<nR) do
-      let new_matches = map2
-        (\m eq->
-          if (m<0) && eq
-          then j
-          else m
-        )
-        matches
-        (tR |> map (\rv -> foldl (&&) true (seqmap2 (false) (==) rv tS[j])))
-      let new_count = countFor (>=0) new_matches
-      in (j+1,new_matches,new_count)
+  let match_in_iy = tR_int
+    |> map (\rv->
+      let heshi = u8_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
+      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
+      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let (sm,_) =
+        loop (j,zhaodaole)=(inf,false) while (j<sup) && (!zhaodaole) do
+          let is_eq = rv == tS_int[j]
+          in if is_eq then (j,true) else (j+1,false)
+      in if sm<sup then sm else (-1)
+    )
   let count_pairs = countFor (>0) match_in_iy
   let zuowei = map2
     (\m z -> if m>0 then z else (-1))
@@ -569,3 +597,106 @@ def radix_hash_join_with_S_keys_unique [nR] [nS] [b]
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
   in {vs=vs_, ix=ix_, iy=iy_}
+def radix_hash_join_with_S_keys_unique_u16 [nR] [nS] [b]
+  (radix_size : i32)
+  (tR : [nR](byteSeq [b]))
+  (tS : [nS](byteSeq [b]))
+  (pS : partitionInfo)
+  (ht_S : radix_hashTable [i64.i32 radix_size])
+: joinPairs_bsq [b] =
+  let tR_int = tR |> map (byteSeq_to_u16)
+  let tS_int = tS |> map (byteSeq_to_u16)
+  let n_pS = length pS.bounds
+  let match_in_iy = tR_int
+    |> map (\rv->
+      let heshi = u16_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
+      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
+      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let (sm,_) =
+        loop (j,zhaodaole)=(inf,false) while (j<sup) && (!zhaodaole) do
+          let is_eq = rv == tS_int[j]
+          in if is_eq then (j,true) else (j+1,false)
+      in if sm<sup then sm else (-1)
+    )
+  let count_pairs = countFor (>0) match_in_iy
+  let zuowei = map2
+    (\m z -> if m>0 then z else (-1))
+    match_in_iy
+    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>0 then 1 else 0)) )
+  let ix_ = scatter (replicate count_pairs (-1)) zuowei (iota nR)
+  let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
+  let vs_ = gather (dummy_byteSeq b) tR ix_
+  in {vs=vs_, ix=ix_, iy=iy_}
+def radix_hash_join_with_S_keys_unique_u32 [nR] [nS] [b]
+  (radix_size : i32)
+  (tR : [nR](byteSeq [b]))
+  (tS : [nS](byteSeq [b]))
+  (pS : partitionInfo)
+  (ht_S : radix_hashTable [i64.i32 radix_size])
+: joinPairs_bsq [b] =
+  let tR_int = tR |> map (byteSeq_to_u32)
+  let tS_int = tS |> map (byteSeq_to_u32)
+  let n_pS = length pS.bounds
+  let match_in_iy = tR_int
+    |> map (\rv->
+      let heshi = u32_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
+      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
+      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let (sm,_) =
+        loop (j,zhaodaole)=(inf,false) while (j<sup) && (!zhaodaole) do
+          let is_eq = rv == tS_int[j]
+          in if is_eq then (j,true) else (j+1,false)
+      in if sm<sup then sm else (-1)
+    )
+  let count_pairs = countFor (>0) match_in_iy
+  let zuowei = map2
+    (\m z -> if m>0 then z else (-1))
+    match_in_iy
+    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>0 then 1 else 0)) )
+  let ix_ = scatter (replicate count_pairs (-1)) zuowei (iota nR)
+  let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
+  let vs_ = gather (dummy_byteSeq b) tR ix_
+  in {vs=vs_, ix=ix_, iy=iy_}
+def radix_hash_join_with_S_keys_unique_u64 [nR] [nS] [b]
+  (radix_size : i32)
+  (tR : [nR](byteSeq [b]))
+  (tS : [nS](byteSeq [b]))
+  (pS : partitionInfo)
+  (ht_S : radix_hashTable [i64.i32 radix_size])
+: joinPairs_bsq [b] =
+  let tR_int = tR |> map (byteSeq_to_u64)
+  let tS_int = tS |> map (byteSeq_to_u64)
+  let n_pS = length pS.bounds
+  let match_in_iy = tR_int
+    |> map (\rv->
+      let heshi = u64_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
+      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
+      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let (sm,_) =
+        loop (j,zhaodaole)=(inf,false) while (j<sup) && (!zhaodaole) do
+          let is_eq = rv == tS_int[j]
+          in if is_eq then (j,true) else (j+1,false)
+      in if sm<sup then sm else (-1)
+    )
+  let count_pairs = countFor (>0) match_in_iy
+  let zuowei = map2
+    (\m z -> if m>0 then z else (-1))
+    match_in_iy
+    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>0 then 1 else 0)) )
+  let ix_ = scatter (replicate count_pairs (-1)) zuowei (iota nR)
+  let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
+  let vs_ = gather (dummy_byteSeq b) tR ix_
+  in {vs=vs_, ix=ix_, iy=iy_}
+
+def radix_hash_join_with_S_keys_unique [b]
+  (radix_size : i32)
+  (tR : [](byteSeq [b]))
+  (tS : [](byteSeq [b]))
+  (pS : partitionInfo)
+  (ht_S : radix_hashTable [i64.i32 radix_size])
+=
+  if b==1 then radix_hash_join_with_S_keys_unique_u8 radix_size tR tS pS ht_S
+  else if b==2 then radix_hash_join_with_S_keys_unique_u16 radix_size tR tS pS ht_S
+  else if b<=4 then radix_hash_join_with_S_keys_unique_u32 radix_size tR tS pS ht_S
+  else radix_hash_join_with_S_keys_unique_u64 radix_size tR tS pS ht_S
+  -- for more bytes, either make tuple types, or filter from long...
