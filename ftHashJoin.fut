@@ -320,6 +320,75 @@ type partitionedSet_GFTR [n] [b] [pL_b] = {ks: [n](byteSeq [b]), pL: [n](byteSeq
 type partitionedSet_GFUR [n] [b] = {ks: [n](byteSeq [b]), idx: [n]idx_t.t}
 
 
+def calc_partInfo [n] [b]
+  (radix_size: i32)
+  (pXs: [n](byteSeq [b]))
+  (offset: idx_t.t)
+  (size_thresh: idx_t.t)
+  (max_depth: i32)
+: partitionInfo =
+  let recursive_info : (partitionInfo, bool)
+  = loop p = (getPartitionBounds 1 pXs 0 (radix_size-1), true)
+  while (p.0.maxDepth < max_depth && p.1) do
+    let bs = p.0.bounds
+    let taidade = indices bs
+      |> map (\i -> (bs[i], if (i<(length bs)-1) then bs[i+1] else (n), i))
+      |> filter (\(lb, ub, _) -> ub-lb > size_thresh)
+    let (inner_info : partitionInfo, _: idx_t.t, _: idx_t.t)
+    = loop (q, ad, ox) = (p.0, 0, 0)
+    for bounds in taidade do
+      let m = bounds.1-bounds.0
+      let x_bufen = pXs[bounds.0:bounds.1] :> [m](byteSeq [b])
+      let new_i = radix_size*(p.0.maxDepth)
+      let new_j = radix_size*(p.0.maxDepth+1) - 1
+      let deeper_info = getPartitionBounds (p.0.maxDepth+1) x_bufen new_i new_j
+      let insert_len = length deeper_info.bounds
+      let stitch = bounds.2 + ox - ad
+      let new_q = {
+        maxDepth = p.0.maxDepth + 1,
+        bounds = q.bounds[0:stitch] ++ (deeper_info.bounds |> map (\b -> b+bounds.0)) ++ q.bounds[stitch+1:(length q.bounds)],
+        depths = q.depths[0:stitch] ++ deeper_info.depths ++ q.depths[stitch+1:(length q.depths)]
+      }
+      in (new_q, ad+1, ox + insert_len)
+    in (inner_info, (length taidade) > 0)
+  let info_len = length recursive_info.0.bounds
+  let recursive_info_with_offset = {
+    maxDepth = recursive_info.0.maxDepth,
+    bounds = recursive_info.0.bounds |> map (\b -> b + offset) :> [info_len]idx_t.t,
+    depths = recursive_info.0.depths :> [info_len]i32
+  }
+  in recursive_info_with_offset
+
+def calc_radixHashTab [n] [b]
+  (radix_size : i32)
+  (pXs : [n](byteSeq [b]))
+  (x_info : partitionInfo)
+  (scatter_psize : idx_t.t)
+: radix_hashTable [i64.i32 radix_size] =
+  let m = length x_info.bounds
+  let is_base = iota m
+  let rs = i64.i32 radix_size
+  let scatter_is_withMultiplicity = is_base
+    |> map (\i ->  radix_to_idx (i32.i64 rs) pXs[x_info.bounds[i]])
+  let is_first_last =
+    if x_info.maxDepth == 1
+    then replicate m (true, true)
+    else is_base
+      |> map (\i ->
+        let cur_i = scatter_is_withMultiplicity[i]
+        let pre_i = if i==0 then -1 else scatter_is_withMultiplicity[i-1]
+        let is_first = (cur_i != pre_i)
+        let pos_i = if i==(m-1) then -1 else scatter_is_withMultiplicity[i+1]
+        let is_last = (cur_i != pos_i)
+        in (is_first, is_last)
+      )
+  let scatter_is_first = map2 (\(is_first, _) i -> if is_first then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
+  let scatter_is_last = map2 (\(_, is_last) i -> if is_last then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
+  let first_partitionIndices = scatter (replicate (2**rs) (-1)) scatter_is_first is_base
+  let last_partitionIndices = scatter (replicate (2**rs) (-1)) scatter_is_last is_base
+  in {first_info_idx = first_partitionIndices, last_info_idx = last_partitionIndices}
+
+
 -- ########################################################################################################################
 -- ########################################################################################################################
 -- ########################################################################################################################
@@ -529,11 +598,11 @@ def radix_hash_join_u8 [nR] [nS] [b]
   let (first_match_per_r, counts_per_r) = tR_int
     |> map (\rv->
       let heshi = u8_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
-      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,cm,_) =
         loop (j,duome,i)=(inf,0,inf) while (i<sup) do
-          let is_eq = rv == tS_int[j]
+          let is_eq = rv == tS_int[i]
           let next_j = if (duome>0 || is_eq) then j else j+1
           let next_duome = if is_eq then duome+1 else duome
           in (next_j, next_duome, i+1)
@@ -593,11 +662,11 @@ def radix_hash_join_u16 [nR] [nS] [b]
   let (first_match_per_r, counts_per_r) = tR_int
     |> map (\rv->
       let heshi = u16_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
-      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,cm,_) =
         loop (j,duome,i)=(inf,0,inf) while (i<sup) do
-          let is_eq = rv == tS_int[j]
+          let is_eq = rv == tS_int[i]
           let next_j = if (duome>0 || is_eq) then j else j+1
           let next_duome = if is_eq then duome+1 else duome
           in (next_j, next_duome, i+1)
@@ -657,11 +726,11 @@ def radix_hash_join_u32 [nR] [nS] [b]
   let (first_match_per_r, counts_per_r) = tR_int
     |> map (\rv->
       let heshi = u32_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
-      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,cm,_) =
         loop (j,duome,i)=(inf,0,inf) while (i<sup) do
-          let is_eq = rv == tS_int[j]
+          let is_eq = rv == tS_int[i]
           let next_j = if (duome>0 || is_eq) then j else j+1
           let next_duome = if is_eq then duome+1 else duome
           in (next_j, next_duome, i+1)
@@ -721,11 +790,11 @@ def radix_hash_join_u64 [nR] [nS] [b]
   let (first_match_per_r, counts_per_r) = tR_int
     |> map (\rv->
       let heshi = u64_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
-      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,cm,_) =
         loop (j,duome,i)=(inf,0,inf) while (i<sup) do
-          let is_eq = rv == tS_int[j]
+          let is_eq = rv == tS_int[i]
           let next_j = if (duome>0 || is_eq) then j else j+1
           let next_duome = if is_eq then duome+1 else duome
           in (next_j, next_duome, i+1)
@@ -799,19 +868,19 @@ def radix_hash_join_with_S_keys_unique_u8 [nR] [nS] [b]
   let match_in_iy = tR_int
     |> map (\rv->
       let heshi = u8_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
-      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,_) =
         loop (j,zhaodaole)=(inf,false) while (j<sup) && (!zhaodaole) do
           let is_eq = rv == tS_int[j]
           in if is_eq then (j,true) else (j+1,false)
       in if sm<sup then sm else (-1)
     )
-  let count_pairs = countFor (>0) match_in_iy
+  let count_pairs = countFor (>=0) match_in_iy
   let zuowei = map2
-    (\m z -> if m>0 then z else (-1))
+    (\m z -> if m>=0 then z else (-1))
     match_in_iy
-    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>0 then 1 else 0)) )
+    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>=0 then 1 else 0)) )
   let ix_ = scatter (replicate count_pairs (-1)) zuowei (iota nR)
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
@@ -829,19 +898,19 @@ def radix_hash_join_with_S_keys_unique_u16 [nR] [nS] [b]
   let match_in_iy = tR_int
     |> map (\rv->
       let heshi = u16_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
-      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,_) =
         loop (j,zhaodaole)=(inf,false) while (j<sup) && (!zhaodaole) do
           let is_eq = rv == tS_int[j]
           in if is_eq then (j,true) else (j+1,false)
       in if sm<sup then sm else (-1)
     )
-  let count_pairs = countFor (>0) match_in_iy
+  let count_pairs = countFor (>=0) match_in_iy
   let zuowei = map2
-    (\m z -> if m>0 then z else (-1))
+    (\m z -> if m>=0 then z else (-1))
     match_in_iy
-    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>0 then 1 else 0)) )
+    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>=0 then 1 else 0)) )
   let ix_ = scatter (replicate count_pairs (-1)) zuowei (iota nR)
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
@@ -859,19 +928,19 @@ def radix_hash_join_with_S_keys_unique_u32 [nR] [nS] [b]
   let match_in_iy = tR_int
     |> map (\rv->
       let heshi = u32_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
-      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,_) =
         loop (j,zhaodaole)=(inf,false) while (j<sup) && (!zhaodaole) do
           let is_eq = rv == tS_int[j]
           in if is_eq then (j,true) else (j+1,false)
       in if sm<sup then sm else (-1)
     )
-  let count_pairs = countFor (>0) match_in_iy
+  let count_pairs = countFor (>=0) match_in_iy
   let zuowei = map2
-    (\m z -> if m>0 then z else (-1))
+    (\m z -> if m>=0 then z else (-1))
     match_in_iy
-    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>0 then 1 else 0)) )
+    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>=0 then 1 else 0)) )
   let ix_ = scatter (replicate count_pairs (-1)) zuowei (iota nR)
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
@@ -889,19 +958,19 @@ def radix_hash_join_with_S_keys_unique_u64 [nR] [nS] [b]
   let match_in_iy = tR_int
     |> map (\rv->
       let heshi = u64_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let sup = if heshi<=0 then 0 else pS.bounds[heshi]
-      let inf = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
+      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,_) =
         loop (j,zhaodaole)=(inf,false) while (j<sup) && (!zhaodaole) do
           let is_eq = rv == tS_int[j]
           in if is_eq then (j,true) else (j+1,false)
       in if sm<sup then sm else (-1)
     )
-  let count_pairs = countFor (>0) match_in_iy
+  let count_pairs = countFor (>=0) match_in_iy
   let zuowei = map2
-    (\m z -> if m>0 then z else (-1))
+    (\m z -> if m>=0 then z else (-1))
     match_in_iy
-    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>0 then 1 else 0)) )
+    ( exscan (+) 0 (match_in_iy |> map (\iy -> if iy>=0 then 1 else 0)) )
   let ix_ = scatter (replicate count_pairs (-1)) zuowei (iota nR)
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
@@ -919,3 +988,10 @@ def radix_hash_join_with_S_keys_unique [b]
   else if b<=4 then radix_hash_join_with_S_keys_unique_u32 radix_size tR tS pS ht_S
   else radix_hash_join_with_S_keys_unique_u64 radix_size tR tS pS ht_S
   -- for more bytes, either make tuple types, or filter from long...
+
+def test =
+  let xs1:[][]u8= [[0,1],[0,1],[2,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
+  let xs2:[][]u8= [[0,1],[0,1],[4,1],[5,1],[2,2],[2,2],[2,2],[2,2],[1,3],[3,3],[5,3],[7,3],[2,4],[2,4],[5,4],[5,4]]
+  let inf1 = calc_partInfo 4 xs1 0 2 4
+  let tab1 = calc_radixHashTab 4 xs1 inf1 256
+  in radix_hash_join 4 xs2 xs1 inf1 tab1

@@ -45,7 +45,7 @@
 #define DDB_MEMSIZE "20GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
-#define VERBOSE false
+#define VERBOSE true
 
 int main() {
   // Initialise logger

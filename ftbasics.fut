@@ -56,7 +56,7 @@ def partitioned_scatter [nd] [n] 'a
   let max_iter = (nd+psize_-1) / psize_
   in loop buff = dest for j in (iota max_iter) do
     let inf = j*psize_
-    let sup = idx_t.min n (inf + psize_)
+    let sup = idx_t.min nd (inf + psize_)
     let shifted_is = is |> map (\i -> i-inf)
     in buff with [inf:sup] = scatter (copy buff[inf:sup]) shifted_is vs
 

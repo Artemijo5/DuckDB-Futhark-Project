@@ -238,37 +238,7 @@ entry calc_partitions_from_partitioned_set [n] [b]
   (size_thresh: idx_t.t)
   (max_depth: i32)
 : partitionInfo =
-  let recursive_info : (partitionInfo, bool)
-  = loop p = (getPartitionBounds 1 pXs 0 (radix_size-1), true)
-  while (p.0.maxDepth < max_depth && p.1) do
-    let bs = p.0.bounds
-    let taidade = indices bs
-      |> map (\i -> (bs[i], if (i<(length bs)-1) then bs[i+1] else (n), i))
-      |> filter (\(lb, ub, _) -> ub-lb > size_thresh)
-    let (inner_info : partitionInfo, _: idx_t.t, _: idx_t.t)
-    = loop (q, ad, ox) = (p.0, 0, 0)
-    for bounds in taidade do
-      let m = bounds.1-bounds.0
-      let x_bufen = pXs[bounds.0:bounds.1] :> [m](byteSeq [b])
-      let new_i = radix_size*(p.0.maxDepth)
-      let new_j = radix_size*(p.0.maxDepth+1) - 1
-      let deeper_info = getPartitionBounds (p.0.maxDepth+1) x_bufen new_i new_j
-      let insert_len = length deeper_info.bounds
-      let stitch = bounds.2 + ox - ad
-      let new_q = {
-        maxDepth = p.0.maxDepth + 1,
-        bounds = q.bounds[0:stitch] ++ (deeper_info.bounds |> map (\b -> b+bounds.0)) ++ q.bounds[stitch+1:(length q.bounds)],
-        depths = q.depths[0:stitch] ++ deeper_info.depths ++ q.depths[stitch+1:(length q.depths)]
-      }
-      in (new_q, ad+1, ox + insert_len)
-    in (inner_info, (length taidade) > 0)
-  let info_len = length recursive_info.0.bounds
-  let recursive_info_with_offset = {
-    maxDepth = recursive_info.0.maxDepth,
-    bounds = recursive_info.0.bounds |> map (\b -> b + offset) :> [info_len]idx_t.t,
-    depths = recursive_info.0.depths :> [info_len]i32
-  }
-  in recursive_info_with_offset
+  calc_partInfo radix_size pXs offset size_thresh max_depth
 
 entry create_hash_table_from_partitioned_set [n] [b]
   (radix_size : i32)
@@ -276,28 +246,7 @@ entry create_hash_table_from_partitioned_set [n] [b]
   (x_info : partitionInfo)
   (scatter_psize : idx_t.t)
 : radix_hashTable [i64.i32 radix_size] =
-  let m = length x_info.bounds
-  let is_base = iota m
-  let rs = i64.i32 radix_size
-  let scatter_is_withMultiplicity = is_base
-    |> map (\i ->  radix_to_idx (i32.i64 rs) pXs[x_info.bounds[i]])
-  let is_first_last =
-    if x_info.maxDepth == 1
-    then replicate m (true, true)
-    else is_base
-      |> map (\i ->
-        let cur_i = scatter_is_withMultiplicity[i]
-        let pre_i = if i==0 then -1 else scatter_is_withMultiplicity[i-1]
-        let is_first = (cur_i != pre_i)
-        let pos_i = if i==(m-1) then -1 else scatter_is_withMultiplicity[i+1]
-        let is_last = (cur_i != pos_i)
-        in (is_first, is_last)
-      )
-  let scatter_is_first = map2 (\(is_first, _) i -> if is_first then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
-  let scatter_is_last = map2 (\(_, is_last) i -> if is_last then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
-  let first_partitionIndices = scatter (replicate (2**rs) (-1)) scatter_is_first is_base
-  let last_partitionIndices = scatter (replicate (2**rs) (-1)) scatter_is_last is_base
-  in {first_info_idx = first_partitionIndices, last_info_idx = last_partitionIndices}
+  calc_radixHashTab radix_size pXs x_info scatter_psize
 
 -- Radix-Hash Partitioned Join
 
