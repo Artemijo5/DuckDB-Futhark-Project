@@ -428,21 +428,82 @@ def byteSeq_to_u32 x
 def byteSeq_to_u64 x
   = byteSeq_to_prim x 0 (u64.u8) (\bits shift -> bits << (u64.i32 shift)) (u64.|)
 
+def byteSeq_to_u48 x : (u16, u32) =
+  let b = length x
+  let ms_slot = byteSeq_to_u16 ((replicate (6-b) 0) ++ x[0:b-4])
+  let ls_slot = byteSeq_to_u32 x[4:(length x)]
+  in (ms_slot, ls_slot)
+def byteSeq_to_u80 x : (u16, u64) =
+  let b = length x
+  let ms_slot = byteSeq_to_u16 ((replicate (10-b) 0) ++ x[0:b-8])
+  let ls_slot = byteSeq_to_u64 x[2:(length x)]
+  in (ms_slot, ls_slot)
+def byteSeq_to_u96 x : (u32, u64) =
+  let b = length x
+  let ms_slot = byteSeq_to_u32 ((replicate (12-b) 0) ++ x[0:b-8])
+  let ls_slot = byteSeq_to_u64 x[b-8:b]
+  in (ms_slot, ls_slot)
+def byteSeq_to_u112 x : (u16,u32,u64) =
+  let b = length x
+  let ms_slot = byteSeq_to_u16 ((replicate (14-b) 0) ++ x[0:b-12])
+  let ns_slot = byteSeq_to_u32 x[b-12:b-8]
+  let ls_slot = byteSeq_to_u64 x[b-8:b]
+  in (ms_slot,ns_slot,ls_slot)
+def byteSeq_to_u128 x : (u64, u64) =
+  let b = length x
+  let ms_slot = byteSeq_to_u64 ((replicate (16 - b) 0) ++ x[0:b-8])
+  let ls_slot = byteSeq_to_u64 x[b-8:b]
+  in (ms_slot, ls_slot)
+
 def prim_get_radix 't
   (radix_bits : i32)
   (x : t)
-  (modulo_pow2 : t -> u32 -> t)
+  (modulo_pow2 : t -> u64 -> t)
 : t =
-  let asPow : u32 = (1 << (u32.i32 radix_bits))
+  let asPow : u64 = (1 << (u64.i32 radix_bits))
   in x `modulo_pow2` asPow
 def u8_get_radix radix_bits x
-  = prim_get_radix radix_bits x (\bits moj -> bits & (u8.u32 (moj-1)))
+  = prim_get_radix radix_bits x (\bits moj -> bits & (u8.u64 (moj-1)))
 def u16_get_radix radix_bits x
-  = prim_get_radix radix_bits x (\bits moj -> bits & (u16.u32 (moj-1)))
+  = prim_get_radix radix_bits x (\bits moj -> bits & (u16.u64 (moj-1)))
 def u32_get_radix radix_bits x
-  = prim_get_radix radix_bits x (\bits moj -> bits & (moj-1))
+  = prim_get_radix radix_bits x (\bits moj -> bits & (u32.u64 moj-1))
 def u64_get_radix radix_bits x
-  = prim_get_radix radix_bits x (\bits moj -> bits & (u64.u32 (moj-1)))
+  = prim_get_radix radix_bits x (\bits moj -> bits & (u64.u64 (moj-1)))
+
+def u48_get_radix radix_bits (x : (u16,u32)) : (u16,u32) =
+  let ls_radix_bits = i32.min radix_bits u32.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u32.num_bits) 0
+  let ls_r = u32_get_radix ls_radix_bits x.1
+  let ms_r = u16_get_radix ms_radix_bits x.0
+  in (ms_r, ls_r)
+def u80_get_radix radix_bits (x : (u16,u64)) : (u16,u64) =
+  let ls_radix_bits = i32.min radix_bits u64.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
+  let ls_r = u64_get_radix ls_radix_bits x.1
+  let ms_r = u16_get_radix ms_radix_bits x.0
+  in (ms_r, ls_r)
+def u96_get_radix radix_bits (x : (u32,u64)) : (u32,u64) =
+  let ls_radix_bits = i32.min radix_bits u64.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
+  let ls_r = u64_get_radix ls_radix_bits x.1
+  let ms_r = u32_get_radix ms_radix_bits x.0
+  in (ms_r, ls_r)
+def u112_get_radix radix_bits (x : (u16,u32,u64)) : (u16,u32,u64) =
+  let ls_radix_bits = i32.min radix_bits u64.num_bits
+  let ns_radix_bits_ = i32.min (i32.max (radix_bits-u64.num_bits) 0) u32.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u32.num_bits-u64.num_bits) 0
+  let ls_r = u64_get_radix ls_radix_bits x.2
+  let ns_r = u32_get_radix ms_radix_bits x.1
+  let ms_r = u16_get_radix ms_radix_bits x.0
+  in (ms_r,ns_r,ls_r)
+def u128_get_radix radix_bits (x : (u64,u64)) : (u64,u64) =
+  let ls_radix_bits = i32.min radix_bits u64.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
+  let ls_r = u64_get_radix ls_radix_bits x.1
+  let ms_r = u64_get_radix ms_radix_bits x.0
+  in (ms_r, ls_r)
+-- TODO gt, lt, eq, other funcs for composites...
 
 def prim_radix_gt 't
   (radix_bits : i32)
@@ -450,7 +511,7 @@ def prim_radix_gt 't
   (x1 : t)
   (x2 : t)
   (gt : t -> t -> bool)
-  (modulo_pow2 : t -> u32 -> t)
+  (modulo_pow2 : t -> u64 -> t)
 : bool = 
   let (_,is_gt,_) =
   loop (def_lt, def_gt, bi) = (false,false,0) while (!def_gt && !def_lt && bi<cur_depth) do
@@ -461,13 +522,13 @@ def prim_radix_gt 't
     in (dlt,dgt,bi+1)
   in is_gt
 def u8_radix_gt radix_bits cur_depth x1 x2
-  = prim_radix_gt radix_bits cur_depth x1 x2 (>) (\bits moj -> bits & (u8.u32 (moj-1)))
+  = prim_radix_gt radix_bits cur_depth x1 x2 (>) (\bits moj -> bits & (u8.u64 (moj-1)))
 def u16_radix_gt radix_bits cur_depth x1 x2
-  = prim_radix_gt radix_bits cur_depth x1 x2 (>) (\bits moj -> bits & (u16.u32 (moj-1)))
+  = prim_radix_gt radix_bits cur_depth x1 x2 (>) (\bits moj -> bits & (u16.u64 (moj-1)))
 def u32_radix_gt radix_bits cur_depth x1 x2
-  = prim_radix_gt radix_bits cur_depth x1 x2 (>) (\bits moj -> bits & (moj-1))
+  = prim_radix_gt radix_bits cur_depth x1 x2 (>) (\bits moj -> bits & (u32.u64 (moj-1)))
 def u64_radix_gt radix_bits cur_depth x1 x2
-  = prim_radix_gt radix_bits cur_depth x1 x2 (>) (\bits moj -> bits & (u64.u32 (moj-1)))
+  = prim_radix_gt radix_bits cur_depth x1 x2 (>) (\bits moj -> bits & (moj-1))
 
 def prim_radix_lt 't
   (radix_bits : i32)
@@ -475,7 +536,7 @@ def prim_radix_lt 't
   (x1 : t)
   (x2 : t)
   (lt : t -> t -> bool)
-  (modulo_pow2 : t -> u32 -> t)
+  (modulo_pow2 : t -> u64 -> t)
 : bool = 
   let (is_lt,_,_) =
   loop (def_lt, def_gt, bi) = (false,false,0) while (!def_gt && !def_lt && bi<cur_depth) do
@@ -486,13 +547,13 @@ def prim_radix_lt 't
     in (dlt,dgt,bi+1)
   in is_lt
 def u8_radix_lt radix_bits cur_depth x1 x2
-  = prim_radix_lt radix_bits cur_depth x1 x2 (<) (\bits moj -> bits & (u8.u32 (moj-1)))
+  = prim_radix_lt radix_bits cur_depth x1 x2 (<) (\bits moj -> bits & (u8.u64 (moj-1)))
 def u16_radix_lt radix_bits cur_depth x1 x2
-  = prim_radix_lt radix_bits cur_depth x1 x2 (<) (\bits moj -> bits & (u16.u32 (moj-1)))
+  = prim_radix_lt radix_bits cur_depth x1 x2 (<) (\bits moj -> bits & (u16.u64 (moj-1)))
 def u32_radix_lt radix_bits cur_depth x1 x2
-  = prim_radix_lt radix_bits cur_depth x1 x2 (<) (\bits moj -> bits & (moj-1))
+  = prim_radix_lt radix_bits cur_depth x1 x2 (<) (\bits moj -> bits & (u32.u64 (moj-1)))
 def u64_radix_lt radix_bits cur_depth x1 x2
-  = prim_radix_lt radix_bits cur_depth x1 x2 (<) (\bits moj -> bits & (u64.u32 (moj-1)))
+  = prim_radix_lt radix_bits cur_depth x1 x2 (<) (\bits moj -> bits & (moj-1))
 
 def prim_radix_eq 't
   (radix_bits : i32)
@@ -500,19 +561,19 @@ def prim_radix_eq 't
   (x1 : t)
   (x2 : t)
   (eq : t -> t -> bool)
-  (modulo_pow2 : t -> u32 -> t)
+  (modulo_pow2 : t -> u64 -> t)
 : bool =
   let r1 = prim_get_radix (radix_bits*cur_depth) x1 (modulo_pow2)
   let r2 = prim_get_radix (radix_bits*cur_depth) x2 (modulo_pow2)
   in r1 `eq` r2
 def u8_radix_eq radix_bits cur_depth x1 x2
-  = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (u8.u32 (moj-1)))
+  = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (u8.u64 (moj-1)))
 def u16_radix_eq radix_bits cur_depth x1 x2
-  = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (u16.u32 (moj-1)))
+  = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (u16.u64 (moj-1)))
 def u32_radix_eq radix_bits cur_depth x1 x2
-  = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (moj-1))
+  = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (u32.u64 (moj-1)))
 def u64_radix_eq radix_bits cur_depth x1 x2
-  = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (u64.u32 (moj-1)))
+  = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (moj-1))
 
 def rv_partitionMatchBounds [nR] [pR] 't
   (as_index_ : t -> i64)
@@ -853,7 +914,6 @@ def radix_hash_join [b]
   else if b==2 then radix_hash_join_u16 radix_size tR tS pS ht_S
   else if b<=4 then radix_hash_join_u32 radix_size tR tS pS ht_S
   else radix_hash_join_u64 radix_size tR tS pS ht_S
-  -- for more bytes, either make tuple types, or filter from long...
 
 def radix_hash_join_with_S_keys_unique_u8 [nR] [nS] [b]
   (radix_size : i32)
@@ -987,7 +1047,6 @@ def radix_hash_join_with_S_keys_unique [b]
   else if b==2 then radix_hash_join_with_S_keys_unique_u16 radix_size tR tS pS ht_S
   else if b<=4 then radix_hash_join_with_S_keys_unique_u32 radix_size tR tS pS ht_S
   else radix_hash_join_with_S_keys_unique_u64 radix_size tR tS pS ht_S
-  -- for more bytes, either make tuple types, or filter from long...
 
 def test =
   let xs1:[][]u8= [[0,1],[0,1],[2,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
