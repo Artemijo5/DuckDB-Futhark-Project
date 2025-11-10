@@ -295,22 +295,20 @@ entry create_hash_table_from_partitioned_set [n] [b]
       )
   let scatter_is_first = map2 (\(is_first, _) i -> if is_first then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
   let scatter_is_last = map2 (\(_, is_last) i -> if is_last then scatter_is_withMultiplicity[i] else -1) is_first_last is_base
-  let first_partitionIndices = partitioned_scatter
-    i64.num_bits scatter_psize (replicate (2**rs) (-1)) scatter_is_first is_base
-  let last_partitionIndices = partitioned_scatter
-    i64.num_bits scatter_psize (replicate (2**rs) (-1)) scatter_is_last is_base
+  let first_partitionIndices = scatter (replicate (2**rs) (-1)) scatter_is_first is_base
+  let last_partitionIndices = scatter (replicate (2**rs) (-1)) scatter_is_last is_base
   in {first_info_idx = first_partitionIndices, last_info_idx = last_partitionIndices}
 
 -- Radix-Hash Partitioned Join
 
---entry Inner_Radix_Hash_Join [nR] [nS] [b]
---  (radix_size : i32)
---  (pR : [nR](byteSeq [b]))
---  (pS : [nS](byteSeq [b]))
---  (s_info : partitionInfo)
---  (s_hashTable : radix_hashTable [i64.i32 radix_size])
--- : joinPairs_bsq [b] =
---  radix_hash_join radix_size pR pS s_info s_hashTable
+entry Inner_Radix_Hash_Join [nR] [nS] [b]
+  (radix_size : i32)
+  (pR : [nR](byteSeq [b]))
+  (pS : [nS](byteSeq [b]))
+  (s_info : partitionInfo)
+  (s_hashTable : radix_hashTable [i64.i32 radix_size])
+ : joinPairs_bsq [b] =
+  radix_hash_join radix_size pR pS s_info s_hashTable
 
 entry Inner_Radix_Hash_Join_with_right_keys_unique [nR] [nS] [b]
   (radix_size : i32)

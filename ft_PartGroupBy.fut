@@ -4,6 +4,7 @@ import "ftHashJoin"
 -- Uses the same Aggregator defined in SortGroupBy
 -- only key-finding differs
 
+-- TODO use the primitive radix method from ftHashJoin
 -- TODO test
 
 local def do_find_key_counts [n] [key_no] [part_no] [b]
@@ -37,8 +38,6 @@ def partgroup_find_known_key_counts [n] [key_no] [part_no] [b]
 
 -- NOTE 1
 -- this only works if b is at most 8 bytes (so can be represented by long)
--- it could work with more with custom arith op's for byteSeq
--- but those would likely be less efficient
 def partgroup_find_unknown_key_counts [n] [part_no] [b]
 	(radix_size : i32)
 	(part_ks : [n](byteSeq [b]))
@@ -64,13 +63,13 @@ def partgroup_find_unknown_key_counts [n] [part_no] [b]
 		|> filter (\(p, c) -> p>=0 && c>0)
 		|> unzip
 
-def partgroup_partitionByIndex [n] [group_no] [b]
-	(group_ks: [group_no](byteSeq [b]))
-	(ks : [n](byteSeq [b]))
-: [n]idx_t.t =
-	ks |> map (\k ->
-		rv_find_match_if_exists k group_ks 0 n
-	)
+--def partgroup_partitionByIndex [n] [group_no] [b]
+--	(group_ks: [group_no](byteSeq [b]))
+--	(ks : [n](byteSeq [b]))
+-- : [n]idx_t.t =
+--	ks |> map (\k ->
+--		rv_find_match_if_exists k group_ks 0 n
+--	)
 
 -- are the following needed anywhere?
 -- probably if I make a specialised Aggregator module (...)

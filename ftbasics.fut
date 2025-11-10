@@ -53,7 +53,7 @@ def partitioned_scatter [nd] [n] 'a
   (vs: [n]a)
 : *[]a =
   let psize_ = psize / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits) )
-  let max_iter = (n+psize_-1) / psize_
+  let max_iter = (nd+psize_-1) / psize_
   in loop buff = dest for j in (iota max_iter) do
     let inf = j*psize_
     let sup = idx_t.min n (inf + psize_)
@@ -115,32 +115,32 @@ def argmin [n] 't
   in min_ik.0
 
 -- sequential map function - needed at a place for hash join
-def seqmap [n] 't 'ot
-  (dummy_elem : ot)
-  (f : t -> ot)
-  (xs: [n]t)
-: [n]ot =
-  loop buff = (replicate n dummy_elem) for j in (iota n) do
-    buff with [j] = f xs[j]
+--def seqmap [n] 't 'ot
+--  (f : t -> ot)
+--  (xs: [n]t)
+-- : [n]ot =
+--  if n==0 then ([] :> [n]ot) else
+--  loop buff = (replicate n (f xs[0])) for j in (1..<n) do
+--    buff with [j] = f xs[j]
 
-def seqmap2 [n] 't1 't2 'ot
-  (dummy_elem : ot)
-  (f : t1 -> t2 -> ot)
-  (xs: [n]t1)
-  (ys: [n]t2)
-: [n]ot =
-  loop buff = (replicate n dummy_elem) for j in (iota n) do
-    buff with [j] = f xs[j] ys[j]
+--def seqmap2 [n] 't1 't2 'ot
+--  (f : t1 -> t2 -> ot)
+--  (xs: [n]t1)
+--  (ys: [n]t2)
+-- : [n]ot =
+--  if n==0 then ([] :> [n]ot) else
+--  loop buff = (replicate n (f xs[0] ys[0])) for j in (1..<n) do
+--    buff with [j] = f xs[j] ys[j]
 
-def seqmap3 [n] 't1 't2 't3 'ot
-  (dummy_elem : ot)
-  (f : t1 -> t2 -> t3 -> ot)
-  (xs: [n]t1)
-  (ys: [n]t2)
-  (zs: [n]t3)
-: [n]ot =
-  loop buff = (replicate n dummy_elem) for j in (iota n) do
-    buff with [j] = f xs[j] ys[j] zs[j]
+--def seqmap3 [n] 't1 't2 't3 'ot
+--  (f : t1 -> t2 -> t3 -> ot)
+--  (xs: [n]t1)
+--  (ys: [n]t2)
+--  (zs: [n]t3)
+-- : [n]ot =
+--  if n==0 then ([] :> [n]ot) else
+--  loop buff = (replicate n (f xs[0] ys[0] zs[0])) for j in (1..<n) do
+--    buff with [j] = f xs[j] ys[j] zs[j]
 
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------

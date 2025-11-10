@@ -250,6 +250,7 @@ int futhark_project_opaque_sortStruct_short_pL(struct futhark_context *ctx, stru
 int futhark_new_opaque_sortStruct_short(struct futhark_context *ctx, struct futhark_opaque_sortStruct_short **out, const struct futhark_i16_1d *f_k, const struct futhark_u8_2d *f_pL);
 
 // Entry points
+int futhark_entry_Inner_Radix_Hash_Join(struct futhark_context *ctx, struct futhark_opaque_joinPairs_bsq **out0, const int32_t in0, const struct futhark_u8_2d *in1, const struct futhark_u8_2d *in2, const struct futhark_opaque_partitionInfo *in3, const struct futhark_opaque_radix_hashTable *in4);
 int futhark_entry_Inner_Radix_Hash_Join_with_right_keys_unique(struct futhark_context *ctx, struct futhark_opaque_joinPairs_bsq **out0, const int32_t in0, const struct futhark_u8_2d *in1, const struct futhark_u8_2d *in2, const struct futhark_opaque_partitionInfo *in3, const struct futhark_opaque_radix_hashTable *in4);
 int futhark_entry_argmin_double(struct futhark_context *ctx, int64_t *out0, const struct futhark_f64_1d *in0);
 int futhark_entry_argmin_float(struct futhark_context *ctx, int64_t *out0, const struct futhark_f32_1d *in0);
