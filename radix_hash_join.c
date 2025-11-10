@@ -23,8 +23,9 @@
 #define SCATTER_PSIZE 32000
 
 #define RADIX_BITS 16
-// TODO for some reason partitioning "all the way through" causes some result tuples to be omitted (?!)
-#define MAX_DEPTH 3
+// TODO for some reason repartitioning past a threshold (different per try) omits result tuples...
+// possibly the useful threshold?
+#define MAX_DEPTH 2
 
 #define R_TBL_NAME "R2_tbl"
 #define S_TBL_NAME "S2_tbl"
