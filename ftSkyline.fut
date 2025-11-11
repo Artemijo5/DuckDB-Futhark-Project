@@ -216,15 +216,27 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 					get_grid_id_from_coords skOp skB x
 				)
 			in hist (+) 0 skB.total_grid_no grid_part_by_idx (replicate n 1)
-		in skB.start_of_grid_partition
-			|> map (\this_o ->
-				let (isD,_) = loop (isDomd, j) = (false, 0)
-					while !isDomd && j<skB.total_grid_no do
-						let o_j = skB.start_of_grid_partition[j]
-						let count_j = count_per_grid_part[j]
-						let domd = (count_j>0 && foldl (&&) (true) (map2 (skOp.skyline_lt) this_o o_j))
-						in (domd, j+1)
-				in isD
+		in (
+			loop domArray=(replicate skB.total_grid_no false) for j in (iota skB.total_grid_no) do
+				let this_o = skB.start_of_grid_partition[j]
+				let isD = (iota skB.total_grid_no)
+					|> map (\i ->
+						if count_per_grid_part[i]==0
+						then false
+						else foldl (&&) (true) (seqmap2 (skOp.skyline_lt) this_o skB.start_of_grid_partition[i])
+					)
+					|> any (id)
+				in domArray with [j] = isD
+			--skB.start_of_grid_partition
+			--	|> map (\this_o ->
+			--		let (isD,_) = loop (isDomd, j) = (false, 0)
+			--			while !isDomd && j<skB.total_grid_no do
+			--				let o_j = skB.start_of_grid_partition[j]
+			--				let count_j = count_per_grid_part[j]
+			--				let domd = (count_j>0 && foldl (&&) (true) (map2 (skOp.skyline_lt) this_o o_j))
+			--				in (domd, j+1)
+			--		in isD
+			--	)
 			)
 			|> zip previous_dominance
 			|> map (\(alt,neu) -> alt || neu)
@@ -272,16 +284,28 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 					get_grid_id_from_coords skOp skB x
 				)
 			in hist (+) 0 skB.total_grid_no grid_part_by_idx (replicate n 1)
-		in skB.start_of_grid_partition
-			|> map (\this_o ->
-				let (isD,_) = loop (isDomd, j) = (false, 0)
-					while !isDomd && j<skB.total_grid_no do
-						let o_j = skB.start_of_grid_partition[j]
-						let count_j = count_per_grid_part[j]
-						let domd = (count_j>0 && foldl (&&) (true) (map2 (skOp.skyline_lt) this_o o_j))
-						in (domd, j+1)
-				in isD
-			)
+		in
+		-- Loop Inversion
+			loop domArray=(replicate skB.total_grid_no false) for j in (iota skB.total_grid_no) do
+				let this_o = skB.start_of_grid_partition[j]
+				let isD = (iota skB.total_grid_no)
+					|> map (\i ->
+						if count_per_grid_part[i]==0
+						then false
+						else foldl (&&) (true) (map2 (skOp.skyline_lt) this_o skB.start_of_grid_partition[i])
+					)
+					|> any (id)
+				in domArray with [j] = isD
+			--skB.start_of_grid_partition
+			--	|> map (\this_o ->
+			--		let (isD,_) = loop (isDomd, j) = (false, 0)
+			--			while !isDomd && j<skB.total_grid_no do
+			--				let o_j = skB.start_of_grid_partition[j]
+			--				let count_j = count_per_grid_part[j]
+			--				let domd = (count_j>0 && foldl (&&) (true) (map2 (skOp.skyline_lt) this_o o_j))
+			--				in (domd, j+1)
+			--		in isD
+			--	)
 	let sorted_xys = sorted_xys_
 		|> filter (\(x,_) ->
 			let g = get_grid_id_from_coords skOp skB x
@@ -309,30 +333,36 @@ def calc_local_Skyline [dim] 't 'pL_t
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 : skylineInfo [dim] t pL_t =
-	let filt_idx = (indices skI.xys)
-		|> map (\i ->
-			let this_x = skI.xys[i].0
-			let (g, a, _) = get_grid_angle_measure_from_coords skOp skB this_x
-			in if skI.isPartitionDominated[g] then (-1) else
-			let p_id = get_id_from_grid_angle skB g a
-			let start_idx = skI.part_idx[i]
-			let end_idx = if i==skB.total_part_no-1 then (length skI.xys) else skI.part_idx[i+1]
-			let loop_over =
-				loop (isElimd, j) = (false, start_idx)
-				while !isElimd && j<end_idx do
-					let cmp_x = skI.xys[j].0
+	-- Loop Inversion
+	let skyline_xys = 
+		let part_sizes = (indices skI.part_idx)
+			|> map (\i ->
+				if i==(length skI.part_idx-1)
+				then (length skI.xys)-skI.part_idx[i]
+				else skI.part_idx[i+1] - skI.part_idx[i]
+			)
+		let max_part_size = idx_t.maximum part_sizes
+		let filt_idx =
+			loop idxs = (indices skI.xys) for j in (iota max_part_size) do
+				idxs |> map (\i ->
+					if i<0 then i else
+					let this_x = skI.xys[i].0
+					let (g,a,_) = get_grid_angle_measure_from_coords skOp skB this_x
+					in if skI.isPartitionDominated[g] then (-1) else
+					let p_id = get_id_from_grid_angle skB g a
+					let still_comparing = (part_sizes[i] > j)
+					in if !still_comparing then i else
+					let cmp_x = skI.xys[skI.part_idx[i]+j].0
 					let elimd =
-						(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
+						(foldl (&&) (true) (seqmap2 (skOp.skyline_leq) this_x cmp_x))
 						&&
-						(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
-					in (elimd, j+1)
-			in
-				if loop_over.0
-				then (-1)
-				else i
-		)
-		|> filter (>=0)
-	let skyline_xys = filt_idx |> map (\i -> skI.xys[i])
+						(foldl (||) (false) (seqmap2 (skOp.skyline_lt) this_x cmp_x))
+					in
+						if elimd then (-1) else i
+				)
+		in filt_idx
+			|> filter (>=0)
+			|> map (\i -> skI.xys[i])
 	let n_filt = length (skyline_xys)
 	let zuowei =
 		let skyline_parts = skyline_xys
@@ -577,25 +607,43 @@ def calc_global_Skyline [dim] 't 'pL_t
 	(skI : skylineInfo [dim] t pL_t)
 : skylineInfo [dim] t pL_t =
 	let n = length skI.xys
-	let new_xys = (indices skI.xys)
-		|> map (\i ->
-			let this_x = skI.xys[i].0
-			let loop_over =
-				loop (isElimd, j) = (false, 0)
-				while !isElimd && j<n do
-					let cmp_x = skI.xys[j].0
-					let elimd =
-						(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
+	-- Loop Inversion
+	let new_xys =
+		let new_is = loop ni = (indices skI.xys) for j in (indices skI.xys) do
+			let cmp_x = skI.xys[j].0
+			in ni |> map (\i ->
+				if i<0 then i else
+				let this_x = skI.xys[i].0
+				let elimd =
+						(foldl (&&) (true) (seqmap2 (skOp.skyline_leq) this_x cmp_x))
 						&&
-						(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
-					in (elimd, j+1)
-			in
-				if loop_over.0
-				then (-1)
-				else i
-		)
-		|> filter (>=0)
-		|> map (\i -> skI.xys[i])
+						(foldl (||) (false) (seqmap2 (skOp.skyline_lt) this_x cmp_x))
+				in
+					if elimd then (-1) else i
+			)
+		in new_is
+			|> filter (>=0)
+			|> map (\i -> skI.xys[i])
+	--
+		--let new_xys = (indices skI.xys)
+		--	|> map (\i ->
+		--		let this_x = skI.xys[i].0
+		--		let loop_over =
+		--			loop (isElimd, j) = (false, 0)
+		--			while !isElimd && j<n do
+		--				let cmp_x = skI.xys[j].0
+		--				let elimd =
+		--					(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
+		--					&&
+		--					(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
+		--				in (elimd, j+1)
+		--		in
+		--			if loop_over.0
+		--			then (-1)
+		--			else i
+		--	)
+		--	|> filter (>=0)
+		--	|> map (\i -> skI.xys[i])
 	let zuowei =
 		let n_filt = length new_xys
 		let skyline_parts = new_xys

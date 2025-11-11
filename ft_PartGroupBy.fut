@@ -4,8 +4,7 @@ import "ftHashJoin"
 -- Uses the same Aggregator defined in SortGroupBy
 -- only key-finding differs
 
--- TODO use the primitive radix method from ftHashJoin
--- TODO test
+-- TODO use loop inversion where necessary
 
 local def do_find_key_counts [n] [key_no] [part_no] [b]
 	(radix_size : i32)
@@ -70,6 +69,19 @@ def partgroup_find_unknown_key_counts [n] [part_no] [b]
 --	ks |> map (\k ->
 --		rv_find_match_if_exists k group_ks 0 n
 --	)
+def partgroup_partitionByIndex [n] [group_no] [b]
+	(group_ks : [group_no](byteSeq [b]))
+	(ks : [n](byteSeq [b]))
+: [n]idx_t.t =
+	loop per_k = (replicate n (-1)) for j in (iota group_ks) do
+		let this_gid = group_ks[j]
+		in map2 (\p i ->
+				if p>=0 then p
+				else if (foldl (&&) true (map2 (==) ks[i] this_gid)) then j
+				else p
+			)
+			per_k
+			(iota n)
 
 -- are the following needed anywhere?
 -- probably if I make a specialised Aggregator module (...)

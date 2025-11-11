@@ -428,33 +428,6 @@ def byteSeq_to_u32 x
 def byteSeq_to_u64 x
   = byteSeq_to_prim x 0 (u64.u8) (\bits shift -> bits << (u64.i32 shift)) (u64.|)
 
-def byteSeq_to_u48 x : (u16, u32) =
-  let b = length x
-  let ms_slot = byteSeq_to_u16 ((replicate (6-b) 0) ++ x[0:b-4])
-  let ls_slot = byteSeq_to_u32 x[4:(length x)]
-  in (ms_slot, ls_slot)
-def byteSeq_to_u80 x : (u16, u64) =
-  let b = length x
-  let ms_slot = byteSeq_to_u16 ((replicate (10-b) 0) ++ x[0:b-8])
-  let ls_slot = byteSeq_to_u64 x[2:(length x)]
-  in (ms_slot, ls_slot)
-def byteSeq_to_u96 x : (u32, u64) =
-  let b = length x
-  let ms_slot = byteSeq_to_u32 ((replicate (12-b) 0) ++ x[0:b-8])
-  let ls_slot = byteSeq_to_u64 x[b-8:b]
-  in (ms_slot, ls_slot)
-def byteSeq_to_u112 x : (u16,u32,u64) =
-  let b = length x
-  let ms_slot = byteSeq_to_u16 ((replicate (14-b) 0) ++ x[0:b-12])
-  let ns_slot = byteSeq_to_u32 x[b-12:b-8]
-  let ls_slot = byteSeq_to_u64 x[b-8:b]
-  in (ms_slot,ns_slot,ls_slot)
-def byteSeq_to_u128 x : (u64, u64) =
-  let b = length x
-  let ms_slot = byteSeq_to_u64 ((replicate (16 - b) 0) ++ x[0:b-8])
-  let ls_slot = byteSeq_to_u64 x[b-8:b]
-  in (ms_slot, ls_slot)
-
 def prim_get_radix 't
   (radix_bits : i32)
   (x : t)
@@ -470,40 +443,6 @@ def u32_get_radix radix_bits x
   = prim_get_radix radix_bits x (\bits moj -> bits & (u32.u64 moj-1))
 def u64_get_radix radix_bits x
   = prim_get_radix radix_bits x (\bits moj -> bits & (u64.u64 (moj-1)))
-
-def u48_get_radix radix_bits (x : (u16,u32)) : (u16,u32) =
-  let ls_radix_bits = i32.min radix_bits u32.num_bits
-  let ms_radix_bits = i32.max (radix_bits-u32.num_bits) 0
-  let ls_r = u32_get_radix ls_radix_bits x.1
-  let ms_r = u16_get_radix ms_radix_bits x.0
-  in (ms_r, ls_r)
-def u80_get_radix radix_bits (x : (u16,u64)) : (u16,u64) =
-  let ls_radix_bits = i32.min radix_bits u64.num_bits
-  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
-  let ls_r = u64_get_radix ls_radix_bits x.1
-  let ms_r = u16_get_radix ms_radix_bits x.0
-  in (ms_r, ls_r)
-def u96_get_radix radix_bits (x : (u32,u64)) : (u32,u64) =
-  let ls_radix_bits = i32.min radix_bits u64.num_bits
-  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
-  let ls_r = u64_get_radix ls_radix_bits x.1
-  let ms_r = u32_get_radix ms_radix_bits x.0
-  in (ms_r, ls_r)
-def u112_get_radix radix_bits (x : (u16,u32,u64)) : (u16,u32,u64) =
-  let ls_radix_bits = i32.min radix_bits u64.num_bits
-  let ns_radix_bits_ = i32.min (i32.max (radix_bits-u64.num_bits) 0) u32.num_bits
-  let ms_radix_bits = i32.max (radix_bits-u32.num_bits-u64.num_bits) 0
-  let ls_r = u64_get_radix ls_radix_bits x.2
-  let ns_r = u32_get_radix ms_radix_bits x.1
-  let ms_r = u16_get_radix ms_radix_bits x.0
-  in (ms_r,ns_r,ls_r)
-def u128_get_radix radix_bits (x : (u64,u64)) : (u64,u64) =
-  let ls_radix_bits = i32.min radix_bits u64.num_bits
-  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
-  let ls_r = u64_get_radix ls_radix_bits x.1
-  let ms_r = u64_get_radix ms_radix_bits x.0
-  in (ms_r, ls_r)
--- TODO gt, lt, eq, other funcs for composites...
 
 def prim_radix_gt 't
   (radix_bits : i32)
@@ -574,6 +513,7 @@ def u32_radix_eq radix_bits cur_depth x1 x2
   = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (u32.u64 (moj-1)))
 def u64_radix_eq radix_bits cur_depth x1 x2
   = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (moj-1))
+
 
 def rv_partitionMatchBounds [nR] [pR] 't
   (as_index_ : t -> i64)
@@ -1048,9 +988,101 @@ def radix_hash_join_with_S_keys_unique [b]
   else if b<=4 then radix_hash_join_with_S_keys_unique_u32 radix_size tR tS pS ht_S
   else radix_hash_join_with_S_keys_unique_u64 radix_size tR tS pS ht_S
 
+-- ################################################################################################################
+-- Composite size types
+-- ################################################################################################################
+
+def byteSeq_to_u48 x : (u16, u32) =
+  let b = length x
+  let ms_slot = byteSeq_to_u16 ((replicate (6-b) 0) ++ x[0:b-4])
+  let ls_slot = byteSeq_to_u32 x[4:(length x)]
+  in (ms_slot, ls_slot)
+def byteSeq_to_u80 x : (u16, u64) =
+  let b = length x
+  let ms_slot = byteSeq_to_u16 ((replicate (10-b) 0) ++ x[0:b-8])
+  let ls_slot = byteSeq_to_u64 x[2:(length x)]
+  in (ms_slot, ls_slot)
+def byteSeq_to_u96 x : (u32, u64) =
+  let b = length x
+  let ms_slot = byteSeq_to_u32 ((replicate (12-b) 0) ++ x[0:b-8])
+  let ls_slot = byteSeq_to_u64 x[b-8:b]
+  in (ms_slot, ls_slot)
+def byteSeq_to_u112 x : (u16,u32,u64) =
+  let b = length x
+  let ms_slot = byteSeq_to_u16 ((replicate (14-b) 0) ++ x[0:b-12])
+  let ns_slot = byteSeq_to_u32 x[b-12:b-8]
+  let ls_slot = byteSeq_to_u64 x[b-8:b]
+  in (ms_slot,ns_slot,ls_slot)
+def byteSeq_to_u128 x : (u64, u64) =
+  let b = length x
+  let ms_slot = byteSeq_to_u64 ((replicate (16 - b) 0) ++ x[0:b-8])
+  let ls_slot = byteSeq_to_u64 x[b-8:b]
+  in (ms_slot, ls_slot)
+
+def u48_get_radix radix_bits (x : (u16,u32)) : (u16,u32) =
+  let ls_radix_bits = i32.min radix_bits u32.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u32.num_bits) 0
+  let ls_r = u32_get_radix ls_radix_bits x.1
+  let ms_r = u16_get_radix ms_radix_bits x.0
+  in (ms_r, ls_r)
+def u80_get_radix radix_bits (x : (u16,u64)) : (u16,u64) =
+  let ls_radix_bits = i32.min radix_bits u64.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
+  let ls_r = u64_get_radix ls_radix_bits x.1
+  let ms_r = u16_get_radix ms_radix_bits x.0
+  in (ms_r, ls_r)
+def u96_get_radix radix_bits (x : (u32,u64)) : (u32,u64) =
+  let ls_radix_bits = i32.min radix_bits u64.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
+  let ls_r = u64_get_radix ls_radix_bits x.1
+  let ms_r = u32_get_radix ms_radix_bits x.0
+  in (ms_r, ls_r)
+def u112_get_radix radix_bits (x : (u16,u32,u64)) : (u16,u32,u64) =
+  let ls_radix_bits = i32.min radix_bits u64.num_bits
+  let ns_radix_bits = i32.min (i32.max (radix_bits-u64.num_bits) 0) u32.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u32.num_bits-u64.num_bits) 0
+  let ls_r = u64_get_radix ls_radix_bits x.2
+  let ns_r = u32_get_radix ns_radix_bits x.1
+  let ms_r = u16_get_radix ms_radix_bits x.0
+  in (ms_r,ns_r,ls_r)
+def u128_get_radix radix_bits (x : (u64,u64)) : (u64,u64) =
+  let ls_radix_bits = i32.min radix_bits u64.num_bits
+  let ms_radix_bits = i32.max (radix_bits-u64.num_bits) 0
+  let ls_r = u64_get_radix ls_radix_bits x.1
+  let ms_r = u64_get_radix ms_radix_bits x.0
+  in (ms_r, ls_r)
+
+def u128_radix_eq radix_bits cur_depth (x1:(u64,u64)) (x2:(u64,u64))
+: bool =
+  let ls_depth = i32.min cur_depth ((radix_bits + u64.num_bits - 1)/(radix_bits))
+  let ms_depth = cur_depth - ls_depth
+  let eq1 = u64_radix_eq radix_bits ls_depth x1.1 x2.1
+  let eq2 = if ms_depth>0 then (u64_radix_eq radix_bits ms_depth x1.0 x2.0) else true
+  in eq1&&eq2
+def u128_radix_gt radix_bits cur_depth (x1:(u64,u64)) (x2:(u64,u64))
+: bool =
+  let ls_depth = i32.min cur_depth ((radix_bits + u64.num_bits - 1)/(radix_bits))
+  let ms_depth = cur_depth - ls_depth
+  let ls_gt = u64_radix_gt radix_bits ls_depth x1.1 x2.1
+  in if ls_gt then true else
+    let ls_eq = u64_radix_eq radix_bits ls_depth x1.1 x2.1
+    let ms_lt = if ms_depth>0 then (u64_radix_gt radix_bits ms_depth x1.0 x2.0) else false
+    in (ms_lt && ls_eq)
+def u128_radix_lt radix_bits cur_depth (x1:(u64,u64)) (x2:(u64,u64))
+: bool =
+  let ls_depth = i32.min cur_depth ((radix_bits + u64.num_bits - 1)/(radix_bits))
+  let ms_depth = cur_depth - ls_depth
+  let ls_lt = u64_radix_lt radix_bits ls_depth x1.1 x2.1
+  in if ls_lt then true else
+    let ls_eq = u64_radix_eq radix_bits ls_depth x1.1 x2.1
+    let ms_lt = if ms_depth>0 then (u64_radix_lt radix_bits ms_depth x1.0 x2.0) else false
+    in (ms_lt && ls_eq)
+
+-- ################################################################################################################
+
 def test =
-  let xs1:[][]u8= [[0,1],[0,1],[2,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
-  let xs2:[][]u8= [[0,1],[0,1],[4,1],[5,1],[2,2],[2,2],[2,2],[2,2],[1,3],[3,3],[5,3],[7,3],[2,4],[2,4],[5,4],[5,4]]
-  let inf1 = calc_partInfo 4 xs1 0 2 4
+  let xs1:[][]u8= [[0,1],[0,1],[0,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
+  let xs2:[][]u8= [[0,1],[0,1],[4,1],[5,1],[2,2],[2,2],[2,2],[2,2],[1,3],[3,3],[5,3],[7,3],[1,4],[2,4],[5,4],[5,4]]
+  let inf1 = calc_partInfo 4 xs1 0 2 3
   let tab1 = calc_radixHashTab 4 xs1 inf1 256
   in radix_hash_join 4 xs2 xs1 inf1 tab1
