@@ -236,7 +236,7 @@ def find_joinTuples [nR] [nS] 't
       let frv = bsearch_first.0
       let init_step_last = idx_t.max 1 ((nS-frv)/2)
       let bsearch_last = if frv == -1 then (-1, 0) else
-        loop (last_match, step) = (nS-1, init_step_last)
+        loop (last_match, step) = (frv, init_step_last)
         while step>0 do
           let sv = tS[last_match]
           let nv = if last_match==nS-1 then sv else tS[last_match+1]
