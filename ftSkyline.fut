@@ -2,9 +2,8 @@ import "lib/github.com/diku-dk/sorts/merge_sort"
 import "ftbasics"
 
 -- TODO
--- compiler limitation encountered
--- see where exactly it happens
--- do with tuples instead... so different version per dimensionality...
+-- Loop Inversion did not save this
+-- will need to remake with tuples...
 
 type^ skylineOp 't = {
 	plus : t -> t -> t,
@@ -275,16 +274,21 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 	(use_measure_for_sorting : bool)
 : skylineInfo [dim] t pL_t =
 	let grid_no = skB.total_grid_no
-	let part_leq : [dim]t -> [dim]t -> bool =
-		(\x1 x2 ->
-			let (id1, m1) = get_id_measure_from_coords skOp skB x1
-			let (id2, m2) = get_id_measure_from_coords skOp skB x2
-			in
-				if use_measure_for_sorting
-				then (id1<id2) || (id1==id2 && m1<=m2)
-				else (id1<=id2)
-		)
-	let sorted_xys_ = merge_sort (\(x1,_) (x2,_) -> part_leq x1 x2) (zip xs ys)
+	--let part_leq : [dim]t -> [dim]t -> bool =
+	--	(\x1 x2 ->
+	--		let (id1, m1) = get_id_measure_from_coords skOp skB x1
+	--		let (id2, m2) = get_id_measure_from_coords skOp skB x2
+	--		in
+	--			if use_measure_for_sorting
+	--			then (id1<id2) || (id1==id2 && m1<=m2)
+	--			else (id1<=id2)
+	--	)
+	--let sorted_xys_ = merge_sort (\(x1,_) (x2,_) -> part_leq x1 x2) (zip xs ys)
+	let sorted_xys_ =
+		let pids = xs |> map (\x -> (get_id_measure_from_coords skOp skB x).0)
+		in (zip3 pids xs ys)
+			|> merge_sort (\(p1,_,_) (p2,_,_) -> p1<=p2)
+			|> map (\(p,x,y) -> (x,y))
 	let isPartitionDominated =
 		let count_per_grid_part =
 			let grid_part_by_idx = sorted_xys_
@@ -322,9 +326,10 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 		)
 	let n_filt = length sorted_xys
 	let zuowei =
-		let part_by_idx = sorted_xys
-			|> map (\(x,_) -> 
-				(get_id_measure_from_coords skOp skB x).0
+		let part_by_idx = (iota n_filt)
+		-- Why can't this be done in parallel!!!!!
+			|> seqmap (\i -> 
+				(get_id_measure_from_coords skOp skB sorted_xys[i].0).0
 			) :> [n_filt]idx_t.t
 		let counts = hist (+) 0 skB.total_part_no part_by_idx (replicate n_filt 1)
 		in exscan (+) 0 counts
@@ -375,7 +380,7 @@ def calc_local_Skyline [dim] 't 'pL_t
 	let n_filt = length (skyline_xys)
 	let zuowei =
 		let skyline_parts = skyline_xys
-			|> map (\(x,_) ->
+			|> seqmap (\(x,_) ->
 				(get_id_measure_from_coords skOp skB x).0
 			) :> [n_filt]idx_t.t
 		let counts = hist (+) 0 skB.total_part_no skyline_parts (replicate n_filt 1)
@@ -697,7 +702,7 @@ entry define_skyline_space_double [dim]
 	(max_per_dim : [dim]f64)
 	(grid_partitions_per_dim : [dim]idx_t.t)
 	(angle_partitions_per_dim : [dim-1]idx_t.t)
-: skylineBase [dim] f64 =
+: skylineBase_double [dim] =
 	mk_skylineBase_from_grid
 		skylineOp_double
 		min_per_dim
@@ -716,6 +721,12 @@ entry sort_for_Skyline_double [n] [dim]
 		xs
 		(indices xs)
 		use_measure_for_sorting
+
+entry calc_local_Skyline_GFUR_double [dim]
+	(skB : skylineBase_double [dim])
+	(skI : skylineInfo_GFUR_double [dim])
+: skylineInfo_GFUR_double [dim] =
+	calc_local_Skyline skylineOp_double skB skI
 
 
 
