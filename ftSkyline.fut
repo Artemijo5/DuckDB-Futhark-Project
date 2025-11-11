@@ -270,21 +270,17 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 	(use_measure_for_sorting : bool)
 : skylineInfo [dim] t pL_t =
 	let grid_no = skB.total_grid_no
-	--let part_leq : [dim]t -> [dim]t -> bool =
-	--	(\x1 x2 ->
-	--		let (id1, m1) = get_id_measure_from_coords skOp skB x1
-	--		let (id2, m2) = get_id_measure_from_coords skOp skB x2
-	--		in
-	--			if use_measure_for_sorting
-	--			then (id1<id2) || (id1==id2 && m1<=m2)
-	--			else (id1<=id2)
-	--	)
-	--let sorted_xys_ = merge_sort (\(x1,_) (x2,_) -> part_leq x1 x2) (zip xs ys)
 	let sorted_xys_ =
-		let pids = xs |> map (\x -> (get_id_measure_from_coords skOp skB x).0)
-		in (zip3 pids xs ys)
-			|> merge_sort (\(p1,_,_) (p2,_,_) -> p1<=p2)
-			|> map (\(p,x,y) -> (x,y))
+		if !use_measure_for_sorting then
+			let pids = xs |> map (\x -> (get_id_measure_from_coords skOp skB x).0)
+			in (zip3 pids xs ys)
+				|> merge_sort (\(p1,_,_) (p2,_,_) -> p1<=p2)
+				|> map (\(p,x,y) -> (x,y))
+		else
+			let pids = xs |> map (\x -> get_id_measure_from_coords skOp skB x)
+			in (zip3 pids xs ys)
+				|> merge_sort (\((p1,m1),_,_) ((p2,m2),_,_) -> p1<p2 || (p1==p2 && m1<=m2))
+				|> map (\((p,m),x,y) -> (x,y))
 	let isPartitionDominated =
 		let count_per_grid_part =
 			let grid_part_by_idx = sorted_xys_
