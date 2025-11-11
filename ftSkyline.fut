@@ -1,10 +1,6 @@
 import "lib/github.com/diku-dk/sorts/merge_sort"
 import "ftbasics"
 
--- TODO
--- Loop Inversion did not save this
--- will need to remake with tuples...
-
 type^ skylineOp 't = {
 	plus : t -> t -> t,
 	minus : t -> t -> t,
@@ -328,6 +324,7 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 	let zuowei =
 		let part_by_idx = (iota n_filt)
 		-- Why can't this be done in parallel!!!!!
+		-- TODO try re-planning the mapping...
 			|> seqmap (\i -> 
 				(get_id_measure_from_coords skOp skB sorted_xys[i].0).0
 			) :> [n_filt]idx_t.t
@@ -358,22 +355,29 @@ def calc_local_Skyline [dim] 't 'pL_t
 		let max_part_size = idx_t.maximum part_sizes
 		let filt_idx =
 			loop idxs = (indices skI.xys) for j in (iota max_part_size) do
-				idxs |> map (\i ->
-					if (i<0 || i==j) then i else
-					let this_x = skI.xys[i].0
-					let (g,a,_) = get_grid_angle_measure_from_coords skOp skB this_x
-					in if skI.isPartitionDominated[g] then (-1) else
-					let p_id = get_id_from_grid_angle skB g a
-					let still_comparing = (part_sizes[p_id] > j)
-					in if !still_comparing then i else
-					let cmp_x = skI.xys[skI.part_idx[p_id]+j].0
-					let elimd =
-						(foldl (&&) (true) (seqmap2 (skOp.skyline_leq) this_x cmp_x))
-						&&
-						(foldl (||) (false) (seqmap2 (skOp.skyline_lt) this_x cmp_x))
-					in
-						if elimd then (-1) else i
-				)
+				-- TODO if works, filter eliminated partitions...
+				let part_ids = skI.xys
+					|> map (\(x,_) -> get_grid_angle_measure_from_coords skOp skB x)
+					|> map (\(g,a,_) ->
+						get_id_from_grid_angle skB g a
+					)
+				let cmp_xs = part_ids
+					|> map (\pid -> (pid, part_sizes[pid]))
+					|> map (\(pid,ps) -> idx_t.min (skI.part_idx[pid]+j) (skI.part_idx[pid]+ps-1))
+					|> map (\pj -> skI.xys[pj].0)
+				in map3
+					(\i (this_x,_) cmp_x ->
+						if (i<0 || i==j) then i else
+						let elimd =
+							(foldl (&&) (true) (seqmap2 (skOp.skyline_leq) this_x cmp_x))
+							&&
+							(foldl (||) (false) (seqmap2 (skOp.skyline_lt) this_x cmp_x))
+						in
+							if elimd then (-1) else i
+					)
+					idxs
+					skI.xys
+					cmp_xs
 		in filt_idx
 			|> filter (>=0)
 			|> map (\i -> skI.xys[i])
@@ -784,6 +788,27 @@ def test_global_skyline_2d (use_measure) =
 	let skB = copy test_skB_2d
 	let skI = test_local_skyline_2d use_measure
 	in calc_global_Skyline skOp skB skI
+
+def test_skylineBase_3d =
+	mk_skylineBase_from_grid
+		(skylineOp_double)
+		([0,0,0])
+		([15,15,15])
+		([3,3,3])
+		([2,2] :> [3-1]i64)
+
+def test_points_3d : [][]f64 = [
+		[6,1,1],[6.4,0.5,0.2],[5.6,1.4,0.3],[6.5,2.3,0.4],
+		[1,6,4],[0.6,6.6,0.4],[1.2,5.8,2.2],[2.2,6.2,3],
+		[6,12,1],[5,13,1],[6.2,11,1],[5.1,12,1],
+		[2,2,6.2],[1,3,6],[1,2,6.1],[2,1,6.1],
+		[7,9.5,8],[9,5.5,6],[5.1,5.7,5.2],[8,5,6],
+		[12,9,9.5],[15,6,8],[12,6,8],[10,8,6],
+		[12,14,9.4],[15,11,7.9],[12,11,7.9],[10,13,6.1],
+		[10,4,10],[11,3,11],[10,2,11],[11,1,10],
+		[5,5,11],[6,5,10],[6,5.2,12],[7,5.3,12],
+		[6,12,12],[7,11,13],[5,11,12],[6,12,10]
+	]
 
 def test_sort_3d (use_measure) =
 	let skOp = skylineOp_double
