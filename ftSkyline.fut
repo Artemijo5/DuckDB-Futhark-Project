@@ -243,19 +243,32 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 			)
 			|> zip previous_dominance
 			|> map (\(alt,neu) -> alt || neu)
-	let sorted_xys = sorted_xys_
-		|> filter (\(x,_) ->
-			let g = get_grid_id_from_coords skOp skB x
-			in !(isPartitionDominated[g])
-		)
-	let n_filt = length sorted_xys
-	let zuowei =
-		let part_by_idx = sorted_xys
-			|> map (\(x,_) -> 
-				(get_id_measure_from_coords skOp skB x).0
-			) :> [n_filt]idx_t.t
-		let counts = hist (+) 0 skB.total_part_no part_by_idx (replicate n_filt 1)
-		in exscan (+) 0 counts
+	--let sorted_xys = sorted_xys_
+	--	|> filter (\(x,_) ->
+	--		let g = get_grid_id_from_coords skOp skB x
+	--		in !(isPartitionDominated[g])
+	--	)
+	--let n_filt = length sorted_xys
+	--let zuowei =
+	--	let part_by_idx = sorted_xys
+	--		|> map (\(x,_) -> 
+	--			(get_id_measure_from_coords skOp skB x).0
+	--		) :> [n_filt]idx_t.t
+	--	let counts = hist (+) 0 skB.total_part_no part_by_idx (replicate n_filt 1)
+	--	in exscan (+) 0 counts
+	let (sorted_xys, zuowei) =
+		let (filt_xys,filt_pids) = sorted_xys_
+			|> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
+			|> zip sorted_xys_
+			|> filter (\(_,pid) ->
+				let (g,_) = get_grid_angle_from_id skB pid
+				in !(isPartitionDominated[g])
+			)
+			|> unzip
+		let n_filt = length filt_pids
+		let counts = hist (+) 0 skB.total_part_no (filt_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
+		let zw = exscan (+) 0 counts
+		in (filt_xys, zw)
 	in {
 		xys = sorted_xys,
 		part_idx = zuowei,
@@ -311,21 +324,36 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 			--				in (domd, j+1)
 			--		in isD
 			--	)
-	let sorted_xys = sorted_xys_
-		|> filter (\(x,_) ->
-			let g = get_grid_id_from_coords skOp skB x
-			in !(isPartitionDominated[g])
-		)
-	let n_filt = length sorted_xys
-	let zuowei =
-		let part_by_idx = (iota n_filt)
-		-- Why can't this be done in parallel!!!!!
-		-- TODO try re-planning the mapping...
-			|> seqmap (\i -> 
-				(get_id_measure_from_coords skOp skB sorted_xys[i].0).0
-			) :> [n_filt]idx_t.t
-		let counts = hist (+) 0 skB.total_part_no part_by_idx (replicate n_filt 1)
-		in exscan (+) 0 counts
+	--let sorted_xys = sorted_xys_
+	--	|> filter (\(x,_) ->
+	--		let g = get_grid_id_from_coords skOp skB x
+	--		in !(isPartitionDominated[g])
+	--	)
+	--let n_filt = length sorted_xys
+	--let zuowei =
+	--	let part_by_idx = (iota n_filt)
+	--	-- Why can't this be done in parallel!!!!!
+	--	-- TODO try re-planning the mapping...
+	--		|> seqmap (\i -> 
+	--			(get_id_measure_from_coords skOp skB sorted_xys[i].0).0
+	--		) :> [n_filt]idx_t.t
+	--	let counts = hist (+) 0 skB.total_part_no part_by_idx (replicate n_filt 1)
+	--	in exscan (+) 0 counts
+	-- -- calculating pids after filter gives "known compiler limitation - cannot handle unsliceable allocation size..."
+	let (sorted_xys, zuowei) =
+		let (filt_xys,filt_pids) = sorted_xys_
+			|> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
+			|> zip sorted_xys_
+			|> filter (\(_,pid) ->
+				let (g,_) = get_grid_angle_from_id skB pid
+				in !(isPartitionDominated[g])
+			)
+			|> unzip
+
+		let n_filt = length filt_pids
+		let counts = hist (+) 0 skB.total_part_no (filt_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
+		let zw = exscan (+) 0 counts
+		in (filt_xys, zw)
 	in {
 		xys = sorted_xys,
 		part_idx = zuowei,
@@ -341,7 +369,7 @@ def calc_local_Skyline [dim] 't 'pL_t
 	(skI : skylineInfo [dim] t pL_t)
 : skylineInfo [dim] t pL_t =
 	-- Loop Inversion
-	let skyline_xys = 
+	let (skyline_xys, skyline_pids) = 
 		let part_sizes = (indices skI.part_idx)
 			|> map (\i ->
 				if i==(length skI.part_idx-1)
@@ -349,9 +377,11 @@ def calc_local_Skyline [dim] 't 'pL_t
 				else skI.part_idx[i+1] - skI.part_idx[i]
 			)
 		let max_part_size = idx_t.maximum part_sizes
-		let filt_idx =
+		let filt_idx_ =
 			loop idxs = (indices skI.xys) for j in (iota max_part_size) do
-				-- TODO if works, filter eliminated partitions...
+				-- TODO
+				-- eliminate partitions
+				-- I *could* continue the search into nearby partitions, making it a non-true local skyline...
 				let part_ids = skI.xys
 					|> map (\(x,_) -> get_grid_angle_measure_from_coords skOp skB x)
 					|> map (\(g,a,_) ->
@@ -374,16 +404,17 @@ def calc_local_Skyline [dim] 't 'pL_t
 					idxs
 					skI.xys
 					cmp_xs
-		in filt_idx
-			|> filter (>=0)
-			|> map (\i -> skI.xys[i])
-	let n_filt = length (skyline_xys)
+		let filt_idx = filt_idx_ |> filter (>=0)
+		let sk_xys = filt_idx |> map (\i -> skI.xys[i])
+		let sk_pids =
+			-- -- calculating pids directly from filt_idx instead of gathering like this
+			-- -- gives "known compiler limitation - cannot handle un-sliceable allocation size"...
+			let all_pids = skI.xys |> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
+			in filt_idx |> map (\i -> all_pids[i])
+		in (sk_xys, sk_pids)
+	let n_filt = length (skyline_pids)
 	let zuowei =
-		let skyline_parts = skyline_xys
-			|> seqmap (\(x,_) ->
-				(get_id_measure_from_coords skOp skB x).0
-			) :> [n_filt]idx_t.t
-		let counts = hist (+) 0 skB.total_part_no skyline_parts (replicate n_filt 1)
+		let counts = hist (+) 0 skB.total_part_no (skyline_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
 		in exscan (+) 0 counts
 	in {
 		xys = skyline_xys,
@@ -622,8 +653,8 @@ def calc_global_Skyline [dim] 't 'pL_t
 : skylineInfo [dim] t pL_t =
 	let n = length skI.xys
 	-- Loop Inversion
-	let new_xys =
-		let new_is = loop ni = (iota n) for j in (iota n) do
+	let (new_xys, new_pids) =
+		let new_is_ = loop ni = (iota n) for j in (iota n) do
 			let cmp_x = skI.xys[j].0
 			in ni |> map (\i ->
 				if (i<0 || i==j) then i else
@@ -635,9 +666,14 @@ def calc_global_Skyline [dim] 't 'pL_t
 				in
 					if elimd then (-1) else i
 			)
-		in new_is
-			|> filter (>=0)
-			|> map (\i -> skI.xys[i])
+		let new_is = new_is_ |> filter (>=0)
+		let nxys = new_is |> map (\i -> skI.xys[i])
+		let npids =
+			-- -- calculating pids directly from filt_idx instead of gathering like this
+			-- -- gives "known compiler limitation - cannot handle un-sliceable allocation size"...
+			let all_pids = skI.xys |> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
+			in new_is |> map (\i -> all_pids[i])
+		in (nxys,npids)
 	--
 		--let new_xys = (indices skI.xys)
 		--	|> map (\i ->
@@ -659,12 +695,8 @@ def calc_global_Skyline [dim] 't 'pL_t
 		--	|> filter (>=0)
 		--	|> map (\i -> skI.xys[i])
 	let zuowei =
-		let n_filt = length new_xys
-		let skyline_parts = new_xys
-			|> map (\(x,_) ->
-				(get_id_measure_from_coords skOp skB x).0
-			) :> [n_filt]idx_t.t
-		let counts = hist (+) 0 skB.total_part_no skyline_parts (replicate n_filt 1)
+		let n_filt = length new_pids
+		let counts = hist (+) 0 skB.total_part_no (new_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
 		in exscan (+) 0 counts
 	in {
 		xys = new_xys,
@@ -728,7 +760,11 @@ entry calc_local_Skyline_GFUR_double [dim]
 : skylineInfo_GFUR_double [dim] =
 	calc_local_Skyline skylineOp_double skB skI
 
-
+entry calc_global_Skyline_GFUR_double [dim]
+	(skB : skylineBase_double [dim])
+	(skI : skylineInfo_GFUR_double [dim])
+: skylineInfo_GFUR_double [dim] =
+	calc_global_Skyline skylineOp_double skB skI
 
 
 
