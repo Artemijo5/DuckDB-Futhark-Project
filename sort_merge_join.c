@@ -15,11 +15,11 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1024*CHUNK_SIZE
 
-#define R_TABLE_SIZE 50*CHUNK_SIZE
-#define S_TABLE_SIZE 100*CHUNK_SIZE
+#define R_TABLE_SIZE 1024*CHUNK_SIZE
+#define S_TABLE_SIZE 2048*CHUNK_SIZE
 
 #define BLOCK_SIZE (idx_t)128000 // TODO segfault (...)
-#define MERGE_PARTITION_SIZE (idx_t)64000
+#define MERGE_PARTITION_SIZE 512*CHUNK_SIZE
 #define GATHER_PSIZE (idx_t)32000 // TODO segfault when too large (might be laptop issue...)
 
 #define R_TBL_NAME "R_tbl"
@@ -36,8 +36,8 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER 25*CHUNK_SIZE
-#define S_JOIN_BUFFER 50*CHUNK_SIZE
+#define R_JOIN_BUFFER 512*CHUNK_SIZE
+#define S_JOIN_BUFFER 512*CHUNK_SIZE
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "20GB"
