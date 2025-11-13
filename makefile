@@ -15,7 +15,7 @@ CUDA-ftRelational: ftRelational.fut
 CUDA1-ftRelational: ftRelational.fut
 	futhark cuda ftRelational.fut --library
 
-CUDA2-ftRelational: ftRelational.fut
+CUDA2-ftRelational: ftRelational.c
 	gcc ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
 
 two_pass_sort: two_pass_sort.c sortstages.c sort_util.c $(DEPS)
@@ -29,3 +29,17 @@ sort_merge_join: sort_merge_join.c sort_util.c join_util.c smjutil.c sortstages.
 radix_hash_join: radix_hash_join.c join_util.c radixJoin_util.c RadixJoinStages.c $(DEPS)
 	$(CC) radix_hash_join.c -o radix_hash_join.o \
 		radixJoin_util.c join_util.c RadixJoinStages.c $(DEPS) $(CFLAGS)
+
+C-ftSkyline: ftSkyline.fut
+	futhark c ftSkyline.fut --library
+	gcc ftSkyline.c -o libftSkyline.so $(LIBFLAGS)
+
+CUDA-ftSkyline: ftSkyline.fut
+	futhark cuda ftSkyline.fut --library
+	gcc ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
+
+CUDA1-ftSkyline: ftSkyline.fut
+	futhark cuda ftSkyline.fut --library
+
+CUDA2-ftSkyline: ftSkyline.c
+	gcc ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)

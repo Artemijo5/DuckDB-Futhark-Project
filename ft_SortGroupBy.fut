@@ -31,7 +31,14 @@ local def grouped_any [n] 't
 
 -- Functions to Find Group Ranges
 
--- Good idea to filter this afterwards
+-- This only finds *counts* from unsorted list...
+-- Also, keys need to be long and take values in (iota key_no)
+def find_known_key_counts [n] 't
+	(key_no : idx_t.t)
+	(ks : [n]idx_t.t)
+: [key_no]idx_t.t =
+	hist (+) 0 key_no ks (replicate n 1)
+
 def sortgroup_find_known_key_counts [n] [key_no] 't
 	(k_ids : [key_no]t)
 	(sorted_ks : [n]t)
@@ -87,7 +94,7 @@ def sortgroup_find_unknown_key_counts [n] 't
 	(sorted_ks : [n]t)
 	(eq : t -> t -> bool)
 : ([]idx_t.t, []idx_t.t) = -- returns index & size of each group
-	let bounds = (iota n)
+	let bounds_ = (iota n)
 		|> map (\j ->
 			if j == 0 then 0 else
 			let this_k = sorted_ks[j]
@@ -97,8 +104,10 @@ def sortgroup_find_unknown_key_counts [n] 't
 				then (-1)
 				else j
 		)
-		|> filter (\j -> j>=0)
-	let sizes = (indices bounds)
+	let num_ks = bounds_ |> countFor (>=0)
+	let scatter_idx = exscan (+) 0 (bounds_ |> map (\b -> if b>=0 then 1 else 0))
+	let bounds = scatter (replicate num_ks (-1)) scatter_idx bounds_
+	let sizes = (iota num_ks)
 		|> map (\j ->
 			if j == (length bounds)-1 then (n-bounds[j]) else
 			let this_ind = bounds[j]
