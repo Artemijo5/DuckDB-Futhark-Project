@@ -126,6 +126,7 @@ int futhark_new_opaque_skylineInfo_GFUR_double(struct futhark_context *ctx, stru
 
 // Entry points
 int futhark_entry_calc_global_Skyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1);
+int futhark_entry_calc_intermSkyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1, const bool in2, const int64_t in3, const int64_t in4, const int64_t in5);
 int futhark_entry_calc_local_Skyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1);
 int futhark_entry_define_skyline_space_double(struct futhark_context *ctx, struct futhark_opaque_skylineBase_double **out0, const struct futhark_f64_1d *in0, const struct futhark_f64_1d *in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3);
 int futhark_entry_merge_Skylines_2_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1, const struct futhark_opaque_skylineInfo_GFUR_double *in2);

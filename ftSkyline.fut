@@ -342,14 +342,12 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 	-- -- calculating pids after filter gives "known compiler limitation - cannot handle unsliceable allocation size..."
 	let (sorted_xys, zuowei) =
 		let (filt_xys,filt_pids) = sorted_xys_
-			|> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
-			|> zip sorted_xys_
+			|> map (\xy -> ( xy , (get_id_measure_from_coords skOp skB xy.0).0 ) )
 			|> filter (\(_,pid) ->
 				let (g,_) = get_grid_angle_from_id skB pid
 				in !(isPartitionDominated[g])
 			)
 			|> unzip
-
 		let n_filt = length filt_pids
 		let counts = hist (+) 0 skB.total_part_no (filt_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
 		let zw = exscan (+) 0 counts
@@ -361,8 +359,6 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 	}
 
 
-
-
 def calc_local_Skyline [dim] 't 'pL_t
 	(skOp : skylineOp t)
 	(skB : skylineBase [dim] t)
@@ -372,16 +368,13 @@ def calc_local_Skyline [dim] 't 'pL_t
 	let (skyline_xys, skyline_pids) = 
 		let part_sizes = (indices skI.part_idx)
 			|> map (\i ->
-				if i==(length skI.part_idx-1)
+				if i==(length skI.part_idx)-1
 				then (length skI.xys)-skI.part_idx[i]
 				else skI.part_idx[i+1] - skI.part_idx[i]
 			)
 		let max_part_size = idx_t.maximum part_sizes
 		let filt_idx_ =
 			loop idxs = (indices skI.xys) for j in (iota max_part_size) do
-				-- TODO
-				-- eliminate partitions
-				-- I *could* continue the search into nearby partitions, making it a non-true local skyline...
 				let part_ids = skI.xys
 					|> map (\(x,_) -> get_grid_angle_measure_from_coords skOp skB x)
 					|> map (\(g,a,_) ->
@@ -389,11 +382,14 @@ def calc_local_Skyline [dim] 't 'pL_t
 					)
 				let cmp_xs = part_ids
 					|> map (\pid -> (pid, part_sizes[pid]))
-					|> map (\(pid,ps) -> idx_t.max 0 (idx_t.min (skI.part_idx[pid]+j) (skI.part_idx[pid]+ps-1)))
+					-- map (\(pid,ps) -> idx_t.max 0 (idx_t.min (skI.part_idx[pid]+j) (skI.part_idx[pid]+ps-1)))
+					|> map (\(pid,ps) -> idx_t.min (skI.part_idx[pid]+j) ((length skI.xys)-1)) -- not "true" local skyline
 					|> map (\pj -> skI.xys[pj].0)
-				in map3
-					(\i (this_x,_) cmp_x ->
+				in map4
+					(\i (this_x,_) cmp_x pid ->
 						if (i<0 || i==j) then i else
+						let (gid,_) = get_grid_angle_from_id skB pid in
+						if skI.isPartitionDominated[gid] then (-1) else
 						let elimd =
 							(foldl (&&) (true) (seqmap2 (skOp.skyline_leq) this_x cmp_x))
 							&&
@@ -404,6 +400,7 @@ def calc_local_Skyline [dim] 't 'pL_t
 					idxs
 					skI.xys
 					cmp_xs
+					part_ids
 		let filt_idx = filt_idx_ |> filter (>=0)
 		let sk_xys = filt_idx |> map (\i -> skI.xys[i])
 		let sk_pids =
@@ -567,51 +564,42 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 	(skOp : skylineOp t)
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
-	(subdiv : idx_t.t)
+	(omit_dims : idx_t.t)
 : (skylineBase [dim] t, skylineInfo [dim] t pL_t) =
-	-- 1. calculate dimensions to omit
-	let (first_dim, subdiv_) =
-		loop (d,sd) = (0,subdiv) while (d<dim && sd>1) do
-			let d_parts = skB.grid_partitions_per_dim[d] in
-			if d_parts>sd then (d,1)
-			else (d+1, (sd+d_parts-1)/d_parts)
-	let new_grid_parts_per_dim = (iota dim)
-		|> map (\i ->
-			if i<first_dim then 1
-			else if i==first_dim then skB.grid_partitions_per_dim[i]/subdiv_
-			else skB.grid_partitions_per_dim[i]
+	let grid_no_omitted =
+		if omit_dims == dim
+		then skB.total_grid_no
+		else skB.grid_part_prefix_sum[omit_dims]
+	let new_grid_partitions_per_dim = skB.grid_partitions_per_dim
+		|> zip (iota dim)
+		|> map (\(i,pd) -> if i<omit_dims then 1 else pd)
+	let new_grid_part_prefix_sum = exscan (*) 1 new_grid_partitions_per_dim
+	let new_total_grid_no = i64.product new_grid_partitions_per_dim
+	let new_starts = skB.start_of_grid_partition
+		|> zip (indices skB.start_of_grid_partition)
+		|> filter (\(i,_) -> (i%grid_no_omitted)==0)
+		|> map (\(_,sp) -> sp)
+	let new_sizes = iota dim
+		|> map (\d ->
+			if d>=omit_dims
+			then skB.grid_part_size_per_dim[d]
+			else skOp.times skB.grid_part_size_per_dim[d] (skOp.from_i64 skB.grid_partitions_per_dim[d])
 		)
-	let new_grid_part_size_per_dim = (iota dim)
-		|> map (\i ->
-			if i < first_dim
-				then ((skOp.times) skB.grid_part_size_per_dim[i] (skOp.from_i64 skB.grid_partitions_per_dim[i]))
-			else if i==first_dim
-				then ((skOp.times) skB.grid_part_size_per_dim[i] (skOp.from_i64 subdiv_))
-			else
-				skB.grid_part_size_per_dim[i]
-			)
-	let new_grid_part_starts = iota skB.total_grid_no
-		|> filter (\i -> 
-			(i % (skB.grid_part_prefix_sum[first_dim]*subdiv_) != 0)
-		)
-		|> map (\i -> skB.start_of_grid_partition[i])
-	let new_grid_total = length new_grid_part_starts
-	let new_skB = {
-		grid_partitions_per_dim = new_grid_parts_per_dim,
+	let new_skB : skylineBase [dim] t = {
+		grid_partitions_per_dim = new_grid_partitions_per_dim,
 		angle_partitions_per_dim = replicate (dim-1) 1,
-		grid_part_prefix_sum = exscan (*) 1 new_grid_parts_per_dim,
+		grid_part_prefix_sum = exscan (*) 1 new_grid_partitions_per_dim,
 		angle_part_prefix_sum = replicate (dim-1) 1,
-		total_grid_no = new_grid_total,
+		total_grid_no = new_total_grid_no,
 		total_angle_no = 1,
-		total_part_no = new_grid_total,
-		start_of_grid_partition = new_grid_part_starts,
-		grid_part_size_per_dim = new_grid_part_size_per_dim,
+		total_part_no = new_total_grid_no,
+		start_of_grid_partition = new_starts,
+		grid_part_size_per_dim = new_sizes
 	}
-	let new_part_idx = iota skB.total_grid_no
-		|> filter (\i -> 
-			(i % (skB.grid_part_prefix_sum[first_dim]*subdiv_) != 0)
-		)
-		|> map (\i -> skI.part_idx[i])
+	let new_part_idx = skI.part_idx
+		|> zip (indices skI.part_idx)
+		|> filter (\(i,_) -> (i%(grid_no_omitted*skB.total_angle_no)) == 0)
+		|> map (\(_,pidx) -> pidx)
 	let new_skI = {
 		xys = skI.xys,
 		part_idx = new_part_idx,
@@ -623,22 +611,24 @@ def calc_intermediate_skyline [dim] 't 'pL_t
 	(skOp : skylineOp t)
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
-	(subdiv : idx_t.t)
+	(include_zero_step : bool)
+	(omit_step : idx_t.t)
+	(max_steps : idx_t.t)
 	(size_thresh : idx_t.t)
 : skylineInfo [dim] t pL_t =
-	let last_sd = (skB.total_grid_no+subdiv-1)/subdiv
-	let (intermediate_skB, intermediate_skI,_) =
-		loop (sd_skB,sd_skI,sd) = (skB,skI,subdiv)
-		while (sd<last_sd && (length sd_skI.xys)>size_thresh) do
-			let (sd_skB_, sd_skI_) = intermediate_SkylineInfo skOp sd_skB sd_skI sd
-			in (sd_skB_, calc_local_Skyline skOp sd_skB_ sd_skI_, sd*subdiv)
+	let (_, intermediate_skI,_) =
+		loop (sd_skB,sd_skI,i) = (skB,skI, (if include_zero_step then 0 else 1))
+		while (i<=max_steps && ((i-1)*omit_step<dim) && (length sd_skI.xys)>size_thresh) do
+			let (sd_skB_, sd_skI_) = intermediate_SkylineInfo skOp sd_skB sd_skI (idx_t.min (i*omit_step) dim)
+			in (sd_skB_, calc_local_Skyline skOp sd_skB_ sd_skI_, i+1)
 	let zuowei =
 		let n_ = length (intermediate_skI.xys)
-		let skyline_parts = intermediate_skI.xys
-			|> map (\(x,_) ->
+		let skyline_parts = skI.xys
+		-- TODO currently can't think of a better solution here...
+			|> seqmap (\(x,_) ->
 				(get_id_measure_from_coords skOp skB x).0
 			) :> [n_]idx_t.t
-		let counts = hist (+) 0 intermediate_skB.total_part_no skyline_parts (replicate n_ 1)
+		let counts = hist (+) 0 skB.total_part_no skyline_parts (replicate n_ 1)
 		in exscan (+) 0 counts
 	in {
 		xys = intermediate_skI.xys,
@@ -713,342 +703,374 @@ def crack_Skyline [dim] 't 'pL_t
 
 -- ENTRY POINTS ----------------------------------------------------------------------------------------------------
 
-def skylineOp_double : skylineOp f64 = {
-	plus = (+),
-	minus = (-),
-	times = (*),
-	over = (/),
-	skyline_lt = (>),
-	skyline_leq = (>=),
-	from_i64 = (f64.i64),
-	to_i64 = (i64.f64),
-	to_f64 = (id),
-	one = f64.i64 1
-}
+	def skylineOp_double : skylineOp f64 = {
+		plus = (+),
+		minus = (-),
+		times = (*),
+		over = (/),
+		skyline_lt = (>),
+		skyline_leq = (>=),
+		from_i64 = (f64.i64),
+		to_i64 = (i64.f64),
+		to_f64 = (id),
+		one = f64.i64 1
+	}
 
-type~ skylineBase_double [dim] = skylineBase [dim] f64
-type~ skylineInfo_GFUR_double [dim] = skylineInfo [dim] f64 i64
+	type~ skylineBase_double [dim] = skylineBase [dim] f64
+	type~ skylineInfo_GFUR_double [dim] = skylineInfo [dim] f64 i64
 
-entry define_skyline_space_double [dim]
-	(min_per_dim : [dim]f64)
-	(max_per_dim : [dim]f64)
-	(grid_partitions_per_dim : [dim]idx_t.t)
-	(angle_partitions_per_dim : [dim-1]idx_t.t)
-: skylineBase_double [dim] =
-	mk_skylineBase_from_grid
-		skylineOp_double
-		min_per_dim
-		max_per_dim
-		grid_partitions_per_dim
-		angle_partitions_per_dim
+	entry define_skyline_space_double [dim]
+		(min_per_dim : [dim]f64)
+		(max_per_dim : [dim]f64)
+		(grid_partitions_per_dim : [dim]idx_t.t)
+		(angle_partitions_per_dim : [dim-1]idx_t.t)
+	: skylineBase_double [dim] =
+		mk_skylineBase_from_grid
+			skylineOp_double
+			min_per_dim
+			max_per_dim
+			grid_partitions_per_dim
+			angle_partitions_per_dim
 
-entry sort_for_Skyline_GFUR_double [n] [dim]
-	(skB : skylineBase_double [dim])
-	(xs : [n][dim]f64)
-	(offset : idx_t.t)
-	(use_measure_for_sorting : bool)
-: skylineInfo_GFUR_double [dim] =
-	sort_for_Skyline_without_previous_windowing
-		skylineOp_double
-		skB
-		xs
-		(map (\i -> i+offset) (indices xs))
-		use_measure_for_sorting
+	entry sort_for_Skyline_GFUR_double [n] [dim]
+		(skB : skylineBase_double [dim])
+		(xs : [n][dim]f64)
+		(offset : idx_t.t)
+		(use_measure_for_sorting : bool)
+	: skylineInfo_GFUR_double [dim] =
+		sort_for_Skyline_without_previous_windowing
+			skylineOp_double
+			skB
+			xs
+			(map (\i -> i+offset) (indices xs))
+			use_measure_for_sorting
 
-entry calc_local_Skyline_GFUR_double [dim]
-	(skB : skylineBase_double [dim])
-	(skI : skylineInfo_GFUR_double [dim])
-: skylineInfo_GFUR_double [dim] =
-	calc_local_Skyline skylineOp_double skB skI
+	entry calc_local_Skyline_GFUR_double [dim]
+		(skB : skylineBase_double [dim])
+		(skI : skylineInfo_GFUR_double [dim])
+	: skylineInfo_GFUR_double [dim] =
+		calc_local_Skyline skylineOp_double skB skI
 
-entry calc_global_Skyline_GFUR_double [dim]
-	(skB : skylineBase_double [dim])
-	(skI : skylineInfo_GFUR_double [dim])
-: skylineInfo_GFUR_double [dim] =
-	calc_global_Skyline skylineOp_double skB skI
+	entry calc_global_Skyline_GFUR_double [dim]
+		(skB : skylineBase_double [dim])
+		(skI : skylineInfo_GFUR_double [dim])
+	: skylineInfo_GFUR_double [dim] =
+		calc_global_Skyline skylineOp_double skB skI
 
--- takes a very long time to compile...
-entry merge_Skylines_5_GFUR_double [dim]
-	(skB : skylineBase_double [dim])
-	(skI1 : skylineInfo_GFUR_double [dim])
-	(skI2 : skylineInfo_GFUR_double [dim])
-	(skI3 : skylineInfo_GFUR_double [dim])
-	(skI4 : skylineInfo_GFUR_double [dim])
-	(skI5 : skylineInfo_GFUR_double [dim])
-: skylineInfo_GFUR_double [dim] =
-	let dummy = ((replicate dim f64.highest),-1)
-	in merge_Skylines_5 skylineOp_double skB skI1 skI2 skI3 skI4 skI5 dummy
-entry merge_Skylines_4_GFUR_double [dim]
-	(skB : skylineBase_double [dim])
-	(skI1 : skylineInfo_GFUR_double [dim])
-	(skI2 : skylineInfo_GFUR_double [dim])
-	(skI3 : skylineInfo_GFUR_double [dim])
-	(skI4 : skylineInfo_GFUR_double [dim])
-: skylineInfo_GFUR_double [dim] =
-	let dummy = ((replicate dim f64.highest),-1)
-	in merge_Skylines_4 skylineOp_double skB skI1 skI2 skI3 skI4 dummy
-entry merge_Skylines_3_GFUR_double [dim]
-	(skB : skylineBase_double [dim])
-	(skI1 : skylineInfo_GFUR_double [dim])
-	(skI2 : skylineInfo_GFUR_double [dim])
-	(skI3 : skylineInfo_GFUR_double [dim])
-: skylineInfo_GFUR_double [dim] =
-	let dummy = ((replicate dim f64.highest),-1)
-	in merge_Skylines_3 skylineOp_double skB skI1 skI2 skI3 dummy
-entry merge_Skylines_2_GFUR_double [dim]
-	(skB : skylineBase_double [dim])
-	(skI1 : skylineInfo_GFUR_double [dim])
-	(skI2 : skylineInfo_GFUR_double [dim])
-: skylineInfo_GFUR_double [dim] =
-	let dummy = ((replicate dim f64.highest),-1)
-	in merge_Skylines_2 skylineOp_double skB skI1 skI2 dummy
+	-- takes a very long time to compile...
+	entry merge_Skylines_5_GFUR_double [dim]
+		(skB : skylineBase_double [dim])
+		(skI1 : skylineInfo_GFUR_double [dim])
+		(skI2 : skylineInfo_GFUR_double [dim])
+		(skI3 : skylineInfo_GFUR_double [dim])
+		(skI4 : skylineInfo_GFUR_double [dim])
+		(skI5 : skylineInfo_GFUR_double [dim])
+	: skylineInfo_GFUR_double [dim] =
+		let dummy = ((replicate dim f64.highest),-1)
+		in merge_Skylines_5 skylineOp_double skB skI1 skI2 skI3 skI4 skI5 dummy
+	entry merge_Skylines_4_GFUR_double [dim]
+		(skB : skylineBase_double [dim])
+		(skI1 : skylineInfo_GFUR_double [dim])
+		(skI2 : skylineInfo_GFUR_double [dim])
+		(skI3 : skylineInfo_GFUR_double [dim])
+		(skI4 : skylineInfo_GFUR_double [dim])
+	: skylineInfo_GFUR_double [dim] =
+		let dummy = ((replicate dim f64.highest),-1)
+		in merge_Skylines_4 skylineOp_double skB skI1 skI2 skI3 skI4 dummy
+	entry merge_Skylines_3_GFUR_double [dim]
+		(skB : skylineBase_double [dim])
+		(skI1 : skylineInfo_GFUR_double [dim])
+		(skI2 : skylineInfo_GFUR_double [dim])
+		(skI3 : skylineInfo_GFUR_double [dim])
+	: skylineInfo_GFUR_double [dim] =
+		let dummy = ((replicate dim f64.highest),-1)
+		in merge_Skylines_3 skylineOp_double skB skI1 skI2 skI3 dummy
+	entry merge_Skylines_2_GFUR_double [dim]
+		(skB : skylineBase_double [dim])
+		(skI1 : skylineInfo_GFUR_double [dim])
+		(skI2 : skylineInfo_GFUR_double [dim])
+	: skylineInfo_GFUR_double [dim] =
+		let dummy = ((replicate dim f64.highest),-1)
+		in merge_Skylines_2 skylineOp_double skB skI1 skI2 dummy
+
+	entry calc_intermSkyline_GFUR_double [dim]
+		(skB : skylineBase_double [dim])
+		(skI : skylineInfo_GFUR_double [dim])
+		(include_zero_step : bool)
+		(omit_step : idx_t.t)
+		(max_steps : idx_t.t)
+		(size_thresh : idx_t.t)
+	: skylineInfo_GFUR_double [dim] =
+		calc_intermediate_skyline skylineOp_double skB skI include_zero_step omit_step max_steps size_thresh
 
 
 -- TESTING ---------------------------------------------------------------------------------------------------------
 
-def test_skB_2d =
-	mk_skylineBase_from_grid
-	(skylineOp_double)
-	([0,0])
-	([10,10])
-	([4,4])
-	([2] :> [2-1]i64)
+	def test_skB_2d =
+		mk_skylineBase_from_grid
+		(skylineOp_double)
+		([0,0])
+		([10,10])
+		([4,4])
+		([2] :> [2-1]i64)
 
-def test_skB_3d =
-	mk_skylineBase_from_grid
-	(skylineOp_double)
-	([0,0,0])
-	([12,10,10])
-	([3,2,4])
-	([2,3] :> [3-1]i64)
-
-def test_skB_5d =
-	mk_skylineBase_from_grid
-	(skylineOp_double)
-	([0,0,0,0,0])
-	([12,10,10,12,10])
-	([3,2,2,3,2])
-	([2,3,5,2] :> [5-1]i64)
-
-def test_coords_2d =
-	let skOp = skylineOp_double
-	let skB = test_skB_2d
-	let points : [][]f64 = [[0,0],[1,0],[0,2],[10,10],[12,11],[-1,5],[2,1],[4,2.7],[5.0,7.5],[7.6,2.2]]
-	let (g,a,m) = points |> map (\c -> get_grid_angle_measure_from_coords skOp skB c) |> unzip3
-	let pid = map2 (get_id_from_grid_angle skB) g a
-	in zip5 points g a m pid
-
-def test_sort_2d (use_measure) =
-	let skOp = skylineOp_double
-	let skB = copy test_skB_2d
-	let points = [[2,1],[0.2,1],[2.5,4],[0.17,7.6],[0.1,7.51],[0.05,0],[2.7,4],[8,8],[9,8],[2.2,7.65]]
-	in sort_for_Skyline_without_previous_windowing skOp skB points (indices points) use_measure
-
-def test_local_skyline_2d (use_measure) =
-	let skOp = skylineOp_double
-	let skB = copy test_skB_2d
-	let skI = test_sort_2d use_measure
-	in calc_local_Skyline skOp skB skI
-
-def test_global_skyline_2d (use_measure) =
-	let skOp = skylineOp_double
-	let skB = copy test_skB_2d
-	let skI = test_local_skyline_2d use_measure
-	in calc_global_Skyline skOp skB skI
-
-def test_skylineBase_3d =
-	mk_skylineBase_from_grid
+	def test_skB_3d =
+		mk_skylineBase_from_grid
 		(skylineOp_double)
 		([0,0,0])
-		([15,15,15])
-		([3,3,3])
-		([2,2] :> [3-1]i64)
+		([12,10,10])
+		([3,2,4])
+		([2,3] :> [3-1]i64)
 
-def test_points_3d : [][]f64 = [
-		[6,1,1],[6.4,0.5,0.2],[5.6,1.4,0.3],[6.5,2.3,0.4],
-		[1,6,4],[0.6,6.6,0.4],[1.2,5.8,2.2],[2.2,6.2,3],
-		[6,12,1],[5,13,1],[6.2,11,1],[5.1,12,1],
-		[2,2,6.2],[1,3,6],[1,2,6.1],[2,1,6.1],
-		[7,9.5,8],[9,5.5,6],[5.1,5.7,5.2],[8,5,6],
-		[12,9,9.5],[15,6,8],[12,6,8],[10,8,6],
-		[12,14,9.4],[15,11,7.9],[12,11,7.9],[10,13,6.1],
-		[10,4,10],[11,3,11],[10,2,11],[11,1,10],
-		[5,5,11],[6,5,10],[6,5.2,12],[7,5.3,12],
-		[6,12,12],[7,11,13],[5,11,12],[6,12,10]
-	]
-
-def test_sort_3d (use_measure) =
-	let skOp = skylineOp_double
-	let skB = mk_skylineBase_from_grid
+	def test_skB_5d =
+		mk_skylineBase_from_grid
 		(skylineOp_double)
-		([0,0,0])
-		([15,15,15])
-		([3,3,3])
-		([2,2] :> [3-1]i64)
-	let points = [
-		[6,1,1],[6.4,0.5,0.2],[5.6,1.4,0.3],[6.5,2.3,0.4],
-		[1,6,4],[0.6,6.6,0.4],[1.2,5.8,2.2],[2.2,6.2,3],
-		[6,12,1],[5,13,1],[6.2,11,1],[5.1,12,1],
-		[2,2,6.2],[1,3,6],[1,2,6.1],[2,1,6.1],
-		[7,9.5,8],[9,5.5,6],[5.1,5.7,5.2],[8,5,6],
-		[12,9,9.5],[15,6,8],[12,6,8],[10,8,6],
-		[12,14,9.4],[15,11,7.9],[12,11,7.9],[10,13,6.1],
-		[10,4,10],[11,3,11],[10,2,11],[11,1,10],
-		[5,5,11],[6,5,10],[6,5.2,12],[7,5.3,12],
-		[6,12,12],[7,11,13],[5,11,12],[6,12,10]
-	]
-	in sort_for_Skyline_without_previous_windowing skOp skB points (indices points) use_measure
+		([0,0,0,0,0])
+		([12,10,10,12,10])
+		([3,2,2,3,2])
+		([2,3,5,2] :> [5-1]i64)
 
-def test_local_skyline_3d (use_measure) =
-	let skOp = skylineOp_double
-	let skB = mk_skylineBase_from_grid
-		(skylineOp_double)
-		([0,0,0])
-		([15,15,15])
-		([3,3,3])
-		([2,2] :> [3-1]i64)
-	let skI = test_sort_3d use_measure
-	in calc_local_Skyline skOp skB skI
+	def test_coords_2d =
+		let skOp = skylineOp_double
+		let skB = test_skB_2d
+		let points : [][]f64 = [[0,0],[1,0],[0,2],[10,10],[12,11],[-1,5],[2,1],[4,2.7],[5.0,7.5],[7.6,2.2]]
+		let (g,a,m) = points |> map (\c -> get_grid_angle_measure_from_coords skOp skB c) |> unzip3
+		let pid = map2 (get_id_from_grid_angle skB) g a
+		in zip5 points g a m pid
 
-def test_global_skyline_3d (use_measure) =
-	let skOp = skylineOp_double
-	let skB = mk_skylineBase_from_grid
-		(skylineOp_double)
-		([0,0,0])
-		([15,15,15])
-		([3,3,3])
-		([2,2] :> [3-1]i64)
-	let skI = test_local_skyline_3d use_measure
-	in calc_global_Skyline skOp skB skI
+	def test_sort_2d (use_measure) =
+		let skOp = skylineOp_double
+		let skB = copy test_skB_2d
+		let points = [[2,1],[0.2,1],[2.5,4],[0.17,7.6],[0.1,7.51],[0.05,0],[2.7,4],[8,8],[9,8],[2.2,7.65]]
+		in sort_for_Skyline_without_previous_windowing skOp skB points (indices points) use_measure
 
-def test_merge_skylines_5 (use_measure) =
-	let skOp = skylineOp_double
-	let skB = mk_skylineBase_from_grid
-		(skylineOp_double)
-		([0,0,0])
-		([15,15,15])
-		([3,3,3])
-		([2,2] :> [3-1]i64)
-	let points1 = [
-		[6,1,1],
-		[1,6,4],
-		[6,12,1],
-		[2,2,6.2],
-		[7,9.5,8],
-		[12,9,9.5],
-		[12,14,9.4],
-		[5,5,11]
-	]
-	let points2 = [
-		[6.4,0.5,0.2],
-		[0.6,6.6,0.4],
-		[5,13,1],
-		[1,3,6],
-		[9,5.5,6],
-		[15,6,8],
-		[15,11,7.9],
-		[6,5,10]
-	]
-	let points3 = [
-		[5.6,1.4,0.3],
-		[1.2,5.8,2.2],
-		[6.2,11,1],
-		[1,2,6.1],
-		[5.1,5.7,5.2],
-		[12,6,8],
-		[12,11,7.9],
-		[6,5.2,12]
-	]
-	let points4 = [
-		[6.5,2.3,0.4],
-		[2.2,6.2,3],
-		[5.1,12,1],
-		[2,1,6.1],
-		[8,5,6],
-		[10,8,6],
-		[10,13,6.1],
-		[7,5.3,12]
-	]
-	let points5 = [
-		[10,4,10],[11,3,11],[10,2,11],[11,1,10],
-		[6,12,12],[7,11,13],[5,11,12],[6,12,10]
-	]
-	let skI1 = sort_for_Skyline_GFUR_double skB points1 0 use_measure
-	let skI2 = sort_for_Skyline_GFUR_double skB points2 8 use_measure
-	let skI3 = sort_for_Skyline_GFUR_double skB points3 16 use_measure
-	let skI4 = sort_for_Skyline_GFUR_double skB points4 24 use_measure
-	let skI5 = sort_for_Skyline_GFUR_double skB points5 32 use_measure
-	in merge_Skylines_5 skOp skB skI1 skI2 skI3 skI4 skI5 ([9000,9000,9000],-1)
+	def test_local_skyline_2d (use_measure) =
+		let skOp = skylineOp_double
+		let skB = copy test_skB_2d
+		let skI = test_sort_2d use_measure
+		in calc_local_Skyline skOp skB skI
 
-def test_merge_skylines_3 (use_measure) =
-	let skOp = skylineOp_double
-	let skB = mk_skylineBase_from_grid
-		(skylineOp_double)
-		([0,0,0])
-		([15,15,15])
-		([3,3,3])
-		([2,2] :> [3-1]i64)
-	let points1 = [
-		[6,1,1],[6.4,0.5,0.2],
-		[1,6,4],[0.6,6.6,0.4],
-		[6,12,1],[5,13,1],
-		[2,2,6.2],[1,3,6],
-		[7,9.5,8],[9,5.5,6],
-		[12,9,9.5],[15,6,8],
-		[12,14,9.4],[15,11,7.9],
-		[5,5,11],[6,5,10]
-	]
-	let points2 = [
-		[5.6,1.4,0.3],[6.5,2.3,0.4],
-		[1.2,5.8,2.2],[2.2,6.2,3],
-		[6.2,11,1],[5.1,12,1],
-		[1,2,6.1],[2,1,6.1],
-		[5.1,5.7,5.2],[8,5,6],
-		[12,6,8],[10,8,6],
-		[12,11,7.9],[10,13,6.1],
-		[6,5.2,12],[7,5.3,12]
-	]
-	let points3 = [
-		[10,4,10],[11,3,11],[10,2,11],[11,1,10],
-		[6,12,12],[7,11,13],[5,11,12],[6,12,10]
-	]
-	let skI1 = sort_for_Skyline_GFUR_double skB points1 0 use_measure
-	let skI2 = sort_for_Skyline_GFUR_double skB points2 8 use_measure
-	let skI3 = sort_for_Skyline_GFUR_double skB points3 16 use_measure
-	in merge_Skylines_3 skOp skB skI1 skI2 skI3 ([9000,9000,9000],-1)
+	def test_global_skyline_2d (use_measure) =
+		let skOp = skylineOp_double
+		let skB = copy test_skB_2d
+		let skI = test_local_skyline_2d use_measure
+		in calc_global_Skyline skOp skB skI
 
-def test_merge_skylines_2 (use_measure) =
-	let skOp = skylineOp_double
-	let skB = mk_skylineBase_from_grid
-		(skylineOp_double)
-		([0,0,0])
-		([15,15,15])
-		([3,3,3])
-		([2,2] :> [3-1]i64)
-	let points1 = [
-		[6,1,1],[6.4,0.5,0.2],
-		[1,6,4],[0.6,6.6,0.4],
-		[6,12,1],[5,13,1],
-		[2,2,6.2],[1,3,6],
-		[7,9.5,8],[9,5.5,6],
-		[12,9,9.5],[15,6,8],
-		[12,14,9.4],[15,11,7.9],
-		[10,4,10],[11,3,11],
-		[5,5,11],[6,5,10],
-		[6,12,12],[7,11,13]
-	]
-	let points2 = [
-		[5.6,1.4,0.3],[6.5,2.3,0.4],
-		[1.2,5.8,2.2],[2.2,6.2,3],
-		[6.2,11,1],[5.1,12,1],
-		[1,2,6.1],[2,1,6.1],
-		[5.1,5.7,5.2],[8,5,6],
-		[12,6,8],[10,8,6],
-		[12,11,7.9],[10,13,6.1],
-		[10,2,11],[11,1,10],
-		[6,5.2,12],[7,5.3,12],
-		[5,11,12],[6,12,10]
-	]
-	let skI1 = sort_for_Skyline_GFUR_double skB points1 0 use_measure
-	let skI2 = sort_for_Skyline_GFUR_double skB points2 8 use_measure
-	in merge_Skylines_2 skOp skB skI1 skI2 ([9000,9000,9000],-1)
+	def test_skylineBase_3d =
+		mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+
+	def test_points_3d : [][]f64 = [
+			[6,1,1],[6.4,0.5,0.2],[5.6,1.4,0.3],[6.5,2.3,0.4],
+			[1,6,4],[0.6,6.6,0.4],[1.2,5.8,2.2],[2.2,6.2,3],
+			[6,12,1],[5,13,1],[6.2,11,1],[5.1,12,1],
+			[2,2,6.2],[1,3,6],[1,2,6.1],[2,1,6.1],
+			[7,9.5,8],[9,5.5,6],[5.1,5.7,5.2],[8,5,6],
+			[12,9,9.5],[15,6,8],[12,6,8],[10,8,6],
+			[12,14,9.4],[15,11,7.9],[12,11,7.9],[10,13,6.1],
+			[10,4,10],[11,3,11],[10,2,11],[11,1,10],
+			[5,5,11],[6,5,10],[6,5.2,12],[7,5.3,12],
+			[6,12,12],[7,11,13],[5,11,12],[6,12,10]
+		]
+
+	def test_sort_3d (use_measure) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+		let points = [
+			[6,1,1],[6.4,0.5,0.2],[5.6,1.4,0.3],[6.5,2.3,0.4],
+			[1,6,4],[0.6,6.6,0.4],[1.2,5.8,2.2],[2.2,6.2,3],
+			[6,12,1],[5,13,1],[6.2,11,1],[5.1,12,1],
+			[2,2,6.2],[1,3,6],[1,2,6.1],[2,1,6.1],
+			[7,9.5,8],[9,5.5,6],[5.1,5.7,5.2],[8,5,6],
+			[12,9,9.5],[15,6,8],[12,6,8],[10,8,6],
+			[12,14,9.4],[15,11,7.9],[12,11,7.9],[10,13,6.1],
+			[10,4,10],[11,3,11],[10,2,11],[11,1,10],
+			[5,5,11],[6,5,10],[6,5.2,12],[7,5.3,12],
+			[6,12,12],[7,11,13],[5,11,12],[6,12,10]
+		]
+		in sort_for_Skyline_without_previous_windowing skOp skB points (indices points) use_measure
+
+	def test_local_skyline_3d (use_measure) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+		let skI = test_sort_3d use_measure
+		in calc_local_Skyline skOp skB skI
+
+	def test_global_skyline_3d (use_measure) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+		let skI = test_local_skyline_3d use_measure
+		in calc_global_Skyline skOp skB skI
+
+	def test_merge_skylines_5 (use_measure) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+		let points1 = [
+			[6,1,1],
+			[1,6,4],
+			[6,12,1],
+			[2,2,6.2],
+			[7,9.5,8],
+			[12,9,9.5],
+			[12,14,9.4],
+			[5,5,11]
+		]
+		let points2 = [
+			[6.4,0.5,0.2],
+			[0.6,6.6,0.4],
+			[5,13,1],
+			[1,3,6],
+			[9,5.5,6],
+			[15,6,8],
+			[15,11,7.9],
+			[6,5,10]
+		]
+		let points3 = [
+			[5.6,1.4,0.3],
+			[1.2,5.8,2.2],
+			[6.2,11,1],
+			[1,2,6.1],
+			[5.1,5.7,5.2],
+			[12,6,8],
+			[12,11,7.9],
+			[6,5.2,12]
+		]
+		let points4 = [
+			[6.5,2.3,0.4],
+			[2.2,6.2,3],
+			[5.1,12,1],
+			[2,1,6.1],
+			[8,5,6],
+			[10,8,6],
+			[10,13,6.1],
+			[7,5.3,12]
+		]
+		let points5 = [
+			[10,4,10],[11,3,11],[10,2,11],[11,1,10],
+			[6,12,12],[7,11,13],[5,11,12],[6,12,10]
+		]
+		let skI1 = sort_for_Skyline_GFUR_double skB points1 0 use_measure
+		let skI2 = sort_for_Skyline_GFUR_double skB points2 8 use_measure
+		let skI3 = sort_for_Skyline_GFUR_double skB points3 16 use_measure
+		let skI4 = sort_for_Skyline_GFUR_double skB points4 24 use_measure
+		let skI5 = sort_for_Skyline_GFUR_double skB points5 32 use_measure
+		in merge_Skylines_5 skOp skB skI1 skI2 skI3 skI4 skI5 ([9000,9000,9000],-1)
+
+	def test_merge_skylines_3 (use_measure) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+		let points1 = [
+			[6,1,1],[6.4,0.5,0.2],
+			[1,6,4],[0.6,6.6,0.4],
+			[6,12,1],[5,13,1],
+			[2,2,6.2],[1,3,6],
+			[7,9.5,8],[9,5.5,6],
+			[12,9,9.5],[15,6,8],
+			[12,14,9.4],[15,11,7.9],
+			[5,5,11],[6,5,10]
+		]
+		let points2 = [
+			[5.6,1.4,0.3],[6.5,2.3,0.4],
+			[1.2,5.8,2.2],[2.2,6.2,3],
+			[6.2,11,1],[5.1,12,1],
+			[1,2,6.1],[2,1,6.1],
+			[5.1,5.7,5.2],[8,5,6],
+			[12,6,8],[10,8,6],
+			[12,11,7.9],[10,13,6.1],
+			[6,5.2,12],[7,5.3,12]
+		]
+		let points3 = [
+			[10,4,10],[11,3,11],[10,2,11],[11,1,10],
+			[6,12,12],[7,11,13],[5,11,12],[6,12,10]
+		]
+		let skI1 = sort_for_Skyline_GFUR_double skB points1 0 use_measure
+		let skI2 = sort_for_Skyline_GFUR_double skB points2 8 use_measure
+		let skI3 = sort_for_Skyline_GFUR_double skB points3 16 use_measure
+		in merge_Skylines_3 skOp skB skI1 skI2 skI3 ([9000,9000,9000],-1)
+
+	def test_merge_skylines_2 (use_measure) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+		let points1 = [
+			[6,1,1],[6.4,0.5,0.2],
+			[1,6,4],[0.6,6.6,0.4],
+			[6,12,1],[5,13,1],
+			[2,2,6.2],[1,3,6],
+			[7,9.5,8],[9,5.5,6],
+			[12,9,9.5],[15,6,8],
+			[12,14,9.4],[15,11,7.9],
+			[10,4,10],[11,3,11],
+			[5,5,11],[6,5,10],
+			[6,12,12],[7,11,13]
+		]
+		let points2 = [
+			[5.6,1.4,0.3],[6.5,2.3,0.4],
+			[1.2,5.8,2.2],[2.2,6.2,3],
+			[6.2,11,1],[5.1,12,1],
+			[1,2,6.1],[2,1,6.1],
+			[5.1,5.7,5.2],[8,5,6],
+			[12,6,8],[10,8,6],
+			[12,11,7.9],[10,13,6.1],
+			[10,2,11],[11,1,10],
+			[6,5.2,12],[7,5.3,12],
+			[5,11,12],[6,12,10]
+		]
+		let skI1 = sort_for_Skyline_GFUR_double skB points1 0 use_measure
+		let skI2 = sort_for_Skyline_GFUR_double skB points2 8 use_measure
+		in merge_Skylines_2 skOp skB skI1 skI2 ([9000,9000,9000],-1)
+
+	def test_intermediate_skyline (subdiv:idx_t.t) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+		let skI = test_local_skyline_3d false
+		in intermediate_SkylineInfo skOp skB skI subdiv
+
+	def test_calc_interm_skyline (include_zero_step : bool) (omit_step) (max_steps) (size_thresh) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([3,3,3])
+			([2,2] :> [3-1]i64)
+		let skI = test_local_skyline_3d false
+		in calc_intermediate_skyline skOp skB skI include_zero_step omit_step max_steps size_thresh
