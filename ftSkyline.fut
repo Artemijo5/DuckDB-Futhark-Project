@@ -623,7 +623,7 @@ def calc_intermediate_skyline [dim] 't 'pL_t
 			in (sd_skB_, calc_local_Skyline skOp sd_skB_ sd_skI_, i+1)
 	let zuowei =
 		let n_ = length (intermediate_skI.xys)
-		let skyline_parts = skI.xys
+		let skyline_parts = intermediate_skI.xys
 		-- TODO currently can't think of a better solution here...
 			|> seqmap (\(x,_) ->
 				(get_id_measure_from_coords skOp skB x).0
