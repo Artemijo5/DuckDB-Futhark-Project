@@ -603,10 +603,18 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 		start_of_grid_partition = new_starts,
 		grid_part_size_per_dim = new_sizes
 	}
-	let new_part_idx = skI.part_idx
-		|> zip (indices skI.part_idx)
-		|> filter (\(i,_) -> (i%(grid_no_omitted*skB.total_angle_no)) == 0)
-		|> map (\(_,pidx) -> pidx)
+	let scatter_new_part_idx = 
+		let filt_idx = indices skI.part_idx
+		|> map (\i->
+			if (i%(grid_no_omitted*skB.total_angle_no)) == 0
+			then i
+			else (-1)
+		)
+		let pref_sum = exscan (+) 0 (filt_idx |> map (\i -> if i<0 then 0 else 1))
+		in pref_sum
+			|> zip filt_idx
+			|> map (\(i,s) -> if i<0 then (-1) else s)
+	let new_part_idx = scatter (replicate new_skB.total_part_no 0) scatter_new_part_idx skI.part_idx 
 	let new_skI = {
 		xys = skI.xys,
 		part_idx = new_part_idx,
@@ -1079,5 +1087,5 @@ def crack_Skyline [dim] 't 'pL_t
 			([15,15,15])
 			([3,3,3])
 			([2,2] :> [3-1]i64)
-		let skI = test_local_skyline_3d false
+		let skI = test_sort_3d false--test_local_skyline_3d false
 		in calc_intermediate_skyline skOp skB skI include_zero_step omit_step max_steps size_thresh
