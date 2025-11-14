@@ -701,7 +701,7 @@ def calc_global_Skyline [dim] 't 'pL_t
 		isPartitionDominated = skI.isPartitionDominated
 	}
 
-type~ skylineData [dim] 't 'pL_t = {skyTups : [dim][]t, pL : []pL_t}
+type~ skylineData [dim] 't 'pL_t = {skyTups : [][dim]t, pL : []pL_t}
 
 type~ skylineData_GFUR_double [dim] = skylineData [dim] f64 idx_t.t
 
