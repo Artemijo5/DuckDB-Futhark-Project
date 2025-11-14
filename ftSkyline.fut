@@ -358,10 +358,10 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 		isPartitionDominated = isPartitionDominated,
 	}
 
-
-def calc_local_Skyline [dim] 't 'pL_t
+def calc_local_Skyline_and_fit_to_skylineBase [dim] 't 'pL_t
 	(skOp : skylineOp t)
-	(skB : skylineBase [dim] t)
+	(skB_crop : skylineBase [dim] t)
+	(skB_fit : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 : skylineInfo [dim] t pL_t =
 	-- Loop Inversion
@@ -376,9 +376,9 @@ def calc_local_Skyline [dim] 't 'pL_t
 		let filt_idx_ =
 			loop idxs = (indices skI.xys) for j in (iota max_part_size) do
 				let part_ids = skI.xys
-					|> map (\(x,_) -> get_grid_angle_measure_from_coords skOp skB x)
+					|> map (\(x,_) -> get_grid_angle_measure_from_coords skOp skB_crop x)
 					|> map (\(g,a,_) ->
-						get_id_from_grid_angle skB g a
+						get_id_from_grid_angle skB_crop g a
 					)
 				let cmp_xs = part_ids
 					|> map (\pid -> (pid, part_sizes[pid]))
@@ -388,7 +388,7 @@ def calc_local_Skyline [dim] 't 'pL_t
 				in map4
 					(\i (this_x,_) cmp_x pid ->
 						if (i<0 || i==j) then i else
-						let (gid,_) = get_grid_angle_from_id skB pid in
+						let (gid,_) = get_grid_angle_from_id skB_crop pid in
 						if skI.isPartitionDominated[gid] then (-1) else
 						let elimd =
 							(foldl (&&) (true) (seqmap2 (skOp.skyline_leq) this_x cmp_x))
@@ -406,18 +406,25 @@ def calc_local_Skyline [dim] 't 'pL_t
 		let sk_pids =
 			-- -- calculating pids directly from filt_idx instead of gathering like this
 			-- -- gives "known compiler limitation - cannot handle un-sliceable allocation size"...
-			let all_pids = skI.xys |> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
+			let all_pids = skI.xys |> map (\(x,_) -> (get_id_measure_from_coords skOp skB_fit x).0)
 			in filt_idx |> map (\i -> all_pids[i])
 		in (sk_xys, sk_pids)
 	let n_filt = length (skyline_pids)
 	let zuowei =
-		let counts = hist (+) 0 skB.total_part_no (skyline_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
+		let counts = hist (+) 0 skB_fit.total_part_no (skyline_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
 		in exscan (+) 0 counts
 	in {
 		xys = skyline_xys,
 		part_idx = zuowei,
 		isPartitionDominated = skI.isPartitionDominated
 	}
+
+def calc_local_Skyline [dim] 't 'pL_t
+	(skOp : skylineOp t)
+	(skB : skylineBase [dim] t)
+	(skI : skylineInfo [dim] t pL_t)
+: skylineInfo [dim] t pL_t =
+	calc_local_Skyline_and_fit_to_skylineBase skOp skB skB skI
 
 -- this can only be used on skylines with the same base
 -- otherwise will have to manually combine their xys, re-sort, etc...
@@ -588,7 +595,7 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 	let new_skB : skylineBase [dim] t = {
 		grid_partitions_per_dim = new_grid_partitions_per_dim,
 		angle_partitions_per_dim = replicate (dim-1) 1,
-		grid_part_prefix_sum = exscan (*) 1 new_grid_partitions_per_dim,
+		grid_part_prefix_sum = new_grid_part_prefix_sum,
 		angle_part_prefix_sum = replicate (dim-1) 1,
 		total_grid_no = new_total_grid_no,
 		total_angle_no = 1,
@@ -620,19 +627,11 @@ def calc_intermediate_skyline [dim] 't 'pL_t
 		loop (sd_skB,sd_skI,i) = (skB,skI, (if include_zero_step then 0 else 1))
 		while (i<=max_steps && ((i-1)*omit_step<dim) && (length sd_skI.xys)>size_thresh) do
 			let (sd_skB_, sd_skI_) = intermediate_SkylineInfo skOp sd_skB sd_skI (idx_t.min (i*omit_step) dim)
-			in (sd_skB_, calc_local_Skyline skOp sd_skB_ sd_skI_, i+1)
-	let zuowei =
-		let n_ = length (intermediate_skI.xys)
-		let skyline_parts = intermediate_skI.xys
-		-- TODO currently can't think of a better solution here...
-			|> seqmap (\(x,_) ->
-				(get_id_measure_from_coords skOp skB x).0
-			) :> [n_]idx_t.t
-		let counts = hist (+) 0 skB.total_part_no skyline_parts (replicate n_ 1)
-		in exscan (+) 0 counts
+			let fit_skI = calc_local_Skyline_and_fit_to_skylineBase skOp sd_skB_ skB sd_skI_
+			in (sd_skB_, fit_skI, i+1)
 	in {
 		xys = intermediate_skI.xys,
-		part_idx = zuowei,
+		part_idx = intermediate_skI.part_idx,
 		isPartitionDominated = skI.isPartitionDominated
 	}
 
@@ -694,11 +693,16 @@ def calc_global_Skyline [dim] 't 'pL_t
 		isPartitionDominated = skI.isPartitionDominated
 	}
 
+type~ skylineData [dim] 't 'pL_t = {skyTups : [dim][]t, pL : []pL_t}
+
+type~ skylineData_GFUR_double [dim] = skylineData [dim] f64 idx_t.t
+
 -- "crack" it like an egg to get the final result
 def crack_Skyline [dim] 't 'pL_t
 	(skI : skylineInfo [dim] t pL_t)
-: ([][dim]t, []pL_t) =
-	unzip skI.xys
+: skylineData [dim] t pL_t =
+	let (skyKeys, skyPl) = unzip skI.xys
+	in {skyTups = skyKeys, pL = skyPl}
 
 
 -- ENTRY POINTS ----------------------------------------------------------------------------------------------------
@@ -802,6 +806,9 @@ def crack_Skyline [dim] 't 'pL_t
 		(size_thresh : idx_t.t)
 	: skylineInfo_GFUR_double [dim] =
 		calc_intermediate_skyline skylineOp_double skB skI include_zero_step omit_step max_steps size_thresh
+
+	entry crack_Skyline_double_GFUR [dim] (skI : skylineInfo_GFUR_double [dim])
+	: skylineData_GFUR_double [dim] = crack_Skyline skI
 
 
 -- TESTING ---------------------------------------------------------------------------------------------------------
