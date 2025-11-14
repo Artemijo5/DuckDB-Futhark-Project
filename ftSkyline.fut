@@ -574,40 +574,53 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 	(omit_dims : idx_t.t)
 	(accumulated_subdiv : idx_t.t)
 : (skylineBase [dim] t, skylineInfo [dim] t pL_t) =
+	let angle_no_omitted =
+		if omit_dims >= dim-1
+		then skB.total_angle_no
+		else skB.angle_part_prefix_sum[omit_dims]
 	let grid_no_omitted =
-		if omit_dims == dim
+		if omit_dims<=dim-1 then 1 else
+		if omit_dims == 2*dim-1
 		then skB.total_grid_no
-		else skB.grid_part_prefix_sum[omit_dims]
+		else skB.grid_part_prefix_sum[omit_dims-dim+1]
+	let new_angle_partitions_per_dim = skB.angle_partitions_per_dim
+		|> zip (iota (dim-1))
+		|> map (\(i,pd) -> if i<omit_dims then 1 else pd)
 	let new_grid_partitions_per_dim = skB.grid_partitions_per_dim
 		|> zip (iota dim)
-		|> map (\(i,pd) -> if i<omit_dims then 1 else pd)
+		|> map (\(i,pd) -> if i<(omit_dims-dim+1) then 1 else pd)
+	let new_angle_part_prefix_sum = exscan (*) 1 new_angle_partitions_per_dim
 	let new_grid_part_prefix_sum = exscan (*) 1 new_grid_partitions_per_dim
+	let new_total_angle_no = i64.product new_angle_partitions_per_dim
 	let new_total_grid_no = i64.product new_grid_partitions_per_dim
-	let new_starts = skB.start_of_grid_partition
-		|> zip (indices skB.start_of_grid_partition)
-		|> filter (\(i,_) -> (i%grid_no_omitted)==0)
-		|> map (\(_,sp) -> sp)
+	let new_starts =
+		if (omit_dims<=dim-1)
+		then skB.start_of_grid_partition
+		else skB.start_of_grid_partition
+			|> zip (indices skB.start_of_grid_partition)
+			|> filter (\(i,_) -> (i%(grid_no_omitted))==0)
+			|> map (\(_,sp) -> sp)
 	let new_sizes = iota dim
 		|> map (\d ->
-			if d>=omit_dims
+			if d>(omit_dims-dim)
 			then skB.grid_part_size_per_dim[d]
 			else skOp.times skB.grid_part_size_per_dim[d] (skOp.from_i64 skB.grid_partitions_per_dim[d])
 		)
 	let new_skB : skylineBase [dim] t = {
 		grid_partitions_per_dim = new_grid_partitions_per_dim,
-		angle_partitions_per_dim = replicate (dim-1) 1,
+		angle_partitions_per_dim = new_angle_partitions_per_dim,
 		grid_part_prefix_sum = new_grid_part_prefix_sum,
-		angle_part_prefix_sum = replicate (dim-1) 1,
+		angle_part_prefix_sum = new_angle_part_prefix_sum,
 		total_grid_no = new_total_grid_no,
-		total_angle_no = 1,
-		total_part_no = new_total_grid_no,
+		total_angle_no = new_total_angle_no,
+		total_part_no = new_total_grid_no*new_total_angle_no,
 		start_of_grid_partition = new_starts,
 		grid_part_size_per_dim = new_sizes
 	}
 	let scatter_new_part_idx = 
 		let filt_idx = indices skI.part_idx
 		|> map (\i->
-			if (i%(grid_no_omitted*skB.total_angle_no*accumulated_subdiv)) == 0
+			if (i%(grid_no_omitted*angle_no_omitted*accumulated_subdiv)) == 0
 			then i
 			else (-1)
 		)
@@ -619,7 +632,7 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 	let new_skI = {
 		xys = skI.xys,
 		part_idx = new_part_idx,
-		isPartitionDominated = replicate skB.total_grid_no false
+		isPartitionDominated = replicate new_skB.total_grid_no false
 	}
 	in (new_skB, new_skI)
 
@@ -627,15 +640,15 @@ def calc_intermediate_skyline [dim] 't 'pL_t
 	(skOp : skylineOp t)
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
-	(include_zero_step : bool)
+	(include_angle_steps : bool)
 	(omit_step : idx_t.t)
 	(max_steps : idx_t.t)
 	(size_thresh : idx_t.t)
 : skylineInfo [dim] t pL_t =
 	let (_, intermediate_skI,_,_) =
-		loop (sd_skB,sd_skI,i,acc_sd) = (skB,skI, (if include_zero_step then 0 else 1) ,1)
-		while (i<=max_steps && ((i-1)*omit_step<dim) && (length sd_skI.xys)>size_thresh) do
-			let (sd_skB_, sd_skI_) = intermediate_SkylineInfo skOp sd_skB sd_skI (idx_t.min (i*omit_step) dim) acc_sd
+		loop (sd_skB,sd_skI,i,acc_sd) = (skB,skI, (if include_angle_steps then 0 else dim) ,1)
+		while (i<(dim+max_steps) && ((i-1)*omit_step<(2*dim-1)) && (length sd_skI.xys)>size_thresh) do
+			let (sd_skB_, sd_skI_) = intermediate_SkylineInfo skOp sd_skB sd_skI (idx_t.min (i*omit_step) (2*dim-1)) acc_sd
 			let fit_skI = calc_local_Skyline_and_fit_to_skylineBase skOp sd_skB_ skB sd_skI_
 			let next_acc_sd = (skB.total_part_no)/(sd_skB_.total_part_no)
 			in (sd_skB_, fit_skI, i+1, next_acc_sd)
@@ -705,8 +718,6 @@ def calc_global_Skyline [dim] 't 'pL_t
 
 type~ skylineData [dim] 't 'pL_t = {skyTups : [][dim]t, pL : []pL_t}
 
-type~ skylineData_GFUR_double [dim] = skylineData [dim] f64 idx_t.t
-
 -- "crack" it like an egg to get the final result
 def crack_Skyline [dim] 't 'pL_t
 	(skI : skylineInfo [dim] t pL_t)
@@ -732,6 +743,7 @@ def crack_Skyline [dim] 't 'pL_t
 
 	type~ skylineBase_double [dim] = skylineBase [dim] f64
 	type~ skylineInfo_GFUR_double [dim] = skylineInfo [dim] f64 i64
+	type~ skylineData_GFUR_double [dim] = skylineData [dim] f64 idx_t.t
 
 	entry define_skyline_space_double [dim]
 		(min_per_dim : [dim]f64)
@@ -810,12 +822,12 @@ def crack_Skyline [dim] 't 'pL_t
 	entry calc_intermSkyline_GFUR_double [dim]
 		(skB : skylineBase_double [dim])
 		(skI : skylineInfo_GFUR_double [dim])
-		(include_zero_step : bool)
+		(include_angle_steps : bool)
 		(omit_step : idx_t.t)
 		(max_steps : idx_t.t)
 		(size_thresh : idx_t.t)
 	: skylineInfo_GFUR_double [dim] =
-		calc_intermediate_skyline skylineOp_double skB skI include_zero_step omit_step max_steps size_thresh
+		calc_intermediate_skyline skylineOp_double skB skI include_angle_steps omit_step max_steps size_thresh
 
 	entry crack_Skyline_double_GFUR [dim] (skI : skylineInfo_GFUR_double [dim])
 	: skylineData_GFUR_double [dim] = crack_Skyline skI
@@ -1078,8 +1090,8 @@ def crack_Skyline [dim] 't 'pL_t
 			([15,15,15])
 			([3,3,3])
 			([2,2] :> [3-1]i64)
-		let skI = test_local_skyline_3d false
-		in intermediate_SkylineInfo skOp skB skI subdiv
+		let skI = test_sort_3d false
+		in intermediate_SkylineInfo skOp skB skI subdiv 1
 
 	def test_calc_interm_skyline (include_zero_step : bool) (omit_step) (max_steps) (size_thresh) =
 		let skOp = skylineOp_double
