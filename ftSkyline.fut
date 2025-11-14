@@ -358,6 +358,19 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 		isPartitionDominated = isPartitionDominated,
 	}
 
+def filter_and_fit_for_Skyline [n] [dim] 't 'pL_t
+	(skOp : skylineOp t)
+	(skB_filt : skylineBase [dim] t)
+	(skB_fit : skylineBase [dim] t)
+	(xs : [n][dim]t)
+	(ys : [n]pL_t)
+	(use_measure_for_sorting_filt : bool)
+	(use_measure_for_sorting_fit : bool)
+: skylineInfo [dim] t pL_t =
+	let filt_skI = sort_for_Skyline_without_previous_windowing skOp skB_filt xs ys use_measure_for_sorting_filt
+	let (filt_xs, filt_ys) = filt_skI.xys |> unzip
+	in sort_for_Skyline_without_previous_windowing skOp skB_fit filt_xs filt_ys use_measure_for_sorting_fit
+
 def calc_local_Skyline_and_fit_to_skylineBase [dim] 't 'pL_t
 	(skOp : skylineOp t)
 	(skB_crop : skylineBase [dim] t)
@@ -771,6 +784,23 @@ def crack_Skyline [dim] 't 'pL_t
 			(map (\i -> i+offset) (indices xs))
 			use_measure_for_sorting
 
+	entry filter_and_fit_for_Skyline_GFUR_double [n] [dim]
+		(skB_filt : skylineBase_double [dim])
+		(skB_fit : skylineBase_double [dim])
+		(xs : [n][dim]f64)
+		(offset : idx_t.t)
+		(use_measure_for_sorting_filt : bool)
+		(use_measure_for_sorting_fit : bool)
+	: skylineInfo_GFUR_double [dim] =
+		filter_and_fit_for_Skyline
+			skylineOp_double
+			skB_filt
+			skB_fit
+			xs
+			(map (\i -> i+offset) (indices xs))
+			use_measure_for_sorting_filt
+			use_measure_for_sorting_fit
+
 	entry calc_local_Skyline_GFUR_double [dim]
 		(skB : skylineBase_double [dim])
 		(skI : skylineInfo_GFUR_double [dim])
@@ -1103,3 +1133,20 @@ def crack_Skyline [dim] 't 'pL_t
 			([2,2] :> [3-1]i64)
 		let skI = test_sort_3d false--test_local_skyline_3d false
 		in calc_intermediate_skyline skOp skB skI include_zero_step omit_step max_steps size_thresh
+
+	def test_filter_and_fit (grd_fine) (ang_fine) =
+		let skOp = skylineOp_double
+		let skB1 = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([grd_fine, grd_fine, grd_fine])
+			([1,1] :> [3-1]i64)
+		let skB2 = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([1,1,1])
+			([ang_fine, ang_fine] :> [3-1]i64)
+		let dat = copy test_points_3d
+		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false true
