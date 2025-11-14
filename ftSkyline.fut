@@ -572,6 +572,7 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 	(omit_dims : idx_t.t)
+	(accumulated_subdiv : idx_t.t)
 : (skylineBase [dim] t, skylineInfo [dim] t pL_t) =
 	let grid_no_omitted =
 		if omit_dims == dim
@@ -606,7 +607,7 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 	let scatter_new_part_idx = 
 		let filt_idx = indices skI.part_idx
 		|> map (\i->
-			if (i%(grid_no_omitted*skB.total_angle_no)) == 0
+			if (i%(grid_no_omitted*skB.total_angle_no*accumulated_subdiv)) == 0
 			then i
 			else (-1)
 		)
@@ -631,12 +632,13 @@ def calc_intermediate_skyline [dim] 't 'pL_t
 	(max_steps : idx_t.t)
 	(size_thresh : idx_t.t)
 : skylineInfo [dim] t pL_t =
-	let (_, intermediate_skI,_) =
-		loop (sd_skB,sd_skI,i) = (skB,skI, (if include_zero_step then 0 else 1))
+	let (_, intermediate_skI,_,_) =
+		loop (sd_skB,sd_skI,i,acc_sd) = (skB,skI, (if include_zero_step then 0 else 1) ,1)
 		while (i<=max_steps && ((i-1)*omit_step<dim) && (length sd_skI.xys)>size_thresh) do
-			let (sd_skB_, sd_skI_) = intermediate_SkylineInfo skOp sd_skB sd_skI (idx_t.min (i*omit_step) dim)
+			let (sd_skB_, sd_skI_) = intermediate_SkylineInfo skOp sd_skB sd_skI (idx_t.min (i*omit_step) dim) acc_sd
 			let fit_skI = calc_local_Skyline_and_fit_to_skylineBase skOp sd_skB_ skB sd_skI_
-			in (sd_skB_, fit_skI, i+1)
+			let next_acc_sd = (skB.total_part_no)/(sd_skB_.total_part_no)
+			in (sd_skB_, fit_skI, i+1, next_acc_sd)
 	in {
 		xys = intermediate_skI.xys,
 		part_idx = intermediate_skI.part_idx,
