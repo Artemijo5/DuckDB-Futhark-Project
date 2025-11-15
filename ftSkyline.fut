@@ -221,7 +221,6 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 				)
 			in hist (+) 0 grid_no grid_part_by_idx (replicate n 1)
 		in
-		-- Loop Inversion
 			loop domArray=(replicate grid_no false) for j in (iota grid_no) do
 				let indomitable = skB.grid_partitions_per_dim
 					|> zip (skB.grid_part_prefix_sum)
@@ -237,33 +236,6 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 					)
 					|> any (id)
 				in domArray with [j] = isD
-		--
-			--skB.start_of_grid_partition
-			--	|> map (\this_o ->
-			--		let (isD,_) = loop (isDomd, j) = (false, 0)
-			--			while !isDomd && j<skB.total_grid_no do
-			--				let o_j = skB.start_of_grid_partition[j]
-			--				let count_j = count_per_grid_part[j]
-			--				let domd = (count_j>0 && foldl (&&) (true) (map2 (skOp.skyline_lt) this_o o_j))
-			--				in (domd, j+1)
-			--		in isD
-			--	)
-	--let sorted_xys = sorted_xys_
-	--	|> filter (\(x,_) ->
-	--		let g = get_grid_id_from_coords skOp skB x
-	--		in !(isPartitionDominated[g])
-	--	)
-	--let n_filt = length sorted_xys
-	--let zuowei =
-	--	let part_by_idx = (iota n_filt)
-	--	-- Why can't this be done in parallel!!!!!
-	--	-- TODO try re-planning the mapping...
-	--		|> seqmap (\i -> 
-	--			(get_id_measure_from_coords skOp skB sorted_xys[i].0).0
-	--		) :> [n_filt]idx_t.t
-	--	let counts = hist (+) 0 skB.total_part_no part_by_idx (replicate n_filt 1)
-	--	in exscan (+) 0 counts
-	-- -- calculating pids after filter gives "known compiler limitation - cannot handle unsliceable allocation size..."
 	let (sorted_xys, zuowei) =
 		let (filt_xys,filt_pids) = sorted_xys_
 			|> map (\xy -> ( xy , (get_id_measure_from_coords skOp skB xy.0).0 ) )
@@ -282,16 +254,57 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 		isPartitionDominated = isPartitionDominated,
 	}
 
+def filter_for_Skyline [n] [dim] 't 'pL_t
+	(skOp : skylineOp t)
+	(skB : skylineBase [dim] t)
+	(xs : [n][dim]t)
+	(ys : [n]pL_t)
+: skylineInfo [dim] t pL_t =
+	let grid_no = skB.total_grid_no
+	let zipped_xys = zip xs ys
+	let isPartitionDominated =
+		if (i64.minimum skB.grid_partitions_per_dim)==1 then (replicate grid_no false) else
+		let count_per_grid_part =
+			let grid_part_by_idx = zipped_xys
+				|> map (\(x,_) -> 
+					get_grid_id_from_coords skOp skB x
+				)
+			in hist (+) 0 grid_no grid_part_by_idx (replicate n 1)
+		in
+			loop domArray=(replicate grid_no false) for j in (iota grid_no) do
+				let indomitable = skB.grid_partitions_per_dim
+					|> zip (skB.grid_part_prefix_sum)
+					|> map (\(pre_d,per_d) -> (j/pre_d)%per_d == 0)
+					|> (foldl (||)) (false)
+				in if indomitable then domArray else
+				let this_o = skB.start_of_grid_partition[j]
+				let isD = (iota j) -- will definitely be dominated by a partition with a smaller id
+					|> map (\i ->
+						if (i==j || count_per_grid_part[i]==0)
+						then false
+						else foldl (&&) (true) (map2 (skOp.skyline_lt) this_o skB.start_of_grid_partition[i])
+					)
+					|> any (id)
+				in domArray with [j] = isD
+	let filtered_xys = zipped_xys
+		|> map (\xy -> ( xy , get_grid_id_from_coords skOp skB xy.0 ) )
+		|> filter (\(_,gid) -> !(isPartitionDominated[gid]))
+		|> map (.0)
+	in {
+		xys = filtered_xys,
+		part_idx = [0],
+		isPartitionDominated = [false],
+	}
+
 def filter_and_fit_for_Skyline [n] [dim] 't 'pL_t
 	(skOp : skylineOp t)
 	(skB_filt : skylineBase [dim] t)
 	(skB_fit : skylineBase [dim] t)
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
-	(use_measure_for_sorting_filt : bool)
 	(use_measure_for_sorting_fit : bool)
 : skylineInfo [dim] t pL_t =
-	let filt_skI = sort_for_Skyline skOp skB_filt xs ys use_measure_for_sorting_filt
+	let filt_skI = filter_for_Skyline skOp skB_filt xs ys
 	let (filt_xs, filt_ys) = filt_skI.xys |> unzip
 	in sort_for_Skyline skOp skB_fit filt_xs filt_ys use_measure_for_sorting_fit
 
@@ -713,8 +726,7 @@ def crack_Skyline [dim] 't 'pL_t
 		(skB_fit : skylineBase_double [dim])
 		(xs : [n][dim]f64)
 		(offset : idx_t.t)
-		(use_measure_for_sorting_filt : bool)
-		(use_measure_for_sorting_fit : bool)
+		(use_measure_for_sorting : bool)
 	: skylineInfo_GFUR_double [dim] =
 		filter_and_fit_for_Skyline
 			skylineOp_double
@@ -722,8 +734,7 @@ def crack_Skyline [dim] 't 'pL_t
 			skB_fit
 			xs
 			(map (\i -> i+offset) (indices xs))
-			use_measure_for_sorting_filt
-			use_measure_for_sorting_fit
+			use_measure_for_sorting
 
 	entry calc_local_Skyline_GFUR_double [dim]
 		(skB : skylineBase_double [dim])
@@ -1073,15 +1084,15 @@ def crack_Skyline [dim] 't 'pL_t
 			([1,1,1])
 			(replicate (3-1) ang_fine)
 		let dat = copy test_points_3d
-		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false true
+		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false
 
-	def test_filter_and_fit_with_board (board_size) (grd_fine) (ang_fine) =
+	def test_filter_and_fit_with_board (board_start) (board_end) (grd_fine) (ang_fine) =
 		let skOp = skylineOp_double
 		let skB1 = mk_skylineBase_from_grid
 			(skylineOp_double)
-			([0,0,0])
-			(replicate 3 board_size)
-			(replicate 3 grd_fine)
+			board_start
+			board_end
+			grd_fine
 			([1,1] :> [3-1]i64)
 		let skB2 = mk_skylineBase_from_grid
 			(skylineOp_double)
@@ -1089,5 +1100,5 @@ def crack_Skyline [dim] 't 'pL_t
 			([15,15,15])
 			([1,1,1])
 			(replicate (3-1) ang_fine)
-		let dat = copy test_points_3d
-		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false true
+		let dat = [[3.1,3.1,3.1]] ++ (copy test_points_3d)
+		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false
