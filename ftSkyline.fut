@@ -132,7 +132,7 @@ def cartesian_to_spherical [dim] 't
 	(skOp : skylineOp t)
 	(coords : [dim]t)
 : (f64, [dim-1]f64) =
-	let fc = seqmap (skOp.to_f64) coords
+	let fc = map (skOp.to_f64) coords
 	let r = f64.sqrt (foldl (+) 0 (map (\x -> x*x) fc))
 	let phis : [dim-1]f64 =
 		loop p = (replicate (dim-1) 0)
@@ -151,10 +151,10 @@ def get_grid_id_from_coords [dim] 't
 	let point_0 = skB.start_of_grid_partition[0]
 	let dists_0 = map2 (skOp.minus) coords point_0
 	let grid_pos = (map2 (skOp.over) dists_0 skB.grid_part_size_per_dim)
-		|> seqmap (skOp.to_i64)
-		|> seqmap (\i -> i64.max i 0)
+		|> map (skOp.to_i64)
+		|> map (\i -> i64.max i 0)
 		|> zip (iota dim)
-		|> seqmap (\(d,i) -> i64.min i (skB.grid_partitions_per_dim[d]-1))
+		|> map (\(d,i) -> i64.min i (skB.grid_partitions_per_dim[d]-1))
 	in foldl (+) 0 (map2 (*) grid_pos skB.grid_part_prefix_sum)
 
 def get_grid_angle_measure_from_coords [dim] 't
@@ -168,7 +168,7 @@ def get_grid_angle_measure_from_coords [dim] 't
 	let dists_g = map2 (skOp.minus) coords skB.start_of_grid_partition[g]
 	let (measure, angles) = cartesian_to_spherical skOp dists_g
 	let base_angles = iota (dim-1)
-		|> seqmap (\i -> (f64.pi/2.0) / (f64.i64 skB.angle_partitions_per_dim[i]) )
+		|> map (\i -> (f64.pi/2.0) / (f64.i64 skB.angle_partitions_per_dim[i]) )
 	let anglePart_ = map4
 		(\a ba pf pd ->
 			let i_ = i64.f64 ((a/ba)*(f64.i64 pf))
@@ -199,88 +199,6 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
 	(use_measure_for_sorting : bool)
-	(previous_dominance : []bool)
-: skylineInfo [dim] t pL_t =
-	let part_leq : [dim]t -> [dim]t -> bool =
-		(\x1 x2 ->
-			let (id1, m1) = get_id_measure_from_coords skOp skB x1
-			let (id2, m2) = get_id_measure_from_coords skOp skB x2
-			in
-				if use_measure_for_sorting
-				then (id1<id2) || (id1==id2 && m1<=m2)
-				else (id1<=id2)
-		)
-	let sorted_xys_ = merge_sort (\(x1,_) (x2,_) -> part_leq x1 x2) (zip xs ys)
-	let isPartitionDominated =
-		let count_per_grid_part =
-			let grid_part_by_idx = sorted_xys_
-				|> map (\(x,_) -> 
-					get_grid_id_from_coords skOp skB x
-				)
-			in hist (+) 0 skB.total_grid_no grid_part_by_idx (replicate n 1)
-		in (
-			loop domArray=(replicate skB.total_grid_no false) for j in (iota skB.total_grid_no) do
-				let this_o = skB.start_of_grid_partition[j]
-				let isD = (iota skB.total_grid_no)
-					|> map (\i ->
-						if (i==j || count_per_grid_part[i]==0)
-						then false
-						else foldl (&&) (true) (seqmap2 (skOp.skyline_lt) this_o skB.start_of_grid_partition[i])
-					)
-					|> any (id)
-				in domArray with [j] = isD
-		--
-			--skB.start_of_grid_partition
-			--	|> map (\this_o ->
-			--		let (isD,_) = loop (isDomd, j) = (false, 0)
-			--			while !isDomd && j<skB.total_grid_no do
-			--				let o_j = skB.start_of_grid_partition[j]
-			--				let count_j = count_per_grid_part[j]
-			--				let domd = (count_j>0 && foldl (&&) (true) (map2 (skOp.skyline_lt) this_o o_j))
-			--				in (domd, j+1)
-			--		in isD
-			--	)
-			)
-			|> zip previous_dominance
-			|> map (\(alt,neu) -> alt || neu)
-	--let sorted_xys = sorted_xys_
-	--	|> filter (\(x,_) ->
-	--		let g = get_grid_id_from_coords skOp skB x
-	--		in !(isPartitionDominated[g])
-	--	)
-	--let n_filt = length sorted_xys
-	--let zuowei =
-	--	let part_by_idx = sorted_xys
-	--		|> map (\(x,_) -> 
-	--			(get_id_measure_from_coords skOp skB x).0
-	--		) :> [n_filt]idx_t.t
-	--	let counts = hist (+) 0 skB.total_part_no part_by_idx (replicate n_filt 1)
-	--	in exscan (+) 0 counts
-	let (sorted_xys, zuowei) =
-		let (filt_xys,filt_pids) = sorted_xys_
-			|> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
-			|> zip sorted_xys_
-			|> filter (\(_,pid) ->
-				let (g,_) = get_grid_angle_from_id skB pid
-				in !(isPartitionDominated[g])
-			)
-			|> unzip
-		let n_filt = length filt_pids
-		let counts = hist (+) 0 skB.total_part_no (filt_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
-		let zw = exscan (+) 0 counts
-		in (filt_xys, zw)
-	in {
-		xys = sorted_xys,
-		part_idx = zuowei,
-		isPartitionDominated = isPartitionDominated,
-	}
-
-def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
-	(skOp : skylineOp t)
-	(skB : skylineBase [dim] t)
-	(xs : [n][dim]t)
-	(ys : [n]pL_t)
-	(use_measure_for_sorting : bool)
 : skylineInfo [dim] t pL_t =
 	let grid_no = skB.total_grid_no
 	let sorted_xys_ =
@@ -295,6 +213,7 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 				|> merge_sort (\((p1,m1),_,_) ((p2,m2),_,_) -> p1<p2 || (p1==p2 && m1<=m2))
 				|> map (\((p,m),x,y) -> (x,y))
 	let isPartitionDominated =
+		if (i64.minimum skB.grid_partitions_per_dim)==1 then (replicate grid_no false) else
 		let count_per_grid_part =
 			let grid_part_by_idx = sorted_xys_
 				|> map (\(x,_) -> 
@@ -304,8 +223,13 @@ def sort_for_Skyline_without_previous_windowing [n] [dim] 't 'pL_t
 		in
 		-- Loop Inversion
 			loop domArray=(replicate grid_no false) for j in (iota grid_no) do
+				let indomitable = skB.grid_partitions_per_dim
+					|> zip (skB.grid_part_prefix_sum)
+					|> map (\(pre_d,per_d) -> (j/pre_d)%per_d == 0)
+					|> (foldl (||)) (false)
+				in if indomitable then domArray else
 				let this_o = skB.start_of_grid_partition[j]
-				let isD = (iota grid_no)
+				let isD = (iota j) -- will definitely be dominated by a partition with a smaller id
 					|> map (\i ->
 						if (i==j || count_per_grid_part[i]==0)
 						then false
@@ -367,9 +291,9 @@ def filter_and_fit_for_Skyline [n] [dim] 't 'pL_t
 	(use_measure_for_sorting_filt : bool)
 	(use_measure_for_sorting_fit : bool)
 : skylineInfo [dim] t pL_t =
-	let filt_skI = sort_for_Skyline_without_previous_windowing skOp skB_filt xs ys use_measure_for_sorting_filt
+	let filt_skI = sort_for_Skyline skOp skB_filt xs ys use_measure_for_sorting_filt
 	let (filt_xs, filt_ys) = filt_skI.xys |> unzip
-	in sort_for_Skyline_without_previous_windowing skOp skB_fit filt_xs filt_ys use_measure_for_sorting_fit
+	in sort_for_Skyline skOp skB_fit filt_xs filt_ys use_measure_for_sorting_fit
 
 def calc_local_Skyline_and_fit_to_skylineBase [dim] 't 'pL_t
 	(skOp : skylineOp t)
@@ -404,9 +328,9 @@ def calc_local_Skyline_and_fit_to_skylineBase [dim] 't 'pL_t
 						let (gid,_) = get_grid_angle_from_id skB_crop pid in
 						if skI.isPartitionDominated[gid] then (-1) else
 						let elimd =
-							(foldl (&&) (true) (seqmap2 (skOp.skyline_leq) this_x cmp_x))
+							(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
 							&&
-							(foldl (||) (false) (seqmap2 (skOp.skyline_lt) this_x cmp_x))
+							(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
 						in
 							if elimd then (-1) else i
 					)
@@ -685,9 +609,9 @@ def calc_global_Skyline [dim] 't 'pL_t
 				if (i<0 || i==j) then i else
 				let this_x = skI.xys[i].0
 				let elimd =
-						(foldl (&&) (true) (seqmap2 (skOp.skyline_leq) this_x cmp_x))
+						(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
 						&&
-						(foldl (||) (false) (seqmap2 (skOp.skyline_lt) this_x cmp_x))
+						(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
 				in
 					if elimd then (-1) else i
 			)
@@ -777,7 +701,7 @@ def crack_Skyline [dim] 't 'pL_t
 		(offset : idx_t.t)
 		(use_measure_for_sorting : bool)
 	: skylineInfo_GFUR_double [dim] =
-		sort_for_Skyline_without_previous_windowing
+		sort_for_Skyline
 			skylineOp_double
 			skB
 			xs
@@ -901,7 +825,7 @@ def crack_Skyline [dim] 't 'pL_t
 		let skOp = skylineOp_double
 		let skB = copy test_skB_2d
 		let points = [[2,1],[0.2,1],[2.5,4],[0.17,7.6],[0.1,7.51],[0.05,0],[2.7,4],[8,8],[9,8],[2.2,7.65]]
-		in sort_for_Skyline_without_previous_windowing skOp skB points (indices points) use_measure
+		in sort_for_Skyline skOp skB points (indices points) use_measure
 
 	def test_local_skyline_2d (use_measure) =
 		let skOp = skylineOp_double
@@ -956,7 +880,7 @@ def crack_Skyline [dim] 't 'pL_t
 			[5,5,11],[6,5,10],[6,5.2,12],[7,5.3,12],
 			[6,12,12],[7,11,13],[5,11,12],[6,12,10]
 		]
-		in sort_for_Skyline_without_previous_windowing skOp skB points (indices points) use_measure
+		in sort_for_Skyline skOp skB points (indices points) use_measure
 
 	def test_local_skyline_3d (use_measure) =
 		let skOp = skylineOp_double
@@ -1140,13 +1064,30 @@ def crack_Skyline [dim] 't 'pL_t
 			(skylineOp_double)
 			([0,0,0])
 			([15,15,15])
-			([grd_fine, grd_fine, grd_fine])
+			(replicate 3 grd_fine)
 			([1,1] :> [3-1]i64)
 		let skB2 = mk_skylineBase_from_grid
 			(skylineOp_double)
 			([0,0,0])
 			([15,15,15])
 			([1,1,1])
-			([ang_fine, ang_fine] :> [3-1]i64)
+			(replicate (3-1) ang_fine)
+		let dat = copy test_points_3d
+		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false true
+
+	def test_filter_and_fit_with_board (board_size) (grd_fine) (ang_fine) =
+		let skOp = skylineOp_double
+		let skB1 = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			(replicate 3 board_size)
+			(replicate 3 grd_fine)
+			([1,1] :> [3-1]i64)
+		let skB2 = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([1,1,1])
+			(replicate (3-1) ang_fine)
 		let dat = copy test_points_3d
 		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false true
