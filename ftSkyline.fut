@@ -1,6 +1,10 @@
 import "lib/github.com/diku-dk/sorts/merge_sort"
 import "ftbasics"
 
+-- TODO
+-- 1 pointwise elimination by finding point closest to start of axes
+-- 2 make f64 ops part of skylineOp as well, so that f32 & f16 don't have needless spatial overhead
+
 type^ skylineOp 't = {
 	plus : t -> t -> t,
 	minus : t -> t -> t,
