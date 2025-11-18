@@ -12,9 +12,13 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE
 #define TABLE_SIZE 4*BUFFER_SIZE
-#define NUM_KEYS 5 // try various values here...
+#define NUM_KEYS 32 // try various values here...
+// TODO results for ID 0 are buggy, especially for NUM_KEYS > 5 (...)
+// for 32+ keys it also (mostly) gets it right... even for 512 keys...
+// for some strange reason, for some interval over 5 keys, results for 0 and sometimes other keys bug out...
+// could it be a bug with the futhark C compiler? otherwise some stupid mistake somehow...
 
-#define STG2_BUFFER_SIZE 2*NUM_KEYS
+#define STG2_BUFFER_SIZE 5*NUM_KEYS
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "4GB"
@@ -167,11 +171,11 @@ int main() {
 	  	/*
 	  	for(idx_t i=0; i<NUM_KEYS; i++) {
 	  		printf("ID %5ld | COUNT %5ld | X1 %8.3f | X2 %8.3f | X1X2 %8.3f\n",
-	  			((long*)Stg2_Buffer[0])[i],
-	  			((long*)Stg2_Buffer[1])[i],
-	  			((double*)Stg2_Buffer[2])[i],
-	  			((double*)Stg2_Buffer[3])[i],
-	  			((double*)Stg2_Buffer[4])[i]
+	  			((long*)Stg2_Buffer[0])[i+curIdx_buff2],
+	  			((long*)Stg2_Buffer[1])[i+curIdx_buff2],
+	  			((double*)Stg2_Buffer[2])[i+curIdx_buff2],
+	  			((double*)Stg2_Buffer[3])[i+curIdx_buff2],
+	  			((double*)Stg2_Buffer[4])[i+curIdx_buff2]
 	  		);
 	  	}
 	  	*/
@@ -207,6 +211,13 @@ int main() {
 	  	futhark_free_f64_1d(ctx, s1_sum_x2);
 	  	futhark_free_f64_1d(ctx, s1_sum_x1x2);
 
+	  	/*
+	  	long count0, count1;
+	  	futhark_index_i64_1d(ctx, &count0, s2_counts, 0);
+	  	futhark_index_i64_1d(ctx, &count1, s2_counts, 1);
+	  	printf("... %ld %ld\n", count0, count1);
+	  	*/
+
 	  	memcpy(Stg2_Buffer[0], knownKeys, NUM_KEYS*sizeof(int64_t));
 	  	futhark_values_i64_1d(ctx, s2_counts, Stg2_Buffer[1]);
 	  	futhark_free_i64_1d(ctx, s2_counts);
@@ -219,6 +230,18 @@ int main() {
 	  	mylog(logfile, "--- Reduced stg2 buffer.");
 
 	  	curIdx_buff2 = NUM_KEYS;
+
+	  	/*
+	  	for(idx_t i=0; i<NUM_KEYS; i++) {
+	  		printf("ID %5ld | COUNT %5ld | X1 %8.3f | X2 %8.3f | X1X2 %8.3f\n",
+	  			((long*)Stg2_Buffer[0])[i],
+	  			((long*)Stg2_Buffer[1])[i],
+	  			((double*)Stg2_Buffer[2])[i],
+	  			((double*)Stg2_Buffer[3])[i],
+	  			((double*)Stg2_Buffer[4])[i]
+	  		);
+	  	}
+	  	*/
 	}
   }
   duckdb_destroy_result(&res);
@@ -228,6 +251,7 @@ int main() {
   for(idx_t j=0; j<NUM_KEYS; j++) {
   	long thisKey = ((long*)Stg2_Buffer[0])[j];
   	long thisCount = ((long*)Stg2_Buffer[1])[j];
+  	thisCount = (thisCount==0)? 1: thisCount;
   	double thisX1 = ((double*)Stg2_Buffer[2])[j];
   	double thisX2 = ((double*)Stg2_Buffer[3])[j];
   	double thisX1X2 = ((double*)Stg2_Buffer[4])[j];
