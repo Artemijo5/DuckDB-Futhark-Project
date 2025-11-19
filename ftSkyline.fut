@@ -258,7 +258,7 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 		isPartitionDominated = isPartitionDominated,
 	}
 
-def filter_for_Skyline [n] [dim] 't 'pL_t
+def partwise_filter_for_Skyline [n] [dim] 't 'pL_t
 	(skOp : skylineOp t)
 	(skB : skylineBase [dim] t)
 	(xs : [n][dim]t)
@@ -300,7 +300,37 @@ def filter_for_Skyline [n] [dim] 't 'pL_t
 		isPartitionDominated = [false],
 	}
 
-def filter_and_fit_for_Skyline [n] [dim] 't 'pL_t
+def pointwise_filter_for_Skyline [n] [dim] 't 'pL_t
+	(skOp : skylineOp t)
+	(skB : skylineBase [dim] t)
+	(xs : [n][dim]t)
+	(ys : [n]pL_t)
+: skylineInfo [dim] t pL_t =
+	let closestPoint =
+		let dists = xs
+			|> map (\x -> map2 (skOp.minus) x skB.start_of_grid_partition[0])
+			|> map (map skOp.to_f64)
+			|> map (\ds -> map (\d -> d*d) ds)
+			|> map (foldl (+) 0)
+		let closestIdx = argmin (<) (==) (f64.highest) dists
+		in xs[closestIdx]
+	let filt_idxs = xs
+		|> map (\x ->
+			foldl (&&) (true) (map2 (skOp.skyline_leq) x closestPoint)
+			&&
+			foldl (||) (false) (map2 (skOp.skyline_lt) x closestPoint)
+		)
+		|> zip (iota n)
+		|> filter (\(i,elimd) -> !elimd)
+		|> map (\(i,_) -> i)
+	let filt_xys = filt_idxs |> map (\i -> (xs[i],ys[i]))
+	in {
+		xys = filt_xys,
+		part_idx = [0],
+		isPartitionDominated = [false],
+	}
+
+def partwise_slice_and_dice_for_Skyline [n] [dim] 't 'pL_t
 	(skOp : skylineOp t)
 	(skB_filt : skylineBase [dim] t)
 	(skB_fit : skylineBase [dim] t)
@@ -308,9 +338,20 @@ def filter_and_fit_for_Skyline [n] [dim] 't 'pL_t
 	(ys : [n]pL_t)
 	(use_measure_for_sorting_fit : bool)
 : skylineInfo [dim] t pL_t =
-	let filt_skI = filter_for_Skyline skOp skB_filt xs ys
+	let filt_skI = partwise_filter_for_Skyline skOp skB_filt xs ys
 	let (filt_xs, filt_ys) = filt_skI.xys |> unzip
 	in sort_for_Skyline skOp skB_fit filt_xs filt_ys use_measure_for_sorting_fit
+
+def pointwise_slice_and_dice_for_Skyline [n] [dim] 't 'pL_t
+	(skOp : skylineOp t)
+	(skB : skylineBase [dim] t)
+	(xs : [n][dim]t)
+	(ys : [n]pL_t)
+	(use_measure_for_sorting : bool)
+: skylineInfo [dim] t pL_t =
+	let filt_skI = pointwise_filter_for_Skyline skOp skB xs ys
+	let (filt_xs, filt_ys) = filt_skI.xys |> unzip
+	in sort_for_Skyline skOp skB filt_xs filt_ys use_measure_for_sorting
 
 def calc_local_Skyline_and_fit_to_skylineBase [dim] 't 'pL_t
 	(skOp : skylineOp t)
@@ -725,17 +766,30 @@ def crack_Skyline [dim] 't 'pL_t
 			(map (\i -> i+offset) (indices xs))
 			use_measure_for_sorting
 
-	entry filter_and_fit_for_Skyline_GFUR_double [n] [dim]
+	entry partwise_slice_and_dice_for_Skyline_GFUR_double [n] [dim]
 		(skB_filt : skylineBase_double [dim])
 		(skB_fit : skylineBase_double [dim])
 		(xs : [n][dim]f64)
 		(offset : idx_t.t)
 		(use_measure_for_sorting : bool)
 	: skylineInfo_GFUR_double [dim] =
-		filter_and_fit_for_Skyline
+		partwise_slice_and_dice_for_Skyline
 			skylineOp_double
 			skB_filt
 			skB_fit
+			xs
+			(map (\i -> i+offset) (indices xs))
+			use_measure_for_sorting
+
+	entry pointwise_slice_and_dice_for_Skyline_GFUR_double [n] [dim]
+		(skB : skylineBase_double [dim])
+		(xs : [n][dim]f64)
+		(offset : idx_t.t)
+		(use_measure_for_sorting : bool)
+	: skylineInfo_GFUR_double [dim] =
+		pointwise_slice_and_dice_for_Skyline
+			skylineOp_double
+			skB
 			xs
 			(map (\i -> i+offset) (indices xs))
 			use_measure_for_sorting
@@ -1073,7 +1127,7 @@ def crack_Skyline [dim] 't 'pL_t
 		let skI = test_sort_3d false--test_local_skyline_3d false
 		in calc_intermediate_skyline skOp skB skI include_zero_step omit_step max_steps size_thresh
 
-	def test_filter_and_fit (grd_fine) (ang_fine) =
+	def test_partwise_slice_and_dice (grd_fine) (ang_fine) =
 		let skOp = skylineOp_double
 		let skB1 = mk_skylineBase_from_grid
 			(skylineOp_double)
@@ -1088,9 +1142,9 @@ def crack_Skyline [dim] 't 'pL_t
 			([1,1,1])
 			(replicate (3-1) ang_fine)
 		let dat = copy test_points_3d
-		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false
+		in partwise_slice_and_dice_for_Skyline skOp skB1 skB2 dat (indices dat) false
 
-	def test_filter_and_fit_with_board (board_start) (board_end) (grd_fine) (ang_fine) =
+	def test_partwise_slice_and_dice_with_board (board_start) (board_end) (grd_fine) (ang_fine) =
 		let skOp = skylineOp_double
 		let skB1 = mk_skylineBase_from_grid
 			(skylineOp_double)
@@ -1105,4 +1159,15 @@ def crack_Skyline [dim] 't 'pL_t
 			([1,1,1])
 			(replicate (3-1) ang_fine)
 		let dat = [[3.1,3.1,3.1]] ++ (copy test_points_3d)
-		in filter_and_fit_for_Skyline skOp skB1 skB2 dat (indices dat) false
+		in partwise_slice_and_dice_for_Skyline skOp skB1 skB2 dat (indices dat) false
+
+	def test_pointwise_slice_and_dice_with_board (ang_fine) =
+		let skOp = skylineOp_double
+		let skB = mk_skylineBase_from_grid
+			(skylineOp_double)
+			([0,0,0])
+			([15,15,15])
+			([1,1,1])
+			([2, ang_fine] :> [3-1]i64)
+		let dat = (copy test_points_3d)
+		in pointwise_slice_and_dice_for_Skyline skOp skB dat (indices dat) false
