@@ -1,11 +1,7 @@
 import "lib/github.com/diku-dk/sorts/merge_sort"
 import "ftbasics"
 
--- TODO
--- 1 pointwise elimination by finding point closest to start of axes
--- 2 make f64 ops part of skylineOp as well, so that f32 & f16 don't have needless spatial overhead
-
-type^ skylineOp 't = {
+type^ skylineOp 't 'ft = {
 	plus : t -> t -> t,
 	minus : t -> t -> t,
 	times : t -> t -> t,
@@ -14,7 +10,20 @@ type^ skylineOp 't = {
 	skyline_leq : t -> t -> bool,
 	from_i64 : i64 -> t,
 	to_i64 : t -> i64,
-	to_f64 : t -> f64,
+	to_float : t -> ft,
+	fplus : ft -> ft -> ft,
+	ftimes : ft -> ft -> ft,
+	fover : ft -> ft -> ft,
+	feq : ft -> ft -> bool,
+	flt : ft -> ft -> bool,
+	fleq: ft -> ft -> bool,
+	atan2 : ft -> ft -> ft,
+	sqrt : ft -> ft,
+	ft_to_i64: ft -> i64,
+	i64_to_ft : i64 -> ft,
+	fzero: ft,
+	piSeconds : ft,
+	fhighest : ft,
 	one : t
 }
 type~ skylineBase [dim] 't = {
@@ -44,8 +53,8 @@ def dummy_skylineInfo [dim] 't 'pL_t
 	isPartitionDominated = replicate skB.total_grid_no false,
 }
 
-local def do_mk_skylineBase [dim] 't
-	(skOp : skylineOp t)
+local def do_mk_skylineBase [dim] 't 'ft
+	(skOp : skylineOp t ft)
 	(min_per_dim : [dim]t)
 	(max_per_dim : [dim]t)
 	(partitionSizePerDim : [dim]t)
@@ -79,8 +88,8 @@ local def do_mk_skylineBase [dim] 't
 		grid_part_size_per_dim = partitionSizePerDim
 	}
 
-def mk_skylineBase_from_grid [dim] 't
-	(skOp : skylineOp t)
+def mk_skylineBase_from_grid [dim] 't 'ft
+	(skOp : skylineOp t ft)
 	(min_per_dim : [dim]t)
 	(max_per_dim : [dim]t)
 	(grid_partitions_per_dim : [dim]idx_t.t)
@@ -98,8 +107,8 @@ def mk_skylineBase_from_grid [dim] 't
 	in do_mk_skylineBase
 		skOp min_per_dim max_per_dim partitionSizePerDim grid_partitions_per_dim angle_partitions_per_dim
 
-def mk_skylineBase_from_boundaries [dim] 't
-	(skOp : skylineOp t)
+def mk_skylineBase_from_boundaries [dim] 't 'ft
+	(skOp : skylineOp t ft)
 	(min_per_dim : [dim]t)
 	(max_per_dim : [dim]t)
 	(partitionSizePerDim : [dim]t)
@@ -132,23 +141,23 @@ def get_grid_angle_from_id [dim] 't
 	let angle_id = part_id % skB.total_angle_no
 	in (grid_id, angle_id)
 
-def cartesian_to_spherical [dim] 't
-	(skOp : skylineOp t)
+def cartesian_to_spherical [dim] 't 'ft
+	(skOp : skylineOp t ft)
 	(coords : [dim]t)
-: (f64, [dim-1]f64) =
-	let fc = map (skOp.to_f64) coords
-	let r = f64.sqrt (foldl (+) 0 (map (\x -> x*x) fc))
-	let phis : [dim-1]f64 =
-		loop p = (replicate (dim-1) 0)
+: (ft, [dim-1]ft) =
+	let fc = map (skOp.to_float) coords
+	let r = skOp.sqrt (foldl (skOp.fplus) (skOp.fzero) (map (\x -> skOp.ftimes x x) fc))
+	let phis : [dim-1]ft =
+		loop p = (replicate (dim-1) (skOp.fzero))
 		for j in (iota (dim-1)) do
 			let this_x = fc[j]
-			let this_y = f64.sqrt (foldl (+) 0 (map (\x -> x*x) fc[(j+1):dim]))
-			let new_phi = f64.atan2 this_y this_x
+			let this_y = skOp.sqrt (foldl (skOp.fplus) (skOp.fzero) (map (\x -> skOp.ftimes x x) fc[(j+1):dim]))
+			let new_phi = skOp.atan2 this_y this_x
 		in p with [j] = new_phi
 	in (r, phis)
 
-def get_grid_id_from_coords [dim] 't
-	(skOp : skylineOp t)
+def get_grid_id_from_coords [dim] 't 'ft
+	(skOp : skylineOp t ft)
 	(skB: skylineBase [dim] t)
 	(coords : [dim]t)
 : idx_t.t =
@@ -161,21 +170,21 @@ def get_grid_id_from_coords [dim] 't
 		|> map (\(d,i) -> i64.min i (skB.grid_partitions_per_dim[d]-1))
 	in foldl (+) 0 (map2 (*) grid_pos skB.grid_part_prefix_sum)
 
-def get_grid_angle_measure_from_coords [dim] 't
-	(skOp : skylineOp t)
+def get_grid_angle_measure_from_coords [dim] 't 'ft
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(coords : [dim]t)
-: (idx_t.t, idx_t.t, f64) =
+: (idx_t.t, idx_t.t, ft) =
 	-- get grid id
 	let g = get_grid_id_from_coords skOp skB coords
 	-- get angle id
 	let dists_g = map2 (skOp.minus) coords skB.start_of_grid_partition[g]
 	let (measure, angles) = cartesian_to_spherical skOp dists_g
 	let base_angles = iota (dim-1)
-		|> map (\i -> (f64.pi/2.0) / (f64.i64 skB.angle_partitions_per_dim[i]) )
+		|> map (\i -> skOp.fover (skOp.piSeconds) (skOp.i64_to_ft skB.angle_partitions_per_dim[i]) )
 	let anglePart_ = map4
 		(\a ba pf pd ->
-			let i_ = i64.f64 ((a/ba)*(f64.i64 pf))
+			let i_ = skOp.ft_to_i64 (skOp.ftimes (skOp.fover a ba) (skOp.i64_to_ft pf))
 			in
 				if i_ < 0 then 0
 				else if i_ >= pd then (pd-1)
@@ -189,16 +198,16 @@ def get_grid_angle_measure_from_coords [dim] 't
 	-- returns
 	in (g, a, measure)
 
-def get_id_measure_from_coords [dim] 't
-	(skOp : skylineOp t)
+def get_id_measure_from_coords [dim] 't 'ft
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(coords : [dim]t)
-: (idx_t.t, f64) =
+: (idx_t.t, ft) =
 	let (g,a,m) = get_grid_angle_measure_from_coords skOp skB coords
 	in (get_id_from_grid_angle skB g a, m)
 
-def sort_for_Skyline [n] [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def sort_for_Skyline [n] [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
@@ -214,7 +223,7 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 		else
 			let pids = xs |> map (\x -> get_id_measure_from_coords skOp skB x)
 			in (zip3 pids xs ys)
-				|> merge_sort (\((p1,m1),_,_) ((p2,m2),_,_) -> p1<p2 || (p1==p2 && m1<=m2))
+				|> merge_sort (\((p1,m1),_,_) ((p2,m2),_,_) -> p1<p2 || ( p1==p2 && (skOp.fleq m1 m2) ) )
 				|> map (\((p,m),x,y) -> (x,y))
 	let isPartitionDominated =
 		if (i64.minimum skB.grid_partitions_per_dim)==1 then (replicate grid_no false) else
@@ -258,8 +267,8 @@ def sort_for_Skyline [n] [dim] 't 'pL_t
 		isPartitionDominated = isPartitionDominated,
 	}
 
-def partwise_filter_for_Skyline [n] [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def partwise_filter_for_Skyline [n] [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
@@ -300,8 +309,8 @@ def partwise_filter_for_Skyline [n] [dim] 't 'pL_t
 		isPartitionDominated = [false],
 	}
 
-def pointwise_filter_for_Skyline [n] [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def pointwise_filter_for_Skyline [n] [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
@@ -309,10 +318,10 @@ def pointwise_filter_for_Skyline [n] [dim] 't 'pL_t
 	let closestPoint =
 		let dists = xs
 			|> map (\x -> map2 (skOp.minus) x skB.start_of_grid_partition[0])
-			|> map (map skOp.to_f64)
-			|> map (\ds -> map (\d -> d*d) ds)
-			|> map (foldl (+) 0)
-		let closestIdx = argmin (<) (==) (f64.highest) dists
+			|> map (map skOp.to_float)
+			|> map (\ds -> map (\d -> skOp.ftimes d d) ds)
+			|> map (foldl (skOp.fplus) (skOp.fzero))
+		let closestIdx = argmin (skOp.flt) (skOp.feq) (skOp.fhighest) dists
 		in xs[closestIdx]
 	let filt_idxs = xs
 		|> map (\x ->
@@ -330,8 +339,8 @@ def pointwise_filter_for_Skyline [n] [dim] 't 'pL_t
 		isPartitionDominated = [false],
 	}
 
-def partwise_slice_and_dice_for_Skyline [n] [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def partwise_slice_and_dice_for_Skyline [n] [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB_filt : skylineBase [dim] t)
 	(skB_fit : skylineBase [dim] t)
 	(xs : [n][dim]t)
@@ -342,8 +351,8 @@ def partwise_slice_and_dice_for_Skyline [n] [dim] 't 'pL_t
 	let (filt_xs, filt_ys) = filt_skI.xys |> unzip
 	in sort_for_Skyline skOp skB_fit filt_xs filt_ys use_measure_for_sorting_fit
 
-def pointwise_slice_and_dice_for_Skyline [n] [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def pointwise_slice_and_dice_for_Skyline [n] [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
@@ -353,8 +362,8 @@ def pointwise_slice_and_dice_for_Skyline [n] [dim] 't 'pL_t
 	let (filt_xs, filt_ys) = filt_skI.xys |> unzip
 	in sort_for_Skyline skOp skB filt_xs filt_ys use_measure_for_sorting
 
-def calc_local_Skyline_and_fit_to_skylineBase [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def calc_local_Skyline_and_fit_to_skylineBase [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB_crop : skylineBase [dim] t)
 	(skB_fit : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
@@ -414,8 +423,8 @@ def calc_local_Skyline_and_fit_to_skylineBase [dim] 't 'pL_t
 		isPartitionDominated = skI.isPartitionDominated
 	}
 
-def calc_local_Skyline [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def calc_local_Skyline [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 : skylineInfo [dim] t pL_t =
@@ -423,8 +432,8 @@ def calc_local_Skyline [dim] 't 'pL_t
 
 -- this can only be used on skylines with the same base
 -- otherwise will have to manually combine their xys, re-sort, etc...
-def merge_Skylines_5 [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def merge_Skylines_5 [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(skI1 : skylineInfo [dim] t pL_t)
 	(skI2 : skylineInfo [dim] t pL_t)
@@ -562,8 +571,8 @@ def merge_Skylines_2 (skOp) (skB) (skI1) (skI2) (dummy_elem) =
 	let dummy_SL = dummy_skylineInfo skB dummy_elem
 	in merge_Skylines_3 skOp skB skI1 skI2 dummy_SL dummy_elem
 
-def intermediate_SkylineInfo [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def intermediate_SkylineInfo [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 	(omit_dims : idx_t.t)
@@ -631,8 +640,8 @@ def intermediate_SkylineInfo [dim] 't 'pL_t
 	}
 	in (new_skB, new_skI)
 
-def calc_intermediate_skyline [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def calc_intermediate_skyline [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 	(include_angle_steps : bool)
@@ -653,8 +662,8 @@ def calc_intermediate_skyline [dim] 't 'pL_t
 		isPartitionDominated = skI.isPartitionDominated
 	}
 
-def calc_global_Skyline [dim] 't 'pL_t
-	(skOp : skylineOp t)
+def calc_global_Skyline [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
 : skylineInfo [dim] t pL_t =
@@ -723,7 +732,7 @@ def crack_Skyline [dim] 't 'pL_t
 
 -- ENTRY POINTS ----------------------------------------------------------------------------------------------------
 
-	def skylineOp_double : skylineOp f64 = {
+	def skylineOp_double : skylineOp f64 f64 = {
 		plus = (+),
 		minus = (-),
 		times = (*),
@@ -732,8 +741,21 @@ def crack_Skyline [dim] 't 'pL_t
 		skyline_leq = (>=),
 		from_i64 = (f64.i64),
 		to_i64 = (i64.f64),
-		to_f64 = (id),
-		one = f64.i64 1
+		to_float = (id),
+		fplus = (+),
+		ftimes = (*),
+		fover = (/),
+		feq = (f64.==),
+		flt = (f64.<),
+		fleq = (f64.<=),
+		atan2 = (f64.atan2),
+		sqrt = (f64.sqrt),
+		ft_to_i64 = i64.f64,
+		i64_to_ft = f64.i64,
+		fzero = f64.i32 0,
+		piSeconds = (f64.pi / 2.0),
+		fhighest = f64.highest,
+		one = f64.i32 1
 	}
 
 	type~ skylineBase_double [dim] = skylineBase [dim] f64
