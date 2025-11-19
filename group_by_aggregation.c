@@ -47,6 +47,7 @@ int main() {
   duckdb_destroy_config(&config);
 
 	duckdb_connect(db, &con);
+	mylog(logfile, "Set up duckdb connection.");
 
   // Create the table tbl on which the testing will be done.
   // TODO eventually make this into a miniature leveled star schema and perform joins...
@@ -72,7 +73,11 @@ int main() {
   duckdb_execute_prepared(init_stmt, NULL);
   duckdb_destroy_prepare(&init_stmt);
 
-  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE sorted_tbl AS (FROM tbl ORDER BY k);", NULL);
+  mylog(logfile, "Created test table.");
+
+  duckdb_query(con, "CREATE OR REPLACE TEMP TABLE sorted_tbl (k BIGINT, x1 DOUBLE, x2 DOUBLE);", NULL);
+  duckdb_query(con, "INSERT INTO sorted_tbl (FROM tbl ORDER BY k);", NULL);
+  mylog(logfile, "Created sorted version of test table.");
 
   // Set up futhark core
   struct futhark_context_config *cfg = futhark_context_config_new();
