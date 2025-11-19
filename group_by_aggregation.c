@@ -12,13 +12,7 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE
 #define TABLE_SIZE 4*BUFFER_SIZE
-#define NUM_KEYS 32 // try various values here...
-// TODO results for ID 0 are buggy, especially for NUM_KEYS > 5 (...)
-// for 32+ keys it also (mostly) gets it right... even for 512 keys...
-// for some strange reason, for some interval over 5 keys, results for 0 and sometimes other keys bug out...
-// could it be a bug with the futhark C compiler? otherwise some stupid mistake somehow...
-
-#define STG2_BUFFER_SIZE 5*NUM_KEYS
+#define NUM_KEYS 25
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "4GB"
@@ -84,17 +78,27 @@ int main() {
   mylog(logfile, "Set up futhark context & config.");
 
   void** Stg1_Buffer = malloc(sizeof(int64_t*) + 2*sizeof(double*));
-  void** Stg2_Buffer = malloc(2*sizeof(int64_t*) + 3*sizeof(double*));
+  void** Stg2_Buffer = malloc(sizeof(int64_t*) + 3*sizeof(double*));
+  void** Res_Buffer = malloc(sizeof(int64_t*) + 3*sizeof(double*));
 
   Stg1_Buffer[0] = malloc(BUFFER_SIZE*sizeof(int64_t));
   Stg1_Buffer[1] = malloc(BUFFER_SIZE*sizeof(double));
   Stg1_Buffer[2] = malloc(BUFFER_SIZE*sizeof(double));
 
-  Stg2_Buffer[0] = malloc(STG2_BUFFER_SIZE*sizeof(int64_t)); // k
-  Stg2_Buffer[1] = malloc(STG2_BUFFER_SIZE*sizeof(int64_t)); // count k
-  Stg2_Buffer[2] = malloc(STG2_BUFFER_SIZE*sizeof(double)); // sum x1
-  Stg2_Buffer[3] = malloc(STG2_BUFFER_SIZE*sizeof(double)); // sum x2
-  Stg2_Buffer[4] = malloc(STG2_BUFFER_SIZE*sizeof(double)); // sum x1*x2
+  Stg2_Buffer[0] = malloc(NUM_KEYS*sizeof(int64_t)); // count k
+  Stg2_Buffer[1] = malloc(NUM_KEYS*sizeof(double)); // sum x1
+  Stg2_Buffer[2] = malloc(NUM_KEYS*sizeof(double)); // sum x2
+  Stg2_Buffer[3] = malloc(NUM_KEYS*sizeof(double)); // sum x1*x2
+
+  Res_Buffer[0] = malloc(NUM_KEYS*sizeof(int64_t)); // count k
+  Res_Buffer[1] = malloc(NUM_KEYS*sizeof(double)); // sum x1
+  Res_Buffer[2] = malloc(NUM_KEYS*sizeof(double)); // sum x2
+  Res_Buffer[3] = malloc(NUM_KEYS*sizeof(double)); // sum x1*x2
+
+  int64_t *result_count = (int64_t*)Res_Buffer[0];
+  double *result_sum_x1 = (double*)Res_Buffer[1];
+  double *result_sum_x2 = (double*)Res_Buffer[2];
+  double *result_sum_x1x2 = (double*)Res_Buffer[3];
 
   duckdb_type colTypes[3] = {DUCKDB_TYPE_BIGINT, DUCKDB_TYPE_DOUBLE, DUCKDB_TYPE_DOUBLE};
 
@@ -106,7 +110,14 @@ int main() {
 
   // Reset these right before each experiment!
   int isTblExhausted = false;
-  idx_t curIdx_buff2 = 0;
+  /*
+  for(idx_t j=0; j<NUM_KEYS; j++) {
+  	result_count[j] = 0;
+  	result_sum_x1[j] = 0;
+  	result_sum_x2[j] = 0;
+  	result_sum_x1x2[j] = 0;
+  }
+  */
 
   // 1 - test aggregation without sorting
   mylog(logfile, "TEST 1 ----- collecting aggregates without sorting (via parallel hist operator).");
@@ -117,7 +128,12 @@ int main() {
   }
   mylog(logfile, "Performed duckdb query to read table.");
   isTblExhausted = false;
-  curIdx_buff2 = 0;
+  for(idx_t j=0; j<NUM_KEYS; j++) {
+  	result_count[j] = 0;
+  	result_sum_x1[j] = 0;
+  	result_sum_x2[j] = 0;
+  	result_sum_x1x2[j] = 0;
+  }
   while(!isTblExhausted) {
   	idx_t curRows = bulk_load_chunks(
 		CHUNK_SIZE,
@@ -157,14 +173,13 @@ int main() {
 	  	futhark_free_f64_1d(ctx, x1_ft);
 	  	futhark_free_f64_1d(ctx, x2_ft);
 
-	  	memcpy(Stg2_Buffer[0] + curIdx_buff2*sizeof(int64_t), knownKeys, NUM_KEYS*sizeof(int64_t));
-	  	futhark_values_i64_1d(ctx, counts, Stg2_Buffer[1] + curIdx_buff2*sizeof(int64_t));
+	  	futhark_values_i64_1d(ctx, counts, Stg2_Buffer[0]);
 	  	futhark_free_i64_1d(ctx, counts);
-	  	futhark_values_f64_1d(ctx, sum_x1, Stg2_Buffer[2] + curIdx_buff2*sizeof(double));
+	  	futhark_values_f64_1d(ctx, sum_x1, Stg2_Buffer[1]);
 	  	futhark_free_f64_1d(ctx, sum_x1);
-	  	futhark_values_f64_1d(ctx, sum_x2, Stg2_Buffer[3] + curIdx_buff2*sizeof(double));
+	  	futhark_values_f64_1d(ctx, sum_x2, Stg2_Buffer[2]);
 	  	futhark_free_f64_1d(ctx, sum_x2);
-	  	futhark_values_f64_1d(ctx, sum_x1x2, Stg2_Buffer[4] + curIdx_buff2*sizeof(double));
+	  	futhark_values_f64_1d(ctx, sum_x1x2, Stg2_Buffer[3]);
 	  	futhark_free_f64_1d(ctx, sum_x1x2);
 	  	mylog(logfile, "Saved cur rows to stg2 buffer.");
 
@@ -179,84 +194,35 @@ int main() {
 	  		);
 	  	}
 	  	*/
-	}
-	curIdx_buff2 += NUM_KEYS;
 
-	if((STG2_BUFFER_SIZE - curIdx_buff2 < NUM_KEYS) || isTblExhausted) {
-		mylog(logfile, "Stage 2 of aggregation...");
-		struct futhark_i64_1d *s1_ks_ft = futhark_new_i64_1d(ctx, Stg2_Buffer[0], curIdx_buff2);
-	  	struct futhark_i64_1d *s1_counts = futhark_new_i64_1d(ctx, Stg2_Buffer[1], curIdx_buff2);
-	  	struct futhark_f64_1d *s1_sum_x1 = futhark_new_f64_1d(ctx, Stg2_Buffer[2], curIdx_buff2);
-	  	struct futhark_f64_1d *s1_sum_x2 = futhark_new_f64_1d(ctx, Stg2_Buffer[3], curIdx_buff2);
-	  	struct futhark_f64_1d *s1_sum_x1x2 = futhark_new_f64_1d(ctx, Stg2_Buffer[4], curIdx_buff2);
-	  	mylog(logfile, "--- Wrapped this buffer's values in the futhark core.");
-
-	  	struct futhark_i64_1d *s2_counts;
-	  	struct futhark_f64_1d *s2_sum_x1;
-	  	struct futhark_f64_1d *s2_sum_x2;
-	  	struct futhark_f64_1d *s2_sum_x1x2;
-
-	  	futhark_entry_long_sum(ctx, &s2_counts, NUM_KEYS, s1_ks_ft, s1_counts);
-	  	futhark_entry_double_sum(ctx, &s2_sum_x1, NUM_KEYS, s1_ks_ft, s1_sum_x1);
-	  	futhark_entry_double_sum(ctx, &s2_sum_x2, NUM_KEYS, s1_ks_ft, s1_sum_x2);
-	  	futhark_entry_double_sum(ctx, &s2_sum_x1x2, NUM_KEYS, s1_ks_ft, s1_sum_x1x2);
-	  	mylog(logfile, "--- Computed this buffer's aggregates.");
-
-	  	futhark_context_sync(ctx);
-	  	mylog(logfile, "--- Synced futhark context.");
-
-	  	futhark_free_i64_1d(ctx, s1_ks_ft);
-	  	futhark_free_i64_1d(ctx, s1_counts);
-	  	futhark_free_f64_1d(ctx, s1_sum_x1);
-	  	futhark_free_f64_1d(ctx, s1_sum_x2);
-	  	futhark_free_f64_1d(ctx, s1_sum_x1x2);
-
-	  	/*
-	  	long count0, count1;
-	  	futhark_index_i64_1d(ctx, &count0, s2_counts, 0);
-	  	futhark_index_i64_1d(ctx, &count1, s2_counts, 1);
-	  	printf("... %ld %ld\n", count0, count1);
-	  	*/
-
-	  	memcpy(Stg2_Buffer[0], knownKeys, NUM_KEYS*sizeof(int64_t));
-	  	futhark_values_i64_1d(ctx, s2_counts, Stg2_Buffer[1]);
-	  	futhark_free_i64_1d(ctx, s2_counts);
-	  	futhark_values_f64_1d(ctx, s2_sum_x1, Stg2_Buffer[2]);
-	  	futhark_free_f64_1d(ctx, s2_sum_x1);
-	  	futhark_values_f64_1d(ctx, s2_sum_x2, Stg2_Buffer[3]);
-	  	futhark_free_f64_1d(ctx, s2_sum_x2);
-	  	futhark_values_f64_1d(ctx, s2_sum_x1x2, Stg2_Buffer[4]);
-	  	futhark_free_f64_1d(ctx, s2_sum_x1x2);
-	  	mylog(logfile, "--- Reduced stg2 buffer.");
-
-	  	curIdx_buff2 = NUM_KEYS;
-
-	  	/*
-	  	for(idx_t i=0; i<NUM_KEYS; i++) {
-	  		printf("ID %5ld | COUNT %5ld | X1 %8.3f | X2 %8.3f | X1X2 %8.3f\n",
-	  			((long*)Stg2_Buffer[0])[i],
-	  			((long*)Stg2_Buffer[1])[i],
-	  			((double*)Stg2_Buffer[2])[i],
-	  			((double*)Stg2_Buffer[3])[i],
-	  			((double*)Stg2_Buffer[4])[i]
-	  		);
+	  	for(idx_t j=0; j<NUM_KEYS; j++) {
+	  		result_count[j] += ((long*)Stg2_Buffer[0])[j];
+	  		result_sum_x1[j] += ((double*)Stg2_Buffer[1])[j];
+	  		result_sum_x2[j] += ((double*)Stg2_Buffer[2])[j];
+	  		result_sum_x1x2[j] += ((double*)Stg2_Buffer[3])[j];
 	  	}
-	  	*/
-	}
+	  	mylog(logfile, "Reduced final aggregates.");
+		}
+	
   }
   duckdb_destroy_result(&res);
   mylog(logfile, "TEST 1 COMPLETE! ----------------------------------------------------");
 
   printf("Printing aggregate values...\n");
   for(idx_t j=0; j<NUM_KEYS; j++) {
-  	long thisKey = ((long*)Stg2_Buffer[0])[j];
-  	long thisCount = ((long*)Stg2_Buffer[1])[j];
+  	long thisKey = knownKeys[j];
+  	long thisCount = result_count[j];
   	thisCount = (thisCount==0)? 1: thisCount;
-  	double thisX1 = ((double*)Stg2_Buffer[2])[j];
-  	double thisX2 = ((double*)Stg2_Buffer[3])[j];
-  	double thisX1X2 = ((double*)Stg2_Buffer[4])[j];
+  	double thisX1 = result_sum_x1[j];
+  	double thisX2 = result_sum_x2[j];
+  	double thisX1X2 = result_sum_x1x2[j];
   	double thisCov = ( thisX1X2 - ((thisX1*thisX2)/((double)thisCount)) ) / ( (double)thisCount );
-  	printf("ID %4ld | COUNT %10ld | COV %+8.3f\n", thisKey, thisCount, thisCov);
+  	/*
+  	printf("ID %4ld | COUNT %8ld | SUM1 %+15.3f | SUM2 %+15.3f | SUM* %+15.3f | COV %+8.3f\n",
+  		thisKey, thisCount, thisX1, thisX2, thisX1X2, thisCov);
+  	*/
+  	printf("ID %4ld | COUNT %8ld | COV %+8.3f\n",
+  		thisKey, thisCount, thisCov);
   }
   
 
@@ -266,9 +232,11 @@ int main() {
   	free(Stg1_Buffer[i]);
   }
   free(Stg1_Buffer);
-  for(idx_t i=0; i<5; i++) {
+  for(idx_t i=0; i<4; i++) {
   	free(Stg2_Buffer[i]);
+  	free(Res_Buffer[i]);
   }
+  free(Res_Buffer);
   free(Stg2_Buffer);
 
   futhark_context_free(ctx);
