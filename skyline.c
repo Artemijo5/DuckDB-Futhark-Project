@@ -151,7 +151,7 @@ int main() {
   			cnk_dat[col] = duckdb_vector_get_data(vec);
   		}
   		payloadColumnsToByteArray_preallocated(
-			  skyData+cur_rows,
+			  skyData+cur_rows*DIM*sizeof(float),
 			  DIM*sizeof(float),
 			  byteSizes,
 			  prefixSizes,
