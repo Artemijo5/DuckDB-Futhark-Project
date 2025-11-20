@@ -48,6 +48,15 @@ void payloadColumnsToByteArray(
 	idx_t pL_col_count,
 	idx_t row_count
 );
+void payloadColumnsToByteArray_preallocated(
+  char* outBytes,
+  idx_t pL_bytes,
+  idx_t* pL_byteSizes,
+  idx_t* pL_prefixSizes,
+  void** inPayloads,
+  idx_t pL_col_count,
+  idx_t row_count
+);
 
 /**
  * A function to transform a byte array into payload columns.

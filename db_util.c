@@ -105,6 +105,26 @@ void payloadColumnsToByteArray(
   }
   *pL_rowBytes = pL_bytes;
 }
+void payloadColumnsToByteArray_preallocated(
+  char* outBytes,
+  idx_t pL_bytes,
+  idx_t* pL_byteSizes,
+  idx_t* pL_prefixSizes,
+  void** inPayloads,
+  idx_t pL_col_count,
+  idx_t row_count
+) {
+  // TODO is this or reverse order faster?
+  for(idx_t r=0; r<row_count; r++) {
+    for(idx_t col=0; col<pL_col_count; col++) {
+      memcpy(
+        outBytes + r*pL_bytes + pL_prefixSizes[col],
+        &((char*)inPayloads[col])[r*pL_byteSizes[col]],
+        pL_byteSizes[col]
+      );
+    }
+  }
+}
 
 void payloadColumnsFromByteArray(
   void** outPayloads,
@@ -225,26 +245,6 @@ idx_t bulk_load_chunks(
 	return row_count;
 }
 
-void payloadColumnsToByteArray_preallocated(
-  char* outBytes,
-  idx_t pL_bytes,
-  idx_t* pL_byteSizes,
-  idx_t* pL_prefixSizes,
-  void** inPayloads,
-  idx_t pL_col_count,
-  idx_t row_count
-) {
-	// TODO is this or reverse order faster?
-  for(idx_t r=0; r<row_count; r++) {
-    for(idx_t col=0; col<pL_col_count; col++) {
-      memcpy(
-        outBytes + r*pL_bytes + pL_prefixSizes[col],
-        &((char*)inPayloads[col])[r*pL_byteSizes[col]],
-        pL_byteSizes[col]
-      );
-    }
-  }
-}
 idx_t bulk_buffer_chunks_GFTR(
 	duckdb_data_chunk* chunks,
 	idx_t num_chunks,

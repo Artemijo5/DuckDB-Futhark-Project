@@ -11,10 +11,6 @@
 #include <stdio.h>
 #include <float.h>
 
-#include <cuda.h>
-#include <cuda_runtime.h>
-#include <nvrtc.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -27,22 +23,6 @@ int futhark_context_config_set_tuning_param(struct futhark_context_config *cfg, 
 struct futhark_context;
 struct futhark_context *futhark_context_new(struct futhark_context_config *cfg);
 void futhark_context_free(struct futhark_context *cfg);
-void futhark_context_config_set_default_thread_block_size(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_default_grid_size(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_default_group_size(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_default_num_groups(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_default_tile_size(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_default_reg_tile_size(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_default_registers(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_default_cache(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_default_threshold(struct futhark_context_config *cfg, int size);
-void futhark_context_config_set_unified_memory(struct futhark_context_config *cfg, int flag);
-void futhark_context_config_add_nvrtc_option(struct futhark_context_config *cfg, const char *opt);
-void futhark_context_config_set_device(struct futhark_context_config *cfg, const char *s);
-const char *futhark_context_config_get_program(struct futhark_context_config *cfg);
-void futhark_context_config_set_program(struct futhark_context_config *cfg, const char *s);
-void futhark_context_config_dump_ptx_to(struct futhark_context_config *cfg, const char *s);
-void futhark_context_config_load_ptx_from(struct futhark_context_config *cfg, const char *s);
 void futhark_context_config_set_debugging(struct futhark_context_config *cfg, int flag);
 void futhark_context_config_set_profiling(struct futhark_context_config *cfg, int flag);
 void futhark_context_config_set_logging(struct futhark_context_config *cfg, int flag);
@@ -53,49 +33,84 @@ const char *futhark_get_tuning_param_class(int);
 // Arrays
 struct futhark_bool_1d;
 struct futhark_bool_1d *futhark_new_bool_1d(struct futhark_context *ctx, const bool *data, int64_t dim0);
-struct futhark_bool_1d *futhark_new_raw_bool_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
+struct futhark_bool_1d *futhark_new_raw_bool_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
 int futhark_free_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
 int futhark_values_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr, bool *data);
 int futhark_index_bool_1d(struct futhark_context *ctx, bool *out, struct futhark_bool_1d *arr, int64_t i0);
-CUdeviceptr futhark_values_raw_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
+unsigned char *futhark_values_raw_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
 const int64_t *futhark_shape_bool_1d(struct futhark_context *ctx, struct futhark_bool_1d *arr);
+struct futhark_f32_1d;
+struct futhark_f32_1d *futhark_new_f32_1d(struct futhark_context *ctx, const float *data, int64_t dim0);
+struct futhark_f32_1d *futhark_new_raw_f32_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
+int futhark_free_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr);
+int futhark_values_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr, float *data);
+int futhark_index_f32_1d(struct futhark_context *ctx, float *out, struct futhark_f32_1d *arr, int64_t i0);
+unsigned char *futhark_values_raw_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr);
+const int64_t *futhark_shape_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr);
+struct futhark_f32_2d;
+struct futhark_f32_2d *futhark_new_f32_2d(struct futhark_context *ctx, const float *data, int64_t dim0, int64_t dim1);
+struct futhark_f32_2d *futhark_new_raw_f32_2d(struct futhark_context *ctx, unsigned char *data, int64_t dim0, int64_t dim1);
+int futhark_free_f32_2d(struct futhark_context *ctx, struct futhark_f32_2d *arr);
+int futhark_values_f32_2d(struct futhark_context *ctx, struct futhark_f32_2d *arr, float *data);
+int futhark_index_f32_2d(struct futhark_context *ctx, float *out, struct futhark_f32_2d *arr, int64_t i0, int64_t i1);
+unsigned char *futhark_values_raw_f32_2d(struct futhark_context *ctx, struct futhark_f32_2d *arr);
+const int64_t *futhark_shape_f32_2d(struct futhark_context *ctx, struct futhark_f32_2d *arr);
 struct futhark_f64_1d;
 struct futhark_f64_1d *futhark_new_f64_1d(struct futhark_context *ctx, const double *data, int64_t dim0);
-struct futhark_f64_1d *futhark_new_raw_f64_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
+struct futhark_f64_1d *futhark_new_raw_f64_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
 int futhark_free_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr);
 int futhark_values_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr, double *data);
 int futhark_index_f64_1d(struct futhark_context *ctx, double *out, struct futhark_f64_1d *arr, int64_t i0);
-CUdeviceptr futhark_values_raw_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr);
+unsigned char *futhark_values_raw_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr);
 const int64_t *futhark_shape_f64_1d(struct futhark_context *ctx, struct futhark_f64_1d *arr);
 struct futhark_f64_2d;
 struct futhark_f64_2d *futhark_new_f64_2d(struct futhark_context *ctx, const double *data, int64_t dim0, int64_t dim1);
-struct futhark_f64_2d *futhark_new_raw_f64_2d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0, int64_t dim1);
+struct futhark_f64_2d *futhark_new_raw_f64_2d(struct futhark_context *ctx, unsigned char *data, int64_t dim0, int64_t dim1);
 int futhark_free_f64_2d(struct futhark_context *ctx, struct futhark_f64_2d *arr);
 int futhark_values_f64_2d(struct futhark_context *ctx, struct futhark_f64_2d *arr, double *data);
 int futhark_index_f64_2d(struct futhark_context *ctx, double *out, struct futhark_f64_2d *arr, int64_t i0, int64_t i1);
-CUdeviceptr futhark_values_raw_f64_2d(struct futhark_context *ctx, struct futhark_f64_2d *arr);
+unsigned char *futhark_values_raw_f64_2d(struct futhark_context *ctx, struct futhark_f64_2d *arr);
 const int64_t *futhark_shape_f64_2d(struct futhark_context *ctx, struct futhark_f64_2d *arr);
 struct futhark_i64_1d;
 struct futhark_i64_1d *futhark_new_i64_1d(struct futhark_context *ctx, const int64_t *data, int64_t dim0);
-struct futhark_i64_1d *futhark_new_raw_i64_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
+struct futhark_i64_1d *futhark_new_raw_i64_1d(struct futhark_context *ctx, unsigned char *data, int64_t dim0);
 int futhark_free_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 int futhark_values_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr, int64_t *data);
 int futhark_index_i64_1d(struct futhark_context *ctx, int64_t *out, struct futhark_i64_1d *arr, int64_t i0);
-CUdeviceptr futhark_values_raw_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
+unsigned char *futhark_values_raw_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 
 // Opaque values
+struct futhark_opaque_tup2_arr1d_f32_i64;
 struct futhark_opaque_tup2_arr1d_f64_i64;
+struct futhark_opaque_arr1d_tup2_arr1d_f32_i64;
 struct futhark_opaque_arr1d_tup2_arr1d_f64_i64;
 struct futhark_opaque_skylineBase_double;
+struct futhark_opaque_skylineBase_float;
 struct futhark_opaque_skylineData_GFUR_double;
+struct futhark_opaque_skylineData_GFUR_float;
 struct futhark_opaque_skylineInfo_GFUR_double;
+struct futhark_opaque_skylineInfo_GFUR_float;
+int futhark_free_opaque_tup2_arr1d_f32_i64(struct futhark_context *ctx, struct futhark_opaque_tup2_arr1d_f32_i64 *obj);
+int futhark_store_opaque_tup2_arr1d_f32_i64(struct futhark_context *ctx, const struct futhark_opaque_tup2_arr1d_f32_i64 *obj, void **p, size_t *n);
+struct futhark_opaque_tup2_arr1d_f32_i64 *futhark_restore_opaque_tup2_arr1d_f32_i64(struct futhark_context *ctx, const void *p);
+int futhark_project_opaque_tup2_arr1d_f32_i64_0(struct futhark_context *ctx, struct futhark_f32_1d **out, const struct futhark_opaque_tup2_arr1d_f32_i64 *obj);
+int futhark_project_opaque_tup2_arr1d_f32_i64_1(struct futhark_context *ctx, int64_t *out, const struct futhark_opaque_tup2_arr1d_f32_i64 *obj);
+int futhark_new_opaque_tup2_arr1d_f32_i64(struct futhark_context *ctx, struct futhark_opaque_tup2_arr1d_f32_i64 **out, const struct futhark_f32_1d *f_0, const int64_t f_1);
 int futhark_free_opaque_tup2_arr1d_f64_i64(struct futhark_context *ctx, struct futhark_opaque_tup2_arr1d_f64_i64 *obj);
 int futhark_store_opaque_tup2_arr1d_f64_i64(struct futhark_context *ctx, const struct futhark_opaque_tup2_arr1d_f64_i64 *obj, void **p, size_t *n);
 struct futhark_opaque_tup2_arr1d_f64_i64 *futhark_restore_opaque_tup2_arr1d_f64_i64(struct futhark_context *ctx, const void *p);
 int futhark_project_opaque_tup2_arr1d_f64_i64_0(struct futhark_context *ctx, struct futhark_f64_1d **out, const struct futhark_opaque_tup2_arr1d_f64_i64 *obj);
 int futhark_project_opaque_tup2_arr1d_f64_i64_1(struct futhark_context *ctx, int64_t *out, const struct futhark_opaque_tup2_arr1d_f64_i64 *obj);
 int futhark_new_opaque_tup2_arr1d_f64_i64(struct futhark_context *ctx, struct futhark_opaque_tup2_arr1d_f64_i64 **out, const struct futhark_f64_1d *f_0, const int64_t f_1);
+int futhark_free_opaque_arr1d_tup2_arr1d_f32_i64(struct futhark_context *ctx, struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 *obj);
+int futhark_store_opaque_arr1d_tup2_arr1d_f32_i64(struct futhark_context *ctx, const struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 *obj, void **p, size_t *n);
+struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 *futhark_restore_opaque_arr1d_tup2_arr1d_f32_i64(struct futhark_context *ctx, const void *p);
+int futhark_project_opaque_arr1d_tup2_arr1d_f32_i64_0(struct futhark_context *ctx, struct futhark_f32_2d **out, const struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 *obj);
+int futhark_project_opaque_arr1d_tup2_arr1d_f32_i64_1(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 *obj);
+int futhark_zip_opaque_arr1d_tup2_arr1d_f32_i64(struct futhark_context *ctx, struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 **out, const struct futhark_f32_2d *f_0, const struct futhark_i64_1d *f_1);
+int futhark_index_opaque_arr1d_tup2_arr1d_f32_i64(struct futhark_context *ctx, struct futhark_opaque_tup2_arr1d_f32_i64 **out, struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 *arr, int64_t i0);
+const int64_t *futhark_shape_opaque_arr1d_tup2_arr1d_f32_i64(struct futhark_context *ctx, struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 *arr);
 int futhark_free_opaque_arr1d_tup2_arr1d_f64_i64(struct futhark_context *ctx, struct futhark_opaque_arr1d_tup2_arr1d_f64_i64 *obj);
 int futhark_store_opaque_arr1d_tup2_arr1d_f64_i64(struct futhark_context *ctx, const struct futhark_opaque_arr1d_tup2_arr1d_f64_i64 *obj, void **p, size_t *n);
 struct futhark_opaque_arr1d_tup2_arr1d_f64_i64 *futhark_restore_opaque_arr1d_tup2_arr1d_f64_i64(struct futhark_context *ctx, const void *p);
@@ -117,12 +132,31 @@ int futhark_project_opaque_skylineBase_double_total_angle_no(struct futhark_cont
 int futhark_project_opaque_skylineBase_double_total_grid_no(struct futhark_context *ctx, int64_t *out, const struct futhark_opaque_skylineBase_double *obj);
 int futhark_project_opaque_skylineBase_double_total_part_no(struct futhark_context *ctx, int64_t *out, const struct futhark_opaque_skylineBase_double *obj);
 int futhark_new_opaque_skylineBase_double(struct futhark_context *ctx, struct futhark_opaque_skylineBase_double **out, const struct futhark_i64_1d *f_angle_part_prefix_sum, const struct futhark_i64_1d *f_angle_partitions_per_dim, const struct futhark_i64_1d *f_grid_part_prefix_sum, const struct futhark_f64_1d *f_grid_part_sizze_per_dim, const struct futhark_i64_1d *f_grid_partitions_per_dim, const struct futhark_f64_2d *f_start_of_grid_partition, const int64_t f_total_angle_no, const int64_t f_total_grid_no, const int64_t f_total_part_no);
+int futhark_free_opaque_skylineBase_float(struct futhark_context *ctx, struct futhark_opaque_skylineBase_float *obj);
+int futhark_store_opaque_skylineBase_float(struct futhark_context *ctx, const struct futhark_opaque_skylineBase_float *obj, void **p, size_t *n);
+struct futhark_opaque_skylineBase_float *futhark_restore_opaque_skylineBase_float(struct futhark_context *ctx, const void *p);
+int futhark_project_opaque_skylineBase_float_angle_part_prefix_sum(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_project_opaque_skylineBase_float_angle_partitions_per_dim(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_project_opaque_skylineBase_float_grid_part_prefix_sum(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_project_opaque_skylineBase_float_grid_part_size_per_dim(struct futhark_context *ctx, struct futhark_f32_1d **out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_project_opaque_skylineBase_float_grid_partitions_per_dim(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_project_opaque_skylineBase_float_start_of_grid_partition(struct futhark_context *ctx, struct futhark_f32_2d **out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_project_opaque_skylineBase_float_total_angle_no(struct futhark_context *ctx, int64_t *out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_project_opaque_skylineBase_float_total_grid_no(struct futhark_context *ctx, int64_t *out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_project_opaque_skylineBase_float_total_part_no(struct futhark_context *ctx, int64_t *out, const struct futhark_opaque_skylineBase_float *obj);
+int futhark_new_opaque_skylineBase_float(struct futhark_context *ctx, struct futhark_opaque_skylineBase_float **out, const struct futhark_i64_1d *f_angle_part_prefix_sum, const struct futhark_i64_1d *f_angle_partitions_per_dim, const struct futhark_i64_1d *f_grid_part_prefix_sum, const struct futhark_f32_1d *f_grid_part_sizze_per_dim, const struct futhark_i64_1d *f_grid_partitions_per_dim, const struct futhark_f32_2d *f_start_of_grid_partition, const int64_t f_total_angle_no, const int64_t f_total_grid_no, const int64_t f_total_part_no);
 int futhark_free_opaque_skylineData_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineData_GFUR_double *obj);
 int futhark_store_opaque_skylineData_GFUR_double(struct futhark_context *ctx, const struct futhark_opaque_skylineData_GFUR_double *obj, void **p, size_t *n);
 struct futhark_opaque_skylineData_GFUR_double *futhark_restore_opaque_skylineData_GFUR_double(struct futhark_context *ctx, const void *p);
 int futhark_project_opaque_skylineData_GFUR_double_pL(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_skylineData_GFUR_double *obj);
 int futhark_project_opaque_skylineData_GFUR_double_skyTups(struct futhark_context *ctx, struct futhark_f64_2d **out, const struct futhark_opaque_skylineData_GFUR_double *obj);
 int futhark_new_opaque_skylineData_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineData_GFUR_double **out, const struct futhark_i64_1d *f_pL, const struct futhark_f64_2d *f_skyTups);
+int futhark_free_opaque_skylineData_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineData_GFUR_float *obj);
+int futhark_store_opaque_skylineData_GFUR_float(struct futhark_context *ctx, const struct futhark_opaque_skylineData_GFUR_float *obj, void **p, size_t *n);
+struct futhark_opaque_skylineData_GFUR_float *futhark_restore_opaque_skylineData_GFUR_float(struct futhark_context *ctx, const void *p);
+int futhark_project_opaque_skylineData_GFUR_float_pL(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_skylineData_GFUR_float *obj);
+int futhark_project_opaque_skylineData_GFUR_float_skyTups(struct futhark_context *ctx, struct futhark_f32_2d **out, const struct futhark_opaque_skylineData_GFUR_float *obj);
+int futhark_new_opaque_skylineData_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineData_GFUR_float **out, const struct futhark_i64_1d *f_pL, const struct futhark_f32_2d *f_skyTups);
 int futhark_free_opaque_skylineInfo_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double *obj);
 int futhark_store_opaque_skylineInfo_GFUR_double(struct futhark_context *ctx, const struct futhark_opaque_skylineInfo_GFUR_double *obj, void **p, size_t *n);
 struct futhark_opaque_skylineInfo_GFUR_double *futhark_restore_opaque_skylineInfo_GFUR_double(struct futhark_context *ctx, const void *p);
@@ -130,20 +164,39 @@ int futhark_project_opaque_skylineInfo_GFUR_double_isPartitionDominated(struct f
 int futhark_project_opaque_skylineInfo_GFUR_double_part_idx(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_skylineInfo_GFUR_double *obj);
 int futhark_project_opaque_skylineInfo_GFUR_double_xys(struct futhark_context *ctx, struct futhark_opaque_arr1d_tup2_arr1d_f64_i64 **out, const struct futhark_opaque_skylineInfo_GFUR_double *obj);
 int futhark_new_opaque_skylineInfo_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out, const struct futhark_bool_1d *f_isPartitionDominated, const struct futhark_i64_1d *f_part_idx, const struct futhark_opaque_arr1d_tup2_arr1d_f64_i64 *f_xys);
+int futhark_free_opaque_skylineInfo_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float *obj);
+int futhark_store_opaque_skylineInfo_GFUR_float(struct futhark_context *ctx, const struct futhark_opaque_skylineInfo_GFUR_float *obj, void **p, size_t *n);
+struct futhark_opaque_skylineInfo_GFUR_float *futhark_restore_opaque_skylineInfo_GFUR_float(struct futhark_context *ctx, const void *p);
+int futhark_project_opaque_skylineInfo_GFUR_float_isPartitionDominated(struct futhark_context *ctx, struct futhark_bool_1d **out, const struct futhark_opaque_skylineInfo_GFUR_float *obj);
+int futhark_project_opaque_skylineInfo_GFUR_float_part_idx(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_skylineInfo_GFUR_float *obj);
+int futhark_project_opaque_skylineInfo_GFUR_float_xys(struct futhark_context *ctx, struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 **out, const struct futhark_opaque_skylineInfo_GFUR_float *obj);
+int futhark_new_opaque_skylineInfo_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out, const struct futhark_bool_1d *f_isPartitionDominated, const struct futhark_i64_1d *f_part_idx, const struct futhark_opaque_arr1d_tup2_arr1d_f32_i64 *f_xys);
 
 // Entry points
 int futhark_entry_calc_global_Skyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1);
+int futhark_entry_calc_global_Skyline_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_opaque_skylineInfo_GFUR_float *in1);
 int futhark_entry_calc_intermSkyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1, const bool in2, const int64_t in3, const int64_t in4, const int64_t in5);
+int futhark_entry_calc_intermSkyline_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_opaque_skylineInfo_GFUR_float *in1, const bool in2, const int64_t in3, const int64_t in4, const int64_t in5);
 int futhark_entry_calc_local_Skyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1);
+int futhark_entry_calc_local_Skyline_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_opaque_skylineInfo_GFUR_float *in1);
 int futhark_entry_crack_Skyline_double_GFUR(struct futhark_context *ctx, struct futhark_opaque_skylineData_GFUR_double **out0, const struct futhark_opaque_skylineInfo_GFUR_double *in0);
+int futhark_entry_crack_Skyline_float_GFUR(struct futhark_context *ctx, struct futhark_opaque_skylineData_GFUR_float **out0, const struct futhark_opaque_skylineInfo_GFUR_float *in0);
 int futhark_entry_define_skyline_space_double(struct futhark_context *ctx, struct futhark_opaque_skylineBase_double **out0, const struct futhark_f64_1d *in0, const struct futhark_f64_1d *in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3);
+int futhark_entry_define_skyline_space_float(struct futhark_context *ctx, struct futhark_opaque_skylineBase_float **out0, const struct futhark_f32_1d *in0, const struct futhark_f32_1d *in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3);
 int futhark_entry_merge_Skylines_2_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1, const struct futhark_opaque_skylineInfo_GFUR_double *in2);
+int futhark_entry_merge_Skylines_2_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_opaque_skylineInfo_GFUR_float *in1, const struct futhark_opaque_skylineInfo_GFUR_float *in2);
 int futhark_entry_merge_Skylines_3_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1, const struct futhark_opaque_skylineInfo_GFUR_double *in2, const struct futhark_opaque_skylineInfo_GFUR_double *in3);
+int futhark_entry_merge_Skylines_3_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_opaque_skylineInfo_GFUR_float *in1, const struct futhark_opaque_skylineInfo_GFUR_float *in2, const struct futhark_opaque_skylineInfo_GFUR_float *in3);
 int futhark_entry_merge_Skylines_4_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1, const struct futhark_opaque_skylineInfo_GFUR_double *in2, const struct futhark_opaque_skylineInfo_GFUR_double *in3, const struct futhark_opaque_skylineInfo_GFUR_double *in4);
+int futhark_entry_merge_Skylines_4_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_opaque_skylineInfo_GFUR_float *in1, const struct futhark_opaque_skylineInfo_GFUR_float *in2, const struct futhark_opaque_skylineInfo_GFUR_float *in3, const struct futhark_opaque_skylineInfo_GFUR_float *in4);
 int futhark_entry_merge_Skylines_5_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineInfo_GFUR_double *in1, const struct futhark_opaque_skylineInfo_GFUR_double *in2, const struct futhark_opaque_skylineInfo_GFUR_double *in3, const struct futhark_opaque_skylineInfo_GFUR_double *in4, const struct futhark_opaque_skylineInfo_GFUR_double *in5);
+int futhark_entry_merge_Skylines_5_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_opaque_skylineInfo_GFUR_float *in1, const struct futhark_opaque_skylineInfo_GFUR_float *in2, const struct futhark_opaque_skylineInfo_GFUR_float *in3, const struct futhark_opaque_skylineInfo_GFUR_float *in4, const struct futhark_opaque_skylineInfo_GFUR_float *in5);
 int futhark_entry_partwise_slice_and_dice_for_Skyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_opaque_skylineBase_double *in1, const struct futhark_f64_2d *in2, const int64_t in3, const bool in4);
+int futhark_entry_partwise_slice_and_dice_for_Skyline_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_opaque_skylineBase_float *in1, const struct futhark_f32_2d *in2, const int64_t in3, const bool in4);
 int futhark_entry_pointwise_slice_and_dice_for_Skyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_f64_2d *in1, const int64_t in2, const bool in3);
+int futhark_entry_pointwise_slice_and_dice_for_Skyline_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_f32_2d *in1, const int64_t in2, const bool in3);
 int futhark_entry_sort_for_Skyline_GFUR_double(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_double **out0, const struct futhark_opaque_skylineBase_double *in0, const struct futhark_f64_2d *in1, const int64_t in2, const bool in3);
+int futhark_entry_sort_for_Skyline_GFUR_float(struct futhark_context *ctx, struct futhark_opaque_skylineInfo_GFUR_float **out0, const struct futhark_opaque_skylineBase_float *in0, const struct futhark_f32_2d *in1, const int64_t in2, const bool in3);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);
@@ -154,7 +207,7 @@ void futhark_context_pause_profiling(struct futhark_context *ctx);
 void futhark_context_unpause_profiling(struct futhark_context *ctx);
 char *futhark_context_report(struct futhark_context *ctx);
 int futhark_context_clear_caches(struct futhark_context *ctx);
-#define FUTHARK_BACKEND_cuda
+#define FUTHARK_BACKEND_c
 #define FUTHARK_SUCCESS 0
 #define FUTHARK_PROGRAM_ERROR 2
 #define FUTHARK_OUT_OF_MEMORY 3

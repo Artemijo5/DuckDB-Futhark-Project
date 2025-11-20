@@ -27,7 +27,6 @@ type^ skylineOp 't 'ft = {
 	one : t
 }
 type~ skylineBase [dim] 't = {
--- will need to be constructed IN entry point...
 	grid_partitions_per_dim : [dim]idx_t.t,
 	angle_partitions_per_dim : [dim-1]idx_t.t,
 	grid_part_prefix_sum : [dim]idx_t.t,
@@ -731,151 +730,300 @@ def crack_Skyline [dim] 't 'pL_t
 
 
 -- ENTRY POINTS ----------------------------------------------------------------------------------------------------
+	
+	-- DOUBLE
 
-	def skylineOp_double : skylineOp f64 f64 = {
-		plus = (+),
-		minus = (-),
-		times = (*),
-		over = (/),
-		skyline_lt = (>),
-		skyline_leq = (>=),
-		from_i64 = (f64.i64),
-		to_i64 = (i64.f64),
-		to_float = (id),
-		fplus = (+),
-		ftimes = (*),
-		fover = (/),
-		feq = (f64.==),
-		flt = (f64.<),
-		fleq = (f64.<=),
-		atan2 = (f64.atan2),
-		sqrt = (f64.sqrt),
-		ft_to_i64 = i64.f64,
-		i64_to_ft = f64.i64,
-		fzero = f64.i32 0,
-		piSeconds = (f64.pi / 2.0),
-		fhighest = f64.highest,
-		one = f64.i32 1
-	}
+		def skylineOp_double : skylineOp f64 f64 = {
+			plus = (+),
+			minus = (-),
+			times = (*),
+			over = (/),
+			skyline_lt = (>),
+			skyline_leq = (>=),
+			from_i64 = (f64.i64),
+			to_i64 = (i64.f64),
+			to_float = (id),
+			fplus = (+),
+			ftimes = (*),
+			fover = (/),
+			feq = (f64.==),
+			flt = (f64.<),
+			fleq = (f64.<=),
+			atan2 = (f64.atan2),
+			sqrt = (f64.sqrt),
+			ft_to_i64 = i64.f64,
+			i64_to_ft = f64.i64,
+			fzero = f64.i32 0,
+			piSeconds = (f64.pi / 2.0),
+			fhighest = f64.highest,
+			one = f64.i32 1
+		}
 
-	type~ skylineBase_double [dim] = skylineBase [dim] f64
-	type~ skylineInfo_GFUR_double [dim] = skylineInfo [dim] f64 i64
-	type~ skylineData_GFUR_double [dim] = skylineData [dim] f64 idx_t.t
+		type~ skylineBase_double [dim] = skylineBase [dim] f64
+		type~ skylineInfo_GFUR_double [dim] = skylineInfo [dim] f64 i64
+		type~ skylineData_GFUR_double [dim] = skylineData [dim] f64 idx_t.t
 
-	entry define_skyline_space_double [dim]
-		(min_per_dim : [dim]f64)
-		(max_per_dim : [dim]f64)
-		(grid_partitions_per_dim : [dim]idx_t.t)
-		(angle_partitions_per_dim : [dim-1]idx_t.t)
-	: skylineBase_double [dim] =
-		mk_skylineBase_from_grid
-			skylineOp_double
-			min_per_dim
-			max_per_dim
-			grid_partitions_per_dim
-			angle_partitions_per_dim
+		entry define_skyline_space_double [dim]
+			(min_per_dim : [dim]f64)
+			(max_per_dim : [dim]f64)
+			(grid_partitions_per_dim : [dim]idx_t.t)
+			(angle_partitions_per_dim : [dim-1]idx_t.t)
+		: skylineBase_double [dim] =
+			mk_skylineBase_from_grid
+				skylineOp_double
+				min_per_dim
+				max_per_dim
+				grid_partitions_per_dim
+				angle_partitions_per_dim
 
-	entry sort_for_Skyline_GFUR_double [n] [dim]
-		(skB : skylineBase_double [dim])
-		(xs : [n][dim]f64)
-		(offset : idx_t.t)
-		(use_measure_for_sorting : bool)
-	: skylineInfo_GFUR_double [dim] =
-		sort_for_Skyline
-			skylineOp_double
-			skB
-			xs
-			(map (\i -> i+offset) (indices xs))
-			use_measure_for_sorting
+		entry sort_for_Skyline_GFUR_double [n] [dim]
+			(skB : skylineBase_double [dim])
+			(xs : [n][dim]f64)
+			(offset : idx_t.t)
+			(use_measure_for_sorting : bool)
+		: skylineInfo_GFUR_double [dim] =
+			sort_for_Skyline
+				skylineOp_double
+				skB
+				xs
+				(map (\i -> i+offset) (indices xs))
+				use_measure_for_sorting
 
-	entry partwise_slice_and_dice_for_Skyline_GFUR_double [n] [dim]
-		(skB_filt : skylineBase_double [dim])
-		(skB_fit : skylineBase_double [dim])
-		(xs : [n][dim]f64)
-		(offset : idx_t.t)
-		(use_measure_for_sorting : bool)
-	: skylineInfo_GFUR_double [dim] =
-		partwise_slice_and_dice_for_Skyline
-			skylineOp_double
-			skB_filt
-			skB_fit
-			xs
-			(map (\i -> i+offset) (indices xs))
-			use_measure_for_sorting
+		entry partwise_slice_and_dice_for_Skyline_GFUR_double [n] [dim]
+			(skB_filt : skylineBase_double [dim])
+			(skB_fit : skylineBase_double [dim])
+			(xs : [n][dim]f64)
+			(offset : idx_t.t)
+			(use_measure_for_sorting : bool)
+		: skylineInfo_GFUR_double [dim] =
+			partwise_slice_and_dice_for_Skyline
+				skylineOp_double
+				skB_filt
+				skB_fit
+				xs
+				(map (\i -> i+offset) (indices xs))
+				use_measure_for_sorting
 
-	entry pointwise_slice_and_dice_for_Skyline_GFUR_double [n] [dim]
-		(skB : skylineBase_double [dim])
-		(xs : [n][dim]f64)
-		(offset : idx_t.t)
-		(use_measure_for_sorting : bool)
-	: skylineInfo_GFUR_double [dim] =
-		pointwise_slice_and_dice_for_Skyline
-			skylineOp_double
-			skB
-			xs
-			(map (\i -> i+offset) (indices xs))
-			use_measure_for_sorting
+		entry pointwise_slice_and_dice_for_Skyline_GFUR_double [n] [dim]
+			(skB : skylineBase_double [dim])
+			(xs : [n][dim]f64)
+			(offset : idx_t.t)
+			(use_measure_for_sorting : bool)
+		: skylineInfo_GFUR_double [dim] =
+			pointwise_slice_and_dice_for_Skyline
+				skylineOp_double
+				skB
+				xs
+				(map (\i -> i+offset) (indices xs))
+				use_measure_for_sorting
 
-	entry calc_local_Skyline_GFUR_double [dim]
-		(skB : skylineBase_double [dim])
-		(skI : skylineInfo_GFUR_double [dim])
-	: skylineInfo_GFUR_double [dim] =
-		calc_local_Skyline skylineOp_double skB skI
+		entry calc_local_Skyline_GFUR_double [dim]
+			(skB : skylineBase_double [dim])
+			(skI : skylineInfo_GFUR_double [dim])
+		: skylineInfo_GFUR_double [dim] =
+			calc_local_Skyline skylineOp_double skB skI
 
-	entry calc_global_Skyline_GFUR_double [dim]
-		(skB : skylineBase_double [dim])
-		(skI : skylineInfo_GFUR_double [dim])
-	: skylineInfo_GFUR_double [dim] =
-		calc_global_Skyline skylineOp_double skB skI
+		entry calc_global_Skyline_GFUR_double [dim]
+			(skB : skylineBase_double [dim])
+			(skI : skylineInfo_GFUR_double [dim])
+		: skylineInfo_GFUR_double [dim] =
+			calc_global_Skyline skylineOp_double skB skI
 
-	-- takes a very long time to compile...
-	entry merge_Skylines_5_GFUR_double [dim]
-		(skB : skylineBase_double [dim])
-		(skI1 : skylineInfo_GFUR_double [dim])
-		(skI2 : skylineInfo_GFUR_double [dim])
-		(skI3 : skylineInfo_GFUR_double [dim])
-		(skI4 : skylineInfo_GFUR_double [dim])
-		(skI5 : skylineInfo_GFUR_double [dim])
-	: skylineInfo_GFUR_double [dim] =
-		let dummy = ((replicate dim f64.highest),-1)
-		in merge_Skylines_5 skylineOp_double skB skI1 skI2 skI3 skI4 skI5 dummy
-	entry merge_Skylines_4_GFUR_double [dim]
-		(skB : skylineBase_double [dim])
-		(skI1 : skylineInfo_GFUR_double [dim])
-		(skI2 : skylineInfo_GFUR_double [dim])
-		(skI3 : skylineInfo_GFUR_double [dim])
-		(skI4 : skylineInfo_GFUR_double [dim])
-	: skylineInfo_GFUR_double [dim] =
-		let dummy = ((replicate dim f64.highest),-1)
-		in merge_Skylines_4 skylineOp_double skB skI1 skI2 skI3 skI4 dummy
-	entry merge_Skylines_3_GFUR_double [dim]
-		(skB : skylineBase_double [dim])
-		(skI1 : skylineInfo_GFUR_double [dim])
-		(skI2 : skylineInfo_GFUR_double [dim])
-		(skI3 : skylineInfo_GFUR_double [dim])
-	: skylineInfo_GFUR_double [dim] =
-		let dummy = ((replicate dim f64.highest),-1)
-		in merge_Skylines_3 skylineOp_double skB skI1 skI2 skI3 dummy
-	entry merge_Skylines_2_GFUR_double [dim]
-		(skB : skylineBase_double [dim])
-		(skI1 : skylineInfo_GFUR_double [dim])
-		(skI2 : skylineInfo_GFUR_double [dim])
-	: skylineInfo_GFUR_double [dim] =
-		let dummy = ((replicate dim f64.highest),-1)
-		in merge_Skylines_2 skylineOp_double skB skI1 skI2 dummy
+		-- takes a very long time to compile...
+		entry merge_Skylines_5_GFUR_double [dim]
+			(skB : skylineBase_double [dim])
+			(skI1 : skylineInfo_GFUR_double [dim])
+			(skI2 : skylineInfo_GFUR_double [dim])
+			(skI3 : skylineInfo_GFUR_double [dim])
+			(skI4 : skylineInfo_GFUR_double [dim])
+			(skI5 : skylineInfo_GFUR_double [dim])
+		: skylineInfo_GFUR_double [dim] =
+			let dummy = ((replicate dim f64.highest),-1)
+			in merge_Skylines_5 skylineOp_double skB skI1 skI2 skI3 skI4 skI5 dummy
+		entry merge_Skylines_4_GFUR_double [dim]
+			(skB : skylineBase_double [dim])
+			(skI1 : skylineInfo_GFUR_double [dim])
+			(skI2 : skylineInfo_GFUR_double [dim])
+			(skI3 : skylineInfo_GFUR_double [dim])
+			(skI4 : skylineInfo_GFUR_double [dim])
+		: skylineInfo_GFUR_double [dim] =
+			let dummy = ((replicate dim f64.highest),-1)
+			in merge_Skylines_4 skylineOp_double skB skI1 skI2 skI3 skI4 dummy
+		entry merge_Skylines_3_GFUR_double [dim]
+			(skB : skylineBase_double [dim])
+			(skI1 : skylineInfo_GFUR_double [dim])
+			(skI2 : skylineInfo_GFUR_double [dim])
+			(skI3 : skylineInfo_GFUR_double [dim])
+		: skylineInfo_GFUR_double [dim] =
+			let dummy = ((replicate dim f64.highest),-1)
+			in merge_Skylines_3 skylineOp_double skB skI1 skI2 skI3 dummy
+		entry merge_Skylines_2_GFUR_double [dim]
+			(skB : skylineBase_double [dim])
+			(skI1 : skylineInfo_GFUR_double [dim])
+			(skI2 : skylineInfo_GFUR_double [dim])
+		: skylineInfo_GFUR_double [dim] =
+			let dummy = ((replicate dim f64.highest),-1)
+			in merge_Skylines_2 skylineOp_double skB skI1 skI2 dummy
 
-	entry calc_intermSkyline_GFUR_double [dim]
-		(skB : skylineBase_double [dim])
-		(skI : skylineInfo_GFUR_double [dim])
-		(include_angle_steps : bool)
-		(omit_step : idx_t.t)
-		(max_steps : idx_t.t)
-		(size_thresh : idx_t.t)
-	: skylineInfo_GFUR_double [dim] =
-		calc_intermediate_skyline skylineOp_double skB skI include_angle_steps omit_step max_steps size_thresh
+		entry calc_intermSkyline_GFUR_double [dim]
+			(skB : skylineBase_double [dim])
+			(skI : skylineInfo_GFUR_double [dim])
+			(include_angle_steps : bool)
+			(omit_step : idx_t.t)
+			(max_steps : idx_t.t)
+			(size_thresh : idx_t.t)
+		: skylineInfo_GFUR_double [dim] =
+			calc_intermediate_skyline skylineOp_double skB skI include_angle_steps omit_step max_steps size_thresh
 
-	entry crack_Skyline_double_GFUR [dim] (skI : skylineInfo_GFUR_double [dim])
-	: skylineData_GFUR_double [dim] = crack_Skyline skI
+		entry crack_Skyline_double_GFUR [dim] (skI : skylineInfo_GFUR_double [dim])
+		: skylineData_GFUR_double [dim] = crack_Skyline skI
+
+	-- FLOAT
+		
+		def skylineOp_float : skylineOp f32 f32 = {
+			plus = (+),
+			minus = (-),
+			times = (*),
+			over = (/),
+			skyline_lt = (>),
+			skyline_leq = (>=),
+			from_i64 = (f32.i64),
+			to_i64 = (i64.f32),
+			to_float = (id),
+			fplus = (+),
+			ftimes = (*),
+			fover = (/),
+			feq = (f32.==),
+			flt = (f32.<),
+			fleq = (f32.<=),
+			atan2 = (f32.atan2),
+			sqrt = (f32.sqrt),
+			ft_to_i64 = i64.f32,
+			i64_to_ft = f32.i64,
+			fzero = f32.i32 0,
+			piSeconds = (f32.pi / 2.0),
+			fhighest = f32.highest,
+			one = f32.i32 1
+		}
+
+		type~ skylineBase_float [dim] = skylineBase [dim] f32
+		type~ skylineInfo_GFUR_float [dim] = skylineInfo [dim] f32 i64
+		type~ skylineData_GFUR_float [dim] = skylineData [dim] f32 idx_t.t
+
+		entry define_skyline_space_float [dim]
+			(min_per_dim : [dim]f32)
+			(max_per_dim : [dim]f32)
+			(grid_partitions_per_dim : [dim]idx_t.t)
+			(angle_partitions_per_dim : [dim-1]idx_t.t)
+		: skylineBase_float [dim] =
+			mk_skylineBase_from_grid
+				skylineOp_float
+				min_per_dim
+				max_per_dim
+				grid_partitions_per_dim
+				angle_partitions_per_dim
+
+		entry sort_for_Skyline_GFUR_float [n] [dim]
+			(skB : skylineBase_float [dim])
+			(xs : [n][dim]f32)
+			(offset : idx_t.t)
+			(use_measure_for_sorting : bool)
+		: skylineInfo_GFUR_float [dim] =
+			sort_for_Skyline
+				skylineOp_float
+				skB
+				xs
+				(map (\i -> i+offset) (indices xs))
+				use_measure_for_sorting
+
+		entry partwise_slice_and_dice_for_Skyline_GFUR_float [n] [dim]
+			(skB_filt : skylineBase_float [dim])
+			(skB_fit : skylineBase_float [dim])
+			(xs : [n][dim]f32)
+			(offset : idx_t.t)
+			(use_measure_for_sorting : bool)
+		: skylineInfo_GFUR_float [dim] =
+			partwise_slice_and_dice_for_Skyline
+				skylineOp_float
+				skB_filt
+				skB_fit
+				xs
+				(map (\i -> i+offset) (indices xs))
+				use_measure_for_sorting
+
+		entry pointwise_slice_and_dice_for_Skyline_GFUR_float [n] [dim]
+			(skB : skylineBase_float [dim])
+			(xs : [n][dim]f32)
+			(offset : idx_t.t)
+			(use_measure_for_sorting : bool)
+		: skylineInfo_GFUR_float [dim] =
+			pointwise_slice_and_dice_for_Skyline
+				skylineOp_float
+				skB
+				xs
+				(map (\i -> i+offset) (indices xs))
+				use_measure_for_sorting
+
+		entry calc_local_Skyline_GFUR_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI : skylineInfo_GFUR_float [dim])
+		: skylineInfo_GFUR_float [dim] =
+			calc_local_Skyline skylineOp_float skB skI
+
+		entry calc_global_Skyline_GFUR_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI : skylineInfo_GFUR_float [dim])
+		: skylineInfo_GFUR_float [dim] =
+			calc_global_Skyline skylineOp_float skB skI
+
+		-- takes a very long time to compile...
+		entry merge_Skylines_5_GFUR_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI1 : skylineInfo_GFUR_float [dim])
+			(skI2 : skylineInfo_GFUR_float [dim])
+			(skI3 : skylineInfo_GFUR_float [dim])
+			(skI4 : skylineInfo_GFUR_float [dim])
+			(skI5 : skylineInfo_GFUR_float [dim])
+		: skylineInfo_GFUR_float [dim] =
+			let dummy = ((replicate dim f32.highest),-1)
+			in merge_Skylines_5 skylineOp_float skB skI1 skI2 skI3 skI4 skI5 dummy
+		entry merge_Skylines_4_GFUR_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI1 : skylineInfo_GFUR_float [dim])
+			(skI2 : skylineInfo_GFUR_float [dim])
+			(skI3 : skylineInfo_GFUR_float [dim])
+			(skI4 : skylineInfo_GFUR_float [dim])
+		: skylineInfo_GFUR_float [dim] =
+			let dummy = ((replicate dim f32.highest),-1)
+			in merge_Skylines_4 skylineOp_float skB skI1 skI2 skI3 skI4 dummy
+		entry merge_Skylines_3_GFUR_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI1 : skylineInfo_GFUR_float [dim])
+			(skI2 : skylineInfo_GFUR_float [dim])
+			(skI3 : skylineInfo_GFUR_float [dim])
+		: skylineInfo_GFUR_float [dim] =
+			let dummy = ((replicate dim f32.highest),-1)
+			in merge_Skylines_3 skylineOp_float skB skI1 skI2 skI3 dummy
+		entry merge_Skylines_2_GFUR_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI1 : skylineInfo_GFUR_float [dim])
+			(skI2 : skylineInfo_GFUR_float [dim])
+		: skylineInfo_GFUR_float [dim] =
+			let dummy = ((replicate dim f32.highest),-1)
+			in merge_Skylines_2 skylineOp_float skB skI1 skI2 dummy
+
+		entry calc_intermSkyline_GFUR_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI : skylineInfo_GFUR_float [dim])
+			(include_angle_steps : bool)
+			(omit_step : idx_t.t)
+			(max_steps : idx_t.t)
+			(size_thresh : idx_t.t)
+		: skylineInfo_GFUR_float [dim] =
+			calc_intermediate_skyline skylineOp_float skB skI include_angle_steps omit_step max_steps size_thresh
+
+		entry crack_Skyline_float_GFUR [dim] (skI : skylineInfo_GFUR_float [dim])
+		: skylineData_GFUR_float [dim] = crack_Skyline skI
 
 
 -- TESTING ---------------------------------------------------------------------------------------------------------
