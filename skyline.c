@@ -134,6 +134,7 @@ int main() {
   mylog(logfile, "Performed query to read skyTbl.");
   int isTblExhausted = false;
   while(!isTblExhausted) {
+  	// TODO separate CNK_TO_READ from BUFFER_SIZE (...)
   	duckdb_data_chunk skyChunks[CNK_TO_READ];
   	idx_t chunks_read = bulk_fetch_chunks(res, CNK_TO_READ, skyChunks);
   	isTblExhausted = (chunks_read < CNK_TO_READ);
@@ -184,6 +185,8 @@ int main() {
   	mylog(logfile, " - - Applied intermediate filtering steps.");
 
   	skyWindows[currently_windowed++] = interm_skyWindow;
+  	mylog(logfile, " - - Cached this window's filtered results.");
+  	// Collapse windows
   	if(isTblExhausted || currently_windowed==5) {
   		logdbg(
   			logfile,
@@ -195,6 +198,7 @@ int main() {
   		struct futhark_opaque_skylineInfo_GFUR_float *collapsed_skyWindow;
   		struct futhark_opaque_skylineInfo_GFUR_float *local_collapsed_skyWindow;
   		struct futhark_opaque_skylineInfo_GFUR_float *interm_collapsed_skyWindow;
+  		
   		switch(currently_windowed) {
   			case 1:
   				collapsed_skyWindow = skyWindows[0];
@@ -229,21 +233,27 @@ int main() {
   				futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindows[w]);
   			}
   		}
-  		currently_windowed = 1;
   		mylog(logfile, " - - | - - Collapsed cached windows.");
 
-  		futhark_entry_calc_local_Skyline_GFUR_float(
-  			ctx, local_collapsed_skyWindow, skB, collapsed_skyWindow
-  		);
-	  	futhark_free_opaque_skylineInfo_GFUR_float(ctx, collapsed_skyWindow);
-	  	mylog(logfile, " - - | - - Applied local filtering.");
-	  	futhark_entry_calc_intermSkyline_GFUR_float(
-	  		ctx, interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, true, 1, 0, SIZE_THRESH
-	  	);
-	  	futhark_free_opaque_skylineInfo_GFUR_float(ctx, local_collapsed_skyWindow);
-	  	mylog(logfile, " - - | - - Applied intermediate filtering steps.");
-
+  		if(currently_windowed>1) {
+  			futhark_entry_calc_local_Skyline_GFUR_float(
+	  			ctx, local_collapsed_skyWindow, skB, collapsed_skyWindow
+	  		);
+		  	futhark_free_opaque_skylineInfo_GFUR_float(ctx, collapsed_skyWindow);
+		  	mylog(logfile, " - - | - - Applied local filtering.");
+		  	futhark_entry_calc_intermSkyline_GFUR_float(
+		  		ctx, interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, true, 1, 0, SIZE_THRESH
+		  	);
+		  	futhark_free_opaque_skylineInfo_GFUR_float(ctx, local_collapsed_skyWindow);
+		  	mylog(logfile, " - - | - - Applied intermediate filtering steps.");
+  		}
+  		else {
+  			interm_collapsed_skyWindow = collapsed_skyWindow;
+  			mylog(logfile, " - - | - - Don't need to apply filtering steps, as there is only one cached window.");
+  		}
+  		
 	  	skyWindows[0] = interm_collapsed_skyWindow;
+	  	currently_windowed = 1;
   	}
   }
   mylog(logfile, "Result is exhausted.");
