@@ -28,13 +28,16 @@ The purpose of this project is to implement some GPU-accelerated database algori
 Former literature on GPU-accelerated database algorithms tends to assume control of low-level parameters, such as utilisation of each level of GPU cache, etc.
 Futhark is a relatively high-level, functional programming language, and leaves much of hardware optimisation to the compiler; thus different techniques from prior work may need to be employed. DuckDB also requires adopting appropriate workflows with the data outside the GPU.
 
-Algorithms currently implemented (still might be optimised):
+Algorithms currently implemented (still to be optimised & benchmarked):
 - Relational Table Sorting (one-pass or two-pass)
 - Relational Joins (SMJ, Radix Hash Join - based on https://arxiv.org/abs/2312.00720 and references)
+- Group-by Aggregation
 Algorithms currently being implemented:
-- Group-by Algorithms (based on https://arxiv.org/abs/2312.00720 and references)
-- Extensions of Sorting to String data
 - Skyline Queries
+- DBSCAN
+- Extensions of Joins to String data
+- (possibly) Sketch Algorithms
+
 
 Other tasks planned:
 - containerise applications with docker and nvidia-ctk

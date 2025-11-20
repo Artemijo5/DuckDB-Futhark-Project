@@ -11,9 +11,9 @@
 #define LOGFILE "skyline.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 2*CHUNK_SIZE
+#define CNK_TO_READ (long)2
+#define BUFFER_SIZE CNK_TO_READ*CHUNK_SIZE
 #define TABLE_SIZE 10*BUFFER_SIZE
-#define CNK_TO_READ (long)60
 
 #define DIM (long)5
 #define ANGULAR_SUBDIV (long)4
