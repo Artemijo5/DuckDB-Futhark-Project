@@ -8,16 +8,16 @@
 #include "mylogger.h"
 #include "db_util.h"
 
-#define LOGFILE NULL//"stdout"//"skyline.log.txt"
+#define LOGFILE "stdout"//"skyline.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)2
-#define BUFFER_CAP 1//(long)2*CNK_TO_READ
+#define BUFFER_CAP 64//(long)2*CNK_TO_READ
 #define BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
 #define TABLE_SIZE 1*BUFFER_SIZE//10*BUFFER_SIZE
 
-#define DIM (long)2
-#define ANGULAR_SUBDIV (long)4
+#define DIM (long)3
+#define ANGULAR_SUBDIV (long)10
 #define MINVAL (float)0.0
 #define MAXVAL (float)100.0
 #define SIZE_THRESH BUFFER_SIZE/10
@@ -105,7 +105,7 @@ int main() {
     for(idx_t i=0; i<DIM; i++) {
     	type_ids[i] = DUCKDB_TYPE_FLOAT;
     	byteSizes[i] = sizeof(float);
-    	prefixSizes[i] = (i>0)? sizeof(float): 0;
+    	prefixSizes[i] = i*sizeof(float);
     	mins[i] = MINVAL;
     	maxs[i] = MAXVAL;
     	grid_per_dim[i] = 1;
