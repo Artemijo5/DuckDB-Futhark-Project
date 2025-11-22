@@ -47,8 +47,8 @@ CUDA1-ftSkyline: ftSkyline.fut
 CUDA2-ftSkyline: ftSkyline.c
 	$(CC) ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
 
-skyline_test: skyline_test.c libftSkyline.so
-	$(CC) skyline_test.c -lm -o skyline_test.o libduckdb.so libftSkyline.so $(CFLAGS)
+#skyline_test: skyline_test.c libftSkyline.so
+#	$(CC) skyline_test.c -lm -o skyline_test.o libduckdb.so libftSkyline.so $(CFLAGS)
 
 Skyline: skyline.c mylogger.c libduckdb.so db_util.c libftSkyline.so
 	$(CC) skyline.c -lm -o skyline.o mylogger.c libduckdb.so db_util.c libftSkyline.so $(CFLAGS)

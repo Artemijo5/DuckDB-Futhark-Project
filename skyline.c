@@ -12,11 +12,11 @@
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)2
-#define BUFFER_CAP (long)2*CNK_TO_READ
+#define BUFFER_CAP 1024//(long)2*CNK_TO_READ
 #define BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
-#define TABLE_SIZE (long)10//(long)10*BUFFER_SIZE
+#define TABLE_SIZE BUFFER_SIZE//10*BUFFER_SIZE
 
-#define DIM (long)3
+#define DIM (long)2
 #define ANGULAR_SUBDIV (long)4
 #define MINVAL (float)0.0
 #define MAXVAL (float)100.0
@@ -298,37 +298,49 @@ int main() {
     // TODO testing
     printf("Skyline length: %ld\n", GlobalSkyline_len);
 
-    char *GlobalSkyline_byteData = malloc(GlobalSkyline_len*DIM*sizeof(float));
+    float *GlobalSkyline_byteData = malloc(GlobalSkyline_len*DIM*sizeof(float));
     idx_t *GlobalSkyline_idxData = malloc(GlobalSkyline_len*sizeof(int64_t));
     mylog(logfile, "Allocated memory to unwrap results from futhark core.");
 
-    futhark_values_f32_2d(ctx, GS_data_ft, (float*)GlobalSkyline_byteData);
+    futhark_values_f32_2d(ctx, GS_data_ft, GlobalSkyline_byteData);
     futhark_values_i64_1d(ctx, GS_idxs_ft, GlobalSkyline_idxData);
     mylog(logfile, "Unwrapped data into byte array.");
     futhark_free_f32_2d(ctx, GS_data_ft);
     futhark_free_i64_1d(ctx, GS_idxs_ft);
+    // TODO testing
+    /*
+      printf("Skyline tuples (from bytes):\n");
+      for(idx_t i=0; i<GlobalSkyline_len; i++) {
+        for(idx_t d=0; d<DIM; d++) {
+          float x = GlobalSkyline_byteData[i*DIM + d];
+          printf("%4.3f", x);
+          if(d<DIM-1) printf(", ");
+          else printf("\n");
+        }
+      }
+    */
 
     void *GlobalSkyline_numData[DIM];
     payloadColumnsFromByteArray(
       GlobalSkyline_numData,
       type_ids,
-      GlobalSkyline_byteData,
+      (void*)GlobalSkyline_byteData,
       DIM,
       GlobalSkyline_len
     );
     mylog(logfile, "Parsed byte array to separate float arrays for each column.");
     free(GlobalSkyline_byteData);
     // TODO testing
-    ///*
+    /*
       printf("Skyline tuples:\n");
       for(idx_t i=0; i<GlobalSkyline_len; i++) {
         for(idx_t d=0; d<DIM; d++) {
-          printf("%f", ((float*)GlobalSkyline_numData[d])[i]);
+          printf("%4.3f", ((float*)GlobalSkyline_numData[d])[i]);
           if(d<DIM-1) printf(", ");
           else printf("\n");
         }
       }
-    //*/
+    */
   
   // 3 - Store Results to Database
     mylog(logfile, "Now to store results in duckdb database...");
