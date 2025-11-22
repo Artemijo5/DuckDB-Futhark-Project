@@ -719,14 +719,14 @@ def calc_global_Skyline [dim] 't 'ft 'pL_t
 		isPartitionDominated = skI.isPartitionDominated
 	}
 
-type~ skylineData [dim] 't 'pL_t = {skyTups : [][dim]t, pL : []pL_t}
+type~ skylineData [dim] 't 'pL_t = {len: idx_t.t, skyTups : [][dim]t, pL : []pL_t}
 
 -- "crack" it like an egg to get the final result
 def crack_Skyline [dim] 't 'pL_t
 	(skI : skylineInfo [dim] t pL_t)
 : skylineData [dim] t pL_t =
 	let (skyKeys, skyPl) = unzip skI.xys
-	in {skyTups = skyKeys, pL = skyPl}
+	in {len = length skyKeys, skyTups = skyKeys, pL = skyPl}
 
 
 -- ENTRY POINTS ----------------------------------------------------------------------------------------------------

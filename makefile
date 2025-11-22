@@ -31,7 +31,7 @@ radix_hash_join: radix_hash_join.c join_util.c radixJoin_util.c RadixJoinStages.
 		radixJoin_util.c join_util.c RadixJoinStages.c $(DEPS) $(CFLAGS)
 
 group_by_aggregation: group_by_aggregation.c $(DEPS)
-	$(CC) group_by_aggregation.c -o group_by_aggregation.o $(DEPS)
+	$(CC) group_by_aggregation.c -o group_by_aggregation.o $(DEPS) $(CFLAGS)
 
 C-ftSkyline: ftSkyline.fut
 	futhark c ftSkyline.fut --library
@@ -46,3 +46,9 @@ CUDA1-ftSkyline: ftSkyline.fut
 
 CUDA2-ftSkyline: ftSkyline.c
 	gcc ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
+
+skyline_test: skyline_test.c libftSkyline.so
+	gcc skyline.c -o skyline.o libftSkyline.so $(CFLAGS)
+
+Skyline: skyline.c mylogger.c libduckdb.so db_util.c libftSkyline.so
+	gcc skyline.c -o skyline.o mylogger.c libduckdb.so db_util.c libftSkyline.so $(CFLAGS)
