@@ -12,9 +12,9 @@
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)2
-#define BUFFER_CAP 1024//(long)2*CNK_TO_READ
+#define BUFFER_CAP 1//(long)2*CNK_TO_READ
 #define BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
-#define TABLE_SIZE BUFFER_SIZE//10*BUFFER_SIZE
+#define TABLE_SIZE 1*BUFFER_SIZE//10*BUFFER_SIZE
 
 #define DIM (long)2
 #define ANGULAR_SUBDIV (long)4
@@ -136,6 +136,7 @@ int main() {
     duckdb_query(con, "SELECT * FROM skyTbl;", &res);
     mylog(logfile, "Performed query to read skyTbl.");
     int isTblExhausted = false;
+    idx_t cur_idx=0;
     while(!isTblExhausted) {
       idx_t chunks_read = 0;
     	duckdb_data_chunk skyChunks[BUFFER_CAP];
@@ -146,54 +147,57 @@ int main() {
         if (cur_chunks_read==0) break;
       }
     	isTblExhausted = (chunks_read < (BUFFER_SIZE/CHUNK_SIZE));
-    	if(chunks_read==0) break;
     	mylog(logfile, " - - Obtained chunks.");
 
-    	idx_t cur_rows = 0;
-    	char* skyData = malloc(DIM*sizeof(float)*BUFFER_SIZE);
+      if(chunks_read>0) {
+      	idx_t cur_rows = 0;
+      	char* skyData = malloc(DIM*sizeof(float)*BUFFER_SIZE);
 
-    	for(idx_t j=0; j<chunks_read; j++) {
-    		idx_t cnk_size = duckdb_data_chunk_get_size(skyChunks[j]);
-    		void *cnk_dat[DIM];
-    		for(idx_t col=0; col<DIM; col++) {
-    			duckdb_vector vec = duckdb_data_chunk_get_vector(skyChunks[j], col);
-    			cnk_dat[col] = duckdb_vector_get_data(vec);
-    		}
-    		payloadColumnsToByteArray_preallocated(
-  			  skyData+cur_rows*DIM*sizeof(float),
-  			  DIM*sizeof(float),
-  			  byteSizes,
-  			  prefixSizes,
-  			  cnk_dat,
-  			  DIM,
-  			  cnk_size
-  			);
-  			cur_rows += cnk_size;
-  			duckdb_destroy_data_chunk(&(skyChunks[j]));
-    	}
-    	mylog(logfile, " - - Buffered data from chunks.");
+      	for(idx_t j=0; j<chunks_read; j++) {
+      		idx_t cnk_size = duckdb_data_chunk_get_size(skyChunks[j]);
+      		void *cnk_dat[DIM];
+      		for(idx_t col=0; col<DIM; col++) {
+      			duckdb_vector vec = duckdb_data_chunk_get_vector(skyChunks[j], col);
+      			cnk_dat[col] = duckdb_vector_get_data(vec);
+      		}
+      		payloadColumnsToByteArray_preallocated(
+    			  skyData+cur_rows*DIM*sizeof(float),
+    			  DIM*sizeof(float),
+    			  byteSizes,
+    			  prefixSizes,
+    			  cnk_dat,
+    			  DIM,
+    			  cnk_size
+    			);
+    			cur_rows += cnk_size;
+    			duckdb_destroy_data_chunk(&(skyChunks[j]));
+      	}
+      	mylog(logfile, " - - Buffered data from chunks.");
 
-    	struct futhark_f32_2d *skyData_ft = futhark_new_f32_2d(ctx, (float*)skyData, cur_rows, DIM);
-    	mylog(logfile, " - - Wrapped data into futhark core.");
-    	free(skyData);
+      	struct futhark_f32_2d *skyData_ft = futhark_new_f32_2d(ctx, (float*)skyData, cur_rows, DIM);
+      	mylog(logfile, " - - Wrapped data into futhark core.");
+      	free(skyData);
 
-    	struct futhark_opaque_skylineInfo_GFUR_float *skyWindow;
-    	struct futhark_opaque_skylineInfo_GFUR_float *local_skyWindow;
-    	struct futhark_opaque_skylineInfo_GFUR_float *interm_skyWindow;
+      	struct futhark_opaque_skylineInfo_GFUR_float *skyWindow;
+      	struct futhark_opaque_skylineInfo_GFUR_float *local_skyWindow;
+      	struct futhark_opaque_skylineInfo_GFUR_float *interm_skyWindow;
 
-    	futhark_entry_pointwise_slice_and_dice_for_Skyline_GFUR_float(ctx, &skyWindow, skB, skyData_ft, 0, false);
-    	mylog(logfile, " - - Applied pointwise filtering & angular partitioning ('slice-and-dice').");
-    	futhark_free_f32_2d(ctx, skyData_ft);
+      	futhark_entry_pointwise_slice_and_dice_for_Skyline_GFUR_float(ctx, &skyWindow, skB, skyData_ft, cur_idx, false);
+      	mylog(logfile, " - - Applied pointwise filtering & angular partitioning ('slice-and-dice').");
+      	futhark_free_f32_2d(ctx, skyData_ft);
 
-    	futhark_entry_calc_local_Skyline_GFUR_float(ctx, &local_skyWindow, skB, skyWindow);
-    	futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindow);
-    	mylog(logfile, " - - Applied local filtering.");
-    	futhark_entry_calc_intermSkyline_GFUR_float(ctx, &interm_skyWindow, skB, local_skyWindow, true, 1, 0, SIZE_THRESH);
-    	futhark_free_opaque_skylineInfo_GFUR_float(ctx, local_skyWindow);
-    	mylog(logfile, " - - Applied intermediate filtering steps.");
+      	futhark_entry_calc_local_Skyline_GFUR_float(ctx, &local_skyWindow, skB, skyWindow);
+      	futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindow);
+      	mylog(logfile, " - - Applied local filtering.");
+      	futhark_entry_calc_intermSkyline_GFUR_float(ctx, &interm_skyWindow, skB, local_skyWindow, true, 1, 0, SIZE_THRESH);
+      	futhark_free_opaque_skylineInfo_GFUR_float(ctx, local_skyWindow);
+      	mylog(logfile, " - - Applied intermediate filtering steps.");
 
-    	skyWindows[currently_windowed++] = interm_skyWindow;
-    	mylog(logfile, " - - Cached this window's filtered results.");
+      	skyWindows[currently_windowed++] = interm_skyWindow;
+      	mylog(logfile, " - - Cached this window's filtered results.");
+        cur_idx += cur_rows;
+      }
+
     	// Collapse windows
     	if(isTblExhausted || currently_windowed==5) {
     		logdbg(
