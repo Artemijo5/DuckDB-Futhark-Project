@@ -8,15 +8,15 @@
 #include "mylogger.h"
 #include "db_util.h"
 
-#define LOGFILE "stdout"//"skyline.log.txt"
+#define LOGFILE NULL//"stdout"//"skyline.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)2
 #define BUFFER_CAP (long)2*CNK_TO_READ
 #define BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
-#define TABLE_SIZE 10*BUFFER_SIZE
+#define TABLE_SIZE (long)10//(long)10*BUFFER_SIZE
 
-#define DIM (long)2
+#define DIM (long)3
 #define ANGULAR_SUBDIV (long)4
 #define MINVAL (float)0.0
 #define MAXVAL (float)100.0
@@ -59,7 +59,7 @@ int main() {
 
   // Create the table tbl on which the testing will be done.
     char queryStr[150 + 20*DIM];
-    int queryLen = sprintf(queryStr, "CREATE OR REPLACE TEMP TABLE skyTbl (");
+    int queryLen = sprintf(queryStr, "CREATE OR REPLACE TABLE skyTbl (");
     for(idx_t i=0; i<DIM; i++) {
     	queryLen += sprintf(queryStr+queryLen, "x%ld FLOAT", i+1);
     	if(i<DIM-1) queryLen += sprintf(queryStr+queryLen, ", ");
@@ -295,6 +295,8 @@ int main() {
     int64_t GlobalSkyline_len;
     futhark_project_opaque_skylineData_GFUR_float_len(ctx, &GlobalSkyline_len, GlobalSkylineData_ft);
     futhark_free_opaque_skylineData_GFUR_float(ctx, GlobalSkylineData_ft);
+    // TODO testing
+    printf("Skyline length: %ld\n", GlobalSkyline_len);
 
     char *GlobalSkyline_byteData = malloc(GlobalSkyline_len*DIM*sizeof(float));
     idx_t *GlobalSkyline_idxData = malloc(GlobalSkyline_len*sizeof(int64_t));
@@ -316,6 +318,17 @@ int main() {
     );
     mylog(logfile, "Parsed byte array to separate float arrays for each column.");
     free(GlobalSkyline_byteData);
+    // TODO testing
+    ///*
+      printf("Skyline tuples:\n");
+      for(idx_t i=0; i<GlobalSkyline_len; i++) {
+        for(idx_t d=0; d<DIM; d++) {
+          printf("%f", ((float*)GlobalSkyline_numData[d])[i]);
+          if(d<DIM-1) printf(", ");
+          else printf("\n");
+        }
+      }
+    //*/
   
   // 3 - Store Results to Database
     mylog(logfile, "Now to store results in duckdb database...");
@@ -349,6 +362,7 @@ int main() {
       duckdb_data_chunk cnk = duckdb_create_data_chunk(ltype_ids, DIM+1);
 
       idx_t to_copy = (GlobalSkyline_len-i >= CHUNK_SIZE)? CHUNK_SIZE: GlobalSkyline_len-i;
+      duckdb_data_chunk_set_size(cnk, to_copy);
       for(idx_t col=0; col<DIM; col++) {
         duckdb_vector vec = duckdb_data_chunk_get_vector(cnk, col);
         void *dat = duckdb_vector_get_data(vec);
@@ -364,7 +378,8 @@ int main() {
       }
 
       duckdb_destroy_data_chunk(&cnk);
-      if((i+CHUNK_SIZE)%(60*CHUNK_SIZE)==0) {
+      //if((i+CHUNK_SIZE)%(60*CHUNK_SIZE)==0) {
+      if(true) {
         duckdb_appender_flush(gs_appender);
       }
     }

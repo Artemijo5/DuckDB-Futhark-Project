@@ -6,17 +6,17 @@ CUDAFLAGS=-lcuda -lcudart -lnvrtc
 
 C-ftRelational: ftRelational.fut
 	futhark c ftRelational.fut --library
-	gcc ftRelational.c -o libftRelational.so $(LIBFLAGS)
+	$(CC) ftRelational.c -o libftRelational.so $(LIBFLAGS)
 
 CUDA-ftRelational: ftRelational.fut
 	futhark cuda ftRelational.fut --library
-	gcc ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
+	$(CC) ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
 
 CUDA1-ftRelational: ftRelational.fut
 	futhark cuda ftRelational.fut --library
 
 CUDA2-ftRelational: ftRelational.c
-	gcc ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
+	$(CC) ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
 
 two_pass_sort: two_pass_sort.c sortstages.c sort_util.c $(DEPS)
 	$(CC) two_pass_sort.c -o two_pass_sort.o \
@@ -35,20 +35,20 @@ group_by_aggregation: group_by_aggregation.c $(DEPS)
 
 C-ftSkyline: ftSkyline.fut
 	futhark c ftSkyline.fut --library
-	gcc ftSkyline.c -o libftSkyline.so $(LIBFLAGS)
+	$(CC) ftSkyline.c -o libftSkyline.so $(LIBFLAGS)
 
 CUDA-ftSkyline: ftSkyline.fut
 	futhark cuda ftSkyline.fut --library
-	gcc ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
+	$(CC) ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
 
 CUDA1-ftSkyline: ftSkyline.fut
 	futhark cuda ftSkyline.fut --library
 
 CUDA2-ftSkyline: ftSkyline.c
-	gcc ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
+	$(CC) ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
 
 skyline_test: skyline_test.c libftSkyline.so
-	gcc skyline.c -o skyline.o libftSkyline.so $(CFLAGS)
+	$(CC) skyline_test.c -lm -o skyline_test.o libduckdb.so libftSkyline.so $(CFLAGS)
 
 Skyline: skyline.c mylogger.c libduckdb.so db_util.c libftSkyline.so
-	gcc skyline.c -o skyline.o mylogger.c libduckdb.so db_util.c libftSkyline.so $(CFLAGS)
+	$(CC) skyline.c -lm -o skyline.o mylogger.c libduckdb.so db_util.c libftSkyline.so $(CFLAGS)
