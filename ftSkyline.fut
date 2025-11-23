@@ -661,7 +661,7 @@ def calc_intermediate_skyline [dim] 't 'ft 'pL_t
 		isPartitionDominated = skI.isPartitionDominated
 	}
 
-def calc_global_Skyline [dim] 't 'ft 'pL_t
+def old_calc_global_Skyline [dim] 't 'ft 'pL_t
 	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
 	(skI : skylineInfo [dim] t pL_t)
@@ -718,6 +718,51 @@ def calc_global_Skyline [dim] 't 'ft 'pL_t
 		part_idx = zuowei,
 		isPartitionDominated = skI.isPartitionDominated
 	}
+
+def calc_global_Skyline [dim] 't 'ft 'pL_t
+	(skOp : skylineOp t ft)
+	(skB : skylineBase [dim] t)
+	(skI : skylineInfo [dim] t pL_t)
+	(m_size : idx_t.t)
+: skylineInfo [dim] t pL_t =
+	let n = length skI.xys
+	let extPar = idx_t.min n (idx_t.max 1 (m_size/n))
+	let num_iter = (extPar + n - 1)/extPar
+	let (new_xys, new_pids) =
+		let new_is_ = loop ni = (iota n) for j in (iota num_iter) do
+			let inf = j*extPar
+			let sup = idx_t.min (inf+extPar) n
+			let idx_range = (inf..<sup) :> [sup-inf]i64
+			let this_xs = skI.xys[inf:sup] |> map (.0)
+			let upd_idx = this_xs
+				|> map (\this_x ->
+					skI.xys
+						|> map (\(cmp_x,_) ->
+							(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
+							&&
+							(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
+						)
+				)
+				|> map (any (id))
+				|> zip idx_range
+				|> map (\(i,elimd) -> if elimd then (-1) else i)
+			in ni with [inf:sup] = upd_idx
+		let new_is = new_is_ |> filter (>=0)
+		let nxys = new_is |> map (\i -> skI.xys[i])
+		let npids =
+			let all_pids = skI.xys |> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
+			in new_is |> map (\i -> all_pids[i])
+		in (nxys, npids)
+	let zuowei =
+		let n_filt = length new_pids
+		let counts = hist (+) 0 skB.total_part_no (new_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
+		in exscan (+) 0 counts
+	in {
+		xys = new_xys,
+		part_idx = zuowei,
+		isPartitionDominated = skI.isPartitionDominated
+	}
+
 
 type~ skylineData [dim] 't 'pL_t = {len: idx_t.t, skyTups : [][dim]t, pL : []pL_t}
 
@@ -826,8 +871,9 @@ def crack_Skyline [dim] 't 'pL_t
 		entry calc_global_Skyline_GFUR_double [dim]
 			(skB : skylineBase_double [dim])
 			(skI : skylineInfo_GFUR_double [dim])
+			(m_size : idx_t.t)
 		: skylineInfo_GFUR_double [dim] =
-			calc_global_Skyline skylineOp_double skB skI
+			calc_global_Skyline skylineOp_double skB skI m_size
 
 		-- takes a very long time to compile...
 		entry merge_Skylines_5_GFUR_double [dim]
@@ -973,8 +1019,9 @@ def crack_Skyline [dim] 't 'pL_t
 		entry calc_global_Skyline_GFUR_float [dim]
 			(skB : skylineBase_float [dim])
 			(skI : skylineInfo_GFUR_float [dim])
+			(m_size : idx_t.t)
 		: skylineInfo_GFUR_float [dim] =
-			calc_global_Skyline skylineOp_float skB skI
+			calc_global_Skyline skylineOp_float skB skI m_size
 
 		-- takes a very long time to compile...
 		entry merge_Skylines_5_GFUR_float [dim]
@@ -1072,11 +1119,11 @@ def crack_Skyline [dim] 't 'pL_t
 		let skI = test_sort_2d use_measure
 		in calc_local_Skyline skOp skB skI
 
-	def test_global_skyline_2d (use_measure) =
+	def test_global_skyline_2d (use_measure) (m_size : idx_t.t) =
 		let skOp = skylineOp_double
 		let skB = copy test_skB_2d
 		let skI = test_local_skyline_2d use_measure
-		in calc_global_Skyline skOp skB skI
+		in calc_global_Skyline skOp skB skI m_size
 
 	def test_skylineBase_3d =
 		mk_skylineBase_from_grid
@@ -1132,7 +1179,7 @@ def crack_Skyline [dim] 't 'pL_t
 		let skI = test_sort_3d use_measure
 		in calc_local_Skyline skOp skB skI
 
-	def test_global_skyline_3d (use_measure) =
+	def test_global_skyline_3d (use_measure) (m_size : idx_t.t) =
 		let skOp = skylineOp_double
 		let skB = mk_skylineBase_from_grid
 			(skylineOp_double)
@@ -1141,7 +1188,7 @@ def crack_Skyline [dim] 't 'pL_t
 			([3,3,3])
 			([2,2] :> [3-1]i64)
 		let skI = test_local_skyline_3d use_measure
-		in calc_global_Skyline skOp skB skI
+		in calc_global_Skyline skOp skB skI m_size
 
 	def test_merge_skylines_5 (use_measure) =
 		let skOp = skylineOp_double
