@@ -661,64 +661,6 @@ def calc_intermediate_skyline [dim] 't 'ft 'pL_t
 		isPartitionDominated = skI.isPartitionDominated
 	}
 
-def old_calc_global_Skyline [dim] 't 'ft 'pL_t
-	(skOp : skylineOp t ft)
-	(skB : skylineBase [dim] t)
-	(skI : skylineInfo [dim] t pL_t)
-: skylineInfo [dim] t pL_t =
-	let n = length skI.xys
-	-- Loop Inversion
-	let (new_xys, new_pids) =
-		let new_is_ = loop ni = (iota n) for j in (iota n) do
-			let cmp_x = skI.xys[j].0
-			in ni |> map (\i ->
-				if (i<0 || i==j) then i else
-				let this_x = skI.xys[i].0
-				let elimd =
-						(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
-						&&
-						(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
-				in
-					if elimd then (-1) else i
-			)
-		let new_is = new_is_ |> filter (>=0)
-		let nxys = new_is |> map (\i -> skI.xys[i])
-		let npids =
-			-- -- calculating pids directly from filt_idx instead of gathering like this
-			-- -- gives "known compiler limitation - cannot handle un-sliceable allocation size"...
-			let all_pids = skI.xys |> map (\(x,_) -> (get_id_measure_from_coords skOp skB x).0)
-			in new_is |> map (\i -> all_pids[i])
-		in (nxys,npids)
-	--
-		--let new_xys = (indices skI.xys)
-		--	|> map (\i ->
-		--		let this_x = skI.xys[i].0
-		--		let loop_over =
-		--			loop (isElimd, j) = (false, 0)
-		--			while !isElimd && j<n do
-		--				let cmp_x = skI.xys[j].0
-		--				let elimd =
-		--					(foldl (&&) (true) (map2 (skOp.skyline_leq) this_x cmp_x))
-		--					&&
-		--					(foldl (||) (false) (map2 (skOp.skyline_lt) this_x cmp_x))
-		--				in (elimd, j+1)
-		--		in
-		--			if loop_over.0
-		--			then (-1)
-		--			else i
-		--	)
-		--	|> filter (>=0)
-		--	|> map (\i -> skI.xys[i])
-	let zuowei =
-		let n_filt = length new_pids
-		let counts = hist (+) 0 skB.total_part_no (new_pids :> [n_filt]idx_t.t) (replicate n_filt 1)
-		in exscan (+) 0 counts
-	in {
-		xys = new_xys,
-		part_idx = zuowei,
-		isPartitionDominated = skI.isPartitionDominated
-	}
-
 def calc_global_Skyline [dim] 't 'ft 'pL_t
 	(skOp : skylineOp t ft)
 	(skB : skylineBase [dim] t)
