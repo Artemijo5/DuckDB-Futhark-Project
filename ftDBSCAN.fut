@@ -8,23 +8,22 @@ type~ cluster_info [n] [dim] 'a = {core_points : [][dim]a, cluster_heads : [n]i6
 module dbscan_module (F : real) = {
 	type t = F.t
 
-	def (==) = (F.==)
-	def (!=) = (F.!=)
-	def (>)  = (F.>)
-	def (<)  = (F.<)
-	def (>=) = (F.>=)
-	def (<=) = (F.<=)
+	def eq  = (F.==)
+	def neq = (F.!=)
+	def gt  = (F.>)
+	def lt  = (F.<)
+	def geq = (F.>=)
+	def leq = (F.<=)
 
 	def min = F.min
 	def max = F.max
 	def minimum = F.minimum
 	def maximum = F.maximum
 
-	def (+)  = (F.+)
-	def (-)  = (F.-)
-	def (*)  = (F.*)
-	def (/)  = (F./)
-	def (**) = (F.**)
+	def plus   = (F.+)
+	def minus  = (F.-)
+	def times  = (F.*)
+	def over   = (F./)
 
 	def zero = F.i32 0
 	def one = F.i32 1
@@ -39,10 +38,8 @@ module dbscan_module (F : real) = {
 
 	def dist [dim] (x1 : [dim]t) (x2 : [dim]t)
 	: t =
-		let sx1 = x1 |> map (\x -> x*x)
-		let sx2 = x2 |> map (\x -> x*x)
-		let sdf = map2 (-) sx1 sx2
-		in sdf |> foldl (+) zero |> sqrt
+		let dfs = map2 (minus) x1 x2
+		in dfs |> map (\df -> df `times` df) |> foldl (plus) zero |> sqrt
 
 	def get_num_neighbours [n] [dim]
 		(dat : [n][dim]t)
@@ -58,7 +55,7 @@ module dbscan_module (F : real) = {
 				|> map (\this_x ->
 					dat
 						|> map (\cmp_x -> dist this_x cmp_x)
-						|> countFor (\d -> d<=eps)
+						|> countFor (\d -> d `leq` eps)
 				)
 			in nnBuff with [inf:sup] = this_neighCount
 
@@ -75,63 +72,59 @@ module dbscan_module (F : real) = {
 	: []([dim]t,i64) =
 		(zip3 isCore dat neighbourCounts) |> filter (\(ic,_,_) -> ic) |> map (\(_,x,c) -> (x,c))
 
-	-- this will be a pain to test & compile & fix...
-	-- if doesn't do cuda compilation, will have to simplify somehow...
-	-- maybe make sequential first and work from there...
+	
 	def find_cluster_heads [n] [dim]
 		(core_dat : [n][dim]t)
 		(neighbourCounts : [n]i64)
 		(eps : t)
 		(minPts : i64)
 		(extPar : i64)
+		(gather_psize : i64)
 	: [n]i64 =
 		let inner_iter = (extPar + n - 1)/extPar
-		let (assigned_head,_,_) =
-		loop (curHead, j, estim_len) = (iota n, 0, n)
-		while j<estim_len do
-			let assignHead =
-			loop md = copy curHead
-			for k in (iota inner_iter) do
-				let inf = k*extPar
-				let sup = i64.min n (inf+extPar)
-				let this_pts = curHead[inf:sup]
-				let this_num_neighbours = this_pts |> map (\hi -> neighbourCounts[hi]) -- TODO partitioned gather?
-				let min_dist_pts =
-					-- find minimum distance core point other than the current one
-					this_pts |> map (\this_hi ->
-						let this_x = dat[this_hi]
-						let dists = curHead
-							|> map (\h -> core_dat[h])
-							|> map (\cand -> dist x cand)
-						let closest = reduce_comm (\(d1, ind1) (d2, ind2) ->
-								if ind1==this_hi then (d2, ind2)
-								else if ind2==this_hi || (d1<d2) then (d1,ind1)
-								else if d2<d1 then (d2,ind2)
-								else (d1, i64.min ind1 ind2) -- equal distances, handled here for determinism
-							)
-							(highest, this_hi)
-							(zip dists curHead)
-						in
-							if closest.0 <= eps
-							then closest.1
-							else this_hi
-					)
-				let min_dist_neighs = min_dist_pts |> map (\ni -> neighbourCounts[ni]) -- TODO partitioned gather?
-				let this_update_heads map4 (\hi hc ni nc ->
-						if hi==ni || hc>nc || (hc==nc && hi<ni)
-						then hi
-						else ni
-					)
-					this_pts
-					this_num_neighbours
-					min_dist_pts
-					min_dist_neighs
-				in md with [inf:sup] = this_update_heads
-			let cur_finalIter_estim = curHead
-				|> zip assignHead
-				|> countFor (\alt neu -> alt != neu)
-			in (assignHead, j+1, cur_finalIter_estim)
-		in assigned_head
+		-- Stage 1 - find nearest neighbour
+		-- TODO CHANGE THIS
+		-- IT HAS TO FIND THE CORE POINT IN ITS NEIGHBOURHOOD WITH MOST NEIGHBOURS
+		let nearestNeighbours = loop neighBuff = (iota n) for j in (iota extPar) do
+			let inf = j*extPar
+			let sup = i64.min n (inf+extPar)
+			let this_inds = (inf..<sup) :> [sup-inf]i64
+			let this_pts = core_dat[inf:sup] :>[sup-inf][dim]t
+			let this_nearest = map2 (\ind pt ->
+					let dists = core_dat
+						|> map(\other_pt ->
+							dist pt other_pt
+						)
+					let closest = core_dat
+						|> argmin (lt) (eq) (highest)
+					in if (dists[closest] `leq` eps) then closest else ind
+				)
+				this_inds
+				this_pts
+			let this_neighCounts = neighbourCounts[inf:sup] :> [sup-inf][dim]t
+			let rival_neighCounts = partitioned_gather_over_array ((i32.i64 dim)*i64.num_bits) gather_psize
+				this_neighCounts neighbourCounts this_nearest
+			let upd = map4 (\nc rnc ind rind ->
+					if nc>rnc || (nc==rnc && ind<rind)
+					then ind
+					else rind
+				)
+				this_neighCounts
+				rival_neighCounts
+				this_inds
+				this_nearest
+			in neighBuff with [inf:sup] = upd
+		-- Stage 2 - iteratively look for cluster head
+		-- cluster heads are going to be the points that have themselves assigned as nearest neighbours
+		-- making them the point with most neighbours in that cluster
+		-- or the point with the smallest index out of the ones that tie with it
+		let (clusterHeads,_) = loop (chBuff,cont) = (nearestNeighbours,true) while cont do
+			let new_cluster_head = partitioned_gather_over_array ((i32.i64 dim)*i64.num_bits) gather_psize
+				chBuff chBuff chBuff
+			let still_cont = any (id) (map2 (!=) new_cluster_head chBuff)
+			in (new_cluster_head, still_cont)
+		in clusterHeads
+
 
 	def match_to_cluster_head [n] [cn] [dim]
 		(dat : [n][dim]t)
@@ -150,8 +143,8 @@ module dbscan_module (F : real) = {
 				|> map (\cd -> dist this_x cd)
 				|> zip cluster_head
 				|> reduce_comm (\(ch1,d1) (ch2,d2) ->
-					if d1>eps && d2>eps then (-1,0)
-					else if d1<d2 then (ch1,d1)
+					if (d1 `gt` eps) && (d2 `gt` eps) then (-1,0)
+					else if (d1 `lt` d2) then (ch1,d1)
 					else (ch2,d2)
 				) (-1,highest)
 			) |> map (.0)
