@@ -10,13 +10,13 @@
 #include "smjutil.h"
 #include "SMJstages.h"
 
-#define LOGFILE "sort_merge_join.log.txt"
+#define LOGFILE "stdout"//"sort_merge_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 1024*CHUNK_SIZE
+#define BUFFER_SIZE 256*CHUNK_SIZE
 
-#define R_TABLE_SIZE 1024*CHUNK_SIZE
-#define S_TABLE_SIZE 2048*CHUNK_SIZE
+#define R_TABLE_SIZE 25*CHUNK_SIZE
+#define S_TABLE_SIZE 25*CHUNK_SIZE
 
 #define BLOCK_SIZE (idx_t)128000 // TODO segfault (...)
 #define MERGE_PARTITION_SIZE 512*CHUNK_SIZE
@@ -53,6 +53,26 @@ int main() {
     return -1;
   }
   FILE* func_logfile = (VERBOSE)? logfile: NULL;
+
+  char log_param[10000];
+  sprintf(log_param,
+    "Logging program parametres:\n"
+    "\tR TABLE NAME       %s\n"
+    "\tS TABLE NAME       %s\n"
+    "\tR TABLE SIZE       %ld\n"
+    "\tS TABLE SIZE       %ld\n"
+    "\tBUFFER SIZE        %ld\n"
+    "\tBUFFER CAPACITY    %ld\n"
+    "\tPARALLEL BYTES     %ld\n"
+    "\tGATHER BYTES       %ld\n"
+    "\tR_JOIN_BUFFER      %ld\n"
+    "\tS_JOIN_BUFFER      %ld\n"
+    "\tVERBOSE            %d",
+    R_TBL_NAME, S_TBL_NAME, R_TABLE_SIZE, S_TABLE_SIZE,
+    BUFFER_SIZE, BUFFER_SIZE/CHUNK_SIZE, MERGE_PARTITION_SIZE, GATHER_PSIZE,
+    R_JOIN_BUFFER, S_JOIN_BUFFER, VERBOSE
+  );
+  mylog(logfile, log_param);
 
   // DuckDB initialisation
   duckdb_database db;

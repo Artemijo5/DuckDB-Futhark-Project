@@ -8,10 +8,10 @@
 #include "sort_util.h"
 #include "sortstages.h"
 
-#define LOGFILE "two_pass_sort.log.txt"
+#define LOGFILE "stdout"//"two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 256*CHUNK_SIZE
+#define BUFFER_SIZE 1*CHUNK_SIZE
 #define TABLE_SIZE BUFFER_SIZE - 12
 
 #define BLOCK_SIZE (idx_t)2048
@@ -28,6 +28,17 @@ int main() {
     perror("Failed to initialise logger.");
     return -1;
   }
+
+  char log_param[10000];
+  sprintf(log_param,
+    "Logging program parametres:\n"
+    "\tTABLE SIZE         %ld\n"
+    "\tBUFFER SIZE        %ld\n"
+    "\tBUFFER CAPACITY    %ld\n"
+    "\tBLOCK_SIZE         %ld",
+    TABLE_SIZE,BUFFER_SIZE,BUFFER_SIZE/CHUNK_SIZE,BLOCK_SIZE
+  );
+  mylog(logfile, log_param);
 
   // DuckDB initialisation
   duckdb_database db;

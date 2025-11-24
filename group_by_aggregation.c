@@ -7,12 +7,12 @@
 #include "mylogger.h"
 #include "db_util.h"
 
-#define LOGFILE "group_by_aggregation.log.txt"
+#define LOGFILE "stdout"//"group_by_aggregation.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 512*CHUNK_SIZE
 #define TABLE_SIZE 4*BUFFER_SIZE
-#define NUM_KEYS 25
+#define NUM_KEYS (int64_t)25
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "4GB"
@@ -25,6 +25,17 @@ int main() {
     perror("Failed to initialise logger.");
     return -1;
   }
+
+  char log_param[10000];
+  sprintf(log_param,
+    "Logging program parametres:\n"
+    "\tTABLE SIZE         %ld\n"
+    "\tBUFFER SIZE        %ld\n"
+    "\tBUFFER CAPACITY    %ld\n"
+    "\tNUM_KEYS           %ld",
+    TABLE_SIZE,BUFFER_SIZE,BUFFER_SIZE/CHUNK_SIZE,NUM_KEYS
+  );
+  mylog(logfile, log_param);
 
   // DuckDB initialisation
   duckdb_database db;
@@ -59,7 +70,8 @@ int main() {
     duckdb_prepare(
       con,
       //"INSERT INTO tbl (SELECT ($1 - i), 10000*random(), 10000*random() FROM range($1) t(i));",
-      "INSERT INTO tbl (SELECT ($1)*random(), 6 + 64*random(), 100*random() FROM range($2) t(i));",
+      "INSERT INTO tbl (SELECT ($1)*random(), ((i%10)+(i%6)-2+5*random()), (1.2*(i%10)+0.6*(i%4)-5+7*random())"
+      "FROM range($2) t(i));",
       &init_stmt
     ) 
     == DuckDBError

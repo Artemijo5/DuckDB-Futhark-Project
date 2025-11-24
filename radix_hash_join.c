@@ -10,17 +10,17 @@
 #include "radixJoin_util.h"
 #include "RadixJoinStages.h"
 
-#define LOGFILE "radix_hash_join.log.txt"
+#define LOGFILE "stdout"//"radix_hash_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 1024*CHUNK_SIZE
+#define BUFFER_SIZE 256*CHUNK_SIZE
 
-#define R_TABLE_SIZE 256*CHUNK_SIZE
-#define S_TABLE_SIZE 256*CHUNK_SIZE
+#define R_TABLE_SIZE 2*CHUNK_SIZE
+#define S_TABLE_SIZE 2*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define MAX_PARTITION_SIZE CHUNK_SIZE
-#define SCATTER_PSIZE 32000
+#define SCATTER_PSIZE (idx_t)32000
 
 #define RADIX_BITS 16
 // TODO for some reason repartitioning past a threshold (different per try) omits result tuples...
@@ -38,8 +38,8 @@
 #define R_KEY "k"
 #define S_KEY "k"
 
-#define R_JOIN_BUFFER 128*CHUNK_SIZE
-#define S_JOIN_BUFFER 128*CHUNK_SIZE
+#define R_JOIN_BUFFER 1*CHUNK_SIZE
+#define S_JOIN_BUFFER 2*CHUNK_SIZE
 #define JOIN_TBL_NAME "R_S_HashJoinTbl_GFTR"
 
 #define DBFILE "testdb.db"
@@ -56,6 +56,29 @@ int main() {
     return -1;
   }
   FILE* func_logfile = (VERBOSE)? logfile: NULL;
+
+  char log_param[10000];
+  sprintf(log_param,
+    "Logging program parametres:\n"
+    "\tR TABLE NAME       %s\n"
+    "\tS TABLE NAME       %s\n"
+    "\tR TABLE SIZE       %ld\n"
+    "\tS TABLE SIZE       %ld\n"
+    "\tBUFFER SIZE        %ld\n"
+    "\tBUFFER CAPACITY    %ld\n"
+    "\tMAX PARTITION SIZE %ld\n"
+    "\tRADIX BITS         %d\n"
+    "\tMAX PART DEPTH     %d\n"
+    "\tSCATTER BYTES      %ld\n"
+    "\tR_JOIN_BUFFER      %ld\n"
+    "\tS_JOIN_BUFFER      %ld\n"
+    "\tVERBOSE            %d",
+    R_TBL_NAME, S_TBL_NAME, R_TABLE_SIZE, S_TABLE_SIZE,
+    BUFFER_SIZE, BUFFER_SIZE/CHUNK_SIZE,
+    MAX_PARTITION_SIZE, RADIX_BITS, MAX_DEPTH,
+    SCATTER_PSIZE, R_JOIN_BUFFER, S_JOIN_BUFFER, VERBOSE
+  );
+  mylog(logfile, log_param);
 
   // DuckDB initialisation
   duckdb_database db;

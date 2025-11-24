@@ -8,7 +8,7 @@
 #include "mylogger.h"
 #include "db_util.h"
 
-#define LOGFILE "skyline.log.txt"
+#define LOGFILE "stdout"//"skyline.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)2
