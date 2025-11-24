@@ -82,43 +82,34 @@ module dbscan_module (F : real) = {
 		(gather_psize : i64)
 	: [n]i64 =
 		let inner_iter = (extPar + n - 1)/extPar
-		-- Stage 1 - find nearest neighbour
-		-- TODO CHANGE THIS
-		-- IT HAS TO FIND THE CORE POINT IN ITS NEIGHBOURHOOD WITH MOST NEIGHBOURS
-		let nearestNeighbours = loop neighBuff = (iota n) for j in (iota extPar) do
+		-- Stage 1 - find neighbour with highest neighbour count
+		let heaviestNeighbours = loop neighBuff = (iota n) for j in (iota extPar) do
 			let inf = j*extPar
 			let sup = i64.min n (inf+extPar)
-			let this_inds = (inf..<sup) :> [sup-inf]i64
 			let this_pts = core_dat[inf:sup] :>[sup-inf][dim]t
-			let this_nearest = map2 (\ind pt ->
-					let dists = core_dat
-						|> map(\other_pt ->
+			let this_first_ch = this_pts
+				|> map (\pt ->
+					let isNeighbour = core_dat
+						|> map (\other_pt ->
 							dist pt other_pt
 						)
-					let closest = core_dat
-						|> argmin (lt) (eq) (highest)
-					in if (dists[closest] `leq` eps) then closest else ind
+						|> map (\d -> d `leq` eps)
+					let nearby_neighCounts = map2
+						(\isNeighbour neighCount ->
+							if isNeighbour
+							then neighCount
+							else 0
+						)
+					-- passing > and lowest instead of < and highest
+					-- effectively makes this argmax
+					in argmin (>) (==) (i64.lowest) nearby_neighCounts
 				)
-				this_inds
-				this_pts
-			let this_neighCounts = neighbourCounts[inf:sup] :> [sup-inf][dim]t
-			let rival_neighCounts = partitioned_gather_over_array ((i32.i64 dim)*i64.num_bits) gather_psize
-				this_neighCounts neighbourCounts this_nearest
-			let upd = map4 (\nc rnc ind rind ->
-					if nc>rnc || (nc==rnc && ind<rind)
-					then ind
-					else rind
-				)
-				this_neighCounts
-				rival_neighCounts
-				this_inds
-				this_nearest
-			in neighBuff with [inf:sup] = upd
+			in neighBuff with [inf:sup] = this_first_ch
 		-- Stage 2 - iteratively look for cluster head
 		-- cluster heads are going to be the points that have themselves assigned as nearest neighbours
 		-- making them the point with most neighbours in that cluster
 		-- or the point with the smallest index out of the ones that tie with it
-		let (clusterHeads,_) = loop (chBuff,cont) = (nearestNeighbours,true) while cont do
+		let (clusterHeads,_) = loop (chBuff,cont) = (heaviestNeighbours,true) while cont do
 			let new_cluster_head = partitioned_gather_over_array ((i32.i64 dim)*i64.num_bits) gather_psize
 				chBuff chBuff chBuff
 			let still_cont = any (id) (map2 (!=) new_cluster_head chBuff)
