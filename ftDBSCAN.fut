@@ -1,9 +1,8 @@
 import "ftbasics"
+import "lib/github.com/diku-dk/sorts/merge_sort"
 
 -- TODO
 -- test, compile, fix, etc
-
-type~ cluster_info [n] [dim] 'a = {core_points : [][dim]a, cluster_heads : [n]i64}
 
 module dbscan_module (F : real) = {
 	type t = F.t
@@ -82,40 +81,7 @@ module dbscan_module (F : real) = {
 		(gather_psize : i64)
 	: [n]i64 =
 		let inner_iter = (extPar + n - 1)/extPar
-		-- Stage 1 - find neighbour with highest neighbour count
-		let heaviestNeighbours = loop neighBuff = (iota n) for j in (iota extPar) do
-			let inf = j*extPar
-			let sup = i64.min n (inf+extPar)
-			let this_pts = core_dat[inf:sup] :>[sup-inf][dim]t
-			let this_first_ch = this_pts
-				|> map (\pt ->
-					let isNeighbour = core_dat
-						|> map (\other_pt ->
-							dist pt other_pt
-						)
-						|> map (\d -> d `leq` eps)
-					let nearby_neighCounts = map2
-						(\isNeighbour neighCount ->
-							if isNeighbour
-							then neighCount
-							else 0
-						)
-					-- passing > and lowest instead of < and highest
-					-- effectively makes this argmax
-					in argmin (>) (==) (i64.lowest) nearby_neighCounts
-				)
-			in neighBuff with [inf:sup] = this_first_ch
-		-- Stage 2 - iteratively look for cluster head
-		-- cluster heads are going to be the points that have themselves assigned as nearest neighbours
-		-- making them the point with most neighbours in that cluster
-		-- or the point with the smallest index out of the ones that tie with it
-		let (clusterHeads,_) = loop (chBuff,cont) = (heaviestNeighbours,true) while cont do
-			let new_cluster_head = partitioned_gather_over_array ((i32.i64 dim)*i64.num_bits) gather_psize
-				chBuff chBuff chBuff
-			let still_cont = any (id) (map2 (!=) new_cluster_head chBuff)
-			in (new_cluster_head, still_cont)
-		in clusterHeads
-
+		
 
 	def match_to_cluster_head [n] [cn] [dim]
 		(dat : [n][dim]t)
@@ -145,15 +111,32 @@ module dbscan_module (F : real) = {
 		(dat : [n][dim]t)
 		(eps : t)
 		(minPts : i64)
-		(extPar : i64)
-	= 0 -- TODO
-	-- : cluster_info [n] [dim] t =
+		(pMem : i64)
+		(gather_psize : i64)
+	: [n]i64 =
+		let extPar1 = i64.max 1 (n/pMem)
+		let neighCounts = get_num_neighbours dat eps extPar1
+		let isCore = find_core_points neighCounts minPts
+		let (corePts, coreNeighCounts) = unzip (isolate_core_points dat neighCounts isCore)
+		let extPar2 = i64.max 1 ((length corePts)/pMem)
+		let core_chs = find_cluster_heads corePts coreNeighCounts eps minPts extPar2 gather_psize
+		in match_to_cluster_head dat core core_chs eps extPar2
+		-- Note : since core_points is discared, cluster head index stops referring directly to that point
+		-- but it still serves as a distinct cluster index
 
+	-- TODO version with payloads?
+	-- TODO must keep filtered cluster_ids as well
+--	def filter_out_noise [n] [dim]
+--		(dat : [n][dim]t)
+--		(cluster_ids : [n]i64)
+--	: [n]i64 =
+--		dat |> zip cluster_ids |> filter (\(_,cid) -> cid>=0) |> map (.0)
 
-
-
-
-
+	-- TODO version with payloads?
+	-- TODO must keep sorted cluster ids as well
+--	def sort_by_cluster_id [n] [dim]
+--		(dat : [n][dim]t)
+--		(cluster_ids)
 
 }
 

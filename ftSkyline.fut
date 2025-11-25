@@ -8,6 +8,8 @@ type^ skylineOp 't 'ft = {
 	over : t -> t -> t,
 	skyline_lt : t -> t -> bool,
 	skyline_leq : t -> t -> bool,
+	eq : t -> t -> bool,
+	skyline_lowest : t,
 	from_i64 : i64 -> t,
 	to_i64 : t -> i64,
 	to_float : t -> ft,
@@ -322,11 +324,28 @@ def pointwise_filter_for_Skyline [n] [dim] 't 'ft 'pL_t
 			|> map (foldl (skOp.fplus) (skOp.fzero))
 		let closestIdx = argmin (skOp.flt) (skOp.feq) (skOp.fhighest) dists
 		in xs[closestIdx]
+	-- Use the closest Euclidean point + the points with each smallest dim value
+	let filtering_points = (iota (dim+1))
+		|> seqmap (\d ->
+			if d==0
+			then closestPoint
+			else
+				let i = argmin
+					(\x1 x2 -> skOp.skyline_lt x2 x1)
+					(skOp.eq)
+					(skOp.skyline_lowest)
+					(xs |> map (\x -> x[d-1]))
+				in xs[i]
+		)
 	let filt_idxs = xs
 		|> map (\x ->
-			foldl (&&) (true) (map2 (skOp.skyline_leq) x closestPoint)
-			&&
-			foldl (||) (false) (map2 (skOp.skyline_lt) x closestPoint)
+			filtering_points
+				|> seqmap (\cmp_x ->
+					foldl (&&) (true) (map2 (skOp.skyline_leq) x cmp_x)
+					&&
+					foldl (||) (false) (map2 (skOp.skyline_lt) x cmp_x)
+				)
+				|> foldl (||) (false)
 		)
 		|> zip (iota n)
 		|> filter (\(i,elimd) -> !elimd)
@@ -460,13 +479,6 @@ def merge_Skylines_5 [dim] 't 'ft 'pL_t
 			(length skI3.xys) +
 			(length skI4.xys) +
 			(length skI5.xys)
-		let scatter_idx_base =
-			loop sc_is = (replicate 5 (replicate skB.total_part_no 0)) for j in (iota 5) do
-				let new_isb =
-					if j==0
-					then total_indices
-					else map2 (+) sc_is[j-1] total_indices
-				in sc_is with [j] = new_isb
 		let buff1 =
 			let scatter_idx = indices skI1.xys
 				|> map (\i -> 
@@ -540,18 +552,6 @@ def merge_Skylines_5 [dim] 't 'ft 'pL_t
 				)
 			in scatter buff4 scatter_idx skI5.xys
 		in buff5
-	--		|> filter (\(x,_) ->
-	--			let g = get_grid_id_from_coords skOp skB x
-	--			in !(partDominated[g])
-	--		)
-	--let zuowei =
-	--	let n_filt = length buff5
-	--	let skyline_parts = new_xys
-	--		|> map (\(x,_) ->
-	--			(get_id_measure_from_coords skOp skB x).0
-	--		) :> [n_filt]idx_t.t
-	--	let counts = hist (+) 0 skB.total_part_no skyline_parts (replicate n_filt 1)
-	--	in exscan (+) 0 counts
 	in {
 		xys = new_xys,
 		part_idx = total_indices,
@@ -727,6 +727,8 @@ def crack_Skyline [dim] 't 'pL_t
 			over = (/),
 			skyline_lt = (>),
 			skyline_leq = (>=),
+			eq = (==),
+			skyline_lowest = f64.highest,
 			from_i64 = (f64.i64),
 			to_i64 = (i64.f64),
 			to_float = (id),
@@ -875,6 +877,8 @@ def crack_Skyline [dim] 't 'pL_t
 			over = (/),
 			skyline_lt = (>),
 			skyline_leq = (>=),
+			eq = (==),
+			skyline_lowest = f32.highest,
 			from_i64 = (f32.i64),
 			to_i64 = (i64.f32),
 			to_float = (id),
@@ -1320,7 +1324,7 @@ def crack_Skyline [dim] 't 'pL_t
 		let dat = [[3.1,3.1,3.1]] ++ (copy test_points_3d)
 		in partwise_slice_and_dice_for_Skyline skOp skB1 skB2 dat (indices dat) false
 
-	def test_pointwise_slice_and_dice_with_board (ang_fine) =
+	def test_pointwise_slice_and_dice (ang_fine) =
 		let skOp = skylineOp_double
 		let skB = mk_skylineBase_from_grid
 			(skylineOp_double)
