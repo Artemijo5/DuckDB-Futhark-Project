@@ -52,3 +52,17 @@ CUDA2-ftSkyline: ftSkyline.c
 
 Skyline: skyline.c mylogger.c libduckdb.so db_util.c libftSkyline.so
 	$(CC) skyline.c -lm -o skyline.o mylogger.c libduckdb.so db_util.c libftSkyline.so $(CFLAGS)
+
+C-ftDBSCAN: ftDBSCAN.fut
+	futhark c ftDBSCAN.fut --library
+	$(CC) ftDBSCAN.c -o libftDBSCAN.so $(LIBFLAGS)
+
+CUDA-ftDBSCAN: ftDBSCAN.fut
+	futhark cuda ftDBSCAN.fut --library
+	$(CC) ftDBSCAN.c -o libftDBSCAN.so $(LIBFLAGS) $(CUDAFLAGS)
+
+CUDA1-ftDBSCAN: ftDBSCAN.fut
+	futhark cuda ftDBSCAN.fut --library
+
+CUDA2-ftDBSCAN: ftDBSCAN.c
+	$(CC) ftDBSCAN.c -o libftDBSCAN.so $(LIBFLAGS) $(CUDAFLAGS)

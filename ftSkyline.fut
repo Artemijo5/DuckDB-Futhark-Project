@@ -1,6 +1,8 @@
 import "lib/github.com/diku-dk/sorts/merge_sort"
 import "ftbasics"
 
+-- TODO maybe rewrite as module in downtime
+
 type^ skylineOp 't 'ft = {
 	plus : t -> t -> t,
 	minus : t -> t -> t,

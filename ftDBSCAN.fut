@@ -1,12 +1,8 @@
 import "ftbasics"
-import "lib/github.com/diku-dk/sorts/merge_sort"
-
--- TODO
--- test, compile, fix, etc
 
 type~ core_cluster [dim] 'a = {core_pts: [][dim]a, core_ids: []i64}
 
-module dbscan_module (F : real) = {
+module dbscan_real (F : real) = {
 	type t = F.t
 
 	def eq  = (F.==)
@@ -57,7 +53,7 @@ module dbscan_module (F : real) = {
 					dat
 						|> map (\cmp_x -> dist this_x cmp_x)
 						|> countFor (\d -> d `leq` eps)
-				)
+				) |> map (\c -> c-1)
 			in nnBuff with [inf:sup] = this_neighCount
 
 	def find_core_points [n]
@@ -68,7 +64,6 @@ module dbscan_module (F : real) = {
 
 	def isolate_core_points [n] [dim]
 		(dat : [n][dim]t)
-		(neighbourCounts : [n]i64)
 		(isCore : [n]bool)
 	: [][dim]t =
 		(zip isCore dat) |> filter (\(ic,_) -> ic) |> map (\(_,x) -> x)
@@ -76,7 +71,6 @@ module dbscan_module (F : real) = {
 	def find_cluster_ids [n] [dim]
 		(core_dat : [n][dim]t)
 		(eps : t)
-		(minPts : i64)
 		(extPar : i64)
 		(gather_psize : i64)
 	: [n]i64 =
@@ -102,7 +96,7 @@ module dbscan_module (F : real) = {
 						in i64.minimum neighChs
 					) this_chs this_pts
 				in (copy chBuff_) with [inf:sup] = this_min_ch
-			let next_conv = (map2 (!=) chBuff next_chBuff) |> any (id)
+			let next_conv = (map2 (==) chBuff next_chBuff) |> all (id)
 			in (next_chBuff, next_conv)
 		-- List Ranking to obtain cluster ids
 		let is_cluster_head = map2 (==) (iota n) cluster_heads
@@ -145,9 +139,9 @@ module dbscan_module (F : real) = {
 		let extPar1 = i64.max 1 (pMem/n)
 		let neighCounts = get_num_neighbours dat eps extPar1
 		let isCore = find_core_points neighCounts minPts
-		let corePts = isolate_core_points dat neighCounts isCore
+		let corePts = isolate_core_points dat isCore
 		let extPar2 = i64.max 1 (pMem/(length corePts))
-		let core_cids = find_cluster_ids corePts eps minPts extPar2 gather_psize
+		let core_cids = find_cluster_ids corePts eps extPar2 gather_psize
 		in match_to_cluster_head dat corePts core_cids eps extPar2
 
 	def do_DBSCAN_star [n] [dim]
@@ -157,17 +151,79 @@ module dbscan_module (F : real) = {
 		(pMem : i64)
 		(gather_psize : i64)
 	: core_cluster [dim] t =
-		let extPar1 = i64.max 1 (n/pMem)
+		let extPar1 = i64.max 1 (pMem/n)
 		let neighCounts = get_num_neighbours dat eps extPar1
 		let isCore = find_core_points neighCounts minPts
-		let corePts = isolate_core_points dat neighCounts isCore
-		let extPar2 = i64.max 1 ((length corePts)/pMem)
-		let core_cids = find_cluster_ids corePts eps minPts extPar2 gather_psize
+		let corePts = isolate_core_points dat isCore
+		let extPar2 = i64.max 1 (pMem/(length corePts))
+		let core_cids = find_cluster_ids corePts eps extPar2 gather_psize
 		in {core_pts = corePts, core_ids = core_cids}
 }
 
 type~ core_cluster_float [dim] = core_cluster [dim] f32
 type~ core_cluster_double [dim] = core_cluster [dim] f64
 
-module dbscan_float = dbscan_module f32
-module dbscan_double = dbscan_module f64
+module dbscan_float = dbscan_real f32
+module dbscan_double = dbscan_real f64
+
+-- Tests
+
+	def test_dat : [][2]f32 = [
+		[2.00, 0.05],
+		[2.00, 2.00],
+		[2.20, 2.25],
+		[3.20, 2.20],
+		[1.75, 0.75],
+		[9.00, 1.00],
+		[0.20, 0.20],
+		[1.50, 1.00],
+		[0.50, 6.55],
+		[0.50, 7.50],
+		[9.50, 1.10],
+		[7.15, 1.80],
+		[8.50, 1.00],
+		[1.75, 8.00],
+		[0.20, 0.50],
+		[0.50, 1.50],
+		[1.00, 8.00],
+		[0.50, 5.75],
+		[1.50, 8.00],
+		[9.00, 9.00],
+		[7.15, 1.00],
+		[9.00, 1.50],
+		[9.00, 2.25],
+		[2.80, 7.90],
+		[0.50, 8.50],
+		[1.00, 1.00],
+		[1.10, 0.75],
+		[2.00, 7.50],
+	]
+
+	def test_find_neighbour_counts =
+		let dat : [][2]f32 = test_dat
+		in zip dat (dbscan_float.get_num_neighbours dat 1.0 (length dat))
+
+	def test_DBSCAN (pMem : i64) =
+		let dat : [][2]f32 = test_dat
+		in zip dat (dbscan_float.do_DBSCAN dat 1.0 3 pMem 1024)
+
+	def test_DBSCAN_star (pMem : i64) =
+		let dat : [][2]f32 = test_dat
+		let dat_star = dbscan_float.do_DBSCAN_star dat 1.0 3 pMem 1024
+		in zip dat_star.core_pts dat_star.core_ids
+
+
+-- Entry Points
+
+	entry ftDBSCAN_float = dbscan_float.do_DBSCAN
+	entry ftDBSCAN_double = dbscan_double.do_DBSCAN
+
+	entry ftDBSCAN_star_float [dim] dat eps minPts pMem gather_psize
+	: core_cluster_float [dim] =
+		dbscan_float.do_DBSCAN_star dat eps minPts pMem gather_psize
+
+	entry ftDBSCAN_star_double [dim] dat eps minPts pMem gather_psize
+	: core_cluster_double [dim] =
+		dbscan_double.do_DBSCAN_star dat eps minPts pMem gather_psize
+
+
