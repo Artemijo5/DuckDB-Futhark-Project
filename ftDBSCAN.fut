@@ -1,6 +1,6 @@
 import "ftbasics"
 
-type~ core_cluster [dim] 'a = {core_pts: [][dim]a, core_ids: []i64}
+type~ core_cluster [dim] 'a = {len: i64, core_pts: [][dim]a, core_ids: []i64}
 
 module dbscan_real (F : real) = {
 	type t = F.t
@@ -140,6 +140,10 @@ module dbscan_real (F : real) = {
 		let neighCounts = get_num_neighbours dat eps extPar1
 		let isCore = find_core_points neighCounts minPts
 		let corePts = isolate_core_points dat isCore
+		in
+			if (length corePts)==0
+			then (replicate n (-1))
+			else
 		let extPar2 = i64.max 1 (pMem/(length corePts))
 		let core_cids = find_cluster_ids corePts eps extPar2 gather_psize
 		in match_to_cluster_head dat corePts core_cids eps extPar2
@@ -155,9 +159,13 @@ module dbscan_real (F : real) = {
 		let neighCounts = get_num_neighbours dat eps extPar1
 		let isCore = find_core_points neighCounts minPts
 		let corePts = isolate_core_points dat isCore
+		in
+			if (length corePts)==0
+			then {len = 0, core_pts = corePts :> [0][dim]t, core_ids = [] :> [0]i64}
+			else
 		let extPar2 = i64.max 1 (pMem/(length corePts))
 		let core_cids = find_cluster_ids corePts eps extPar2 gather_psize
-		in {core_pts = corePts, core_ids = core_cids}
+		in {len = length corePts, core_pts = corePts, core_ids = core_cids}
 }
 
 type~ core_cluster_float [dim] = core_cluster [dim] f32

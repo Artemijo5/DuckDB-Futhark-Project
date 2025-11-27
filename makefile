@@ -66,3 +66,6 @@ CUDA1-ftDBSCAN: ftDBSCAN.fut
 
 CUDA2-ftDBSCAN: ftDBSCAN.c
 	$(CC) ftDBSCAN.c -o libftDBSCAN.so $(LIBFLAGS) $(CUDAFLAGS)
+
+DBSCAN: dbscan.c mylogger.c libduckdb.so db_util.c libftDBSCAN.so
+	$(CC) dbscan.c -lm -o dbscan.o mylogger.c libduckdb.so db_util.c libftDBSCAN.so $(CFLAGS)

@@ -22,8 +22,8 @@
 #define MAXVAL (float)100.0
 #define SIZE_THRESH BUFFER_SIZE/10
 
-#define USE_MANY_PTS true
 #define SKYLINE_MEMSIZE 1*BUFFER_SIZE
+#define USE_MANY_PTS true
 #define SKIP_LOCAL_SKYLINE true
 
 #define DBFILE "testdb.db"
@@ -42,15 +42,16 @@ int main() {
   char log_param[10000];
   sprintf(log_param,
     "Logging program parametres:\n"
-    "\tTABLE SIZE         %ld\n"
-    "\tBUFFER SIZE        %ld\n"
-    "\tBUFFER CAPACITY    %ld\n"
-    "\tDATA DIMENSIONS    %ld\n"
-    "\tANGLE SUBDIVISIONS %ld\n"
-    "\tSIZE THRESHOLD     %ld\n"
-    "\tSKYLINE MEMSIZE    %ld\n"
-    "\tSKIP LOCAL SKYLINE %d",
-    TABLE_SIZE,BUFFER_SIZE,BUFFER_CAP,DIM,ANGULAR_SUBDIV,SIZE_THRESH,SKYLINE_MEMSIZE,SKIP_LOCAL_SKYLINE
+    "\tTABLE SIZE           %ld\n"
+    "\tBUFFER SIZE          %ld\n"
+    "\tBUFFER CAPACITY      %ld\n"
+    "\tDATA DIMENSIONS      %ld\n"
+    "\tANGLE SUBDIVISIONS   %ld\n"
+    "\tSIZE THRESHOLD       %ld\n"
+    "\tSKYLINE MEMSIZE      %ld\n"
+    "\tFILTER WITH MANY PTS %d\n"
+    "\tSKIP LOCAL SKYLINE   %d",
+    TABLE_SIZE,BUFFER_SIZE,BUFFER_CAP,DIM,ANGULAR_SUBDIV,SIZE_THRESH,SKYLINE_MEMSIZE,USE_MANY_PTS,SKIP_LOCAL_SKYLINE
   );
   mylog(logfile, log_param);
 
