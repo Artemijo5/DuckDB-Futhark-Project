@@ -49,16 +49,15 @@ def sortgroup_find_known_key_counts [n] [key_no] 't
 	let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
 	let (bsearch_first,_) =
 		loop (search_is,last_step) = (replicate key_no 0, n) for _ in (iota num_iter) do
-			let this_step = i64.max 1 ((last_step+1)/2)
-			let cmps = search_is
+			let this_step = (last_step+1)/2
+			let cmps_ = search_is
 				|> map (\i ->
 					let prev_elem = if i<=0 then sorted_ks[0] else sorted_ks[i-1]
 					let cur_elem = if i<0 then sorted_ks[0] else sorted_ks[i]
 					let next_elem = if i>=(n-1) then sorted_ks[n-1] else sorted_ks[i+1]
 					in (i, prev_elem, cur_elem, next_elem)
 				)
-				|> zip k_ids
-				|> map (\(kv, (i, pv, cv, nv)) ->
+			let cmps = map2 (\kv (i, pv, cv, nv) ->
 					if i<0 then (-1) else
 					if (kv `eq` cv) && (i==0 || (kv `gt` pv))
 						then i
@@ -72,19 +71,18 @@ def sortgroup_find_known_key_counts [n] [key_no] 't
 						if (i == 0 || (kv `gt` pv))
 						then -1
 						else i64.max 0 (i-this_step)
-				)
+				) k_ids cmps_
 			in (cmps, this_step)
 	let (bsearch_last,_) =
 		loop (search_is,last_step) = (bsearch_first, n) for _ in (iota num_iter) do
 			let this_step = i64.max 1 ((last_step+1)/2)
-			let cmps = search_is
+			let cmps_ = search_is
 				|> map (\i ->
 					let cur_elem = if i<0 then sorted_ks[0] else sorted_ks[i]
 					let next_elem = if i>=(n-1) then sorted_ks[n-1] else sorted_ks[i+1]
 					in (i, cur_elem, next_elem)
 				)
-				|> zip k_ids
-				|> map (\(kv, (i, cv, nv)) ->
+			let cmps = map2 (\kv (i, cv, nv) ->
 					if i<0 then (-1) else
 					if (kv `eq` cv) && (i==(n-1) || (nv `gt` kv))
 						then i
@@ -94,7 +92,7 @@ def sortgroup_find_known_key_counts [n] [key_no] 't
 						then i64.min (n-1) (i+this_step)
 					else -- cv `gt` kv
 						i64.max 0 (i-this_step)
-				)
+				) k_ids cmps_
 			in (cmps, this_step)
 	let counts = map2 (\fm lm -> if fm<0 then 0 else lm-fm+1) bsearch_first bsearch_last
 	in (bsearch_first, counts)

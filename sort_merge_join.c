@@ -13,10 +13,10 @@
 #define LOGFILE "stdout"//"sort_merge_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 256*CHUNK_SIZE
+#define BUFFER_SIZE 16*CHUNK_SIZE
 
-#define R_TABLE_SIZE 25*CHUNK_SIZE
-#define S_TABLE_SIZE 25*CHUNK_SIZE
+#define R_TABLE_SIZE 256*CHUNK_SIZE
+#define S_TABLE_SIZE 256*CHUNK_SIZE
 
 #define BLOCK_SIZE (idx_t)128000 // TODO segfault (...)
 #define MERGE_PARTITION_SIZE 512*CHUNK_SIZE
