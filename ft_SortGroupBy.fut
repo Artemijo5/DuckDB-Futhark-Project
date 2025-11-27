@@ -45,50 +45,59 @@ def sortgroup_find_known_key_counts [n] [key_no] 't
 	(eq : t -> t -> bool)
 	(gt : t -> t -> bool)
 : ([key_no]idx_t.t, [key_no]idx_t.t) = -- returns index & size of each group
-	let init_step = idx_t.min 1 (n/2)
-	in k_ids
-		|> map (\kv ->
-			if (n==0) then (-1,0) else
-			let bsearch_first = 
-				loop (heshi, step) = (0, init_step)
-				while step>0 do
-					let cv = sorted_ks[heshi]
-					let pv = if heshi==0 then cv else sorted_ks[heshi-1]
-					let nv = if heshi==n-1 then cv else sorted_ks[heshi+1]
-					in
-						if (kv `eq` cv) && (heshi==0 || (kv `gt` pv))
-							then (heshi, 0)
-						else if (kv `eq` cv)
-							then (heshi-step, idx_t.max 1 (step/2))
-						else if (kv `gt` cv) then
-							if (heshi == n-1 || (nv `gt` kv))
-							then (-1, 0)
-							else (heshi+step, idx_t.max 1 (step/2))
-						else
-							if (heshi==0 || (kv `gt` pv))
-							then (-1, 0)
-							else (heshi-step, idx_t.max 1 (step/2))
-			let fm = bsearch_first.0
-			let init_step_last = idx_t.max 1 (n-fm)/2
-			let bsearch_last = if fm<0 then (-1,0) else
-				loop (heshi, step) = (fm, init_step_last)
-				while step>0 do
-					let cv = sorted_ks[heshi]
-					let nv = if heshi==n-1 then cv else sorted_ks[heshi+1]
-					in
-						if (kv `eq` cv) && (heshi==n-1 || (nv `gt` kv)) then
-							(heshi, 0)
-						else if (kv `eq` cv) then
-							(heshi+step, idx_t.max 1 (step/2))
-						else if (kv `gt` cv) then
-							(heshi+step, idx_t.max 1 (step/2))
-						else
-							(heshi-step, idx_t.max 1 (step/2))
-			let lm = bsearch_last.0
-			let cm = if fm<0 then 0 else lm-fm+1
-			in (fm,cm)
-		)
-		|> unzip
+	-- Binary Search Loop Inversion
+	let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+	let (bsearch_first,_) =
+		loop (search_is,last_step) = (replicate key_no 0, n) for _ in (iota num_iter) do
+			let this_step = i64.max 1 ((last_step+1)/2)
+			let cmps = search_is
+				|> map (\i ->
+					let prev_elem = if i<=0 then sorted_ks[0] else sorted_ks[i-1]
+					let cur_elem = if i<0 then sorted_ks[0] else sorted_ks[i]
+					let next_elem = if i>=(n-1) then sorted_ks[n-1] else sorted_ks[i+1]
+					in (i, prev_elem, cur_elem, next_elem)
+				)
+				|> zip k_ids
+				|> map (\(kv, (i, pv, cv, nv)) ->
+					if i<0 then (-1) else
+					if (kv `eq` cv) && (i==0 || (kv `gt` pv))
+						then i
+					else if (kv `eq` cv)
+						then i64.max 0 (i-this_step)
+					else if (kv `gt` cv) then
+						if (i == n-1 || (nv `gt` kv))
+						then -1
+						else i64.min (n-1) (i+this_step)
+					else -- cv `gt` kv
+						if (i == 0 || (kv `gt` pv))
+						then -1
+						else i64.max 0 (i-this_step)
+				)
+			in (cmps, this_step)
+	let (bsearch_last,_) =
+		loop (search_is,last_step) = (bsearch_first, n) for _ in (iota num_iter) do
+			let this_step = i64.max 1 ((last_step+1)/2)
+			let cmps = search_is
+				|> map (\i ->
+					let cur_elem = if i<0 then sorted_ks[0] else sorted_ks[i]
+					let next_elem = if i>=(n-1) then sorted_ks[n-1] else sorted_ks[i+1]
+					in (i, cur_elem, next_elem)
+				)
+				|> zip k_ids
+				|> map (\(kv, (i, cv, nv)) ->
+					if i<0 then (-1) else
+					if (kv `eq` cv) && (i==(n-1) || (nv `gt` kv))
+						then i
+					else if (kv `eq` cv)
+						then i64.min (n-1) (i+this_step)
+					else if (kv `gt` cv)
+						then i64.min (n-1) (i+this_step)
+					else -- cv `gt` kv
+						i64.max 0 (i-this_step)
+				)
+			in (cmps, this_step)
+	let counts = map2 (\fm lm -> if fm<0 then 0 else lm-fm+1) bsearch_first bsearch_last
+	in (bsearch_first, counts)
 
 def sortgroup_find_unknown_key_counts [n] 't
 	(sorted_ks : [n]t)
