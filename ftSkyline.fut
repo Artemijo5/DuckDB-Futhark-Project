@@ -317,6 +317,7 @@ def pointwise_filter_for_Skyline [n] [dim] 't 'ft 'pL_t
 	(skB : skylineBase [dim] t)
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
+	(use_many_points : bool)
 : skylineInfo [dim] t pL_t =
 	let closestPoint =
 		let dists = xs
@@ -327,8 +328,9 @@ def pointwise_filter_for_Skyline [n] [dim] 't 'ft 'pL_t
 		let closestIdx = argmin (skOp.flt) (skOp.feq) (skOp.fhighest) dists
 		in xs[closestIdx]
 	-- Use the closest Euclidean point + the points with each smallest dim value
-	let filtering_points = (iota (dim+1))
-		|> seqmap (\d ->
+	let num_fpts = if use_many_points then (dim+1) else 1
+	let filtering_points = (iota num_fpts)
+		|> map (\d ->
 			if d==0
 			then closestPoint
 			else
@@ -376,9 +378,10 @@ def pointwise_slice_and_dice_for_Skyline [n] [dim] 't 'ft 'pL_t
 	(skB : skylineBase [dim] t)
 	(xs : [n][dim]t)
 	(ys : [n]pL_t)
+	(use_many_points : bool)
 	(use_measure_for_sorting : bool)
 : skylineInfo [dim] t pL_t =
-	let filt_skI = pointwise_filter_for_Skyline skOp skB xs ys
+	let filt_skI = pointwise_filter_for_Skyline skOp skB xs ys use_many_points
 	let (filt_xs, filt_ys) = filt_skI.xys |> unzip
 	in sort_for_Skyline skOp skB filt_xs filt_ys use_measure_for_sorting
 
@@ -799,6 +802,7 @@ def crack_Skyline [dim] 't 'pL_t
 			(skB : skylineBase_double [dim])
 			(xs : [n][dim]f64)
 			(offset : idx_t.t)
+			(use_many_points : bool)
 			(use_measure_for_sorting : bool)
 		: skylineInfo_GFUR_double [dim] =
 			pointwise_slice_and_dice_for_Skyline
@@ -806,6 +810,7 @@ def crack_Skyline [dim] 't 'pL_t
 				skB
 				xs
 				(map (\i -> i+offset) (indices xs))
+				use_many_points
 				use_measure_for_sorting
 
 		entry calc_local_Skyline_GFUR_double [dim]
@@ -949,6 +954,7 @@ def crack_Skyline [dim] 't 'pL_t
 			(skB : skylineBase_float [dim])
 			(xs : [n][dim]f32)
 			(offset : idx_t.t)
+			(use_many_points : bool)
 			(use_measure_for_sorting : bool)
 		: skylineInfo_GFUR_float [dim] =
 			pointwise_slice_and_dice_for_Skyline
@@ -956,6 +962,7 @@ def crack_Skyline [dim] 't 'pL_t
 				skB
 				xs
 				(map (\i -> i+offset) (indices xs))
+				use_many_points
 				use_measure_for_sorting
 
 		entry calc_local_Skyline_GFUR_float [dim]
@@ -1326,7 +1333,7 @@ def crack_Skyline [dim] 't 'pL_t
 		let dat = [[3.1,3.1,3.1]] ++ (copy test_points_3d)
 		in partwise_slice_and_dice_for_Skyline skOp skB1 skB2 dat (indices dat) false
 
-	def test_pointwise_slice_and_dice (ang_fine) =
+	def test_pointwise_slice_and_dice (ang_fine) (use_many_points : bool) =
 		let skOp = skylineOp_double
 		let skB = mk_skylineBase_from_grid
 			(skylineOp_double)
@@ -1335,4 +1342,4 @@ def crack_Skyline [dim] 't 'pL_t
 			([1,1,1])
 			([2, ang_fine] :> [3-1]i64)
 		let dat = (copy test_points_3d)
-		in pointwise_slice_and_dice_for_Skyline skOp skB dat (indices dat) false
+		in pointwise_slice_and_dice_for_Skyline skOp skB dat (indices dat) use_many_points false

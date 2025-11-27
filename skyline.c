@@ -22,6 +22,7 @@
 #define MAXVAL (float)100.0
 #define SIZE_THRESH BUFFER_SIZE/10
 
+#define USE_MANY_PTS true
 #define SKYLINE_MEMSIZE 1*BUFFER_SIZE
 #define SKIP_LOCAL_SKYLINE true
 
@@ -202,7 +203,7 @@ int main() {
       	struct futhark_opaque_skylineInfo_GFUR_float *local_skyWindow;
       	struct futhark_opaque_skylineInfo_GFUR_float *interm_skyWindow;
 
-      	futhark_entry_pointwise_slice_and_dice_for_Skyline_GFUR_float(ctx, &skyWindow, skB, skyData_ft, cur_idx, false);
+      	futhark_entry_pointwise_slice_and_dice_for_Skyline_GFUR_float(ctx, &skyWindow, skB, skyData_ft, cur_idx, USE_MANY_PTS, false);
       	mylog(logfile, " - - Applied pointwise filtering & angular partitioning ('slice-and-dice').");
       	futhark_free_f32_2d(ctx, skyData_ft);
 
