@@ -84,6 +84,9 @@ void SortMergeJoin_GFTR(
     void *Rbuff_ft;
     struct futhark_u8_2d *R_payload_ft;
 
+    void *R_minimum = malloc(colType_bytes(key_type));
+    void *R_maximum = malloc(colType_bytes(key_type));
+
     // READ R DATA INTO BUFFER
     idx_t R_rowCount = bulk_load_chunks_GFTR(
       CHUNK_SIZE,
@@ -113,25 +116,42 @@ void SortMergeJoin_GFTR(
         Rbuff,
         R_payload,
         R_pL_bytesPerRow,
-        R_rowCount
+        R_rowCount,
+        R_minimum,
+        R_maximum
       );
       mylog(logfile, "Sorted this buffer of R.");
     } else {
       switch(key_type) {
         case DUCKDB_TYPE_SMALLINT:
           Rbuff_ft = futhark_new_i16_1d(ctx, (int16_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_short(ctx, (int16_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_short(ctx, (int16_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_INTEGER:
           Rbuff_ft = futhark_new_i32_1d(ctx, (int32_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_int(ctx, (int32_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_int(ctx, (int32_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_BIGINT:
           Rbuff_ft = futhark_new_i64_1d(ctx, (int64_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_long(ctx, (int64_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_long(ctx, (int64_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_FLOAT:
           Rbuff_ft = futhark_new_f32_1d(ctx, (float*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_float(ctx, (float*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_float(ctx, (float*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_DOUBLE:
           Rbuff_ft = futhark_new_f64_1d(ctx, (double*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_double(ctx, (double*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_double(ctx, (double*)R_maximum, Rbuff_ft);
           break;
         default:
           perror("Invalid type.");
@@ -145,39 +165,8 @@ void SortMergeJoin_GFTR(
     free(R_payload);
     R_payload = NULL;
 
-    // get minimum and maximum elements
-    futhark_context_sync(ctx);
-    void *R_minimum = malloc(colType_bytes(key_type));
-    void *R_maximum = malloc(colType_bytes(key_type));
-    switch(key_type) {
-      case DUCKDB_TYPE_SMALLINT:
-        futhark_index_i16_1d(ctx, (int16_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i16_1d(ctx, (int16_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        futhark_index_i32_1d(ctx, (int32_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i32_1d(ctx, (int32_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        futhark_index_i64_1d(ctx, (int64_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i64_1d(ctx, (int64_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        futhark_index_f32_1d(ctx, (float*)R_minimum, Rbuff_ft, 0);
-        futhark_index_f32_1d(ctx, (float*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        futhark_index_f64_1d(ctx, (double*)R_minimum, Rbuff_ft, 0);
-        futhark_index_f64_1d(ctx, (double*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      default:
-        perror("Invalid type!");
-        return;
-    }
-
     mylog(logfile, "Obtain S's keys...");
     duckdb_result res_Sk;
-    // TODO construct S query to read from minimum relevant index
     duckdb_state S_query =
     selective_query(
       key_type,
@@ -234,7 +223,9 @@ void SortMergeJoin_GFTR(
           Sbuff,
           S_payload,
           S_pL_bytesPerRow,
-          S_rowCount
+          S_rowCount,
+          NULL,
+          NULL
         );
         mylog(logfile, "Sorted this buffer of S.");
       } else {
@@ -585,29 +576,46 @@ void SortMergeJoin_GFUR(
         BLOCK_SIZE, // TODO
         &R_idx_ft,
         Rbuff,
-        R_rowCount
+        R_rowCount,
+        R_minimum,
+        R_maximum
       );
       mylog(logfile, "Sorted this buffer of R.");
     } else {
       switch(key_type) {
         case DUCKDB_TYPE_SMALLINT:
-          Rbuff_ft = (void*)futhark_new_i16_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i16_1d(ctx, (int16_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_short(ctx, (int16_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_short(ctx, (int16_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_INTEGER:
-          Rbuff_ft = (void*)futhark_new_i32_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i32_1d(ctx, (int32_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_int(ctx, (int32_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_int(ctx, (int32_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_BIGINT:
-          Rbuff_ft = (void*)futhark_new_i64_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i64_1d(ctx, (int64_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_long(ctx, (int64_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_long(ctx, (int64_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_FLOAT:
-          Rbuff_ft = (void*)futhark_new_f32_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_f32_1d(ctx, (float*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_float(ctx, (float*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_float(ctx, (float*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_DOUBLE:
-          Rbuff_ft = (void*)futhark_new_f64_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_f64_1d(ctx, (double*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_double(ctx, (double*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_double(ctx, (double*)R_maximum, Rbuff_ft);
           break;
         default:
-          perror("Invalid type!");
-          break;
+          perror("Invalid type.");
+          return;
       }
       idx_t *R_indices = malloc(R_rowCount * sizeof(idx_t));
       for(idx_t i=0; i<R_rowCount; i++) {
@@ -619,34 +627,6 @@ void SortMergeJoin_GFUR(
     }
     free(Rbuff);
     Rbuff = NULL;
-
-    // get minimum and maximum elements
-    futhark_context_sync(ctx);
-    switch(key_type) {
-      case DUCKDB_TYPE_SMALLINT:
-        futhark_index_i16_1d(ctx, (int16_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i16_1d(ctx, (int16_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        futhark_index_i32_1d(ctx, (int32_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i32_1d(ctx, (int32_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        futhark_index_i64_1d(ctx, (int64_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i64_1d(ctx, (int64_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        futhark_index_f32_1d(ctx, (float*)R_minimum, Rbuff_ft, 0);
-        futhark_index_f32_1d(ctx, (float*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        futhark_index_f64_1d(ctx, (double*)R_minimum, Rbuff_ft, 0);
-        futhark_index_f64_1d(ctx, (double*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      default:
-        perror("Invalid type!");
-        return;
-    }
 
     logdbg(logfile, is_S_sorted, "Obtain S's sorted keys...", "Obtain S's keys...");
     duckdb_result res_Sk;
@@ -703,7 +683,9 @@ void SortMergeJoin_GFUR(
           BLOCK_SIZE, // TODO
           &S_idx_ft,
           Sbuff,
-          S_rowCount
+          S_rowCount,
+          NULL,
+          NULL
         );
         mylog(logfile, "Sorted this buffer of S.");
       } else {
@@ -1093,29 +1075,46 @@ void SortMergeJoin_GFTR_with_S_semisorted(
         Rbuff,
         R_payload,
         R_pL_bytesPerRow,
-        R_rowCount
+        R_rowCount,
+        R_minimum,
+        R_maximum
       );
       mylog(logfile, "Sorted this buffer of R.");
     } else {
       switch(key_type) {
         case DUCKDB_TYPE_SMALLINT:
-          Rbuff_ft = (void*)futhark_new_i16_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i16_1d(ctx, (int16_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_short(ctx, (int16_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_short(ctx, (int16_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_INTEGER:
-          Rbuff_ft = (void*)futhark_new_i32_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i32_1d(ctx, (int32_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_int(ctx, (int32_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_int(ctx, (int32_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_BIGINT:
-          Rbuff_ft = (void*)futhark_new_i64_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i64_1d(ctx, (int64_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_long(ctx, (int64_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_long(ctx, (int64_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_FLOAT:
-          Rbuff_ft = (void*)futhark_new_f32_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_f32_1d(ctx, (float*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_float(ctx, (float*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_float(ctx, (float*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_DOUBLE:
-          Rbuff_ft = (void*)futhark_new_f64_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_f64_1d(ctx, (double*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_double(ctx, (double*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_double(ctx, (double*)R_maximum, Rbuff_ft);
           break;
         default:
-          perror("Invalid type!");
-          break;
+          perror("Invalid type.");
+          return;
       }
       R_payload_ft = futhark_new_u8_2d(ctx, R_payload, R_rowCount, R_pL_bytesPerRow);
       futhark_context_sync(ctx);
@@ -1124,34 +1123,6 @@ void SortMergeJoin_GFTR_with_S_semisorted(
     Rbuff = NULL;
     free(R_payload);
     R_payload = NULL;
-
-    // get minimum and maximum elements
-    futhark_context_sync(ctx);
-    switch(key_type) {
-      case DUCKDB_TYPE_SMALLINT:
-        futhark_index_i16_1d(ctx, (int16_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i16_1d(ctx, (int16_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        futhark_index_i32_1d(ctx, (int32_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i32_1d(ctx, (int32_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        futhark_index_i64_1d(ctx, (int64_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i64_1d(ctx, (int64_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        futhark_index_f32_1d(ctx, (float*)R_minimum, Rbuff_ft, 0);
-        futhark_index_f32_1d(ctx, (float*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        futhark_index_f64_1d(ctx, (double*)R_minimum, Rbuff_ft, 0);
-        futhark_index_f64_1d(ctx, (double*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      default:
-        perror("Invalid type!");
-        return;
-    }
 
     mylog(logfile, "Iterating over S tables...");
     for (idx_t interm=0; interm<S_num_tbls; interm++) {
@@ -1506,29 +1477,46 @@ void SortMergeJoin_GFUR_with_S_semisorted(
         BLOCK_SIZE, // TODO
         &R_idx_ft,
         Rbuff,
-        R_rowCount
+        R_rowCount,
+        R_minimum,
+        R_maximum
       );
       mylog(logfile, "Sorted this buffer of R.");
     } else {
       switch(key_type) {
         case DUCKDB_TYPE_SMALLINT:
-          Rbuff_ft = (void*)futhark_new_i16_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i16_1d(ctx, (int16_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_short(ctx, (int16_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_short(ctx, (int16_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_INTEGER:
-          Rbuff_ft = (void*)futhark_new_i32_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i32_1d(ctx, (int32_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_int(ctx, (int32_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_int(ctx, (int32_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_BIGINT:
-          Rbuff_ft = (void*)futhark_new_i64_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i64_1d(ctx, (int64_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_long(ctx, (int64_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_long(ctx, (int64_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_FLOAT:
-          Rbuff_ft = (void*)futhark_new_f32_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_f32_1d(ctx, (float*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_float(ctx, (float*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_float(ctx, (float*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_DOUBLE:
-          Rbuff_ft = (void*)futhark_new_f64_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_f64_1d(ctx, (double*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_double(ctx, (double*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_double(ctx, (double*)R_maximum, Rbuff_ft);
           break;
         default:
-          perror("Invalid type!");
-          break;
+          perror("Invalid type.");
+          return;
       }
       idx_t *R_indices = malloc(R_rowCount * sizeof(idx_t));
       for(idx_t i=0; i<R_rowCount; i++) {
@@ -1540,34 +1528,6 @@ void SortMergeJoin_GFUR_with_S_semisorted(
     }
     free(Rbuff);
     Rbuff = NULL;
-
-    // get minimum and maximum elements
-    futhark_context_sync(ctx);
-    switch(key_type) {
-      case DUCKDB_TYPE_SMALLINT:
-        futhark_index_i16_1d(ctx, (int16_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i16_1d(ctx, (int16_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_INTEGER:
-        futhark_index_i32_1d(ctx, (int32_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i32_1d(ctx, (int32_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_BIGINT:
-        futhark_index_i64_1d(ctx, (int64_t*)R_minimum, Rbuff_ft, 0);
-        futhark_index_i64_1d(ctx, (int64_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_FLOAT:
-        futhark_index_f32_1d(ctx, (float*)R_minimum, Rbuff_ft, 0);
-        futhark_index_f32_1d(ctx, (float*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      case DUCKDB_TYPE_DOUBLE:
-        futhark_index_f64_1d(ctx, (double*)R_minimum, Rbuff_ft, 0);
-        futhark_index_f64_1d(ctx, (double*)R_maximum, Rbuff_ft, R_rowCount-1);
-        break;
-      default:
-        perror("Invalid type!");
-        return;
-    }
 
     mylog(logfile, "Iterate over S tables...");
     for (idx_t interm=0; interm<S_num_tbls; interm++) {
@@ -1925,59 +1885,45 @@ void MergeJoin_GFTR_semisorted(
 
       switch(key_type) {
         case DUCKDB_TYPE_SMALLINT:
-          Rbuff_ft = (void*)futhark_new_i16_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i16_1d(ctx, (int16_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_short(ctx, (int16_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_short(ctx, (int16_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_INTEGER:
-          Rbuff_ft = (void*)futhark_new_i32_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i32_1d(ctx, (int32_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_int(ctx, (int32_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_int(ctx, (int32_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_BIGINT:
-          Rbuff_ft = (void*)futhark_new_i64_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_i64_1d(ctx, (int64_t*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_long(ctx, (int64_t*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_long(ctx, (int64_t*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_FLOAT:
-          Rbuff_ft = (void*)futhark_new_f32_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_f32_1d(ctx, (float*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_float(ctx, (float*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_float(ctx, (float*)R_maximum, Rbuff_ft);
           break;
         case DUCKDB_TYPE_DOUBLE:
-          Rbuff_ft = (void*)futhark_new_f64_1d(ctx, Rbuff, R_rowCount);
+          Rbuff_ft = futhark_new_f64_1d(ctx, (double*)Rbuff, R_rowCount);
+          futhark_context_sync(ctx);
+          futhark_entry_minimum_double(ctx, (double*)R_minimum, Rbuff_ft);
+          futhark_entry_maximum_double(ctx, (double*)R_maximum, Rbuff_ft);
           break;
         default:
-          perror("Invalid type!");
-          break;
+          perror("Invalid type.");
+          return;
       }
       R_payload_ft = futhark_new_u8_2d(ctx, R_payload, R_rowCount, R_pL_bytesPerRow);
-      futhark_context_sync(ctx);
 
       free(Rbuff);
       Rbuff = NULL;
       free(R_payload);
       R_payload = NULL;
-
-      // get minimum and maximum elements
-      futhark_context_sync(ctx);
-      switch(key_type) {
-        case DUCKDB_TYPE_SMALLINT:
-          futhark_index_i16_1d(ctx, (int16_t*)R_minimum, Rbuff_ft, 0);
-          futhark_index_i16_1d(ctx, (int16_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-          break;
-        case DUCKDB_TYPE_INTEGER:
-          futhark_index_i32_1d(ctx, (int32_t*)R_minimum, Rbuff_ft, 0);
-          futhark_index_i32_1d(ctx, (int32_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-          break;
-        case DUCKDB_TYPE_BIGINT:
-          futhark_index_i64_1d(ctx, (int64_t*)R_minimum, Rbuff_ft, 0);
-          futhark_index_i64_1d(ctx, (int64_t*)R_maximum, Rbuff_ft, R_rowCount-1);
-          break;
-        case DUCKDB_TYPE_FLOAT:
-          futhark_index_f32_1d(ctx, (float*)R_minimum, Rbuff_ft, 0);
-          futhark_index_f32_1d(ctx, (float*)R_maximum, Rbuff_ft, R_rowCount-1);
-          break;
-        case DUCKDB_TYPE_DOUBLE:
-          futhark_index_f64_1d(ctx, (double*)R_minimum, Rbuff_ft, 0);
-          futhark_index_f64_1d(ctx, (double*)R_maximum, Rbuff_ft, R_rowCount-1);
-          break;
-        default:
-          perror("Invalid type!");
-          return;
-      }
 
       mylog(logfile, "Iterating over S tables...");
       for (idx_t interm=0; interm<S_num_tbls; interm++) {
