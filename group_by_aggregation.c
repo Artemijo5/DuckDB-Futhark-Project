@@ -18,6 +18,8 @@
 #define DDB_MEMSIZE "4GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
+#define VERBOSE false
+
 int main() {
   // Initialise logger
 	  FILE* logfile = loginit(LOGFILE, "Group-By Aggregation : Starting test program.");
@@ -25,6 +27,7 @@ int main() {
 	    perror("Failed to initialise logger.");
 	    return -1;
 	  }
+	  FILE* func_logfile = (VERBOSE)? logfile: NULL;
 
 	// Log Initial Parametres
 	  char log_param[10000];
@@ -33,8 +36,9 @@ int main() {
 	    "\tTABLE SIZE         %ld\n"
 	    "\tBUFFER SIZE        %ld\n"
 	    "\tBUFFER CAPACITY    %ld\n"
-	    "\tNUM_KEYS           %ld",
-	    TABLE_SIZE,BUFFER_SIZE,BUFFER_SIZE/CHUNK_SIZE,NUM_KEYS
+	    "\tNUM_KEYS           %ld\n"
+	    "\tVERBOSE            %d",
+	    TABLE_SIZE,BUFFER_SIZE,BUFFER_SIZE/CHUNK_SIZE,NUM_KEYS,VERBOSE
 	  );
 	  mylog(logfile, log_param);
 
@@ -168,13 +172,13 @@ int main() {
 					BUFFER_SIZE,
 					&isTblExhausted
 				);
-		  	mylog(logfile, "Read a buffer.");
+		  	mylog(func_logfile, "Read a buffer.");
 
 		  	if(curRows>0) {
 			  	struct futhark_i64_1d *ks_ft = futhark_new_i64_1d(ctx, Stg1_Buffer[0], curRows);
 			  	struct futhark_f64_1d *x1_ft = futhark_new_f64_1d(ctx, Stg1_Buffer[1], curRows);
 			  	struct futhark_f64_1d *x2_ft = futhark_new_f64_1d(ctx, Stg1_Buffer[2], curRows);
-			  	mylog(logfile, "Wrapped this buffer's values in the futhark core.");
+			  	mylog(func_logfile, "Wrapped this buffer's values in the futhark core.");
 
 			  	struct futhark_i64_1d *counts;
 			  	struct futhark_f64_1d *sum_x1;
@@ -185,10 +189,10 @@ int main() {
 			  	futhark_entry_double_sum(ctx, &sum_x1, NUM_KEYS, ks_ft, x1_ft);
 			  	futhark_entry_double_sum(ctx, &sum_x2, NUM_KEYS, ks_ft, x2_ft);
 			  	futhark_entry_double_sum_xy(ctx, &sum_x1x2, NUM_KEYS, ks_ft, x1_ft, x2_ft);
-			  	mylog(logfile, "Computed this buffer's aggregates.");
+			  	mylog(func_logfile, "Computed this buffer's aggregates.");
 
 			  	futhark_context_sync(ctx);
-			  	mylog(logfile, "Synced futhark context.");
+			  	mylog(func_logfile, "Synced futhark context.");
 
 			  	futhark_free_i64_1d(ctx, ks_ft);
 			  	futhark_free_f64_1d(ctx, x1_ft);
@@ -202,7 +206,7 @@ int main() {
 			  	futhark_free_f64_1d(ctx, sum_x2);
 			  	futhark_values_f64_1d(ctx, sum_x1x2, Stg2_Buffer[3]);
 			  	futhark_free_f64_1d(ctx, sum_x1x2);
-			  	mylog(logfile, "Unwrapped aggregates.");
+			  	mylog(func_logfile, "Unwrapped aggregates.");
 
 			  	/*
 			  	for(idx_t i=0; i<NUM_KEYS; i++) {
@@ -222,30 +226,32 @@ int main() {
 			  		result_sum_x2[j] += ((double*)Stg2_Buffer[2])[j];
 			  		result_sum_x1x2[j] += ((double*)Stg2_Buffer[3])[j];
 			  	}
-			  	mylog(logfile, "Reduced final aggregates.");
+			  	mylog(func_logfile, "Reduced final aggregates.");
 				}
 		  }
 		  mylog(logfile, "TEST 1 COMPLETE! ----------------------------------------------------");
 		  duckdb_destroy_result(&res);
 		  mylog(logfile, "Destroyed duckdb result.");
 		  
-		  printf("Printing aggregate values...\n");
-		  for(idx_t j=0; j<NUM_KEYS; j++) {
-		  	long thisKey = knownKeys[j];
-		  	long thisCount = result_count[j];
-		  	thisCount = (thisCount==0)? 1: thisCount;
-		  	double thisX1 = result_sum_x1[j];
-		  	double thisX2 = result_sum_x2[j];
-		  	double thisX1X2 = result_sum_x1x2[j];
-		  	double thisCov = ( thisX1X2 - ((thisX1*thisX2)/((double)thisCount)) ) / ( (double)thisCount );
-		  	/*
-		  	printf("ID %4ld | COUNT %8ld | SUM1 %+15.3f | SUM2 %+15.3f | SUM* %+15.3f | COV %+8.3f\n",
-		  		thisKey, thisCount, thisX1, thisX2, thisX1X2, thisCov);
-		  	*/
-		  	printf("ID %4ld | COUNT %8ld | COV %+8.3f\n",
-		  		thisKey, thisCount, thisCov);
-		  }
-		  printf("\n");
+		  if(VERBOSE) {
+			  printf("Printing aggregate values...\n");
+			  for(idx_t j=0; j<NUM_KEYS; j++) {
+			  	long thisKey = knownKeys[j];
+			  	long thisCount = result_count[j];
+			  	thisCount = (thisCount==0)? 1: thisCount;
+			  	double thisX1 = result_sum_x1[j];
+			  	double thisX2 = result_sum_x2[j];
+			  	double thisX1X2 = result_sum_x1x2[j];
+			  	double thisCov = ( thisX1X2 - ((thisX1*thisX2)/((double)thisCount)) ) / ( (double)thisCount );
+			  	/*
+			  	printf("ID %4ld | COUNT %8ld | SUM1 %+15.3f | SUM2 %+15.3f | SUM* %+15.3f | COV %+8.3f\n",
+			  		thisKey, thisCount, thisX1, thisX2, thisX1X2, thisCov);
+			  	*/
+			  	printf("ID %4ld | COUNT %8ld | COV %+8.3f\n",
+			  		thisKey, thisCount, thisCov);
+			  }
+			  printf("\n");
+			}
 
   // 2 - test aggregation with sorting
 	  mylog(logfile, "TEST 2 ----- collecting aggregates after sorting (via parallel hist operator).");
@@ -275,13 +281,13 @@ int main() {
 					BUFFER_SIZE,
 					&isTblExhausted
 				);
-		  	mylog(logfile, "Read a buffer.");
+		  	mylog(func_logfile, "Read a buffer.");
 
 		  	if(curRows>0) {
 			  	struct futhark_i64_1d *ks_ft = futhark_new_i64_1d(ctx, Stg1_Buffer[0], curRows);
 			  	struct futhark_f64_1d *x1_ft = futhark_new_f64_1d(ctx, Stg1_Buffer[1], curRows);
 			  	struct futhark_f64_1d *x2_ft = futhark_new_f64_1d(ctx, Stg1_Buffer[2], curRows);
-			  	mylog(logfile, "Wrapped this buffer's values in the futhark core.");
+			  	mylog(func_logfile, "Wrapped this buffer's values in the futhark core.");
 
 			  	struct futhark_opaque_sortgroupInfo *sg;
 			  	struct futhark_i64_1d *counts;
@@ -294,10 +300,10 @@ int main() {
 			  	futhark_entry_double_sum(ctx, &sum_x1, NUM_KEYS, ks_ft, x1_ft);
 			  	futhark_entry_double_sum(ctx, &sum_x2, NUM_KEYS, ks_ft, x2_ft);
 			  	futhark_entry_double_sum_xy(ctx, &sum_x1x2, NUM_KEYS, ks_ft, x1_ft, x2_ft);
-			  	mylog(logfile, "Computed this buffer's aggregates.");
+			  	mylog(func_logfile, "Computed this buffer's aggregates.");
 
 			  	futhark_context_sync(ctx);
-			  	mylog(logfile, "Synced futhark context.");
+			  	mylog(func_logfile, "Synced futhark context.");
 
 			  	futhark_free_opaque_sortgroupInfo(ctx, sg);
 			  	futhark_free_i64_1d(ctx, ks_ft);
@@ -312,7 +318,7 @@ int main() {
 			  	futhark_free_f64_1d(ctx, sum_x2);
 			  	futhark_values_f64_1d(ctx, sum_x1x2, Stg2_Buffer[3]);
 			  	futhark_free_f64_1d(ctx, sum_x1x2);
-			  	mylog(logfile, "Unwrapped aggregates.");
+			  	mylog(func_logfile, "Unwrapped aggregates.");
 
 			  	/*
 			  	for(idx_t i=0; i<NUM_KEYS; i++) {
@@ -332,31 +338,33 @@ int main() {
 			  		result_sum_x2[j] += ((double*)Stg2_Buffer[2])[j];
 			  		result_sum_x1x2[j] += ((double*)Stg2_Buffer[3])[j];
 			  	}
-			  	mylog(logfile, "Reduced final aggregates.");
+			  	mylog(func_logfile, "Reduced final aggregates.");
 				}
 		  }
 		  mylog(logfile, "TEST 2 COMPLETE! ----------------------------------------------------");
 		  duckdb_destroy_result(&sort_res);
 		  mylog(logfile, "Destroyed duckdb result.");
 		  
-		  printf("Printing aggregate values...\n");
-		  for(idx_t j=0; j<NUM_KEYS; j++) {
-		  	long thisKey = knownKeys[j];
-		  	long thisCount = result_count[j];
-		  	thisCount = (thisCount==0)? 1: thisCount;
-		  	double thisX1 = result_sum_x1[j];
-		  	double thisX2 = result_sum_x2[j];
-		  	double thisX1X2 = result_sum_x1x2[j];
-		  	double thisCov = ( thisX1X2 - ((thisX1*thisX2)/((double)thisCount)) ) / ( (double)thisCount );
-		  	/*
-		  	printf("ID %4ld | COUNT %8ld | SUM1 %+15.3f | SUM2 %+15.3f | SUM* %+15.3f | COV %+8.3f\n",
-		  		thisKey, thisCount, thisX1, thisX2, thisX1X2, thisCov);
-		  	*/
-		  	printf("ID %4ld | COUNT %8ld | COV %+8.3f\n",
-		  		thisKey, thisCount, thisCov);
-		  }
-		  printf("\n");
-  
+		  if(VERBOSE) {
+			  printf("Printing aggregate values...\n");
+			  for(idx_t j=0; j<NUM_KEYS; j++) {
+			  	long thisKey = knownKeys[j];
+			  	long thisCount = result_count[j];
+			  	thisCount = (thisCount==0)? 1: thisCount;
+			  	double thisX1 = result_sum_x1[j];
+			  	double thisX2 = result_sum_x2[j];
+			  	double thisX1X2 = result_sum_x1x2[j];
+			  	double thisCov = ( thisX1X2 - ((thisX1*thisX2)/((double)thisCount)) ) / ( (double)thisCount );
+			  	/*
+			  	printf("ID %4ld | COUNT %8ld | SUM1 %+15.3f | SUM2 %+15.3f | SUM* %+15.3f | COV %+8.3f\n",
+			  		thisKey, thisCount, thisX1, thisX2, thisX1X2, thisCov);
+			  	*/
+			  	printf("ID %4ld | COUNT %8ld | COV %+8.3f\n",
+			  		thisKey, thisCount, thisCov);
+			  }
+			  printf("\n");
+  		}
+
 	// 3 - test alt aggregation with sorting
 	  mylog(logfile, "TEST 3 ----- collecting aggregates after sorting (via nested map-reduce).");
 		  duckdb_result alt_res;
@@ -385,13 +393,13 @@ int main() {
 					BUFFER_SIZE,
 					&isTblExhausted
 				);
-		  	mylog(logfile, "Read a buffer.");
+		  	mylog(func_logfile, "Read a buffer.");
 
 		  	if(curRows>0) {
 			  	struct futhark_i64_1d *ks_ft = futhark_new_i64_1d(ctx, Stg1_Buffer[0], curRows);
 			  	struct futhark_f64_1d *x1_ft = futhark_new_f64_1d(ctx, Stg1_Buffer[1], curRows);
 			  	struct futhark_f64_1d *x2_ft = futhark_new_f64_1d(ctx, Stg1_Buffer[2], curRows);
-			  	mylog(logfile, "Wrapped this buffer's values in the futhark core.");
+			  	mylog(func_logfile, "Wrapped this buffer's values in the futhark core.");
 
 			  	struct futhark_opaque_sortgroupInfo *sg;
 			  	struct futhark_i64_1d *counts;
@@ -406,10 +414,10 @@ int main() {
 			  	futhark_entry_alt_double_sum(ctx, &sum_x1, k_idxs, counts, x1_ft);
 			  	futhark_entry_alt_double_sum(ctx, &sum_x2, k_idxs, counts, x2_ft);
 			  	futhark_entry_alt_double_sum_xy(ctx, &sum_x1x2, k_idxs, counts, x1_ft, x2_ft);
-			  	mylog(logfile, "Computed this buffer's aggregates (keys currently unknown).");
+			  	mylog(func_logfile, "Computed this buffer's aggregates (keys currently unknown).");
 
 			  	futhark_context_sync(ctx);
-			  	mylog(logfile, "Synced futhark context.");
+			  	mylog(func_logfile, "Synced futhark context.");
 
 			  	futhark_free_opaque_sortgroupInfo(ctx, sg);
 			  	futhark_free_i64_1d(ctx, ks_ft);
@@ -426,7 +434,7 @@ int main() {
 				  	idx_t accIdx = uk_keys[i];
 				  	uk_keys[i] = ((long*)Stg1_Buffer[0])[accIdx];
 				  }
-				  mylog(logfile, "Gathered key slots that current aggregates correspond to.");
+				  mylog(func_logfile, "Gathered key slots that current aggregates correspond to.");
 
 			  	futhark_values_i64_1d(ctx, counts, Stg2_Buffer[0]);
 			  	futhark_free_i64_1d(ctx, counts);
@@ -436,7 +444,7 @@ int main() {
 			  	futhark_free_f64_1d(ctx, sum_x2);
 			  	futhark_values_f64_1d(ctx, sum_x1x2, Stg2_Buffer[3]);
 			  	futhark_free_f64_1d(ctx, sum_x1x2);
-			  	mylog(logfile, "Unwrapped aggregates.");
+			  	mylog(func_logfile, "Unwrapped aggregates.");
 
 			  	for(idx_t j=0; j<uk_keysCount; j++) {
 			  		idx_t accIdx = uk_keys[j];
@@ -446,30 +454,32 @@ int main() {
 			  		result_sum_x1x2[accIdx] += ((double*)Stg2_Buffer[3])[j];
 			  	}
 			  	free(uk_keys);
-			  	mylog(logfile, "Reduced final aggregates.");
+			  	mylog(func_logfile, "Reduced final aggregates.");
 				}
 		  }
 		  mylog(logfile, "TEST 3 COMPLETE! ----------------------------------------------------");
 		  duckdb_destroy_result(&alt_res);
 		  mylog(logfile, "Destroyed duckdb result.");
 		  
-		  printf("Printing aggregate values...\n");
-		  for(idx_t j=0; j<NUM_KEYS; j++) {
-		  	long thisKey = knownKeys[j];
-		  	long thisCount = result_count[j];
-		  	thisCount = (thisCount==0)? 1: thisCount;
-		  	double thisX1 = result_sum_x1[j];
-		  	double thisX2 = result_sum_x2[j];
-		  	double thisX1X2 = result_sum_x1x2[j];
-		  	double thisCov = ( thisX1X2 - ((thisX1*thisX2)/((double)thisCount)) ) / ( (double)thisCount );
-		  	/*
-		  	printf("ID %4ld | COUNT %8ld | SUM1 %+15.3f | SUM2 %+15.3f | SUM* %+15.3f | COV %+8.3f\n",
-		  		thisKey, thisCount, thisX1, thisX2, thisX1X2, thisCov);
-		  	*/
-		  	printf("ID %4ld | COUNT %8ld | COV %+8.3f\n",
-		  		thisKey, thisCount, thisCov);
-		  }
-		  printf("\n");  
+		  if(VERBOSE) {
+			  printf("Printing aggregate values...\n");
+			  for(idx_t j=0; j<NUM_KEYS; j++) {
+			  	long thisKey = knownKeys[j];
+			  	long thisCount = result_count[j];
+			  	thisCount = (thisCount==0)? 1: thisCount;
+			  	double thisX1 = result_sum_x1[j];
+			  	double thisX2 = result_sum_x2[j];
+			  	double thisX1X2 = result_sum_x1x2[j];
+			  	double thisCov = ( thisX1X2 - ((thisX1*thisX2)/((double)thisCount)) ) / ( (double)thisCount );
+			  	/*
+			  	printf("ID %4ld | COUNT %8ld | SUM1 %+15.3f | SUM2 %+15.3f | SUM* %+15.3f | COV %+8.3f\n",
+			  		thisKey, thisCount, thisX1, thisX2, thisX1X2, thisCov);
+			  	*/
+			  	printf("ID %4ld | COUNT %8ld | COV %+8.3f\n",
+			  		thisKey, thisCount, thisCov);
+			  }
+			  printf("\n");
+			}
 
   // Clean-up
 	  futhark_free_i64_1d(ctx, knownKeys_ft);

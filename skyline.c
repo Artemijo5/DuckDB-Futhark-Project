@@ -14,7 +14,7 @@
 #define CNK_TO_READ (long)2
 #define BUFFER_CAP (long)16//(long)2*CNK_TO_READ
 #define BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
-#define TABLE_SIZE 10*BUFFER_SIZE//10*BUFFER_SIZE
+#define TABLE_SIZE 2*BUFFER_SIZE//10*BUFFER_SIZE
 
 #define DIM (long)3
 #define ANGULAR_SUBDIV (long)10
@@ -30,6 +30,8 @@
 #define DDB_MEMSIZE "4GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
+#define VERBOSE false
+
 int main() {
   // Initialise logger
     FILE* logfile = loginit(LOGFILE, "Skyline Computation : Starting test program.");
@@ -37,6 +39,7 @@ int main() {
       perror("Failed to initialise logger.\n");
       return -1;
     }
+    FILE* func_logfile = (VERBOSE)? logfile: NULL;
 
   // Log program parametres
   char log_param[10000];
@@ -50,8 +53,11 @@ int main() {
     "\tSIZE THRESHOLD       %ld\n"
     "\tSKYLINE MEMSIZE      %ld\n"
     "\tFILTER WITH MANY PTS %d\n"
-    "\tSKIP LOCAL SKYLINE   %d",
-    TABLE_SIZE,BUFFER_SIZE,BUFFER_CAP,DIM,ANGULAR_SUBDIV,SIZE_THRESH,SKYLINE_MEMSIZE,USE_MANY_PTS,SKIP_LOCAL_SKYLINE
+    "\tSKIP LOCAL SKYLINE   %d\n"
+    "\tVERBOSE            %d",
+    TABLE_SIZE,BUFFER_SIZE,BUFFER_CAP,
+    DIM,ANGULAR_SUBDIV,SIZE_THRESH,SKYLINE_MEMSIZE,
+    USE_MANY_PTS,SKIP_LOCAL_SKYLINE,VERBOSE
   );
   mylog(logfile, log_param);
 
@@ -169,7 +175,7 @@ int main() {
         if (cur_chunks_read==0) break;
       }
     	isTblExhausted = (chunks_read < (BUFFER_SIZE/CHUNK_SIZE));
-    	mylog(logfile, " - - Obtained chunks.");
+    	mylog(func_logfile, " - - Obtained chunks.");
 
       if(chunks_read>0) {
       	idx_t cur_rows = 0;
@@ -194,10 +200,10 @@ int main() {
     			cur_rows += cnk_size;
     			duckdb_destroy_data_chunk(&(skyChunks[j]));
       	}
-      	mylog(logfile, " - - Buffered data from chunks.");
+      	mylog(func_logfile, " - - Buffered data from chunks.");
 
       	struct futhark_f32_2d *skyData_ft = futhark_new_f32_2d(ctx, (float*)skyData, cur_rows, DIM);
-      	mylog(logfile, " - - Wrapped data into futhark core.");
+      	mylog(func_logfile, " - - Wrapped data into futhark core.");
       	free(skyData);
 
       	struct futhark_opaque_skylineInfo_GFUR_float *skyWindow;
@@ -205,32 +211,32 @@ int main() {
       	struct futhark_opaque_skylineInfo_GFUR_float *interm_skyWindow;
 
       	futhark_entry_pointwise_slice_and_dice_for_Skyline_GFUR_float(ctx, &skyWindow, skB, skyData_ft, cur_idx, USE_MANY_PTS, false);
-      	mylog(logfile, " - - Applied pointwise filtering & angular partitioning ('slice-and-dice').");
+      	mylog(func_logfile, " - - Applied pointwise filtering & angular partitioning ('slice-and-dice').");
       	futhark_free_f32_2d(ctx, skyData_ft);
 
         if (!SKIP_LOCAL_SKYLINE) {
         	futhark_entry_calc_local_Skyline_GFUR_float(ctx, &local_skyWindow, skB, skyWindow);
         	futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindow);
-        	mylog(logfile, " - - Applied local filtering.");
+        	mylog(func_logfile, " - - Applied local filtering.");
         	futhark_entry_calc_intermSkyline_GFUR_float(ctx, &interm_skyWindow, skB, local_skyWindow, true, 1, 0, SIZE_THRESH);
         	futhark_free_opaque_skylineInfo_GFUR_float(ctx, local_skyWindow);
-        	mylog(logfile, " - - Applied intermediate filtering steps.");
+        	mylog(func_logfile, " - - Applied intermediate filtering steps.");
         }
         else {
           futhark_entry_calc_global_Skyline_GFUR_float(ctx, &interm_skyWindow, skB, skyWindow, SKYLINE_MEMSIZE);
           futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindow);
-          mylog(logfile, " - - Directly applied global filtering.");
+          mylog(func_logfile, " - - Directly applied global filtering.");
         }
 
       	skyWindows[currently_windowed++] = interm_skyWindow;
-      	mylog(logfile, " - - Cached this window's filtered results.");
+      	mylog(func_logfile, " - - Cached this window's filtered results.");
         cur_idx += cur_rows;
       }
 
     	// Collapse windows
     	if(isTblExhausted || currently_windowed==5) {
     		logdbg(
-    			logfile,
+    			func_logfile,
     			isTblExhausted,
     			" - - | - - Data exhausted - collapsing windows...",
     			" - - | - - Window cache filled - collapsing windows..."
@@ -274,7 +280,7 @@ int main() {
     				futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindows[w]);
     			}
     		}
-    		mylog(logfile, " - - | - - Collapsed cached windows.");
+    		mylog(func_logfile, " - - | - - Collapsed cached windows.");
 
     		if(currently_windowed>1) {
 
@@ -283,25 +289,25 @@ int main() {
     	  			ctx, &local_collapsed_skyWindow, skB, collapsed_skyWindow
     	  		);
     		  	futhark_free_opaque_skylineInfo_GFUR_float(ctx, collapsed_skyWindow);
-    		  	mylog(logfile, " - - | - - Applied local filtering.");
+    		  	mylog(func_logfile, " - - | - - Applied local filtering.");
     		  	futhark_entry_calc_intermSkyline_GFUR_float(
     		  		ctx, &interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, true, 1, 0, SIZE_THRESH
     		  	);
     		  	futhark_free_opaque_skylineInfo_GFUR_float(ctx, local_collapsed_skyWindow);
-    		  	mylog(logfile, " - - | - - Applied intermediate filtering steps.");
+    		  	mylog(func_logfile, " - - | - - Applied intermediate filtering steps.");
           }
           else {
             futhark_entry_calc_global_Skyline_GFUR_float(
               ctx, &interm_collapsed_skyWindow, skB, collapsed_skyWindow, SKYLINE_MEMSIZE
             );
             futhark_free_opaque_skylineInfo_GFUR_float(ctx, collapsed_skyWindow);
-            mylog(logfile, " - - | - - Directly applied global filtering.");
+            mylog(func_logfile, " - - | - - Directly applied global filtering.");
           }
 
     		}
     		else {
     			interm_collapsed_skyWindow = collapsed_skyWindow;
-    			mylog(logfile, " - - | - - Don't need to apply filtering steps, as there is only one cached window.");
+    			mylog(func_logfile, " - - | - - Don't need to apply filtering steps, as there is only one cached window.");
     		}
     		
   	  	skyWindows[0] = interm_collapsed_skyWindow;
