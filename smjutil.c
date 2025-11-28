@@ -362,21 +362,30 @@ void sortRelationByKey_inFuthark_short(
   short* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
-  idx_t card
+  idx_t card,
+	void *minval,
+	void *maxval
 ) {
-  // Wrap keys & payloads into futhark sortStruct
+  // Wrap keys & payloads into futhark context
   struct futhark_u8_2d *inPayloads_ft = futhark_new_u8_2d(ctx, (uint8_t*)inPayloads, card, pL_bytesPerRow);
   struct futhark_i16_1d *inKeys_ft = futhark_new_i16_1d(ctx, inKeys, card);
+  // Obtain min & max
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_short(ctx, (short*)minVal, inKeys_ft);
+  	if(maxVal) futhark_entry_maximum_short(ctx, (short*)maxVal, inKeys_ft);
+  }
+  // Wrap into sortstruct
   struct futhark_opaque_sortStruct_short *sortStruct_in;
   futhark_new_opaque_sortStruct_short(ctx, &sortStruct_in, inKeys_ft, inPayloads_ft);
+  futhark_free_i16_1d(ctx, inKeys_ft);
+  futhark_free_u8_2d(ctx, inPayloads_ft);
   // Perform the sorting
   struct futhark_opaque_sortStruct_short *sortStruct_out;
   if(blocked) futhark_entry_radixSortRelation_short(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_short(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
   //futhark_context_sync(ctx);
-  futhark_free_i16_1d(ctx, inKeys_ft);
-  futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_short(ctx, sortStruct_in);
   // Unwrap sorted output
   futhark_project_opaque_sortStruct_short_k(ctx, outKeys, sortStruct_out);
@@ -394,21 +403,30 @@ void sortRelationByKey_inFuthark_int(
   int* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
-  idx_t card
+  idx_t card,
+	void *minval,
+	void *maxval
 ) {
-  // Wrap keys & payloads into futhark sortStruct
+  // Wrap keys & payloads into futhark context
   struct futhark_u8_2d *inPayloads_ft = futhark_new_u8_2d(ctx, (uint8_t*)inPayloads, card, pL_bytesPerRow);
   struct futhark_i32_1d *inKeys_ft = futhark_new_i32_1d(ctx, inKeys, card);
+  // Obtain min & max
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_int(ctx, (int*)minVal, inKeys_ft);
+  	if(maxVal) futhark_entry_maximum_int(ctx, (int*)maxVal, inKeys_ft);
+  }
+  // Wrap into sortstruct
   struct futhark_opaque_sortStruct_int *sortStruct_in;
   futhark_new_opaque_sortStruct_int(ctx, &sortStruct_in, inKeys_ft, inPayloads_ft);
+  futhark_free_i32_1d(ctx, inKeys_ft);
+  futhark_free_u8_2d(ctx, inPayloads_ft);
   // Perform the sorting
   struct futhark_opaque_sortStruct_int *sortStruct_out;
   if(blocked) futhark_entry_radixSortRelation_int(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_int(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
   //futhark_context_sync(ctx);
-  futhark_free_i32_1d(ctx, inKeys_ft);
-  futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_int(ctx, sortStruct_in);
   // Unwrap sorted output
   futhark_project_opaque_sortStruct_int_k(ctx, outKeys, sortStruct_out);
@@ -426,21 +444,30 @@ void sortRelationByKey_inFuthark_long(
   long* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
-  idx_t card
+  idx_t card,
+	void *minval,
+	void *maxval
 ) {
-  // Wrap keys & payloads into futhark sortStruct
+  // Wrap keys & payloads into futhark context
   struct futhark_u8_2d *inPayloads_ft = futhark_new_u8_2d(ctx, (uint8_t*)inPayloads, card, pL_bytesPerRow);
   struct futhark_i64_1d *inKeys_ft = futhark_new_i64_1d(ctx, inKeys, card);
+  // Obtain min & max
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_long(ctx, (long*)minVal, inKeys_ft);
+  	if(maxVal) futhark_entry_maximum_long(ctx, (long*)maxVal, inKeys_ft);
+  }
+  // Wrap into sortstruct
   struct futhark_opaque_sortStruct_long *sortStruct_in;
   futhark_new_opaque_sortStruct_long(ctx, &sortStruct_in, inKeys_ft, inPayloads_ft);
+  futhark_free_i64_1d(ctx, inKeys_ft);
+  futhark_free_u8_2d(ctx, inPayloads_ft);
   // Perform the sorting
   struct futhark_opaque_sortStruct_long *sortStruct_out;
   if(blocked) futhark_entry_radixSortRelation_long(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_long(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
   //futhark_context_sync(ctx);
-  futhark_free_i64_1d(ctx, inKeys_ft);
-  futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_long(ctx, sortStruct_in);
   // Unwrap sorted output
   futhark_project_opaque_sortStruct_long_k(ctx, outKeys, sortStruct_out);
@@ -458,21 +485,30 @@ void sortRelationByKey_inFuthark_float(
   float* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
-  idx_t card
+  idx_t card,
+	void *minval,
+	void *maxval
 ) {
-  // Wrap keys & payloads into futhark sortStruct
+  // Wrap keys & payloads into futhark context
   struct futhark_u8_2d *inPayloads_ft = futhark_new_u8_2d(ctx, (uint8_t*)inPayloads, card, pL_bytesPerRow);
   struct futhark_f32_1d *inKeys_ft = futhark_new_f32_1d(ctx, inKeys, card);
+  // Obtain min & max
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_float(ctx, (float*)minVal, inKeys_ft);
+  	if(maxVal) futhark_entry_maximum_float(ctx, (float*)maxVal, inKeys_ft);
+  }
+  // Wrap into sortstruct
   struct futhark_opaque_sortStruct_float *sortStruct_in;
   futhark_new_opaque_sortStruct_float(ctx, &sortStruct_in, inKeys_ft, inPayloads_ft);
+  futhark_free_f32_1d(ctx, inKeys_ft);
+  futhark_free_u8_2d(ctx, inPayloads_ft);
   // Perform the sorting
   struct futhark_opaque_sortStruct_float *sortStruct_out;
   if(blocked) futhark_entry_radixSortRelation_float(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_float(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
   //futhark_context_sync(ctx);
-  futhark_free_f32_1d(ctx, inKeys_ft);
-  futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_float(ctx, sortStruct_in);
   // Unwrap sorted output
   futhark_project_opaque_sortStruct_float_k(ctx, outKeys, sortStruct_out);
@@ -490,21 +526,30 @@ void sortRelationByKey_inFuthark_double(
   double* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
-  idx_t card
+  idx_t card,
+	void *minval,
+	void *maxval
 ) {
-  // Wrap keys & payloads into futhark sortStruct
+  // Wrap keys & payloads into futhark context
   struct futhark_u8_2d *inPayloads_ft = futhark_new_u8_2d(ctx, (uint8_t*)inPayloads, card, pL_bytesPerRow);
   struct futhark_f64_1d *inKeys_ft = futhark_new_f64_1d(ctx, inKeys, card);
+  // Obtain min & max
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_double(ctx, (double*)minVal, inKeys_ft);
+  	if(maxVal) futhark_entry_maximum_double(ctx, (double*)maxVal, inKeys_ft);
+  }
+  // Wrap into sortstruct
   struct futhark_opaque_sortStruct_double *sortStruct_in;
   futhark_new_opaque_sortStruct_double(ctx, &sortStruct_in, inKeys_ft, inPayloads_ft);
+  futhark_free_f64_1d(ctx, inKeys_ft);
+  futhark_free_u8_2d(ctx, inPayloads_ft);
   // Perform the sorting
   struct futhark_opaque_sortStruct_double *sortStruct_out;
   if(blocked) futhark_entry_radixSortRelation_double(ctx, &sortStruct_out, block_size, sortStruct_in);
   else futhark_entry_mergeSortRelation_double(ctx, &sortStruct_out, sortStruct_in);
   // Sync context, cleanup
   //futhark_context_sync(ctx);
-  futhark_free_f64_1d(ctx, inKeys_ft);
-  futhark_free_u8_2d(ctx, inPayloads_ft);
   futhark_free_opaque_sortStruct_double(ctx, sortStruct_in);
   // Unwrap sorted output
   futhark_project_opaque_sortStruct_double_k(ctx, outKeys, sortStruct_out);
@@ -523,29 +568,31 @@ void sortRelationByKey_inFuthark(
   void* inKeys,
   char* inPayloads,
   idx_t pL_bytesPerRow,
-  idx_t card
+  idx_t card,
+  void *minval,
+	void *maxval
 ) {
   // Wrap payloads and keys
   switch(key_type) {
     case DUCKDB_TYPE_SMALLINT:
       sortRelationByKey_inFuthark_short(ctx, (struct futhark_i16_1d **)outKeys, outPayloads, blocked, block_size,
-        (short*)inKeys, inPayloads, pL_bytesPerRow, card);
+        (short*)inKeys, inPayloads, pL_bytesPerRow, card, minval, maxval);
       return;
     case DUCKDB_TYPE_INTEGER:
       sortRelationByKey_inFuthark_int(ctx, (struct futhark_i32_1d **)outKeys, outPayloads, blocked, block_size,
-        (int*)inKeys, inPayloads, pL_bytesPerRow, card);
+        (int*)inKeys, inPayloads, pL_bytesPerRow, card, minval, maxval);
       return;
     case DUCKDB_TYPE_BIGINT:
       sortRelationByKey_inFuthark_long(ctx, (struct futhark_i64_1d **)outKeys, outPayloads, blocked, block_size,
-        (long*)inKeys, inPayloads, pL_bytesPerRow, card);
+        (long*)inKeys, inPayloads, pL_bytesPerRow, card, minval, maxval);
       return;
     case DUCKDB_TYPE_FLOAT:
       sortRelationByKey_inFuthark_float(ctx, (struct futhark_f32_1d **)outKeys, outPayloads, blocked, block_size,
-        (float*)inKeys, inPayloads, pL_bytesPerRow, card);
+        (float*)inKeys, inPayloads, pL_bytesPerRow, card, minval, maxval);
       return;
     case DUCKDB_TYPE_DOUBLE:
       sortRelationByKey_inFuthark_double(ctx, (struct futhark_f64_1d **)outKeys, outPayloads, blocked, block_size,
-        (double*)inKeys, inPayloads, pL_bytesPerRow, card);
+        (double*)inKeys, inPayloads, pL_bytesPerRow, card, minval, maxval);
       return;
     default:
       perror("sortRelationByKey: Invalid Type.");
@@ -553,9 +600,26 @@ void sortRelationByKey_inFuthark(
   }
 }
 
-void sortKeyColumn_inFuthark_short(struct futhark_context *ctx, struct futhark_i16_1d **outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, short* keys, idx_t card) {
+void sortKeyColumn_inFuthark_short(
+	struct futhark_context *ctx,
+	struct futhark_i16_1d **outCol,
+	idx_t incr,
+	int blocked,
+	idx_t block_size,
+	struct futhark_i64_1d **outIdx,
+	short* keys,
+	idx_t card,
+	void *minval,
+	void *maxval
+) {
   // Wrap x into a futhark array x_ft
   struct futhark_i16_1d *x_ft = futhark_new_i16_1d(ctx, keys, card);
+  // Obtain minimum & maximum
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_short(ctx, (short*)minVal, x_ft);
+  	if(maxVal) futhark_entry_maximum_short(ctx, (short*)maxVal, x_ft);
+  }
   // Sort x_ft
   struct futhark_opaque_sortInfo_short *sortInfo;
   if (blocked) {
@@ -573,9 +637,26 @@ void sortKeyColumn_inFuthark_short(struct futhark_context *ctx, struct futhark_i
   futhark_free_opaque_sortInfo_short(ctx, sortInfo);
   futhark_free_i16_1d(ctx, x_ft);
 }
-void sortKeyColumn_inFuthark_int(struct futhark_context *ctx, struct futhark_i32_1d **outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, int* keys, idx_t card) {
+void sortKeyColumn_inFuthark_int(
+	struct futhark_context *ctx,
+	struct futhark_i32_1d **outCol,
+	idx_t incr,
+	int blocked,
+	idx_t block_size,
+	struct futhark_i64_1d **outIdx,
+	int* keys,
+	idx_t card,
+	void *minval,
+	void *maxval
+) {
   // Wrap x into a futhark array x_ft
   struct futhark_i32_1d *x_ft = futhark_new_i32_1d(ctx, keys, card);
+  // Obtain minimum & maximum
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_int(ctx, (int*)minVal, x_ft);
+  	if(maxVal) futhark_entry_maximum_int(ctx, (int*)maxVal, x_ft);
+  }
   // Sort x_ft
   struct futhark_opaque_sortInfo_int *sortInfo;
   if (blocked) {
@@ -594,9 +675,26 @@ void sortKeyColumn_inFuthark_int(struct futhark_context *ctx, struct futhark_i32
   futhark_free_opaque_sortInfo_int(ctx, sortInfo);
   futhark_free_i32_1d(ctx, x_ft);
 }
-void sortKeyColumn_inFuthark_long(struct futhark_context *ctx, struct futhark_i64_1d **outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, long* keys, idx_t card) {
+void sortKeyColumn_inFuthark_long(
+	struct futhark_context *ctx,
+	struct futhark_i64_1d **outCol,
+	idx_t incr,
+	int blocked,
+	idx_t block_size,
+	struct futhark_i64_1d **outIdx,
+	long* keys,
+	idx_t card,
+	void *minval,
+	void *maxval
+) {
   // Wrap x into a futhark array x_ft
   struct futhark_i64_1d *x_ft = futhark_new_i64_1d(ctx, keys, card);
+  // Obtain minimum & maximum
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_long(ctx, (long*)minVal, x_ft);
+  	if(maxVal) futhark_entry_maximum_long(ctx, (long*)maxVal, x_ft);
+  }
   // Sort x_ft
   struct futhark_opaque_sortInfo_long *sortInfo;
   if (blocked) {
@@ -614,9 +712,25 @@ void sortKeyColumn_inFuthark_long(struct futhark_context *ctx, struct futhark_i6
   futhark_free_opaque_sortInfo_long(ctx, sortInfo);
   futhark_free_i64_1d(ctx, x_ft);
 }
-void sortKeyColumn_inFuthark_float(struct futhark_context *ctx, struct futhark_f32_1d **outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, float* keys, idx_t card) {
+void sortKeyColumn_inFuthark_float(
+	struct futhark_context *ctx,
+	struct futhark_f32_1d **outCol,
+	idx_t incr, int blocked,
+	idx_t block_size,
+	struct futhark_i64_1d **outIdx,
+	float* keys,
+	idx_t card,
+	void *minval,
+	void *maxval
+) {
   // Wrap x into a futhark array x_ft
   struct futhark_f32_1d *x_ft = futhark_new_f32_1d(ctx, keys, card);
+  // Obtain minimum & maximum
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_float(ctx, (float*)minVal, x_ft);
+  	if(maxVal) futhark_entry_maximum_float(ctx, (float*)maxVal, x_ft);
+  }
   // Sort x_ft
   struct futhark_opaque_sortInfo_float *sortInfo;
   if (blocked) {
@@ -634,9 +748,26 @@ void sortKeyColumn_inFuthark_float(struct futhark_context *ctx, struct futhark_f
   futhark_free_opaque_sortInfo_float(ctx, sortInfo);
   futhark_free_f32_1d(ctx, x_ft);
 }
-void sortKeyColumn_inFuthark_double(struct futhark_context *ctx, struct futhark_f64_1d **outCol, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, double* keys, idx_t card) {
+void sortKeyColumn_inFuthark_double(
+	struct futhark_context *ctx,
+	struct futhark_f64_1d **outCol,
+	idx_t incr,
+	int blocked,
+	idx_t block_size,
+	struct futhark_i64_1d **outIdx,
+	double* keys,
+	idx_t card,
+	void *minval,
+	void *maxval
+) {
   // Wrap x into a futhark array x_ft
   struct futhark_f64_1d *x_ft = futhark_new_f64_1d(ctx, keys, card);
+  // Obtain minimum & maximum
+  if(minVal || maxVal) {
+  	futhark_context_sync(ctx);
+  	if(minVal) futhark_entry_minimum_double(ctx, (double*)minVal, x_ft);
+  	if(maxVal) futhark_entry_maximum_double(ctx, (double*)maxVal, x_ft);
+  }
   // Sort x_ft
   struct futhark_opaque_sortInfo_double *sortInfo;
   if (blocked) {
@@ -654,22 +785,44 @@ void sortKeyColumn_inFuthark_double(struct futhark_context *ctx, struct futhark_
   futhark_free_opaque_sortInfo_double(ctx, sortInfo);
   futhark_free_f64_1d(ctx, x_ft);
 }
-void sortKeyColumn_inFuthark(struct futhark_context *ctx, void **outCol, duckdb_type type, idx_t incr, int blocked, idx_t block_size, struct futhark_i64_1d **outIdx, void* keys, idx_t card) {
+void sortKeyColumn_inFuthark(
+	struct futhark_context *ctx,
+	void **outCol,
+	duckdb_type type,
+	idx_t incr,
+	int blocked,
+	idx_t block_size,
+	struct futhark_i64_1d **outIdx,
+	void* keys,
+	idx_t card,
+	void *minval,
+	void *maxval
+) {
   switch (type){
   case DUCKDB_TYPE_SMALLINT:
-      sortKeyColumn_inFuthark_short(ctx, (struct futhark_i16_1d **)outCol, incr, blocked, block_size, outIdx, (short*)keys, card);
+      sortKeyColumn_inFuthark_short(
+      	ctx, (struct futhark_i16_1d **)outCol, incr, blocked, block_size, outIdx, (short*)keys, card, minval, maxval
+      );
       return;
     case DUCKDB_TYPE_INTEGER:
-      sortKeyColumn_inFuthark_int(ctx, (struct futhark_i32_1d **)outCol, incr, blocked, block_size, outIdx, (int*)keys, card);
+      sortKeyColumn_inFuthark_int(
+      	ctx, (struct futhark_i32_1d **)outCol, incr, blocked, block_size, outIdx, (int*)keys, card, minval, maxval
+      );
       return;
     case DUCKDB_TYPE_BIGINT:
-      sortKeyColumn_inFuthark_long(ctx, (struct futhark_i64_1d **)outCol, incr, blocked, block_size, outIdx, (long*)keys, card);
+      sortKeyColumn_inFuthark_long(
+      	ctx, (struct futhark_i64_1d **)outCol, incr, blocked, block_size, outIdx, (long*)keys, card, minval, maxval
+      );
       return;
     case DUCKDB_TYPE_FLOAT:
-      sortKeyColumn_inFuthark_float(ctx, (struct futhark_f32_1d **)outCol, incr, blocked, block_size, outIdx, (float*)keys, card);
+      sortKeyColumn_inFuthark_float(
+      	ctx, (struct futhark_f32_1d **)outCol, incr, blocked, block_size, outIdx, (float*)keys, card, minval, maxval
+      );
       return;
     case DUCKDB_TYPE_DOUBLE:
-      sortKeyColumn_inFuthark_double(ctx, (struct futhark_f64_1d **)outCol, incr, blocked, block_size, outIdx, (double*)keys, card);
+      sortKeyColumn_inFuthark_double(
+      	ctx, (struct futhark_f64_1d **)outCol, incr, blocked, block_size, outIdx, (double*)keys, card, minval, maxval
+      );
       return;
     default:
       perror("Invalid type.");

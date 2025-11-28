@@ -15,11 +15,11 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 16*CHUNK_SIZE
 
-#define R_TABLE_SIZE 256*CHUNK_SIZE
-#define S_TABLE_SIZE 256*CHUNK_SIZE
+#define R_TABLE_SIZE 64*CHUNK_SIZE
+#define S_TABLE_SIZE 64*CHUNK_SIZE
 
 #define BLOCK_SIZE (idx_t)128000 // TODO segfault (...)
-#define MERGE_PARTITION_SIZE 512*CHUNK_SIZE
+#define MERGE_PARTITION_SIZE 8*CHUNK_SIZE
 #define GATHER_PSIZE (idx_t)32000 // TODO segfault when too large (might be laptop issue...)
 
 #define R_TBL_NAME "R_tbl"
@@ -110,13 +110,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 2000000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 200000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 2000000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 200000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );

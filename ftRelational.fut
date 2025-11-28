@@ -18,6 +18,21 @@ import "ft_SortGroupBy"
   entry argmin_double [n] (ks: [n]f64) : idx_t.t =
     argmin (<) (==) (f64.highest) ks
 
+  entry minimum_short = i16.minimum
+  entry maximum_short = i16.maximum
+
+  entry minimum_int = i32.minimum
+  entry maximum_int = i32.maximum
+
+  entry minimum_long = i64.minimum
+  entry maximum_long = i64.maximum
+
+  entry minimum_float = f32.minimum
+  entry maximum_float = f32.maximum
+
+  entry minimum_double = f64.minimum
+  entry maximum_double = f64.maximum
+
   entry min_idx = idx_t.minimum
   entry max_idx = idx_t.maximum
 

@@ -2,138 +2,138 @@ import "ftbasics"
 
 -- Abstract Grouped Aggregations
 
-local def grouped_reduce [n] 't
-	(group_no : idx_t.t)
-	(group_by_idx : [n]idx_t.t)
-	(f : t -> t -> t)
-	(ne : t)
-	(xs : [n]t)
-: [group_no]t =
-	hist f ne group_no group_by_idx xs
+	local def grouped_reduce [n] 't
+		(group_no : idx_t.t)
+		(group_by_idx : [n]idx_t.t)
+		(f : t -> t -> t)
+		(ne : t)
+		(xs : [n]t)
+	: [group_no]t =
+		hist f ne group_no group_by_idx xs
 
-local def grouped_all [n] 't
-	(group_no : idx_t.t)
-	(group_by_idx : [n]idx_t.t)
-	(f : t -> bool)
-	(xs : [n]t)
-: [group_no]bool =
-	let fxs = map f xs
-	in grouped_reduce group_no group_by_idx (&&) (true) fxs
+	local def grouped_all [n] 't
+		(group_no : idx_t.t)
+		(group_by_idx : [n]idx_t.t)
+		(f : t -> bool)
+		(xs : [n]t)
+	: [group_no]bool =
+		let fxs = map f xs
+		in grouped_reduce group_no group_by_idx (&&) (true) fxs
 
-local def grouped_any [n] 't
-	(group_no : idx_t.t)
-	(group_by_idx : [n]idx_t.t)
-	(f : t -> bool)
-	(xs : [n]t)
-: [group_no]bool =
-	let fxs = map f xs
-	in grouped_reduce group_no group_by_idx (||) (false) fxs
+	local def grouped_any [n] 't
+		(group_no : idx_t.t)
+		(group_by_idx : [n]idx_t.t)
+		(f : t -> bool)
+		(xs : [n]t)
+	: [group_no]bool =
+		let fxs = map f xs
+		in grouped_reduce group_no group_by_idx (||) (false) fxs
 
 -- Functions to Find Group Ranges
 
--- This only finds *counts* from unsorted list...
--- Also, keys need to be long and take values in (iota key_no)
-def find_known_key_counts [n] 't
-	(key_no : idx_t.t)
-	(ks : [n]idx_t.t)
-: [key_no]idx_t.t =
-	hist (+) 0 key_no ks (replicate n 1)
+	-- This only finds *counts* from unsorted list...
+	-- Also, keys need to be long and take values in (iota key_no)
+	def find_known_key_counts [n] 't
+		(key_no : idx_t.t)
+		(ks : [n]idx_t.t)
+	: [key_no]idx_t.t =
+		hist (+) 0 key_no ks (replicate n 1)
 
-def sortgroup_find_known_key_counts [n] [key_no] 't
-	(k_ids : [key_no]t)
-	(sorted_ks : [n]t)
-	(eq : t -> t -> bool)
-	(gt : t -> t -> bool)
-: ([key_no]idx_t.t, [key_no]idx_t.t) = -- returns index & size of each group
-	-- Binary Search Loop Inversion
-	let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
-	let (bsearch_first,_) =
-		loop (search_is,last_step) = (replicate key_no 0, n) for _ in (iota num_iter) do
-			let this_step = (last_step+1)/2
-			let cmps_ = search_is
-				|> map (\i ->
-					let prev_elem = if i<=0 then sorted_ks[0] else sorted_ks[i-1]
-					let cur_elem = if i<0 then sorted_ks[0] else sorted_ks[i]
-					let next_elem = if i>=(n-1) then sorted_ks[n-1] else sorted_ks[i+1]
-					in (i, prev_elem, cur_elem, next_elem)
-				)
-			let cmps = map2 (\kv (i, pv, cv, nv) ->
-					if i<0 then (-1) else
-					if (kv `eq` cv) && (i==0 || (kv `gt` pv))
-						then i
-					else if (kv `eq` cv)
-						then i64.max 0 (i-this_step)
-					else if (kv `gt` cv) then
-						if (i == n-1 || (nv `gt` kv))
-						then -1
-						else i64.min (n-1) (i+this_step)
-					else -- cv `gt` kv
-						if (i == 0 || (kv `gt` pv))
-						then -1
-						else i64.max 0 (i-this_step)
-				) k_ids cmps_
-			in (cmps, this_step)
-	let (bsearch_last,_) =
-		loop (search_is,last_step) = (bsearch_first, n) for _ in (iota num_iter) do
-			let this_step = i64.max 1 ((last_step+1)/2)
-			let cmps_ = search_is
-				|> map (\i ->
-					let cur_elem = if i<0 then sorted_ks[0] else sorted_ks[i]
-					let next_elem = if i>=(n-1) then sorted_ks[n-1] else sorted_ks[i+1]
-					in (i, cur_elem, next_elem)
-				)
-			let cmps = map2 (\kv (i, cv, nv) ->
-					if i<0 then (-1) else
-					if (kv `eq` cv) && (i==(n-1) || (nv `gt` kv))
-						then i
-					else if (kv `eq` cv)
-						then i64.min (n-1) (i+this_step)
-					else if (kv `gt` cv)
-						then i64.min (n-1) (i+this_step)
-					else -- cv `gt` kv
-						i64.max 0 (i-this_step)
-				) k_ids cmps_
-			in (cmps, this_step)
-	let counts = map2 (\fm lm -> if fm<0 then 0 else lm-fm+1) bsearch_first bsearch_last
-	in (bsearch_first, counts)
+	def sortgroup_find_known_key_counts [n] [key_no] 't
+		(k_ids : [key_no]t)
+		(sorted_ks : [n]t)
+		(eq : t -> t -> bool)
+		(gt : t -> t -> bool)
+	: ([key_no]idx_t.t, [key_no]idx_t.t) = -- returns index & size of each group
+		-- Binary Search Loop Inversion
+		let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+		let (bsearch_first,_) =
+			loop (search_is,last_step) = (replicate key_no 0, n) for _ in (iota num_iter) do
+				let this_step = (last_step+1)/2
+				let cmps_ = search_is
+					|> map (\i ->
+						let prev_elem = if i<=0 then sorted_ks[0] else sorted_ks[i-1]
+						let cur_elem = if i<0 then sorted_ks[0] else sorted_ks[i]
+						let next_elem = if i>=(n-1) then sorted_ks[n-1] else sorted_ks[i+1]
+						in (i, prev_elem, cur_elem, next_elem)
+					)
+				let cmps = map2 (\kv (i, pv, cv, nv) ->
+						if i<0 then (-1) else
+						if (kv `eq` cv) && (i==0 || (kv `gt` pv))
+							then i
+						else if (kv `eq` cv)
+							then i64.max 0 (i-this_step)
+						else if (kv `gt` cv) then
+							if (i == n-1 || (nv `gt` kv))
+							then -1
+							else i64.min (n-1) (i+this_step)
+						else -- cv `gt` kv
+							if (i == 0 || (kv `gt` pv))
+							then -1
+							else i64.max 0 (i-this_step)
+					) k_ids cmps_
+				in (cmps, this_step)
+		let (bsearch_last,_) =
+			loop (search_is,last_step) = (bsearch_first, n) for _ in (iota num_iter) do
+				let this_step = i64.max 1 ((last_step+1)/2)
+				let cmps_ = search_is
+					|> map (\i ->
+						let cur_elem = if i<0 then sorted_ks[0] else sorted_ks[i]
+						let next_elem = if i>=(n-1) then sorted_ks[n-1] else sorted_ks[i+1]
+						in (i, cur_elem, next_elem)
+					)
+				let cmps = map2 (\kv (i, cv, nv) ->
+						if i<0 then (-1) else
+						if (kv `eq` cv) && (i==(n-1) || (nv `gt` kv))
+							then i
+						else if (kv `eq` cv)
+							then i64.min (n-1) (i+this_step)
+						else if (kv `gt` cv)
+							then i64.min (n-1) (i+this_step)
+						else -- cv `gt` kv
+							i64.max 0 (i-this_step)
+					) k_ids cmps_
+				in (cmps, this_step)
+		let counts = map2 (\fm lm -> if fm<0 then 0 else lm-fm+1) bsearch_first bsearch_last
+		in (bsearch_first, counts)
 
-def sortgroup_find_unknown_key_counts [n] 't
-	(sorted_ks : [n]t)
-	(eq : t -> t -> bool)
-: ([]idx_t.t, []idx_t.t) = -- returns index & size of each group
-	let bounds_ = (iota n)
-		|> map (\j ->
-			if j == 0 then 0 else
-			let this_k = sorted_ks[j]
-			let prev_k = sorted_ks[j-1]
-			in
-				if this_k `eq` prev_k
-				then (-1)
-				else j
-		)
-	let num_ks = bounds_ |> countFor (>=0)
-	let scatter_idx = exscan (+) 0 (bounds_ |> map (\b -> if b>=0 then 1 else 0))
-	let bounds = scatter (replicate num_ks (-1)) scatter_idx bounds_
-	let sizes = (iota num_ks)
-		|> map (\j ->
-			if j == (length bounds)-1 then (n-bounds[j]) else
-			let this_ind = bounds[j]
-			let next_ind = bounds[j+1]
-			in next_ind-this_ind
-		)
-	in (bounds, sizes)
+	def sortgroup_find_unknown_key_counts [n] 't
+		(sorted_ks : [n]t)
+		(eq : t -> t -> bool)
+	: ([]idx_t.t, []idx_t.t) = -- returns index & size of each group
+		let bounds_ = (iota n)
+			|> map (\j ->
+				if j == 0 then 0 else
+				let this_k = sorted_ks[j]
+				let prev_k = sorted_ks[j-1]
+				in
+					if this_k `eq` prev_k
+					then (-1)
+					else j
+			)
+		let num_ks = bounds_ |> countFor (>=0)
+		let scatter_idx = exscan (+) 0 (bounds_ |> map (\b -> if b>=0 then 1 else 0))
+		let bounds = scatter (replicate num_ks (-1)) scatter_idx bounds_
+		let sizes = (iota num_ks)
+			|> map (\j ->
+				if j == (length bounds)-1 then (n-bounds[j]) else
+				let this_ind = bounds[j]
+				let next_ind = bounds[j+1]
+				in next_ind-this_ind
+			)
+		in (bounds, sizes)
 
--- TODO this could be done with map and binary search
-def sortgroup_partitionByIndex [group_no]
-	(group_idx: [group_no]idx_t.t)
-	(group_sizes: [group_no]idx_t.t)
-	(len: idx_t.t)
-: [len]idx_t.t =
-	loop buff = (replicate len (-1))
-	for j in (iota group_no) do
-		let zuowei = group_idx[j]
-		let xiaoda = group_sizes[j]
-		in buff with [zuowei:zuowei+xiaoda] = replicate xiaoda j
+	-- TODO this could be done with map and binary search
+	def sortgroup_partitionByIndex [group_no]
+		(group_idx: [group_no]idx_t.t)
+		(group_sizes: [group_no]idx_t.t)
+		(len: idx_t.t)
+	: [len]idx_t.t =
+		loop buff = (replicate len (-1))
+		for j in (iota group_no) do
+			let zuowei = group_idx[j]
+			let xiaoda = group_sizes[j]
+			in buff with [zuowei:zuowei+xiaoda] = replicate xiaoda j
 		
 
 -- Aggregation Modules
@@ -285,44 +285,40 @@ module GroupedAggregator_double = mk_aggrCol_from_numeric f64
 -- ---------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------
 
--- TODO determine if this is worthwhile compared to the hist approach
--- the thinking is that hist might not exploit the keys being sorted
--- whereas this approach might have too much fragmentation
+	local def alt_grouped_reduce [n] [group_no] 't
+		(group_idx : [group_no]idx_t.t)
+		(group_sizes : [group_no]idx_t.t)
+		(f : t -> t -> t)
+		(ne : t)
+		(xs : [n]t)
+	: [group_no]t =
+		let max_size = idx_t.maximum group_sizes
+		let regularised_xs = (iota group_no)
+			|> map (\gi ->
+				let this_inf = group_idx[gi]
+				let this_sup = this_inf + group_sizes[gi]
+				let this_pad = max_size - group_sizes[gi]
+				in (xs[this_inf:this_sup] ++ (replicate this_pad ne)) :> [max_size]t
+			)
+		in map (\gxs -> reduce_comm f ne gxs) regularised_xs
 
-local def alt_grouped_reduce [n] [group_no] 't
-	(group_idx : [group_no]idx_t.t)
-	(group_sizes : [group_no]idx_t.t)
-	(f : t -> t -> t)
-	(ne : t)
-	(xs : [n]t)
-: [group_no]t =
-	let max_size = idx_t.maximum group_sizes
-	let regularised_xs = (iota group_no)
-		|> map (\gi ->
-			let this_inf = group_idx[gi]
-			let this_sup = this_inf + group_sizes[gi]
-			let this_pad = max_size - group_sizes[gi]
-			in (xs[this_inf:this_sup] ++ (replicate this_pad ne)) :> [max_size]t
-		)
-	in map (\gxs -> reduce_comm f ne gxs) regularised_xs
+	local def alt_grouped_all [n] [group_no] 't
+		(group_idx : [group_no]idx_t.t)
+		(group_sizes : [group_no]idx_t.t)
+		(f : t -> bool)
+		(xs : [n]t)
+	: [group_no]bool =
+		let fxs = map f xs
+		in alt_grouped_reduce group_idx group_sizes (&&) (true) fxs
 
-local def alt_grouped_all [n] [group_no] 't
-	(group_idx : [group_no]idx_t.t)
-	(group_sizes : [group_no]idx_t.t)
-	(f : t -> bool)
-	(xs : [n]t)
-: [group_no]bool =
-	let fxs = map f xs
-	in alt_grouped_reduce group_idx group_sizes (&&) (true) fxs
-
-local def alt_grouped_any [n] [group_no] 't
-	(group_idx : [group_no]idx_t.t)
-	(group_sizes : [group_no]idx_t.t)
-	(f : t -> bool)
-	(xs : [n]t)
-: [group_no]bool =
-	let fxs = map f xs
-	in alt_grouped_reduce group_idx group_sizes (||) (false) fxs
+	local def alt_grouped_any [n] [group_no] 't
+		(group_idx : [group_no]idx_t.t)
+		(group_sizes : [group_no]idx_t.t)
+		(f : t -> bool)
+		(xs : [n]t)
+	: [group_no]bool =
+		let fxs = map f xs
+		in alt_grouped_reduce group_idx group_sizes (||) (false) fxs
 
 
 local module type alt_aggrCol = {

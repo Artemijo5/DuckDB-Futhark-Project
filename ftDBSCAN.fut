@@ -5,33 +5,21 @@ type~ core_cluster [dim] 'a = {len: i64, core_pts: [][dim]a, core_ids: []i64}
 module dbscan_real (F : real) = {
 	type t = F.t
 
-	def eq  = (F.==)
-	def neq = (F.!=)
-	def gt  = (F.>)
-	def lt  = (F.<)
-	def geq = (F.>=)
-	def leq = (F.<=)
+	local def eq  = (F.==)
+	local def gt  = (F.>)
+	local def lt  = (F.<)
+	local def leq = (F.<=)
 
-	def min = F.min
-	def max = F.max
-	def minimum = F.minimum
-	def maximum = F.maximum
+	local def plus   = (F.+)
+	local def minus  = (F.-)
+	local def times  = (F.*)
 
-	def plus   = (F.+)
-	def minus  = (F.-)
-	def times  = (F.*)
-	def over   = (F./)
+	local def zero = F.i32 0
 
-	def zero = F.i32 0
-	def one = F.i32 1
-	def two = F.i32 2
+	local def lowest = F.lowest
+	local def highest = F.highest
 
-	def lowest = F.lowest
-	def highest = F.highest
-
-	def sum = F.sum
-	def prod = F.product
-	def sqrt = F.sqrt
+	local def sqrt = F.sqrt
 
 	def dist [dim] (x1 : [dim]t) (x2 : [dim]t)
 	: t =

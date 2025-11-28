@@ -282,6 +282,11 @@ int futhark_entry_int_sum_xy(struct futhark_context *ctx, struct futhark_i32_1d 
 int futhark_entry_long_sum(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i64_1d *in2);
 int futhark_entry_long_sum_xy(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3);
 int futhark_entry_max_idx(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0);
+int futhark_entry_maximum_double(struct futhark_context *ctx, double *out0, const struct futhark_f64_1d *in0);
+int futhark_entry_maximum_float(struct futhark_context *ctx, float *out0, const struct futhark_f32_1d *in0);
+int futhark_entry_maximum_int(struct futhark_context *ctx, int32_t *out0, const struct futhark_i32_1d *in0);
+int futhark_entry_maximum_long(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0);
+int futhark_entry_maximum_short(struct futhark_context *ctx, int16_t *out0, const struct futhark_i16_1d *in0);
 int futhark_entry_mergeSortColumn_double(struct futhark_context *ctx, struct futhark_opaque_sortInfo_double **out0, const int64_t in0, const struct futhark_f64_1d *in1);
 int futhark_entry_mergeSortColumn_float(struct futhark_context *ctx, struct futhark_opaque_sortInfo_float **out0, const int64_t in0, const struct futhark_f32_1d *in1);
 int futhark_entry_mergeSortColumn_int(struct futhark_context *ctx, struct futhark_opaque_sortInfo_int **out0, const int64_t in0, const struct futhark_i32_1d *in1);
@@ -293,6 +298,11 @@ int futhark_entry_mergeSortRelation_int(struct futhark_context *ctx, struct futh
 int futhark_entry_mergeSortRelation_long(struct futhark_context *ctx, struct futhark_opaque_sortStruct_long **out0, const struct futhark_opaque_sortStruct_long *in0);
 int futhark_entry_mergeSortRelation_short(struct futhark_context *ctx, struct futhark_opaque_sortStruct_short **out0, const struct futhark_opaque_sortStruct_short *in0);
 int futhark_entry_min_idx(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0);
+int futhark_entry_minimum_double(struct futhark_context *ctx, double *out0, const struct futhark_f64_1d *in0);
+int futhark_entry_minimum_float(struct futhark_context *ctx, float *out0, const struct futhark_f32_1d *in0);
+int futhark_entry_minimum_int(struct futhark_context *ctx, int32_t *out0, const struct futhark_i32_1d *in0);
+int futhark_entry_minimum_long(struct futhark_context *ctx, int64_t *out0, const struct futhark_i64_1d *in0);
+int futhark_entry_minimum_short(struct futhark_context *ctx, int16_t *out0, const struct futhark_i16_1d *in0);
 int futhark_entry_orderByIndices_double(struct futhark_context *ctx, struct futhark_f64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_f64_1d *in3);
 int futhark_entry_orderByIndices_float(struct futhark_context *ctx, struct futhark_f32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_f32_1d *in3);
 int futhark_entry_orderByIndices_int(struct futhark_context *ctx, struct futhark_i32_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i32_1d *in3);

@@ -60,7 +60,9 @@ void sortRelationByKey_inFuthark(
 	void* inKeys,
 	char *inPayloads,
 	idx_t pL_bytesPerRow,
-	idx_t card
+	idx_t card,
+	void *minval,
+	void *maxval
 );
 void sortKeyColumn_inFuthark(
 	struct futhark_context *ctx,
@@ -71,7 +73,9 @@ void sortKeyColumn_inFuthark(
 	idx_t block_size,
 	struct futhark_i64_1d **outIdx,
 	void* keys,
-	idx_t card
+	idx_t card,
+	void *minval,
+	void *maxval
 );
 void InnerJoin_joinKeyColumns_inFuthark(
 	struct futhark_context *ctx,
