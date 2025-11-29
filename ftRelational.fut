@@ -3,6 +3,7 @@ import "ftSMJ"
 import "ftHashJoin"
 import "ft_SortGroupBy"
 import "ft_StrUtil"
+import "ftSMJ_str"
 
 -- TODO make bit_step (++) accessible from entry points
 
@@ -369,10 +370,75 @@ import "ft_StrUtil"
 -- String Functions
 
   -- Gather
-  entry gather_str [ni]
-    (psize : i64)
-    (gather_is : [ni]i64)
-    (str_con : []u8)
-    (str_is : []i64)
-  : strInfo =
-    gather_str psize gather_is {str_content = str_con, str_idx = str_is}
+    entry gather_str [ni]
+      (psize : i64)
+      (gather_is : [ni]i64)
+      (str_con : []u8)
+      (str_is : []i64)
+    : strInfo =
+      gather_str psize gather_is {str_content = str_con, str_idx = str_is}
+
+  -- Sort
+    entry arith_sort_str_GFTR [n] [total_len] [pL_b]
+      (str_content : [total_len]u8)
+      (str_idx : [n]idx_t.t)
+      (ys : [n][pL_b]u8)
+      (psize : idx_t.t)
+    : sortStruct_str [pL_b] =
+      let (sort_con, sort_is, sort_pL) = do_sort_str arith_char_cmp str_content str_idx ys psize
+      let sort_info : strInfo = {str_content = sort_con, str_idx = sort_is}
+      in {str_info = sort_info, pL = sort_pL}
+    entry arith_sort_str_GFUR [n] [total_len]
+      (str_content : [total_len]u8)
+      (str_idx : [n]idx_t.t)
+      (offset : idx_t.t)
+      (psize : idx_t.t)
+    : sortInfo_str =
+      let ys = indices str_idx |> map (\i -> i+offset)
+      let (sort_con, sort_is, sort_pL) = do_sort_str arith_char_cmp str_content str_idx ys psize
+      let sort_info : strInfo = {str_content = sort_con, str_idx = sort_is}
+      in {str_info = sort_info, is = sort_pL}
+
+    entry arith_sort_str_caseInsens_GFTR [n] [total_len] [pL_b]
+      (str_content : [total_len]u8)
+      (str_idx : [n]idx_t.t)
+      (ys : [n][pL_b]u8)
+      (psize : idx_t.t)
+    : sortStruct_str [pL_b] =
+      let ci_arith_char_cmp = case_insensitive_char_cmp arith_char_cmp
+      let (sort_con, sort_is, sort_pL) = do_sort_str ci_arith_char_cmp str_content str_idx ys psize
+      let sort_info : strInfo = {str_content = sort_con, str_idx = sort_is}
+      in {str_info = sort_info, pL = sort_pL}
+    entry arith_sort_str_caseInsens_GFUR [n] [total_len]
+      (str_content : [total_len]u8)
+      (str_idx : [n]idx_t.t)
+      (offset : idx_t.t)
+      (psize : idx_t.t)
+    : sortInfo_str =
+      let ci_arith_char_cmp = case_insensitive_char_cmp arith_char_cmp
+      let ys = indices str_idx |> map (\i -> i+offset)
+      let (sort_con, sort_is, sort_pL) = do_sort_str ci_arith_char_cmp str_content str_idx ys psize
+      let sort_info : strInfo = {str_content = sort_con, str_idx = sort_is}
+      in {str_info = sort_info, is = sort_pL}
+
+  -- SMJ
+    entry sortMergeJoin_str
+      (str_info1 : strInfo)
+      (str_info2 : strInfo)
+      (offset_R : idx_t.t)
+      (offset_S : idx_t.t)
+      (partitionSize: idx_t.t)
+      (scatter_psize: idx_t.t)
+    : joinPairs_str =
+      smj_str arith_char_cmp str_info1 str_info2 offset_R offset_S partitionSize scatter_psize
+
+    entry sortMergeJoin_str_caseInsens
+      (str_info1 : strInfo)
+      (str_info2 : strInfo)
+      (offset_R : idx_t.t)
+      (offset_S : idx_t.t)
+      (partitionSize: idx_t.t)
+      (scatter_psize: idx_t.t)
+    : joinPairs_str =
+      let ci_arith_char_cmp = case_insensitive_char_cmp arith_char_cmp
+      in smj_str ci_arith_char_cmp str_info1 str_info2 offset_R offset_S partitionSize scatter_psize

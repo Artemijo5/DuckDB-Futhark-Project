@@ -3,9 +3,6 @@ import "ftbasics"
 import "ft_StrUtil"
 import "ftSMJ"
 
--- TODO entry points
--- probably make a content+idx record type
-
 def do_sort_str [n] [total_len] 't
 	(char_cmp : u8 -> u8 -> i32)
 	(str_content : [total_len]u8)
@@ -65,8 +62,6 @@ def do_smj_str [n1] [n2] [total_len1] [total_len2] 't
 	in
 		inner_SMJ (i64.num_bits) (-1) (iota n1) (iota n2) offset_R offset_S partitionSize scatter_psize (str_eq) (str_gt) (str_lt)
 
--- TODO entry points for sort...
-
 def smj_str
 	(char_cmp : u8 -> u8 -> i32)
 	(str_info1 : strInfo)
@@ -86,13 +81,3 @@ def smj_str
 		scatter_psize
 	let jp_str = gather_str scatter_psize jp.vs str_info1
 	in {str_info = jp_str, ix = jp.ix, iy = jp.iy}
-
-entry sortMergeJoin_str
-	(str_info1 : strInfo)
-	(str_info2 : strInfo)
-	(offset_R : idx_t.t)
-	(offset_S : idx_t.t)
-	(partitionSize: idx_t.t)
-	(scatter_psize: idx_t.t)
-: joinPairs_str =
-	smj_str arith_char_cmp str_info1 str_info2 offset_R offset_S partitionSize scatter_psize
