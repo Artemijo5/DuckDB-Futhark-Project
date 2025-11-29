@@ -2,6 +2,7 @@ import "ftbasics"
 import "ftSMJ"
 import "ftHashJoin"
 import "ft_SortGroupBy"
+import "ft_StrUtil"
 
 -- TODO make bit_step (++) accessible from entry points
 
@@ -363,3 +364,15 @@ import "ft_SortGroupBy"
 
     entry alt_double_sum = SortGroupedAggregator_double.sum
     entry alt_double_sum_xy = SortGroupedAggregator_double.sum_xy
+
+
+-- String Functions
+
+  -- Gather
+  entry gather_str [ni]
+    (psize : i64)
+    (gather_is : [ni]i64)
+    (str_con : []u8)
+    (str_is : []i64)
+  : strInfo =
+    gather_str psize gather_is {str_content = str_con, str_idx = str_is}

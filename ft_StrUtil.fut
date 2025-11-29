@@ -97,7 +97,7 @@ def do_gather_str [n] [ni] [total_len]
 			in scatter (copy buff) scatter_idxs scatter_chars
 	in (new_con, zuowei)
 
-type~ strInfo = {str_content : []u8, str_idx : []idx_t.t}
+type~ strInfo = {str_content : []u8, str_idx : []i64}
 type~ sortInfo_str = {str_info : strInfo, is : []idx_t.t}
 type~ sortStruct_str [b] = {str_info : strInfo, pL : [][b]u8}
 type~ joinPairs_str = {str_info : strInfo, ix : []idx_t.t, iy : []idx_t.t}
@@ -109,3 +109,4 @@ def gather_str [ni]
 : strInfo =
 	let (g_con, g_idx) = do_gather_str psize gather_is str_info.str_content str_info.str_idx
 	in {str_content = g_con, str_idx = g_idx}
+

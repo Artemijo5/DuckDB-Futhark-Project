@@ -18,7 +18,7 @@
 #define R_TABLE_SIZE 4*CHUNK_SIZE
 #define S_TABLE_SIZE 4*CHUNK_SIZE
 
-#define BLOCK_SIZE (idx_t)128000 // TODO segfault (...)
+#define BLOCK_SIZE (idx_t)128000 // TODO radix sort segfaults
 #define MERGE_PARTITION_SIZE 128*CHUNK_SIZE
 #define GATHER_PSIZE (idx_t)1024*CHUNK_SIZE*sizeof(long)
 

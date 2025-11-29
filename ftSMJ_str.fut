@@ -86,3 +86,13 @@ def smj_str
 		scatter_psize
 	let jp_str = gather_str scatter_psize jp.vs str_info1
 	in {str_info = jp_str, ix = jp.ix, iy = jp.iy}
+
+entry sortMergeJoin_str
+	(str_info1 : strInfo)
+	(str_info2 : strInfo)
+	(offset_R : idx_t.t)
+	(offset_S : idx_t.t)
+	(partitionSize: idx_t.t)
+	(scatter_psize: idx_t.t)
+: joinPairs_str =
+	smj_str arith_char_cmp str_info1 str_info2 offset_R offset_S partitionSize scatter_psize

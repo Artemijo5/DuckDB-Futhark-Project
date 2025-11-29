@@ -91,6 +91,14 @@ int futhark_values_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *ar
 int futhark_index_i64_1d(struct futhark_context *ctx, int64_t *out, struct futhark_i64_1d *arr, int64_t i0);
 CUdeviceptr futhark_values_raw_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
+struct futhark_u8_1d;
+struct futhark_u8_1d *futhark_new_u8_1d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0);
+struct futhark_u8_1d *futhark_new_raw_u8_1d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0);
+int futhark_free_u8_1d(struct futhark_context *ctx, struct futhark_u8_1d *arr);
+int futhark_values_u8_1d(struct futhark_context *ctx, struct futhark_u8_1d *arr, uint8_t *data);
+int futhark_index_u8_1d(struct futhark_context *ctx, uint8_t *out, struct futhark_u8_1d *arr, int64_t i0);
+CUdeviceptr futhark_values_raw_u8_1d(struct futhark_context *ctx, struct futhark_u8_1d *arr);
+const int64_t *futhark_shape_u8_1d(struct futhark_context *ctx, struct futhark_u8_1d *arr);
 struct futhark_u8_2d;
 struct futhark_u8_2d *futhark_new_u8_2d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1);
 struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, CUdeviceptr data, int64_t dim0, int64_t dim1);
@@ -122,6 +130,7 @@ struct futhark_opaque_sortStruct_int;
 struct futhark_opaque_sortStruct_long;
 struct futhark_opaque_sortStruct_short;
 struct futhark_opaque_sortgroupInfo;
+struct futhark_opaque_strInfo;
 int futhark_free_opaque_joinPairs_bsq(struct futhark_context *ctx, struct futhark_opaque_joinPairs_bsq *obj);
 int futhark_store_opaque_joinPairs_bsq(struct futhark_context *ctx, const struct futhark_opaque_joinPairs_bsq *obj, void **p, size_t *n);
 struct futhark_opaque_joinPairs_bsq *futhark_restore_opaque_joinPairs_bsq(struct futhark_context *ctx, const void *p);
@@ -255,6 +264,12 @@ struct futhark_opaque_sortgroupInfo *futhark_restore_opaque_sortgroupInfo(struct
 int futhark_project_opaque_sortgroupInfo_group_count(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_sortgroupInfo *obj);
 int futhark_project_opaque_sortgroupInfo_group_idx(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_sortgroupInfo *obj);
 int futhark_new_opaque_sortgroupInfo(struct futhark_context *ctx, struct futhark_opaque_sortgroupInfo **out, const struct futhark_i64_1d *f_group_count, const struct futhark_i64_1d *f_group_idx);
+int futhark_free_opaque_strInfo(struct futhark_context *ctx, struct futhark_opaque_strInfo *obj);
+int futhark_store_opaque_strInfo(struct futhark_context *ctx, const struct futhark_opaque_strInfo *obj, void **p, size_t *n);
+struct futhark_opaque_strInfo *futhark_restore_opaque_strInfo(struct futhark_context *ctx, const void *p);
+int futhark_project_opaque_strInfo_str_content(struct futhark_context *ctx, struct futhark_u8_1d **out, const struct futhark_opaque_strInfo *obj);
+int futhark_project_opaque_strInfo_str_idx(struct futhark_context *ctx, struct futhark_i64_1d **out, const struct futhark_opaque_strInfo *obj);
+int futhark_new_opaque_strInfo(struct futhark_context *ctx, struct futhark_opaque_strInfo **out, const struct futhark_u8_1d *f_str_content, const struct futhark_i64_1d *f_str_idx);
 
 // Entry points
 int futhark_entry_Inner_Radix_Hash_Join(struct futhark_context *ctx, struct futhark_opaque_joinPairs_bsq **out0, const int32_t in0, const struct futhark_u8_2d *in1, const struct futhark_u8_2d *in2, const struct futhark_opaque_partitionInfo *in3, const struct futhark_opaque_radix_hashTable *in4);
@@ -292,6 +307,7 @@ int futhark_entry_gather_payloads_long(struct futhark_context *ctx, struct futha
 int futhark_entry_gather_payloads_long_GFUR(struct futhark_context *ctx, struct futhark_i64_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_i64_1d *in4);
 int futhark_entry_gather_payloads_short(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i64_1d *in2, const struct futhark_i16_1d *in3);
 int futhark_entry_gather_payloads_short_GFUR(struct futhark_context *ctx, struct futhark_i16_1d **out0, const int64_t in0, const int64_t in1, const struct futhark_i16_1d *in2, const struct futhark_i64_1d *in3, const struct futhark_i16_1d *in4);
+int futhark_entry_gather_str(struct futhark_context *ctx, struct futhark_opaque_strInfo **out0, const int64_t in0, const struct futhark_i64_1d *in1, const struct futhark_u8_1d *in2, const struct futhark_i64_1d *in3);
 int futhark_entry_inner_SMJ_double(struct futhark_context *ctx, struct futhark_opaque_joinPairs_double **out0, const struct futhark_f64_1d *in0, const struct futhark_f64_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5);
 int futhark_entry_inner_SMJ_float(struct futhark_context *ctx, struct futhark_opaque_joinPairs_float **out0, const struct futhark_f32_1d *in0, const struct futhark_f32_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5);
 int futhark_entry_inner_SMJ_int(struct futhark_context *ctx, struct futhark_opaque_joinPairs_int **out0, const struct futhark_i32_1d *in0, const struct futhark_i32_1d *in1, const int64_t in2, const int64_t in3, const int64_t in4, const int64_t in5);
