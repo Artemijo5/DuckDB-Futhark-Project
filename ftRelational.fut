@@ -368,6 +368,7 @@ import "ftSMJ_str"
 
 
 -- String Functions
+-- TODO for tests: maybe alphabetic comparison?
 
   -- Gather
     entry gather_str [ni]
@@ -442,3 +443,8 @@ import "ftSMJ_str"
     : joinPairs_str =
       let ci_arith_char_cmp = case_insensitive_char_cmp arith_char_cmp
       in smj_str ci_arith_char_cmp str_info1 str_info2 offset_R offset_S partitionSize scatter_psize
+
+  -- Hashing
+
+
+  -- Hash Join

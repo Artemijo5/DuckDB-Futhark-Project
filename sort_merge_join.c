@@ -13,10 +13,10 @@
 #define LOGFILE "stdout"//"sort_merge_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 64*CHUNK_SIZE
+#define BUFFER_SIZE 4*CHUNK_SIZE
 
-#define R_TABLE_SIZE 4*CHUNK_SIZE
-#define S_TABLE_SIZE 4*CHUNK_SIZE
+#define R_TABLE_SIZE 16*CHUNK_SIZE
+#define S_TABLE_SIZE 16*CHUNK_SIZE
 
 #define BLOCK_SIZE (idx_t)128000 // TODO radix sort segfaults
 #define MERGE_PARTITION_SIZE 128*CHUNK_SIZE
@@ -110,13 +110,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 2000000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 2000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 2000000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 2000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );

@@ -4,7 +4,6 @@ import "ftbasics"
 -- Sorting Functions
 
 -- 1. Radix Sort
--- TODO implement blocked algorithm like in sorts library?
 
   def my_radix_sort [n] 't
     (block_size : idx_t.t)
@@ -218,17 +217,16 @@ import "ftbasics"
           |> map (\i ->
             let prev_elem = if i<=0 then tS[0] else tS[i-1]
             let cur_elem = if i<0 then tS[0] else tS[i]
-            let next_elem = if i>=(nS-1) then tS[nS-1] else tS[i+1]
-            in (i, prev_elem, cur_elem, next_elem)
+            in (i, prev_elem, cur_elem)
           )
-        let cmps = map2 (\kv (i, pv, cv, nv) ->
+        let cmps = map2 (\kv (i, pv, cv) ->
             if i<0 then (-1) else
             if (kv `eq` cv) && (i==0 || (kv `gt` pv))
               then i
             else if (kv `eq` cv)
               then i64.max 0 (i-this_step)
             else if (kv `gt` cv) then
-              if (i == nS-1 || (kv `lt` nv))
+              if (i == nS-1) -- ommitted nv to make tuple leaner
               then -1
               else i64.min (nS-1) (i+this_step)
             else -- cv `gt` kv

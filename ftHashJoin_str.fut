@@ -117,9 +117,7 @@ def str_hash_join [b]
 				)==0
 		)
 	let (filt_idx, filt_ix, filt_iy) = (indices jp.vs)
-		|> filter (\i ->
-			str_eq i i
-		)
+		|> filter (\i -> str_eq i i)
 		|> map (\i ->
 			(i, jp.ix[i], jp.iy[i])
 		)
