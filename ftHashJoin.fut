@@ -68,14 +68,14 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
     let loop_over =
       loop p = {def_lt = false, def_gt = false, byte = fb}
-      while (!p.def_lt && !p.def_gt && p.byte<lb) do
+      while (!p.def_lt && !p.def_gt && p.byte<=lb) do
         let dlt = r1[p.byte] < r2[p.byte]
         let dgt = r1[p.byte] > r2[p.byte]
         in
         {
           def_lt = dlt,
           def_gt = dgt,
-          byte = if !(dlt || dgt) then p.byte+1 else lb
+          byte = if !(dlt || dgt) then p.byte+1 else lb+1
         }
     in (loop_over.def_lt || (!loop_over.def_gt))
 
@@ -87,13 +87,13 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
     let loop_over =
       loop p = {def_lt = false, byte = fb}
-      while (!p.def_lt && p.byte<lb) do
+      while (!p.def_lt && p.byte<=lb) do
         let dlt = r1[p.byte] < r2[p.byte]
         let dgt = r1[p.byte] > r2[p.byte]
         in
         {
           def_lt = dlt,
-          byte = if !(dlt || dgt) then p.byte+1 else lb
+          byte = if !(dlt || dgt) then p.byte+1 else lb+1
         }
     in loop_over.def_lt
 
@@ -105,14 +105,14 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
     let loop_over =
       loop p = {def_lt = false, def_gt = false, byte = fb}
-      while (!p.def_lt && !p.def_gt && p.byte<lb) do
+      while (!p.def_lt && !p.def_gt && p.byte<=lb) do
         let dlt = r1[p.byte] < r2[p.byte]
         let dgt = r1[p.byte] > r2[p.byte]
         in
         {
           def_lt = dlt,
           def_gt = dgt,
-          byte = if !(dlt || dgt) then p.byte+1 else lb
+          byte = if !(dlt || dgt) then p.byte+1 else lb+1
         }
     in (loop_over.def_gt || (!loop_over.def_lt))
 
@@ -124,13 +124,13 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
     let loop_over =
       loop p = {def_gt = false, byte = fb}
-      while (!p.def_gt && p.byte<lb) do
+      while (!p.def_gt && p.byte<=lb) do
         let dlt = r1[p.byte] < r2[p.byte]
         let dgt = r1[p.byte] > r2[p.byte]
         in
         {
           def_gt = dgt,
-          byte = if !(dlt || dgt) then p.byte+1 else lb
+          byte = if !(dlt || dgt) then p.byte+1 else lb+1
         }
     in loop_over.def_gt
 
@@ -473,8 +473,8 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
       for j in (iota max_partition_size) do
         map3 (\i cc rv ->
           if i<0 || (i+j)>=nS then cc else
-          let sv = tS[i]
-          let isEq = (byteSeq_eq 0 ((i32.i64 b)-1) rv sv)
+          let sv = tS[i+j]
+          let isEq = (radix_eq ((i32.i64 b)*u8.num_bits) 1 rv sv)
           in if isEq then (cc+1) else cc
         ) (searchIs :> [nR]i64) (cms :> [nR]i64) tR
     let starting_pos = 
@@ -499,11 +499,12 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
             else (starting_pos[i]+iter)
           )
         in scatter (copy curBuff) this_scatter_idxs (zip (replicate nR (iter+1)) (iota nR))
+    -- TODO the following loop *might* cause sth to go wrong...
     let (s_inds,_) =
       loop (s_inds_, cur_k) = r_inds |> map (\(k,ir) -> (searchIs[ir],k)) |> unzip
       for _ in (iota max_partition_size) do
         let is_k = map3 (\i_s (_,ir) ck ->
-            if ck<0 then (i_s, ck) else
+            if ck<=0 then (i_s, ck) else
             let rv = tR[ir]
             let sv = tS[i_s]
             let isEq = (byteSeq_eq 0 ((i32.i64 b)-1) rv sv)
@@ -518,7 +519,7 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
       {
         vs = r_inds |> map (\(_, ir) -> tR[ir]),
         ix = r_inds |> map (.1),
-        iy = s_inds
+        iy = s_inds |> map (\i -> i-1)
       }
 
   def radix_hash_join_with_S_keys_unique [b]
@@ -527,8 +528,7 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     (tS : [](byteSeq [b]))
     (pS : partitionInfo)
     (ht_S : radix_hashTable [i64.i32 radix_size])
---  : joinPairs_bsq [b] =
-  =
+  : joinPairs_bsq [b] =
     let n_pS = length pS.bounds
     -- find matches
     -- first check ht_S
@@ -564,11 +564,11 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
               else if radix_gt radix_size cdepth rv cv then
                 if i==max_i
                 then (-1)
-                else i64.max min_i (i-this_step)
+                else i64.min max_i (i+this_step)
               else -- radix_lt radix_size cdepth rv cv
                 if (i==min_i || radix_gt radix_size pdepth rv pv)
                 then (-2)
-                else i64.min max_i (i+this_step)
+                else i64.max min_i (i-this_step)
             ) tR cmps_ direct_flm_matches this_steps
             in (cmps, this_steps)
         in pmb
@@ -594,8 +594,8 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     let ix_ = scatter (replicate count_pairs (-1)) zuowei (indices tR)
     let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
     let vs_ = gather (dummy_byteSeq b) tR ix_
-    --in {vs=vs_, ix=ix_, iy=iy_}
-    in (direct_flm_matches, partition_match_bounds)
+    in {vs=vs_, ix=ix_, iy=iy_}
+    --in (direct_flm_matches, partition_match_bounds)
 
 -- ################################################################################################################
 -- Testing
@@ -609,13 +609,8 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     in (inf2, tab2, radix_hash_join_with_S_keys_unique 4 xs1 xs2 inf2 tab2)
 
   def test =
-    --let xs1:[][]u8= [[0,1],[0,1],[0,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
-    --let xs2:[][]u8= [[0,1],[0,1],[4,1],[5,1],[2,2],[2,2],[2,2],[2,2],[1,3],[3,3],[5,3],[7,3],[1,4],[2,4],[5,4],[5,4]]
-    --let inf1 = calc_partInfo 4 xs1 0 2 3
-    --let tab1 = calc_radixHashTab 4 xs1 inf1 256
-    --in radix_hash_join 4 xs2 xs1 inf1 tab1
     let xs1:[][]u8= [[0,1],[0,1],[0,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
-    let xs2:[][]u8= [[0,1],[1,1],[4,1],[5,1],[1,2],[2,2],[7,2],[9,2],[1,3],[3,3],[5,3],[7,3],[1,4],[2,4],[5,4],[6,4]]
-    let inf2 = calc_partInfo 4 xs2 0 2 10
-    let tab2 = calc_radixHashTab 4 xs2 inf2 256
-    in radix_hash_join 4 xs1 xs2 inf2 tab2
+    let xs2:[][]u8= [[0,1],[0,1],[4,1],[5,1],[2,2],[2,2],[2,2],[2,2],[1,3],[3,3],[5,3],[7,3],[1,4],[2,4],[5,4],[5,4]]
+    let inf1 = calc_partInfo 4 xs1 0 2 3
+    let tab1 = calc_radixHashTab 4 xs1 inf1 256
+    in radix_hash_join 4 xs2 xs1 inf1 tab1
