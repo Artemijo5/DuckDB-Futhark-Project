@@ -414,7 +414,8 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     (tS : [nS](byteSeq [b]))
     (pS : partitionInfo)
     (ht_S : radix_hashTable [i64.i32 radix_size])
-  : joinPairs_bsq [b] =
+--  : joinPairs_bsq [b] =
+  =
     let n_pS = length pS.bounds
     -- find matches
     -- first check ht_S
@@ -499,27 +500,26 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
             else (starting_pos[i]+iter)
           )
         in scatter (copy curBuff) this_scatter_idxs (zip (replicate nR (iter+1)) (iota nR))
-    -- TODO the following loop *might* cause sth to go wrong...
     let (s_inds,_) =
       loop (s_inds_, cur_k) = r_inds |> map (\(k,ir) -> (searchIs[ir],k)) |> unzip
       for _ in (iota max_partition_size) do
         let is_k = map3 (\i_s (_,ir) ck ->
-            if ck<=0 then (i_s, ck) else
-            let rv = tR[ir]
-            let sv = tS[i_s]
-            let isEq = (byteSeq_eq 0 ((i32.i64 b)-1) rv sv)
-            in if isEq then
-              if ck==0
+          if (ck<=0) then (i_s,ck) else
+          let rv = tR[ir]
+          let sv = tS[i_s]
+          let isEq = (byteSeq_eq 0 ((i32.i64 b)-1) rv sv)
+          in if isEq then
+              if ck==1
               then (i_s, ck-1)
               else (i_s+1,ck-1)
             else (i_s+1,ck)
-          ) s_inds_ r_inds cur_k
+        ) s_inds_ r_inds cur_k
         in unzip is_k
     in
       {
         vs = r_inds |> map (\(_, ir) -> tR[ir]),
         ix = r_inds |> map (.1),
-        iy = s_inds |> map (\i -> i-1)
+        iy = s_inds
       }
 
   def radix_hash_join_with_S_keys_unique [b]
@@ -606,7 +606,7 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     let xs2:[][]u8= [[0,1],[1,1],[4,1],[5,1],[1,2],[2,2],[7,2],[9,2],[1,3],[3,3],[5,3],[7,3],[1,4],[2,4],[5,4],[6,4]]
     let inf2 = calc_partInfo 4 xs2 0 2 3
     let tab2 = calc_radixHashTab 4 xs2 inf2 256
-    in (inf2, tab2, radix_hash_join_with_S_keys_unique 4 xs1 xs2 inf2 tab2)
+    in radix_hash_join_with_S_keys_unique 4 xs1 xs2 inf2 tab2
 
   def test =
     let xs1:[][]u8= [[0,1],[0,1],[0,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
@@ -614,3 +614,10 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     let inf1 = calc_partInfo 4 xs1 0 2 3
     let tab1 = calc_radixHashTab 4 xs1 inf1 256
     in radix_hash_join 4 xs2 xs1 inf1 tab1
+
+  def test1 =
+    let xs1:[][]u8= [[0,1],[0,1],[0,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
+    let xs2:[][]u8= [[0,1],[1,1],[4,1],[5,1],[1,2],[2,2],[7,2],[9,2],[1,3],[3,3],[5,3],[7,3],[1,4],[2,4],[5,4],[6,4]]
+    let inf2 = calc_partInfo 4 xs2 0 2 3
+    let tab2 = calc_radixHashTab 4 xs2 inf2 256
+    in radix_hash_join 4 xs1 xs2 inf2 tab2
