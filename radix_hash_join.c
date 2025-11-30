@@ -15,8 +15,8 @@
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 256*CHUNK_SIZE
 
-#define R_TABLE_SIZE 1*CHUNK_SIZE
-#define S_TABLE_SIZE 4*CHUNK_SIZE
+#define R_TABLE_SIZE 10//1*CHUNK_SIZE
+#define S_TABLE_SIZE 10//4*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
 #define MAX_PARTITION_SIZE CHUNK_SIZE
@@ -122,13 +122,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 30000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 10*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 30000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 10*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );

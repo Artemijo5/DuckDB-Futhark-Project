@@ -621,3 +621,35 @@ type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**
     let inf2 = calc_partInfo 4 xs2 0 2 3
     let tab2 = calc_radixHashTab 4 xs2 inf2 256
     in radix_hash_join 4 xs1 xs2 inf2 tab2
+
+  def more_test =
+    let xs1:[][]u8=[
+      [0,0,0,0,0,0,0,2],
+      [0,0,0,0,0,0,0,3],
+      [0,0,0,0,0,0,0,2],
+      [0,0,0,0,0,0,0,2],
+      [0,0,0,0,0,0,0,7],
+      [0,0,0,0,0,0,0,3],
+      [0,0,0,0,0,0,0,3],
+      [0,0,0,0,0,0,0,3],
+      [0,0,0,0,0,0,0,9],
+      [0,0,0,0,0,0,0,9],
+    ]
+    let xs2:[][]u8=[
+      [0,0,0,0,0,0,0,3],
+      [0,0,0,0,0,0,0,2],
+      [0,0,0,0,0,0,0,7],
+      [0,0,0,0,0,0,0,10],
+      [0,0,0,0,0,0,0,5],
+      [0,0,0,0,0,0,0,2],
+      [0,0,0,0,0,0,0,8],
+      [0,0,0,0,0,0,0,2],
+      [0,0,0,0,0,0,0,9],
+      [0,0,0,0,0,0,0,7]
+    ]
+    let (sxs1,_) = partition_and_deepen 256 256 16 xs1 (indices xs1) (2048) 2 2
+    let (sxs2,_) = partition_and_deepen 256 256 16 xs2 (indices xs1) (2048) 2 2
+    let inf2 = calc_partInfo 16 sxs2 0 2048 2
+    let tab2 = calc_radixHashTab 16 sxs2 inf2 256
+    in (sxs1, sxs2, radix_hash_join 16 sxs1 sxs2 inf2 tab2)
+    
