@@ -13,16 +13,16 @@
 #define LOGFILE "stdout"//"radix_hash_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 256*CHUNK_SIZE
+#define BUFFER_SIZE 4096*CHUNK_SIZE
 
-#define R_TABLE_SIZE 10//1*CHUNK_SIZE
-#define S_TABLE_SIZE 10//4*CHUNK_SIZE
+#define R_TABLE_SIZE 64*CHUNK_SIZE//1*CHUNK_SIZE
+#define S_TABLE_SIZE 64*CHUNK_SIZE//4*CHUNK_SIZE
 
 #define BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define MAX_PARTITION_SIZE CHUNK_SIZE
-#define SCATTER_PSIZE (idx_t)32000
+#define MAX_PARTITION_SIZE (idx_t)64
+#define SCATTER_PSIZE (idx_t)320000000
 
-#define RADIX_BITS 16
+#define RADIX_BITS 14
 // TODO for some reason repartitioning past a threshold (different per try) omits result tuples...
 // possibly the useful threshold?
 #define MAX_DEPTH 2
@@ -38,8 +38,8 @@
 #define R_KEY "k"
 #define S_KEY "k"
 
-#define R_JOIN_BUFFER 1*CHUNK_SIZE
-#define S_JOIN_BUFFER 2*CHUNK_SIZE
+#define R_JOIN_BUFFER 512*CHUNK_SIZE
+#define S_JOIN_BUFFER 512*CHUNK_SIZE
 #define JOIN_TBL_NAME "R_S_HashJoinTbl_GFTR"
 
 #define DBFILE "testdb.db"
@@ -122,13 +122,13 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 10*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 4000000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 10*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 4000000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );

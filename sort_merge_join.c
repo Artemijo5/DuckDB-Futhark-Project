@@ -13,14 +13,14 @@
 #define LOGFILE "stdout"//"sort_merge_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 4*CHUNK_SIZE
+#define BUFFER_SIZE 64*128*CHUNK_SIZE
 
-#define R_TABLE_SIZE 16*CHUNK_SIZE
-#define S_TABLE_SIZE 16*CHUNK_SIZE
+#define R_TABLE_SIZE 128*1024*CHUNK_SIZE
+#define S_TABLE_SIZE 128*1024*CHUNK_SIZE
 
 #define BLOCK_SIZE (idx_t)128000 // TODO radix sort segfaults
-#define MERGE_PARTITION_SIZE 128*CHUNK_SIZE
-#define GATHER_PSIZE (idx_t)1024*CHUNK_SIZE*sizeof(long)
+#define MERGE_PARTITION_SIZE 128*1024*CHUNK_SIZE
+#define GATHER_PSIZE (idx_t)128*1024*CHUNK_SIZE*sizeof(long)
 
 #define R_TBL_NAME "R_tbl"
 #define S_TBL_NAME "S_tbl"
@@ -36,14 +36,14 @@
 #define R_SORTED_NAME "R_tbl_sorted"
 #define S_SORTED_NAME "S_tbl_sorted"
 
-#define R_JOIN_BUFFER 512*CHUNK_SIZE
-#define S_JOIN_BUFFER 512*CHUNK_SIZE
+#define R_JOIN_BUFFER 128*1024*CHUNK_SIZE
+#define S_JOIN_BUFFER 128*1024*CHUNK_SIZE
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "20GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
-#define VERBOSE false
+#define VERBOSE true
 
 int main() {
   // Initialise logger
@@ -96,6 +96,7 @@ int main() {
 
   duckdb_connect(db, &con);
 
+/*
   // Create tables R and S
   duckdb_query(con, "setseed(0.42);", NULL);
   char createRtbl[1000 + strlen(R_TBL_NAME)];
@@ -110,27 +111,27 @@ int main() {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 2000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 2000000000000000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 2000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 2000000000000000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
   duckdb_query(con, R_init_query, NULL);
   duckdb_query(con, S_init_query, NULL);
   mylog(logfile, "Created the tables R and S.");
-
+*/
   // Set up futhark core
   struct futhark_context_config *cfg = futhark_context_config_new();
   struct futhark_context *ctx = futhark_context_new(cfg);
   mylog(logfile, "Set up futhark context & config.");
 
   // Semisorts
-  ///*
+  /*
   mylog(logfile, "Semi-sorting tables...");
   idx_t R_tbl_num = semi_sort_with_payloads(
     CHUNK_SIZE,
@@ -188,8 +189,7 @@ int main() {
     false
   );
   mylog(logfile, "Semi-sorted S (without payloads).");
-  //*/
-
+  */
 // ############################################################################################################
 // JOIN PHASE
 // ############################################################################################################
@@ -290,7 +290,7 @@ int main() {
     false,
     false
   );*/
-  mylog(logfile, "EXPERIMENT #4 -- GPU-based (GFTR) SMJ (from semisorted)----------------------------------------------------");
+ /* mylog(logfile, "EXPERIMENT #4 -- GPU-based (GFTR) SMJ (from semisorted)----------------------------------------------------");
   MergeJoin_GFTR_semisorted(
     CHUNK_SIZE,
     R_JOIN_BUFFER,
@@ -334,7 +334,7 @@ int main() {
     "GPU_SMJ_GFUR_semisorted",
     false,
     false
-  );
+  );*/
 
   // Clean-up  
   futhark_context_free(ctx);

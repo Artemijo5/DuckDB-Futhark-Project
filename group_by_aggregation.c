@@ -10,8 +10,8 @@
 #define LOGFILE "stdout"//"group_by_aggregation.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 512*CHUNK_SIZE
-#define TABLE_SIZE 4*BUFFER_SIZE
+#define BUFFER_SIZE 128*1024*CHUNK_SIZE
+#define TABLE_SIZE 1*BUFFER_SIZE
 #define NUM_KEYS (int64_t)25
 
 #define DBFILE "testdb.db"

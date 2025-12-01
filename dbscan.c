@@ -12,19 +12,19 @@
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)64
-#define BUFFER_CAP (long)4
+#define BUFFER_CAP (long)2048
 #define TABLE_SIZE BUFFER_CAP*CHUNK_SIZE // assume entire dataset can be processed at once
 
 #define DIM (long)2
 #define MINVAL (float)0.0
-#define MAXVAL (float)250.0
+#define MAXVAL (float)5500.0 // roughly 200-256 for 4 chunks (in 2d) - O(sqrt BUFFER_CAP)
 
 #define EPS (float)2.0
 #define MIN_PTS 2 + DIM
 
 #define GATHER_PSIZE 1*sizeof(long)*TABLE_SIZE
-#define DBSCAN_MEMSIZE 100*TABLE_SIZE
-#define OMIT_BORDER true
+#define DBSCAN_MEMSIZE 1024*1024*TABLE_SIZE
+#define OMIT_BORDER false
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "4GB"

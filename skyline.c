@@ -11,18 +11,18 @@
 #define LOGFILE "stdout"//"skyline.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define CNK_TO_READ (long)2
-#define BUFFER_CAP (long)16//(long)2*CNK_TO_READ
+#define CNK_TO_READ (long)4
+#define BUFFER_CAP (long)2*1024//(long)2*CNK_TO_READ
 #define BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
-#define TABLE_SIZE 2*BUFFER_SIZE//10*BUFFER_SIZE
+#define TABLE_SIZE 8*BUFFER_SIZE//10*BUFFER_SIZE
 
-#define DIM (long)3
+#define DIM (long)4
 #define ANGULAR_SUBDIV (long)10
 #define MINVAL (float)0.0
 #define MAXVAL (float)100.0
-#define SIZE_THRESH BUFFER_SIZE/10
+#define SIZE_THRESH BUFFER_SIZE/100
 
-#define SKYLINE_MEMSIZE 1*BUFFER_SIZE
+#define SKYLINE_MEMSIZE 256*1024*CHUNK_SIZE
 #define USE_MANY_PTS true
 #define SKIP_LOCAL_SKYLINE true
 
