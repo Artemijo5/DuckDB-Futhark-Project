@@ -1,7 +1,5 @@
 import "ftbasics"
 
-type byteSeq [bytes] = [bytes]u8
-
 type~ partitionInfo = {maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 
 -- TODO consider using Option type here (?)
@@ -66,14 +64,14 @@ def byteSeq_leq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
   let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
   let loop_over =
     loop p = {def_lt = false, def_gt = false, byte = fb}
-    while (!p.def_lt && !p.def_gt && p.byte<lb) do
+    while (!p.def_lt && !p.def_gt && p.byte<=lb) do
       let dlt = r1[p.byte] < r2[p.byte]
       let dgt = r1[p.byte] > r2[p.byte]
       in
       {
         def_lt = dlt,
         def_gt = dgt,
-        byte = if !(dlt || dgt) then p.byte+1 else lb
+        byte = if !(dlt || dgt) then p.byte+1 else lb+1
       }
   in (loop_over.def_lt || (!loop_over.def_gt))
 
@@ -85,13 +83,13 @@ def byteSeq_lt [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
   let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
   let loop_over =
     loop p = {def_lt = false, byte = fb}
-    while (!p.def_lt && p.byte<lb) do
+    while (!p.def_lt && p.byte<=lb) do
       let dlt = r1[p.byte] < r2[p.byte]
       let dgt = r1[p.byte] > r2[p.byte]
       in
       {
         def_lt = dlt,
-        byte = if !(dlt || dgt) then p.byte+1 else lb
+        byte = if !(dlt || dgt) then p.byte+1 else lb+1
       }
   in loop_over.def_lt
 
@@ -103,14 +101,14 @@ def byteSeq_geq [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
   let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
   let loop_over =
     loop p = {def_lt = false, def_gt = false, byte = fb}
-    while (!p.def_lt && !p.def_gt && p.byte<lb) do
+    while (!p.def_lt && !p.def_gt && p.byte<=lb) do
       let dlt = r1[p.byte] < r2[p.byte]
       let dgt = r1[p.byte] > r2[p.byte]
       in
       {
         def_lt = dlt,
         def_gt = dgt,
-        byte = if !(dlt || dgt) then p.byte+1 else lb
+        byte = if !(dlt || dgt) then p.byte+1 else lb+1
       }
   in (loop_over.def_gt || (!loop_over.def_lt))
 
@@ -122,13 +120,13 @@ def byteSeq_gt [b] (i: i32) (j: i32) (x1: byteSeq [b]) (x2: byteSeq [b])
   let lb = i64.i32 ((i32.i64 b) - (i/u8.num_bits) - 1)
   let loop_over =
     loop p = {def_gt = false, byte = fb}
-    while (!p.def_gt && p.byte<lb) do
+    while (!p.def_gt && p.byte<=lb) do
       let dlt = r1[p.byte] < r2[p.byte]
       let dgt = r1[p.byte] > r2[p.byte]
       in
       {
         def_gt = dgt,
-        byte = if !(dlt || dgt) then p.byte+1 else lb
+        byte = if !(dlt || dgt) then p.byte+1 else lb+1
       }
   in loop_over.def_gt
 

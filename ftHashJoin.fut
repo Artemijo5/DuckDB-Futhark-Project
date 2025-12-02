@@ -1,8 +1,6 @@
 import "ftbasics"
 --import "lib/github.com/diku-dk/sorts/merge_sort"
 
-type byteSeq [bytes] = [bytes]u8
-
 type~ partitionInfo = {maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 
 type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**rb]idx_t.t} -- if idx == -1, partition is not present

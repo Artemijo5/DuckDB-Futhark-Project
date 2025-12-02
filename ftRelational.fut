@@ -1,9 +1,10 @@
 import "ftbasics"
 import "ftSMJ"
-import "ftHashJoin"
+import "ftHashJoin_old"
 import "ft_SortGroupBy"
 import "ft_StrUtil"
 import "ftSMJ_str"
+import "ftHashJoin_str"
 
 -- TODO make bit_step (++) accessible from entry points
 
@@ -445,6 +446,7 @@ import "ftSMJ_str"
       in smj_str ci_arith_char_cmp str_info1 str_info2 offset_R offset_S partitionSize scatter_psize
 
   -- Hashing
+  -- TODO
 
 
   -- Hash Join
