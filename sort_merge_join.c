@@ -19,7 +19,7 @@
 
 #define BLOCK_SIZE (idx_t)128000 // TODO radix sort segfaults
 #define MERGE_PARTITION_SIZE 128*1024*CHUNK_SIZE
-#define GATHER_PSIZE (idx_t)128*1024*CHUNK_SIZE*sizeof(long)
+#define GATHER_PSIZE (idx_t)256*CHUNK_SIZE*sizeof(long)
 // TODO gathers seem to be ruined for some reason...
 
 #define R_TBL_NAME "R_tbl"

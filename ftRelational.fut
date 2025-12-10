@@ -445,7 +445,32 @@ import "ftHashJoin_str"
       in smj_str ci_arith_char_cmp str_info1 str_info2 offset_R offset_S partitionSize scatter_psize
 
   -- Hashing
-  -- TODO
+    entry hash_str_col
+      (len_bytes : idx_t.t)
+      (content_bytes : idx_t.t)
+      (len_range_per_bucket : idx_t.t)
+      (from_subdiv : idx_t.t)
+      (num_subdiv : idx_t.t)
+      (case_sens : bool)
+      (merge_chars : idx_t.t)
+      (str_info : strInfo)
+    : str_hash_info [content_bytes + len_bytes] =
+      get_hashed_strs len_bytes content_bytes len_range_per_bucket from_subdiv num_subdiv case_sens merge_chars str_info
 
+  -- Hash-Sort
+    entry sort_hashed_strs_GFUR [b]
+      (xs : str_hash_info [b])
+    : sortedHash_str_GFUR [b] =
+      do_sort_hashed_strs_GFUR xs
 
-  -- Hash Join
+  -- Hash-SMJ
+    def str_HSMJ [b]
+      (char_cmp : u8 -> u8 -> i32)
+      (tR : sortedHash_str_GFUR [b])
+      (tS : sortedHash_str_GFUR [b])
+      (partition_size : i64)
+      (scatter_psize : i64)
+      (str_info_R : strInfo)
+      (str_info_S : strInfo)
+    : joinPairs_str =
+      do_hashed_str_SMJ char_cmp tR tS partition_size scatter_psize str_info_R str_info_S
