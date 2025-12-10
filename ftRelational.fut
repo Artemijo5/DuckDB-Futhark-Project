@@ -369,7 +369,6 @@ import "ftHashJoin_str"
 
 
 -- String Functions
--- TODO for tests: maybe alphabetic comparison?
 
   -- Gather
     entry gather_str [ni]

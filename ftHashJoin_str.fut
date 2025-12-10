@@ -174,10 +174,12 @@ def do_hashed_str_SMJ [b]
 	in {str_info = filt_str, ix = filt_ix, iy = filt_iy}
 
 def test_smj (case_sens : bool) =
+	-- NOTE case_sens only works when hashing 2 chars per byte
 	let str1_ = "The quick brown fox jumps over the lazy dog"
 	let str2_ = "I wonder if that dog was jumped over by the brown fox"
 	let idx1_ = (indices str1_) |> filter (\i -> i==0 || str1_[i-1]==32)
 	let idx2_ = (indices str2_) |> filter (\i -> i==0 || str2_[i-1]==32)
+	-- split strings based on space delimiter
 	let str1 = str1_ |> filter (\c -> c!=32)
 	let str2 = str2_ |> filter (\c -> c!=32)
 	let idx1 = idx1_ |> zip (indices idx1_) |> map (\(ii,i) -> i-ii)
