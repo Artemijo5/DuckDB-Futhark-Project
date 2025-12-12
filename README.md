@@ -39,12 +39,7 @@ Algorithms to be implemented:
 - Extensions of Joins to String data
 - (possibly) Sketch Algorithms
 
-
-Other tasks planned:
-- containerise applications with docker and nvidia-ctk
-- make applications callable directly from DuckDB (if possible - alternatively maybe a simple CLI)
-
 -----------------------------------------
-Tools used:
+Main tools used:
 - [DuckDB](https://duckdb.org/) is an in-process OLAP database. In this project, it is invoked through its [C API](https://duckdb.org/docs/stable/clients/c/overview).
 - [Futhark](https://futhark-lang.org/index.html) is a functional progamming language that can be compiled to sequential C code or parallel CUDA or OpenCL code. Futhark functions are invoked through a functional core from C code.
