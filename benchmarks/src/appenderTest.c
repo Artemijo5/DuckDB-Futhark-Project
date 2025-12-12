@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "duckdb.h"
+#include "../../clibs/duckdb.h"
 
-#include "mylogger.h"
+#include "../../clibs/mylogger.h"
 
-#define LOGFILE "appenderTest.log.txt"
+#define LOGFILE "stdout"//"logs/appenderTest.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define TABLE_SIZE 32*512*CHUNK_SIZE

@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "duckdb.h"
+#include "../../clibs/duckdb.h"
 
-#include "mylogger.h"
-#include "sortstages.h"
+#include "../../clibs/mylogger.h"
+#include "../../algo_utils/sort/sortstages.h"
 
-#include "ftRelational.h"
-#include "smjutil.h"
-#include "SMJstages.h"
+#include "../../ft_clibs/ftRelational.h"
+#include "../../algo_utils/join/smj/smjutil.h"
+#include "../../algo_utils/join/smj/SMJstages.h"
 
-#define LOGFILE "stdout"//"sort_merge_join.log.txt"
+#define LOGFILE "stdout"//"logs/sort_merge_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 

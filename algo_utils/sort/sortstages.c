@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "duckdb.h"
+#include "../../clibs/duckdb.h"
 
-#include "ftRelational.h"
-#include "mylogger.h"
+#include "../../ft_clibs/ftRelational.h"
+#include "../../clibs/mylogger.h"
 #include "sort_util.h"
-#include "db_util.h"
+#include "../../clibs/db_util.h"
 
 #include <limits.h> // for maximum values of integral types
 #include <float.h> // for maximum values of floating-point types

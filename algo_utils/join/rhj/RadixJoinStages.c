@@ -3,13 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "duckdb.h"
+#include "../../../clibs/duckdb.h"
 
-#include "ftRelational.h"
-#include "mylogger.h"
+#include "../../../ft_clibs/ftRelational.h"
+#include "../../../clibs/mylogger.h"
 #include "radixJoin_util.h"
-#include "join_util.h"
-#include "db_util.h"
+#include "../join_util.h"
+#include "../../../clibs/db_util.h"
 
 void do_RadixHashJoin_GFTR(
   idx_t CHUNK_SIZE,

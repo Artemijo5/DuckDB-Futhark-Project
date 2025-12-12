@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "duckdb.h"
+#include "../../../clibs/duckdb.h"
 
-#include "ftRelational.h"
-#include "mylogger.h"
+#include "../../../ft_clibs/ftRelational.h"
+#include "../../../clibs/mylogger.h"
 #include "smjutil.h"
 
 #ifndef SMJSTAGES_H

@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "duckdb.h"
+#include "../../clibs/duckdb.h"
 
-#include "ftSkyline.h"
-#include "mylogger.h"
-#include "db_util.h"
+#include "../../ft_clibs/ftSkyline.h"
+#include "../../clibs/mylogger.h"
+#include "../../clibs/db_util.h"
 
-#define LOGFILE "stdout"//"skyline.log.txt"
+#define LOGFILE "stdout"//"logs/skyline.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)4
@@ -28,7 +28,7 @@
 
 #define DBFILE "testdb.db"
 #define DDB_MEMSIZE "4GB"
-#define DDB_TEMPDIR "tps_tempdir"
+#define DDB_TEMPDIR "/tps_tempdir"
 
 #define VERBOSE false
 

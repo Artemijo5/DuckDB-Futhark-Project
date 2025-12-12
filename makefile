@@ -67,7 +67,7 @@ CUDA-ftSkyline: ftSkyline.fut
 	make CUDA1-ftSkyline
 	make CUDA2-ftSkyline
 
-Skyline: benchmarks/skyline.c $(DEPS) $(SKYLINE_DEPS)
+Skyline: benchmarks/src/skyline.c $(DEPS) $(SKYLINE_DEPS)
 	$(CC) benchmarks/src/skyline.c -lm -o benchmarks/skyline.o \
 		$(DEPS) $(SKYLINE_DEPS) $(CFLAGS)
 

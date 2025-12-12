@@ -2,12 +2,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "duckdb.h"
-#include "mylogger.h"
-#include "db_util.h"
+#include "../../../clibs/duckdb.h"
+#include "../../../clibs/mylogger.h"
+#include "../../../clibs/db_util.h"
 #include <string.h>
 
-#include "ftRelational.h"
+#include "../../../ft_clibs/ftRelational.h"
 
 duckdb_state selective_query(
 	duckdb_type keyType,

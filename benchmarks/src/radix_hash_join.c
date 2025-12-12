@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "duckdb.h"
+#include "../../clibs/duckdb.h"
 
-#include "mylogger.h"
-#include "sortstages.h"
+#include "../../clibs/mylogger.h"
+#include "../../algo_utils/sort/sortstages.h"
 
-#include "ftRelational.h"
-#include "radixJoin_util.h"
-#include "RadixJoinStages.h"
+#include "../../ft_clibs/ftRelational.h"
+#include "../../algo_utils/join/rhj/radixJoin_util.h"
+#include "../../algo_utils/join/rhj/RadixJoinStages.h"
 
-#define LOGFILE "stdout"//"radix_hash_join.log.txt"
+#define LOGFILE "stdout"//"logs/radix_hash_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 4096*CHUNK_SIZE

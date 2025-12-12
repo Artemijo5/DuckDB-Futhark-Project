@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "duckdb.h"
+#include "../../clibs/duckdb.h"
 
-#include "ftDBSCAN.h"
-#include "mylogger.h"
-#include "db_util.h"
+#include "../../ft_clibs/ftDBSCAN.h"
+#include "../../clibs/mylogger.h"
+#include "../../clibs/db_util.h"
 
-#define LOGFILE "stdout"//"dbscan.log.txt"
+#define LOGFILE "stdout"//"logs/dbscan.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)64

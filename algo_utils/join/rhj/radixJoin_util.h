@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "duckdb.h"
-#include "ftRelational.h"
+#include "../../../clibs/duckdb.h"
+#include "../../../ft_clibs/ftRelational.h"
 
 #ifndef RADIXJOIN_UTIL_H
 #define RADIXJOIN_UTIL_H

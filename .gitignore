@@ -10,6 +10,7 @@
 /tps_tempdir/*
 /logs/*
 /lib/*
+/ft_clibs/*
 /ft_libs/lib/*
 
 duckdb.h

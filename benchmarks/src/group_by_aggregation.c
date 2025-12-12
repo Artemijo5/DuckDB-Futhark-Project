@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "duckdb.h"
+#include "../../clibs/duckdb.h"
 
-#include "ftRelational.h"
-#include "mylogger.h"
-#include "db_util.h"
+#include "../../ft_clibs/ftRelational.h"
+#include "../../clibs/mylogger.h"
+#include "../../clibs/db_util.h"
 
-#define LOGFILE "stdout"//"group_by_aggregation.log.txt"
+#define LOGFILE "stdout"//"logs/group_by_aggregation.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 128*1024*CHUNK_SIZE

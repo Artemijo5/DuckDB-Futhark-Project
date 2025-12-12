@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "duckdb.h"
+#include "../../clibs/duckdb.h"
 
-#include "ftRelational.h"
-#include "mylogger.h"
-#include "sort_util.h"
-#include "sortstages.h"
+#include "../../ft_clibs/ftRelational.h"
+#include "../../clibs/mylogger.h"
+#include "../../algo_utils/sort/sort_util.h"
+#include "../../algo_utils/sort/sortstages.h"
 
-#define LOGFILE "stdout"//"two_pass_sort.log.txt"
+#define LOGFILE "stdout"//"logs/two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define BUFFER_SIZE 1*CHUNK_SIZE
