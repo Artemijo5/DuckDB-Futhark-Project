@@ -8,6 +8,7 @@
 *.db
 /tempdir/*
 /tps_tempdir/*
+/logs/*
 /lib/*
 /ft_libs/lib/*
 
