@@ -7,34 +7,35 @@ supervised by prof. Vasileios Samoladas
 
 Technical University of Crete, Department of Electrical and Computer Engineering
 
+(Pending to organise better)
+
 -----------------------------------------
-To use:
+Preparation:
 - add libduckdb.so and libduckdb_static.a from duckdb's [Linux C installation page](https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64) to the project directory
 - (Optional) have duckdb installed to create test tables and see results outside of the C API
-- have futhark installed in order to compile .fut files (otherwise have futhark files compiled in the last commit)
-- make sure that the directory is on the load path, eg ```` export LD_LIBRARY_PATH=`pwd` ````
-- see makefile for compilation options
-- for CUDA backend, linking done with -lcuda -lcudart -lnvrtc https://futhark.readthedocs.io/en/latest/man/futhark-cuda.html
+- have futhark installed in order to compile .fut files
+- install [futhark's sort libraries](https://github.com/diku-dk/sorts) in /ft_libs
 -----------------------------------------
-Current makefile options:
-- ```C-ftSMJ```: (requires futhark) compiles SMJ futhark library to sequential C code & .so files
-- ```CUDA-ftSMJ```: (requires futhark AND cuda installed) compiles SMJ futhark library to parallel CUDA code & .so files
-- ```CUDA1-ftSMJ```: (requires only futhark) compiles SMJ futhark library to CUDA code files, which can then be compiled to .so
-- ```CUDA2-ftSMJ```: (requires only CUDA) compiles CUDA code files of SMJ to .so files
-The remainder are testing applications that process data from duckdb through the futhark core.
+To use:
+1. export LD_LIBRARY_PATH using the string in ./set_path
+2. compile futhark libraries (`make CUDA-LIB`, or `make C-LIB` for sequential compilation)
+3. build the desired benchmark (located in /benchmarks/src, see makefile for options)
+4. run the desired benchmark from a terminal in the project directory
 -----------------------------------------
-The purpose of this project is to implement some GPU-accelerated database algorithms, using the tools DuckDB and The Futhark Programming Language. 
+Current futhark libraries:
+- ftRelational : used by sort, joins, group-by aggregation
+- ftSkyline : used by Skyline (TODO revise)
+- ftDBSCAN : used by DBSCAN
+-----------------------------------------
+The purpose of this project is to implement some GPU-based relational algorithms using the futhark programming language, identifying techniques for functional GPU database programming and evaluating performance.
 
-Former literature on GPU-accelerated database algorithms tends to assume control of low-level parameters, such as utilisation of each level of GPU cache, etc.
-Futhark is a relatively high-level, functional programming language, and leaves much of hardware optimisation to the compiler; thus different techniques from prior work may need to be employed. DuckDB also requires adopting appropriate workflows with the data outside the GPU.
-
-Algorithms currently implemented (still to be optimised & benchmarked):
-- Relational Table Sorting (one-pass or two-pass)
+Algorithms currently implemented:
+- Sorting
 - Relational Joins (SMJ, Radix Hash Join - based on https://arxiv.org/abs/2312.00720 and references)
 - Group-by Aggregation
-Algorithms currently being implemented:
 - Skyline Queries
-- DBSCAN
+- DBSCAN (currently only for datasets that fit fully in the GPU)
+Algorithms to be implemented:
 - Extensions of Joins to String data
 - (possibly) Sketch Algorithms
 
