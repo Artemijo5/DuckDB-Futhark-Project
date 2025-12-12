@@ -1,71 +1,90 @@
 CC=gcc
-CFLAGS=-I.
-DEPS=mylogger.c libduckdb.so db_util.c libftRelational.so
+CFLAGS=-I . -std=c99
+
+DEPS=clibs/mylogger.c clibs/libduckdb.so clibs/db_util.c
+REL_DEPS=ft_clibs/libftRelational.so
+SKYLINE_DEPS=ft_clibs/libftSkyline.so
+DBSCAN_DEPS=ft_clibs/libftDBSCAN.so
+
 LIBFLAGS=-fPIC -shared
 CUDAFLAGS=-lcuda -lcudart -lnvrtc
 
-C-ftRelational: ftRelational.fut
-	futhark c ftRelational.fut --library
-	$(CC) ftRelational.c -o libftRelational.so $(LIBFLAGS)
+SORT_DEPS=$(DEPS) $(REL_DEPS) $(wildcard algo_utils/sort/*.c)
+JOIN_DEPS=$(SORT_DEPS) algo_utils/join/join_util.c
+SMJ_DEPS=$(JOIN_DEPS) $(wildcard algo_utils/join/smj/*.c)
+RHJ_DEPS=$(JOIN_DEPS) $(wildcard algo_utils/join/rhj/*.c)
+AGGR_DEPS=$(SMJ_DEPS)
 
-CUDA-ftRelational: ftRelational.fut
-	futhark cuda ftRelational.fut --library
-	$(CC) ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
+CUDA-LIBS:
+	make CUDA-ftRelational && make CUDA-ftDBSCAN && make CUDA-ftSkyline
+
+C-LIBS:
+	make C-ftRelational && make C-ftDBSCAN && make C-ftSkyline
+
+C-ftRelational: ft_libs/ftRelational.fut
+	futhark c ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
+	$(CC) ft_clibs/ftRelational.c -o $(REL_DEPS) $(LIBFLAGS) $(CFLAGS)
 
 CUDA1-ftRelational: ftRelational.fut
-	futhark cuda ftRelational.fut --library
+	futhark cuda ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
 
 CUDA2-ftRelational: ftRelational.c
-	$(CC) ftRelational.c -o libftRelational.so $(LIBFLAGS) $(CUDAFLAGS)
+	$(CC) ft_clibs/ftRelational.c -o $(REL_DEPS) \
+		$(LIBFLAGS) $(CFLAGS) $(CUDAFLAGS)
 
-two_pass_sort: two_pass_sort.c sortstages.c sort_util.c $(DEPS)
-	$(CC) two_pass_sort.c -o two_pass_sort.o \
-		sortstages.c sort_util.c $(DEPS) $(CFLAGS)
+CUDA-ftRelational: ftRelational.fut
+	make CUDA1-ftRelational
+	make CUDA2-ftRelational
 
-sort_merge_join: sort_merge_join.c sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c $(DEPS)
-	$(CC) sort_merge_join.c -o sort_merge_join.o \
-		sort_util.c join_util.c smjutil.c sortstages.c SMJstages.c $(DEPS) $(CFLAGS)
+two_pass_sort: benchmarks/src/two_pass_sort.c $(SORT_DEPS)
+	$(CC) benchmarks/src/two_pass_sort.c -o benchmarks/two_pass_sort.o \
+		$(SORT_DEPS) $(CFLAGS)
 
-radix_hash_join: radix_hash_join.c join_util.c radixJoin_util.c RadixJoinStages.c $(DEPS)
-	$(CC) radix_hash_join.c -o radix_hash_join.o \
-		radixJoin_util.c join_util.c RadixJoinStages.c $(DEPS) $(CFLAGS)
+sort_merge_join: benchmarks/src/sort_merge_join.c $(SMJ_DEPS)
+	$(CC) benchmarks/src/sort_merge_join.c -o benchmarks/sort_merge_join.o \
+		$(SMJ_DEPS) $(CFLAGS)
 
-group_by_aggregation: group_by_aggregation.c $(DEPS)
-	$(CC) group_by_aggregation.c -o group_by_aggregation.o $(DEPS) $(CFLAGS)
+radix_hash_join: benchmarks/src/radix_hash_join.c $(RHJ_DEPS)
+	$(CC) benchmarks/src/radix_hash_join.c -o benchmarks/radix_hash_join.o \
+		$(RHJ_DEPS) $(CFLAGS)
 
-C-ftSkyline: ftSkyline.fut
-	futhark c ftSkyline.fut --library
-	$(CC) ftSkyline.c -o libftSkyline.so $(LIBFLAGS)
+group_by_aggregation: /benchmarks/src/group_by_aggregation.c $(AGGR_DEPS)
+	$(CC) benchmarks/src/group_by_aggregation.c -o benchmarks/group_by_aggregation.o \
+		$(AGGR_DEPS) $(CFLAGS)
 
-CUDA-ftSkyline: ftSkyline.fut
-	futhark cuda ftSkyline.fut --library
-	$(CC) ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
+C-ftSkyline: ft_libs/ftSkyline.fut
+	futhark c ft_libs/ftSkyline.fut --library -o ft_clibs/ftSkyline
+	$(CC) ft_clibs/ftSkyline.c -o $(SKYLINE_DEPS) $(LIBFLAGS) $(CFLAGS)
 
 CUDA1-ftSkyline: ftSkyline.fut
-	futhark cuda ftSkyline.fut --library
+	futhark cuda ft_libs/ftSkyline.fut --library -o ft_clibs/ftSkyline
 
 CUDA2-ftSkyline: ftSkyline.c
-	$(CC) ftSkyline.c -o libftSkyline.so $(LIBFLAGS) $(CUDAFLAGS)
+	$(CC) ft_clibs/ftSkyline.c -o $(SKYLINE_DEPS) \
+		$(LIBFLAGS) $(CFLAGS) $(CUDAFLAGS)
 
-#skyline_test: skyline_test.c libftSkyline.so
-#	$(CC) skyline_test.c -lm -o skyline_test.o libduckdb.so libftSkyline.so $(CFLAGS)
+CUDA-ftSkyline: ftSkyline.fut
+	make CUDA1-ftSkyline
+	make CUDA2-ftSkyline
 
-Skyline: skyline.c mylogger.c libduckdb.so db_util.c libftSkyline.so
-	$(CC) skyline.c -lm -o skyline.o mylogger.c libduckdb.so db_util.c libftSkyline.so $(CFLAGS)
+Skyline: benchmarks/skyline.c $(DEPS) $(SKYLINE_DEPS)
+	$(CC) benchmarks/src/skyline.c -lm -o benchmarks/skyline.o \
+		$(DEPS) $(SKYLINE_DEPS) $(CFLAGS)
 
-C-ftDBSCAN: ftDBSCAN.fut
-	futhark c ftDBSCAN.fut --library
-	$(CC) ftDBSCAN.c -o libftDBSCAN.so $(LIBFLAGS)
+C-ftDBSCAN: ft_libs/ftDBSCAN.fut
+	futhark c ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
+	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS)
 
 CUDA-ftDBSCAN: ftDBSCAN.fut
 	futhark cuda ftDBSCAN.fut --library
-	$(CC) ftDBSCAN.c -o libftDBSCAN.so $(LIBFLAGS) $(CUDAFLAGS)
+	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
 CUDA1-ftDBSCAN: ftDBSCAN.fut
-	futhark cuda ftDBSCAN.fut --library
+	futhark cuda ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
 
 CUDA2-ftDBSCAN: ftDBSCAN.c
-	$(CC) ftDBSCAN.c -o libftDBSCAN.so $(LIBFLAGS) $(CUDAFLAGS)
+	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
-DBSCAN: dbscan.c mylogger.c libduckdb.so db_util.c libftDBSCAN.so
-	$(CC) dbscan.c -lm -o dbscan.o mylogger.c libduckdb.so db_util.c libftDBSCAN.so $(CFLAGS)
+DBSCAN: benchmarks/src/dbscan.c $(DEPS) $(DBSCAN_DEPS)
+	$(CC) benchmarks/src/dbscan.c -lm -o benchmarks/dbscan.c \
+		$(DEPS) $(DBSCAN_DEPS) $(CFLAGS)
