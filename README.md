@@ -35,6 +35,7 @@ Algorithms currently implemented:
 - Group-by Aggregation
 - Skyline Queries
 - DBSCAN (currently only for datasets that fit fully in the GPU)
+
 Algorithms to be implemented:
 - Extensions of Joins to String data
 - (possibly) Sketch Algorithms
