@@ -14,8 +14,6 @@ local module param_idx_t (it: integral) = {
 -- | Integer type used for indices.
 module idx_t = param_idx_t i64
 
-type byteSeq [bytes] = [bytes]u8
-
 -- | Gather operation (based on futhark example).
 def gather 't [ni] [n] (dummy_elem: t) (xs: [n]t) (is: [ni](idx_t.t)) =
   is |> map (\i -> if (i>=0 && i<n) then xs[i] else dummy_elem)
@@ -155,6 +153,8 @@ def seqmap [n] 't 'ot
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
+
+type byteSeq [bytes] = [bytes]u8
 
 -- | Obtains a radix (of size 1 byte at most!).
 def get_radix 't (i : i32) (j : i32) (get_bit : i32 -> t -> i32) (x : t) : u8 =

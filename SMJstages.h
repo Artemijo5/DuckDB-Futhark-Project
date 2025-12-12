@@ -52,7 +52,6 @@ void Inner_MergeJoin_GFUR(
 	int saveAsTempTable
 );
 
-// TODO add more parametres for the sorting part
 void SortMergeJoin_GFTR(
 	idx_t CHUNK_SIZE,
 	idx_t R_JOIN_BUFFER,

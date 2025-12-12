@@ -1,5 +1,5 @@
-import "lib/github.com/diku-dk/sorts/merge_sort"
-import "ftbasics"
+import "../lib/github.com/diku-dk/sorts/merge_sort"
+import "../ftbasics"
 
 -- Sorting Functions
 
@@ -346,7 +346,6 @@ import "ftbasics"
     let pairsWithMultiplicity = fcm
       |> zip tup_index
       |> filter (\(_,cm) -> cm>1)
-    -- TODO test
     let max_mult =
       if (length pairsWithMultiplicity > 0)
       then pairsWithMultiplicity

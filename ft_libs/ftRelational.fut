@@ -1,12 +1,10 @@
 import "ftbasics"
-import "ftSMJ"
-import "ftHashJoin_old"
 import "ft_SortGroupBy"
 import "ft_StrUtil"
-import "ftSMJ_str"
-import "ftHashJoin_str"
-
--- TODO make bit_step (++) accessible from entry points
+import "joins/ftSMJ"
+import "joins/ftHashJoin_old"
+import "joins/ftSMJ_str"
+import "joins/ftHashJoin_str"
 
 -- Misc
 
@@ -287,7 +285,7 @@ import "ftHashJoin_str"
   : joinPairs_bsq [b] =
     radix_hash_join_with_S_keys_unique radix_size pR pS s_info s_hashTable
 
-  -- Group-By
+-- Group-By
     entry find_known_key_counts_long (key_no) (ks)
     = find_known_key_counts key_no ks
 

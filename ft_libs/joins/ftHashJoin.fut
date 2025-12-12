@@ -1,5 +1,5 @@
-import "ftbasics"
---import "lib/github.com/diku-dk/sorts/merge_sort"
+import "../ftbasics"
+--import "../lib/github.com/diku-dk/sorts/merge_sort"
 
 type~ partitionInfo = {maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 

@@ -1,4 +1,4 @@
-import "ftbasics"
+import "../ftbasics"
 
 type~ partitionInfo = {maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 

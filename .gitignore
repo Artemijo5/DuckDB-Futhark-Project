@@ -7,3 +7,9 @@
 *.pkg
 *.db
 /tempdir/*
+/tps_tempdir/*
+/lib/*
+/ft_libs/lib/*
+
+duckdb.h
+duckdb.hpp

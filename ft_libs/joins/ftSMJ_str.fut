@@ -1,6 +1,6 @@
-import "lib/github.com/diku-dk/sorts/merge_sort"
-import "ftbasics"
-import "ft_StrUtil"
+import "../lib/github.com/diku-dk/sorts/merge_sort"
+import "../ftbasics"
+import "../ft_StrUtil"
 import "ftSMJ"
 
 def do_sort_str [n] [total_len] 't

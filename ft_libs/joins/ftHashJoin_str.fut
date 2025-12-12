@@ -1,6 +1,6 @@
-import "lib/github.com/diku-dk/sorts/merge_sort"
-import "ftbasics"
-import "ft_StrUtil"
+import "../lib/github.com/diku-dk/sorts/merge_sort"
+import "../ftbasics"
+import "../ft_StrUtil"
 import "ftSMJ"
 
 type~ str_hash_info [b] = [](byteSeq [b])
