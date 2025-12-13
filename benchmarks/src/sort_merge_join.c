@@ -10,23 +10,26 @@
 #include "../../algo_utils/join/smj/smjutil.h"
 #include "../../algo_utils/join/smj/SMJstages.h"
 
-#define LOGFILE "stdout"//"logs/sort_merge_join.log.txt"
+#include <unistd.h>
+#include <getopt.h>
+
+#define default_LOGFILE "stdout"//"logs/sort_merge_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 
-#define R_TABLE_SIZE 16*CHUNK_SIZE
-#define S_TABLE_SIZE 16*CHUNK_SIZE
+#define default_R_TABLE_SIZE 16*CHUNK_SIZE
+#define default_S_TABLE_SIZE 16*CHUNK_SIZE
 
 #define BLOCK_SIZE (idx_t)128000 // TODO radix sort segfaults
-#define MERGE_PARTITION_SIZE 128*1024*CHUNK_SIZE
-#define GATHER_PSIZE (idx_t)256*CHUNK_SIZE*sizeof(long)
+#define default_MERGE_PARTITION_SIZE 128*1024*CHUNK_SIZE
+#define default_GATHER_PSIZE (idx_t)256*CHUNK_SIZE*sizeof(long)
 // TODO gathers seem to be ruined for some reason...
 
-#define R_TBL_NAME "R_tbl"
-#define S_TBL_NAME "S_tbl"
+#define default_R_TBL_NAME "R_tbl"
+#define default_S_TBL_NAME "S_tbl"
 
-#define R_KEY "k"
-#define S_KEY "k"
+#define default_R_KEY "k"
+#define default_S_KEY "k"
 
 #define R_interm "R_tbl_interm"
 #define S_interm "S_tbl_interm"
@@ -36,26 +39,139 @@
 #define R_SORTED_NAME_GFTR "R_tbl_sorted"
 #define R_SORTED_NAME_GFUR "R_tbl_sorted_wo"
 
-#define R_SORT_BUFFER_GFTR 4*CHUNK_SIZE
-#define S_SORT_BUFFER_GFTR 4*CHUNK_SIZE
-#define R_SORT_BUFFER_GFUR 8*CHUNK_SIZE
-#define S_SORT_BUFFER_GFUR 8*CHUNK_SIZE
+#define default_R_SORT_BUFFER_GFTR 4*CHUNK_SIZE
+#define default_S_SORT_BUFFER_GFTR 4*CHUNK_SIZE
+#define default_R_SORT_BUFFER_GFUR 8*CHUNK_SIZE
+#define default_S_SORT_BUFFER_GFUR 8*CHUNK_SIZE
 
-#define R_JOIN_BUFFER 16*CHUNK_SIZE
-#define S_JOIN_BUFFER 16*CHUNK_SIZE
+#define default_R_JOIN_BUFFER 16*CHUNK_SIZE
+#define default_S_JOIN_BUFFER 16*CHUNK_SIZE
 
-#define DBFILE "testdb.db"
-#define DDB_MEMSIZE "4GB"
-#define DDB_TEMPDIR "tps_tempdir"
+#define default_DBFILE "testdb.db"
+#define default_DDB_MEMSIZE "4GB"
+#define default_DDB_TEMPDIR "tps_tempdir"
 
-#define VERBOSE false
-#define DO_CREATE_TABLES true
-#define DO_TEST_CPU true
-#define DO_TEST_UNSORTED true
-#define DO_TEST_SEMISORTED true
-#define DO_TEST_SORTED true
+#define default_VERBOSE false
+#define default_DO_CREATE_TABLES false
+#define default_DO_TEST_CPU true
+#define default_DO_TEST_UNSORTED true
+#define default_DO_TEST_SEMISORTED true
+#define default_DO_TEST_SORTED true
 
-int main() {
+int main(int argc, char *argv[]) {
+  // Parse command line arguments
+    // Initializations
+      char LOGFILE[250] = default_LOGFILE;
+      char R_TBL_NAME[250] = default_R_TBL_NAME;
+      char S_TBL_NAME[250] = default_S_TBL_NAME;
+      char R_KEY[250] = default_R_KEY;
+      char S_KEY[250] = default_S_KEY;
+      int64_t R_TABLE_SIZE = default_R_TABLE_SIZE;
+      int64_t S_TABLE_SIZE = default_S_TABLE_SIZE;
+      int64_t MERGE_PARTITION_SIZE = default_MERGE_PARTITION_SIZE;
+      int64_t GATHER_PSIZE = default_GATHER_PSIZE;
+      int64_t R_SORT_BUFFER_GFTR = default_R_SORT_BUFFER_GFTR;
+      int64_t S_SORT_BUFFER_GFTR = default_S_SORT_BUFFER_GFTR;
+      int64_t R_SORT_BUFFER_GFUR = default_R_SORT_BUFFER_GFUR;
+      int64_t S_SORT_BUFFER_GFUR = default_S_SORT_BUFFER_GFUR;
+      int64_t R_JOIN_BUFFER = default_R_JOIN_BUFFER;
+      int64_t S_JOIN_BUFFER = default_S_JOIN_BUFFER;
+      char DBFILE[250] = default_DBFILE;
+      char DDB_MEMSIZE[25] = default_DDB_MEMSIZE;
+      char DDB_TEMPDIR[250] = default_DDB_TEMPDIR;
+      int32_t VERBOSE = default_VERBOSE;
+      int32_t DO_CREATE_TABLES = default_DO_CREATE_TABLES;
+      int32_t DO_TEST_CPU = default_DO_TEST_CPU;
+      int32_t DO_TEST_UNSORTED = default_DO_TEST_UNSORTED;
+      int32_t DO_TEST_SEMISORTED = default_DO_TEST_SEMISORTED;
+      int32_t DO_TEST_SORTED = default_DO_TEST_SORTED;
+
+    static struct option long_options[] =
+      {
+          {"logfile", required_argument, 0, 'l'},
+          {"R_tbl", required_argument, 0, 'r'},
+          {"S_tbl", required_argument, 0, 's'},
+          {"R_key", required_argument, 0, 'k'},
+          {"S_key", required_argument, 0, 'K'},
+          {"R_size", required_argument, 0, 'R'},
+          {"S_size", required_argument, 0, 'S'},
+          {"parallel_bytes", required_argument, 0, 'P'},
+          {"gather_bytes", required_argument, 0, 'G'},
+          {"R_sort_buffer_GFTR", required_argument, 0, 'z'},
+          {"R_sort_buffer_GFUR", required_argument, 0, 'x'},
+          {"S_sort_buffer_GFTR", required_argument, 0, 'Z'},
+          {"S_sort_buffer_GFUR", required_argument, 0, 'X'},
+          {"R_join_buffer", required_argument, 0, 'j'},
+          {"S_join_buffer", required_argument, 0, 'J'},
+          {"db_file", required_argument, 0, 'f'},
+          {"db_memsize", required_argument, 0, 'm'},
+          {"db_tempdir", required_argument, 0, 'd'},
+          {"verbose", no_argument, 0, 'v'},
+          {"create_tables", no_argument, 0, 'c'},
+          {"skip_CPU", no_argument, 0, '0'},
+          {"skip_unsorted", no_argument, 0, '1'},
+          {"skip_semisorted", no_argument, 0, '2'},
+          {"skip_sorted", no_argument, 0, '3'},
+          {0, 0, 0, 0}
+      };
+    char ch;
+    while(
+      (ch = getopt_long_only(argc,argv,"l:r:s:k:K:R:S:P:G:z:x:Z:X:j:J:f:m:d:vc0123",long_options,NULL)) != -1
+    ) {
+      switch(ch) {
+        case 'l':
+          memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
+        case 'r':
+          memcpy(R_TBL_NAME, optarg, strlen(optarg)+1); break;
+        case 's':
+          memcpy(S_TBL_NAME, optarg, strlen(optarg)+1); break;
+        case 'k':
+          memcpy(R_KEY, optarg, strlen(optarg)+1); break;
+        case 'K':
+          memcpy(S_KEY, optarg, strlen(optarg)+1); break;
+        case 'R':
+          R_TABLE_SIZE = atol(optarg); break;
+        case 'S':
+          S_TABLE_SIZE = atol(optarg); break;
+        case 'P':
+          MERGE_PARTITION_SIZE = atol(optarg); break;
+        case 'G':
+          GATHER_PSIZE = atol(optarg); break;
+        case 'z':
+          R_SORT_BUFFER_GFTR = atol(optarg); break;
+        case 'x':
+          R_SORT_BUFFER_GFUR = atol(optarg); break;
+        case 'Z':
+          S_SORT_BUFFER_GFTR = atol(optarg); break;
+        case 'X':
+          S_SORT_BUFFER_GFUR = atol(optarg); break;
+        case 'j':
+          R_JOIN_BUFFER = atol(optarg); break;
+        case 'J':
+          S_JOIN_BUFFER = atol(optarg); break;
+        case 'f':
+          memcpy(DBFILE, optarg, strlen(optarg)+1); break;
+        case 'm':
+          memcpy(DDB_MEMSIZE, optarg, strlen(optarg)+1); break;
+        case 'd':
+          memcpy(DDB_TEMPDIR, optarg, strlen(optarg)+1); break;
+        case 'v':
+          VERBOSE=true; break;
+        case 'c':
+          DO_CREATE_TABLES=true; break;
+        case '0':
+          DO_TEST_CPU=false; break;
+        case '1':
+          DO_TEST_UNSORTED=false; break;
+        case '2':
+          DO_TEST_SEMISORTED=false; break;
+        case '3':
+          DO_TEST_SORTED=false; break;
+      }
+    }
+
+
+
   // Initialise logger
     FILE* logfile = loginit(LOGFILE, "Sort Merge Join: Starting test program...");
     if(LOGFILE && !logfile) {
@@ -125,8 +241,8 @@ int main() {
   // Create tables R and S
     if(DO_CREATE_TABLES) {
       duckdb_query(con, "setseed(0.42);", NULL);
-      char createRtbl[1000 + strlen(R_TBL_NAME)];
-      char createStbl[1000 + strlen(S_TBL_NAME)];
+      char createRtbl[1250];
+      char createStbl[1250];
       sprintf(createRtbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload1 FLOAT, payload2 INTEGER, payload3 SMALLINT);", R_TBL_NAME);
       duckdb_query(con, createRtbl, NULL);
       sprintf(createStbl, "CREATE OR REPLACE TABLE %s (k BIGINT, payload4 INTEGER, payload5 SMALLINT, payload6 DOUBLE);", S_TBL_NAME);

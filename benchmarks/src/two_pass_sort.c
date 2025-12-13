@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include <getopt.h>
 
+// TODO parameterisable input & output tables...
+
 #define default_LOGFILE "stdout"//"logs/two_pass_sort.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
@@ -115,7 +117,7 @@ int main(int argc, char *argv[]) {
 
   // Create the table tbl on which the testing will be done.
     if(CREATE_TABLE) {
-      duckdb_query(con, "CREATE OR REPLACE TEMP TABLE tbl (k BIGINT, payload1 SMALLINT, payload2 DOUBLE, payload3 FLOAT);", NULL);
+      duckdb_query(con, "CREATE OR REPLACE TABLE tbl (k BIGINT, payload1 SMALLINT, payload2 DOUBLE, payload3 FLOAT);", NULL);
       duckdb_query(con, "setseed(0.42);", NULL);
 
       duckdb_prepared_statement init_stmt;
