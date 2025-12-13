@@ -48,7 +48,7 @@ radix_hash_join: benchmarks/src/radix_hash_join.c $(RHJ_DEPS)
 	$(CC) benchmarks/src/radix_hash_join.c -o benchmarks/radix_hash_join.o \
 		$(RHJ_DEPS) $(CFLAGS)
 
-group_by_aggregation: /benchmarks/src/group_by_aggregation.c $(AGGR_DEPS)
+group_by_aggregation: benchmarks/src/group_by_aggregation.c $(AGGR_DEPS)
 	$(CC) benchmarks/src/group_by_aggregation.c -o benchmarks/group_by_aggregation.o \
 		$(AGGR_DEPS) $(CFLAGS)
 
@@ -86,5 +86,5 @@ CUDA2-ftDBSCAN: ftDBSCAN.c
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
 DBSCAN: benchmarks/src/dbscan.c $(DEPS) $(DBSCAN_DEPS)
-	$(CC) benchmarks/src/dbscan.c -lm -o benchmarks/dbscan.c \
+	$(CC) benchmarks/src/dbscan.c -lm -o benchmarks/dbscan.o \
 		$(DEPS) $(DBSCAN_DEPS) $(CFLAGS)

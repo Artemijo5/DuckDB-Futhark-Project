@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 
     static struct option long_options[] =
       {
-          {"logfile", required_argument, 0, 'l'},
+          {"logfile", required_argument, 0, 'L'},
           {"buffer_size", required_argument, 0, 's'},
           {"table_size", required_argument, 0, 't'},
           {"block_size", required_argument, 0, 'b'},
@@ -52,10 +52,10 @@ int main(int argc, char *argv[]) {
       };
     char ch;
     while(
-      (ch = getopt_long_only(argc,argv,"l:s:t:b:cf:m:d:",long_options,NULL)) != -1
+      (ch = getopt_long_only(argc,argv,"L:s:t:b:cf:m:d:",long_options,NULL)) != -1
     ) {
       switch(ch) {
-        case 'l':
+        case 'L':
           memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
         case 's':
           BUFFER_SIZE = atol(optarg); break;

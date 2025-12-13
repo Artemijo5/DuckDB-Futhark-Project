@@ -7,20 +7,70 @@
 #include "../../clibs/mylogger.h"
 #include "../../clibs/db_util.h"
 
-#define LOGFILE "stdout"//"logs/group_by_aggregation.log.txt"
+#include <unistd.h>
+#include <getopt.h>
+
+#define default_LOGFILE "stdout"//"logs/group_by_aggregation.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define BUFFER_SIZE 128*1024*CHUNK_SIZE
-#define TABLE_SIZE 1*BUFFER_SIZE
-#define NUM_KEYS (int64_t)25
+#define default_BUFFER_SIZE 1024*CHUNK_SIZE
+#define default_TABLE_SIZE 1*default_BUFFER_SIZE
+#define default_NUM_KEYS (int64_t)25
 
-#define DBFILE "testdb.db"
-#define DDB_MEMSIZE "4GB"
-#define DDB_TEMPDIR "tps_tempdir"
+#define default_DBFILE "testdb.db"
+#define default_DDB_MEMSIZE "4GB"
+#define default_DDB_TEMPDIR "tps_tempdir"
 
-#define VERBOSE false
+#define default_VERBOSE false
 
-int main() {
+int main(int argc, char *argv[]) {
+  // Parse command line arguments
+    // Initializations
+			char LOGFILE[250] = default_LOGFILE;
+			int64_t BUFFER_SIZE = default_BUFFER_SIZE;
+			int64_t TABLE_SIZE = default_TABLE_SIZE;
+			int64_t NUM_KEYS = default_NUM_KEYS;
+			char DBFILE[250] = default_DBFILE;
+      char DDB_MEMSIZE[25] = default_DDB_MEMSIZE;
+      char DDB_TEMPDIR[250] = default_DDB_TEMPDIR;
+      int32_t VERBOSE = default_VERBOSE;
+
+    static struct option long_options[] =
+      {
+          {"logfile", required_argument, 0, 'L'},
+          {"buffer_size", required_argument, 0, 'B'},
+          {"table_size", required_argument, 0, 'T'},
+          {"num_keys", required_argument, 0, 'K'},
+          {"db_file", required_argument, 0, 'f'},
+          {"db_memsize", required_argument, 0, 'm'},
+          {"db_tempdir", required_argument, 0, 'd'},
+          {"verbose", no_argument, 0, 'v'},
+          {0, 0, 0, 0}
+      };
+    char ch;
+    while(
+      (ch = getopt_long_only(argc,argv,"L:B:T:K:f:m:d:v",long_options,NULL)) != -1
+    ) {
+      switch(ch) {
+        case 'L':
+          memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
+        case 'B':
+          BUFFER_SIZE = atol(optarg); break;
+        case 'T':
+          TABLE_SIZE = atol(optarg); break;
+        case 'K':
+          NUM_KEYS = atol(optarg); break;
+        case 'f':
+          memcpy(DBFILE, optarg, strlen(optarg)+1); break;
+        case 'm':
+          memcpy(DDB_MEMSIZE, optarg, strlen(optarg)+1); break;
+        case 'd':
+          memcpy(DDB_TEMPDIR, optarg, strlen(optarg)+1); break;
+        case 'v':
+          VERBOSE=true; break;
+      }
+    }
+
   // Initialise logger
 	  FILE* logfile = loginit(LOGFILE, "Group-By Aggregation : Starting test program.");
 	  if(LOGFILE && !logfile) {

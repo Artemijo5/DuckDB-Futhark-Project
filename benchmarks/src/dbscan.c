@@ -8,29 +8,104 @@
 #include "../../clibs/mylogger.h"
 #include "../../clibs/db_util.h"
 
-#define LOGFILE "stdout"//"logs/dbscan.log.txt"
+#include <unistd.h>
+#include <getopt.h>
+
+#define default_LOGFILE "stdout"//"logs/dbscan.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)64
-#define BUFFER_CAP (long)2048
-#define TABLE_SIZE BUFFER_CAP*CHUNK_SIZE // assume entire dataset can be processed at once
+#define default_BUFFER_CAP (long)4
+#define default_TABLE_SIZE BUFFER_CAP*CHUNK_SIZE // assume entire dataset can be processed at once
 
-#define DIM (long)2
-#define MINVAL (float)0.0
-#define MAXVAL (float)5500.0 // roughly 200-256 for 4 chunks (in 2d) - O(sqrt BUFFER_CAP)
+#define default_DIM (long)2
+#define default_MINVAL (float)0.0
+#define default_MAXVAL (float)180.0 // roughly 200-256 for 4 chunks (in 2d) - O(sqrt BUFFER_CAP)
+// roughly 0-35/40 for 4 chunks in 3d (half the dataset is corepoints)
+// 3d and maxval = 60 : about 8/9ths are noise
 
-#define EPS (float)2.0
-#define MIN_PTS 2 + DIM
+#define default_EPS (float)2.0
+#define default_MIN_PTS 2 + DIM
 
-#define GATHER_PSIZE 1*sizeof(long)*TABLE_SIZE
-#define DBSCAN_MEMSIZE 1024*1024*TABLE_SIZE
-#define OMIT_BORDER false
+#define default_GATHER_PSIZE 1*sizeof(long)*default_TABLE_SIZE
+#define default_DBSCAN_MEMSIZE 1024*1024*default_TABLE_SIZE
+#define default_OMIT_BORDER false
 
-#define DBFILE "testdb.db"
-#define DDB_MEMSIZE "4GB"
-#define DDB_TEMPDIR "tps_tempdir"
+#define default_DBFILE "testdb.db"
+#define default_DDB_MEMSIZE "4GB"
+#define default_DDB_TEMPDIR "tps_tempdir"
 
-int main() {
+int main(int argc, char *argv[]) {
+  // Parse command line arguments
+    // Initializations
+      char LOGFILE[250] = default_LOGFILE;
+      int64_t BUFFER_CAP = default_BUFFER_CAP;
+      int64_t DIM = default_DIM;
+      float MINVAL = default_MINVAL;
+      float MAXVAL = default_MAXVAL;
+      float EPS = default_EPS;
+      int64_t MIN_PTS = default_MIN_PTS;
+      int64_t GATHER_PSIZE = default_GATHER_PSIZE;
+      int64_t DBSCAN_MEMSIZE = default_DBSCAN_MEMSIZE;
+      int32_t OMIT_BORDER = default_OMIT_BORDER;
+      char DBFILE[250] = default_DBFILE;
+      char DDB_MEMSIZE[25] = default_DDB_MEMSIZE;
+      char DDB_TEMPDIR[250] = default_DDB_TEMPDIR;
+
+    static struct option long_options[] =
+      {
+          {"logfile", required_argument, 0, 'L'},
+          {"buffer_chunks", required_argument, 0, 'T'},
+          {"dim", required_argument, 0, 'D'},
+          {"minval", required_argument, 0, 'I'},
+          {"maxval", required_argument, 0, 'S'},
+          {"eps", required_argument, 0, 'e'},
+          {"minPts", required_argument, 0, 'p'},
+          {"gather_bytes", required_argument, 0, 'G'},
+          {"memsize", required_argument, 0, 'M'},
+          {"omit_border", no_argument, 0, 'O'},
+          {"db_file", required_argument, 0, 'f'},
+          {"db_memsize", required_argument, 0, 'm'},
+          {"db_tempdir", required_argument, 0, 'd'},
+          {0, 0, 0, 0}
+      };
+    char ch;
+    while(
+      (ch = getopt_long_only(argc,argv,"L:T:D:I:S:e:p:G:M:Of:m:d:",long_options,NULL)) != -1
+    ) {
+      switch(ch) {
+        case 'L':
+          memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
+        case 'T':
+          BUFFER_CAP = atol(optarg); break;
+        case 'D':
+          DIM = atol(optarg); break;
+        case 'I':
+          MINVAL = (float)atof(optarg); break;
+        case 'S':
+          MAXVAL = (float)atof(optarg); break;
+        case 'e':
+          EPS = (float)atof(optarg); break;
+        case 'p':
+          MIN_PTS = atol(optarg); break;
+        case 'G':
+          GATHER_PSIZE = atol(optarg); break;
+        case 'M':
+          DBSCAN_MEMSIZE = atol(optarg); break;
+        case 'O':
+          OMIT_BORDER = true; break;
+        case 'f':
+          memcpy(DBFILE, optarg, strlen(optarg)+1); break;
+        case 'm':
+          memcpy(DDB_MEMSIZE, optarg, strlen(optarg)+1); break;
+        case 'd':
+          memcpy(DDB_TEMPDIR, optarg, strlen(optarg)+1); break;
+      }
+    }
+
+    int64_t TABLE_SIZE = BUFFER_CAP*CHUNK_SIZE;
+
+
   // Initialise logger
     FILE* logfile = loginit(LOGFILE, "DBSCAN : Starting test program.");
     if(LOGFILE && !logfile) {

@@ -8,31 +8,110 @@
 #include "../../clibs/mylogger.h"
 #include "../../clibs/db_util.h"
 
-#define LOGFILE "stdout"//"logs/skyline.log.txt"
+#include <unistd.h>
+#include <getopt.h>
+
+#define default_LOGFILE "stdout"//"logs/skyline.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)4
-#define BUFFER_CAP (long)2*1024//(long)2*CNK_TO_READ
-#define BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
-#define TABLE_SIZE 8*BUFFER_SIZE//10*BUFFER_SIZE
+#define default_BUFFER_CAP (long)2*1024//(long)2*CNK_TO_READ
+#define default_BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
+#define default_TABLE_SIZE 8*BUFFER_SIZE//10*BUFFER_SIZE
 
-#define DIM (long)4
-#define ANGULAR_SUBDIV (long)10
-#define MINVAL (float)0.0
-#define MAXVAL (float)100.0
-#define SIZE_THRESH BUFFER_SIZE/100
+#define default_DIM (long)4
+#define default_ANGULAR_SUBDIV (long)2
+#define default_MINVAL (float)0.0
+#define default_MAXVAL (float)100.0
+#define default_SIZE_THRESH default_BUFFER_SIZE/100
 
-#define SKYLINE_MEMSIZE 256*1024*CHUNK_SIZE
-#define USE_MANY_PTS true
-#define SKIP_LOCAL_SKYLINE true
+#define default_SKYLINE_MEMSIZE 256*1024*CHUNK_SIZE
+#define default_USE_MANY_PTS false
+#define default_SKIP_LOCAL_SKYLINE false
 
-#define DBFILE "testdb.db"
-#define DDB_MEMSIZE "4GB"
-#define DDB_TEMPDIR "/tps_tempdir"
+#define default_DBFILE "testdb.db"
+#define default_DDB_MEMSIZE "4GB"
+#define default_DDB_TEMPDIR "/tps_tempdir"
 
-#define VERBOSE false
+#define default_VERBOSE false
 
-int main() {
+int main(int argc, char *argv[]) {
+  // Parse command line arguments
+    // Initializations
+      char LOGFILE[250] = default_LOGFILE;
+      int64_t BUFFER_CAP = default_BUFFER_CAP;
+      int64_t BUFFER_SIZE = BUFFER_CAP*CHUNK_SIZE;
+      int64_t TABLE_SIZE = default_TABLE_SIZE;
+      int64_t DIM = default_DIM;
+      int64_t ANGULAR_SUBDIV = default_ANGULAR_SUBDIV;
+      float MINVAL = default_MINVAL;
+      float MAXVAL = default_MAXVAL;
+      int64_t SIZE_THRESH = default_SIZE_THRESH;
+      int64_t SKYLINE_MEMSIZE = default_SKYLINE_MEMSIZE;
+      bool USE_MANY_PTS = default_USE_MANY_PTS;
+      bool SKIP_LOCAL_SKYLINE = default_SKIP_LOCAL_SKYLINE;
+      char DBFILE[250] = default_DBFILE;
+      char DDB_MEMSIZE[25] = default_DDB_MEMSIZE;
+      char DDB_TEMPDIR[250] = default_DDB_TEMPDIR;
+      bool VERBOSE = default_VERBOSE;
+
+    static struct option long_options[] =
+      {
+          {"logfile", required_argument, 0, 'L'},
+          {"buffer_cap", required_argument, 0, 'B'},
+          {"table_size", required_argument, 0, 'T'},
+          {"dim", required_argument, 0, 'D'},
+          {"angular_subdiv", required_argument, 0, 'a'},
+          {"minval", required_argument, 0, 'I'},
+          {"maxval", required_argument, 0, 'S'},
+          {"size_thresh", required_argument, 0, 's'},
+          {"memsize", required_argument, 0, 'M'},
+          {"use_many_pts", no_argument, 0, 'u'},
+          {"skip_local", no_argument, 0, 'n'},
+          {"db_file", required_argument, 0, 'f'},
+          {"db_memsize", required_argument, 0, 'm'},
+          {"db_tempdir", required_argument, 0, 'd'},
+          {"verbose", no_argument, 0, 'v'},
+          {0, 0, 0, 0}
+      };
+    char ch;
+    while(
+      (ch = getopt_long_only(argc,argv,"L:B:T:D:a:I:S:s:M:unf:m:d:v",long_options,NULL)) != -1
+    ) {
+      switch(ch) {
+        case 'L':
+          memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
+        case 'B':
+          BUFFER_CAP = atol(optarg); BUFFER_SIZE = BUFFER_CAP*CHUNK_SIZE; break;
+        case 'T':
+          TABLE_SIZE = atol(optarg); break;
+        case 'D':
+          DIM = atol(optarg); break;
+        case 'a':
+          ANGULAR_SUBDIV = atol(optarg); break;
+        case 'I':
+          MINVAL = (float)atof(optarg); break;
+        case 'S':
+          MAXVAL = (float)atof(optarg); break;
+        case 's':
+          SIZE_THRESH = atol(optarg); break;
+        case 'M':
+          SKYLINE_MEMSIZE = atol(optarg); break;
+        case 'u':
+          USE_MANY_PTS = true; break;
+        case 'n':
+          SKIP_LOCAL_SKYLINE = true; break;
+        case 'f':
+          memcpy(DBFILE, optarg, strlen(optarg)+1); break;
+        case 'm':
+          memcpy(DDB_MEMSIZE, optarg, strlen(optarg)+1); break;
+        case 'd':
+          memcpy(DDB_TEMPDIR, optarg, strlen(optarg)+1); break;
+        case 'v':
+          VERBOSE=true; break;
+      }
+    }
+
   // Initialise logger
     FILE* logfile = loginit(LOGFILE, "Skyline Computation : Starting test program.");
     if(LOGFILE && !logfile) {

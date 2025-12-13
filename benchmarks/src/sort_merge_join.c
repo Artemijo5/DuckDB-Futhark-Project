@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
     static struct option long_options[] =
       {
-          {"logfile", required_argument, 0, 'l'},
+          {"logfile", required_argument, 0, 'L'},
           {"R_tbl", required_argument, 0, 'r'},
           {"S_tbl", required_argument, 0, 's'},
           {"R_key", required_argument, 0, 'k'},
@@ -116,10 +116,10 @@ int main(int argc, char *argv[]) {
       };
     char ch;
     while(
-      (ch = getopt_long_only(argc,argv,"l:r:s:k:K:R:S:P:G:z:x:Z:X:j:J:f:m:d:vc0123",long_options,NULL)) != -1
+      (ch = getopt_long_only(argc,argv,"L:r:s:k:K:R:S:P:G:z:x:Z:X:j:J:f:m:d:vc0123",long_options,NULL)) != -1
     ) {
       switch(ch) {
-        case 'l':
+        case 'L':
           memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
         case 'r':
           memcpy(R_TBL_NAME, optarg, strlen(optarg)+1); break;
