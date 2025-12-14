@@ -148,7 +148,7 @@ def sm_red [n] 't
   (ne : t)
   (xs : [n]t)
 : t =
-  if n<8
+  if n<6
   then foldl f ne xs
   else reduce f ne xs
 
