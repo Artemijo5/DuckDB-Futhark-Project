@@ -142,6 +142,16 @@ def seqmap [n] 't 'ot
 --  loop buff = (replicate n (f xs[0] ys[0] zs[0])) for j in (1..<n) do
 --    buff with [j] = f xs[j] ys[j] zs[j]
 
+-- reduce for small arrays
+def sm_red [n] 't
+  (f : t -> t -> t)
+  (ne : t)
+  (xs : [n]t)
+: t =
+  if n<8
+  then foldl f ne xs
+  else reduce f ne xs
+
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
