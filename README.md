@@ -11,7 +11,7 @@ Technical University of Crete, Department of Electrical and Computer Engineering
 
 -----------------------------------------
 Preparation:
-- add libduckdb.so and libduckdb_static.a from duckdb's [Linux C installation page](https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64) to the project directory
+- add the files from duckdb's [Linux C installation page](https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64) to clibs/
 - (Optional) have duckdb installed to create test tables and see results outside of the C API
 - have futhark installed in order to compile .fut files
 - install [futhark's sort libraries](https://github.com/diku-dk/sorts) in /ft_libs
