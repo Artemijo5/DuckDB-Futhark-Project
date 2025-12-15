@@ -290,7 +290,7 @@ module skyline_real (F:real) = {
 				part_no
 				pids
 				(zip (iota n) (measures))
-			|> map (\(i,_) -> skI.xys[i].0)
+			|> map (.0)
 			-- Use the closest Euclidean point + the points with each smallest dim value (per partition)
 			let num_fpts = if use_many_points then (dim+1) else 1
 			let filtering_points = (iota num_fpts)
@@ -307,20 +307,22 @@ module skyline_real (F:real) = {
 						part_no
 						pids
 						(zip (iota n) (skI.xys |> map (\(x,_) -> x[d-1]) :> [n]t))
-					|> map (\(i,_) -> skI.xys[i].0)
+					|> map (.0)
 				)
 			let filt_xys = (skI.xys :> [n]([dim]t, pL_t))
 				|> zip (pids :> [n]i64)
 				|> map (\(pid,xy) ->
 					let isElimd = filtering_points
 						|> map (\f_per_dim -> f_per_dim[pid])
-						|> map (\cmp_x ->
+						|> map (\cmp_i -> let cmp_x = skI.xys[cmp_i].0 in
+							-- TODO could use segmented gather here...
 							sm_red (&&) (true) (map2 (geq) xy.0 cmp_x)
 							&&
 							sm_red (||) (false) (map2 (gt) xy.0 cmp_x)
 						)
 						|> sm_red (||) (false)
-					in (xy, skI.isPartitionDominated[pid] || isElimd)
+					let (gid,_) = get_grid_angle_from_id skB pid
+					in (xy, skI.isPartitionDominated[gid] || isElimd)
 				)
 				|> filter (\(_, isElimd) -> !isElimd)
 				|> map (\(xy,_) -> xy)
@@ -522,10 +524,10 @@ module skyline_real (F:real) = {
 		entry skyline_slice_and_dice_float [n] [dim]
 			(skB : skylineBase_float [dim])
 			(xs : [n][dim]f32)
-			(is : [n]i64)
+			(offs : i64)
 			(use_many_pts : bool)
 		: skylineInfo_float [dim] =
-			skyline_float.skyline_slice_and_dice skB xs is use_many_pts
+			skyline_float.skyline_slice_and_dice skB xs (iota n |> map (\i -> i+offs)) use_many_pts
 
 		entry skyline_local_filter_float [dim]
 			(skB : skylineBase_float [dim])
@@ -576,7 +578,7 @@ module skyline_real (F:real) = {
 
 		entry crack_skylineInfo_float [dim] (skI : skylineInfo_float [dim]) : skylineData_float [dim] =
 			skyline_float.crack_skyline skI
-			
+
 	-- TODO double, half entry points
 
 -- TODO test Intermediate Skyline to ensure works as desired

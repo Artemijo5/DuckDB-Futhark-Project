@@ -27,6 +27,7 @@
 
 #define default_SKYLINE_MEMSIZE 256*1024*CHUNK_SIZE
 #define default_USE_MANY_PTS false
+#define default_USE_MANY_PTS_LOCAL false
 #define default_SKIP_LOCAL_SKYLINE false
 
 #define default_DBFILE "testdb.db"
@@ -49,6 +50,7 @@ int main(int argc, char *argv[]) {
       int64_t SIZE_THRESH = default_SIZE_THRESH;
       int64_t SKYLINE_MEMSIZE = default_SKYLINE_MEMSIZE;
       bool USE_MANY_PTS = default_USE_MANY_PTS;
+      bool USE_MANY_PTS_LOCAL = default_USE_MANY_PTS_LOCAL;
       bool SKIP_LOCAL_SKYLINE = default_SKIP_LOCAL_SKYLINE;
       char DBFILE[250] = default_DBFILE;
       char DDB_MEMSIZE[25] = default_DDB_MEMSIZE;
@@ -67,6 +69,7 @@ int main(int argc, char *argv[]) {
           {"size_thresh", required_argument, 0, 's'},
           {"memsize", required_argument, 0, 'M'},
           {"use_many_pts", no_argument, 0, 'u'},
+          {"use_many_pts_local", no_argument, 0, 'U'},
           {"skip_local", no_argument, 0, 'n'},
           {"db_file", required_argument, 0, 'f'},
           {"db_memsize", required_argument, 0, 'm'},
@@ -99,6 +102,8 @@ int main(int argc, char *argv[]) {
           SKYLINE_MEMSIZE = atol(optarg); break;
         case 'u':
           USE_MANY_PTS = true; break;
+        case 'U':
+          USE_MANY_PTS_LOCAL = true; break;
         case 'n':
           SKIP_LOCAL_SKYLINE = true; break;
         case 'f':
@@ -132,11 +137,12 @@ int main(int argc, char *argv[]) {
     "\tSIZE THRESHOLD       %ld\n"
     "\tSKYLINE MEMSIZE      %ld\n"
     "\tFILTER WITH MANY PTS %d\n"
+    "\t-||- LOCALLY         %d\n"
     "\tSKIP LOCAL SKYLINE   %d\n"
     "\tVERBOSE            %d",
     TABLE_SIZE,BUFFER_SIZE,BUFFER_CAP,
     DIM,ANGULAR_SUBDIV,SIZE_THRESH,SKYLINE_MEMSIZE,
-    USE_MANY_PTS,SKIP_LOCAL_SKYLINE,VERBOSE
+    USE_MANY_PTS,USE_MANY_PTS_LOCAL,SKIP_LOCAL_SKYLINE,VERBOSE
   );
   mylog(logfile, log_param);
 
@@ -227,7 +233,7 @@ int main(int argc, char *argv[]) {
 	  struct futhark_f32_1d *maxs_ft = futhark_new_f32_1d(ctx,maxs,DIM);
 	  struct futhark_i64_1d *grids_ft = futhark_new_i64_1d(ctx, grid_per_dim, DIM);
 	  struct futhark_i64_1d *angls_ft = futhark_new_i64_1d(ctx, angl_per_dim, DIM-1);
-	  futhark_entry_define_skyline_space_float(ctx, &skB, mins_ft, maxs_ft, grids_ft, angls_ft);
+	  futhark_entry_make_skylineBase_float(ctx, &skB, mins_ft, maxs_ft, grids_ft, angls_ft, SKYLINE_MEMSIZE);
 	  futhark_context_sync(ctx);
 	  mylog(logfile, "Defined data space in the form of SkylineBase.");
 	  futhark_free_f32_1d(ctx, mins_ft);
@@ -235,7 +241,7 @@ int main(int argc, char *argv[]) {
 	  futhark_free_i64_1d(ctx, grids_ft);
 	  futhark_free_i64_1d(ctx, angls_ft);
 
-	struct futhark_opaque_skylineInfo_GFUR_float *skyWindows[5];
+	struct futhark_opaque_skylineInfo_float *skyWindows[5];
 	idx_t currently_windowed = 0;
 
   // 1 - Calculate Intermediate Skylines per Window, Collapsing Windows
@@ -285,25 +291,30 @@ int main(int argc, char *argv[]) {
       	mylog(func_logfile, " - - Wrapped data into futhark core.");
       	free(skyData);
 
-      	struct futhark_opaque_skylineInfo_GFUR_float *skyWindow;
-      	struct futhark_opaque_skylineInfo_GFUR_float *local_skyWindow;
-      	struct futhark_opaque_skylineInfo_GFUR_float *interm_skyWindow;
+      	struct futhark_opaque_skylineInfo_float *skyWindow;
+      	struct futhark_opaque_skylineInfo_float *local_skyWindow;
+      	struct futhark_opaque_skylineInfo_float *interm_skyWindow;
 
-      	futhark_entry_pointwise_slice_and_dice_for_Skyline_GFUR_float(ctx, &skyWindow, skB, skyData_ft, cur_idx, USE_MANY_PTS, false);
+      	futhark_entry_skyline_slice_and_dice_float(ctx, &skyWindow, skB, skyData_ft, cur_idx, USE_MANY_PTS);
       	mylog(func_logfile, " - - Applied pointwise filtering & angular partitioning ('slice-and-dice').");
       	futhark_free_f32_2d(ctx, skyData_ft);
 
         if (!SKIP_LOCAL_SKYLINE) {
-        	futhark_entry_calc_local_Skyline_GFUR_float(ctx, &local_skyWindow, skB, skyWindow);
-        	futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindow);
+          futhark_entry_skyline_local_filter_float(
+            ctx, &local_skyWindow, skB, skyWindow, USE_MANY_PTS_LOCAL
+          );
+        	futhark_free_opaque_skylineInfo_float(ctx, skyWindow);
         	mylog(func_logfile, " - - Applied local filtering.");
-        	futhark_entry_calc_intermSkyline_GFUR_float(ctx, &interm_skyWindow, skB, local_skyWindow, true, 1, 0, SIZE_THRESH);
-        	futhark_free_opaque_skylineInfo_GFUR_float(ctx, local_skyWindow);
+          //printf("\n\n%s\n\n", futhark_context_get_error(ctx));
+          futhark_entry_skyline_intermediate_filter_float(
+            ctx, &interm_skyWindow, skB, local_skyWindow, USE_MANY_PTS_LOCAL, 1, DIM, SIZE_THRESH
+          );
+        	futhark_free_opaque_skylineInfo_float(ctx, local_skyWindow);
         	mylog(func_logfile, " - - Applied intermediate filtering steps.");
         }
         else {
-          futhark_entry_calc_global_Skyline_GFUR_float(ctx, &interm_skyWindow, skB, skyWindow, SKYLINE_MEMSIZE);
-          futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindow);
+          futhark_entry_calc_Global_Skyline_float(ctx, &interm_skyWindow, skB, skyWindow);
+          futhark_free_opaque_skylineInfo_float(ctx, skyWindow);
           mylog(func_logfile, " - - Directly applied global filtering.");
         }
 
@@ -321,42 +332,42 @@ int main(int argc, char *argv[]) {
     			" - - | - - Window cache filled - collapsing windows..."
     		);
 
-    		struct futhark_opaque_skylineInfo_GFUR_float *collapsed_skyWindow;
-    		struct futhark_opaque_skylineInfo_GFUR_float *local_collapsed_skyWindow;
-    		struct futhark_opaque_skylineInfo_GFUR_float *interm_collapsed_skyWindow;
+    		struct futhark_opaque_skylineInfo_float *collapsed_skyWindow;
+    		struct futhark_opaque_skylineInfo_float *local_collapsed_skyWindow;
+    		struct futhark_opaque_skylineInfo_float *interm_collapsed_skyWindow;
     		
     		switch(currently_windowed) {
     			case 1:
     				collapsed_skyWindow = skyWindows[0];
     				break;
     			case 2:
-    				futhark_entry_merge_Skylines_2_GFUR_float(
-    					ctx, &collapsed_skyWindow, skB,
+    				futhark_entry_skyline_merge_2_float(
+    					ctx, &collapsed_skyWindow,
     					skyWindows[0], skyWindows[1]
     				);
     				break;
     			case 3:
-    				futhark_entry_merge_Skylines_3_GFUR_float(
-    					ctx, &collapsed_skyWindow, skB,
+    				futhark_entry_skyline_merge_3_float(
+    					ctx, &collapsed_skyWindow,
     					skyWindows[0], skyWindows[1], skyWindows[2]
     				);
     				break;
     			case 4:
-    				futhark_entry_merge_Skylines_4_GFUR_float(
-    					ctx, &collapsed_skyWindow, skB,
+    				futhark_entry_skyline_merge_4_float(
+    					ctx, &collapsed_skyWindow,
     					skyWindows[0], skyWindows[1], skyWindows[2], skyWindows[3]
     				);
     				break;
     			default:
-    				futhark_entry_merge_Skylines_5_GFUR_float(
-    					ctx, &collapsed_skyWindow, skB,
+    				futhark_entry_skyline_merge_5_float(
+    					ctx, &collapsed_skyWindow,
     					skyWindows[0], skyWindows[1], skyWindows[2], skyWindows[3], skyWindows[4]
     				);
     				break;
     		}
     		if(currently_windowed>1) {
     			for(idx_t w=0; w<currently_windowed; w++) {
-    				futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindows[w]);
+    				futhark_free_opaque_skylineInfo_float(ctx, skyWindows[w]);
     			}
     		}
     		mylog(func_logfile, " - - | - - Collapsed cached windows.");
@@ -364,22 +375,22 @@ int main(int argc, char *argv[]) {
     		if(currently_windowed>1) {
 
           if(!SKIP_LOCAL_SKYLINE) {
-      			futhark_entry_calc_local_Skyline_GFUR_float(
-    	  			ctx, &local_collapsed_skyWindow, skB, collapsed_skyWindow
+      			futhark_entry_skyline_local_filter_float(
+    	  			ctx, &local_collapsed_skyWindow, skB, collapsed_skyWindow, USE_MANY_PTS_LOCAL
     	  		);
-    		  	futhark_free_opaque_skylineInfo_GFUR_float(ctx, collapsed_skyWindow);
+    		  	futhark_free_opaque_skylineInfo_float(ctx, collapsed_skyWindow);
     		  	mylog(func_logfile, " - - | - - Applied local filtering.");
-    		  	futhark_entry_calc_intermSkyline_GFUR_float(
-    		  		ctx, &interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, true, 1, 0, SIZE_THRESH
+    		  	futhark_entry_skyline_intermediate_filter_float(
+    		  		ctx, &interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, USE_MANY_PTS_LOCAL, 1, DIM, SIZE_THRESH
     		  	);
-    		  	futhark_free_opaque_skylineInfo_GFUR_float(ctx, local_collapsed_skyWindow);
+    		  	futhark_free_opaque_skylineInfo_float(ctx, local_collapsed_skyWindow);
     		  	mylog(func_logfile, " - - | - - Applied intermediate filtering steps.");
           }
           else {
-            futhark_entry_calc_global_Skyline_GFUR_float(
-              ctx, &interm_collapsed_skyWindow, skB, collapsed_skyWindow, SKYLINE_MEMSIZE
+            futhark_entry_calc_Global_Skyline_float(
+              ctx, &interm_collapsed_skyWindow, skB, collapsed_skyWindow
             );
-            futhark_free_opaque_skylineInfo_GFUR_float(ctx, collapsed_skyWindow);
+            futhark_free_opaque_skylineInfo_float(ctx, collapsed_skyWindow);
             mylog(func_logfile, " - - | - - Directly applied global filtering.");
           }
 
@@ -401,11 +412,11 @@ int main(int argc, char *argv[]) {
     // At this stage, all data is in skyWindows[0]
     // Any needed intermediate filtering has already been applied
     // So, we only need to apply the final Global Skyline function
-    struct futhark_opaque_skylineInfo_GFUR_float *GlobalSkylineInfo_ft;
+    struct futhark_opaque_skylineInfo_float *GlobalSkylineInfo_ft;
     if(!SKIP_LOCAL_SKYLINE) {
-      futhark_entry_calc_global_Skyline_GFUR_float(ctx, &GlobalSkylineInfo_ft, skB, skyWindows[0], SKYLINE_MEMSIZE);
+      futhark_entry_calc_Global_Skyline_float(ctx, &GlobalSkylineInfo_ft, skB, skyWindows[0]);
       mylog(logfile, "Function to compute global skyline has returned.");
-      futhark_free_opaque_skylineInfo_GFUR_float(ctx, skyWindows[0]);
+      futhark_free_opaque_skylineInfo_float(ctx, skyWindows[0]);
     }
     else {
       GlobalSkylineInfo_ft = skyWindows[0];
@@ -413,23 +424,23 @@ int main(int argc, char *argv[]) {
     }
 
     mylog(logfile, "Unwrapping data from futhark core...");
-    struct futhark_opaque_skylineData_GFUR_float *GlobalSkylineData_ft;
-    futhark_entry_crack_Skyline_float_GFUR(ctx, &GlobalSkylineData_ft, GlobalSkylineInfo_ft);
+    struct futhark_opaque_skylineData_float *GlobalSkylineData_ft;
+    futhark_entry_crack_skylineInfo_float(ctx, &GlobalSkylineData_ft, GlobalSkylineInfo_ft);
     mylog(logfile, "'Cracked' SkylineInfo.");
-    futhark_free_opaque_skylineInfo_GFUR_float(ctx, GlobalSkylineInfo_ft);
+    futhark_free_opaque_skylineInfo_float(ctx, GlobalSkylineInfo_ft);
 
     struct futhark_f32_2d *GS_data_ft;
     struct futhark_i64_1d *GS_idxs_ft;
-    futhark_project_opaque_skylineData_GFUR_float_skyTups(ctx, &GS_data_ft, GlobalSkylineData_ft);
-    futhark_project_opaque_skylineData_GFUR_float_pL(ctx, &GS_idxs_ft, GlobalSkylineData_ft);
+    futhark_project_opaque_skylineData_float_dat(ctx, &GS_data_ft, GlobalSkylineData_ft);
+    futhark_project_opaque_skylineData_float_pL(ctx, &GS_idxs_ft, GlobalSkylineData_ft);
     mylog(logfile, "Projected futhark primitive arrays.");
 
     futhark_context_sync(ctx);
     mylog(logfile, "Synced futhark context.");
 
     int64_t GlobalSkyline_len;
-    futhark_project_opaque_skylineData_GFUR_float_len(ctx, &GlobalSkyline_len, GlobalSkylineData_ft);
-    futhark_free_opaque_skylineData_GFUR_float(ctx, GlobalSkylineData_ft);
+    futhark_project_opaque_skylineData_float_len(ctx, &GlobalSkyline_len, GlobalSkylineData_ft);
+    futhark_free_opaque_skylineData_float(ctx, GlobalSkylineData_ft);
     // TODO testing
     printf("Skyline length: %ld\n", GlobalSkyline_len);
 
