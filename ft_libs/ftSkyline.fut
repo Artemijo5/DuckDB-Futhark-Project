@@ -20,6 +20,11 @@ type~ skylineInfo_t [dim] 't 'pL_t = {
 	xys : []([dim]t, pL_t),
 	isPartitionDominated : []bool,
 }
+type~ skylineData_t [dim] 't 'pL_t = {
+	len : i64,
+	dat : [][dim]t,
+	pL : []pL_t
+}
 
 module skyline_real (F:real) = {
 	-- Types and Operators
@@ -27,6 +32,7 @@ module skyline_real (F:real) = {
 
 		type~ skylineBase [dim] = skylineBase_t [dim] t
 		type~ skylineInfo [dim] 'pL_t = skylineInfo_t [dim] t pL_t
+		type~ skylineData [dim] 'pL_t = skylineData_t [dim] t pL_t
 
 		local def gt = (F.>)
 		local def geq = (F.>=)
@@ -113,7 +119,7 @@ module skyline_real (F:real) = {
 		: i64 =
 			grid_id*(skB.total_angle_no) + angle_id
 
-		def get_grid_angle_from_id [dim]
+		local def get_grid_angle_from_id [dim]
 			(skB : skylineBase [dim])
 			(part_id : i64)
 		: (i64, i64) =
@@ -121,20 +127,20 @@ module skyline_real (F:real) = {
 			let angle_id = part_id % skB.total_angle_no
 			in (grid_id, angle_id)
 
-		def cartesian_to_spherical [dim]
+		local def cartesian_to_spherical [dim]
 			(coords : [dim]t)
 		: (t, [dim-1]t) =
-			let r = coords |> map (\x -> times x x) |> sm_red (plus) (zero) |> sqrt
+			let r = coords |> map (\x -> times x x) |> foldl (plus) (zero) |> sqrt
 			let phis : [dim-1]t =
 				loop p = (replicate (dim-1) (zero))
 				for j in (iota (dim-1)) do
 					let this_x = coords[j]
-					let this_y = coords[(j+1):dim] |> map (\x -> times x x) |> sm_red (plus) (zero) |> sqrt
+					let this_y = coords[(j+1):dim] |> map (\x -> times x x) |> foldl (plus) (zero) |> sqrt
 					let new_phi = atan2 this_y this_x
 				in p with [j] = new_phi
 			in (r, phis)
 
-		def get_grid_id_from_coords [dim]
+		local def get_grid_id_from_coords [dim]
 			(skB: skylineBase [dim])
 			(coords : [dim]t)
 		: i64 =
@@ -145,9 +151,9 @@ module skyline_real (F:real) = {
 				|> map (\i -> i64.max i 0)
 				|> zip (iota dim)
 				|> map (\(d,i) -> i64.min i (skB.grid_partitions_per_dim[d]-1))
-			in sm_red (+) 0 (map2 (*) grid_pos skB.grid_part_prefix_sum)
+			in foldl (+) 0 (map2 (*) grid_pos skB.grid_part_prefix_sum)
 
-		def get_grid_angle_measure_from_coords [dim]
+		local def get_grid_angle_measure_from_coords [dim]
 			(skB : skylineBase [dim])
 			(coords : [dim]t)
 		: (i64, i64, t) =
@@ -170,11 +176,11 @@ module skyline_real (F:real) = {
 				base_angles
 				skB.angle_part_prefix_sum
 				skB.angle_partitions_per_dim
-			let a = sm_red (+) 0 anglePart_
+			let a = foldl (+) 0 anglePart_
 			-- returns
 			in (g, a, measure)
 
-		def get_id_measure_from_coords [dim]
+		local def get_id_measure_from_coords [dim]
 			(skB : skylineBase [dim])
 			(coords : [dim]t)
 		: (i64, t) =
@@ -220,7 +226,7 @@ module skyline_real (F:real) = {
 						|> sm_red (||) (false)
 				)
 				|> zip (iota n)
-				|> filter (\(i,elimd) -> !elimd)
+				|> filter (\(_,elimd) -> !elimd)
 				|> map (\(i,_) -> i)
 			let filt_xys = filt_idxs |> map (\i -> (xs[i],ys[i]))
 			in {
@@ -270,9 +276,9 @@ module skyline_real (F:real) = {
 		: skylineInfo [dim] pL_t =
 			let n = length skI.xys
 			let part_no = skB.total_part_no
-			let (pids,measures) : ([n]i64,[n]t) = skI.xys
+			let (pids,measures) = (skI.xys :> [n]([dim]t, pL_t))
 				|> map (\(x,_) -> get_id_measure_from_coords skB x)
-				|> unzip :> ([n]i64,[n]t)
+				|> unzip
 			-- find minimum point per partition
 			let partitionWise_closest = hist
 				(\(i1,m1) (i2,m2) ->
@@ -283,7 +289,7 @@ module skyline_real (F:real) = {
 				(n,highest)
 				part_no
 				pids
-				(zip (iota n) (measures :> [n]t))
+				(zip (iota n) (measures))
 			|> map (\(i,_) -> skI.xys[i].0)
 			-- Use the closest Euclidean point + the points with each smallest dim value (per partition)
 			let num_fpts = if use_many_points then (dim+1) else 1
@@ -356,16 +362,11 @@ module skyline_real (F:real) = {
 			}
 
 	-- Intermediate Filtering
-		def intermediate_SkylineInfo [dim] 'pL_t
+		local def intermediate_SkylineInfo [dim] 'pL_t
 			(skB : skylineBase [dim])
 			(skI : skylineInfo [dim] pL_t)
 			(omit_dims : i64)
-			(accumulated_subdiv : i64)
 		: (skylineBase [dim], skylineInfo [dim] pL_t) =
-			let angle_no_omitted =
-				if omit_dims >= dim-1
-				then skB.total_angle_no
-				else skB.angle_part_prefix_sum[omit_dims]
 			let grid_no_omitted =
 				if omit_dims<=dim-1 then 1 else
 				if omit_dims == 2*dim-1
@@ -420,16 +421,15 @@ module skyline_real (F:real) = {
 			(max_steps : i64)
 			(size_thresh : i64)
 		: skylineInfo [dim] pL_t =
-			let (_, intermediate_skI,_,_) =
-				loop (sd_skB,sd_skI,i,acc_sd) = (skB,skI,0,1)
+			let (_, intermediate_skI,_) =
+				loop (sd_skB,sd_skI,i) = (skB,skI,0)
 				while (i<(max_steps) && (sd_skB.total_part_no>1) && (length sd_skI.xys)>size_thresh) do
-					let (sd_skB_, sd_skI_) = intermediate_SkylineInfo sd_skB sd_skI (i64.min (i*p_step) (2*dim-1)) acc_sd
+					let (sd_skB_, sd_skI_) = intermediate_SkylineInfo sd_skB sd_skI (i64.min (i*p_step) (2*dim-1))
 					let fit_skI =
 						if sd_skB_.total_part_no>1
 						then skyline_local_filter sd_skB_ sd_skI_ use_many_points
 						else calc_global_Skyline skB sd_skI_
-					let next_acc_sd = (skB.total_part_no)/(sd_skB_.total_part_no)
-					in (sd_skB_, fit_skI, i+1, next_acc_sd)
+					in (sd_skB_, fit_skI, i+1)
 			in {
 				xys = intermediate_skI.xys,
 				isPartitionDominated = skI.isPartitionDominated
@@ -493,10 +493,90 @@ module skyline_real (F:real) = {
 					skI2.isPartitionDominated
 			}
 
+	-- Unwrap Data
+		def crack_skyline [dim] 'pL_t
+			(skI : skylineInfo [dim] pL_t)
+		: skylineData [dim] pL_t =
+			let (xs,ys) = skI.xys |> unzip
+			in {len = length xs, dat = xs, pL = ys}
 }
 
 -- Entry Points
-	
+	-- Float
+		module skyline_float = skyline_real (f32)
 
--- Test
+		type~ skylineBase_float [dim] = skyline_float.skylineBase [dim]
+		type~ skylineInfo_float [dim] = skyline_float.skylineInfo [dim] i64
+		type~ skylineData_float [dim] = skyline_float.skylineData [dim] i64
 
+		entry make_skylineBase_float [dim]
+			(min_per_dim : [dim]f32)
+			(max_per_dim : [dim]f32)
+			(grid_partitions_per_dim : [dim]i64)
+			(angle_partitions_per_dim : [dim-1]i64)
+			(m_size : i64)
+		: skylineBase_float [dim] =
+			skyline_float.mk_skylineBase_from_grid
+				min_per_dim max_per_dim grid_partitions_per_dim angle_partitions_per_dim m_size
+
+		entry skyline_slice_and_dice_float [n] [dim]
+			(skB : skylineBase_float [dim])
+			(xs : [n][dim]f32)
+			(is : [n]i64)
+			(use_many_pts : bool)
+		: skylineInfo_float [dim] =
+			skyline_float.skyline_slice_and_dice skB xs is use_many_pts
+
+		entry skyline_local_filter_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI : skylineInfo_float [dim])
+			(use_many_pts : bool)
+		: skylineInfo_float [dim] =
+			skyline_float.skyline_local_filter skB skI use_many_pts
+
+		entry skyline_intermediate_filter_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI : skylineInfo_float [dim])
+			use_many_pts p_step max_steps size_thresh
+		: skylineInfo_float [dim] =
+			skyline_float.calc_intermediate_skyline skB skI use_many_pts p_step max_steps size_thresh
+
+		entry skyline_merge_5_float [dim]
+			(skI1 : skylineInfo_float [dim])
+			(skI2 : skylineInfo_float [dim])
+			(skI3 : skylineInfo_float [dim])
+			(skI4 : skylineInfo_float [dim])
+			(skI5 : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.merge_Skylines_5 skI1 skI2 skI3 skI4 skI5
+		entry skyline_merge_4_float [dim]
+			(skI1 : skylineInfo_float [dim])
+			(skI2 : skylineInfo_float [dim])
+			(skI3 : skylineInfo_float [dim])
+			(skI4 : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.merge_Skylines_4 skI1 skI2 skI3 skI4
+		entry skyline_merge_3_float [dim]
+			(skI1 : skylineInfo_float [dim])
+			(skI2 : skylineInfo_float [dim])
+			(skI3 : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.merge_Skylines_3 skI1 skI2 skI3
+		entry skyline_merge_2_float [dim]
+			(skI1 : skylineInfo_float [dim])
+			(skI2 : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.merge_Skylines_2 skI1 skI2
+
+		entry calc_Global_Skyline_float [dim]
+			(skB : skylineBase_float [dim])
+			(skI : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.calc_global_Skyline skB skI
+
+		entry crack_skylineInfo_float [dim] (skI : skylineInfo_float [dim]) : skylineData_float [dim] =
+			skyline_float.crack_skyline skI
+			
+	-- TODO double, half entry points
+
+-- TODO test Intermediate Skyline to ensure works as desired
