@@ -1,4 +1,5 @@
 import "../lib/github.com/diku-dk/sorts/merge_sort"
+import "../lib/github.com/diku-dk/segmented/segmented"
 import "../ftbasics"
 
 -- Sorting Functions
@@ -322,49 +323,19 @@ import "../ftbasics"
   type~ joinPairs 't = {vs: []t, ix: []idx_t.t, iy: []idx_t.t}
 
   def joinTups_to_joinPairs_InnerJoin [n] 't
-  --  (psize: idx_t.t)
     (tups: joinTup [n] t)
     (dummy_elem: t)
-   =
-    let filtTups_idx = (iota n) |> map (\i -> if tups.cm[i]>0 then i else (-1))
-    -- separate match counts & pair info
-    let fcm = gather 0 tups.cm filtTups_idx
-    let fTups_minusCm = gather (dummy_elem, -1, -1) (zip3 tups.vs tups.ix tups.iy) filtTups_idx
-    -- obtain the starting indices of each match in the output array
-    let tup_index = map2
-      (\c z -> if c>0 then z else (-1))
-      fcm
-      (exscan (\cm1 cm2 -> cm1+cm2) 0 fcm)
-    -- obtain the total number of pairs
-    let n_pairs = idx_t.sum fcm
-    -- initialise the array
-    let pairsArray = scatter -- partitioned_scatter
-      --(psize)
-      (replicate n_pairs (dummy_elem, -1, -1))
-      (tup_index)
-      (fTups_minusCm)
-    let pairsWithMultiplicity = fcm
-      |> zip tup_index
-      |> filter (\(_,cm) -> cm>1)
-    let max_mult =
-      if (length pairsWithMultiplicity > 0)
-      then pairsWithMultiplicity
-        |> map (\(_,cm) -> cm)
-        |> idx_t.maximum
-      else 1
-    let loop_over : [](t, idx_t.t, idx_t.t)
-    = loop buff = pairsArray
-    for iter in (1..<max_mult) do
-      let this_scatter_idxs = (indices tup_index)
-        |> map (\i ->
-          if fcm[i]>iter
-          then tup_index[i]+iter
-          else (-1)
-        )
-      in scatter (copy buff) this_scatter_idxs (fTups_minusCm |> map (\(v,ri,si) -> (v,ri,si+iter)))
-    let unzPairs = loop_over |> unzip3
-    let pairs : joinPairs t = {vs=unzPairs.0, ix=unzPairs.1, iy=unzPairs.2}
-    in pairs
+  : joinPairs t =
+    -- Code revision using segmented iota
+    let ix_withoutOffs = replicated_iota tups.cm
+    let iy_offsOnly = (indices ix_withoutOffs)
+      |> map (\i -> if i==0 then false else (ix_withoutOffs[i] != ix_withoutOffs[i-1]))
+      |> segmented_iota
+    let iy_withoutOffs = ix_withoutOffs |> map (\i -> tups.iy[i])
+    let get_vs = ix_withoutOffs |> map (\i -> tups.vs[i])
+    let get_ix = ix_withoutOffs |> map (\i -> tups.ix[i])
+    let get_iy = map2 (+) iy_offsOnly iy_withoutOffs
+    in {vs=get_vs, ix=get_ix, iy=get_iy}
 
   -- NOTE : R is at the left side of all comparisons
   def inner_SMJ [nR] [nS] 't
