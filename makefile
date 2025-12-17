@@ -25,14 +25,14 @@ C-ftRelational: ft_libs/ftRelational.fut
 	futhark c ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
 	$(CC) ft_clibs/ftRelational.c -o $(REL_DEPS) $(LIBFLAGS) $(CFLAGS)
 
-CUDA1-ftRelational: ftRelational.fut
+CUDA1-ftRelational: ft_libs/ftRelational.fut
 	futhark cuda ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
 
-CUDA2-ftRelational: ftRelational.c
+CUDA2-ftRelational: ft_clibs/ftRelational.c
 	$(CC) ft_clibs/ftRelational.c -o $(REL_DEPS) \
 		$(LIBFLAGS) $(CFLAGS) $(CUDAFLAGS)
 
-CUDA-ftRelational: ftRelational.fut
+CUDA-ftRelational: ft_libs/ftRelational.fut
 	make CUDA1-ftRelational
 	make CUDA2-ftRelational
 
@@ -56,14 +56,14 @@ C-ftSkyline: ft_libs/ftSkyline.fut
 	futhark c ft_libs/ftSkyline.fut --library -o ft_clibs/ftSkyline
 	$(CC) ft_clibs/ftSkyline.c -o $(SKYLINE_DEPS) $(LIBFLAGS) $(CFLAGS)
 
-CUDA1-ftSkyline: ftSkyline.fut
+CUDA1-ftSkyline: ft_libs/ftSkyline.fut
 	futhark cuda ft_libs/ftSkyline.fut --library -o ft_clibs/ftSkyline
 
-CUDA2-ftSkyline: ftSkyline.c
+CUDA2-ftSkyline: ft_clibs/ftSkyline.c
 	$(CC) ft_clibs/ftSkyline.c -o $(SKYLINE_DEPS) \
 		$(LIBFLAGS) $(CFLAGS) $(CUDAFLAGS)
 
-CUDA-ftSkyline: ftSkyline.fut
+CUDA-ftSkyline: ft_libs/ftSkyline.fut
 	make CUDA1-ftSkyline
 	make CUDA2-ftSkyline
 
@@ -75,14 +75,14 @@ C-ftDBSCAN: ft_libs/ftDBSCAN.fut
 	futhark c ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS)
 
-CUDA-ftDBSCAN: ftDBSCAN.fut
+CUDA-ftDBSCAN: ft_libs/ftDBSCAN.fut
 	futhark cuda ftDBSCAN.fut --library
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
-CUDA1-ftDBSCAN: ftDBSCAN.fut
+CUDA1-ftDBSCAN: ft_libs/ft_libs/ftDBSCAN.fut
 	futhark cuda ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
 
-CUDA2-ftDBSCAN: ftDBSCAN.c
+CUDA2-ftDBSCAN: ft_clibs/ftDBSCAN.c
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
 DBSCAN: benchmarks/src/dbscan.c $(DEPS) $(DBSCAN_DEPS)

@@ -290,7 +290,7 @@ module skyline_real (F:real) = {
 				part_no
 				pids
 				(zip (iota n) (measures))
-			|> map (.0)
+			|> map (\(i,_) -> if i<n then skI.xys[i].0 else (replicate dim highest))
 			-- Use the closest Euclidean point + the points with each smallest dim value (per partition)
 			let num_fpts = if use_many_points then (dim+1) else 1
 			let filtering_points = (iota num_fpts)
@@ -307,15 +307,15 @@ module skyline_real (F:real) = {
 						part_no
 						pids
 						(zip (iota n) (skI.xys |> map (\(x,_) -> x[d-1]) :> [n]t))
-					|> map (.0)
-				)
+					-- TODO could use segmented gather here
+					|> map (\(i,_) -> if i<n then skI.xys[i].0 else (replicate dim highest))
+				) 
 			let filt_xys = (skI.xys :> [n]([dim]t, pL_t))
 				|> zip (pids :> [n]i64)
 				|> map (\(pid,xy) ->
 					let isElimd = filtering_points
 						|> map (\f_per_dim -> f_per_dim[pid])
-						|> map (\cmp_i -> let cmp_x = skI.xys[cmp_i].0 in
-							-- TODO could use segmented gather here...
+						|> map (\cmp_x ->
 							sm_red (&&) (true) (map2 (geq) xy.0 cmp_x)
 							&&
 							sm_red (||) (false) (map2 (gt) xy.0 cmp_x)
@@ -364,6 +364,9 @@ module skyline_real (F:real) = {
 			}
 
 	-- Intermediate Filtering
+	-- TODO this was made so that the intermediate skB's are derived successively from the original
+	-- however that isn't necessarily advantageous to the current implementation
+	-- so could instead make entirely new skB's
 		local def intermediate_SkylineInfo [dim] 'pL_t
 			(skB : skylineBase [dim])
 			(skI : skylineInfo [dim] pL_t)
