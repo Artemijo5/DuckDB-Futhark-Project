@@ -70,34 +70,6 @@ def str_cmp_in_content [n] [total_len]
 : idx_t.t =
 	str_cmp_across_contents str_content str_idx str_content str_idx i1 i2 char_cmp
 
-def do_gather_str_olds [n] [ni] [total_len]
-	(psize : idx_t.t)
-	(gather_is : [ni]idx_t.t)
-	(str_content : [total_len]u8)
-	(str_idx : [n]idx_t.t)
-: ([]u8, [ni]idx_t.t) =
-	let gather_lens = 
-		let all_lens = (iota n)
-			|> map (\i -> get_str_len total_len str_idx i)
-		in partitioned_gather i64.num_bits psize 0 all_lens gather_is
-	let zuowei = exscan (+) 0 gather_lens
-	let output_size = idx_t.sum gather_lens
-	let max_len = idx_t.maximum gather_lens
-	let new_con =
-		loop buff : [output_size]u8 = (replicate output_size 0)
-		for j in (iota max_len) do
-			let scatter_idxs = (iota ni)
-				|> map (\i ->
-					let len = gather_lens[i]
-					in if len<=j then (-1) else (j+zuowei[i])
-				)
-			let scatter_chars =
-				let raw_chars = (iota n)
-					|> map (\i -> get_kth_char str_content str_idx i j)
-				in partitioned_gather u8.num_bits psize 0 raw_chars gather_is
-			in scatter (copy buff) scatter_idxs scatter_chars
-	in (new_con, zuowei)
-
 def do_gather_str [n] [ni] [total_len]
 	(psize : idx_t.t)
 	(gather_is : [ni]idx_t.t)

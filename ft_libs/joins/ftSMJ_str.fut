@@ -1,4 +1,5 @@
 import "../lib/github.com/diku-dk/sorts/merge_sort"
+import "../lib/github.com/diku-dk/segmented/segmented"
 import "../ftbasics"
 import "../ft_StrUtil"
 import "ftSMJ"
@@ -14,27 +15,9 @@ def do_sort_str [n] [total_len] 't
 		= (\i1 i2 -> (str_cmp_in_content str_content str_idx i1 i2 char_cmp)<=0)
 	let (sorted_idxs, sorted_ys) = (merge_sort (\(i1, _) (i2, _) -> str_leq i1 i2) (zip (iota n) ys))
 		|> unzip
-	let (sorted_str_con, sorted_str_idx) =
-		let sorted_str_lens = 
-			let lens = (iota n)
-				|> map (\i -> get_str_len total_len str_idx i)
-			in partitioned_gather i64.num_bits psize 0 lens sorted_idxs
-		let max_len = idx_t.maximum sorted_str_lens
-		let zuowei = exscan (+) 0 sorted_str_lens
-		let new_con =
-			loop buff : [total_len]u8 = (replicate total_len 0)
-			for j in (iota max_len) do
-				let scatter_idxs = (iota n)
-					|> map (\i ->
-						let len = sorted_str_lens[i]
-						in if len<=j then (-1) else (j+zuowei[i])
-					)
-				let scatter_chars =
-					let unsorted_chars = (iota n)
-						|> map (\i -> get_kth_char str_content str_idx i j)
-					in partitioned_gather u8.num_bits psize 0 unsorted_chars sorted_idxs
-				in scatter (copy buff) scatter_idxs scatter_chars
-		in (new_con, zuowei)
+	let (sorted_str_con_, sorted_str_idx) =
+		do_gather_str psize sorted_idxs str_content str_idx
+	let sorted_str_con = sorted_str_con_ :> [total_len]u8
 	in (sorted_str_con, sorted_str_idx, sorted_ys)
 
 -- after this is called, still need to gather strings from r using vs
