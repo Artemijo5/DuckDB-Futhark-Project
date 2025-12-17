@@ -1,4 +1,5 @@
 import "ftbasics"
+import "lib/github.com/diku-dk/segmented/segmented"
 
 def arith_char_cmp (c1: u8) (c2: u8)
 : i32 =
@@ -69,7 +70,7 @@ def str_cmp_in_content [n] [total_len]
 : idx_t.t =
 	str_cmp_across_contents str_content str_idx str_content str_idx i1 i2 char_cmp
 
-def do_gather_str [n] [ni] [total_len]
+def do_gather_str_olds [n] [ni] [total_len]
 	(psize : idx_t.t)
 	(gather_is : [ni]idx_t.t)
 	(str_content : [total_len]u8)
@@ -96,6 +97,29 @@ def do_gather_str [n] [ni] [total_len]
 				in partitioned_gather u8.num_bits psize 0 raw_chars gather_is
 			in scatter (copy buff) scatter_idxs scatter_chars
 	in (new_con, zuowei)
+
+def do_gather_str [n] [ni] [total_len]
+	(psize : idx_t.t)
+	(gather_is : [ni]idx_t.t)
+	(str_content : [total_len]u8)
+	(str_idx : [n]idx_t.t)
+: ([]u8, [ni]idx_t.t) =
+	let gather_lens = 
+		let all_lens = (iota n)
+			|> map (\i -> get_str_len total_len str_idx i)
+		in partitioned_gather i64.num_bits psize 0 all_lens gather_is
+	let zuowei = exscan (+) 0 gather_lens
+	let overlayed_gis = 
+		let gis_preset = replicated_iota gather_lens
+		let gis_offsOnly = (indices gis_preset)
+			|> map (\i -> if i==0 then false else (gis_preset[i] != gis_preset[i-1]))
+			|> segmented_iota
+		let gis_withoutOffs = partitioned_gather i64.num_bits psize 0
+			str_idx (gis_preset |> map (\i -> gather_is[i]))
+		in map2 (+) gis_withoutOffs gis_offsOnly
+	let new_con = partitioned_gather u8.num_bits psize 0 str_content overlayed_gis
+	in (new_con, zuowei)
+
 
 type~ strInfo = {str_content : []u8, str_idx : []i64}
 type~ sortInfo_str = {str_info : strInfo, is : []idx_t.t}
