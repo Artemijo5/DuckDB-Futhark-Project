@@ -7,25 +7,23 @@ supervised by prof. Vasileios Samoladas
 
 Technical University of Crete, Department of Electrical and Computer Engineering
 
-(Pending to organise better)
-
 -----------------------------------------
 Preparation:
-- add the files from duckdb's [Linux C installation page](https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64) to clibs/
+- add the files from duckdb's [Linux C installation page](https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64) to `clibs/`
 - (Optional) have duckdb installed to create test tables and see results outside of the C API
 - have futhark installed in order to compile .fut files
-- install [futhark's sort libraries](https://github.com/diku-dk/sorts) in /ft_libs
+- install [futhark's sort libraries](https://github.com/diku-dk/sorts) in `ft_libs/`
 -----------------------------------------
 To use:
-1. export LD_LIBRARY_PATH using the string in ./set_path
+1. export LD_LIBRARY_PATH using the string in `set_path`
 2. compile futhark libraries (`make CUDA-LIB`, or `make C-LIB` for sequential compilation)
-3. build the desired benchmark (located in /benchmarks/src, see makefile for options)
+3. build the desired benchmark (located in `benchmarks/src/`, see makefile for options)
 4. run the desired benchmark from a terminal in the project directory
 -----------------------------------------
 Current futhark libraries:
-- ftRelational : used by sort, joins, group-by aggregation
-- ftSkyline : used by Skyline (TODO revise)
-- ftDBSCAN : used by DBSCAN
+- `ftRelational` : used by sort, joins, group-by aggregation
+- `ftSkyline` : used by Skyline (TODO revise)
+- `ftDBSCAN` : used by DBSCAN
 -----------------------------------------
 The purpose of this project is to implement some GPU-based relational algorithms using the futhark programming language, identifying techniques for functional GPU database programming and evaluating performance.
 
@@ -34,10 +32,6 @@ Algorithms currently implemented:
 - Group-by Aggregation
 - Skyline Queries
 - DBSCAN (currently only for datasets that fit fully in the GPU)
-
-Algorithms to be implemented:
-- Extensions of Joins to String data
-- (possibly) Sketch Algorithms
 
 -----------------------------------------
 Main tools used:
