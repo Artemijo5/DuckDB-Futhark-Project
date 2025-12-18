@@ -364,81 +364,36 @@ module skyline_real (F:real) = {
 			}
 
 	-- Intermediate Filtering
-	-- TODO this was made so that the intermediate skB's are derived successively from the original
-	-- however that isn't necessarily advantageous to the current implementation
-	-- so could instead make entirely new skB's
-		local def intermediate_SkylineInfo [dim] 'pL_t
-			(skB : skylineBase [dim])
-			(skI : skylineInfo [dim] pL_t)
-			(omit_dims : i64)
-		: (skylineBase [dim], skylineInfo [dim] pL_t) =
-			let grid_no_omitted =
-				if omit_dims<=dim-1 then 1 else
-				if omit_dims == 2*dim-1
-				then skB.total_grid_no
-				else skB.grid_part_prefix_sum[omit_dims-dim+1]
-			let new_angle_partitions_per_dim = skB.angle_partitions_per_dim
-				|> zip (iota (dim-1))
-				|> map (\(i,pd) -> if i<omit_dims then 1 else pd)
-			let new_grid_partitions_per_dim = skB.grid_partitions_per_dim
-				|> zip (iota dim)
-				|> map (\(i,pd) -> if i<(omit_dims-dim+1) then 1 else pd)
-			let new_angle_part_prefix_sum = exscan (*) 1 new_angle_partitions_per_dim
-			let new_grid_part_prefix_sum = exscan (*) 1 new_grid_partitions_per_dim
-			let new_total_angle_no = i64.product new_angle_partitions_per_dim
-			let new_total_grid_no = i64.product new_grid_partitions_per_dim
-			let new_starts =
-				if (omit_dims<=dim-1)
-				then skB.start_of_grid_partition
-				else skB.start_of_grid_partition
-					|> zip (indices skB.start_of_grid_partition)
-					|> filter (\(i,_) -> (i%(grid_no_omitted))==0)
-					|> map (\(_,sp) -> sp)
-			let new_sizes = iota dim
-				|> map (\d ->
-					if d>(omit_dims-dim)
-					then skB.grid_part_size_per_dim[d]
-					else times skB.grid_part_size_per_dim[d] (from_i64 skB.grid_partitions_per_dim[d])
-				)
-			let new_skB : skylineBase [dim] = {
-				grid_partitions_per_dim = new_grid_partitions_per_dim,
-				angle_partitions_per_dim = new_angle_partitions_per_dim,
-				grid_part_prefix_sum = new_grid_part_prefix_sum,
-				angle_part_prefix_sum = new_angle_part_prefix_sum,
-				total_grid_no = new_total_grid_no,
-				total_angle_no = new_total_angle_no,
-				total_part_no = new_total_grid_no*new_total_angle_no,
-				start_of_grid_partition = new_starts,
-				grid_part_size_per_dim = new_sizes,
-				m_size = skB.m_size
-			}
-			let new_skI = {
-				xys = skI.xys,
-				isPartitionDominated = replicate new_skB.total_grid_no false
-			}
-			in (new_skB, new_skI)
-
 		def calc_intermediate_skyline [dim] 'pL_t
 			(skB : skylineBase [dim])
 			(skI : skylineInfo [dim] pL_t)
-			(use_many_points : bool)
-			(p_step : i64)
-			(max_steps : i64)
+			(max_subdiv : i64)
+			(min_subdiv : i64)
+			(subdiv_step : i64)
 			(size_thresh : i64)
 		: skylineInfo [dim] pL_t =
-			let (_, intermediate_skI,_) =
-				loop (sd_skB,sd_skI,i) = (skB,skI,0)
-				while (i<(max_steps) && (sd_skB.total_part_no>1) && (length sd_skI.xys)>size_thresh) do
-					let (sd_skB_, sd_skI_) = intermediate_SkylineInfo sd_skB sd_skI (i64.min (i*p_step) (2*dim-1))
-					let fit_skI =
-						if sd_skB_.total_part_no>1
-						then skyline_local_filter sd_skB_ sd_skI_ use_many_points
-						else calc_global_Skyline skB sd_skI_
-					in (sd_skB_, fit_skI, i+1)
-			in {
-				xys = intermediate_skI.xys,
-				isPartitionDominated = skI.isPartitionDominated
-			}
+			-- start with thin angular slices, and gradually broaden them
+			let skI_ = {xys = skI.xys, isPartitionDominated = [false]}
+			let (intermediate_skI,_) =
+				loop (sd_skI, subdiv) = (skI_, max_subdiv)
+				while (subdiv>min_subdiv)&&(subdiv>0)&&(length sd_skI.xys > size_thresh) do
+					-- if 1 subdivision, just do global skyline
+					if subdiv==1
+					then (calc_global_Skyline skB sd_skI, -1)
+					-- split each dimension in isolation
+					else let (perDim_skI,_)=
+						loop (dsd_skI,curD) = (sd_skI, 0)
+						while (curD<dim-1)&&(length dsd_skI.xys > size_thresh) do
+							let sd_skB = mk_skylineBase_from_grid
+								(skB.start_of_grid_partition[0])
+								(skB.start_of_grid_partition[0])
+								(replicate dim 1)
+								((replicate (dim-1) 1) with [curD] = subdiv)
+								skB.m_size
+							let new_skI = skyline_local_filter sd_skB dsd_skI false
+							in (new_skI, dim+1)
+						in (perDim_skI, subdiv - subdiv_step)
+			in {xys = intermediate_skI.xys, isPartitionDominated = skI.isPartitionDominated}
 
 	-- Window Merging
 		def merge_Skylines_5 [dim] 'pL_t
@@ -542,9 +497,12 @@ module skyline_real (F:real) = {
 		entry skyline_intermediate_filter_float [dim]
 			(skB : skylineBase_float [dim])
 			(skI : skylineInfo_float [dim])
-			use_many_pts p_step max_steps size_thresh
+			(max_subdiv : i64)
+			(min_subdiv : i64)
+			(subdiv_step : i64)
+			(size_thresh : i64)
 		: skylineInfo_float [dim] =
-			skyline_float.calc_intermediate_skyline skB skI use_many_pts p_step max_steps size_thresh
+			skyline_float.calc_intermediate_skyline skB skI max_subdiv min_subdiv subdiv_step size_thresh
 
 		entry skyline_merge_5_float [dim]
 			(skI1 : skylineInfo_float [dim])
@@ -583,5 +541,3 @@ module skyline_real (F:real) = {
 			skyline_float.crack_skyline skI
 
 	-- TODO double, half entry points
-
--- TODO test Intermediate Skyline to ensure works as desired

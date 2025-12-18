@@ -23,12 +23,16 @@
 #define default_ANGULAR_SUBDIV (long)2
 #define default_MINVAL (float)0.0
 #define default_MAXVAL (float)100.0
-#define default_SIZE_THRESH default_BUFFER_SIZE/100
 
 #define default_SKYLINE_MEMSIZE 256*1024*CHUNK_SIZE
 #define default_USE_MANY_PTS false
 #define default_USE_MANY_PTS_LOCAL false
 #define default_SKIP_LOCAL_SKYLINE false
+
+#define default_MAX_SUBDIV (int64_t)90
+#define default_MIN_SUBDIV (int64_t)45
+#define default_SUBDIV_STEP (int64_t)45
+#define default_SIZE_THRESH default_BUFFER_SIZE/100
 
 #define default_DBFILE "testdb.db"
 #define default_DDB_MEMSIZE "4GB"
@@ -47,11 +51,14 @@ int main(int argc, char *argv[]) {
       int64_t ANGULAR_SUBDIV = default_ANGULAR_SUBDIV;
       float MINVAL = default_MINVAL;
       float MAXVAL = default_MAXVAL;
-      int64_t SIZE_THRESH = default_SIZE_THRESH;
       int64_t SKYLINE_MEMSIZE = default_SKYLINE_MEMSIZE;
       bool USE_MANY_PTS = default_USE_MANY_PTS;
       bool USE_MANY_PTS_LOCAL = default_USE_MANY_PTS_LOCAL;
       bool SKIP_LOCAL_SKYLINE = default_SKIP_LOCAL_SKYLINE;
+      int64_t MAX_SUBDIV = default_MAX_SUBDIV;
+      int64_t MIN_SUBDIV = default_MIN_SUBDIV;
+      int64_t SUBDIV_STEP = default_SUBDIV_STEP;
+      int64_t SIZE_THRESH = default_SIZE_THRESH;
       char DBFILE[250] = default_DBFILE;
       char DDB_MEMSIZE[25] = default_DDB_MEMSIZE;
       char DDB_TEMPDIR[250] = default_DDB_TEMPDIR;
@@ -66,11 +73,14 @@ int main(int argc, char *argv[]) {
           {"angular_subdiv", required_argument, 0, 'a'},
           {"minval", required_argument, 0, 'I'},
           {"maxval", required_argument, 0, 'S'},
-          {"size_thresh", required_argument, 0, 's'},
           {"memsize", required_argument, 0, 'M'},
           {"use_many_pts", no_argument, 0, 'u'},
           {"use_many_pts_local", no_argument, 0, 'U'},
           {"skip_local", no_argument, 0, 'n'},
+          {"max_subdiv", required_argument, 0, '1'},
+          {"min_subdiv", required_argument, 0, '2'},
+          {"subdiv_step", required_argument, 0, '3'},
+          {"size_thresh", required_argument, 0, 's'},
           {"db_file", required_argument, 0, 'f'},
           {"db_memsize", required_argument, 0, 'm'},
           {"db_tempdir", required_argument, 0, 'd'},
@@ -96,8 +106,6 @@ int main(int argc, char *argv[]) {
           MINVAL = (float)atof(optarg); break;
         case 'S':
           MAXVAL = (float)atof(optarg); break;
-        case 's':
-          SIZE_THRESH = atol(optarg); break;
         case 'M':
           SKYLINE_MEMSIZE = atol(optarg); break;
         case 'u':
@@ -106,6 +114,14 @@ int main(int argc, char *argv[]) {
           USE_MANY_PTS_LOCAL = true; break;
         case 'n':
           SKIP_LOCAL_SKYLINE = true; break;
+        case '1':
+          MAX_SUBDIV = atol(optarg); break;
+        case '2':
+          MIN_SUBDIV = atol(optarg); break;
+        case '3':
+          SUBDIV_STEP = atol(optarg); break;
+        case 's':
+          SIZE_THRESH = atol(optarg); break;
         case 'f':
           memcpy(DBFILE, optarg, strlen(optarg)+1); break;
         case 'm':
@@ -307,7 +323,7 @@ int main(int argc, char *argv[]) {
         	mylog(func_logfile, " - - Applied local filtering.");
           //printf("\n\n%s\n\n", futhark_context_get_error(ctx));
           futhark_entry_skyline_intermediate_filter_float(
-            ctx, &interm_skyWindow, skB, local_skyWindow, USE_MANY_PTS_LOCAL, 1, DIM, SIZE_THRESH
+            ctx, &interm_skyWindow, skB, local_skyWindow, MAX_SUBDIV, MIN_SUBDIV, SUBDIV_STEP, SIZE_THRESH
           );
         	futhark_free_opaque_skylineInfo_float(ctx, local_skyWindow);
         	mylog(func_logfile, " - - Applied intermediate filtering steps.");
@@ -381,7 +397,7 @@ int main(int argc, char *argv[]) {
     		  	futhark_free_opaque_skylineInfo_float(ctx, collapsed_skyWindow);
     		  	mylog(func_logfile, " - - | - - Applied local filtering.");
     		  	futhark_entry_skyline_intermediate_filter_float(
-    		  		ctx, &interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, USE_MANY_PTS_LOCAL, 1, DIM, SIZE_THRESH
+    		  		ctx, &interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, MAX_SUBDIV, MIN_SUBDIV, SUBDIV_STEP, SIZE_THRESH
     		  	);
     		  	futhark_free_opaque_skylineInfo_float(ctx, local_collapsed_skyWindow);
     		  	mylog(func_logfile, " - - | - - Applied intermediate filtering steps.");
