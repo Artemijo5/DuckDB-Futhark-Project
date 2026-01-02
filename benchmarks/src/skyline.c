@@ -150,6 +150,9 @@ int main(int argc, char *argv[]) {
     "\tBUFFER CAPACITY      %ld\n"
     "\tDATA DIMENSIONS      %ld\n"
     "\tANGLE SUBDIVISIONS   %ld\n"
+    "\tINTERM MAX_SUBDIV    %ld\n"
+    "\tINTERM MIN_SUBDIV    %ld\n"
+    "\tINTERM SUBDIV_STEP   %ld\n"
     "\tSIZE THRESHOLD       %ld\n"
     "\tSKYLINE MEMSIZE      %ld\n"
     "\tFILTER WITH MANY PTS %d\n"
@@ -157,7 +160,9 @@ int main(int argc, char *argv[]) {
     "\tSKIP LOCAL SKYLINE   %d\n"
     "\tVERBOSE            %d",
     TABLE_SIZE,BUFFER_SIZE,BUFFER_CAP,
-    DIM,ANGULAR_SUBDIV,SIZE_THRESH,SKYLINE_MEMSIZE,
+    DIM,ANGULAR_SUBDIV,
+    MAX_SUBDIV,MIN_SUBDIV,SUBDIV_STEP,SIZE_THRESH,
+    SKYLINE_MEMSIZE,
     USE_MANY_PTS,USE_MANY_PTS_LOCAL,SKIP_LOCAL_SKYLINE,VERBOSE
   );
   mylog(logfile, log_param);

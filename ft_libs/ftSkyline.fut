@@ -1,9 +1,5 @@
 import "ftbasics"
 
--- TODO change local logic so that it only filters using skyline sample pts
--- this way it doesn't need to sort, and merging doesn't need to respect any order
--- also ig save mem_size in skylineBase (?)
-
 type~ skylineBase_t [dim] 't = {
 	grid_partitions_per_dim : [dim]i64,
 	angle_partitions_per_dim : [dim-1]i64,
