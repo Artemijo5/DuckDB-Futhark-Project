@@ -449,6 +449,156 @@ module skyline_real (F:real) = {
 					skI2.isPartitionDominated
 			}
 
+	-- Window Merging & Simultaneous Filtering
+		def filter_against [dim] 'pL_t
+			(skB : skylineBase [dim])
+			(skI2 : skylineInfo [dim] pL_t)
+			(skI1 : skylineInfo [dim] pL_t)
+		: skylineInfo [dim] pL_t =
+			let n1 = length skI1.xys
+			let extPar = idx_t.min n1 (idx_t.max 1 (skB.m_size/n1))
+			let num_iter = (extPar + n1 - 1)/extPar
+			let new_xys =
+				let new_is_ = loop ni = (iota n1) for j in (iota num_iter) do
+					let inf = j*extPar
+					let sup = idx_t.min (inf+extPar) n1
+					let idx_range = (inf..<sup) :> [sup-inf]i64
+					let this_xs = skI1.xys[inf:sup] |> map (.0)
+					let upd_idx = this_xs
+						|> map (\this_x ->
+							skI2.xys
+								|> map (\(cmp_x,_) ->
+									(sm_red (&&) (true) (map2 (geq) this_x cmp_x))
+									&&
+									(sm_red (||) (false) (map2 (gt) this_x cmp_x))
+								)
+						)
+						|> map (any (id))
+						|> zip idx_range
+						|> map (\(i,elimd) -> if elimd then (-1) else i)
+					in ni with [inf:sup] = upd_idx
+				let new_is = new_is_ |> filter (>=0)
+				let nxys = new_is |> map (\i -> skI1.xys[i])
+				in nxys
+			in {
+				xys = new_xys,
+				isPartitionDominated = skI1.isPartitionDominated
+			}
+
+		def mergeFilter_Skylines_5 [dim] 'pL_t
+			(self_filter_first : bool)
+			(skB : skylineBase [dim])
+			(skI1 : skylineInfo [dim] pL_t)
+			(skI2 : skylineInfo [dim] pL_t)
+			(skI3 : skylineInfo [dim] pL_t)
+			(skI4 : skylineInfo [dim] pL_t)
+			(skI5 : skylineInfo [dim] pL_t)
+		: skylineInfo [dim] pL_t =
+			let skI1_ =
+				if self_filter_first
+				then calc_global_Skyline skB skI1
+				else skI1
+			let skI2_ = calc_global_Skyline skB skI2
+				|> filter_against skB skI1_
+			let skI3_ = calc_global_Skyline skB skI3
+				|> filter_against skB skI1_
+			let skI4_ = calc_global_Skyline skB skI4
+				|> filter_against skB skI1_
+			let skI5_ = calc_global_Skyline skB skI5
+				|> filter_against skB skI1_
+			let skI1_filtered = skI1_
+				|> filter_against skB skI2_
+				|> filter_against skB skI3_
+				|> filter_against skB skI4_
+				|> filter_against skB skI5_
+			let skI2_filtered = skI2_
+				|> filter_against skB skI3_
+				|> filter_against skB skI4_
+				|> filter_against skB skI5_
+			let skI3_filtered = skI3_
+				|> filter_against skB skI2_
+				|> filter_against skB skI4_
+				|> filter_against skB skI5_
+			let skI4_filtered = skI4_
+				|> filter_against skB skI2_
+				|> filter_against skB skI3_
+				|> filter_against skB skI5_
+			let skI5_filtered = skI5_
+				|> filter_against skB skI2_
+				|> filter_against skB skI3_
+				|> filter_against skB skI4_
+			in merge_Skylines_5 skI1_filtered skI2_filtered skI3_filtered skI4_filtered skI5_filtered
+		def mergeFilter_Skylines_4 [dim] 'pL_t
+			(self_filter_first : bool)
+			(skB : skylineBase [dim])
+			(skI1 : skylineInfo [dim] pL_t)
+			(skI2 : skylineInfo [dim] pL_t)
+			(skI3 : skylineInfo [dim] pL_t)
+			(skI4 : skylineInfo [dim] pL_t)
+		: skylineInfo [dim] pL_t =
+			let skI1_ =
+				if self_filter_first
+				then calc_global_Skyline skB skI1
+				else skI1
+			let skI2_ = calc_global_Skyline skB skI2
+				|> filter_against skB skI1_
+			let skI3_ = calc_global_Skyline skB skI3
+				|> filter_against skB skI1_
+			let skI4_ = calc_global_Skyline skB skI4
+				|> filter_against skB skI1_
+			let skI1_filtered = skI1_
+				|> filter_against skB skI2_
+				|> filter_against skB skI3_
+				|> filter_against skB skI4_
+			let skI2_filtered = skI2_
+				|> filter_against skB skI3_
+				|> filter_against skB skI4_
+			let skI3_filtered = skI3_
+				|> filter_against skB skI2_
+				|> filter_against skB skI4_
+			let skI4_filtered = skI4_
+				|> filter_against skB skI2_
+				|> filter_against skB skI3_
+			in merge_Skylines_4 skI1_filtered skI2_filtered skI3_filtered skI4_filtered
+		def mergeFilter_Skylines_3 [dim] 'pL_t
+			(self_filter_first : bool)
+			(skB : skylineBase [dim])
+			(skI1 : skylineInfo [dim] pL_t)
+			(skI2 : skylineInfo [dim] pL_t)
+			(skI3 : skylineInfo [dim] pL_t)
+		: skylineInfo [dim] pL_t =
+			let skI1_ =
+				if self_filter_first
+				then calc_global_Skyline skB skI1
+				else skI1
+			let skI2_ = calc_global_Skyline skB skI2
+				|> filter_against skB skI1_
+			let skI3_ = calc_global_Skyline skB skI3
+				|> filter_against skB skI1_
+			let skI1_filtered = skI1_
+				|> filter_against skB skI2_
+				|> filter_against skB skI3_
+			let skI2_filtered = skI2_
+				|> filter_against skB skI3_
+			let skI3_filtered = skI3_
+				|> filter_against skB skI2_
+			in merge_Skylines_3 skI1_filtered skI2_filtered skI3_filtered
+		def mergeFilter_Skylines_2 [dim] 'pL_t
+			(self_filter_first : bool)
+			(skB : skylineBase [dim])
+			(skI1 : skylineInfo [dim] pL_t)
+			(skI2 : skylineInfo [dim] pL_t)
+		: skylineInfo [dim] pL_t =
+			let skI1_ =
+				if self_filter_first
+				then calc_global_Skyline skB skI1
+				else skI1
+			let skI2_filtered = calc_global_Skyline skB skI2
+				|> filter_against skB skI1_
+			let skI1_filtered = skI1_
+				|> filter_against skB skI2_filtered
+			in merge_Skylines_2 skI1_filtered skI2_filtered
+
 	-- Unwrap Data
 		def crack_skyline [dim] 'pL_t
 			(skI : skylineInfo [dim] pL_t)
@@ -526,6 +676,41 @@ module skyline_real (F:real) = {
 			(skI2 : skylineInfo_float [dim])
 		: skylineInfo_float [dim] =
 			skyline_float.merge_Skylines_2 skI1 skI2
+
+		entry skyline_mergeFilter_5_float [dim]
+			(self_filter_first : bool)
+			(skB : skylineBase_float [dim])
+			(skI1 : skylineInfo_float [dim])
+			(skI2 : skylineInfo_float [dim])
+			(skI3 : skylineInfo_float [dim])
+			(skI4 : skylineInfo_float [dim])
+			(skI5 : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.mergeFilter_Skylines_5 self_filter_first skB skI1 skI2 skI3 skI4 skI5
+		entry skyline_mergeFilter_4_float [dim]
+			(self_filter_first : bool)
+			(skB : skylineBase_float [dim])
+			(skI1 : skylineInfo_float [dim])
+			(skI2 : skylineInfo_float [dim])
+			(skI3 : skylineInfo_float [dim])
+			(skI4 : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.mergeFilter_Skylines_4 self_filter_first skB skI1 skI2 skI3 skI4
+		entry skyline_mergeFilter_3_float [dim]
+			(self_filter_first : bool)
+			(skB : skylineBase_float [dim])
+			(skI1 : skylineInfo_float [dim])
+			(skI2 : skylineInfo_float [dim])
+			(skI3 : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.mergeFilter_Skylines_3 self_filter_first skB skI1 skI2 skI3
+		entry skyline_mergeFilter_2_float [dim]
+			(self_filter_first : bool)
+			(skB : skylineBase_float [dim])
+			(skI1 : skylineInfo_float [dim])
+			(skI2 : skylineInfo_float [dim])
+		: skylineInfo_float [dim] =
+			skyline_float.mergeFilter_Skylines_2 self_filter_first skB skI1 skI2
 
 		entry calc_Global_Skyline_float [dim]
 			(skB : skylineBase_float [dim])

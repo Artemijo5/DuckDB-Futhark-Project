@@ -46,6 +46,8 @@ type~ dbcHandler_t [n] [part_no] 'f = {
 	clBase : dbcBase_t f,
 	clProc : dbcProcessor_t [part_no] f,
 	current_partition : dbcPartition_t [n] f,
+	toFlush_dat : [](f,f),
+	toFlush_ids : []i64,
 	chain_collisions : [](i64,i64) -- TODO figure out exactly how to handle, prob in 2nd pass
 }
 
@@ -200,7 +202,14 @@ module dbscan_plus (F : real) = {
 					isMargin = [],
 					chain_ids = []
 				}
-			in {clBase = clBase, clProc = clProc, current_partition = dummy_partition, chain_collisions = []}
+			in {
+				clBase = clBase,
+				clProc = clProc,
+				current_partition = dummy_partition,
+				toFlush_dat = [],
+				toFlush_ids = [],
+				chain_collisions = []
+			}
 
 		def next_partition_to_read [n] [part_no]
 			(clHandler : dbcHandler [n] [part_no])
@@ -260,7 +269,7 @@ module dbscan_plus (F : real) = {
 					then ((y_id+1)*clBase.part_per_dim[0] + x_id - 1)
 					else (-1)
 				in [nleft, nld, ndown, nrd, nright, nru, nup, nlu]
-			let isNeighVisited = neighs |> map (\n -> n<0 || !(clProc.isPartVisited[n]))
+			let isNeighVisited = neighs |> map (\n -> n>=0 && (clProc.isPartVisited[n]))
 			let new_isPartVisited = (copy clProc.isPartVisited) with [new_id] = true
 			-- new partition's margin points
 			let (min_coords, max_coords, min_inner, max_inner) =
@@ -314,25 +323,35 @@ module dbscan_plus (F : real) = {
 				|> map (.0)
 			let added_relevants = clProc ++ new_relevants -- append for breadth-first
 			-- update buffered points
+			-- also flush points
 			-- first add margin points of previous partition
 			-- then filter
 			-- only keep ones within 2*eps of an unvisited partition
 			-- TODO see if filters will make compiler complain...
-			let (new_buffered_pts, new_buffered_isCore new_buffered_cids) =
+			let (new_buffered_pts, new_buffered_isCore, new_buffered_cids,
+				flush_pts, flush_cids) =
 				-- get last part's margin points & their info
-				let (last_pts, last_isC, last_cid) =
+				-- flush non-margin points
+				let (lastTups_keep, lastTups_flush) =
 					zip4 old_part.dat old_part.isCore old_part.chain_ids old_part.isMargin
-					|> filter (.3)
+					|> partition (.3)
+				let (last_pts, last_isC, last_cid) =
+					lastTups_keep
 					|> map (\(dat, isCore, cid, _) -> (dat, isCore, cid))
 					|> unzip3
+				let (flush_pts_fromPart, flush_cids_fromPart) =
+					lastTups_flush
+					|> map (\(dat, _, cid, _) -> (dat, cid))
+					|> unzip
 				-- append them
 				let (added_pts, added_isC, added_cid) = (
 					dbcProc.buffered_pts ++ last_pts,
 					dbcProc.buff_isCore ++ last_isC,
 					dbcProc.buffered_ids ++ last_cid
 				)
-				-- filter irrelevant
-				in indices added_pts
+				-- flush irrelevant margin points
+				let (margins_toKeep_is, margins_toFlush_is) =
+					indices added_pts
 					|> map (\i ->
 						let pt_i = added_pts[i]
 						let (_,isNearAnyRelevant) =
@@ -353,9 +372,17 @@ module dbscan_plus (F : real) = {
 								in (curPart_i+1, isN)
 						in (curPart_i+1, isNearAnyRelevant)
 					)
-					|> filter (.1)
+					|> partition (.1)
+				let (nBuff_pts, nBuff_isCore, nBuff_cids) =
+					margins_toKeep_is
 					|> map (\(i,_) -> (added_pts[i], added_isC[i], added_cid[i]))
 					|> unzip3
+				let (margin_flush_pts, margin_flush_cids) =
+					margins_toFlush_is
+					|> map (\(i,_) -> (added_pts[i], added_cid[i]))
+					|> unzip
+				in (nBuff_pts, nBuff_isCore, nBuff_cids,
+					flush_pts_fromPart ++ margin_flush_pts, flush_cids_fromPart ++ margin_flush_cids)
 			-- lastly, create new handler objects
 			let new_proc : dbcProcessor [part_no] = {
 				cur_part_id = new_id,
@@ -386,6 +413,8 @@ module dbscan_plus (F : real) = {
 				clBase = clBase,
 				clProc = new_proc,
 				current_partition = new_part,
+				toFlush_dat = flush_pts,
+				toFlush_ids = flush_cids,
 				chain_collisions = clHandler.chain_collisions
 			}
 	
