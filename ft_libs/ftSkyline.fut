@@ -33,7 +33,7 @@ module skyline_real (F:real) = {
 		local def gt = (F.>)
 		local def geq = (F.>=)
 		local def lt = (F.<)
-		local def leq = (F.>=)
+		local def leq = (F.<=)
 		local def eq = (F.==)
 
 		local def plus = (F.+)
@@ -456,7 +456,8 @@ module skyline_real (F:real) = {
 			(skI1 : skylineInfo [dim] pL_t)
 		: skylineInfo [dim] pL_t =
 			let n1 = length skI1.xys
-			let extPar = idx_t.min n1 (idx_t.max 1 (skB.m_size/n1))
+			let n2 = length skI2.xys
+			let extPar = idx_t.min n1 (idx_t.max 1 (skB.m_size/n2))
 			let num_iter = (extPar + n1 - 1)/extPar
 			let new_xys =
 				let new_is_ = loop ni = (iota n1) for j in (iota num_iter) do

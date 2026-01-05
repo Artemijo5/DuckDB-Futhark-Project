@@ -27,6 +27,7 @@ type dbcPartition_t [n] 'f = {
 	dat : [n](f,f),
 	isCore : [n]bool,
 	isMargin : [n]bool,
+	-- TODO ig keep separate isTightMargin (...) - useful for most efficient clipping (!)
 	chain_ids : [n]i64
 }
 type~ dbcProcessor_t [part_no] 'f = {
@@ -62,7 +63,8 @@ module dbscan_plus (F : real) = {
 
 		local def gt = (F.>)
 		local def lt = (F.<)
-		local def leq = (F.>=)
+		local def geq = (F.>=)
+		local def leq = (F.<=)
 		local def eq = (F.==)
 
 		local def plus = (F.+)
@@ -418,10 +420,131 @@ module dbscan_plus (F : real) = {
 				chain_collisions = clHandler.chain_collisions
 			}
 	
-	-- TODO
-	-- implement DBSCAN algorithm from here on
-	-- test that this stuff works...
+	-- DBSCAN functions
+	-- NOTE : any DBSCAN functions delete the flushData from DBSCAN
+	-- It is assumed that they will be flushed before calling them
 
-	-- DBSCAN algorithm per partition
+		local def get_num_neighbours_against [n1] [n2]
+			(dat1 : [n1](f,f))
+			(dat2 : [n2](f,f))
+			(eps : f)
+			(dist_t : distType)
+			(angle_t : anglType)
+			(radius : f)
+			(m_size : i64)
+		: [n1]i64 =
+			let extPar = i64.max 1 (m_size/n2)
+			let num_iter = (extPar + n1 - 1)/extPar
+			in loop nnBuff = (replicate n1 0) for j in (iota num_iter) do
+				let inf = j*extPar
+				let sup = i64.min n1 (inf+extPar)
+				let this_xs = dat1[inf:sup]
+				let this_neighCount = this_xs
+					|> map (\this_x ->
+						dat2
+							|> map (\cmp_x -> dist dist_t angle_t radius this_x cmp_x)
+							|> countFor (\d -> d `leq` eps)
+					) |> map (\c -> c)
+				in nnBuff with [inf:sup] = this_neighCount
+
+		local def find_cluster_ids
+			(core_pts : [](f,f))
+			(pre_cids : []i64)
+			(eps : t)
+			(dist_t : distType)
+			(angle_t : anglType)
+			(radius : f)
+			(m_size : i64)
+			(gather_psize : i64)
+		-- returns cids + collided pairs
+		: ([]i64, [](i64, i64)) = ([],[]) -- TODO
+
+		def do_DBSCAN [n]
+			(clHander : dbcHandler [n])
+			(gather_psize : i64)
+		: dbcHandler [n] =
+			let clBase = clHandler.clBase
+			let clProc = clHandler.clProc
+			let cur_part = clHandler.current_partition
+			let eps = clBase.eps
+			let eps2 = times two eps
+			let minPts = clBase.minPts
+			-- compute margin pts from partition + their indices - used twice later
+			let (margin_is, margin_dat) = cur_part.dat
+				|> zip3 (cur_part.isMargin) (indices dat)
+				|> filter (.0)
+				|> map (\(_,is,pts) -> (is,pts))
+				|> unzip
+			-- find tight and loose frontier from margin points
+			let (tight_frontier, loose_frontier) =
+				let frontier =
+					indices clProc.buffered_pts
+					|> map (\i -> (clProc.buffered_pts[i] clProc.buff_isCore[i] clProc.buffered_ids[i], i))
+					|> filter (\((x,y),_,_,_) ->
+						((x `geq` (minus cur_part.min_coord[0] eps2)) && (x `leq` (plus cur_part.max_coord[0] eps2)))
+							&&
+						((y `geq` (minus cur_part.min_coord[1] eps2)) && (y `leq` (plus cur_part.max_coord[1] eps2)))
+					)
+				in frontier
+					|> partition (\((x,y),_,_,_) ->
+						((x `geq` (minus cur_part.min_coord[0] eps)) && (x `leq` (plus cur_part.max_coord[0] eps)))
+							&&
+						((y `geq` (minus cur_part.min_coord[1] eps)) && (y `leq` (plus cur_part.max_coord[1] eps)))
+					)
+			let (tf_pts, tf_cid, tf_is) = tight_frontier |> map (\(pt,_,cid,is) -> (pt,cid,is)) |> unzip
+			let lf_pts = loose_frontier |> map (.0)
+			-- find core points from tight margins
+			let tf_isC =
+				-- get neighcount from tight & loose frontiers
+				let tf_neighCount1 = get_num_neighbours_against
+					tf_pts tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+				let tf_neighCount2 = get_num_neighbours_against
+					tf_pts lf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+				-- get neighcount from partition's tight margin
+				-- TODO currently using whole margin (...)
+				let tf_neighCount3 = get_num_neighbours_against
+					tf_pts margin_dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+				-- sum
+				in map3 (\c1 c2 c3 -> c1+c2+c3-1)
+					tf_neighCount1 tf_neighCount2 tf_neighCount3
+					|> map (>= minPts)
+			-- find core points from partition
+			let part_isC : [n]bool =
+				let dat = cur_part.dat
+				-- from self
+				let part_neighCount1 = get_num_neighbours_against
+					dat dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+				-- from tight frontier
+				-- TODO currently using whole margin (...)
+				let part_neighCount2 =
+					let part_neighCount2_ = get_num_neighbours_against
+						margin_dat tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+					in scatter (replicate n 0) margin_is part_neighCount2_
+				-- sum
+				in map2 (+) part_neighCount1 part_neighCount2
+					|> map (>= minPts)
+			-- isolate core pts && cids from tfs
+			let (core_pts, preCids) =
+				let (tf_core_pts, tf_precids) =
+					zip3 tf_pts tf_cid tf_isC
+					|> filter (.2)
+					|> map (\(pts,cid,_) -> (pts,cid))
+					|> unzip
+				let (part_core_pts, part_precids) =
+					zip3 cur_part.dat (replicate n (-1)) part_isC
+					|> filter (.2)
+					|> map (\(pts,cid,_) -> (pts,cid))
+					|> unzip
+				in (tf_core_pts ++ part_core_pts, tf_precids ++ part_precids)
+			-- iteratively group them in chains
+			-- TODO write code for this func...
+			let (cids, new_collisions) = find_cluster_ids
+				core_pts preCids eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size gather_psize
+			-- TODO assign chains to all points
+			-- TODO return updated clHandler
+
+	-- TODO functions to rectify chain collisions (2nd pass)
+
+
 
 }
