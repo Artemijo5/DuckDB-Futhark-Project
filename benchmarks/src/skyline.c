@@ -15,9 +15,9 @@
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define CNK_TO_READ (long)4
-#define default_BUFFER_CAP (long)2*1024//(long)2*CNK_TO_READ
+#define default_BUFFER_CAP (long)1//(long)2*CNK_TO_READ
 #define default_BUFFER_SIZE BUFFER_CAP*CHUNK_SIZE
-#define default_TABLE_SIZE 8*BUFFER_SIZE//10*BUFFER_SIZE
+#define default_TABLE_SIZE 16*BUFFER_SIZE//10*BUFFER_SIZE
 
 #define default_DIM (long)4
 #define default_ANGULAR_SUBDIV (long)2
@@ -28,6 +28,7 @@
 #define default_USE_MANY_PTS false
 #define default_USE_MANY_PTS_LOCAL false
 #define default_SKIP_LOCAL_SKYLINE false
+#define default_SKIP_MERGED_LOCAL_SKYLINE false
 
 #define default_MAX_SUBDIV (int64_t)90
 #define default_MIN_SUBDIV (int64_t)45
@@ -55,6 +56,7 @@ int main(int argc, char *argv[]) {
       bool USE_MANY_PTS = default_USE_MANY_PTS;
       bool USE_MANY_PTS_LOCAL = default_USE_MANY_PTS_LOCAL;
       bool SKIP_LOCAL_SKYLINE = default_SKIP_LOCAL_SKYLINE;
+      bool SKIP_MERGED_LOCAL_SKYLINE = default_SKIP_MERGED_LOCAL_SKYLINE;
       int64_t MAX_SUBDIV = default_MAX_SUBDIV;
       int64_t MIN_SUBDIV = default_MIN_SUBDIV;
       int64_t SUBDIV_STEP = default_SUBDIV_STEP;
@@ -77,6 +79,7 @@ int main(int argc, char *argv[]) {
           {"use_many_pts", no_argument, 0, 'u'},
           {"use_many_pts_local", no_argument, 0, 'U'},
           {"skip_local", no_argument, 0, 'n'},
+          {"skip_merged_local", no_argument, 0, 'N'},
           {"max_subdiv", required_argument, 0, '1'},
           {"min_subdiv", required_argument, 0, '2'},
           {"subdiv_step", required_argument, 0, '3'},
@@ -89,7 +92,7 @@ int main(int argc, char *argv[]) {
       };
     char ch;
     while(
-      (ch = getopt_long_only(argc,argv,"L:B:T:D:a:I:S:s:M:unf:m:d:v",long_options,NULL)) != -1
+      (ch = getopt_long_only(argc,argv,"L:B:T:D:a:I:S:s:M:unNf:m:d:v",long_options,NULL)) != -1
     ) {
       switch(ch) {
         case 'L':
@@ -114,6 +117,8 @@ int main(int argc, char *argv[]) {
           USE_MANY_PTS_LOCAL = true; break;
         case 'n':
           SKIP_LOCAL_SKYLINE = true; break;
+        case 'N':
+          SKIP_MERGED_LOCAL_SKYLINE = true; break;
         case '1':
           MAX_SUBDIV = atol(optarg); break;
         case '2':
@@ -271,6 +276,7 @@ int main(int argc, char *argv[]) {
     mylog(logfile, "Performed query to read skyTbl.");
     int isTblExhausted = false;
     idx_t cur_idx=0;
+    bool self_filter_first = true; // for merge-filter func - true only for its first iteration
     while(!isTblExhausted) {
       idx_t chunks_read = 0;
     	duckdb_data_chunk skyChunks[BUFFER_CAP];
@@ -359,31 +365,60 @@ int main(int argc, char *argv[]) {
     		
     		switch(currently_windowed) {
     			case 1:
-    				collapsed_skyWindow = skyWindows[0];
+            if (!self_filter_first || !(SKIP_LOCAL_SKYLINE || SKIP_MERGED_LOCAL_SKYLINE))
+    				  collapsed_skyWindow = skyWindows[0];
+            else
+              futhark_entry_calc_Global_Skyline_float(
+                ctx, &collapsed_skyWindow, skB, skyWindows[0]
+              );
     				break;
     			case 2:
-    				futhark_entry_skyline_merge_2_float(
-    					ctx, &collapsed_skyWindow,
-    					skyWindows[0], skyWindows[1]
-    				);
+            if (!(SKIP_LOCAL_SKYLINE || SKIP_MERGED_LOCAL_SKYLINE))
+      				futhark_entry_skyline_merge_2_float(
+      					ctx, &collapsed_skyWindow,
+      					skyWindows[0], skyWindows[1]
+      				);
+            else
+              futhark_entry_skyline_mergeFilter_2_float(
+                ctx, &collapsed_skyWindow, self_filter_first, skB,
+                skyWindows[0], skyWindows[1]
+              );
     				break;
     			case 3:
-    				futhark_entry_skyline_merge_3_float(
-    					ctx, &collapsed_skyWindow,
-    					skyWindows[0], skyWindows[1], skyWindows[2]
-    				);
+    				if (!(SKIP_LOCAL_SKYLINE || SKIP_MERGED_LOCAL_SKYLINE))
+              futhark_entry_skyline_merge_3_float(
+                ctx, &collapsed_skyWindow,
+                skyWindows[0], skyWindows[1], skyWindows[2]
+              );
+            else
+              futhark_entry_skyline_mergeFilter_3_float(
+                ctx, &collapsed_skyWindow, self_filter_first, skB,
+                skyWindows[0], skyWindows[1], skyWindows[2]
+              );
     				break;
     			case 4:
-    				futhark_entry_skyline_merge_4_float(
-    					ctx, &collapsed_skyWindow,
-    					skyWindows[0], skyWindows[1], skyWindows[2], skyWindows[3]
-    				);
+    				if (!(SKIP_LOCAL_SKYLINE || SKIP_MERGED_LOCAL_SKYLINE))
+              futhark_entry_skyline_merge_4_float(
+                ctx, &collapsed_skyWindow,
+                skyWindows[0], skyWindows[1], skyWindows[2], skyWindows[3]
+              );
+            else
+              futhark_entry_skyline_mergeFilter_4_float(
+                ctx, &collapsed_skyWindow, self_filter_first, skB,
+                skyWindows[0], skyWindows[1], skyWindows[2], skyWindows[3]
+              );
     				break;
     			default:
-    				futhark_entry_skyline_merge_5_float(
-    					ctx, &collapsed_skyWindow,
-    					skyWindows[0], skyWindows[1], skyWindows[2], skyWindows[3], skyWindows[4]
-    				);
+    				if (!(SKIP_LOCAL_SKYLINE || SKIP_MERGED_LOCAL_SKYLINE))
+              futhark_entry_skyline_merge_5_float(
+                ctx, &collapsed_skyWindow,
+                skyWindows[0], skyWindows[1], skyWindows[2], skyWindows[3], skyWindows[4]
+              );
+            else
+              futhark_entry_skyline_mergeFilter_5_float(
+                ctx, &collapsed_skyWindow, self_filter_first, skB,
+                skyWindows[0], skyWindows[1], skyWindows[2], skyWindows[3], skyWindows[4]
+              );
     				break;
     		}
     		if(currently_windowed>1) {
@@ -393,36 +428,26 @@ int main(int argc, char *argv[]) {
     		}
     		mylog(func_logfile, " - - | - - Collapsed cached windows.");
 
-    		if(currently_windowed>1) {
-
-          if(!SKIP_LOCAL_SKYLINE) {
-      			futhark_entry_skyline_local_filter_float(
-    	  			ctx, &local_collapsed_skyWindow, skB, collapsed_skyWindow, USE_MANY_PTS_LOCAL
-    	  		);
-    		  	futhark_free_opaque_skylineInfo_float(ctx, collapsed_skyWindow);
-    		  	mylog(func_logfile, " - - | - - Applied local filtering.");
-    		  	futhark_entry_skyline_intermediate_filter_float(
-    		  		ctx, &interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, MAX_SUBDIV, MIN_SUBDIV, SUBDIV_STEP, SIZE_THRESH
-    		  	);
-    		  	futhark_free_opaque_skylineInfo_float(ctx, local_collapsed_skyWindow);
-    		  	mylog(func_logfile, " - - | - - Applied intermediate filtering steps.");
-          }
-          else {
-            futhark_entry_calc_Global_Skyline_float(
-              ctx, &interm_collapsed_skyWindow, skB, collapsed_skyWindow
-            );
-            futhark_free_opaque_skylineInfo_float(ctx, collapsed_skyWindow);
-            mylog(func_logfile, " - - | - - Directly applied global filtering.");
-          }
-
+    		if(currently_windowed>1 && !(SKIP_LOCAL_SKYLINE || SKIP_MERGED_LOCAL_SKYLINE)) {
+      		futhark_entry_skyline_local_filter_float(
+    	  		ctx, &local_collapsed_skyWindow, skB, collapsed_skyWindow, USE_MANY_PTS_LOCAL
+    	  	);
+    			futhark_free_opaque_skylineInfo_float(ctx, collapsed_skyWindow);
+    			mylog(func_logfile, " - - | - - Applied local filtering.");
+    			futhark_entry_skyline_intermediate_filter_float(
+    				ctx, &interm_collapsed_skyWindow, skB, local_collapsed_skyWindow, MAX_SUBDIV, MIN_SUBDIV, SUBDIV_STEP, SIZE_THRESH
+    			);
+    			futhark_free_opaque_skylineInfo_float(ctx, local_collapsed_skyWindow);
+    			mylog(func_logfile, " - - | - - Applied intermediate filtering steps.");
     		}
     		else {
     			interm_collapsed_skyWindow = collapsed_skyWindow;
-    			mylog(func_logfile, " - - | - - Don't need to apply filtering steps, as there is only one cached window.");
+    			mylog(func_logfile, " - - | - - Don't need to apply additional filtering steps.");
     		}
     		
   	  	skyWindows[0] = interm_collapsed_skyWindow;
   	  	currently_windowed = 1;
+        self_filter_first = false;
     	}
     }
     mylog(logfile, "Result is exhausted.");
@@ -434,7 +459,7 @@ int main(int argc, char *argv[]) {
     // Any needed intermediate filtering has already been applied
     // So, we only need to apply the final Global Skyline function
     struct futhark_opaque_skylineInfo_float *GlobalSkylineInfo_ft;
-    if(!SKIP_LOCAL_SKYLINE) {
+    if(!(SKIP_LOCAL_SKYLINE || SKIP_MERGED_LOCAL_SKYLINE)) {
       futhark_entry_calc_Global_Skyline_float(ctx, &GlobalSkylineInfo_ft, skB, skyWindows[0]);
       mylog(logfile, "Function to compute global skyline has returned.");
       futhark_free_opaque_skylineInfo_float(ctx, skyWindows[0]);
