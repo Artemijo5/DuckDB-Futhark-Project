@@ -1,6 +1,6 @@
 import "ftbasics"
 
-type distType = #euclidean | #haversine
+type distType = #euclidean | #haversine -- TODO hsv distance ? for Mahalanobis transform data externally
 type anglType = #degrees | #radians
 
 type dbcBase_t 'f = {
@@ -27,7 +27,7 @@ type dbcPartition_t [n] 'f = {
 	dat : [n](f,f),
 	isCore : [n]bool,
 	isMargin : [n]bool,
-	-- TODO ig keep separate isTightMargin (...) - useful for most efficient clipping (!)
+	isTightMargin : [n]bool,
 	chain_ids : [n]i64
 }
 type~ dbcProcessor_t [part_no] 'f = {
@@ -40,7 +40,7 @@ type~ dbcProcessor_t [part_no] 'f = {
 	buffered_ids : []i64,
 	offs : i64,
 	next_offs : i64,
-	chainOffs : i64 -- TODO could just use min point id as chain id, not needing this...
+	chainOffs : i64
 }
 
 type~ dbcHandler_t [n] [part_no] 'f = {
@@ -202,6 +202,7 @@ module dbscan_plus (F : real) = {
 					dat = [],
 					isCore = [],
 					isMargin = [],
+					isTightMargin = [],
 					chain_ids = []
 				}
 			in {
@@ -238,10 +239,11 @@ module dbscan_plus (F : real) = {
 			(new_xs : [n_new]f)
 			(new_ys : [n_new]f)
 		: clHandler [n_new] [part_no] =
-			let eps2 = times two eps
 			let clBase = clHandler.clBase
 			let clProc = clHandler.clProc
 			let old_part = clHandler.current_partition
+			let eps = clBase.eps
+			let eps2 = times two eps
 			-- find adjacent partition ids
 			let x_id = new_id % clBase.part_per_dim[0]
 			let y_id = new_id / clBase.part_per_dim[0]
@@ -299,6 +301,10 @@ module dbscan_plus (F : real) = {
 			let new_pts = zip new_xs new_ys
 			let new_isMargin = new_pts |> map (\(x,y) ->
 				(x `leq` min_inner.0) || (x `geq` max_inner.0)
+				|| (y `leq` min_inner.1) || (y `geq` max_inner.1)
+			)
+			let new_isTightMargin = new_pts |> map (\(x,y) ->
+				(x `leq` (minus min_inner.0 eps)) || (x `geq` (plus max_inner.0 eps))
 				|| (y `leq` min_inner.1) || (y `geq` max_inner.1)
 			)
 			-- update relevant partitions
@@ -409,6 +415,7 @@ module dbscan_plus (F : real) = {
 				dat = new_pts,
 				isCore = replicate n_new false,
 				isMargin = new_isMargin,
+				isTightMargin = new_isTightMargin,
 				chain_ids = replicate n_new (-1)
 			}
 			in {
@@ -447,7 +454,7 @@ module dbscan_plus (F : real) = {
 					) |> map (\c -> c)
 				in nnBuff with [inf:sup] = this_neighCount
 
-		local def find_cluster_ids
+		local def find_chain_ids
 			(core_pts : [](f,f))
 			(pre_cids : []i64)
 			(eps : t)
@@ -456,8 +463,59 @@ module dbscan_plus (F : real) = {
 			(radius : f)
 			(m_size : i64)
 			(gather_psize : i64)
+			(chain_offs : i64)
 		-- returns cids + collided pairs
 		: ([]i64, [](i64, i64)) = ([],[]) -- TODO
+
+		local def assign_chain_ids [fn] [pn]
+			(frontier_pts : [fn](f,f))
+			(partition_pts : [pn](f,f))
+			(core_pts : [](f,f))
+			(cids : []i64)
+			(eps : t)
+			(dist_t : distType)
+			(angle_t : anglType)
+			(radius : f)
+			(m_size : i64)
+		: ([fn]i64, [pn]i64) =
+			let extPar = i64.max 1 (m_size/(length core_pts))
+			let cluster_head = indices core_pts
+				|> map (\i -> (cids[i], core_pts[i]))
+			-- assign cids to frontier points
+			let numIter1 = (extPar + fn - 1)/extPar
+			let f_cids =
+				loop buff = (replicate n (-1)) for j in (iota num_iter) do
+				let inf = j*extPar
+				let sup = i64.min fn (inf+extPar)
+				let this_pts = frontier_pts[inf:sup]
+				let cur_upd = this_pts |> map (\this_x ->
+					cluster_head
+					|> map (\(i, cd) -> (i, dist dist_t angle_t radius this_x cd))
+					|> reduce_comm (\(ch1,d1) (ch2,d2) ->
+						if (d1 `gt` eps) && (d2 `gt` eps) then (-1,highest)
+						else if (d1 `lt` d2) then (ch1,d1)
+						else (ch2,d2) -- non-deterministic if d1==d2
+					) (-1,highest)
+				) |> map (.0)
+				in buff with [inf:sup] = cur_upd
+			-- assign cids to partition points
+			let numIter2 = (extPar + pn - 1)/extPar
+			let p_cids =
+				loop buff = (replicate n (-1)) for j in (iota num_iter) do
+				let inf = j*extPar
+				let sup = i64.min fn (inf+extPar)
+				let this_pts = partition_pts[inf:sup]
+				let cur_upd = this_pts |> map (\this_x ->
+					cluster_head
+					|> map (\(i, cd) -> (i, dist dist_t angle_t radius this_x cd))
+					|> reduce_comm (\(ch1,d1) (ch2,d2) ->
+						if (d1 `gt` eps) && (d2 `gt` eps) then (-1,highest)
+						else if (d1 `lt` d2) then (ch1,d1)
+						else (ch2,d2) -- non-deterministic if d1==d2
+					) (-1,highest)
+				) |> map (.0)
+				in buff with [inf:sup] = cur_upd
+			in (f_cids, p_cids)
 
 		def do_DBSCAN [n]
 			(clHander : dbcHandler [n])
@@ -469,12 +527,12 @@ module dbscan_plus (F : real) = {
 			let eps = clBase.eps
 			let eps2 = times two eps
 			let minPts = clBase.minPts
-			-- compute margin pts from partition + their indices - used twice later
+			-- compute *tight* margin pts from partition + their indices - used twice later
 			let (margin_is, margin_dat) = cur_part.dat
-				|> zip3 (cur_part.isMargin) (indices dat)
-				|> filter (.0)
-				|> map (\(_,is,pts) -> (is,pts))
-				|> unzip
+				|> zip3 (isTightMargin) (iota n)
+				|> filter (.0) ((.0) && !(.1)) --TODO
+				|> map (\(_,is,dat) -> (is,dat))
+				|> unzip				
 			-- find tight and loose frontier from margin points
 			let (tight_frontier, loose_frontier) =
 				let frontier =
@@ -501,7 +559,6 @@ module dbscan_plus (F : real) = {
 				let tf_neighCount2 = get_num_neighbours_against
 					tf_pts lf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- get neighcount from partition's tight margin
-				-- TODO currently using whole margin (...)
 				let tf_neighCount3 = get_num_neighbours_against
 					tf_pts margin_dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- sum
@@ -515,7 +572,6 @@ module dbscan_plus (F : real) = {
 				let part_neighCount1 = get_num_neighbours_against
 					dat dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- from tight frontier
-				-- TODO currently using whole margin (...)
 				let part_neighCount2 =
 					let part_neighCount2_ = get_num_neighbours_against
 						margin_dat tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
@@ -538,10 +594,32 @@ module dbscan_plus (F : real) = {
 				in (tf_core_pts ++ part_core_pts, tf_precids ++ part_precids)
 			-- iteratively group them in chains
 			-- TODO write code for this func...
-			let (cids, new_collisions) = find_cluster_ids
-				core_pts preCids eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size gather_psize
+			let (cids, new_collisions) = find_chain_ids
+				core_pts preCids
+				eps clBase.dist_t clBase.angle_t clBase.radius
+				clBase.m_size gather_psize
+				clProc.chainOffs
 			-- TODO assign chains to all points
+			let (f_cids, p_cids) = assign_chain_ids
+				tf_pts cur_part.dat core_pts
+				cids eps clBase.dist_t clBase.angle_t clBase.radius
+				clBase.m_size
 			-- TODO return updated clHandler
+			let new_part = {
+				part_id = cur_part.part_id,
+				min_coord = cur_part.min_coord,
+				max_coord = cur_part.max_coord,
+				inner_min_coord = cur_part.inner_min_coord,
+				inner_max_coord = cur_part.inner_max_coord,
+				neighbours = cur_part.neighbours,
+				isNeighbourVisited = cur_part.isNeighbourVisited,
+				dat = cur_part.dat,
+				isCore = part_isC,
+				isMargin = cur_part.isMargin,
+				isTightMargin = cur_part.isTightMargin,
+				chain_ids = 
+			}
+			
 
 	-- TODO functions to rectify chain collisions (2nd pass)
 
