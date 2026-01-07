@@ -37,13 +37,13 @@ def funnels [dim] [n]
 		let rs_ = rss[dim+d]
 		let ms = mss[d]
 		let sgns = sgnss[d]
-		let xs_ = map2 (\s r_ -> 1 + f*s*r_) sgns rs_
+		in map2 (\s r_ -> 1 + f*s*r_) sgns rs_
 			|> map2 (*) rs
 			|> map2 (\m r -> r / (f32.sqrt m + 0.001)) ms
-		let min_xs_ = xs_ |> f32.minimum
-		in xs_
-			|> map (\x -> x - min_xs_)
+			|> map (f32.abs)
 			|> map (f32.sqrt)
 	)
-	let max_xss = xss |> map (f32.maximum)
-	in map2 (\xs mx -> map (\x -> x / mx * mag) xs) xss max_xss
+	let min_xss = xss |> map (f32.minimum)
+	let xss_ = map2 (\xs mx -> map (\x -> x-mx) xs) xss min_xss
+	let max_xss_ = xss_ |> map (f32.maximum)
+	in map2 (\xs mx -> map (\x -> x / mx * mag) xs) xss_ max_xss_

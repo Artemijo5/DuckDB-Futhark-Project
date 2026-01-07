@@ -118,10 +118,10 @@ module dbscan_plus (F : real) = {
 		: t =
 			let (p1,p2) : ((f,f),(f,f)) =
 				match aType
-				case #degrees -> (pt1, pt2)
-				case #radians -> (
-					(rad_to_deg pt1.0, rad_to_deg pt1.1),
-					(rad_to_deg pt2.0, rad_to_deg pt2.1)
+				case #radians -> (pt1, pt2)
+				case #degrees -> (
+					(deg_to_rad pt1.0, deg_to_rad pt1.1),
+					(deg_to_rad pt2.0, deg_to_rad pt2.1)
 				)
 			let h_theta = F.min (hav_theta p1 p2) one
 			let theta = times h_theta two |> minus one |> acos
@@ -275,7 +275,7 @@ module dbscan_plus (F : real) = {
 				in [nleft, nld, ndown, nrd, nright, nru, nup, nlu]
 			let isNeighVisited = neighs |> map (\n -> n>=0 && (clProc.isPartVisited[n]))
 			let new_isPartVisited = (copy clProc.isPartVisited) with [new_id] = true
-			-- new partition's margin points
+			-- new partition coords
 			let (min_coords, max_coords, min_inner, max_inner) =
 				let minC = (
 					if x_id==0 then lowest else clBase.mins[0] + x_id*clBase.step_per_dim[0],
@@ -299,14 +299,6 @@ module dbscan_plus (F : real) = {
 				)
 				in (minC, maxC, min_inner, max_inner)
 			let new_pts = zip new_xs new_ys
-			let new_isMargin = new_pts |> map (\(x,y) ->
-				(x `leq` min_inner.0) || (x `geq` max_inner.0)
-				|| (y `leq` min_inner.1) || (y `geq` max_inner.1)
-			)
-			let new_isTightMargin = new_pts |> map (\(x,y) ->
-				(x `leq` (minus min_inner.0 eps)) || (x `geq` (plus max_inner.0 eps))
-				|| (y `leq` min_inner.1) || (y `geq` max_inner.1)
-			)
 			-- update relevant partitions
 			let new_relevants = neighs
 				|> map (\n -> if isNeighVisited[n] then (-1) else n) -- visited can't be relevant
@@ -330,6 +322,40 @@ module dbscan_plus (F : real) = {
 				-- TODO could better shave corner points
 				|> map (.0)
 			let added_relevants = clProc ++ new_relevants -- append for breadth-first
+			-- new partition's margin points
+			-- don't mind those that are not near any neighbours
+			let new_isMargin = new_pts |> map (\(x,y) ->
+				neighs |> any (\nid ->
+					if nid<0 then false else
+					let nxid = nid % clBase.part_per_dim[0]
+					let nyid = nid / clBase.part_per_dim[0]
+					let min_x = clBase.mins[0] + nxid*clBase.step_per_dim[0]
+					let min_y = clBase.mins[1] + nyid*clBase.step_per_dim[1]
+					let max_x = clBase.mins[0] + (nxid+1)*clBase.step_per_dim[0]
+					let max_y = clBase.mins[1] + (nyid+1)*clBase.step_per_dim[1]
+					in
+						((x `geq` (minus min_x eps2)) && (x `leq` (plus max_x eps2)))
+						&&
+						((y `geq` (minus min_y eps2)) && (y `leq` (plus max_y eps2)))
+				)
+			)
+			let new_isTightMargin = new_pts |> zip new_isMargin
+				|> map (\(isM, (x,y)) ->
+					isM &&
+					(neighs |> any (\nid ->
+						if nid<0 then false else
+						let nxid = nid % clBase.part_per_dim[0]
+						let nyid = nid / clBase.part_per_dim[0]
+						let min_x = clBase.mins[0] + nxid*clBase.step_per_dim[0]
+						let min_y = clBase.mins[1] + nyid*clBase.step_per_dim[1]
+						let max_x = clBase.mins[0] + (nxid+1)*clBase.step_per_dim[0]
+						let max_y = clBase.mins[1] + (nyid+1)*clBase.step_per_dim[1]
+						in
+							((x `geq` (minus min_x eps)) && (x `leq` (plus max_x eps)))
+							&&
+							((y `geq` (minus min_y eps)) && (y `leq` (plus max_y eps)))
+					))
+				)
 			-- update buffered points
 			-- also flush points
 			-- first add margin points of previous partition
@@ -465,7 +491,77 @@ module dbscan_plus (F : real) = {
 			(gather_psize : i64)
 			(chain_offs : i64)
 		-- returns cids + collided pairs
-		: ([]i64, [](i64, i64)) = ([],[]) -- TODO
+		: ([]i64, [](i64, i64)) =
+			-- 0 - parameters
+				let n = length core_pts
+				let extPar = i64.max 1 (m_size/n)
+			-- 1 - find current cluster IDs irrespective of preCids
+				let (cluster_heads,_) =
+				loop (chBuff,conv) = (iota n, false) while (!conv) do
+					let next_chBuff = 
+					loop chBuff_ = chBuff for j in (iota inner_iter) do
+						let inf = j*extPar
+						let sup = i64.min n (inf + extPar)
+						let this_pts = core_pts[inf:sup]
+						let this_chs = chBuff_[inf:sup]
+						let this_min_ch = map2 (\ch pt ->
+								let coreNeigh = core_pts
+									|> map (\other_pt -> dist pt other_pt)
+									|> map (\d -> d `leq` eps)
+								let neighChs = map2 (\other_ch isN ->
+									if isN then other_ch else ch
+								) chBuff_ coreNeigh -- using chBuff_ here could bring faster convergence
+								in i64.minimum neighChs
+							) this_chs this_pts
+						in (copy chBuff_) with [inf:sup] = this_min_ch
+					let next_conv = (map2 (==) chBuff next_chBuff) |> all (id)
+					in (next_chBuff, next_conv)
+			-- 2 - List - Ranking & offset
+				let is_cluster_head = map2 (==) (iota n) (cluster_heads :> [n]i64)
+				let ch_ids = is_cluster_head
+					|> map (\isCh -> if isCh then 1 else 0)
+					|> exscan (+) 0
+				let local_clustering = partitioned_gather (i64.num_bits) (gather_psize) (-1) ch_ids cluster_heads
+					|> map (\cid -> cid + chain_offs)
+			-- 3 - Collide with preCids
+				-- make a compact list of collisions
+				let prior_collisions_multiplicity = (pre_cids :> [n]i64)
+					|> zip local_clustering
+					|> filter (\(_, preCid) -> preCid>=0)
+				-- distinct
+				-- TODO apply m_size here?
+				let numCol_mult = length prior_collisions_multiplicity
+				let prior_collisions_flags = numCol_mult
+					|> map (\i ->
+						let pc = prior_collisions_multiplicity[i]
+						let toFlag = numCol_mult
+							|> map (\j -> (j, prior_collisions_multiplicity[j]))
+							|> reduce_comm (\(j1,pc1) (j2,pc2) ->
+								if ((pc1.0 != pc.0 || pc1.1 != pc.1) ||
+									(j1>j2 && pc2.0 == pc.0 && pc2.1 == pc.1))
+								then (j2,pc2)
+								else (j1,pc1)
+							) (i,pc)
+						in toFlag.0 == i
+					)
+				let prior_collisions = (prior_collisions_multiplicity :> [numCol_mult](i64,i64))
+					|> zip (prior_collisions_flags :> [numCol_mult]bool)
+					|> filter (.0)
+					|> map (.1)
+				-- all ids are replaced with smallest collision, if exists
+				-- TODO apply m_size here?
+				let rectified_clustering = local_clustering |> map (\cc ->
+						prior_collisions |> reduce_comm (\(cur1,pre1) (cur2,pre2) ->
+							if (cur1!=cc || pre1<0 || (pre1>pre2 && cur2==cc)) then (cur2,pre2)
+							else (cur1,pre1) 
+						) (cc, cc)
+					)
+			-- 4 - Store preCid collisions
+				let new_collisions = prior_collisions
+					|> filter (\(curCid,_) -> curCid < chain_offs)
+			-- Return
+				in (rectified_clustering, new_collisions)
+
 
 		local def assign_chain_ids [fn] [pn]
 			(frontier_pts : [fn](f,f))
@@ -604,6 +700,8 @@ module dbscan_plus (F : real) = {
 				tf_pts cur_part.dat core_pts
 				cids eps clBase.dist_t clBase.angle_t clBase.radius
 				clBase.m_size
+			let new_relevant_cids = scatter (copy clProc.buffered_ids) tf_is f_cids
+			let new_relevant_isC = scatter (copy clProc.buff_isCore) tf_is tf_isC
 			-- TODO return updated clHandler
 			let new_part = {
 				part_id = cur_part.part_id,
@@ -617,7 +715,27 @@ module dbscan_plus (F : real) = {
 				isCore = part_isC,
 				isMargin = cur_part.isMargin,
 				isTightMargin = cur_part.isTightMargin,
-				chain_ids = 
+				chain_ids = p_cids
+			}
+			let new_proc = {
+				cur_part_id = clProc.cur_part_id,
+				cur_part_order = clProc.cur_part_order,
+				isPartVisited = clProc.isPartVisited,
+				relevantParts = clProc.relevantParts,
+				buffered_pts = clProc.buffered_pts,
+				buff_isCore = new_relevant_isC,
+				buffered_ids = new_relevant_cids,
+				offs = clProc.offs,
+				next_offs = clProc.next_offs,
+				chainOffs = clProc.chainOffs
+			}
+			in {
+				clBase = clBase,
+				clProc = new_proc,
+				cur_part = new_part,
+				toFlush_dat = [],
+				toFlush_ids = [],
+				chain_collisions = clHandler.chain_collisions ++ new_collisions
 			}
 			
 
