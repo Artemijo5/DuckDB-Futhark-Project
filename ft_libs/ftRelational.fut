@@ -2,7 +2,7 @@ import "ftbasics"
 import "ft_SortGroupBy"
 import "ft_StrUtil"
 import "joins/ftSMJ"
-import "joins/ftHashJoin_old"
+--import "joins/ftHashJoin_old"
 import "joins/ftSMJ_str"
 import "joins/ftHashJoin_str"
 
@@ -218,72 +218,74 @@ import "joins/ftHashJoin_str"
 
 
 -- Radix-Partitioning
+-- TODO
 
-  entry partition_and_deepen_GFTR [n] [b] [pL_b]
-    (block_size: i16)
-    (gather_psize: idx_t.t)
-    (radix_size: i32)
-    (xs: [n](byteSeq [b]))
-    (pL: [n](byteSeq [pL_b]))
-    (size_thresh: idx_t.t)
-    (max_depth: i32)
-    (bit_step: i32)
-  : partitionedSet_GFTR [n] [b] [pL_b] =
-    let kps =
-      partition_and_deepen block_size gather_psize radix_size xs pL size_thresh max_depth bit_step
-    in {ks = kps.0, pL = kps.1}
+  --  entry partition_and_deepen_GFTR [n] [b] [pL_b]
+  --    (block_size: i16)
+  --    (gather_psize: idx_t.t)
+  --    (radix_size: i32)
+  --    (xs: [n](byteSeq [b]))
+  --    (pL: [n](byteSeq [pL_b]))
+  --    (size_thresh: idx_t.t)
+  --    (max_depth: i32)
+  --    (bit_step: i32)
+  --  : partitionedSet_GFTR [n] [b] [pL_b] =
+  --    let kps =
+  --      partition_and_deepen block_size gather_psize radix_size xs pL size_thresh max_depth bit_step
+  --    in {ks = kps.0, pL = kps.1}
 
-  entry partition_and_deepen_GFUR [n] [b]
-    (block_size: i16)
-    (gather_psize: idx_t.t)
-    (radix_size: i32)
-    (xs: [n](byteSeq [b]))
-    (offset: idx_t.t)
-    (size_thresh: idx_t.t)
-    (max_depth: i32)
-    (bit_step: i32)
-  : partitionedSet_GFUR [n] [b] =
-    let is = (offset..<(offset+n)) :> [n]idx_t.t
-    let kis =
-      partition_and_deepen block_size gather_psize radix_size xs is size_thresh max_depth bit_step
-    in {ks = kis.0, idx = kis.1}
+  --  entry partition_and_deepen_GFUR [n] [b]
+  --    (block_size: i16)
+  --    (gather_psize: idx_t.t)
+  --    (radix_size: i32)
+  --    (xs: [n](byteSeq [b]))
+  --    (offset: idx_t.t)
+  --    (size_thresh: idx_t.t)
+  --    (max_depth: i32)
+  --    (bit_step: i32)
+  --  : partitionedSet_GFUR [n] [b] =
+  --    let is = (offset..<(offset+n)) :> [n]idx_t.t
+  --    let kis =
+  --      partition_and_deepen block_size gather_psize radix_size xs is size_thresh max_depth bit_step
+  --    in {ks = kis.0, idx = kis.1}
 
-  entry calc_partitions_from_partitioned_set [n] [b]
-    (radix_size: i32)
-    (pXs: [n](byteSeq [b]))
-    (offset: idx_t.t)
-    (size_thresh: idx_t.t)
-    (max_depth: i32)
-  : partitionInfo =
-    calc_partInfo radix_size pXs offset size_thresh max_depth
+  --  entry calc_partitions_from_partitioned_set [n] [b]
+  --    (radix_size: i32)
+  --    (pXs: [n](byteSeq [b]))
+  --    (offset: idx_t.t)
+  --    (size_thresh: idx_t.t)
+  --    (max_depth: i32)
+  --  : partitionInfo =
+  --    calc_partInfo radix_size pXs offset size_thresh max_depth
 
-  entry create_hash_table_from_partitioned_set [n] [b]
-    (radix_size : i32)
-    (pXs : [n](byteSeq [b]))
-    (x_info : partitionInfo)
-    (scatter_psize : idx_t.t)
-  : radix_hashTable [i64.i32 radix_size] =
-    calc_radixHashTab radix_size pXs x_info scatter_psize
+  --  entry create_hash_table_from_partitioned_set [n] [b]
+  --    (radix_size : i32)
+  --    (pXs : [n](byteSeq [b]))
+  --    (x_info : partitionInfo)
+  --    (scatter_psize : idx_t.t)
+  --  : radix_hashTable [i64.i32 radix_size] =
+  --    calc_radixHashTab radix_size pXs x_info scatter_psize
 
 -- Radix-Hash Partitioned Join
+-- TODO
 
-  entry Inner_Radix_Hash_Join [nR] [nS] [b]
-    (radix_size : i32)
-    (pR : [nR](byteSeq [b]))
-    (pS : [nS](byteSeq [b]))
-    (s_info : partitionInfo)
-    (s_hashTable : radix_hashTable [i64.i32 radix_size])
-   : joinPairs_bsq [b] =
-    radix_hash_join radix_size pR pS s_info s_hashTable
+  --  entry Inner_Radix_Hash_Join [nR] [nS] [b]
+  --    (radix_size : i32)
+  --    (pR : [nR](byteSeq [b]))
+  --    (pS : [nS](byteSeq [b]))
+  --    (s_info : partitionInfo)
+  --    (s_hashTable : radix_hashTable [i64.i32 radix_size])
+  --   : joinPairs_bsq [b] =
+  --    radix_hash_join radix_size pR pS s_info s_hashTable
 
-  entry Inner_Radix_Hash_Join_with_right_keys_unique [nR] [nS] [b]
-    (radix_size : i32)
-    (pR : [nR](byteSeq [b]))
-    (pS : [nS](byteSeq [b]))
-    (s_info : partitionInfo)
-    (s_hashTable : radix_hashTable [i64.i32 radix_size])
-  : joinPairs_bsq [b] =
-    radix_hash_join_with_S_keys_unique radix_size pR pS s_info s_hashTable
+  --  entry Inner_Radix_Hash_Join_with_right_keys_unique [nR] [nS] [b]
+  --    (radix_size : i32)
+  --    (pR : [nR](byteSeq [b]))
+  --    (pS : [nS](byteSeq [b]))
+  --    (s_info : partitionInfo)
+  --    (s_hashTable : radix_hashTable [i64.i32 radix_size])
+  --  : joinPairs_bsq [b] =
+  --    radix_hash_join_with_S_keys_unique radix_size pR pS s_info s_hashTable
 
 -- Group-By
     entry find_known_key_counts_long (key_no) (ks)
@@ -377,6 +379,13 @@ import "joins/ftHashJoin_str"
     : strInfo =
       gather_str psize gather_is {str_content = str_con, str_idx = str_is}
 
+  -- Split
+   entry split_words_from_text [n]
+    (include_numerics : bool)
+    (chars : [n]u8)
+  : strInfo =
+    split_words include_numerics chars
+
   -- Sort
     entry arith_sort_str_GFTR [n] [total_len] [pL_b]
       (str_content : [total_len]u8)
@@ -419,6 +428,19 @@ import "joins/ftHashJoin_str"
       let (sort_con, sort_is, sort_pL) = do_sort_str ci_arith_char_cmp str_content str_idx ys psize
       let sort_info : strInfo = {str_content = sort_con, str_idx = sort_is}
       in {str_info = sort_info, is = sort_pL}
+
+    entry arith_sorted_str_rank_count
+      (str_info : strInfo)
+    : sortgroupInfo =
+      let (s_rank, s_count) = sorted_str_rankCount str_info arith_char_cmp
+      in {group_idx = s_rank, group_count = s_count}
+
+    entry arith_sorted_str_rank_count_caseInsens
+      (str_info : strInfo)
+    : sortgroupInfo =
+      let ci_arith_char_cmp = case_insensitive_char_cmp arith_char_cmp
+      let (s_rank, s_count) = sorted_str_rankCount str_info ci_arith_char_cmp
+      in {group_idx = s_rank, group_count = s_count}
 
   -- SMJ
     entry sortMergeJoin_str

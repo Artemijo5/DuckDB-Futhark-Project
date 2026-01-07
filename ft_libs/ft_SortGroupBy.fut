@@ -1,4 +1,5 @@
 import "ftbasics"
+import "lib/github.com/diku-dk/segmented/segmented"
 
 -- Abstract Grouped Aggregations
 
@@ -292,15 +293,8 @@ module GroupedAggregator_double = mk_aggrCol_from_numeric f64
 		(ne : t)
 		(xs : [n]t)
 	: [group_no]t =
-		let max_size = idx_t.maximum group_sizes
-		let regularised_xs = (iota group_no)
-			|> map (\gi ->
-				let this_inf = group_idx[gi]
-				let this_sup = this_inf + group_sizes[gi]
-				let this_pad = max_size - group_sizes[gi]
-				in (xs[this_inf:this_sup] ++ (replicate this_pad ne)) :> [max_size]t
-			)
-		in map (\gxs -> reduce_comm f ne gxs) regularised_xs
+		let flags = scatter (replicate n false) group_idx (replicate group_no true)
+		in (segmented_reduce f ne flags xs) :> [group_no]t
 
 	local def alt_grouped_all [n] [group_no] 't
 		(group_idx : [group_no]idx_t.t)

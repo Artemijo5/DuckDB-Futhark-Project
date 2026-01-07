@@ -64,3 +64,24 @@ def smj_str
 		scatter_psize
 	let jp_str = gather_str scatter_psize jp.vs str_info1
 	in {str_info = jp_str, ix = jp.ix, iy = jp.iy}
+
+def sorted_str_rankCount
+	(str_info : strInfo)
+	(char_cmp : u8 -> u8 -> i32)
+: ([]i64, []i64) =
+	let isStart = indices str_info.str_idx
+		|> map (\i -> i==0 || (
+			(str_cmp_in_content
+				str_info.str_content str_info.str_idx i (i-1) char_cmp
+			) != 0 )
+		)
+	let nums_ = indices str_info.str_idx
+		|> zip isStart
+		|> filter (.0)
+		|> map (.1)
+	let n_distinct = length nums_
+	let nums = iota n_distinct
+		|> map (\i -> (nums_[i], if i==(n_distinct - 1) then nums_[i]+1 else nums_[i+1]))
+		|> map (\(i1,i2) -> i2-i1)
+	in (nums_, nums)
+	

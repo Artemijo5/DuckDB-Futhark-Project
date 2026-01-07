@@ -106,3 +106,27 @@ def gather_str [ni]
 	let (g_con, g_idx) = do_gather_str psize gather_is str_info.str_content str_info.str_idx
 	in {str_content = g_con, str_idx = g_idx}
 
+def split_words [n]
+	(include_numerics : bool)
+	(chars : [n]u8)
+: strInfo =
+	let isValid = chars
+		|> map (\c ->
+			(c>=65 && c<=90 ) ||
+			(c>=97 && c<=122) ||
+			(include_numerics && c>=48 && c<=57)
+		)
+	let invalidCounter = isValid
+		|> map (\v -> if v then (i64.i32 0) else (i64.i32 1))
+		|> exscan (+) 0
+	let strContent = zip isValid chars
+		|> filter (.0)
+		|> map (.1)
+	let strIdx = iota n
+		|> map (\i ->
+			let isStart = isValid[i] && (i==0 || !(isValid[i-1]))
+			in (isStart, invalidCounter[i], i)
+		)
+		|> filter (.0)
+		|> map (\(_,ii,i) -> i-ii)
+	in {str_content = strContent, str_idx = strIdx}
