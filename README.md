@@ -28,7 +28,7 @@ Current futhark libraries:
 The purpose of this project is to implement some GPU-based relational algorithms using the futhark programming language, identifying techniques for functional GPU database programming and evaluating performance.
 
 Algorithms currently implemented:
-- Relational Joins (SMJ, Radix Hash Join - based on https://arxiv.org/abs/2312.00720 and references)
+- Relational Joins (SMJ, Radix Hash Join - based on https://arxiv.org/abs/2312.00720 and references) (note: Hash Joins are temporarily not being compiled)
 - Group-by Aggregation
 - Skyline Queries
 - DBSCAN (currently only for datasets that fit fully in the GPU)

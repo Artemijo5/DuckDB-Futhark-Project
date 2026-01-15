@@ -79,7 +79,7 @@ CUDA-ftDBSCAN: ft_libs/ftDBSCAN.fut
 	futhark cuda ftDBSCAN.fut --library
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
-CUDA1-ftDBSCAN: ft_libs/ft_libs/ftDBSCAN.fut
+CUDA1-ftDBSCAN: ft_libs/ftDBSCAN.fut
 	futhark cuda ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
 
 CUDA2-ftDBSCAN: ft_clibs/ftDBSCAN.c

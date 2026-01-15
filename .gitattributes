@@ -1,1 +1,5 @@
 *.fut linguist-language=Futhark
+
+ft_clibs/* linguist-vendored
+/ft_libs/lib/* linguist-vendored
+clibs/duckdb.* linguist-vendored

@@ -454,8 +454,8 @@ module dbscan_plus (F : real) = {
 			}
 	
 	-- DBSCAN functions
-	-- NOTE : any DBSCAN functions delete the flushData from DBSCAN
-	-- It is assumed that they will be flushed before calling them
+	-- NOTE : deletes the flushData from clHandler
+	-- It is assumed that they will be flushed before DBSCAN
 
 		local def get_num_neighbours_against [n1] [n2]
 			(dat1 : [n1](f,f))
@@ -561,7 +561,6 @@ module dbscan_plus (F : real) = {
 					|> filter (\(curCid,_) -> curCid < chain_offs)
 			-- Return
 				in (rectified_clustering, new_collisions)
-
 
 		local def assign_chain_ids [fn] [pn]
 			(frontier_pts : [fn](f,f))
