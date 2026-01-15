@@ -49,8 +49,10 @@ type~ dbcHandler_t [n] [part_no] 'f = {
 	current_partition : dbcPartition_t [n] f,
 	toFlush_dat : [](f,f),
 	toFlush_ids : []i64,
-	chain_collisions : [](i64,i64) -- TODO figure out exactly how to handle, prob in 2nd pass
+	chain_collisions : [](i64,i64)
 }
+
+type~ collisionTable = {chain_id: []i64, replaceWith: []i64}
 
 module dbscan_plus (F : real) = {
 	-- Types and Basic Ops
@@ -531,10 +533,10 @@ module dbscan_plus (F : real) = {
 				-- distinct
 				-- TODO apply m_size here?
 				let numCol_mult = length prior_collisions_multiplicity
-				let prior_collisions_flags = numCol_mult
+				let prior_collisions_flags = iota numCol_mult
 					|> map (\i ->
 						let pc = prior_collisions_multiplicity[i]
-						let toFlag = numCol_mult
+						let toFlag = iota numCol_mult
 							|> map (\j -> (j, prior_collisions_multiplicity[j]))
 							|> reduce_comm (\(j1,pc1) (j2,pc2) ->
 								if ((pc1.0 != pc.0 || pc1.1 != pc.1) ||
@@ -739,7 +741,59 @@ module dbscan_plus (F : real) = {
 			
 
 	-- TODO functions to rectify chain collisions (2nd pass)
+		def make_collisions_compact [n]
+			(clHandler : dbcHandler [n])
+		: collisionTable =
+			let m_size = clHandler.clBase.m_size
+			let cc = clHandler.chain_collisions
+			let nc = length cc
+			let extPar = i64.max 1 (m_size / nc)
+			let num_iter = (extPar + nc - 1) / extPar
+			let cc_flags =
+				loop iter_flags = (replicate nc true) for j in (iota num_iter) do
+					let inf = j*extPar
+					let sup = i64.min (inf + extPar) nc
+					let cur_is = (inf..<sup)
+					let cur_flags = cur_is |> map (\i ->
+							let pc = cc[i]
+							let toFlag = cc
+								|> reduce_comm (\cc1 cc2 ->
+									if (cc1.0!=pc.0 || (cc2.0==pc.0 && cc2.1<cc1.1))
+									then cc2
+									else cc1
+								) pc
+							in toFlag.1 == pc.1
+						)
+					in iter_flags with [inf:sup] = cur_flags
+			let cc_distinct = cc
+				|> zip (cc_flags)
+				|> filter (.0)
+				|> map (.1)
+			let (cur_chain, prev_chain) = cc_distinct |> unzip
+			in {chain_id = cur_chair, replaceWith = prev_chain}
 
-
-
+		def rectify_partition_ids [n]
+			(partition_ids : [n]i64)
+			(colTbl : collisionTable)
+			(m_size : i64)
+		: [n]i64 =
+			let ncc = length colTbl.chain_id
+			let extPar = i64.max 1 (m_size / ncc)
+			let num_iter = (extPar + n - 1) / extPar
+			let cc = zip (colTbl.chain_id :> [ncc]i64) (colTbl.replaceWith :> [ncc]i64)
+			let rectified_clustering =
+				loop rect_ids = partition_ids for j in (iota num_iter) do
+					let inf = j*extPar
+					let sup = i64.min (inf + extPar) n
+					let cur_ids = partition_ids[inf:sup]
+					let cur_rect_ids = cur_ids |> map (\i ->
+						cc |> reduce_comm (\(cur1,pre1) (cur2,pre2) ->
+								if ((cur1!=i) || (cur2==i && pre1==i))
+								then (cur2,pre2)
+								else (cur1,pre1)
+							) (i,i)
+					)
+				in rect_ids with [inf:sup] = cur_rect_ids
+			in rectified_clustering
 }
+
