@@ -52,6 +52,8 @@ type~ dbcHandler_t [n] [part_no] 'f = {
 	chain_collisions : [](i64,i64)
 }
 
+type~ flushedData_t 'f = {xs : []f, ys : []f, chain_ids : []i64}
+
 type~ collisionTable = {chain_id: []i64, replaceWith: []i64}
 
 module dbscan_plus (F : real) = {
@@ -62,6 +64,8 @@ module dbscan_plus (F : real) = {
 		type dbcPartition [n] = dbcPartition_t [n] t
 		type~ dbcProcessor [part_no] = dbcProcessor_t [part_no] t
 		type~ dbcHandler [n] [part_no] = dbcHandler_t [n] [part_no] t
+
+		type~ flushedData = flushedData_t t
 
 		local def gt = (F.>)
 		local def lt = (F.<)
@@ -460,6 +464,12 @@ module dbscan_plus (F : real) = {
 				toFlush_ids = flush_cids,
 				chain_collisions = clHandler.chain_collisions
 			}
+
+		def flush_dat [n] [part_no]
+			(clHandler : dbcHandler [n] [part_no])
+		: flushedData =
+			let (xdat, ydat) = clHandler.toFlush_dat |> unzip
+			in {xs = xdat, ys = ydat, chain_ids = clHandler.toFlush_ids}
 	
 	-- DBSCAN functions
 	-- NOTE : deletes the flushData from clHandler
@@ -808,3 +818,62 @@ module dbscan_plus (F : real) = {
 }
 
 -- Double Entry Points
+	type  dbcBase_double = dbcBase_t f64
+	type  dbcPartition_double [n] = dbcPartition_t [n] f64
+	type~ dbcProcessor_double [part_no] = dbcProcessor_t [part_no] f64
+	type~ dbcHandler_double [n] [part_no] = dbcHandler_t [n] [part_no] f64
+
+	type~ flushedData_double = flushedData_t f64
+
+	module dbscanPlus_double = dbscan_plus f64
+
+	entry mk_dbcHandler_double
+		(min_x : f64) (min_y : f64) (max_x : f64) (max_y : f64)
+		(parts_x : i64) (parts_y : i64)
+		(isEuclidean : bool) (isRadians : bool) (radius : f64)
+		(eps : f64) (minPts : i64)
+		(m_size : i64)
+	: dbcHandler_double [0] [parts_x * parts_y] =
+		let dist_type  : distType = if isEuclidean then #euclidean else #haversine
+		let angle_type : anglType = if isRadians then #radians else #degrees
+		in dbscanPlus_double.mk_dbcHandler
+			min_x min_y max_x max_y parts_x parts_y
+			dist_type angle_type radius
+			eps minPts m_size
+
+	entry next_partition_to_read_double [n] [part_no]
+		(clHandler : dbcHandler_double [n] [part_no])
+	: i64 =
+		dbscanPlus_double.next_partition_to_read clHandler
+
+	entry add_next_partition_double [n_old] [n_new] [part_no]
+		(clHandler : dbcHandler_double [n_old] [part_no])
+		(new_id : i64)
+		(new_xs : [n_new]f64)
+		(new_ys : [n_new]f64)
+	: dbcHandler_double [n_new] [part_no] =
+		dbscanPlus_double.add_next_partition clHandler new_id new_xs new_ys
+
+	entry flush_dat_double [n] [part_no]
+		(clHandler : dbcHandler_double [n] [part_no])
+	: flushedData_double =
+		dbscanPlus_double.flush_dat clHandler
+
+	entry do_DBSCAN_double [n] [part_no]
+		(clHandler : dbcHandler_double [n] [part_no])
+		(gather_psize : i64)
+	: dbcHandler_double [n] [part_no] =
+		dbscanPlus_double.do_DBSCAN clHandler gather_psize
+
+	entry make_collisions_compact_double [n] [part_no]
+		(clHandler : dbcHandler_double [n] [part_no])
+	: collisionTable =
+		dbscanPlus_double.make_collisions_compact clHandler
+
+	entry rectify_partition_ids_double [n]
+		(partition_ids : [n]i64)
+		(colTbl : collisionTable)
+		(m_size : i64)
+	: [n]i64 =
+		dbscanPlus_double.rectify_partition_ids partition_ids colTbl m_size
+
