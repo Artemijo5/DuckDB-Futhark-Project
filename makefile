@@ -5,6 +5,7 @@ DEPS=clibs/mylogger.c clibs/libduckdb.so clibs/db_util.c
 REL_DEPS=ft_clibs/libftRelational.so
 SKYLINE_DEPS=ft_clibs/libftSkyline.so
 DBSCAN_DEPS=ft_clibs/libftDBSCAN.so
+DBSCANPLUS_DEPS=ft_clibs/libftDBSCAN_plus.so
 
 LIBFLAGS=-fPIC -shared
 CUDAFLAGS=-lcuda -lcudart -lnvrtc
@@ -88,3 +89,17 @@ CUDA2-ftDBSCAN: ft_clibs/ftDBSCAN.c
 DBSCAN: benchmarks/src/dbscan.c $(DEPS) $(DBSCAN_DEPS)
 	$(CC) benchmarks/src/dbscan.c -lm -o benchmarks/dbscan.o \
 		$(DEPS) $(DBSCAN_DEPS) $(CFLAGS)
+
+C-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
+	futhark c ft_libs/ftDBSCAN_plus.fut --library -o ft_clibs/ftDBSCAN_plus
+	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS)
+
+CUDA-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
+	futhark cuda ftDBSCAN_plus.fut --library
+	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
+
+CUDA1-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
+	futhark cuda ft_libs/ftDBSCAN_plus.fut --library -o ft_clibs/ftDBSCAN_plus
+
+CUDA2-ftDBSCAN_plus: ft_clibs/ftDBSCAN_plus.c
+	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
