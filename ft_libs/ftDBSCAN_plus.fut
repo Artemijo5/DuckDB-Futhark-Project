@@ -953,4 +953,8 @@ module dbscan_plus (F : real) = {
 		let clHandler1 = do_DBSCAN_double clHandler 1024
 		in clHandler1
 
+-- TODO might need to pass in loose margins for core point cids as well
+-- for corner case:
+-- minPts>=3, TM point only becomes core when neighbouring part is examined, neighbour with 2 cores in loose margin
+
 
