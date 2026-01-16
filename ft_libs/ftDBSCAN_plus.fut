@@ -580,14 +580,31 @@ module dbscan_plus (F : real) = {
 					)
 					|> map (.1)
 			-- 4 - Store preCid collisions
-				let new_collisions = prior_collisions
-					|> filter (\(curCid,_) -> curCid < chain_offs)
-					-- TODO doesn't work as intended...
-					-- TODO figure out...
-					-- TODO ok I'll have to:
-					-- recombine preCids with rectified
-					-- and redo distinct
-					-- ...
+				let new_collisions =
+					-- find where previous ids collide
+					let previous_collisions = rectified_clustering
+						|> zip pre_cids
+						|> filter (\(pc,rc) -> rc<chain_offs && pc>=0)
+					-- distinct by prevCid (keep the smallest per each one)
+					-- TODO use m_size here?
+					let n_prevCol = length previous_collisions
+					let prcol_flag = indices previous_collisions
+						|> map (\i ->
+							let (prv,cur) = previous_collisions[i]
+							let res = previous_collisions
+								|> zip (indices previous_collisions)
+								|> reduce_comm (\(i1, (prv1,cur1)) (i2, (prv2,cur2)) ->
+									if (cur1!=cur || cur1==prv1 ||
+									(cur2==cur && ((prv2<prv1 && prv2!=cur2) || prv2==prv1 && i2<i1)))
+									then (i2, (cur2,prv2))
+									else (i1, (cur1,prv1))
+								) (i,(prv,cur))
+							in i == res.0 && (res.1.0 != res.1.1)
+						)
+					in (previous_collisions :> [n_prevCol](i64,i64))
+						|> zip (prcol_flag :> [n_prevCol]bool)
+						|> filter(.0)
+						|> map (.1)
 			-- Return
 				in (rectified_clustering, new_collisions)
 
