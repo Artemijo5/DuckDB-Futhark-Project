@@ -311,7 +311,6 @@ module dbscan_plus (F : real) = {
 			let new_pts = zip new_xs new_ys
 			-- update relevant partitions
 			let new_relevants = neighs
-				|> map (\n -> if isNeighVisited[n] then (-1) else n) -- visited can't be relevant
 				|> map (\n -> if clProc.relevantParts |> any (== n) then (-1) else n) -- avoid multiplicity
 				|> map (\nid ->
 					if nid<0 then (-1,false) else
@@ -331,7 +330,8 @@ module dbscan_plus (F : real) = {
 				|> filter (.1) -- keep only partitions with pts within eps of their boundaries
 				-- TODO could better shave corner points
 				|> map (.0)
-			let added_relevants = clProc.relevantParts ++ new_relevants -- append for breadth-first
+			let added_relevants = (clProc.relevantParts ++ new_relevants)
+				|> filter (\pid -> !new_isPartVisited[pid])-- append for breadth-first
 			-- new partition's margin points
 			-- don't mind those that are not near any neighbours
 			let new_isMargin = new_pts |> map (\(x,y) ->
@@ -484,7 +484,7 @@ module dbscan_plus (F : real) = {
 			(radius : t)
 			(m_size : i64)
 		: [n1]i64 =
-			let extPar = i64.max 1 (m_size/n2)
+			let extPar = i64.max 1 (m_size/(i64.max n2 1))
 			let num_iter = (extPar + n1 - 1)/extPar
 			in loop nnBuff = (replicate n1 0) for j in (iota num_iter) do
 				let inf = j*extPar
@@ -514,7 +514,7 @@ module dbscan_plus (F : real) = {
 				let n1 = length pre_cids_
 				let core_pts = core_pts_ :> [n1](t,t) -- dumb size-checker
 				let pre_cids = pre_cids_ :> [n1]i64 -- dumb size-checker
-				let extPar = i64.max 1 (m_size/n1)
+				let extPar = i64.max 1 (m_size/(i64.max 1 n1))
 				let num_iter = (extPar + n1 - 1) / extPar
 			-- 1 - find current cluster IDs irrespective of preCids
 				let (cluster_heads,_) =
@@ -573,14 +573,21 @@ module dbscan_plus (F : real) = {
 				-- TODO apply m_size here?
 				let rectified_clustering = local_clustering |> map (\cc ->
 						prior_collisions |> reduce_comm (\(cur1,pre1) (cur2,pre2) ->
-							if (cur1!=cc || pre1<0 || (pre1>pre2 && cur2==cc)) then (cur2,pre2)
+							if (cur1!=cc || pre1<0 || (pre1>pre2 && cur2==cc))
+							then (cur2,pre2)
 							else (cur1,pre1) 
 						) (cc, cc)
 					)
-					|> map (.0)
+					|> map (.1)
 			-- 4 - Store preCid collisions
 				let new_collisions = prior_collisions
 					|> filter (\(curCid,_) -> curCid < chain_offs)
+					-- TODO doesn't work as intended...
+					-- TODO figure out...
+					-- TODO ok I'll have to:
+					-- recombine preCids with rectified
+					-- and redo distinct
+					-- ...
 			-- Return
 				in (rectified_clustering, new_collisions)
 
@@ -595,7 +602,7 @@ module dbscan_plus (F : real) = {
 			(radius : t)
 			(m_size : i64)
 		: ([fn]i64, [pn]i64) =
-			let extPar = i64.max 1 (m_size/(length core_pts))
+			let extPar = i64.max 1 (m_size/(i64.max 1 (length core_pts)))
 			let cluster_head = indices core_pts
 				|> map (\i -> (cids[i], core_pts[i]))
 			-- assign cids to frontier points
@@ -673,14 +680,15 @@ module dbscan_plus (F : real) = {
 				-- get neighcount from tight & loose frontiers
 				let tf_neighCount1 = get_num_neighbours_against
 					tf_pts tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+					|> map (\c -> c-1)
 				let tf_neighCount2 = get_num_neighbours_against
 					tf_pts lf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- get neighcount from partition's tight margin
 				let tf_neighCount3 = get_num_neighbours_against
 					tf_pts margin_dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- sum
-				in map3 (\c1 c2 c3 -> c1+c2+c3-1)
-					tf_neighCount1 tf_neighCount2 tf_neighCount3
+				in (map3 (\c1 c2 c3 -> c1+c2+c3)
+						tf_neighCount1 tf_neighCount2 tf_neighCount3)
 					|> map (>= minPts)
 			-- find core points from partition
 			let part_isC : [n]bool =
@@ -688,13 +696,14 @@ module dbscan_plus (F : real) = {
 				-- from self
 				let part_neighCount1 = get_num_neighbours_against
 					dat dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+					|> map (\c -> c-1)
 				-- from tight frontier
 				let part_neighCount2 =
 					let part_neighCount2_ = get_num_neighbours_against
 						margin_dat tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 					in scatter (replicate n 0) margin_is part_neighCount2_
 				-- sum
-				in map2 (+) part_neighCount1 part_neighCount2
+				in (map2 (+) part_neighCount1 part_neighCount2)
 					|> map (>= minPts)
 			-- isolate core pts && cids from tfs
 			let (core_pts, preCids) =
@@ -722,6 +731,7 @@ module dbscan_plus (F : real) = {
 				clBase.m_size
 			let new_relevant_cids = scatter (copy clProc.buffered_ids) tf_is f_cids
 			let new_relevant_isC = scatter (copy clProc.buff_isCore) tf_is tf_isC
+			let max_cid = i64.max (i64.maximum f_cids) (i64.maximum p_cids)
 			-- return updated clHandler
 			let new_part = {
 				part_id = cur_part.part_id,
@@ -747,7 +757,7 @@ module dbscan_plus (F : real) = {
 				buffered_ids = new_relevant_cids,
 				offs = clProc.offs,
 				next_offs = clProc.next_offs,
-				chainOffs = clProc.chainOffs
+				chainOffs = i64.max (clProc.chainOffs) (max_cid+1)
 			}
 			in {
 				clBase = clBase,
@@ -876,4 +886,54 @@ module dbscan_plus (F : real) = {
 		(m_size : i64)
 	: [n]i64 =
 		dbscanPlus_double.rectify_partition_ids partition_ids colTbl m_size
+
+-- Tests
+	def test_handler = mk_dbcHandler_double
+		0.0 0.0 30.0 30.0
+		3 3
+		true true 0.0
+		1.0 1
+		4096
+
+	def make_test_part [n]
+		(pid) (xys : [n](f64,f64))
+	: ([n]f64, [n]f64) =
+		let x_id = pid % 3
+		let y_id = pid / 3
+		let x_offs = (f64.i64 x_id)*10.0
+		let y_offs = (f64.i64 y_id)*10.0
+		in xys |> map (\(x,y) -> (x+x_offs,y+y_offs)) |> unzip
+
+	def test_1 =
+		let pts : [](f64,f64) = [
+				(0.4,2.5),
+				(8.5,9.5),
+				(7.5,7.5),
+				(9.4,2.1),
+				(9.4,2.2),
+				(9.4,3.5),
+				(9.4,3.6),
+				(3,0.2),
+				(3,1.2),
+				(2.5,2.5),
+				(2.5,3.4),
+				(3.4,3.4)]
+		let (xs,ys) = make_test_part 4 pts
+		let clHandler = add_next_partition_double (copy test_handler) 4 xs ys
+		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let next = next_partition_to_read_double clHandler1
+		let pts : [](f64,f64) = [(4.0, 1.1),(0.0,1.9),(9.9,2.5),(4.0,9.7),(4.5,9.7)]
+		let (xs,ys) = make_test_part next pts
+		let clHandler = add_next_partition_double clHandler1 next xs ys
+		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let next = next_partition_to_read_double clHandler1
+		let clHandler = add_next_partition_double clHandler1 next [13] [9.7]
+		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let next = next_partition_to_read_double clHandler1
+		let pts : [](f64,f64) = [(0.1,2.2), (0.2,2.8), (0.1, 3.5)]
+		let (xs,ys) = make_test_part next pts
+		let clHandler = add_next_partition_double clHandler1 next xs ys
+		let clHandler1 = do_DBSCAN_double clHandler 1024
+		in clHandler1
+
 

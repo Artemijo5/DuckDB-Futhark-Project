@@ -1,4 +1,5 @@
 *.so
+!ft_clibs/*.so
 *.a
 *.o
 *.obj
