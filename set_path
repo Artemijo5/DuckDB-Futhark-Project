@@ -1,1 +1,1 @@
-"`pwd`:`pwd`/clibs:`pwd`/ft_clibs:`pwd`/algo_utils/sort:`pwd`/algo_utils/join:`pwd`/algo_utils/smj:`pwd`/algo_utils/rmj:`pwd`/benchmarks:`pwd`/benchmarks/src:$LD_LIBRARY_PATH"
+"$(pwd):$(pwd)/clibs:$(pwd)/ft_clibs:$(pwd)/algo_utils/sort:$(pwd)/algo_utils/join:$(pwd)/algo_utils/smj:$(pwd)/algo_utils/rmj:$(pwd)/benchmarks:$(pwd)/benchmarks/src:$LD_LIBRARY_PATH"

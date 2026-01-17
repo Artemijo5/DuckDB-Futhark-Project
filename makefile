@@ -17,10 +17,16 @@ RHJ_DEPS=$(JOIN_DEPS) $(wildcard algo_utils/join/rhj/*.c)
 AGGR_DEPS=$(SMJ_DEPS)
 
 CUDA-LIBS:
-	make CUDA-ftRelational && make CUDA-ftDBSCAN && make CUDA-ftSkyline
+	make CUDA-ftRelational && \
+	make CUDA-ftSkyline && \
+	make CUDA-ftDBSCAN && \
+	make CUDA-ftDBSCAN_plus 
 
 C-LIBS:
-	make C-ftRelational && make C-ftDBSCAN && make C-ftSkyline
+	make C-ftRelational && \
+	make C-ftSkyline && \
+	make C-ftDBSCAN && \
+	make C-ftDBSCAN_plus 
 
 C-ftRelational: ft_libs/ftRelational.fut
 	futhark c ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
@@ -77,7 +83,7 @@ C-ftDBSCAN: ft_libs/ftDBSCAN.fut
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS)
 
 CUDA-ftDBSCAN: ft_libs/ftDBSCAN.fut
-	futhark cuda ftDBSCAN.fut --library
+	futhark cuda ft_clibs/ftDBSCAN.fut --library
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
 CUDA1-ftDBSCAN: ft_libs/ftDBSCAN.fut
@@ -95,7 +101,7 @@ C-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
 	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS)
 
 CUDA-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
-	futhark cuda ftDBSCAN_plus.fut --library
+	futhark cuda ft_clibs/ftDBSCAN_plus.fut --library
 	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
 CUDA1-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut

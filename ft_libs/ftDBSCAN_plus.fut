@@ -956,5 +956,7 @@ module dbscan_plus (F : real) = {
 -- TODO might need to pass in loose margins for core point cids as well
 -- for corner case:
 -- minPts>=3, TM point only becomes core when neighbouring part is examined, neighbour with 2 cores in loose margin
+-- could also do an if statement for minPts >= 3 (...)
+-- ALSO ig margin points should be at the end of core pts rather than the start, so that offset can be better...
 
 
