@@ -26,7 +26,7 @@ C-LIBS:
 	make C-ftRelational && \
 	make C-ftSkyline && \
 	make C-ftDBSCAN && \
-	make C-ftDBSCAN_plus 
+	make C-ftDBSCAN_plus
 
 C-ftRelational: ft_libs/ftRelational.fut
 	futhark c ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
