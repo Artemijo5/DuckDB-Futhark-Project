@@ -1,4 +1,5 @@
 import "ftbasics"
+import "lib/github.com/diku-dk/sorts/merge_sort"
 
 type distType = #euclidean | #haversine -- TODO hsv distance ? for Mahalanobis transform data externally
 type anglType = #degrees | #radians
@@ -56,7 +57,7 @@ type~ flushedData_t 'f = {xs : []f, ys : []f, chain_ids : []i64}
 
 type~ collisionTable = {chain_id: []i64, replaceWith: []i64}
 
-module dbscan_plus (F : real) = {
+module dbscan_plus (F : float) = {
 	-- Types and Basic Ops
 		type t = F.t
 
@@ -90,6 +91,8 @@ module dbscan_plus (F : real) = {
 
 		local def sqrt = (F.sqrt)
 		local def hypot = (F.hypot)
+
+		local def num_bits : i32 = F.num_bits
 
 	-- Angular Ops
 		local def pi = (F.pi)
@@ -691,7 +694,7 @@ module dbscan_plus (F : real) = {
 						((y `geq` (minus cur_part.min_coord[1] eps)) && (y `leq` (plus cur_part.max_coord[1] eps)))
 					)
 			let (tf_pts, tf_cid, tf_is) = tight_frontier |> map (\(pt,_,cid,is) -> (pt,cid,is)) |> unzip3
-			let lf_pts = loose_frontier |> map (.0)
+			let (lf_pts, lf_isC, lf_cid) = loose_frontier |> map (\(pt,isC,cid,_) -> (pt,isC,cid)) |> unzip3
 			-- find core points from tight margins
 			let tf_isC =
 				-- get neighcount from tight & loose frontiers
@@ -722,7 +725,7 @@ module dbscan_plus (F : real) = {
 				-- sum
 				in (map2 (+) part_neighCount1 part_neighCount2)
 					|> map (>= minPts)
-			-- isolate core pts && cids from tfs
+			-- isolate core pts && cids
 			let (core_pts, preCids) =
 				let (tf_core_pts, tf_precids) =
 					zip3 tf_pts tf_cid tf_isC
@@ -734,7 +737,15 @@ module dbscan_plus (F : real) = {
 					|> filter (.2)
 					|> map (\(pts,cid,_) -> (pts,cid))
 					|> unzip
-				in (tf_core_pts ++ part_core_pts, tf_precids ++ part_precids)
+				-- loose frontier only needed if minPts >= 3
+				let (lf_core_pts, lf_precids) =
+					if minPts<3 then ([],[]) else
+					zip3 lf_pts lf_cid lf_isC
+					|> filter (.2)
+					|> map (\(pts,cid,_) -> (pts,cid))
+					|> unzip
+				in (part_core_pts ++ tf_core_pts ++ lf_core_pts,
+					part_precids ++ tf_precids ++ lf_precids)
 			-- iteratively group them in chains
 			let (cids, new_collisions) = find_chain_ids
 				core_pts preCids
@@ -786,13 +797,14 @@ module dbscan_plus (F : real) = {
 			}
 			
 
-	-- TODO functions to rectify chain collisions (2nd pass)
-		def make_collisions_compact [n] [part_no]
+	-- functions to rectify chain collisions (2nd pass)
+		def old_make_collisions_compact [n] [part_no]
 			(clHandler : dbcHandler [n] [part_no])
 		: collisionTable =
 			let m_size = clHandler.clBase.m_size
 			let cc = clHandler.chain_collisions
 			let nc = length cc
+			in if nc == 0 then {chain_id = [], replaceWith = []} else
 			let extPar = i64.max 1 (m_size / nc)
 			let num_iter = (extPar + nc - 1) / extPar
 			let cc_flags =
@@ -818,30 +830,55 @@ module dbscan_plus (F : real) = {
 			let (cur_chain, prev_chain) = cc_distinct |> unzip
 			in {chain_id = cur_chain, replaceWith = prev_chain}
 
-		def rectify_partition_ids [n]
-			(partition_ids : [n]i64)
+		def make_collisions_compact [n] [part_no]
+			(clHandler : dbcHandler [n] [part_no])
+		: collisionTable =
+			let cc_sorted = clHandler.chain_collisions
+				|> merge_sort (\(c1,p1) (c2,p2) -> (c1<c2 || (c1==c2 && p1<=p2)))
+			let cc_distinct = indices cc_sorted
+				|> map (\i -> if i==0 then true else (cc_sorted[i].0 != cc_sorted[i-1].0))
+				|> zip cc_sorted
+				|> filter (.1)
+				|> map (.0)
+			let (cur_chain, prev_chain) = cc_distinct |> unzip
+			in {chain_id = cur_chain, replaceWith = prev_chain}
+
+		def rectify_cluster_ids [n]
+			(chain_ids : [n]i64)
 			(colTbl : collisionTable)
-			(m_size : i64)
+			(gather_psize : i64)
 		: [n]i64 =
-			let ncc = length colTbl.chain_id
-			let extPar = i64.max 1 (m_size / ncc)
-			let num_iter = (extPar + n - 1) / extPar
-			let cc = zip (colTbl.chain_id :> [ncc]i64) (colTbl.replaceWith :> [ncc]i64)
-			let rectified_clustering =
-				loop rect_ids = (copy partition_ids) for j in (iota num_iter) do
-					let inf = j*extPar
-					let sup = i64.min (inf + extPar) n
-					let cur_ids = partition_ids[inf:sup]
-					let cur_rect_ids = cur_ids |> map (\i ->
-						cc |> reduce_comm (\(cur1,pre1) (cur2,pre2) ->
-								if ((cur1!=i) || (cur2==i && pre1==i))
-								then (cur2,pre2)
-								else (cur1,pre1)
-							) (i,i)
-					)
-					|> map (.1)
-				in rect_ids with [inf:sup] = cur_rect_ids
-			in rectified_clustering
+			-- Binary search to find match
+			let cid = colTbl.chain_id
+			let ncc = length cid
+			let num_iter = 1 + (ncc |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+			let (bsearch,_) =
+				loop (search_is, last_step) = (replicate n 0, ncc) for _ in iota (num_iter) do
+					let this_step = (last_step+1) / 2
+					let cmps_ = search_is
+			          |> map (\i ->
+			            let prev_elem = if i<=0 then cid[0] else cid[i-1]
+			            let cur_elem = if i<0 then cid[0] else cid[i]
+			            in (i, prev_elem, cur_elem)
+			          )
+			        let cmps = map2 (\kv (i, pv, cv) ->
+			            if i<0 then (-1) else
+			            if (kv == cv) && (i==0 || (kv > pv))
+			              then i
+			            else if (kv == cv)
+			              then i64.max 0 (i-this_step)
+			            else if (kv > cv) then
+			              if (i == ncc-1) -- ommitted nv to make tuple leaner
+			              then -1
+			              else i64.min (ncc-1) (i+this_step)
+			            else -- kv < cv
+			              if (i == 0 || (kv > pv))
+			              then -1
+			              else i64.max 0 (i-this_step)
+			          ) chain_ids cmps_
+			        in (cmps, this_step)
+			in partitioned_gather_over_array (num_bits * 2) gather_psize
+				chain_ids colTbl.replaceWith bsearch
 }
 
 -- Double Entry Points
@@ -897,12 +934,12 @@ module dbscan_plus (F : real) = {
 	: collisionTable =
 		dbscanPlus_double.make_collisions_compact clHandler
 
-	entry rectify_partition_ids_double [n]
-		(partition_ids : [n]i64)
+	entry rectify_cluster_ids_double [n]
+		(chain_ids : [n]i64)
 		(colTbl : collisionTable)
-		(m_size : i64)
+		(gather_psize : i64)
 	: [n]i64 =
-		dbscanPlus_double.rectify_partition_ids partition_ids colTbl m_size
+		dbscanPlus_double.rectify_cluster_ids chain_ids colTbl gather_psize
 
 -- Tests
 	def test_handler = mk_dbcHandler_double
@@ -921,7 +958,7 @@ module dbscan_plus (F : real) = {
 		let y_offs = (f64.i64 y_id)*10.0
 		in xys |> map (\(x,y) -> (x+x_offs,y+y_offs)) |> unzip
 
-	def test_1 =
+	def test_1 (stop_point : i64) =
 		let pts : [](f64,f64) = [
 				(0.4,2.5),
 				(8.5,9.5),
@@ -930,6 +967,46 @@ module dbscan_plus (F : real) = {
 				(9.4,2.2),
 				(9.4,3.5),
 				(9.4,3.6),
+				(8.5,3.6),
+				(7.5,3.6),
+				(3,0.2),
+				(3,1.2),
+				(2.5,2.5),
+				(2.5,3.4),
+				(3.4,3.4)]
+		let (xs,ys) = make_test_part 4 pts
+		let clHandler = add_next_partition_double (copy test_handler) 4 xs ys
+		let clHandler1 = do_DBSCAN_double clHandler 1024
+		in if (stop_point<=0) then clHandler1 else
+		let next = next_partition_to_read_double clHandler1
+		let pts : [](f64,f64) = [(4.0, 1.1),(0.0,1.9),(9.9,2.5),(4.0,9.7),(4.5,9.7)]
+		let (xs,ys) = make_test_part next pts
+		let clHandler = add_next_partition_double clHandler1 next xs ys
+		let clHandler1 = do_DBSCAN_double clHandler 1024
+		in if (stop_point==1) then clHandler1 else
+		let next = next_partition_to_read_double clHandler1
+		let clHandler = add_next_partition_double clHandler1 next [13] [9.7]
+		let clHandler1 = do_DBSCAN_double clHandler 1024
+		in if (stop_point==2) then clHandler1 else
+		let next = next_partition_to_read_double clHandler1
+		let pts : [](f64,f64) = [(0.1,2.2), (0.2,2.8), (0.1, 3.5)]
+		let (xs,ys) = make_test_part next pts
+		let clHandler = add_next_partition_double clHandler1 next xs ys
+		let clHandler1 = do_DBSCAN_double clHandler 1024
+		in clHandler1
+
+	def test_2 (rect : bool) =
+		let flushedCids : []i64 = []
+		let pts : [](f64,f64) = [
+				(0.4,2.5),
+				(8.5,9.5),
+				(7.5,7.5),
+				(9.4,2.1),
+				(9.4,2.2),
+				(9.4,3.5),
+				(9.4,3.6),
+				(8.5,3.6),
+				(7.5,3.6),
 				(3,0.2),
 				(3,1.2),
 				(2.5,2.5),
@@ -942,21 +1019,30 @@ module dbscan_plus (F : real) = {
 		let pts : [](f64,f64) = [(4.0, 1.1),(0.0,1.9),(9.9,2.5),(4.0,9.7),(4.5,9.7)]
 		let (xs,ys) = make_test_part next pts
 		let clHandler = add_next_partition_double clHandler1 next xs ys
+		let flushedCids = flushedCids ++ clHandler.toFlush_ids
 		let clHandler1 = do_DBSCAN_double clHandler 1024
 		let next = next_partition_to_read_double clHandler1
 		let clHandler = add_next_partition_double clHandler1 next [13] [9.7]
+		let flushedCids = flushedCids ++ clHandler.toFlush_ids
 		let clHandler1 = do_DBSCAN_double clHandler 1024
 		let next = next_partition_to_read_double clHandler1
 		let pts : [](f64,f64) = [(0.1,2.2), (0.2,2.8), (0.1, 3.5)]
 		let (xs,ys) = make_test_part next pts
 		let clHandler = add_next_partition_double clHandler1 next xs ys
+		let flushedCids = flushedCids ++ clHandler.toFlush_ids
 		let clHandler1 = do_DBSCAN_double clHandler 1024
-		in clHandler1
+		let next = next_partition_to_read_double clHandler1
+		let clHandler = add_next_partition_double clHandler1 next [] []
+		let flushedCids = flushedCids ++ clHandler.toFlush_ids
+		in if !rect then flushedCids else
+		let cc = make_collisions_compact_double clHandler
+		in rectify_cluster_ids_double flushedCids cc 1024
 
 -- TODO might need to pass in loose margins for core point cids as well
 -- for corner case:
 -- minPts>=3, TM point only becomes core when neighbouring part is examined, neighbour with 2 cores in loose margin
 -- could also do an if statement for minPts >= 3 (...)
 -- ALSO ig margin points should be at the end of core pts rather than the start, so that offset can be better...
+-- ALSO ig sort chain collisions for 2nd pass...
 
 

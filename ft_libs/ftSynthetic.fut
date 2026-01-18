@@ -53,6 +53,7 @@ def hyperbolic [dim] [n]
 	(mag_inner : f32)
 	(mag : f32)
 	(rss_ : [dim][n]f32) -- random values from 0 to 1
+	(s : f32)
  : [n][dim]f32 =
 	let rss = rss_
 		|> map (map (\r -> mag_inner
@@ -70,6 +71,7 @@ def hyperbolic [dim] [n]
 			|> map (f32.sum)
 			|> map (\r -> r/(f32.i64 (dim-1)))
 			|> map (\r -> f*f |> (f32.-) 1.0 |> f32.sqrt |> (f32.*) r)
+			|> map (\r -> r**s)
 		)
 	let xss = rss
 		|> map (map (\r -> r*f))
@@ -82,12 +84,14 @@ def hyperbolic [dim] [n]
 def zipf_skewed [n] [n_hot]
 	(xs : [n]i64)
 	(hot_keys : [n_hot]i64)
+	(num_keys : i64)
 	(r_prob : [n]f32)
 	(s : f32)
 	(q : f32)
 : [n]i64 =
-	-- TODO only care for hot keys in Harmonic number (?) tho ig that doens't change "much"
-	let h_n = (iota (10*n_hot)) |> map (\n -> 1/((q+(f32.i64 (n+1)))**s)) |> f32.sum
+	let h_n = iota (i64.max num_keys (n_hot+1))
+		|> map (\n -> 1/((q+(f32.i64 (n+1)))**s))
+		|> f32.sum
 	let prob_k = (iota n_hot) |> map (\i -> 1.0/((((f32.i64 i)+q)**s)*h_n))
 	in map2 (\x p ->
 		let (newV,_,_) =

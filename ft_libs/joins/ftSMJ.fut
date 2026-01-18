@@ -230,7 +230,7 @@ import "../ftbasics"
               if (i == nS-1) -- ommitted nv to make tuple leaner
               then -1
               else i64.min (nS-1) (i+this_step)
-            else -- cv `gt` kv
+            else -- kv `lt` cv
               if (i == 0 || (kv `gt` pv))
               then -1
               else i64.max 0 (i-this_step)
