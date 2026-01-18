@@ -330,7 +330,7 @@ module skyline_real (F:real) = {
 			(skI : skylineInfo [dim] pL_t)
 		: skylineInfo [dim] pL_t =
 			let n = length skI.xys
-			let extPar = idx_t.min n (idx_t.max 1 (skB.m_size/n))
+			let extPar = idx_t.max 1 (idx_t.min n (idx_t.max 1 (skB.m_size/n)))
 			let num_iter = (extPar + n - 1)/extPar
 			let new_xys =
 				let new_is_ = loop ni = (iota n) for j in (iota num_iter) do
@@ -457,7 +457,7 @@ module skyline_real (F:real) = {
 		: skylineInfo [dim] pL_t =
 			let n1 = length skI1.xys
 			let n2 = length skI2.xys
-			let extPar = idx_t.min n1 (idx_t.max 1 (skB.m_size/n2))
+			let extPar = idx_t.max 1 (idx_t.min n1 (idx_t.max 1 (skB.m_size/(idx_t.max 1 n2))))
 			let num_iter = (extPar + n1 - 1)/extPar
 			let new_xys =
 				let new_is_ = loop ni = (iota n1) for j in (iota num_iter) do

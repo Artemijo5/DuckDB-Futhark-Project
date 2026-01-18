@@ -316,6 +316,11 @@ int main(int argc, char *argv[]) {
 
       	struct futhark_f32_2d *skyData_ft = futhark_new_f32_2d(ctx, (float*)skyData, cur_rows, DIM);
       	mylog(func_logfile, " - - Wrapped data into futhark core.");
+
+        const char* ftErr = futhark_context_get_error(ctx);
+        if(ftErr) perror(ftErr);
+
+
       	free(skyData);
 
       	struct futhark_opaque_skylineInfo_float *skyWindow;
