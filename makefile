@@ -6,6 +6,7 @@ REL_DEPS=ft_clibs/libftRelational.so
 SKYLINE_DEPS=ft_clibs/libftSkyline.so
 DBSCAN_DEPS=ft_clibs/libftDBSCAN.so
 DBSCANPLUS_DEPS=ft_clibs/libftDBSCAN_plus.so
+SYNTH_DEPS=ft_clibs/libftSynthetic.so
 
 LIBFLAGS=-fPIC -shared
 CUDAFLAGS=-lcuda -lcudart -lnvrtc
@@ -20,13 +21,15 @@ CUDA-LIBS:
 	make CUDA-ftRelational && \
 	make CUDA-ftSkyline && \
 	make CUDA-ftDBSCAN && \
-	make CUDA-ftDBSCAN_plus 
+	make CUDA-ftDBSCAN_plus && \
+	make CUDA-ftSynthetic
 
 C-LIBS:
 	make C-ftRelational && \
 	make C-ftSkyline && \
 	make C-ftDBSCAN && \
-	make C-ftDBSCAN_plus
+	make C-ftDBSCAN_plus && \
+	make C-ftSynthetic
 
 C-ftRelational: ft_libs/ftRelational.fut
 	futhark c ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
@@ -109,3 +112,17 @@ CUDA1-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
 
 CUDA2-ftDBSCAN_plus: ft_clibs/ftDBSCAN_plus.c
 	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
+
+C-ftSynthetic: ft_libs/ftSynthetic.fut
+	futhark c ft_libs/ftSynthetic.fut --library -o ft_clibs/ftSynthetic
+	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS)
+
+CUDA-ftSynthetic: ft_libs/ftSynthetic.fut
+	futhark cuda ft_clibs/ftSynthetic.fut --library
+	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
+
+CUDA1-ftSynthetic: ft_libs/ftSynthetic.fut
+	futhark cuda ft_libs/ftSynthetic.fut --library -o ft_clibs/ftSynthetic
+
+CUDA2-ftSynthetic: ft_clibs/ftSynthetic.c
+	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS) $(CUDAFLAGS)

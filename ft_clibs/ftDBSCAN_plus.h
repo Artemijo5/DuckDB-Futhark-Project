@@ -189,7 +189,7 @@ int futhark_entry_flush_dat_double(struct futhark_context *ctx, struct futhark_o
 int futhark_entry_make_collisions_compact_double(struct futhark_context *ctx, struct futhark_opaque_collisionTable **out0, const struct futhark_opaque_dbcHandler_double *in0);
 int futhark_entry_mk_dbcHandler_double(struct futhark_context *ctx, struct futhark_opaque_dbcHandler_double **out0, const double in0, const double in1, const double in2, const double in3, const int64_t in4, const int64_t in5, const bool in6, const bool in7, const double in8, const double in9, const int64_t in10, const int64_t in11);
 int futhark_entry_next_partition_to_read_double(struct futhark_context *ctx, int64_t *out0, const struct futhark_opaque_dbcHandler_double *in0);
-int futhark_entry_rectify_partition_ids_double(struct futhark_context *ctx, struct futhark_i64_1d **out0, const struct futhark_i64_1d *in0, const struct futhark_opaque_collisionTable *in1, const int64_t in2);
+int futhark_entry_rectify_cluster_ids_double(struct futhark_context *ctx, struct futhark_i64_1d **out0, const struct futhark_i64_1d *in0, const struct futhark_opaque_collisionTable *in1, const int64_t in2);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);
