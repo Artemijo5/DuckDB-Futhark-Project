@@ -25,6 +25,8 @@
 // 3d and maxval = 60 : about 8/9ths are noise
 // 4d : maxval 20 about 1/4 is noise, 21 about half is, 25 most is
 
+#define default_USE_COMPACT_METHOD false
+
 #define default_EPS (float)2.0
 #define default_MIN_PTS 2 + DIM
 
@@ -52,6 +54,7 @@ int main(int argc, char *argv[]) {
       char DBFILE[250] = default_DBFILE;
       char DDB_MEMSIZE[25] = default_DDB_MEMSIZE;
       char DDB_TEMPDIR[250] = default_DDB_TEMPDIR;
+      bool USE_COMPACT_METHOD = default_USE_COMPACT_METHOD;
 
     static struct option long_options[] =
       {
@@ -65,6 +68,7 @@ int main(int argc, char *argv[]) {
           {"gather_bytes", required_argument, 0, 'G'},
           {"memsize", required_argument, 0, 'M'},
           {"omit_border", no_argument, 0, 'O'},
+          {"compact_list", no_argument, 0, 'C'},
           {"db_file", required_argument, 0, 'f'},
           {"db_memsize", required_argument, 0, 'm'},
           {"db_tempdir", required_argument, 0, 'd'},
@@ -72,7 +76,7 @@ int main(int argc, char *argv[]) {
       };
     char ch;
     while(
-      (ch = getopt_long_only(argc,argv,"L:T:D:I:S:e:p:G:M:Of:m:d:",long_options,NULL)) != -1
+      (ch = getopt_long_only(argc,argv,"L:T:D:I:S:e:p:G:M:OCf:m:d:",long_options,NULL)) != -1
     ) {
       switch(ch) {
         case 'L':
@@ -95,6 +99,8 @@ int main(int argc, char *argv[]) {
           DBSCAN_MEMSIZE = atol(optarg); break;
         case 'O':
           OMIT_BORDER = true; break;
+        case 'C' :
+          USE_COMPACT_METHOD = true; break;
         case 'f':
           memcpy(DBFILE, optarg, strlen(optarg)+1); break;
         case 'm':
@@ -253,13 +259,15 @@ int main(int argc, char *argv[]) {
 	    	mylog(logfile, " - - Performing gpu-parallel DBSCAN algorithm...");
 	    	dbcResult_len = cur_rows;
 	    	dbcResult_pts = dbcData_ft;
-	    	futhark_entry_ftDBSCAN_float(ctx, &dbcResult_ids, dbcData_ft, EPS, MIN_PTS, DBSCAN_MEMSIZE, GATHER_PSIZE);
+	    	futhark_entry_ftDBSCAN_float(ctx, &dbcResult_ids,
+            dbcData_ft, EPS, MIN_PTS, DBSCAN_MEMSIZE, GATHER_PSIZE, USE_COMPACT_METHOD);
 	    	mylog(logfile, " - - DBSCAN has returned.");
 	    }
 	    else {
 	    	mylog(logfile, " - - Performing gpu-parallel DBSCAN* algorithm...");
 	    	struct futhark_opaque_core_cluster_float *DBSCAN_star_result;
-	    	futhark_entry_ftDBSCAN_star_float(ctx, &DBSCAN_star_result, dbcData_ft, EPS, MIN_PTS, DBSCAN_MEMSIZE, GATHER_PSIZE);
+	    	futhark_entry_ftDBSCAN_star_float(ctx, &DBSCAN_star_result,
+            dbcData_ft, EPS, MIN_PTS, DBSCAN_MEMSIZE, GATHER_PSIZE, USE_COMPACT_METHOD);
 	    	futhark_free_f32_2d(ctx, dbcData_ft);
 	    	mylog(logfile, " - - DBSCAN* has returned.");
 	    	futhark_context_sync(ctx);

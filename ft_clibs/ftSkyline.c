@@ -9775,35 +9775,9 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_3_float(struct futhark_con
     if (memblock_unref(ctx, &ext_mem_49563, "ext_mem_49563") != 0)
         return 1;
     
-    int64_t defunc_0_f_res_45542;
+    int64_t defunc_0_f_res_45554;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49569, &ext_mem_49568, &ext_mem_49567, &defunc_0_f_res_45542, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49560, ext_mem_49559, ext_mem_49558, ext_mem_49554, ext_mem_49553, ext_mem_49552, dim_42774, dz2080U_42775, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_42776, dz2081U_42778, defunc_0_f_res_45506, dz2081U_42778, mergeFilter_Skylines_3_res_45490, m_sizze_42787, total_angle_no_42789, total_grid_no_42790, total_part_no_42791) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_unref(ctx, &ext_mem_49552, "ext_mem_49552") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49553, "ext_mem_49553") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49554, "ext_mem_49554") != 0)
-        return 1;
-    
-    int64_t defunc_0_f_res_45573;
-    
-    if (futrts_filter_against_9757(ctx, &ext_mem_49572, &ext_mem_49571, &ext_mem_49570, &defunc_0_f_res_45573, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49566, ext_mem_49565, ext_mem_49564, ext_mem_49569, ext_mem_49568, ext_mem_49567, dim_42774, dz2080U_42775, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_42776, dz2081U_42778, defunc_0_f_res_45523, dz2081U_42778, defunc_0_f_res_45542, m_sizze_42787, total_angle_no_42789, total_grid_no_42790, total_part_no_42791) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_unref(ctx, &ext_mem_49567, "ext_mem_49567") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49568, "ext_mem_49568") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49569, "ext_mem_49569") != 0)
-        return 1;
-    
-    int64_t defunc_0_f_res_45604;
-    
-    if (futrts_filter_against_9757(ctx, &ext_mem_49575, &ext_mem_49574, &ext_mem_49573, &defunc_0_f_res_45604, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49566, ext_mem_49565, ext_mem_49564, ext_mem_49560, ext_mem_49559, ext_mem_49558, dim_42774, dz2080U_42775, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_42776, dz2081U_42778, defunc_0_f_res_45523, dz2081U_42778, defunc_0_f_res_45506, m_sizze_42787, total_angle_no_42789, total_grid_no_42790, total_part_no_42791) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49569, &ext_mem_49568, &ext_mem_49567, &defunc_0_f_res_45554, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49566, ext_mem_49565, ext_mem_49564, ext_mem_49560, ext_mem_49559, ext_mem_49558, dim_42774, dz2080U_42775, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_42776, dz2081U_42778, defunc_0_f_res_45523, dz2081U_42778, defunc_0_f_res_45506, m_sizze_42787, total_angle_no_42789, total_grid_no_42790, total_part_no_42791) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -9814,9 +9788,9 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_3_float(struct futhark_con
     if (memblock_unref(ctx, &ext_mem_49560, "ext_mem_49560") != 0)
         return 1;
     
-    int64_t defunc_0_f_res_45635;
+    int64_t defunc_0_f_res_45585;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49578, &ext_mem_49577, &ext_mem_49576, &defunc_0_f_res_45635, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49575, ext_mem_49574, ext_mem_49573, ext_mem_49566, ext_mem_49565, ext_mem_49564, dim_42774, dz2080U_42775, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_42776, dz2081U_42778, defunc_0_f_res_45604, dz2081U_42778, defunc_0_f_res_45523, m_sizze_42787, total_angle_no_42789, total_grid_no_42790, total_part_no_42791) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49572, &ext_mem_49571, &ext_mem_49570, &defunc_0_f_res_45585, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49569, ext_mem_49568, ext_mem_49567, ext_mem_49566, ext_mem_49565, ext_mem_49564, dim_42774, dz2080U_42775, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_42776, dz2081U_42778, defunc_0_f_res_45554, dz2081U_42778, defunc_0_f_res_45523, m_sizze_42787, total_angle_no_42789, total_grid_no_42790, total_part_no_42791) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -9827,8 +9801,34 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_3_float(struct futhark_con
     if (memblock_unref(ctx, &ext_mem_49566, "ext_mem_49566") != 0)
         return 1;
     
-    int64_t conc_tmp_45657 = defunc_0_f_res_45573 + defunc_0_f_res_45604;
-    int64_t conc_tmp_45660 = defunc_0_f_res_45635 + conc_tmp_45657;
+    int64_t defunc_0_f_res_45604;
+    
+    if (futrts_filter_against_9757(ctx, &ext_mem_49575, &ext_mem_49574, &ext_mem_49573, &defunc_0_f_res_45604, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49569, ext_mem_49568, ext_mem_49567, ext_mem_49554, ext_mem_49553, ext_mem_49552, dim_42774, dz2080U_42775, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_42776, dz2081U_42778, defunc_0_f_res_45554, dz2081U_42778, mergeFilter_Skylines_3_res_45490, m_sizze_42787, total_angle_no_42789, total_grid_no_42790, total_part_no_42791) != 0) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_unref(ctx, &ext_mem_49552, "ext_mem_49552") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49553, "ext_mem_49553") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49554, "ext_mem_49554") != 0)
+        return 1;
+    
+    int64_t defunc_0_f_res_45635;
+    
+    if (futrts_filter_against_9757(ctx, &ext_mem_49578, &ext_mem_49577, &ext_mem_49576, &defunc_0_f_res_45635, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49572, ext_mem_49571, ext_mem_49570, ext_mem_49575, ext_mem_49574, ext_mem_49573, dim_42774, dz2080U_42775, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_42776, dz2081U_42778, defunc_0_f_res_45585, dz2081U_42778, defunc_0_f_res_45604, m_sizze_42787, total_angle_no_42789, total_grid_no_42790, total_part_no_42791) != 0) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_unref(ctx, &ext_mem_49573, "ext_mem_49573") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49574, "ext_mem_49574") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49575, "ext_mem_49575") != 0)
+        return 1;
+    
+    int64_t conc_tmp_45657 = defunc_0_f_res_45554 + defunc_0_f_res_45635;
+    int64_t conc_tmp_45660 = defunc_0_f_res_45585 + conc_tmp_45657;
     int64_t binop_x_49579 = (int64_t) 4 * conc_tmp_45660;
     int64_t bytes_49580 = dim_42774 * binop_x_49579;
     int64_t bytes_49582 = (int64_t) 8 * conc_tmp_45660;
@@ -9840,15 +9840,15 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_3_float(struct futhark_con
     
     int64_t tmp_offs_49796 = (int64_t) 0;
     
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49581.mem, dim_42774 * tmp_offs_49796, (int64_t []) {dim_42774, (int64_t) 1}, (uint32_t *) ext_mem_49571.mem, (int64_t) 0, (int64_t []) {dim_42774, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45573, dim_42774});
-    tmp_offs_49796 += defunc_0_f_res_45573;
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49581.mem, dim_42774 * tmp_offs_49796, (int64_t []) {dim_42774, (int64_t) 1}, (uint32_t *) ext_mem_49574.mem, (int64_t) 0, (int64_t []) {dim_42774, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45604, dim_42774});
-    tmp_offs_49796 += defunc_0_f_res_45604;
     lmad_copy_4b(ctx, 2, (uint32_t *) mem_49581.mem, dim_42774 * tmp_offs_49796, (int64_t []) {dim_42774, (int64_t) 1}, (uint32_t *) ext_mem_49577.mem, (int64_t) 0, (int64_t []) {dim_42774, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45635, dim_42774});
     tmp_offs_49796 += defunc_0_f_res_45635;
-    if (memblock_unref(ctx, &ext_mem_49571, "ext_mem_49571") != 0)
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49581.mem, dim_42774 * tmp_offs_49796, (int64_t []) {dim_42774, (int64_t) 1}, (uint32_t *) ext_mem_49568.mem, (int64_t) 0, (int64_t []) {dim_42774, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45554, dim_42774});
+    tmp_offs_49796 += defunc_0_f_res_45554;
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49581.mem, dim_42774 * tmp_offs_49796, (int64_t []) {dim_42774, (int64_t) 1}, (uint32_t *) ext_mem_49571.mem, (int64_t) 0, (int64_t []) {dim_42774, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45585, dim_42774});
+    tmp_offs_49796 += defunc_0_f_res_45585;
+    if (memblock_unref(ctx, &ext_mem_49568, "ext_mem_49568") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49574, "ext_mem_49574") != 0)
+    if (memblock_unref(ctx, &ext_mem_49571, "ext_mem_49571") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49577, "ext_mem_49577") != 0)
         return 1;
@@ -9859,15 +9859,15 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_3_float(struct futhark_con
     
     int64_t tmp_offs_49797 = (int64_t) 0;
     
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49583.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49570.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45573});
-    tmp_offs_49797 += defunc_0_f_res_45573;
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49583.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49573.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45604});
-    tmp_offs_49797 += defunc_0_f_res_45604;
     lmad_copy_8b(ctx, 1, (uint64_t *) mem_49583.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49576.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45635});
     tmp_offs_49797 += defunc_0_f_res_45635;
-    if (memblock_unref(ctx, &ext_mem_49570, "ext_mem_49570") != 0)
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49583.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49567.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45554});
+    tmp_offs_49797 += defunc_0_f_res_45554;
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49583.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49570.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45585});
+    tmp_offs_49797 += defunc_0_f_res_45585;
+    if (memblock_unref(ctx, &ext_mem_49567, "ext_mem_49567") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49573, "ext_mem_49573") != 0)
+    if (memblock_unref(ctx, &ext_mem_49570, "ext_mem_49570") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49576, "ext_mem_49576") != 0)
         return 1;
@@ -9876,17 +9876,17 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_3_float(struct futhark_con
         goto cleanup;
     }
     for (int64_t i_49400 = 0; i_49400 < dz2081U_42778; i_49400++) {
-        bool eta_p_45664 = ((bool *) ext_mem_49572.mem)[i_49400];
-        bool eta_p_45665 = ((bool *) ext_mem_49575.mem)[i_49400];
-        bool eta_p_45666 = ((bool *) ext_mem_49578.mem)[i_49400];
+        bool eta_p_45664 = ((bool *) ext_mem_49578.mem)[i_49400];
+        bool eta_p_45665 = ((bool *) ext_mem_49569.mem)[i_49400];
+        bool eta_p_45666 = ((bool *) ext_mem_49572.mem)[i_49400];
         bool cond_45667 = eta_p_45664 || eta_p_45665;
         bool lifted_lambda_res_45668 = eta_p_45666 || cond_45667;
         
         ((bool *) mem_49584.mem)[i_49400] = lifted_lambda_res_45668;
     }
-    if (memblock_unref(ctx, &ext_mem_49572, "ext_mem_49572") != 0)
+    if (memblock_unref(ctx, &ext_mem_49569, "ext_mem_49569") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49575, "ext_mem_49575") != 0)
+    if (memblock_unref(ctx, &ext_mem_49572, "ext_mem_49572") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49578, "ext_mem_49578") != 0)
         return 1;
@@ -10326,20 +10326,20 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_4_float(struct futhark_con
     
     int64_t defunc_0_f_res_45933;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49578, &ext_mem_49577, &ext_mem_49576, &defunc_0_f_res_45933, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49563, ext_mem_49562, ext_mem_49561, ext_mem_49557, ext_mem_49556, ext_mem_49555, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45913, dz2081U_41621, mergeFilter_Skylines_4_res_45897, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49578, &ext_mem_49577, &ext_mem_49576, &defunc_0_f_res_45933, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49569, ext_mem_49568, ext_mem_49567, ext_mem_49563, ext_mem_49562, ext_mem_49561, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45921, dz2081U_41621, defunc_0_f_res_45913, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49555, "ext_mem_49555") != 0)
+    if (memblock_unref(ctx, &ext_mem_49561, "ext_mem_49561") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49556, "ext_mem_49556") != 0)
+    if (memblock_unref(ctx, &ext_mem_49562, "ext_mem_49562") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49557, "ext_mem_49557") != 0)
+    if (memblock_unref(ctx, &ext_mem_49563, "ext_mem_49563") != 0)
         return 1;
     
     int64_t defunc_0_f_res_45937;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49581, &ext_mem_49580, &ext_mem_49579, &defunc_0_f_res_45937, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49569, ext_mem_49568, ext_mem_49567, ext_mem_49578, ext_mem_49577, ext_mem_49576, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45921, dz2081U_41621, defunc_0_f_res_45933, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49581, &ext_mem_49580, &ext_mem_49579, &defunc_0_f_res_45937, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49575, ext_mem_49574, ext_mem_49573, ext_mem_49578, ext_mem_49577, ext_mem_49576, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45929, dz2081U_41621, defunc_0_f_res_45933, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -10352,46 +10352,7 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_4_float(struct futhark_con
     
     int64_t defunc_0_f_res_45941;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49584, &ext_mem_49583, &ext_mem_49582, &defunc_0_f_res_45941, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49575, ext_mem_49574, ext_mem_49573, ext_mem_49581, ext_mem_49580, ext_mem_49579, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45929, dz2081U_41621, defunc_0_f_res_45937, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_unref(ctx, &ext_mem_49579, "ext_mem_49579") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49580, "ext_mem_49580") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49581, "ext_mem_49581") != 0)
-        return 1;
-    
-    int64_t defunc_0_f_res_45945;
-    
-    if (futrts_filter_against_9757(ctx, &ext_mem_49587, &ext_mem_49586, &ext_mem_49585, &defunc_0_f_res_45945, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49569, ext_mem_49568, ext_mem_49567, ext_mem_49563, ext_mem_49562, ext_mem_49561, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45921, dz2081U_41621, defunc_0_f_res_45913, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_unref(ctx, &ext_mem_49561, "ext_mem_49561") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49562, "ext_mem_49562") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49563, "ext_mem_49563") != 0)
-        return 1;
-    
-    int64_t defunc_0_f_res_45949;
-    
-    if (futrts_filter_against_9757(ctx, &ext_mem_49590, &ext_mem_49589, &ext_mem_49588, &defunc_0_f_res_45949, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49575, ext_mem_49574, ext_mem_49573, ext_mem_49587, ext_mem_49586, ext_mem_49585, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45929, dz2081U_41621, defunc_0_f_res_45945, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_unref(ctx, &ext_mem_49585, "ext_mem_49585") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49586, "ext_mem_49586") != 0)
-        return 1;
-    if (memblock_unref(ctx, &ext_mem_49587, "ext_mem_49587") != 0)
-        return 1;
-    
-    int64_t defunc_0_f_res_45953;
-    
-    if (futrts_filter_against_9757(ctx, &ext_mem_49593, &ext_mem_49592, &ext_mem_49591, &defunc_0_f_res_45953, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49590, ext_mem_49589, ext_mem_49588, ext_mem_49569, ext_mem_49568, ext_mem_49567, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45949, dz2081U_41621, defunc_0_f_res_45921, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49584, &ext_mem_49583, &ext_mem_49582, &defunc_0_f_res_45941, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49581, ext_mem_49580, ext_mem_49579, ext_mem_49569, ext_mem_49568, ext_mem_49567, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45937, dz2081U_41621, defunc_0_f_res_45921, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -10402,22 +10363,22 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_4_float(struct futhark_con
     if (memblock_unref(ctx, &ext_mem_49569, "ext_mem_49569") != 0)
         return 1;
     
-    int64_t defunc_0_f_res_45957;
+    int64_t defunc_0_f_res_45945;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49596, &ext_mem_49595, &ext_mem_49594, &defunc_0_f_res_45957, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49575, ext_mem_49574, ext_mem_49573, ext_mem_49593, ext_mem_49592, ext_mem_49591, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45929, dz2081U_41621, defunc_0_f_res_45953, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49587, &ext_mem_49586, &ext_mem_49585, &defunc_0_f_res_45945, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49575, ext_mem_49574, ext_mem_49573, ext_mem_49584, ext_mem_49583, ext_mem_49582, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45929, dz2081U_41621, defunc_0_f_res_45941, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49591, "ext_mem_49591") != 0)
+    if (memblock_unref(ctx, &ext_mem_49582, "ext_mem_49582") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49592, "ext_mem_49592") != 0)
+    if (memblock_unref(ctx, &ext_mem_49583, "ext_mem_49583") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49593, "ext_mem_49593") != 0)
+    if (memblock_unref(ctx, &ext_mem_49584, "ext_mem_49584") != 0)
         return 1;
     
-    int64_t defunc_0_f_res_45961;
+    int64_t defunc_0_f_res_45949;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49599, &ext_mem_49598, &ext_mem_49597, &defunc_0_f_res_45961, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49590, ext_mem_49589, ext_mem_49588, ext_mem_49575, ext_mem_49574, ext_mem_49573, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45949, dz2081U_41621, defunc_0_f_res_45929, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49590, &ext_mem_49589, &ext_mem_49588, &defunc_0_f_res_45949, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49581, ext_mem_49580, ext_mem_49579, ext_mem_49575, ext_mem_49574, ext_mem_49573, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45937, dz2081U_41621, defunc_0_f_res_45929, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -10428,9 +10389,48 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_4_float(struct futhark_con
     if (memblock_unref(ctx, &ext_mem_49575, "ext_mem_49575") != 0)
         return 1;
     
+    int64_t defunc_0_f_res_45953;
+    
+    if (futrts_filter_against_9757(ctx, &ext_mem_49593, &ext_mem_49592, &ext_mem_49591, &defunc_0_f_res_45953, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49587, ext_mem_49586, ext_mem_49585, ext_mem_49590, ext_mem_49589, ext_mem_49588, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45945, dz2081U_41621, defunc_0_f_res_45949, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_unref(ctx, &ext_mem_49588, "ext_mem_49588") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49589, "ext_mem_49589") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49590, "ext_mem_49590") != 0)
+        return 1;
+    
+    int64_t defunc_0_f_res_45957;
+    
+    if (futrts_filter_against_9757(ctx, &ext_mem_49596, &ext_mem_49595, &ext_mem_49594, &defunc_0_f_res_45957, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49581, ext_mem_49580, ext_mem_49579, ext_mem_49557, ext_mem_49556, ext_mem_49555, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45937, dz2081U_41621, mergeFilter_Skylines_4_res_45897, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_unref(ctx, &ext_mem_49555, "ext_mem_49555") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49556, "ext_mem_49556") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49557, "ext_mem_49557") != 0)
+        return 1;
+    
+    int64_t defunc_0_f_res_45961;
+    
+    if (futrts_filter_against_9757(ctx, &ext_mem_49599, &ext_mem_49598, &ext_mem_49597, &defunc_0_f_res_45961, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49587, ext_mem_49586, ext_mem_49585, ext_mem_49596, ext_mem_49595, ext_mem_49594, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45945, dz2081U_41621, defunc_0_f_res_45957, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_unref(ctx, &ext_mem_49594, "ext_mem_49594") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49595, "ext_mem_49595") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_49596, "ext_mem_49596") != 0)
+        return 1;
+    
     int64_t defunc_0_f_res_45965;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49602, &ext_mem_49601, &ext_mem_49600, &defunc_0_f_res_45965, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49596, ext_mem_49595, ext_mem_49594, ext_mem_49599, ext_mem_49598, ext_mem_49597, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45957, dz2081U_41621, defunc_0_f_res_45961, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49602, &ext_mem_49601, &ext_mem_49600, &defunc_0_f_res_45965, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49593, ext_mem_49592, ext_mem_49591, ext_mem_49599, ext_mem_49598, ext_mem_49597, dim_41617, dz2080U_41618, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_41619, dz2081U_41621, defunc_0_f_res_45953, dz2081U_41621, defunc_0_f_res_45961, m_sizze_41631, total_angle_no_41633, total_grid_no_41634, total_part_no_41635) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -10441,9 +10441,9 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_4_float(struct futhark_con
     if (memblock_unref(ctx, &ext_mem_49599, "ext_mem_49599") != 0)
         return 1;
     
-    int64_t conc_tmp_45969 = defunc_0_f_res_45941 + defunc_0_f_res_45949;
-    int64_t conc_tmp_45970 = defunc_0_f_res_45957 + conc_tmp_45969;
-    int64_t conc_tmp_45971 = defunc_0_f_res_45965 + conc_tmp_45970;
+    int64_t conc_tmp_45969 = defunc_0_f_res_45937 + defunc_0_f_res_45965;
+    int64_t conc_tmp_45970 = defunc_0_f_res_45945 + conc_tmp_45969;
+    int64_t conc_tmp_45971 = defunc_0_f_res_45953 + conc_tmp_45970;
     int64_t binop_x_49603 = (int64_t) 4 * conc_tmp_45971;
     int64_t bytes_49604 = dim_41617 * binop_x_49603;
     int64_t bytes_49606 = (int64_t) 8 * conc_tmp_45971;
@@ -10455,19 +10455,19 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_4_float(struct futhark_con
     
     int64_t tmp_offs_49796 = (int64_t) 0;
     
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49605.mem, dim_41617 * tmp_offs_49796, (int64_t []) {dim_41617, (int64_t) 1}, (uint32_t *) ext_mem_49583.mem, (int64_t) 0, (int64_t []) {dim_41617, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45941, dim_41617});
-    tmp_offs_49796 += defunc_0_f_res_45941;
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49605.mem, dim_41617 * tmp_offs_49796, (int64_t []) {dim_41617, (int64_t) 1}, (uint32_t *) ext_mem_49589.mem, (int64_t) 0, (int64_t []) {dim_41617, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45949, dim_41617});
-    tmp_offs_49796 += defunc_0_f_res_45949;
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49605.mem, dim_41617 * tmp_offs_49796, (int64_t []) {dim_41617, (int64_t) 1}, (uint32_t *) ext_mem_49595.mem, (int64_t) 0, (int64_t []) {dim_41617, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45957, dim_41617});
-    tmp_offs_49796 += defunc_0_f_res_45957;
     lmad_copy_4b(ctx, 2, (uint32_t *) mem_49605.mem, dim_41617 * tmp_offs_49796, (int64_t []) {dim_41617, (int64_t) 1}, (uint32_t *) ext_mem_49601.mem, (int64_t) 0, (int64_t []) {dim_41617, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45965, dim_41617});
     tmp_offs_49796 += defunc_0_f_res_45965;
-    if (memblock_unref(ctx, &ext_mem_49583, "ext_mem_49583") != 0)
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49605.mem, dim_41617 * tmp_offs_49796, (int64_t []) {dim_41617, (int64_t) 1}, (uint32_t *) ext_mem_49580.mem, (int64_t) 0, (int64_t []) {dim_41617, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45937, dim_41617});
+    tmp_offs_49796 += defunc_0_f_res_45937;
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49605.mem, dim_41617 * tmp_offs_49796, (int64_t []) {dim_41617, (int64_t) 1}, (uint32_t *) ext_mem_49586.mem, (int64_t) 0, (int64_t []) {dim_41617, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45945, dim_41617});
+    tmp_offs_49796 += defunc_0_f_res_45945;
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49605.mem, dim_41617 * tmp_offs_49796, (int64_t []) {dim_41617, (int64_t) 1}, (uint32_t *) ext_mem_49592.mem, (int64_t) 0, (int64_t []) {dim_41617, (int64_t) 1}, (int64_t []) {defunc_0_f_res_45953, dim_41617});
+    tmp_offs_49796 += defunc_0_f_res_45953;
+    if (memblock_unref(ctx, &ext_mem_49580, "ext_mem_49580") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49589, "ext_mem_49589") != 0)
+    if (memblock_unref(ctx, &ext_mem_49586, "ext_mem_49586") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49595, "ext_mem_49595") != 0)
+    if (memblock_unref(ctx, &ext_mem_49592, "ext_mem_49592") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49601, "ext_mem_49601") != 0)
         return 1;
@@ -10478,19 +10478,19 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_4_float(struct futhark_con
     
     int64_t tmp_offs_49797 = (int64_t) 0;
     
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49607.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49582.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45941});
-    tmp_offs_49797 += defunc_0_f_res_45941;
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49607.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49588.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45949});
-    tmp_offs_49797 += defunc_0_f_res_45949;
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49607.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49594.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45957});
-    tmp_offs_49797 += defunc_0_f_res_45957;
     lmad_copy_8b(ctx, 1, (uint64_t *) mem_49607.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49600.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45965});
     tmp_offs_49797 += defunc_0_f_res_45965;
-    if (memblock_unref(ctx, &ext_mem_49582, "ext_mem_49582") != 0)
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49607.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49579.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45937});
+    tmp_offs_49797 += defunc_0_f_res_45937;
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49607.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49585.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45945});
+    tmp_offs_49797 += defunc_0_f_res_45945;
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49607.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49591.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_45953});
+    tmp_offs_49797 += defunc_0_f_res_45953;
+    if (memblock_unref(ctx, &ext_mem_49579, "ext_mem_49579") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49588, "ext_mem_49588") != 0)
+    if (memblock_unref(ctx, &ext_mem_49585, "ext_mem_49585") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49594, "ext_mem_49594") != 0)
+    if (memblock_unref(ctx, &ext_mem_49591, "ext_mem_49591") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49600, "ext_mem_49600") != 0)
         return 1;
@@ -10499,21 +10499,21 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_4_float(struct futhark_con
         goto cleanup;
     }
     for (int64_t i_49400 = 0; i_49400 < dz2081U_41621; i_49400++) {
-        bool eta_p_45975 = ((bool *) ext_mem_49584.mem)[i_49400];
-        bool eta_p_45976 = ((bool *) ext_mem_49590.mem)[i_49400];
-        bool eta_p_45977 = ((bool *) ext_mem_49596.mem)[i_49400];
-        bool eta_p_45978 = ((bool *) ext_mem_49602.mem)[i_49400];
+        bool eta_p_45975 = ((bool *) ext_mem_49602.mem)[i_49400];
+        bool eta_p_45976 = ((bool *) ext_mem_49581.mem)[i_49400];
+        bool eta_p_45977 = ((bool *) ext_mem_49587.mem)[i_49400];
+        bool eta_p_45978 = ((bool *) ext_mem_49593.mem)[i_49400];
         bool cond_45979 = eta_p_45975 || eta_p_45976;
         bool cond_45980 = eta_p_45977 || cond_45979;
         bool lifted_lambda_res_45981 = eta_p_45978 || cond_45980;
         
         ((bool *) mem_49608.mem)[i_49400] = lifted_lambda_res_45981;
     }
-    if (memblock_unref(ctx, &ext_mem_49584, "ext_mem_49584") != 0)
+    if (memblock_unref(ctx, &ext_mem_49581, "ext_mem_49581") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49590, "ext_mem_49590") != 0)
+    if (memblock_unref(ctx, &ext_mem_49587, "ext_mem_49587") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49596, "ext_mem_49596") != 0)
+    if (memblock_unref(ctx, &ext_mem_49593, "ext_mem_49593") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49602, "ext_mem_49602") != 0)
         return 1;
@@ -11123,20 +11123,20 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t defunc_0_f_res_46104;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49587, &ext_mem_49586, &ext_mem_49585, &defunc_0_f_res_46104, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49566, ext_mem_49565, ext_mem_49564, ext_mem_49560, ext_mem_49559, ext_mem_49558, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46076, dz2081U_39402, mergeFilter_Skylines_5_res_46060, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49587, &ext_mem_49586, &ext_mem_49585, &defunc_0_f_res_46104, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49572, ext_mem_49571, ext_mem_49570, ext_mem_49566, ext_mem_49565, ext_mem_49564, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46084, dz2081U_39402, defunc_0_f_res_46076, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49558, "ext_mem_49558") != 0)
+    if (memblock_unref(ctx, &ext_mem_49564, "ext_mem_49564") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49559, "ext_mem_49559") != 0)
+    if (memblock_unref(ctx, &ext_mem_49565, "ext_mem_49565") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49560, "ext_mem_49560") != 0)
+    if (memblock_unref(ctx, &ext_mem_49566, "ext_mem_49566") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46108;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49590, &ext_mem_49589, &ext_mem_49588, &defunc_0_f_res_46108, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49572, ext_mem_49571, ext_mem_49570, ext_mem_49587, ext_mem_49586, ext_mem_49585, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46084, dz2081U_39402, defunc_0_f_res_46104, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49590, &ext_mem_49589, &ext_mem_49588, &defunc_0_f_res_46108, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49578, ext_mem_49577, ext_mem_49576, ext_mem_49587, ext_mem_49586, ext_mem_49585, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46092, dz2081U_39402, defunc_0_f_res_46104, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -11149,7 +11149,7 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t defunc_0_f_res_46112;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49593, &ext_mem_49592, &ext_mem_49591, &defunc_0_f_res_46112, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49578, ext_mem_49577, ext_mem_49576, ext_mem_49590, ext_mem_49589, ext_mem_49588, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46092, dz2081U_39402, defunc_0_f_res_46108, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49593, &ext_mem_49592, &ext_mem_49591, &defunc_0_f_res_46112, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49584, ext_mem_49583, ext_mem_49582, ext_mem_49590, ext_mem_49589, ext_mem_49588, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46100, dz2081U_39402, defunc_0_f_res_46108, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -11162,33 +11162,33 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t defunc_0_f_res_46116;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49596, &ext_mem_49595, &ext_mem_49594, &defunc_0_f_res_46116, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49584, ext_mem_49583, ext_mem_49582, ext_mem_49593, ext_mem_49592, ext_mem_49591, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46100, dz2081U_39402, defunc_0_f_res_46112, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49596, &ext_mem_49595, &ext_mem_49594, &defunc_0_f_res_46116, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49593, ext_mem_49592, ext_mem_49591, ext_mem_49572, ext_mem_49571, ext_mem_49570, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46112, dz2081U_39402, defunc_0_f_res_46084, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49591, "ext_mem_49591") != 0)
+    if (memblock_unref(ctx, &ext_mem_49570, "ext_mem_49570") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49592, "ext_mem_49592") != 0)
+    if (memblock_unref(ctx, &ext_mem_49571, "ext_mem_49571") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49593, "ext_mem_49593") != 0)
+    if (memblock_unref(ctx, &ext_mem_49572, "ext_mem_49572") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46120;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49599, &ext_mem_49598, &ext_mem_49597, &defunc_0_f_res_46120, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49572, ext_mem_49571, ext_mem_49570, ext_mem_49566, ext_mem_49565, ext_mem_49564, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46084, dz2081U_39402, defunc_0_f_res_46076, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49599, &ext_mem_49598, &ext_mem_49597, &defunc_0_f_res_46120, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49578, ext_mem_49577, ext_mem_49576, ext_mem_49596, ext_mem_49595, ext_mem_49594, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46092, dz2081U_39402, defunc_0_f_res_46116, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49564, "ext_mem_49564") != 0)
+    if (memblock_unref(ctx, &ext_mem_49594, "ext_mem_49594") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49565, "ext_mem_49565") != 0)
+    if (memblock_unref(ctx, &ext_mem_49595, "ext_mem_49595") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49566, "ext_mem_49566") != 0)
+    if (memblock_unref(ctx, &ext_mem_49596, "ext_mem_49596") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46124;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49602, &ext_mem_49601, &ext_mem_49600, &defunc_0_f_res_46124, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49578, ext_mem_49577, ext_mem_49576, ext_mem_49599, ext_mem_49598, ext_mem_49597, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46092, dz2081U_39402, defunc_0_f_res_46120, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49602, &ext_mem_49601, &ext_mem_49600, &defunc_0_f_res_46124, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49584, ext_mem_49583, ext_mem_49582, ext_mem_49599, ext_mem_49598, ext_mem_49597, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46100, dz2081U_39402, defunc_0_f_res_46120, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -11201,33 +11201,33 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t defunc_0_f_res_46128;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49605, &ext_mem_49604, &ext_mem_49603, &defunc_0_f_res_46128, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49584, ext_mem_49583, ext_mem_49582, ext_mem_49602, ext_mem_49601, ext_mem_49600, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46100, dz2081U_39402, defunc_0_f_res_46124, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49605, &ext_mem_49604, &ext_mem_49603, &defunc_0_f_res_46128, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49593, ext_mem_49592, ext_mem_49591, ext_mem_49578, ext_mem_49577, ext_mem_49576, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46112, dz2081U_39402, defunc_0_f_res_46092, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49600, "ext_mem_49600") != 0)
+    if (memblock_unref(ctx, &ext_mem_49576, "ext_mem_49576") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49601, "ext_mem_49601") != 0)
+    if (memblock_unref(ctx, &ext_mem_49577, "ext_mem_49577") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49602, "ext_mem_49602") != 0)
+    if (memblock_unref(ctx, &ext_mem_49578, "ext_mem_49578") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46132;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49608, &ext_mem_49607, &ext_mem_49606, &defunc_0_f_res_46132, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49605, ext_mem_49604, ext_mem_49603, ext_mem_49572, ext_mem_49571, ext_mem_49570, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46128, dz2081U_39402, defunc_0_f_res_46084, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49608, &ext_mem_49607, &ext_mem_49606, &defunc_0_f_res_46132, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49602, ext_mem_49601, ext_mem_49600, ext_mem_49605, ext_mem_49604, ext_mem_49603, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46124, dz2081U_39402, defunc_0_f_res_46128, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49570, "ext_mem_49570") != 0)
+    if (memblock_unref(ctx, &ext_mem_49603, "ext_mem_49603") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49571, "ext_mem_49571") != 0)
+    if (memblock_unref(ctx, &ext_mem_49604, "ext_mem_49604") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49572, "ext_mem_49572") != 0)
+    if (memblock_unref(ctx, &ext_mem_49605, "ext_mem_49605") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46136;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49611, &ext_mem_49610, &ext_mem_49609, &defunc_0_f_res_46136, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49578, ext_mem_49577, ext_mem_49576, ext_mem_49608, ext_mem_49607, ext_mem_49606, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46092, dz2081U_39402, defunc_0_f_res_46132, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49611, &ext_mem_49610, &ext_mem_49609, &defunc_0_f_res_46136, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49584, ext_mem_49583, ext_mem_49582, ext_mem_49608, ext_mem_49607, ext_mem_49606, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46100, dz2081U_39402, defunc_0_f_res_46132, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -11240,33 +11240,33 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t defunc_0_f_res_46140;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49614, &ext_mem_49613, &ext_mem_49612, &defunc_0_f_res_46140, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49584, ext_mem_49583, ext_mem_49582, ext_mem_49611, ext_mem_49610, ext_mem_49609, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46100, dz2081U_39402, defunc_0_f_res_46136, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49614, &ext_mem_49613, &ext_mem_49612, &defunc_0_f_res_46140, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49593, ext_mem_49592, ext_mem_49591, ext_mem_49584, ext_mem_49583, ext_mem_49582, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46112, dz2081U_39402, defunc_0_f_res_46100, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49609, "ext_mem_49609") != 0)
+    if (memblock_unref(ctx, &ext_mem_49582, "ext_mem_49582") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49610, "ext_mem_49610") != 0)
+    if (memblock_unref(ctx, &ext_mem_49583, "ext_mem_49583") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49611, "ext_mem_49611") != 0)
+    if (memblock_unref(ctx, &ext_mem_49584, "ext_mem_49584") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46144;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49617, &ext_mem_49616, &ext_mem_49615, &defunc_0_f_res_46144, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49605, ext_mem_49604, ext_mem_49603, ext_mem_49578, ext_mem_49577, ext_mem_49576, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46128, dz2081U_39402, defunc_0_f_res_46092, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49617, &ext_mem_49616, &ext_mem_49615, &defunc_0_f_res_46144, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49602, ext_mem_49601, ext_mem_49600, ext_mem_49614, ext_mem_49613, ext_mem_49612, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46124, dz2081U_39402, defunc_0_f_res_46140, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49576, "ext_mem_49576") != 0)
+    if (memblock_unref(ctx, &ext_mem_49612, "ext_mem_49612") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49577, "ext_mem_49577") != 0)
+    if (memblock_unref(ctx, &ext_mem_49613, "ext_mem_49613") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49578, "ext_mem_49578") != 0)
+    if (memblock_unref(ctx, &ext_mem_49614, "ext_mem_49614") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46148;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49620, &ext_mem_49619, &ext_mem_49618, &defunc_0_f_res_46148, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49614, ext_mem_49613, ext_mem_49612, ext_mem_49617, ext_mem_49616, ext_mem_49615, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46140, dz2081U_39402, defunc_0_f_res_46144, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49620, &ext_mem_49619, &ext_mem_49618, &defunc_0_f_res_46148, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49611, ext_mem_49610, ext_mem_49609, ext_mem_49617, ext_mem_49616, ext_mem_49615, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46136, dz2081U_39402, defunc_0_f_res_46144, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -11279,33 +11279,33 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t defunc_0_f_res_46152;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49623, &ext_mem_49622, &ext_mem_49621, &defunc_0_f_res_46152, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49584, ext_mem_49583, ext_mem_49582, ext_mem_49620, ext_mem_49619, ext_mem_49618, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46100, dz2081U_39402, defunc_0_f_res_46148, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49623, &ext_mem_49622, &ext_mem_49621, &defunc_0_f_res_46152, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49593, ext_mem_49592, ext_mem_49591, ext_mem_49560, ext_mem_49559, ext_mem_49558, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46112, dz2081U_39402, mergeFilter_Skylines_5_res_46060, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49618, "ext_mem_49618") != 0)
+    if (memblock_unref(ctx, &ext_mem_49558, "ext_mem_49558") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49619, "ext_mem_49619") != 0)
+    if (memblock_unref(ctx, &ext_mem_49559, "ext_mem_49559") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49620, "ext_mem_49620") != 0)
+    if (memblock_unref(ctx, &ext_mem_49560, "ext_mem_49560") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46156;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49626, &ext_mem_49625, &ext_mem_49624, &defunc_0_f_res_46156, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49605, ext_mem_49604, ext_mem_49603, ext_mem_49584, ext_mem_49583, ext_mem_49582, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46128, dz2081U_39402, defunc_0_f_res_46100, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49626, &ext_mem_49625, &ext_mem_49624, &defunc_0_f_res_46156, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49602, ext_mem_49601, ext_mem_49600, ext_mem_49623, ext_mem_49622, ext_mem_49621, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46124, dz2081U_39402, defunc_0_f_res_46152, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_unref(ctx, &ext_mem_49582, "ext_mem_49582") != 0)
+    if (memblock_unref(ctx, &ext_mem_49621, "ext_mem_49621") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49583, "ext_mem_49583") != 0)
+    if (memblock_unref(ctx, &ext_mem_49622, "ext_mem_49622") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49584, "ext_mem_49584") != 0)
+    if (memblock_unref(ctx, &ext_mem_49623, "ext_mem_49623") != 0)
         return 1;
     
     int64_t defunc_0_f_res_46160;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49629, &ext_mem_49628, &ext_mem_49627, &defunc_0_f_res_46160, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49614, ext_mem_49613, ext_mem_49612, ext_mem_49626, ext_mem_49625, ext_mem_49624, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46140, dz2081U_39402, defunc_0_f_res_46156, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49629, &ext_mem_49628, &ext_mem_49627, &defunc_0_f_res_46160, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49611, ext_mem_49610, ext_mem_49609, ext_mem_49626, ext_mem_49625, ext_mem_49624, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46136, dz2081U_39402, defunc_0_f_res_46156, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -11318,7 +11318,7 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t defunc_0_f_res_46164;
     
-    if (futrts_filter_against_9757(ctx, &ext_mem_49632, &ext_mem_49631, &ext_mem_49630, &defunc_0_f_res_46164, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49623, ext_mem_49622, ext_mem_49621, ext_mem_49629, ext_mem_49628, ext_mem_49627, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46152, dz2081U_39402, defunc_0_f_res_46160, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
+    if (futrts_filter_against_9757(ctx, &ext_mem_49632, &ext_mem_49631, &ext_mem_49630, &defunc_0_f_res_46164, angle_part_prefix_sum_mem_49534, angle_partitions_per_dim_mem_49535, grid_part_prefix_sum_mem_49536, grid_part_sizze_per_dim_mem_49537, grid_partitions_per_dim_mem_49538, start_of_grid_partition_mem_49539, ext_mem_49620, ext_mem_49619, ext_mem_49618, ext_mem_49629, ext_mem_49628, ext_mem_49627, dim_39398, dz2080U_39399, dzlz7bUZLzmZRz20Udimz20U1z7dUzg_39400, dz2081U_39402, defunc_0_f_res_46148, dz2081U_39402, defunc_0_f_res_46160, m_sizze_39413, total_angle_no_39415, total_grid_no_39416, total_part_no_39417) != 0) {
         err = 1;
         goto cleanup;
     }
@@ -11329,10 +11329,10 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     if (memblock_unref(ctx, &ext_mem_49629, "ext_mem_49629") != 0)
         return 1;
     
-    int64_t conc_tmp_46168 = defunc_0_f_res_46116 + defunc_0_f_res_46128;
-    int64_t conc_tmp_46169 = defunc_0_f_res_46140 + conc_tmp_46168;
-    int64_t conc_tmp_46170 = defunc_0_f_res_46152 + conc_tmp_46169;
-    int64_t conc_tmp_46171 = defunc_0_f_res_46164 + conc_tmp_46170;
+    int64_t conc_tmp_46168 = defunc_0_f_res_46112 + defunc_0_f_res_46164;
+    int64_t conc_tmp_46169 = defunc_0_f_res_46124 + conc_tmp_46168;
+    int64_t conc_tmp_46170 = defunc_0_f_res_46136 + conc_tmp_46169;
+    int64_t conc_tmp_46171 = defunc_0_f_res_46148 + conc_tmp_46170;
     int64_t binop_x_49633 = (int64_t) 4 * conc_tmp_46171;
     int64_t bytes_49634 = dim_39398 * binop_x_49633;
     int64_t bytes_49636 = (int64_t) 8 * conc_tmp_46171;
@@ -11344,23 +11344,23 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t tmp_offs_49796 = (int64_t) 0;
     
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49595.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46116, dim_39398});
-    tmp_offs_49796 += defunc_0_f_res_46116;
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49604.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46128, dim_39398});
-    tmp_offs_49796 += defunc_0_f_res_46128;
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49613.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46140, dim_39398});
-    tmp_offs_49796 += defunc_0_f_res_46140;
-    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49622.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46152, dim_39398});
-    tmp_offs_49796 += defunc_0_f_res_46152;
     lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49631.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46164, dim_39398});
     tmp_offs_49796 += defunc_0_f_res_46164;
-    if (memblock_unref(ctx, &ext_mem_49595, "ext_mem_49595") != 0)
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49592.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46112, dim_39398});
+    tmp_offs_49796 += defunc_0_f_res_46112;
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49601.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46124, dim_39398});
+    tmp_offs_49796 += defunc_0_f_res_46124;
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49610.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46136, dim_39398});
+    tmp_offs_49796 += defunc_0_f_res_46136;
+    lmad_copy_4b(ctx, 2, (uint32_t *) mem_49635.mem, dim_39398 * tmp_offs_49796, (int64_t []) {dim_39398, (int64_t) 1}, (uint32_t *) ext_mem_49619.mem, (int64_t) 0, (int64_t []) {dim_39398, (int64_t) 1}, (int64_t []) {defunc_0_f_res_46148, dim_39398});
+    tmp_offs_49796 += defunc_0_f_res_46148;
+    if (memblock_unref(ctx, &ext_mem_49592, "ext_mem_49592") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49604, "ext_mem_49604") != 0)
+    if (memblock_unref(ctx, &ext_mem_49601, "ext_mem_49601") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49613, "ext_mem_49613") != 0)
+    if (memblock_unref(ctx, &ext_mem_49610, "ext_mem_49610") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49622, "ext_mem_49622") != 0)
+    if (memblock_unref(ctx, &ext_mem_49619, "ext_mem_49619") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49631, "ext_mem_49631") != 0)
         return 1;
@@ -11371,23 +11371,23 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
     
     int64_t tmp_offs_49797 = (int64_t) 0;
     
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49594.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46116});
-    tmp_offs_49797 += defunc_0_f_res_46116;
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49603.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46128});
-    tmp_offs_49797 += defunc_0_f_res_46128;
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49612.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46140});
-    tmp_offs_49797 += defunc_0_f_res_46140;
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49621.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46152});
-    tmp_offs_49797 += defunc_0_f_res_46152;
     lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49630.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46164});
     tmp_offs_49797 += defunc_0_f_res_46164;
-    if (memblock_unref(ctx, &ext_mem_49594, "ext_mem_49594") != 0)
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49591.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46112});
+    tmp_offs_49797 += defunc_0_f_res_46112;
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49600.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46124});
+    tmp_offs_49797 += defunc_0_f_res_46124;
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49609.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46136});
+    tmp_offs_49797 += defunc_0_f_res_46136;
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_49637.mem, tmp_offs_49797, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_49618.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_0_f_res_46148});
+    tmp_offs_49797 += defunc_0_f_res_46148;
+    if (memblock_unref(ctx, &ext_mem_49591, "ext_mem_49591") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49603, "ext_mem_49603") != 0)
+    if (memblock_unref(ctx, &ext_mem_49600, "ext_mem_49600") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49612, "ext_mem_49612") != 0)
+    if (memblock_unref(ctx, &ext_mem_49609, "ext_mem_49609") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49621, "ext_mem_49621") != 0)
+    if (memblock_unref(ctx, &ext_mem_49618, "ext_mem_49618") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49630, "ext_mem_49630") != 0)
         return 1;
@@ -11396,11 +11396,11 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
         goto cleanup;
     }
     for (int64_t i_49400 = 0; i_49400 < dz2081U_39402; i_49400++) {
-        bool eta_p_46175 = ((bool *) ext_mem_49596.mem)[i_49400];
-        bool eta_p_46176 = ((bool *) ext_mem_49605.mem)[i_49400];
-        bool eta_p_46177 = ((bool *) ext_mem_49614.mem)[i_49400];
-        bool eta_p_46178 = ((bool *) ext_mem_49623.mem)[i_49400];
-        bool eta_p_46179 = ((bool *) ext_mem_49632.mem)[i_49400];
+        bool eta_p_46175 = ((bool *) ext_mem_49632.mem)[i_49400];
+        bool eta_p_46176 = ((bool *) ext_mem_49593.mem)[i_49400];
+        bool eta_p_46177 = ((bool *) ext_mem_49602.mem)[i_49400];
+        bool eta_p_46178 = ((bool *) ext_mem_49611.mem)[i_49400];
+        bool eta_p_46179 = ((bool *) ext_mem_49620.mem)[i_49400];
         bool cond_46180 = eta_p_46175 || eta_p_46176;
         bool cond_46181 = eta_p_46177 || cond_46180;
         bool cond_46182 = eta_p_46178 || cond_46181;
@@ -11408,13 +11408,13 @@ FUTHARK_FUN_ATTR int futrts_entry_skyline_mergeFilter_5_float(struct futhark_con
         
         ((bool *) mem_49638.mem)[i_49400] = lifted_lambda_res_46183;
     }
-    if (memblock_unref(ctx, &ext_mem_49596, "ext_mem_49596") != 0)
+    if (memblock_unref(ctx, &ext_mem_49593, "ext_mem_49593") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49605, "ext_mem_49605") != 0)
+    if (memblock_unref(ctx, &ext_mem_49602, "ext_mem_49602") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49614, "ext_mem_49614") != 0)
+    if (memblock_unref(ctx, &ext_mem_49611, "ext_mem_49611") != 0)
         return 1;
-    if (memblock_unref(ctx, &ext_mem_49623, "ext_mem_49623") != 0)
+    if (memblock_unref(ctx, &ext_mem_49620, "ext_mem_49620") != 0)
         return 1;
     if (memblock_unref(ctx, &ext_mem_49632, "ext_mem_49632") != 0)
         return 1;

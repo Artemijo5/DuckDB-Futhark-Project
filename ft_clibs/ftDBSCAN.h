@@ -75,10 +75,10 @@ int futhark_project_opaque_core_cluster_float_len(struct futhark_context *ctx, i
 int futhark_new_opaque_core_cluster_float(struct futhark_context *ctx, struct futhark_opaque_core_cluster_float **out, const struct futhark_i64_1d *f_core_ids, const struct futhark_f32_2d *f_core_pts, const int64_t f_len);
 
 // Entry points
-int futhark_entry_ftDBSCAN_double(struct futhark_context *ctx, struct futhark_i64_1d **out0, const struct futhark_f64_2d *in0, const double in1, const int64_t in2, const int64_t in3, const int64_t in4);
-int futhark_entry_ftDBSCAN_float(struct futhark_context *ctx, struct futhark_i64_1d **out0, const struct futhark_f32_2d *in0, const float in1, const int64_t in2, const int64_t in3, const int64_t in4);
-int futhark_entry_ftDBSCAN_star_double(struct futhark_context *ctx, struct futhark_opaque_core_cluster_double **out0, const struct futhark_f64_2d *in0, const double in1, const int64_t in2, const int64_t in3, const int64_t in4);
-int futhark_entry_ftDBSCAN_star_float(struct futhark_context *ctx, struct futhark_opaque_core_cluster_float **out0, const struct futhark_f32_2d *in0, const float in1, const int64_t in2, const int64_t in3, const int64_t in4);
+int futhark_entry_ftDBSCAN_double(struct futhark_context *ctx, struct futhark_i64_1d **out0, const struct futhark_f64_2d *in0, const double in1, const int64_t in2, const int64_t in3, const int64_t in4, const bool in5);
+int futhark_entry_ftDBSCAN_float(struct futhark_context *ctx, struct futhark_i64_1d **out0, const struct futhark_f32_2d *in0, const float in1, const int64_t in2, const int64_t in3, const int64_t in4, const bool in5);
+int futhark_entry_ftDBSCAN_star_double(struct futhark_context *ctx, struct futhark_opaque_core_cluster_double **out0, const struct futhark_f64_2d *in0, const double in1, const int64_t in2, const int64_t in3, const int64_t in4, const bool in5);
+int futhark_entry_ftDBSCAN_star_float(struct futhark_context *ctx, struct futhark_opaque_core_cluster_float **out0, const struct futhark_f32_2d *in0, const float in1, const int64_t in2, const int64_t in3, const int64_t in4, const bool in5);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);

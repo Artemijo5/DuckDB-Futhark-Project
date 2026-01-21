@@ -1,4 +1,5 @@
 import "ftbasics"
+import "lib/github.com/diku-dk/segmented/segmented"
 
 type~ core_cluster [dim] 'a = {len: i64, core_pts: [][dim]a, core_ids: []i64}
 
@@ -56,7 +57,7 @@ module dbscan_real (F : real) = {
 	: [][dim]t =
 		(zip isCore dat) |> filter (\(ic,_) -> ic) |> map (\(_,x) -> x)
 
-	def find_cluster_ids [n] [dim]
+	def old_find_cluster_ids [n] [dim]
 		(core_dat : [n][dim]t)
 		(eps : t)
 		(extPar : i64)
@@ -93,6 +94,74 @@ module dbscan_real (F : real) = {
 			|> exscan (+) 0
 		in partitioned_gather (i64.num_bits) (gather_psize) (-1) ch_ids cluster_heads
 
+	def mk_adjacency_list [n] [dim]
+		(core_dat : [n][dim]t)
+		(eps : t)
+		(extPar : i64)
+	: ([n]i64, []i64) = -- returns compact neighbour list + starting indices of each pt
+		let inner_iter = (extPar + n - 1)/extPar
+		let (neighcounts, graph) : ([n]i64, []i64) =
+			loop (iter_nc, iter_graph) = (replicate n 0, [])
+			for j in iota inner_iter do
+				let inf = j*extPar
+				let sup = i64.min n (inf + extPar)
+				let this_pts = core_dat[inf:sup]
+				let neigh_matrices = this_pts
+					|> zip (inf..<sup)
+					|> map (\(i1,pt1) ->
+						core_dat |> zip (indices core_dat) |> map (\(i2,pt2) ->
+							if i1 == i2 then (-1,-1,false) else
+							let d = dist pt1 pt2
+							in (i1, i2, d `leq` eps)
+						)
+					)
+				let (compact_reps, compact_neigh) = neigh_matrices
+					|> flatten
+					|> filter (.2)
+					|> map (\(i1,i2,_) -> (i1-inf,i2))
+					|> unzip
+				let nc = length compact_reps
+				let this_neighCount = hist (+) 0 (sup-inf) (compact_reps :> [nc]i64) (replicate nc 1)
+				in (iter_nc with [inf:sup] = this_neighCount, iter_graph ++ compact_neigh)
+		in (exscan (+) 0 neighcounts, graph)
+
+	def new_find_cluster_ids [n] [dim]
+		(core_dat : [n][dim]t)
+		(eps : t)
+		(extPar : i64)
+		(gather_psize : i64)
+	: [n]i64 =
+		-- Construct compact adjacency list
+		let (dat_is, dat_neighs) = mk_adjacency_list core_dat eps extPar
+		let ndn = length dat_neighs
+		-- Use adjacency list to get smallest reachable pt
+		let cluster_heads =
+			-- Iterate over neighs:
+			-- assign each neigh to be replaced by its smallest (first) neighbour
+			-- until convergence
+			let (_,itered_neighlist) : ([ndn]i64, [ndn]i64) =
+				loop (old_list,new_list) = (replicate ndn (-1), dat_neighs :> [ndn]i64)
+				while any (id) (map2 (\alt neu -> alt != neu) old_list new_list) do
+					let newer_list_ = partitioned_gather
+						(i64.num_bits) (gather_psize) (-1) new_list
+						(new_list |> map (\i -> dat_is[i]))
+					let newer_list = map2 (\alt neu->
+						if alt>neu then neu else alt)
+					new_list newer_list_
+					in (new_list, newer_list)
+			-- obtain ids via segmented reduction
+			let segment_flags = scatter (replicate ndn false) dat_is (replicate n true)
+			in segmented_reduce (\n1 n2 -> if n1<n2 then n1 else n2) (i64.highest)
+				segment_flags (itered_neighlist :> [ndn]i64)
+		-- List Ranking to obtain cluster ids
+		let is_cluster_head = map2 (==) (iota n) (cluster_heads :> [n]i64)
+		let ch_ids = is_cluster_head
+			|> map (\isCh -> if isCh then 1 else 0)
+			|> exscan (+) 0
+		in partitioned_gather (i64.num_bits) (gather_psize) (-1) ch_ids (cluster_heads :> [n]i64)
+
+
+
 	def match_to_cluster_head [n] [cn] [dim]
 		(dat : [n][dim]t)
 		(core_dat : [cn][dim]t)
@@ -123,6 +192,7 @@ module dbscan_real (F : real) = {
 		(minPts : i64)
 		(pMem : i64)
 		(gather_psize : i64)
+		(construct_list : bool)
 	: [n]i64 =
 		let extPar1 = i64.max 1 (pMem/n)
 		let neighCounts = get_num_neighbours dat eps extPar1
@@ -132,8 +202,11 @@ module dbscan_real (F : real) = {
 			if (length corePts)==0
 			then (replicate n (-1))
 			else
-		let extPar2 = i64.max 1 (pMem/(length corePts))
-		let core_cids = find_cluster_ids corePts eps extPar2 gather_psize
+		let extPar2 = i64.max 1 (pMem/(i64.max 1 (length corePts)))
+		let core_cids = 
+			if construct_list
+			then new_find_cluster_ids corePts eps extPar2 gather_psize
+			else old_find_cluster_ids corePts eps extPar2 gather_psize
 		in match_to_cluster_head dat corePts core_cids eps extPar2
 
 	def do_DBSCAN_star [n] [dim]
@@ -142,6 +215,7 @@ module dbscan_real (F : real) = {
 		(minPts : i64)
 		(pMem : i64)
 		(gather_psize : i64)
+		(construct_list : bool)
 	: core_cluster [dim] t =
 		let extPar1 = i64.max 1 (pMem/n)
 		let neighCounts = get_num_neighbours dat eps extPar1
@@ -151,8 +225,11 @@ module dbscan_real (F : real) = {
 			if (length corePts)==0
 			then {len = 0, core_pts = corePts :> [0][dim]t, core_ids = [] :> [0]i64}
 			else
-		let extPar2 = i64.max 1 (pMem/(length corePts))
-		let core_cids = find_cluster_ids corePts eps extPar2 gather_psize
+		let extPar2 = i64.max 1 (pMem/(i64.max 1 (length corePts)))
+		let core_cids = 
+			if construct_list
+			then new_find_cluster_ids corePts eps extPar2 gather_psize
+			else old_find_cluster_ids corePts eps extPar2 gather_psize
 		in {len = length corePts, core_pts = corePts, core_ids = core_cids}
 }
 
@@ -199,13 +276,20 @@ module dbscan_double = dbscan_real f64
 		let dat : [][2]f32 = test_dat
 		in zip dat (dbscan_float.get_num_neighbours dat 1.0 (length dat))
 
-	def test_DBSCAN (pMem : i64) =
+	def test_list =
 		let dat : [][2]f32 = test_dat
-		in zip dat (dbscan_float.do_DBSCAN dat 1.0 3 pMem 1024)
+		let neighCounts = dbscan_float.get_num_neighbours dat 1.0 (length dat)
+		let isCore = dbscan_float.find_core_points neighCounts 3
+		let corePts = dbscan_float.isolate_core_points dat isCore
+		in dbscan_float.mk_adjacency_list corePts 1.0 1024
 
-	def test_DBSCAN_star (pMem : i64) =
+	def test_DBSCAN (pMem : i64) (construct_list : bool) =
 		let dat : [][2]f32 = test_dat
-		let dat_star = dbscan_float.do_DBSCAN_star dat 1.0 3 pMem 1024
+		in zip dat (dbscan_float.do_DBSCAN dat 1.0 3 pMem 1024 construct_list)
+
+	def test_DBSCAN_star (pMem : i64) (construct_list : bool) =
+		let dat : [][2]f32 = test_dat
+		let dat_star = dbscan_float.do_DBSCAN_star dat 1.0 3 pMem 1024 construct_list
 		in zip dat_star.core_pts dat_star.core_ids
 
 
@@ -214,12 +298,13 @@ module dbscan_double = dbscan_real f64
 	entry ftDBSCAN_float = dbscan_float.do_DBSCAN
 	entry ftDBSCAN_double = dbscan_double.do_DBSCAN
 
-	entry ftDBSCAN_star_float [dim] dat eps minPts pMem gather_psize
+	entry ftDBSCAN_star_float [dim] dat eps minPts pMem gather_psize construct_list
 	: core_cluster_float [dim] =
-		dbscan_float.do_DBSCAN_star dat eps minPts pMem gather_psize
+		dbscan_float.do_DBSCAN_star dat eps minPts pMem gather_psize construct_list
 
-	entry ftDBSCAN_star_double [dim] dat eps minPts pMem gather_psize
+	entry ftDBSCAN_star_double [dim] dat eps minPts pMem gather_psize construct_list
 	: core_cluster_double [dim] =
-		dbscan_double.do_DBSCAN_star dat eps minPts pMem gather_psize
+		dbscan_double.do_DBSCAN_star dat eps minPts pMem gather_psize construct_list
 
+-- TODO ensure compact method yields no errors
 

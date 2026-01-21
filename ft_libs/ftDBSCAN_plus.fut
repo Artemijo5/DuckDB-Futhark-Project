@@ -51,7 +51,7 @@ type~ dbcHandler_t [n] [part_no] 'f = {
 	chain_collisions : [](i64,i64)
 }
 
-type~ flushedData_t 'f = {xs : []f, ys : []f, chain_ids : []i64}
+type~ flushedData_t 'f = {n : i64, xs : []f, ys : []f, chain_ids : []i64}
 
 type~ collisionTable = {ncc : i64, chain_id: []i64, replaceWith: []i64}
 
@@ -475,9 +475,18 @@ module dbscan_plus (F : float) = {
 
 		def flush_dat [n] [part_no]
 			(clHandler : dbcHandler [n] [part_no])
+			(total : bool)
 		: flushedData =
-			let (xdat, ydat) = clHandler.toFlush_dat |> unzip
-			in {xs = xdat, ys = ydat, chain_ids = clHandler.toFlush_ids}
+			let (xdat, ydat) =
+				if !total
+				then clHandler.toFlush_dat |> unzip
+				else (clHandler.toFlush_dat ++ clHandler.clProc.buffered_pts ++ clHandler.current_partition.dat)
+					|> unzip
+			let cids =
+				if !total
+				then clHandler.toFlush_ids
+				else clHandler.toFlush_ids ++ clHandler.clProc.buffered_ids ++ clHandler.current_partition.chain_ids
+			in {n = length xdat, xs = xdat, ys = ydat, chain_ids = cids}
 	
 	-- DBSCAN functions
 	-- NOTE : deletes the flushData from clHandler
@@ -506,6 +515,7 @@ module dbscan_plus (F : float) = {
 					) |> map (\c -> c)
 				in nnBuff with [inf:sup] = this_neighCount
 
+		-- TODO make compact like in ftDBSCAN
 		local def find_chain_ids
 			(core_pts_ : [](t,t))
 			(pre_cids_ : []i64)
@@ -617,6 +627,7 @@ module dbscan_plus (F : float) = {
 				in (rectified_clustering, new_collisions)
 
 		local def assign_chain_ids [fn] [pn]
+			(isMarginal_func : (t,t) -> t -> bool)
 			(frontier_pts : [fn](t,t))
 			(partition_pts : [pn](t,t))
 			(core_pts : [](t,t))
@@ -631,14 +642,18 @@ module dbscan_plus (F : float) = {
 			let cluster_head = indices core_pts
 				|> map (\i -> (cids[i], core_pts[i]))
 			-- assign cids to frontier points
-			let numIter1 = (extPar + fn - 1)/extPar
+			-- only need to be compared to tight marginal points
+			let cluster_head_tm = cluster_head
+				|> filter (\(_,pt) -> isMarginal_func pt eps)
+			let extPar_tm = i64.max 1 (m_size/(i64.max 1 (length cluster_head_tm)))
+			let numIter1 = (extPar_tm + fn - 1)/extPar_tm
 			let f_cids =
 				loop buff = (replicate fn (-1)) for j in (iota numIter1) do
-				let inf = j*extPar
-				let sup = i64.min fn (inf+extPar)
+				let inf = j*extPar_tm
+				let sup = i64.min fn (inf+extPar_tm)
 				let this_pts = frontier_pts[inf:sup]
 				let cur_upd = this_pts |> map (\this_x ->
-					cluster_head
+					cluster_head_tm
 					|> map (\(i, cd) -> (i, dist dist_t angle_t radius this_x cd))
 					|> reduce_comm (\(ch1,d1) (ch2,d2) ->
 						if (d1 `gt` eps) && (d2 `gt` eps) then (-1,highest)
@@ -709,7 +724,7 @@ module dbscan_plus (F : float) = {
 				-- get neighcount from tight & loose frontiers
 				let tf_neighCount1 = get_num_neighbours_against
 					tf_pts tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
-					|> map (\c -> if c>0 then c-1 else c)
+					|> map (\c -> c-1)
 				let tf_neighCount2 = get_num_neighbours_against
 					tf_pts lf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- get neighcount from partition's tight margin
@@ -725,7 +740,7 @@ module dbscan_plus (F : float) = {
 				-- from self
 				let part_neighCount1 = get_num_neighbours_against
 					dat dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
-					|> map (\c -> if c>0 then c-1 else c)
+					|> map (\c -> c-1)
 				-- from tight frontier
 				let part_neighCount2 =
 					let part_neighCount2_ = get_num_neighbours_against
@@ -771,6 +786,10 @@ module dbscan_plus (F : float) = {
 			let nf = length f_is
 			-- assign chains to all points
 			let (f_cids, p_cids) = assign_chain_ids
+				(isWithinMargins
+					cur_part.min_coord[0] cur_part.min_coord[1]
+					cur_part.max_coord[0] cur_part.max_coord[1]
+				)
 				f_pts cur_part.dat core_pts
 				cids eps clBase.dist_t clBase.angle_t clBase.radius
 				clBase.m_size
@@ -938,8 +957,9 @@ module dbscan_plus (F : float) = {
 
 	entry flush_dat_double [n] [part_no]
 		(clHandler : dbcHandler_double [n] [part_no])
+		(total : bool)
 	: flushedData_double =
-		dbscanPlus_double.flush_dat clHandler
+		dbscanPlus_double.flush_dat clHandler total
 
 	entry do_DBSCAN_double [n] [part_no]
 		(clHandler : dbcHandler_double [n] [part_no])
@@ -1053,18 +1073,9 @@ module dbscan_plus (F : float) = {
 		let clHandler = add_next_partition_double clHandler1 next xs ys
 		let flushedCids = flushedCids ++ clHandler.toFlush_ids
 		let clHandler1 = do_DBSCAN_double clHandler 1024
-		let next = next_partition_to_read_double clHandler1
-		let clHandler = add_next_partition_double clHandler1 next [] []
-		let flushedCids = flushedCids ++ clHandler.toFlush_ids
+		let flushedCids = flushedCids ++ clHandler1.clProc.buffered_ids ++ clHandler1.current_partition.chain_ids
 		in if !rect then flushedCids else
-		let cc = make_collisions_compact_double clHandler
+		let cc = make_collisions_compact_double clHandler1
 		in rectify_cluster_ids_double flushedCids cc 1024
-
--- TODO might need to pass in loose margins for core point cids as well
--- for corner case:
--- minPts>=3, TM point only becomes core when neighbouring part is examined, neighbour with 2 cores in loose margin
--- could also do an if statement for minPts >= 3 (...)
--- ALSO ig margin points should be at the end of core pts rather than the start, so that offset can be better...
--- ALSO ig sort chain collisions for 2nd pass...
 
 
