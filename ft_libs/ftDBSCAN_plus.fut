@@ -21,8 +21,6 @@ type dbcPartition_t [n] 'f = {
 	part_id : i64,
 	min_coord : [2]f,
 	max_coord: [2]f,
-	inner_min_coord : [2]f, -- bottom left corner within 2*eps
-	inner_max_coord : [2]f, -- top right corner within 2*eps
 	neighbours : [8]i64, -- stored in counter-clockwise order, starting from left
 	isNeighbourVisited : [8]bool,
 	dat : [n](f,f),
@@ -55,7 +53,7 @@ type~ dbcHandler_t [n] [part_no] 'f = {
 
 type~ flushedData_t 'f = {xs : []f, ys : []f, chain_ids : []i64}
 
-type~ collisionTable = {chain_id: []i64, replaceWith: []i64}
+type~ collisionTable = {ncc : i64, chain_id: []i64, replaceWith: []i64}
 
 module dbscan_plus (F : float) = {
 	-- Types and Basic Ops
@@ -91,6 +89,7 @@ module dbscan_plus (F : float) = {
 
 		local def sqrt = (F.sqrt)
 		local def hypot = (F.hypot)
+		local def abs = (F.abs)
 
 		local def num_bits : i32 = F.num_bits
 
@@ -121,7 +120,10 @@ module dbscan_plus (F : float) = {
 		--local def earth_radius : t = F.f64 6161.6 -- average earth radius
 
 		local def d_euclidean (pt1 : (t,t)) (pt2 : (t,t))
-		: t = hypot (minus pt1.0 pt2.0) (minus pt1.1 pt2.1)
+		: t = 
+			if (pt1.0 `eq` pt2.0) then abs (pt1.1 `minus` pt2.1)
+			else if (pt1.1 `eq` pt2.1) then abs (pt1.0 `minus` pt2.0)
+			else hypot (minus pt1.0 pt2.0) (minus pt1.1 pt2.1)
 
 		local def d_haversine (aType : anglType) (r: t) (pt1 : (t,t)) (pt2 : (t,t))
 		: t =
@@ -141,6 +143,30 @@ module dbscan_plus (F : float) = {
 			match dType
 			case #euclidean -> d_euclidean pt1 pt2
 			case #haversine -> d_haversine aType r pt1 pt2
+
+		local def is_pt_marginal -- see if a point is within a partition's margins or frontier
+			(dType : distType) (aType : anglType) (r : t)
+			(minX : t) (minY : t) (maxX : t) (maxY : t)
+			(pt : (t,t)) (thresh : t)
+		: bool =
+			let (x,y) = pt
+			let dfunc : (t,t) -> t = dist dType aType r pt
+			in
+			(
+				(y `geq` minY) && (y `leq` (maxY)) && 
+				(((dfunc (minX,y)) `leq` thresh) || ((dfunc (maxX,y)) `leq` thresh))
+			)
+			||
+			(
+				(x `geq` minX) && (x `leq` (maxX)) && 
+				(((dfunc (x,minY)) `leq` thresh) || ((dfunc (x,maxY)) `leq` thresh))
+			)
+			||
+			(
+				let corn_x = if (x `leq` minX) then minX else maxX
+				let corn_y = if (y `leq` minY) then minY else maxY
+				in ((dfunc (corn_x, corn_y)) `leq` thresh)
+			)
 
 	-- Initializations & Continuation Info
 		local def mk_dbcBase
@@ -204,8 +230,6 @@ module dbscan_plus (F : float) = {
 					part_id = -1,
 					min_coord = replicate 2 highest,
 					max_coord = replicate 2 lowest,
-					inner_min_coord = replicate 2 highest,
-					inner_max_coord = replicate 2 lowest,
 					neighbours = replicate 8 (-1),
 					isNeighbourVisited = replicate 8 false,
 					dat = [],
@@ -253,6 +277,8 @@ module dbscan_plus (F : float) = {
 			let old_part = clHandler.current_partition
 			let eps = clBase.eps
 			let eps2 = times two eps
+			let isWithinMargins : t -> t -> t -> t -> (t,t) -> t -> bool
+				= is_pt_marginal clBase.dist_t clBase.angle_t clBase.radius 
 			-- find adjacent partition ids
 			let x_id = new_id % clBase.part_per_dim[0]
 			let y_id = new_id / clBase.part_per_dim[0]
@@ -285,7 +311,7 @@ module dbscan_plus (F : float) = {
 			let isNeighVisited = neighs |> map (\n -> n>=0 && (clProc.isPartVisited[n]))
 			let new_isPartVisited = (copy clProc.isPartVisited) with [new_id] = true
 			-- new partition coords
-			let (min_coords, max_coords, min_inner, max_inner) =
+			let (min_coords, max_coords) =
 				let minC = (
 					if x_id==0 then lowest else
 						plus clBase.mins[0] (times (from_i64 x_id) clBase.step_per_dim[0]),
@@ -300,17 +326,7 @@ module dbscan_plus (F : float) = {
 						then highest else 
 							plus clBase.mins[1] (times (from_i64 (y_id+1)) clBase.step_per_dim[1])
 				)
-				let min_inner = (
-					if (x_id==0 || isNeighVisited[0]) then minC.0 else plus minC.0 eps2,
-					if (y_id==0 || isNeighVisited[1]) then minC.1 else plus minC.1 eps2
-				)
-				let max_inner = (
-					if (x_id==(clBase.part_per_dim[0]-1) || isNeighVisited[2])
-						then maxC.0 else minus maxC.0 eps2,
-					if (y_id==(clBase.part_per_dim[1]-1) || isNeighVisited[3])
-						then maxC.1 else minus maxC.1 eps2
-				)
-				in (minC, maxC, min_inner, max_inner)
+				in (minC, maxC)
 			let new_pts = zip new_xs new_ys
 			-- update relevant partitions
 			let new_relevants = neighs
@@ -323,10 +339,8 @@ module dbscan_plus (F : float) = {
 					let min_y = plus clBase.mins[1] (times (from_i64 nyid) clBase.step_per_dim[1])
 					let max_x = plus min_x clBase.step_per_dim[0]
 					let max_y = plus min_y clBase.step_per_dim[1]
-					let isRel = new_pts |> any (\(x,y) ->
-						((x `geq` (minus min_x eps)) && (x `leq` (plus max_x eps)))
-						&&
-						((y `geq` (minus min_y eps)) && (y `leq` (plus max_y eps)))
+					let isRel = new_pts |> any (\pt ->
+						isWithinMargins min_x min_y max_x max_y pt eps
 					)
 					in (nid, isRel)
 				)
@@ -337,7 +351,7 @@ module dbscan_plus (F : float) = {
 				|> filter (\pid -> !new_isPartVisited[pid])-- append for breadth-first
 			-- new partition's margin points
 			-- don't mind those that are not near any neighbours
-			let new_isMargin = new_pts |> map (\(x,y) ->
+			let new_isMargin = new_pts |> map (\pt ->
 				neighs |> any (\nid ->
 					if nid<0 then false else
 					let nxid = nid % clBase.part_per_dim[0]
@@ -347,13 +361,11 @@ module dbscan_plus (F : float) = {
 					let max_x = plus min_x clBase.step_per_dim[0]
 					let max_y = plus min_y clBase.step_per_dim[1]
 					in
-						((x `geq` (minus min_x eps2)) && (x `leq` (plus max_x eps2)))
-						&&
-						((y `geq` (minus min_y eps2)) && (y `leq` (plus max_y eps2)))
+						isWithinMargins min_x min_y max_x max_y pt eps2
 				)
 			)
 			let new_isTightMargin = new_pts |> zip new_isMargin
-				|> map (\(isM, (x,y)) ->
+				|> map (\(isM, pt) ->
 					isM &&
 					(neighs |> any (\nid ->
 						if nid<0 then false else
@@ -364,9 +376,7 @@ module dbscan_plus (F : float) = {
 						let max_x = plus min_x clBase.step_per_dim[0]
 						let max_y = plus min_y clBase.step_per_dim[1]
 						in
-							((x `geq` (minus min_x eps)) && (x `leq` (plus max_x eps)))
-							&&
-							((y `geq` (minus min_y eps)) && (y `leq` (plus max_y eps)))
+							isWithinMargins min_x min_y max_x max_y pt eps
 					))
 				)
 			-- update buffered points
@@ -413,11 +423,8 @@ module dbscan_plus (F : float) = {
 									(times (from_i64 cur_yid) clBase.step_per_dim[1]))
 								let cur_maxX = plus cur_minX clBase.step_per_dim[0]
 								let cur_maxY = plus cur_minY clBase.step_per_dim[1]
-								let isN = (
-									((pt_i.0 `geq` (minus cur_minX eps2)) && (pt_i.0 `leq` (plus cur_maxX eps2)))
-									&&
-									((pt_i.1 `geq` (minus cur_minY eps2)) && (pt_i.1 `leq` (plus cur_maxY eps2)))
-								)
+								let isN = 
+									isWithinMargins cur_minX cur_minY cur_maxX cur_maxY pt_i eps2
 								in (curPart_i+1, isN)
 						in (i, isNearAnyRelevant)
 					)
@@ -449,8 +456,6 @@ module dbscan_plus (F : float) = {
 				part_id = new_id,
 				min_coord = [min_coords.0, min_coords.1],
 				max_coord = [max_coords.0, max_coords.1],
-				inner_min_coord = [min_inner.0, min_inner.1],
-				inner_max_coord = [max_inner.0, max_inner.1],
 				neighbours = neighs,
 				isNeighbourVisited = isNeighVisited,
 				dat = new_pts,
@@ -671,6 +676,8 @@ module dbscan_plus (F : float) = {
 			let eps = clBase.eps
 			let eps2 = times two eps
 			let minPts = clBase.minPts
+			let isWithinMargins : t -> t -> t -> t -> (t,t) -> t -> bool
+				= is_pt_marginal clBase.dist_t clBase.angle_t clBase.radius
 			-- compute *tight* margin pts from partition + their indices - used twice later
 			let (margin_is, margin_dat) = cur_part.dat
 				|> zip3 (cur_part.isTightMargin) (iota n)
@@ -682,25 +689,27 @@ module dbscan_plus (F : float) = {
 				let frontier =
 					indices clProc.buffered_pts
 					|> map (\i -> (clProc.buffered_pts[i], clProc.buff_isCore[i], clProc.buffered_ids[i], i))
-					|> filter (\((x,y),_,_,_) ->
-						((x `geq` (minus cur_part.min_coord[0] eps2)) && (x `leq` (plus cur_part.max_coord[0] eps2)))
-							&&
-						((y `geq` (minus cur_part.min_coord[1] eps2)) && (y `leq` (plus cur_part.max_coord[1] eps2)))
+					|> filter (\(pt,_,_,_) ->
+						isWithinMargins
+							cur_part.min_coord[0] cur_part.min_coord[1] 
+							cur_part.max_coord[0] cur_part.max_coord[1]
+							pt eps2
 					)
 				in frontier
-					|> partition (\((x,y),_,_,_) ->
-						((x `geq` (minus cur_part.min_coord[0] eps)) && (x `leq` (plus cur_part.max_coord[0] eps)))
-							&&
-						((y `geq` (minus cur_part.min_coord[1] eps)) && (y `leq` (plus cur_part.max_coord[1] eps)))
+					|> partition (\(pt,_,_,_) ->
+						isWithinMargins
+							cur_part.min_coord[0] cur_part.min_coord[1] 
+							cur_part.max_coord[0] cur_part.max_coord[1]
+							pt eps
 					)
 			let (tf_pts, tf_cid, tf_is) = tight_frontier |> map (\(pt,_,cid,is) -> (pt,cid,is)) |> unzip3
-			let (lf_pts, lf_isC, lf_cid) = loose_frontier |> map (\(pt,isC,cid,_) -> (pt,isC,cid)) |> unzip3
+			let (lf_pts, lf_isC, lf_cid, lf_is) = loose_frontier |> unzip4
 			-- find core points from tight margins
 			let tf_isC =
 				-- get neighcount from tight & loose frontiers
 				let tf_neighCount1 = get_num_neighbours_against
 					tf_pts tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
-					|> map (\c -> c-1)
+					|> map (\c -> if c>0 then c-1 else c)
 				let tf_neighCount2 = get_num_neighbours_against
 					tf_pts lf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- get neighcount from partition's tight margin
@@ -716,7 +725,7 @@ module dbscan_plus (F : float) = {
 				-- from self
 				let part_neighCount1 = get_num_neighbours_against
 					dat dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
-					|> map (\c -> c-1)
+					|> map (\c -> if c>0 then c-1 else c)
 				-- from tight frontier
 				let part_neighCount2 =
 					let part_neighCount2_ = get_num_neighbours_against
@@ -752,21 +761,29 @@ module dbscan_plus (F : float) = {
 				eps clBase.dist_t clBase.angle_t clBase.radius
 				clBase.m_size gather_psize
 				clProc.chainOffs
+			-- get frontier points together for assignment
+			-- to address a tight margin point becoming core with new partition
+			-- and having border neighbours in loose margin (with minPts>=2)
+			let (f_pts, f_is) =
+				if minPts<2
+				then (tf_pts,tf_is)
+				else (tf_pts++lf_pts, tf_is++lf_is)
+			let nf = length f_is
 			-- assign chains to all points
 			let (f_cids, p_cids) = assign_chain_ids
-				tf_pts cur_part.dat core_pts
+				f_pts cur_part.dat core_pts
 				cids eps clBase.dist_t clBase.angle_t clBase.radius
 				clBase.m_size
-			let new_relevant_cids = scatter (copy clProc.buffered_ids) tf_is f_cids
-			let new_relevant_isC = scatter (copy clProc.buff_isCore) tf_is tf_isC
+			let new_relevant_cids =
+				scatter (copy clProc.buffered_ids) (f_is :> [nf]i64) (f_cids :> [nf]i64)
+			let new_relevant_isC =
+				scatter (copy clProc.buff_isCore) tf_is tf_isC
 			let max_cid = i64.max (i64.maximum f_cids) (i64.maximum p_cids)
 			-- return updated clHandler
 			let new_part = {
 				part_id = cur_part.part_id,
 				min_coord = cur_part.min_coord,
 				max_coord = cur_part.max_coord,
-				inner_min_coord = cur_part.inner_min_coord,
-				inner_max_coord = cur_part.inner_max_coord,
 				neighbours = cur_part.neighbours,
 				isNeighbourVisited = cur_part.isNeighbourVisited,
 				dat = cur_part.dat,
@@ -804,7 +821,7 @@ module dbscan_plus (F : float) = {
 			let m_size = clHandler.clBase.m_size
 			let cc = clHandler.chain_collisions
 			let nc = length cc
-			in if nc == 0 then {chain_id = [], replaceWith = []} else
+			in if nc == 0 then {ncc = 0, chain_id = [], replaceWith = []} else
 			let extPar = i64.max 1 (m_size / nc)
 			let num_iter = (extPar + nc - 1) / extPar
 			let cc_flags =
@@ -828,7 +845,7 @@ module dbscan_plus (F : float) = {
 				|> filter (.0)
 				|> map (.1)
 			let (cur_chain, prev_chain) = cc_distinct |> unzip
-			in {chain_id = cur_chain, replaceWith = prev_chain}
+			in {ncc = length cur_chain, chain_id = cur_chain, replaceWith = prev_chain}
 
 		def make_collisions_compact [n] [part_no]
 			(clHandler : dbcHandler [n] [part_no])
@@ -841,7 +858,7 @@ module dbscan_plus (F : float) = {
 				|> filter (.1)
 				|> map (.0)
 			let (cur_chain, prev_chain) = cc_distinct |> unzip
-			in {chain_id = cur_chain, replaceWith = prev_chain}
+			in {ncc = length cur_chain, chain_id = cur_chain, replaceWith = prev_chain}
 
 		def rectify_cluster_ids [n]
 			(chain_ids : [n]i64)
@@ -850,7 +867,8 @@ module dbscan_plus (F : float) = {
 		: [n]i64 =
 			-- Binary search to find match
 			let cid = colTbl.chain_id
-			let ncc = length cid
+			let ncc = colTbl.ncc
+			in if ncc==0 then chain_ids else
 			let num_iter = 1 + (ncc |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
 			let (bsearch,_) =
 				loop (search_is, last_step) = (replicate n 0, ncc) for _ in iota (num_iter) do
@@ -976,22 +994,26 @@ module dbscan_plus (F : float) = {
 				(3.4,3.4)]
 		let (xs,ys) = make_test_part 4 pts
 		let clHandler = add_next_partition_double (copy test_handler) 4 xs ys
+		in if (stop_point<=0) then clHandler else
 		let clHandler1 = do_DBSCAN_double clHandler 1024
-		in if (stop_point<=0) then clHandler1 else
+		in if (stop_point==1) then clHandler1 else
 		let next = next_partition_to_read_double clHandler1
 		let pts : [](f64,f64) = [(4.0, 1.1),(0.0,1.9),(9.9,2.5),(4.0,9.7),(4.5,9.7)]
 		let (xs,ys) = make_test_part next pts
 		let clHandler = add_next_partition_double clHandler1 next xs ys
+		in if (stop_point==2) then clHandler else
 		let clHandler1 = do_DBSCAN_double clHandler 1024
-		in if (stop_point==1) then clHandler1 else
+		in if (stop_point==3) then clHandler1 else
 		let next = next_partition_to_read_double clHandler1
 		let clHandler = add_next_partition_double clHandler1 next [13] [9.7]
+		in if (stop_point==4) then clHandler else
 		let clHandler1 = do_DBSCAN_double clHandler 1024
-		in if (stop_point==2) then clHandler1 else
+		in if (stop_point==5) then clHandler1 else
 		let next = next_partition_to_read_double clHandler1
 		let pts : [](f64,f64) = [(0.1,2.2), (0.2,2.8), (0.1, 3.5)]
 		let (xs,ys) = make_test_part next pts
 		let clHandler = add_next_partition_double clHandler1 next xs ys
+		in if (stop_point==6) then clHandler else
 		let clHandler1 = do_DBSCAN_double clHandler 1024
 		in clHandler1
 

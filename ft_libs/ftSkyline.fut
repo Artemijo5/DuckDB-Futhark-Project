@@ -507,11 +507,6 @@ module skyline_real (F:real) = {
 				|> filter_against skB skI1_
 			let skI5_ = calc_global_Skyline skB skI5
 				|> filter_against skB skI1_
-			let skI1_filtered = skI1_
-				|> filter_against skB skI2_
-				|> filter_against skB skI3_
-				|> filter_against skB skI4_
-				|> filter_against skB skI5_
 			let skI2_filtered = skI2_
 				|> filter_against skB skI3_
 				|> filter_against skB skI4_
@@ -528,6 +523,11 @@ module skyline_real (F:real) = {
 				|> filter_against skB skI2_filtered
 				|> filter_against skB skI3_filtered
 				|> filter_against skB skI4_filtered
+			let skI1_filtered = skI1_
+				|> filter_against skB skI2_filtered
+				|> filter_against skB skI3_filtered
+				|> filter_against skB skI4_filtered
+				|> filter_against skB skI5_filtered
 			in merge_Skylines_5 skI1_filtered skI2_filtered skI3_filtered skI4_filtered skI5_filtered
 		def mergeFilter_Skylines_4 [dim] 'pL_t
 			(self_filter_first : bool)
@@ -547,10 +547,6 @@ module skyline_real (F:real) = {
 				|> filter_against skB skI1_
 			let skI4_ = calc_global_Skyline skB skI4
 				|> filter_against skB skI1_
-			let skI1_filtered = skI1_
-				|> filter_against skB skI2_
-				|> filter_against skB skI3_
-				|> filter_against skB skI4_
 			let skI2_filtered = skI2_
 				|> filter_against skB skI3_
 				|> filter_against skB skI4_
@@ -560,6 +556,10 @@ module skyline_real (F:real) = {
 			let skI4_filtered = skI4_
 				|> filter_against skB skI2_filtered
 				|> filter_against skB skI3_filtered
+			let skI1_filtered = skI1_
+				|> filter_against skB skI2_filtered
+				|> filter_against skB skI3_filtered
+				|> filter_against skB skI4_filtered
 			in merge_Skylines_4 skI1_filtered skI2_filtered skI3_filtered skI4_filtered
 		def mergeFilter_Skylines_3 [dim] 'pL_t
 			(self_filter_first : bool)
@@ -576,13 +576,13 @@ module skyline_real (F:real) = {
 				|> filter_against skB skI1_
 			let skI3_ = calc_global_Skyline skB skI3
 				|> filter_against skB skI1_
-			let skI1_filtered = skI1_
-				|> filter_against skB skI2_
-				|> filter_against skB skI3_
 			let skI2_filtered = skI2_
 				|> filter_against skB skI3_
 			let skI3_filtered = skI3_
 				|> filter_against skB skI2_filtered
+			let skI1_filtered = skI1_
+				|> filter_against skB skI2_filtered
+				|> filter_against skB skI3_filtered
 			in merge_Skylines_3 skI1_filtered skI2_filtered skI3_filtered
 		def mergeFilter_Skylines_2 [dim] 'pL_t
 			(self_filter_first : bool)
