@@ -20,7 +20,7 @@
 
 #define default_DIM (long)3
 #define default_MINVAL (float)0.0
-#define default_MAXVAL (float)42.0 // roughly 200-256 for 4 chunks (in 2d) - O(sqrt BUFFER_CAP)
+#define default_MAXVAL (float)42.0 // roughly 130-250 for 4 chunks (in 2d) - O(sqrt BUFFER_CAP)
 // roughly 0-35/40 for 4 chunks in 3d (half the dataset is corepoints)
 // 3d and maxval = 60 : about 8/9ths are noise
 // 4d : maxval 20 about 1/4 is noise, 21 about half is, 25 most is

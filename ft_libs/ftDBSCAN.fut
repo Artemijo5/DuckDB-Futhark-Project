@@ -110,7 +110,7 @@ module dbscan_real (F : real) = {
 					|> zip (inf..<sup)
 					|> map (\(i1,pt1) ->
 						core_dat |> zip (indices core_dat) |> map (\(i2,pt2) ->
-							if i1 == i2 then (-1,-1,false) else
+							if i1 == i2 then (i1,i2,true) else
 							let d = dist pt1 pt2
 							in (i1, i2, d `leq` eps)
 						)
@@ -134,23 +134,26 @@ module dbscan_real (F : real) = {
 		-- Construct compact adjacency list
 		let (dat_is, dat_neighs) = mk_adjacency_list core_dat eps extPar
 		let ndn = length dat_neighs
+		let segment_flags = scatter (replicate ndn false) dat_is (replicate n true)
 		-- Use adjacency list to get smallest reachable pt
 		let cluster_heads =
 			-- Iterate over neighs:
-			-- assign each neigh to be replaced by its smallest (first) neighbour
+			-- assign each neigh to be replaced by its smallest neighbour
 			-- until convergence
 			let (_,itered_neighlist) : ([ndn]i64, [ndn]i64) =
 				loop (old_list,new_list) = (replicate ndn (-1), dat_neighs :> [ndn]i64)
 				while any (id) (map2 (\alt neu -> alt != neu) old_list new_list) do
-					let newer_list_ = partitioned_gather
-						(i64.num_bits) (gather_psize) (-1) new_list
-						(new_list |> map (\i -> dat_is[i]))
-					let newer_list = map2 (\alt neu->
-						if alt>neu then neu else alt)
-					new_list newer_list_
+					let current_min_neighbours = segmented_reduce
+						(\n1 n2 -> if n1<n2 then n1 else n2) (i64.highest)
+						segment_flags new_list
+					let newer_list = new_list
+						|> map (\i -> current_min_neighbours[i])
+					-- -- following not needed as each iteration will only shrink min neighbours
+					--let newer_list = map2 (\alt neu->
+					--	if alt>neu then neu else alt)
+					--new_list newer_list_
 					in (new_list, newer_list)
 			-- obtain ids via segmented reduction
-			let segment_flags = scatter (replicate ndn false) dat_is (replicate n true)
 			in segmented_reduce (\n1 n2 -> if n1<n2 then n1 else n2) (i64.highest)
 				segment_flags (itered_neighlist :> [ndn]i64)
 		-- List Ranking to obtain cluster ids
