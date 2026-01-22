@@ -211,7 +211,7 @@ int main(int argc, char *argv[]) {
 		    	}
 		    	if(row_count==0) {
 		    		free(flatbuff);
-			    	for(int64_t d=0; d<DIM; d++) {
+			    	for(int64_t d=0; d<DIM+1; d++) {
 			    		free(buffers[d]);
 			    	}
 			    	free(buffers);
@@ -286,7 +286,7 @@ int main(int argc, char *argv[]) {
 
 	    	// Cleanup
 		    	free(flatbuff);
-		    	for(int64_t d=0; d<DIM; d++) {
+		    	for(int64_t d=0; d<DIM+1; d++) {
 		    		free(buffers[d]);
 		    	}
 		    	free(buffers);

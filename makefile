@@ -130,3 +130,7 @@ CUDA2-ftSynthetic: ft_clibs/ftSynthetic.c
 Synthetic-Correlated: benchmarks/src/mk_correlated.c ft_clibs/libftSynthetic.so $(DEPS)
 	$(CC) benchmarks/src/mk_correlated.c -o benchmarks/mk_correlated.o \
 		ft_clibs/libftSynthetic.so $(DEPS) $(CFLAGS)
+
+Synthetic-Crescent: benchmarks/src/mk_crescent.c ft_clibs/libftSynthetic.so $(DEPS)
+	$(CC) benchmarks/src/mk_crescent.c -o benchmarks/mk_crescent.o \
+		ft_clibs/libftSynthetic.so $(DEPS) $(CFLAGS)
