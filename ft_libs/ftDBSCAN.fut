@@ -309,5 +309,3 @@ module dbscan_double = dbscan_real f64
 	: core_cluster_double [dim] =
 		dbscan_double.do_DBSCAN_star dat eps minPts pMem gather_psize construct_list
 
--- TODO ensure compact method yields no errors
-

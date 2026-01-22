@@ -35,6 +35,9 @@
 #define default_SUBDIV_STEP (int64_t)45
 #define default_SIZE_THRESH default_BUFFER_SIZE/100
 
+#define default_CREATE_TABLE false
+#define default_TABLE_NAME "skyTbl"
+
 #define default_DBFILE "testdb.db"
 #define default_DDB_MEMSIZE "4GB"
 #define default_DDB_TEMPDIR "/tps_tempdir"
@@ -61,6 +64,8 @@ int main(int argc, char *argv[]) {
       int64_t MIN_SUBDIV = default_MIN_SUBDIV;
       int64_t SUBDIV_STEP = default_SUBDIV_STEP;
       int64_t SIZE_THRESH = default_SIZE_THRESH;
+      bool CREATE_TABLE = default_CREATE_TABLE;
+      char TABLE_NAME[250] = default_TABLE_NAME;
       char DBFILE[250] = default_DBFILE;
       char DDB_MEMSIZE[25] = default_DDB_MEMSIZE;
       char DDB_TEMPDIR[250] = default_DDB_TEMPDIR;
@@ -84,6 +89,8 @@ int main(int argc, char *argv[]) {
           {"min_subdiv", required_argument, 0, '2'},
           {"subdiv_step", required_argument, 0, '3'},
           {"size_thresh", required_argument, 0, 's'},
+          {"create_table", no_argument, 0, 'C'},
+          {"table_name", required_argument, 0, 't'},
           {"db_file", required_argument, 0, 'f'},
           {"db_memsize", required_argument, 0, 'm'},
           {"db_tempdir", required_argument, 0, 'd'},
@@ -92,7 +99,7 @@ int main(int argc, char *argv[]) {
       };
     char ch;
     while(
-      (ch = getopt_long_only(argc,argv,"L:B:T:D:a:I:S:s:M:unNf:m:d:v",long_options,NULL)) != -1
+      (ch = getopt_long_only(argc,argv,"L:B:T:D:a:I:S:M:uUnN1:2:3:s:Ct:f:m:d:v",long_options,NULL)) != -1
     ) {
       switch(ch) {
         case 'L':
@@ -127,6 +134,10 @@ int main(int argc, char *argv[]) {
           SUBDIV_STEP = atol(optarg); break;
         case 's':
           SIZE_THRESH = atol(optarg); break;
+        case 'C':
+          CREATE_TABLE = true; break;
+        case 't':
+          memcpy(TABLE_NAME, optarg, strlen(optarg)+1); break;
         case 'f':
           memcpy(DBFILE, optarg, strlen(optarg)+1); break;
         case 'm':
@@ -196,37 +207,38 @@ int main(int argc, char *argv[]) {
   	mylog(logfile, "Set up duckdb connection.");
 
   // Create the table tbl on which the testing will be done.
-    char queryStr[150 + 20*DIM];
-    int queryLen = sprintf(queryStr, "CREATE OR REPLACE TABLE skyTbl (");
-    for(idx_t i=0; i<DIM; i++) {
-    	queryLen += sprintf(queryStr+queryLen, "x%ld FLOAT", i+1);
-    	if(i<DIM-1) queryLen += sprintf(queryStr+queryLen, ", ");
-    }
-    queryLen += sprintf(queryStr+queryLen, ");");
-    if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
-    	perror("Failed to create initial table.\n");
-    	perror(queryStr);
-    	return -1;
-    }
+    if(CREATE_TABLE) {
+      char queryStr[150 + 20*DIM];
+      int queryLen = sprintf(queryStr, "CREATE OR REPLACE TABLE %s (", TABLE_NAME);
+      for(idx_t i=0; i<DIM; i++) {
+      	queryLen += sprintf(queryStr+queryLen, "x%ld FLOAT", i+1);
+      	if(i<DIM-1) queryLen += sprintf(queryStr+queryLen, ", ");
+      }
+      queryLen += sprintf(queryStr+queryLen, ");");
+      if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
+      	perror("Failed to create initial table.\n");
+      	perror(queryStr);
+      	return -1;
+      }
 
-    duckdb_query(con, "setseed(0.42);", NULL);
+      duckdb_query(con, "setseed(0.42);", NULL);
 
-    // Insert random data into the table
-    char insertQueryStr[150 + 100*DIM];
-    int insertQueryLen = sprintf(insertQueryStr, "INSERT INTO skyTbl (SELECT ");
-    for(idx_t i=0; i<DIM; i++) {
-    	insertQueryLen += sprintf(insertQueryStr+insertQueryLen, "%f*random()-%f", MAXVAL-MINVAL, MINVAL);
-    	if(i<DIM-1) insertQueryLen += sprintf(insertQueryStr+insertQueryLen, ", ");
+      // Insert random data into the table
+      char insertQueryStr[150 + 100*DIM];
+      int insertQueryLen = sprintf(insertQueryStr, "INSERT INTO %s (SELECT ", TABLE_NAME);
+      for(idx_t i=0; i<DIM; i++) {
+      	insertQueryLen += sprintf(insertQueryStr+insertQueryLen, "%f*random()-%f", MAXVAL-MINVAL, MINVAL);
+      	if(i<DIM-1) insertQueryLen += sprintf(insertQueryStr+insertQueryLen, ", ");
+      }
+      insertQueryLen += sprintf(insertQueryStr+insertQueryLen, " FROM RANGE(%ld) t(i));", TABLE_SIZE);
+      if( duckdb_query(con, insertQueryStr, NULL) == DuckDBError ) {
+      	perror("Failed to insert data into the initial table.\n");
+      	perror(insertQueryStr);
+      	return -1;
+      }
+
+      mylog(logfile, "Created test table.");
     }
-    insertQueryLen += sprintf(insertQueryStr+insertQueryLen, " FROM RANGE(%ld) t(i));", TABLE_SIZE);
-    if( duckdb_query(con, insertQueryStr, NULL) == DuckDBError ) {
-    	perror("Failed to insert data into the initial table.\n");
-    	perror(insertQueryStr);
-    	return -1;
-    }
-
-    mylog(logfile, "Created test table 'skyTbl'.");
-
   // Set up futhark core
     struct futhark_context_config *cfg = futhark_context_config_new();
     struct futhark_context *ctx = futhark_context_new(cfg);
@@ -272,7 +284,9 @@ int main(int argc, char *argv[]) {
 
   // 1 - Calculate Intermediate Skylines per Window, Collapsing Windows
     duckdb_result res;
-    duckdb_query(con, "SELECT * FROM skyTbl;", &res);
+    char select_str[100 + strlen(TABLE_NAME)];
+    sprintf(select_str, "SELECT * FROM %s;", TABLE_NAME);
+    duckdb_query(con, select_str, &res);
     mylog(logfile, "Performed query to read skyTbl.");
     int isTblExhausted = false;
     idx_t cur_idx=0;
