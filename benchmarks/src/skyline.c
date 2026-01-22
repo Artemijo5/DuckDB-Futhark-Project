@@ -208,7 +208,7 @@ int main(int argc, char *argv[]) {
 
   // Create the table tbl on which the testing will be done.
     if(CREATE_TABLE) {
-      char queryStr[150 + 20*DIM];
+      char queryStr[150 + strlen(TABLE_NAME) + 20*DIM];
       int queryLen = sprintf(queryStr, "CREATE OR REPLACE TABLE %s (", TABLE_NAME);
       for(idx_t i=0; i<DIM; i++) {
       	queryLen += sprintf(queryStr+queryLen, "x%ld FLOAT", i+1);

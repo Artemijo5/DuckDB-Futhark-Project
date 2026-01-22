@@ -126,3 +126,7 @@ CUDA1-ftSynthetic: ft_libs/ftSynthetic.fut
 
 CUDA2-ftSynthetic: ft_clibs/ftSynthetic.c
 	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
+
+Synthetic-Correlated: benchmarks/src/mk_correlated.c ft_clibs/libftSynthetic.so $(DEPS)
+	$(CC) benchmarks/src/mk_correlated.c -o benchmarks/mk_correlated.o \
+		ft_clibs/libftSynthetic.so $(DEPS) $(CFLAGS)
