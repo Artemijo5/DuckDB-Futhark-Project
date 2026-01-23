@@ -1,4 +1,5 @@
 import "ftbasics"
+import "lib/github.com/diku-dk/segmented/segmented"
 import "lib/github.com/diku-dk/sorts/merge_sort"
 
 type distType = #euclidean | #haversine -- TODO hsv distance ? for Mahalanobis transform data externally
@@ -515,6 +516,105 @@ module dbscan_plus (F : float) = {
 					) |> map (\c -> c)
 				in nnBuff with [inf:sup] = this_neighCount
 
+		local def form_clusters_naive [n1]
+			(core_pts : [n1](t,t))
+			(eps : t)
+			(dist_t : distType)
+			(angle_t : anglType)
+			(radius : t)
+			(extPar : i64)
+			(num_iter : i64)
+		: [n1]i64 =
+			let (cluster_heads,_) =
+			loop (chBuff,conv) = (iota n1, false) while (!conv) do
+				let next_chBuff = 
+				loop chBuff_ = chBuff for j in (iota num_iter) do
+					let inf = j*extPar
+					let sup = i64.min n1 (inf + extPar)
+					let this_pts = core_pts[inf:sup]
+					let this_chs = chBuff_[inf:sup]
+					let this_min_ch = map2 (\ch pt ->
+							let coreNeigh = core_pts
+								|> map (\other_pt -> dist dist_t angle_t radius pt other_pt)
+								|> map (\d -> d `leq` eps)
+							let neighChs = map2 (\other_ch isN ->
+								if isN then other_ch else ch
+							) chBuff_ coreNeigh -- using chBuff_ here could bring faster convergence
+							in i64.minimum neighChs
+						) this_chs this_pts
+					in (copy chBuff_) with [inf:sup] = this_min_ch
+				let next_conv = (map2 (==) chBuff next_chBuff) |> all (id)
+				in (next_chBuff :> [n1]i64, next_conv)
+			in cluster_heads
+
+		def mk_adjacency_list [n]
+			(core_dat : [n](t,t))
+			(eps : t)
+			(dist_t : distType)
+			(angle_t : anglType)
+			(radius : t)
+			(extPar : i64)
+		: ([n]i64, []i64) = -- returns compact neighbour list + starting indices of each pt
+			let inner_iter = (extPar + n - 1)/extPar
+			let (neighcounts, graph) : ([n]i64, []i64) =
+				loop (iter_nc, iter_graph) = (replicate n 0, [])
+				for j in iota inner_iter do
+					let inf = j*extPar
+					let sup = i64.min n (inf + extPar)
+					let this_pts = core_dat[inf:sup]
+					let neigh_matrices = this_pts
+						|> zip (inf..<sup)
+						|> map (\(i1,pt1) ->
+							core_dat |> zip (indices core_dat) |> map (\(i2,pt2) ->
+								if i1 == i2 then (i1,i2,true) else
+								let d = dist dist_t angle_t radius pt1 pt2
+								in (i1, i2, d `leq` eps)
+							)
+						)
+					let (compact_reps, compact_neigh) = neigh_matrices
+						|> flatten
+						|> filter (.2)
+						|> map (\(i1,i2,_) -> (i1-inf,i2))
+						|> unzip
+					let nc = length compact_reps
+					let this_neighCount = hist (+) 0 (sup-inf) (compact_reps :> [nc]i64) (replicate nc 1)
+					in (iter_nc with [inf:sup] = this_neighCount, iter_graph ++ compact_neigh)
+			in (exscan (+) 0 neighcounts, graph)
+
+		local def form_clusters_compact [n]
+			(core_pts : [n](t,t))
+			(eps : t)
+			(dist_t : distType)
+			(angle_t : anglType)
+			(radius : t)
+			(extPar : i64)
+		: [n]i64 =
+			let (dat_is, dat_neighs) = mk_adjacency_list core_pts eps dist_t angle_t radius extPar
+			let ndn = length dat_neighs
+			let segment_flags = scatter (replicate ndn false) dat_is (replicate n true)
+			-- Use adjacency list to get smallest reachable pt
+			let cluster_heads =
+				-- Iterate over neighs:
+				-- assign each neigh to be replaced by its smallest neighbour
+				-- until convergence
+				let (_,itered_neighlist) : ([ndn]i64, [ndn]i64) =
+					loop (old_list,new_list) = (replicate ndn (-1), dat_neighs :> [ndn]i64)
+					while any (id) (map2 (\alt neu -> alt != neu) old_list new_list) do
+						let current_min_neighbours = segmented_reduce
+							(\n1 n2 -> if n1<n2 then n1 else n2) (i64.highest)
+							segment_flags new_list
+						let newer_list = new_list
+							|> map (\i -> current_min_neighbours[i])
+						-- -- following not needed as each iteration will only shrink min neighbours
+						--let newer_list = map2 (\alt neu->
+						--	if alt>neu then neu else alt)
+						--new_list newer_list_
+						in (new_list, newer_list)
+				-- obtain ids via segmented reduction
+				in segmented_reduce (\n1 n2 -> if n1<n2 then n1 else n2) (i64.highest)
+					segment_flags (itered_neighlist :> [ndn]i64)
+			in cluster_heads :> [n]i64
+
 		-- TODO make compact like in ftDBSCAN
 		local def find_chain_ids
 			(core_pts_ : [](t,t))
@@ -526,6 +626,7 @@ module dbscan_plus (F : float) = {
 			(m_size : i64)
 			(gather_psize : i64)
 			(chain_offs : i64)
+			(compact_list : bool)
 		-- returns cids + collided pairs
 		: ([]i64, [](i64, i64)) =
 			-- 0 - parameters
@@ -535,26 +636,10 @@ module dbscan_plus (F : float) = {
 				let extPar = i64.max 1 (m_size/(i64.max 1 n1))
 				let num_iter = (extPar + n1 - 1) / extPar
 			-- 1 - find current cluster IDs irrespective of preCids
-				let (cluster_heads,_) =
-				loop (chBuff,conv) = (iota n1, false) while (!conv) do
-					let next_chBuff = 
-					loop chBuff_ = chBuff for j in (iota num_iter) do
-						let inf = j*extPar
-						let sup = i64.min n1 (inf + extPar)
-						let this_pts = core_pts[inf:sup]
-						let this_chs = chBuff_[inf:sup]
-						let this_min_ch = map2 (\ch pt ->
-								let coreNeigh = core_pts
-									|> map (\other_pt -> dist dist_t angle_t radius pt other_pt)
-									|> map (\d -> d `leq` eps)
-								let neighChs = map2 (\other_ch isN ->
-									if isN then other_ch else ch
-								) chBuff_ coreNeigh -- using chBuff_ here could bring faster convergence
-								in i64.minimum neighChs
-							) this_chs this_pts
-						in (copy chBuff_) with [inf:sup] = this_min_ch
-					let next_conv = (map2 (==) chBuff next_chBuff) |> all (id)
-					in (next_chBuff :> [n1]i64, next_conv)
+				let cluster_heads =
+					if compact_list
+					then form_clusters_compact core_pts eps dist_t angle_t radius extPar
+					else form_clusters_naive core_pts eps dist_t angle_t radius extPar num_iter
 			-- 2 - List - Ranking & offset
 				let is_cluster_head = map2 (==) (iota n1) (cluster_heads :> [n1]i64)
 				let ch_ids = is_cluster_head
@@ -684,6 +769,7 @@ module dbscan_plus (F : float) = {
 		def do_DBSCAN [n] [part_no]
 			(clHandler : dbcHandler [n] [part_no])
 			(gather_psize : i64)
+			(compact_list : bool)
 		: dbcHandler [n] [part_no] =
 			let clBase = clHandler.clBase
 			let clProc = clHandler.clProc
@@ -775,7 +861,7 @@ module dbscan_plus (F : float) = {
 				core_pts preCids
 				eps clBase.dist_t clBase.angle_t clBase.radius
 				clBase.m_size gather_psize
-				clProc.chainOffs
+				clProc.chainOffs compact_list
 			-- get frontier points together for assignment
 			-- to address a tight margin point becoming core with new partition
 			-- and having border neighbours in loose margin (with minPts>=2)
@@ -964,8 +1050,9 @@ module dbscan_plus (F : float) = {
 	entry do_DBSCAN_double [n] [part_no]
 		(clHandler : dbcHandler_double [n] [part_no])
 		(gather_psize : i64)
+		(compact_list : bool)
 	: dbcHandler_double [n] [part_no] =
-		dbscanPlus_double.do_DBSCAN clHandler gather_psize
+		dbscanPlus_double.do_DBSCAN clHandler gather_psize compact_list
 
 	entry make_collisions_compact_double [n] [part_no]
 		(clHandler : dbcHandler_double [n] [part_no])
@@ -996,7 +1083,7 @@ module dbscan_plus (F : float) = {
 		let y_offs = (f64.i64 y_id)*10.0
 		in xys |> map (\(x,y) -> (x+x_offs,y+y_offs)) |> unzip
 
-	def test_1 (stop_point : i64) =
+	def test_1 (do_compact : bool) (stop_point : i64) =
 		let pts : [](f64,f64) = [
 				(0.4,2.5),
 				(8.5,9.5),
@@ -1015,29 +1102,29 @@ module dbscan_plus (F : float) = {
 		let (xs,ys) = make_test_part 4 pts
 		let clHandler = add_next_partition_double (copy test_handler) 4 xs ys
 		in if (stop_point<=0) then clHandler else
-		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let clHandler1 = do_DBSCAN_double clHandler 1024 do_compact
 		in if (stop_point==1) then clHandler1 else
 		let next = next_partition_to_read_double clHandler1
 		let pts : [](f64,f64) = [(4.0, 1.1),(0.0,1.9),(9.9,2.5),(4.0,9.7),(4.5,9.7)]
 		let (xs,ys) = make_test_part next pts
 		let clHandler = add_next_partition_double clHandler1 next xs ys
 		in if (stop_point==2) then clHandler else
-		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let clHandler1 = do_DBSCAN_double clHandler 1024 do_compact
 		in if (stop_point==3) then clHandler1 else
 		let next = next_partition_to_read_double clHandler1
 		let clHandler = add_next_partition_double clHandler1 next [13] [9.7]
 		in if (stop_point==4) then clHandler else
-		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let clHandler1 = do_DBSCAN_double clHandler 1024 do_compact
 		in if (stop_point==5) then clHandler1 else
 		let next = next_partition_to_read_double clHandler1
 		let pts : [](f64,f64) = [(0.1,2.2), (0.2,2.8), (0.1, 3.5)]
 		let (xs,ys) = make_test_part next pts
 		let clHandler = add_next_partition_double clHandler1 next xs ys
 		in if (stop_point==6) then clHandler else
-		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let clHandler1 = do_DBSCAN_double clHandler 1024 do_compact
 		in clHandler1
 
-	def test_2 (rect : bool) =
+	def test_2 (do_compact : bool) (rect : bool) =
 		let flushedCids : []i64 = []
 		let pts : [](f64,f64) = [
 				(0.4,2.5),
@@ -1056,23 +1143,23 @@ module dbscan_plus (F : float) = {
 				(3.4,3.4)]
 		let (xs,ys) = make_test_part 4 pts
 		let clHandler = add_next_partition_double (copy test_handler) 4 xs ys
-		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let clHandler1 = do_DBSCAN_double clHandler 1024 do_compact
 		let next = next_partition_to_read_double clHandler1
 		let pts : [](f64,f64) = [(4.0, 1.1),(0.0,1.9),(9.9,2.5),(4.0,9.7),(4.5,9.7)]
 		let (xs,ys) = make_test_part next pts
 		let clHandler = add_next_partition_double clHandler1 next xs ys
 		let flushedCids = flushedCids ++ clHandler.toFlush_ids
-		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let clHandler1 = do_DBSCAN_double clHandler 1024 do_compact
 		let next = next_partition_to_read_double clHandler1
 		let clHandler = add_next_partition_double clHandler1 next [13] [9.7]
 		let flushedCids = flushedCids ++ clHandler.toFlush_ids
-		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let clHandler1 = do_DBSCAN_double clHandler 1024 do_compact
 		let next = next_partition_to_read_double clHandler1
 		let pts : [](f64,f64) = [(0.1,2.2), (0.2,2.8), (0.1, 3.5)]
 		let (xs,ys) = make_test_part next pts
 		let clHandler = add_next_partition_double clHandler1 next xs ys
 		let flushedCids = flushedCids ++ clHandler.toFlush_ids
-		let clHandler1 = do_DBSCAN_double clHandler 1024
+		let clHandler1 = do_DBSCAN_double clHandler 1024 do_compact
 		let flushedCids = flushedCids ++ clHandler1.clProc.buffered_ids ++ clHandler1.current_partition.chain_ids
 		in if !rect then flushedCids else
 		let cc = make_collisions_compact_double clHandler1
