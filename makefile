@@ -85,15 +85,15 @@ C-ftDBSCAN: ft_libs/ftDBSCAN.fut
 	futhark c ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS)
 
-CUDA-ftDBSCAN: ft_libs/ftDBSCAN.fut
-	futhark cuda ft_clibs/ftDBSCAN.fut --library
-	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
-
 CUDA1-ftDBSCAN: ft_libs/ftDBSCAN.fut
 	futhark cuda ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
 
 CUDA2-ftDBSCAN: ft_clibs/ftDBSCAN.c
 	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
+
+CUDA-ftDBSCAN: ft_libs/ftDBSCAN.fut
+	make CUDA1-ftDBSCAN
+	make CUDA2-ftDBSCAN
 
 DBSCAN: benchmarks/src/dbscan.c $(DEPS) $(DBSCAN_DEPS)
 	$(CC) benchmarks/src/dbscan.c -lm -o benchmarks/dbscan.o \
@@ -103,29 +103,29 @@ C-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
 	futhark c ft_libs/ftDBSCAN_plus.fut --library -o ft_clibs/ftDBSCAN_plus
 	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS)
 
-CUDA-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
-	futhark cuda ft_clibs/ftDBSCAN_plus.fut --library
-	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
-
 CUDA1-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
 	futhark cuda ft_libs/ftDBSCAN_plus.fut --library -o ft_clibs/ftDBSCAN_plus
 
 CUDA2-ftDBSCAN_plus: ft_clibs/ftDBSCAN_plus.c
 	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
+CUDA-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
+	make CUDA1-ftDBSCAN_plus
+	make CUDA2-ftDBSCAN_plus
+
 C-ftSynthetic: ft_libs/ftSynthetic.fut
 	futhark c ft_libs/ftSynthetic.fut --library -o ft_clibs/ftSynthetic
 	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS)
-
-CUDA-ftSynthetic: ft_libs/ftSynthetic.fut
-	futhark cuda ft_clibs/ftSynthetic.fut --library
-	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
 
 CUDA1-ftSynthetic: ft_libs/ftSynthetic.fut
 	futhark cuda ft_libs/ftSynthetic.fut --library -o ft_clibs/ftSynthetic
 
 CUDA2-ftSynthetic: ft_clibs/ftSynthetic.c
 	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
+
+CUDA-ftSynthetic: ft_libs/ftSynthetic.fut
+	make CUDA1-ftSynthetic
+	make CUDA2-ftSynthetic
 
 Synthetic-Correlated: benchmarks/src/mk_correlated.c ft_clibs/libftSynthetic.so $(DEPS)
 	$(CC) benchmarks/src/mk_correlated.c -o benchmarks/mk_correlated.o \

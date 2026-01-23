@@ -362,7 +362,7 @@ int main(int argc, char *argv[]) {
 
   if(DO_TEST_CPU) {
     mylog(logfile, "EXPERIMENT #1 -- CPU-base join.");
-    char joinQ[1000];
+    char joinQ[500 + strlen(R_KEY) + 2*strlen(S_KEY) + strlen(R_TBL_NAME) + strlen(S_TBL_NAME) ];
     sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
       S_KEY, R_TBL_NAME, S_TBL_NAME, R_KEY, S_KEY);
     if(duckdb_query(con, joinQ, NULL) == DuckDBError) {

@@ -23,6 +23,9 @@ def gather 't [ni] [n] (dummy_elem: t) (xs: [n]t) (is: [ni](idx_t.t)) =
 def partitioned_gather_over_array [ni] [n] 'a
   (n_bits : i32) (psize : idx_t.t) (dest: [ni]a) (xs : [n]a) (is : [ni]idx_t.t)
 =
+  -- TODO temporary code to debug gather slowness...
+  if true then (is |> map (\i -> if (i<0 || i>=n) then dest[i] else xs[i])) else
+  -- TODO why does this delay so much?!?!?!
   let psize_ = i64.max 1 (psize / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits) ))
   let max_iter = (n+psize_-1) / psize_
   in loop buff = dest for j in (iota max_iter) do
