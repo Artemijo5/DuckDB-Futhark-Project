@@ -2,7 +2,7 @@ import "ftbasics"
 import "lib/github.com/diku-dk/segmented/segmented"
 import "lib/github.com/diku-dk/sorts/merge_sort"
 
-type distType = #euclidean | #haversine -- TODO hsv distance ? for Mahalanobis transform data externally
+type distType = #euclidean | #haversine
 type anglType = #degrees | #radians
 
 type dbcBase_t 'f = {

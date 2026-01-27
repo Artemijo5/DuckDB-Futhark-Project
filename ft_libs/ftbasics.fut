@@ -55,6 +55,7 @@ def partitioned_scatter [nd] [n] 'a
   (is: [n]idx_t.t)
   (vs: [n]a)
 : *[]a =
+  if true then scatter dest is vs else
   let psize_ = psize / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits) )
   let max_iter = (nd+psize_-1) / psize_
   in loop buff = dest for j in (iota max_iter) do
