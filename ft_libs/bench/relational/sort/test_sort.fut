@@ -1,7 +1,7 @@
 import "../../../ftbasics"
 import "../../../joins/ftSMJ"
 
--- Sorting
+-- TODO why won't radix sort compile (!!!)
 
 -- Merge Sort
 
@@ -27,6 +27,12 @@ import "../../../joins/ftSMJ"
 -- random input { [134217728]i32 [134217728][4]u8 }
 -- auto output
 -- random input { [134217728]i32 [134217728][8]u8 }
+-- auto output
+-- random input { [268435456]i32 [268435456][0]u8 }
+-- auto output
+-- random input { [268435456]i32 [268435456][4]u8 }
+-- auto output
+-- random input { [268435456]i32 [268435456][8]u8 }
 -- auto output
 
 entry merge_sort_i32 [n] [b] (ks : [n]i32) (pL : [n][b]u8) =
@@ -56,6 +62,12 @@ entry merge_sort_i32 [n] [b] (ks : [n]i32) (pL : [n][b]u8) =
 -- random input { [134217728]i64 [134217728][4]u8 }
 -- auto output
 -- random input { [134217728]i64 [134217728][8]u8 }
+-- auto output
+-- random input { [268435456]i64 [268435456][0]u8 }
+-- auto output
+-- random input { [268435456]i64 [268435456][4]u8 }
+-- auto output
+-- random input { [268435456]i64 [268435456][8]u8 }
 -- auto output
 
 entry merge_sort_i64 [n] [b] (ks : [n]i64) (pL : [n][b]u8) =
@@ -89,6 +101,12 @@ entry merge_sort_i64 [n] [b] (ks : [n]i64) (pL : [n][b]u8) =
 -- auto output
 -- random input { [134217728]i32 [134217728][8]u8 }
 -- auto output
+-- random input { [268435456]i32 [268435456][0]u8 }
+-- auto output
+-- random input { [268435456]i32 [268435456][4]u8 }
+-- auto output
+-- random input { [268435456]i32 [268435456][8]u8 }
+-- auto output
 
 entry radix_sort_i32 [n] [b] (ks : [n]i32) (pL : [n][b]u8) =
 	let xs = zip ks pL
@@ -117,6 +135,12 @@ entry radix_sort_i32 [n] [b] (ks : [n]i32) (pL : [n][b]u8) =
 -- random input { [134217728]i64 [134217728][4]u8 }
 -- auto output
 -- random input { [134217728]i64 [134217728][8]u8 }
+-- auto output
+-- random input { [268435456]i64 [268435456][0]u8 }
+-- auto output
+-- random input { [268435456]i64 [268435456][4]u8 }
+-- auto output
+-- random input { [268435456]i64 [268435456][8]u8 }
 -- auto output
 
 entry radix_sort_i64 [n] [b] (ks : [n]i64) (pL : [n][b]u8) =

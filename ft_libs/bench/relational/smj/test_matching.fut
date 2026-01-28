@@ -24,7 +24,7 @@ entry smj1_i32 [n1] [n2]
 	let xs2 : sortStruct_int [n2] [0] = {k = ks2, pL = pL2}
 	let sks1 = (mergeSortRelation xs1 (<=)).k
 	let sks2 = (mergeSortRelation xs2 (<=)).k
-	let res = mergeJoin i32.num_bits sks1 sks2 0 0 (i64.highest) (==) (>) (<)
+	let res = mergeJoin i32.num_bits sks1 sks2 0 0 (1073741824) (==) (>) (<)
 	in (res.vs, res.ix, res.iy, res.cm)
 
 -- Match-finding, 8-byte integer keys.
@@ -50,5 +50,5 @@ entry smj1_i64 [n1] [n2]
 	let xs2 : sortStruct_long [n2] [0] = {k = ks2, pL = pL2}
 	let sks1 = (mergeSortRelation xs1 (<=)).k
 	let sks2 = (mergeSortRelation xs2 (<=)).k
-	let res = mergeJoin i32.num_bits sks1 sks2 0 0 (i64.highest) (==) (>) (<)
+	let res = mergeJoin i32.num_bits sks1 sks2 0 0 (1073741824) (==) (>) (<)
 	in (res.vs, res.ix, res.iy, res.cm)

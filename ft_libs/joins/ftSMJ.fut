@@ -278,42 +278,33 @@ import "../ftbasics"
     (lt : t -> t -> bool)
   : joinTup [nR] t =
     let partitionSize = partitionSize_ / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits))
-    let numIter_R = (nR + partitionSize - 1)/partitionSize
     let numIter_S = (nS + partitionSize - 1)/partitionSize
-    let loop_over_R : (idx_t.t, joinTup [nR] t, idx_t.t)
-    = loop (iter, jtup, first_relevant_in_S) = (0, uncooked_joinTup tR offset_R, 0)
-    while iter < numIter_R do
-      let tR_start = iter * partitionSize
-      let tR_end = idx_t.min (nR) (tR_start + partitionSize)
-      let cur_R = tR[tR_start:tR_end]
-      let cur_R_size = tR_end-tR_start
-      let loop_over_S : (idx_t.t, joinTup [tR_end-tR_start] t , bool, idx_t.t)
-      = loop (s_iter, s_jtup, isRelevant, minRelevant)
-        = (
-            first_relevant_in_S,
-            uncooked_joinTup cur_R (offset_R+tR_start),
-            true,
-            first_relevant_in_S
-          )
-      while (s_iter < numIter_S && isRelevant) do
-        let tS_start = s_iter * partitionSize
-        let tS_end = idx_t.min (nS) (tS_start + partitionSize)
-        let cur_S = tS[tS_start:tS_end]
-        let cur_S_size = tS_end-tS_start
-        let thisRelYet = !(cur_R[0] `gt` cur_S[cur_S_size-1])
-        let thisStillRel = !(cur_R[cur_R_size-1] `lt` cur_S[0])
-        in
-          if !thisRelYet then (s_iter+1, s_jtup, true, s_iter+1) else -- stil not relevant - skip to next
-          if !thisStillRel then (s_iter, s_jtup, thisStillRel, minRelevant) else -- already not relevant - break
-          let nextRel = !(cur_R[cur_R_size-1] `lt` cur_S[cur_S_size-1]) -- will next S be relevant? if not, break afterwards
-          let new_s_jtup = find_joinTuples cur_R cur_S (offset_R+tR_start) (offset_S+tS_start) (eq) (gt) (lt)
-          let new_s_iy = map2 (\alt neu -> if (alt<0) then neu else alt) (s_jtup.iy) (new_s_jtup.iy)
-          let new_s_cm = map2 (+) (s_jtup.cm) (new_s_jtup.cm)
-          let next_s_jtup = {vs = s_jtup.vs, ix = s_jtup.ix, iy = new_s_iy, cm = new_s_cm}
-          in (s_iter+1, next_s_jtup, nextRel, minRelevant)
-      let new_jtup = overlay_joinTups jtup loop_over_S.1 tR_start
-      in (iter+1, new_jtup, loop_over_S.3)
-    in loop_over_R.1
+    let first_relevant_in_S = 0
+    let loop_over_S : (idx_t.t, joinTup [nR] t , bool, idx_t.t)
+    = loop (s_iter, s_jtup, isRelevant, minRelevant)
+      = (
+          first_relevant_in_S,
+          uncooked_joinTup tR (offset_R),
+          true,
+          first_relevant_in_S
+        )
+    while (s_iter < numIter_S && isRelevant) do
+      let tS_start = s_iter * partitionSize
+      let tS_end = idx_t.min (nS) (tS_start + partitionSize)
+      let cur_S = tS[tS_start:tS_end]
+      let cur_S_size = tS_end-tS_start
+      let thisRelYet = !(tR[0] `gt` cur_S[cur_S_size-1])
+      let thisStillRel = !(tR[nR-1] `lt` cur_S[0])
+      in
+        if !thisRelYet then (s_iter+1, s_jtup, true, s_iter+1) else -- stil not relevant - skip to next
+        if !thisStillRel then (s_iter, s_jtup, thisStillRel, minRelevant) else -- already not relevant - break
+        let nextRel = !(tR[nR-1] `lt` cur_S[cur_S_size-1]) -- will next S be relevant? if not, break afterwards
+        let new_s_jtup = find_joinTuples tR cur_S (offset_R) (offset_S+tS_start) (eq) (gt) (lt)
+        let new_s_iy = map2 (\alt neu -> if (alt<0) then neu else alt) (s_jtup.iy) (new_s_jtup.iy)
+        let new_s_cm = map2 (+) (s_jtup.cm) (new_s_jtup.cm)
+        let next_s_jtup = {vs = s_jtup.vs, ix = s_jtup.ix, iy = new_s_iy, cm = new_s_cm}
+        in (s_iter+1, next_s_jtup, nextRel, minRelevant)
+    in loop_over_S.1
 
   -- | The pairs obtained from joining x&y.
   -- vs : the values of each pair
