@@ -15,15 +15,17 @@ Preparation:
 - install [futhark's sort libraries](https://github.com/diku-dk/sorts) in `ft_libs/`
 -----------------------------------------
 To use:
-1. export LD_LIBRARY_PATH using the string in `set_path`
+1. `source set_path` to set LD_LIBRARY_PATH
 2. compile futhark libraries (`make CUDA-LIB`, or `make C-LIB` for sequential compilation)
 3. build the desired benchmark (located in `benchmarks/src/`, see makefile for options)
 4. run the desired benchmark from a terminal in the project directory
+Also check the futhark benchmarks in ft_libs/bench (WIP)
 -----------------------------------------
 Current futhark libraries:
-- `ftRelational` : used by sort, joins, group-by aggregation
-- `ftSkyline` : used by Skyline (TODO revise)
-- `ftDBSCAN` : used by DBSCAN
+- `ftRelational` : sort, joins, group-by aggregation
+- `ftSkyline` : Skyline Computation
+- `ftDBSCAN` : DBSCAN (entire dataset is processed at once, quadratic space)
+- `ftDBSCAN_plus` : DBSCAN (directory-level index, WIP)
 -----------------------------------------
 The purpose of this project is to implement some GPU-based relational algorithms using the futhark programming language, identifying techniques for functional GPU database programming and evaluating performance.
 
@@ -31,7 +33,7 @@ Algorithms currently implemented:
 - Relational Joins (SMJ, Radix Hash Join - based on https://arxiv.org/abs/2312.00720 and references) (note: Hash Joins are temporarily not being compiled)
 - Group-by Aggregation
 - Skyline Queries
-- DBSCAN (currently only for datasets that fit fully in the GPU)
+- DBSCAN
 
 -----------------------------------------
 Main tools used:

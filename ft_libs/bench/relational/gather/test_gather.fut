@@ -1,14 +1,14 @@
-import "../../ftbasics"
+import "../../../ftbasics"
 
 -- Performance of clustered scatter - i32 values.
 --
 -- ==
 -- entry: scatter1_i32
--- input { 1000i64 }
+-- compiled input { 33554432i64 }
 -- auto output
--- compiled input { 100000i64 }
+-- compiled input { 67108864i64 }
 -- auto output
--- compiled input { 10000000i64 }
+-- compiled input { 134217728i64 }
 -- auto output
 
 entry scatter1_i32 (n : i64) =
@@ -18,11 +18,11 @@ entry scatter1_i32 (n : i64) =
 --
 -- ==
 -- entry: scatter1_i64
--- input { 1000i64 }
+-- compiled input { 33554432i64 }
 -- auto output
--- compiled input { 100000i64 }
+-- compiled input { 67108864i64 }
 -- auto output
--- compiled input { 10000000i64 }
+-- compiled input { 134217728i64 }
 -- auto output
 
 entry scatter1_i64 (n : i64) =
@@ -34,11 +34,11 @@ entry scatter1_i64 (n : i64) =
 --
 -- ==
 -- entry: clustered1_i32
--- compiled input { 1000i64 }
+-- compiled input { 33554432i64 }
 -- auto output
--- compiled input { 100000i64 }
+-- compiled input { 67108864i64 }
 -- auto output
--- compiled input { 10000000i64 }
+-- compiled input { 134217728i64 }
 -- auto output
 
 entry clustered1_i32 (n : i64) =
@@ -48,47 +48,41 @@ entry clustered1_i32 (n : i64) =
 --
 -- ==
 -- entry: clustered1_i64
--- compiled input { 1000i64 }
+-- compiled input { 33554432i64 }
 -- auto output
--- compiled input { 100000i64 }
+-- compiled input { 67108864i64 }
 -- auto output
--- compiled input { 10000000i64 }
+-- compiled input { 134217728i64 }
 -- auto output
 
 entry clustered1_i64 (n : i64) =
 	gather (-1) (iota n) (iota n)
 
--- Performance of unclustered gathers - i32 values.
+-- Performance of unclustered gathers - 4-byte & 8-byte values.
 --
 -- ==
--- entry: unclustered1_i32
+-- entry: unclustered1
 -- input @data/gatherIn_i32.in
 -- auto output
-
-entry unclustered1_i32 (vs : []i32) (is : []i64) =
-	gather (-1) vs is
-
--- Performance of unclustered gathers - i64 values.
---
--- ==
--- entry: unclustered1_i64
 -- input @data/gatherIn_i64.in
 -- auto output
 
-entry unclustered1_i64 (vs : []i64) (is : []i64) =
-	gather (-1) vs is
+entry unclustered1 [b] (vs : [][b]u8) (is : []i64) =
+	gather (replicate b 0) vs is
 
 -- Performance of segmented unclustered gathers - i64 values.
 --
--- 
+-- ==
 -- entry: unclustered2
+-- input @data/gatherIn_i32.in
+-- auto output
 -- input @data/gatherIn_i64.in
 -- auto output
 
-entry unclustered2 [n] (vs : []i64) (is : [n]i64) : [n]i64 =
-	let psize_ = i64.max 1 (128000 / (i64.i32 ((64+u8.num_bits-1)/u8.num_bits) ))
+entry unclustered2 [n] [b] (vs : [n][b]u8) (is : [n]i64) : [n][b]u8 =
+	let psize_ = i64.max 1 (128000 / b)
 	let max_iter = (n+psize_-1) / psize_
-	in loop buff : [n]i64 = (replicate n 0) for j in (iota max_iter) do
+	in loop buff : [n][b]u8 = (replicate n (replicate b 0)) for j in (iota max_iter) do
 		let inf = j*psize_
 		let sup = i64.min n (inf + psize_)
 		in buff

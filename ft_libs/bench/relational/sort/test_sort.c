@@ -7840,13 +7840,13 @@ GEN_LMAD_COPY(8b, uint64_t)
 
 #define FUTHARK_FUN_ATTR static
 
-FUTHARK_FUN_ATTR int futrts_entry_merge_sort_i32(struct futhark_context *ctx, struct memblock *mem_out_p_27294, struct memblock *mem_out_p_27295, struct memblock ks_mem_26974, struct memblock pL_mem_26975, int64_t n_16379, int64_t b_16380);
-FUTHARK_FUN_ATTR int futrts_entry_merge_sort_i64(struct futhark_context *ctx, struct memblock *mem_out_p_27306, struct memblock *mem_out_p_27307, struct memblock ks_mem_26974, struct memblock pL_mem_26975, int64_t n_18759, int64_t b_18760);
-FUTHARK_FUN_ATTR int futrts_entry_radix_sort_i32(struct futhark_context *ctx, struct memblock *mem_out_p_27318, struct memblock *mem_out_p_27319, struct memblock ks_mem_26974, struct memblock pL_mem_26975, int64_t n_19742, int64_t b_19743);
-FUTHARK_FUN_ATTR int futrts_entry_radix_sort_i64(struct futhark_context *ctx, struct memblock *mem_out_p_27322, struct memblock *mem_out_p_27323, struct memblock ks_mem_26974, struct memblock pL_mem_26975, int64_t n_20621, int64_t b_20622);
-FUTHARK_FUN_ATTR int futrts_greatest_divisor_leq_than_5346(struct futhark_context *ctx, int64_t *out_prim_out_27326, int64_t upper_bound_13924, int64_t n_13925);
-FUTHARK_FUN_ATTR int futrts_lifted_normalizze_7703(struct futhark_context *ctx, int64_t *out_prim_out_27327, int64_t *out_prim_out_27328, int64_t *out_prim_out_27329, int64_t *out_prim_out_27330, int64_t *out_prim_out_27331, int64_t slo_14157, int64_t shi_14158, int64_t tlo_14159, int64_t thi_14160, int64_t count_14161);
-FUTHARK_FUN_ATTR int futrts_set_bit_2464(struct futhark_context *ctx, int8_t *out_prim_out_27332, int32_t bit_18795, int8_t x_18796, int32_t b_18797);
+FUTHARK_FUN_ATTR int futrts_entry_merge_sort_i32(struct futhark_context *ctx, struct memblock *mem_out_p_27111, struct memblock *mem_out_p_27112, struct memblock ks_mem_26791, struct memblock pL_mem_26792, int64_t n_16308, int64_t b_16309);
+FUTHARK_FUN_ATTR int futrts_entry_merge_sort_i64(struct futhark_context *ctx, struct memblock *mem_out_p_27123, struct memblock *mem_out_p_27124, struct memblock ks_mem_26791, struct memblock pL_mem_26792, int64_t n_18688, int64_t b_18689);
+FUTHARK_FUN_ATTR int futrts_entry_radix_sort_i32(struct futhark_context *ctx, struct memblock *mem_out_p_27135, struct memblock *mem_out_p_27136, struct memblock ks_mem_26791, struct memblock pL_mem_26792, int64_t n_19615, int64_t b_19616);
+FUTHARK_FUN_ATTR int futrts_entry_radix_sort_i64(struct futhark_context *ctx, struct memblock *mem_out_p_27139, struct memblock *mem_out_p_27140, struct memblock ks_mem_26791, struct memblock pL_mem_26792, int64_t n_20438, int64_t b_20439);
+FUTHARK_FUN_ATTR int futrts_greatest_divisor_leq_than_5346(struct futhark_context *ctx, int64_t *out_prim_out_27143, int64_t upper_bound_13853, int64_t n_13854);
+FUTHARK_FUN_ATTR int futrts_lifted_normalizze_7715(struct futhark_context *ctx, int64_t *out_prim_out_27144, int64_t *out_prim_out_27145, int64_t *out_prim_out_27146, int64_t *out_prim_out_27147, int64_t *out_prim_out_27148, int64_t slo_14086, int64_t shi_14087, int64_t tlo_14088, int64_t thi_14089, int64_t count_14090);
+FUTHARK_FUN_ATTR int futrts_set_bit_2464(struct futhark_context *ctx, int8_t *out_prim_out_27149, int32_t bit_18749, int8_t x_18750, int32_t b_18751);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -8121,3755 +8121,3755 @@ const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_
     return arr->shape;
 }
 
-FUTHARK_FUN_ATTR int futrts_entry_merge_sort_i32(struct futhark_context *ctx, struct memblock *mem_out_p_27294, struct memblock *mem_out_p_27295, struct memblock ks_mem_26974, struct memblock pL_mem_26975, int64_t n_16379, int64_t b_16380)
+FUTHARK_FUN_ATTR int futrts_entry_merge_sort_i32(struct futhark_context *ctx, struct memblock *mem_out_p_27111, struct memblock *mem_out_p_27112, struct memblock ks_mem_26791, struct memblock pL_mem_26792, int64_t n_16308, int64_t b_16309)
 {
     (void) ctx;
     
     int err = 0;
-    int64_t mem_26980_cached_sizze_27296 = 0;
-    unsigned char *mem_26980 = NULL;
-    int64_t mem_26983_cached_sizze_27297 = 0;
-    unsigned char *mem_26983 = NULL;
-    int64_t mem_26993_cached_sizze_27298 = 0;
-    unsigned char *mem_26993 = NULL;
-    int64_t mem_26995_cached_sizze_27299 = 0;
-    unsigned char *mem_26995 = NULL;
-    int64_t mem_27062_cached_sizze_27300 = 0;
-    unsigned char *mem_27062 = NULL;
-    int64_t mem_27065_cached_sizze_27301 = 0;
-    unsigned char *mem_27065 = NULL;
-    int64_t mem_27075_cached_sizze_27302 = 0;
-    unsigned char *mem_27075 = NULL;
-    int64_t mem_27077_cached_sizze_27303 = 0;
-    unsigned char *mem_27077 = NULL;
-    int64_t mem_27092_cached_sizze_27304 = 0;
-    unsigned char *mem_27092 = NULL;
-    int64_t mem_27095_cached_sizze_27305 = 0;
-    unsigned char *mem_27095 = NULL;
-    struct memblock mem_27186;
+    int64_t mem_26797_cached_sizze_27113 = 0;
+    unsigned char *mem_26797 = NULL;
+    int64_t mem_26800_cached_sizze_27114 = 0;
+    unsigned char *mem_26800 = NULL;
+    int64_t mem_26810_cached_sizze_27115 = 0;
+    unsigned char *mem_26810 = NULL;
+    int64_t mem_26812_cached_sizze_27116 = 0;
+    unsigned char *mem_26812 = NULL;
+    int64_t mem_26879_cached_sizze_27117 = 0;
+    unsigned char *mem_26879 = NULL;
+    int64_t mem_26882_cached_sizze_27118 = 0;
+    unsigned char *mem_26882 = NULL;
+    int64_t mem_26892_cached_sizze_27119 = 0;
+    unsigned char *mem_26892 = NULL;
+    int64_t mem_26894_cached_sizze_27120 = 0;
+    unsigned char *mem_26894 = NULL;
+    int64_t mem_26909_cached_sizze_27121 = 0;
+    unsigned char *mem_26909 = NULL;
+    int64_t mem_26912_cached_sizze_27122 = 0;
+    unsigned char *mem_26912 = NULL;
+    struct memblock mem_27003;
     
-    mem_27186.references = NULL;
+    mem_27003.references = NULL;
     
-    struct memblock mem_27184;
+    struct memblock mem_27001;
     
-    mem_27184.references = NULL;
+    mem_27001.references = NULL;
     
-    struct memblock mem_param_tmp_27264;
+    struct memblock mem_param_tmp_27081;
     
-    mem_param_tmp_27264.references = NULL;
+    mem_param_tmp_27081.references = NULL;
     
-    struct memblock mem_param_tmp_27263;
+    struct memblock mem_param_tmp_27080;
     
-    mem_param_tmp_27263.references = NULL;
+    mem_param_tmp_27080.references = NULL;
     
-    struct memblock mem_27172;
+    struct memblock mem_26989;
     
-    mem_27172.references = NULL;
+    mem_26989.references = NULL;
     
-    struct memblock mem_27168;
+    struct memblock mem_26985;
     
-    mem_27168.references = NULL;
+    mem_26985.references = NULL;
     
-    struct memblock mem_27134;
+    struct memblock mem_26951;
     
-    mem_27134.references = NULL;
+    mem_26951.references = NULL;
     
-    struct memblock mem_27130;
+    struct memblock mem_26947;
     
-    mem_27130.references = NULL;
+    mem_26947.references = NULL;
     
-    struct memblock mem_27139;
+    struct memblock mem_26956;
     
-    mem_27139.references = NULL;
+    mem_26956.references = NULL;
     
-    struct memblock mem_27137;
+    struct memblock mem_26954;
     
-    mem_27137.references = NULL;
+    mem_26954.references = NULL;
     
-    struct memblock ext_mem_27154;
+    struct memblock ext_mem_26971;
     
-    ext_mem_27154.references = NULL;
+    ext_mem_26971.references = NULL;
     
-    struct memblock ext_mem_27157;
+    struct memblock ext_mem_26974;
     
-    ext_mem_27157.references = NULL;
+    ext_mem_26974.references = NULL;
     
-    struct memblock mem_param_27059;
+    struct memblock mem_param_26876;
     
-    mem_param_27059.references = NULL;
+    mem_param_26876.references = NULL;
     
-    struct memblock mem_param_27056;
+    struct memblock mem_param_26873;
     
-    mem_param_27056.references = NULL;
+    mem_param_26873.references = NULL;
     
-    struct memblock ext_mem_27178;
+    struct memblock ext_mem_26995;
     
-    ext_mem_27178.references = NULL;
+    ext_mem_26995.references = NULL;
     
-    struct memblock ext_mem_27179;
+    struct memblock ext_mem_26996;
     
-    ext_mem_27179.references = NULL;
+    ext_mem_26996.references = NULL;
     
-    struct memblock mem_27052;
+    struct memblock mem_26869;
     
-    mem_27052.references = NULL;
+    mem_26869.references = NULL;
     
-    struct memblock mem_27048;
+    struct memblock mem_26865;
     
-    mem_27048.references = NULL;
+    mem_26865.references = NULL;
     
-    struct memblock ext_mem_27182;
+    struct memblock ext_mem_26999;
     
-    ext_mem_27182.references = NULL;
+    ext_mem_26999.references = NULL;
     
-    struct memblock mem_26977;
+    struct memblock mem_26794;
     
-    mem_26977.references = NULL;
+    mem_26794.references = NULL;
     
-    struct memblock mem_out_27246;
+    struct memblock mem_out_27063;
     
-    mem_out_27246.references = NULL;
+    mem_out_27063.references = NULL;
     
-    struct memblock mem_out_27245;
+    struct memblock mem_out_27062;
     
-    mem_out_27245.references = NULL;
+    mem_out_27062.references = NULL;
     
-    int64_t bytes_26976 = (int64_t) 8 * n_16379;
-    bool cond_26073 = sle64(n_16379, (int64_t) 1);
-    int64_t zs_lhs_26074 = sub64(n_16379, (int64_t) 1);
-    int64_t zp_rhs_26075 = sdiv_safe64(zs_lhs_26074, (int64_t) 20);
-    int64_t min_num_blocks_26076 = add64((int64_t) 1, zp_rhs_26075);
-    bool loop_cond_26077 = slt64((int64_t) 1, min_num_blocks_26076);
-    bool smallest_pow_2_geq_than_res_26078;
-    int64_t smallest_pow_2_geq_than_res_26079;
-    bool loop_while_26080;
-    int64_t x_26081;
+    int64_t bytes_26793 = (int64_t) 8 * n_16308;
+    bool cond_25890 = sle64(n_16308, (int64_t) 1);
+    int64_t zs_lhs_25891 = sub64(n_16308, (int64_t) 1);
+    int64_t zp_rhs_25892 = sdiv_safe64(zs_lhs_25891, (int64_t) 20);
+    int64_t min_num_blocks_25893 = add64((int64_t) 1, zp_rhs_25892);
+    bool loop_cond_25894 = slt64((int64_t) 1, min_num_blocks_25893);
+    bool smallest_pow_2_geq_than_res_25895;
+    int64_t smallest_pow_2_geq_than_res_25896;
+    bool loop_while_25897;
+    int64_t x_25898;
     
-    loop_while_26080 = loop_cond_26077;
-    x_26081 = (int64_t) 1;
-    while (loop_while_26080) {
-        int64_t loopres_26082 = mul64((int64_t) 2, x_26081);
-        bool loop_cond_26083 = slt64(loopres_26082, min_num_blocks_26076);
-        bool loop_while_tmp_27247 = loop_cond_26083;
-        int64_t x_tmp_27248 = loopres_26082;
+    loop_while_25897 = loop_cond_25894;
+    x_25898 = (int64_t) 1;
+    while (loop_while_25897) {
+        int64_t loopres_25899 = mul64((int64_t) 2, x_25898);
+        bool loop_cond_25900 = slt64(loopres_25899, min_num_blocks_25893);
+        bool loop_while_tmp_27064 = loop_cond_25900;
+        int64_t x_tmp_27065 = loopres_25899;
         
-        loop_while_26080 = loop_while_tmp_27247;
-        x_26081 = x_tmp_27248;
+        loop_while_25897 = loop_while_tmp_27064;
+        x_25898 = x_tmp_27065;
     }
-    smallest_pow_2_geq_than_res_26078 = loop_while_26080;
-    smallest_pow_2_geq_than_res_26079 = x_26081;
+    smallest_pow_2_geq_than_res_25895 = loop_while_25897;
+    smallest_pow_2_geq_than_res_25896 = x_25898;
     
-    bool zzero_26084 = smallest_pow_2_geq_than_res_26079 == (int64_t) 0;
-    bool nonzzero_26085 = !zzero_26084;
-    bool protect_assert_disj_26086 = cond_26073 || nonzzero_26085;
-    bool nonzzero_cert_26087;
+    bool zzero_25901 = smallest_pow_2_geq_than_res_25896 == (int64_t) 0;
+    bool nonzzero_25902 = !zzero_25901;
+    bool protect_assert_disj_25903 = cond_25890 || nonzzero_25902;
+    bool nonzzero_cert_25904;
     
-    if (!protect_assert_disj_26086) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:234:30-42\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:28:40-44\n   #5  test_sort.fut:26:1-29:27\n"));
+    if (!protect_assert_disj_25903) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:234:30-42\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:34:40-44\n   #5  test_sort.fut:32:1-35:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t zp_rhs_26088 = sdiv_safe64(zs_lhs_26074, smallest_pow_2_geq_than_res_26079);
-    int64_t block_sizze_26089 = add64((int64_t) 1, zp_rhs_26088);
-    bool y_26095 = slt64((int64_t) 0, n_16379);
-    bool protect_assert_disj_27218 = cond_26073 || y_26095;
-    bool index_certs_26096;
+    int64_t zp_rhs_25905 = sdiv_safe64(zs_lhs_25891, smallest_pow_2_geq_than_res_25896);
+    int64_t block_sizze_25906 = add64((int64_t) 1, zp_rhs_25905);
+    bool y_25912 = slt64((int64_t) 0, n_16308);
+    bool protect_assert_disj_27035 = cond_25890 || y_25912;
+    bool index_certs_25913;
     
-    if (!protect_assert_disj_27218) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) n_16379, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:240:60-64\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:28:40-44\n   #5  test_sort.fut:26:1-29:27\n"));
+    if (!protect_assert_disj_27035) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) n_16308, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:240:60-64\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:34:40-44\n   #5  test_sort.fut:32:1-35:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    bool bounds_invalid_upwards_26110 = slt64(smallest_pow_2_geq_than_res_26079, (int64_t) 0);
-    bool valid_26111 = !bounds_invalid_upwards_26110;
-    bool protect_assert_disj_27226 = cond_26073 || valid_26111;
-    bool range_valid_c_26112;
+    bool bounds_invalid_upwards_25927 = slt64(smallest_pow_2_geq_than_res_25896, (int64_t) 0);
+    bool valid_25928 = !bounds_invalid_upwards_25927;
+    bool protect_assert_disj_27043 = cond_25890 || valid_25928;
+    bool range_valid_c_25929;
     
-    if (!protect_assert_disj_27226) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) smallest_pow_2_geq_than_res_26079, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:28:40-44\n   #6  test_sort.fut:26:1-29:27\n"));
+    if (!protect_assert_disj_27043) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) smallest_pow_2_geq_than_res_25896, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:34:40-44\n   #6  test_sort.fut:32:1-35:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    bool bounds_invalid_upwards_26114 = slt64(block_sizze_26089, (int64_t) 0);
-    bool valid_26115 = !bounds_invalid_upwards_26114;
-    bool protect_assert_disj_27228 = cond_26073 || valid_26115;
-    bool range_valid_c_26116;
+    bool bounds_invalid_upwards_25931 = slt64(block_sizze_25906, (int64_t) 0);
+    bool valid_25932 = !bounds_invalid_upwards_25931;
+    bool protect_assert_disj_27045 = cond_25890 || valid_25932;
+    bool range_valid_c_25933;
     
-    if (!protect_assert_disj_27228) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) block_sizze_26089, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+    if (!protect_assert_disj_27045) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) block_sizze_25906, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    bool cond_26118 = sle64(block_sizze_26089, (int64_t) 1);
-    int64_t tmp_26119 = sub64(block_sizze_26089, (int64_t) 2);
-    bool bounds_invalid_upwards_26120 = slt64(tmp_26119, (int64_t) 0);
-    bool valid_26122 = !bounds_invalid_upwards_26120;
-    bool protect_assert_disj_26123 = cond_26118 || valid_26122;
-    bool protect_assert_disj_27230 = cond_26073 || protect_assert_disj_26123;
-    bool range_valid_c_26124;
+    bool cond_25935 = sle64(block_sizze_25906, (int64_t) 1);
+    int64_t tmp_25936 = sub64(block_sizze_25906, (int64_t) 2);
+    bool bounds_invalid_upwards_25937 = slt64(tmp_25936, (int64_t) 0);
+    bool valid_25939 = !bounds_invalid_upwards_25937;
+    bool protect_assert_disj_25940 = cond_25935 || valid_25939;
+    bool protect_assert_disj_27047 = cond_25890 || protect_assert_disj_25940;
+    bool range_valid_c_25941;
     
-    if (!protect_assert_disj_27230) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "...", (long long) tmp_26119, " is invalid.", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:166:19-28\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+    if (!protect_assert_disj_27047) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "...", (long long) tmp_25936, " is invalid.", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:166:19-28\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t bytes_27183 = (int64_t) 4 * n_16379;
-    int64_t bytes_27185 = n_16379 * b_16380;
+    int64_t bytes_27000 = (int64_t) 4 * n_16308;
+    int64_t bytes_27002 = n_16308 * b_16309;
     
-    if (memblock_alloc(ctx, &mem_26977, bytes_26976, "mem_26977")) {
+    if (memblock_alloc(ctx, &mem_26794, bytes_26793, "mem_26794")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t i_27249 = 0; i_27249 < n_16379; i_27249++) {
-        int64_t x_27250 = (int64_t) 0 + i_27249 * (int64_t) 1;
+    for (int64_t i_27066 = 0; i_27066 < n_16308; i_27066++) {
+        int64_t x_27067 = (int64_t) 0 + i_27066 * (int64_t) 1;
         
-        ((int64_t *) mem_26977.mem)[i_27249] = x_27250;
+        ((int64_t *) mem_26794.mem)[i_27066] = x_27067;
     }
     
-    int64_t flat_dim_26090 = smallest_pow_2_geq_than_res_26079 * block_sizze_26089;
-    bool x_27213 = !cond_26073;
-    int64_t greatest_divisor_leq_than_arg1_26093 = mul64((int64_t) 2, block_sizze_26089);
-    int64_t merge_block_sizze_26094;
+    int64_t flat_dim_25907 = smallest_pow_2_geq_than_res_25896 * block_sizze_25906;
+    bool x_27030 = !cond_25890;
+    int64_t greatest_divisor_leq_than_arg1_25910 = mul64((int64_t) 2, block_sizze_25906);
+    int64_t merge_block_sizze_25911;
     
-    if (x_27213) {
-        int64_t x_27215;
+    if (x_27030) {
+        int64_t x_27032;
         
-        if (futrts_greatest_divisor_leq_than_5346(ctx, &x_27215, (int64_t) 8, greatest_divisor_leq_than_arg1_26093) != 0) {
+        if (futrts_greatest_divisor_leq_than_5346(ctx, &x_27032, (int64_t) 8, greatest_divisor_leq_than_arg1_25910) != 0) {
             err = 1;
             goto cleanup;
         }
-        merge_block_sizze_26094 = x_27215;
+        merge_block_sizze_25911 = x_27032;
     } else {
-        merge_block_sizze_26094 = (int64_t) 0;
+        merge_block_sizze_25911 = (int64_t) 0;
     }
     
-    int32_t reduce_arg1_26097;
+    int32_t reduce_arg1_25914;
     
-    if (x_27213) {
-        int32_t x_27219 = ((int32_t *) ks_mem_26974.mem)[(int64_t) 0];
+    if (x_27030) {
+        int32_t x_27036 = ((int32_t *) ks_mem_26791.mem)[(int64_t) 0];
         
-        reduce_arg1_26097 = x_27219;
+        reduce_arg1_25914 = x_27036;
     } else {
-        reduce_arg1_26097 = 0;
+        reduce_arg1_25914 = 0;
     }
     
-    int32_t defunc_0_reduce_res_26742;
-    int64_t defunc_0_reduce_res_26743;
+    int32_t defunc_0_reduce_res_26559;
+    int64_t defunc_0_reduce_res_26560;
     
-    if (x_27213) {
-        int32_t x_27221;
-        int64_t x_27222;
-        int32_t redout_26902;
-        int64_t redout_26903;
+    if (x_27030) {
+        int32_t x_27038;
+        int64_t x_27039;
+        int32_t redout_26719;
+        int64_t redout_26720;
         
-        redout_26902 = reduce_arg1_26097;
-        redout_26903 = (int64_t) 0;
-        for (int64_t i_26904 = 0; i_26904 < n_16379; i_26904++) {
-            int32_t x_26101 = ((int32_t *) ks_mem_26974.mem)[i_26904];
-            bool defunc_0_leq_res_26107 = sle32(redout_26902, x_26101);
-            int32_t defunc_0_op_res_26108;
+        redout_26719 = reduce_arg1_25914;
+        redout_26720 = (int64_t) 0;
+        for (int64_t i_26721 = 0; i_26721 < n_16308; i_26721++) {
+            int32_t x_25918 = ((int32_t *) ks_mem_26791.mem)[i_26721];
+            bool defunc_0_leq_res_25924 = sle32(redout_26719, x_25918);
+            int32_t defunc_0_op_res_25925;
             
-            if (defunc_0_leq_res_26107) {
-                defunc_0_op_res_26108 = x_26101;
+            if (defunc_0_leq_res_25924) {
+                defunc_0_op_res_25925 = x_25918;
             } else {
-                defunc_0_op_res_26108 = redout_26902;
+                defunc_0_op_res_25925 = redout_26719;
             }
             
-            int64_t defunc_0_op_res_26109;
+            int64_t defunc_0_op_res_25926;
             
-            if (defunc_0_leq_res_26107) {
-                defunc_0_op_res_26109 = i_26904;
+            if (defunc_0_leq_res_25924) {
+                defunc_0_op_res_25926 = i_26721;
             } else {
-                defunc_0_op_res_26109 = redout_26903;
+                defunc_0_op_res_25926 = redout_26720;
             }
             
-            int32_t redout_tmp_27251 = defunc_0_op_res_26108;
-            int64_t redout_tmp_27252 = defunc_0_op_res_26109;
+            int32_t redout_tmp_27068 = defunc_0_op_res_25925;
+            int64_t redout_tmp_27069 = defunc_0_op_res_25926;
             
-            redout_26902 = redout_tmp_27251;
-            redout_26903 = redout_tmp_27252;
+            redout_26719 = redout_tmp_27068;
+            redout_26720 = redout_tmp_27069;
         }
-        x_27221 = redout_26902;
-        x_27222 = redout_26903;
-        defunc_0_reduce_res_26742 = x_27221;
-        defunc_0_reduce_res_26743 = x_27222;
+        x_27038 = redout_26719;
+        x_27039 = redout_26720;
+        defunc_0_reduce_res_26559 = x_27038;
+        defunc_0_reduce_res_26560 = x_27039;
     } else {
-        defunc_0_reduce_res_26742 = 0;
-        defunc_0_reduce_res_26743 = (int64_t) 0;
+        defunc_0_reduce_res_26559 = 0;
+        defunc_0_reduce_res_26560 = (int64_t) 0;
     }
     
-    int64_t distance_26121 = add64((int64_t) 1, tmp_26119);
-    int64_t binop_x_26978 = (int64_t) 4 * smallest_pow_2_geq_than_res_26079;
-    int64_t bytes_26979 = block_sizze_26089 * binop_x_26978;
-    int64_t binop_x_26981 = (int64_t) 8 * smallest_pow_2_geq_than_res_26079;
-    int64_t bytes_26982 = block_sizze_26089 * binop_x_26981;
-    int64_t bytes_26992 = (int64_t) 4 * block_sizze_26089;
-    int64_t bytes_26994 = (int64_t) 8 * block_sizze_26089;
-    bool loop_cond_26196 = slt64(block_sizze_26089, flat_dim_26090);
-    bool zzero_26197 = merge_block_sizze_26094 == (int64_t) 0;
-    bool nonzzero_26198 = !zzero_26197;
+    int64_t distance_25938 = add64((int64_t) 1, tmp_25936);
+    int64_t binop_x_26795 = (int64_t) 4 * smallest_pow_2_geq_than_res_25896;
+    int64_t bytes_26796 = block_sizze_25906 * binop_x_26795;
+    int64_t binop_x_26798 = (int64_t) 8 * smallest_pow_2_geq_than_res_25896;
+    int64_t bytes_26799 = block_sizze_25906 * binop_x_26798;
+    int64_t bytes_26809 = (int64_t) 4 * block_sizze_25906;
+    int64_t bytes_26811 = (int64_t) 8 * block_sizze_25906;
+    bool loop_cond_26013 = slt64(block_sizze_25906, flat_dim_25907);
+    bool zzero_26014 = merge_block_sizze_25911 == (int64_t) 0;
+    bool nonzzero_26015 = !zzero_26014;
     
-    if (cond_26073) {
-        if (memblock_set(ctx, &ext_mem_27182, &mem_26977, "mem_26977") != 0)
+    if (cond_25890) {
+        if (memblock_set(ctx, &ext_mem_26999, &mem_26794, "mem_26794") != 0)
             return 1;
     } else {
-        if (mem_26980_cached_sizze_27296 < bytes_26979) {
-            err = lexical_realloc(ctx, &mem_26980, &mem_26980_cached_sizze_27296, bytes_26979);
+        if (mem_26797_cached_sizze_27113 < bytes_26796) {
+            err = lexical_realloc(ctx, &mem_26797, &mem_26797_cached_sizze_27113, bytes_26796);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
-        if (mem_26983_cached_sizze_27297 < bytes_26982) {
-            err = lexical_realloc(ctx, &mem_26983, &mem_26983_cached_sizze_27297, bytes_26982);
+        if (mem_26800_cached_sizze_27114 < bytes_26799) {
+            err = lexical_realloc(ctx, &mem_26800, &mem_26800_cached_sizze_27114, bytes_26799);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
-        if (mem_26993_cached_sizze_27298 < bytes_26992) {
-            err = lexical_realloc(ctx, &mem_26993, &mem_26993_cached_sizze_27298, bytes_26992);
+        if (mem_26810_cached_sizze_27115 < bytes_26809) {
+            err = lexical_realloc(ctx, &mem_26810, &mem_26810_cached_sizze_27115, bytes_26809);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
-        if (mem_26995_cached_sizze_27299 < bytes_26994) {
-            err = lexical_realloc(ctx, &mem_26995, &mem_26995_cached_sizze_27299, bytes_26994);
+        if (mem_26812_cached_sizze_27116 < bytes_26811) {
+            err = lexical_realloc(ctx, &mem_26812, &mem_26812_cached_sizze_27116, bytes_26811);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
-        for (int64_t i_26916 = 0; i_26916 < smallest_pow_2_geq_than_res_26079; i_26916++) {
-            int64_t zp_lhs_26128 = mul64(block_sizze_26089, i_26916);
+        for (int64_t i_26733 = 0; i_26733 < smallest_pow_2_geq_than_res_25896; i_26733++) {
+            int64_t zp_lhs_25945 = mul64(block_sizze_25906, i_26733);
             
-            for (int64_t i_26909 = 0; i_26909 < block_sizze_26089; i_26909++) {
-                int64_t k_26132 = add64(zp_lhs_26128, i_26909);
-                bool cond_26133 = slt64(k_26132, n_16379);
-                int32_t lifted_lambda_res_26134;
-                int64_t lifted_lambda_res_26135;
+            for (int64_t i_26726 = 0; i_26726 < block_sizze_25906; i_26726++) {
+                int64_t k_25949 = add64(zp_lhs_25945, i_26726);
+                bool cond_25950 = slt64(k_25949, n_16308);
+                int32_t lifted_lambda_res_25951;
+                int64_t lifted_lambda_res_25952;
                 
-                if (cond_26133) {
-                    bool x_26595 = sle64((int64_t) 0, k_26132);
-                    bool bounds_check_26596 = cond_26133 && x_26595;
-                    bool index_certs_26597;
+                if (cond_25950) {
+                    bool x_26412 = sle64((int64_t) 0, k_25949);
+                    bool bounds_check_26413 = cond_25950 && x_26412;
+                    bool index_certs_26414;
                     
-                    if (!bounds_check_26596) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) k_26132, "] out of bounds for array of shape [", (long long) n_16379, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:246:26-30\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:28:40-44\n   #9  test_sort.fut:26:1-29:27\n"));
+                    if (!bounds_check_26413) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) k_25949, "] out of bounds for array of shape [", (long long) n_16308, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:246:26-30\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:34:40-44\n   #9  test_sort.fut:32:1-35:27\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
                     
-                    int32_t lifted_lambda_res_t_res_26598 = ((int32_t *) ks_mem_26974.mem)[k_26132];
+                    int32_t lifted_lambda_res_t_res_26415 = ((int32_t *) ks_mem_26791.mem)[k_25949];
                     
-                    lifted_lambda_res_26134 = lifted_lambda_res_t_res_26598;
-                    lifted_lambda_res_26135 = k_26132;
+                    lifted_lambda_res_25951 = lifted_lambda_res_t_res_26415;
+                    lifted_lambda_res_25952 = k_25949;
                 } else {
-                    lifted_lambda_res_26134 = defunc_0_reduce_res_26742;
-                    lifted_lambda_res_26135 = defunc_0_reduce_res_26743;
+                    lifted_lambda_res_25951 = defunc_0_reduce_res_26559;
+                    lifted_lambda_res_25952 = defunc_0_reduce_res_26560;
                 }
-                ((int32_t *) mem_26993)[i_26909] = lifted_lambda_res_26134;
-                ((int64_t *) mem_26995)[i_26909] = lifted_lambda_res_26135;
+                ((int32_t *) mem_26810)[i_26726] = lifted_lambda_res_25951;
+                ((int64_t *) mem_26812)[i_26726] = lifted_lambda_res_25952;
             }
-            if (!cond_26118) {
-                for (int64_t i_26145 = 0; i_26145 < distance_26121; i_26145++) {
-                    int64_t gt_arg1_26148 = add64((int64_t) 1, i_26145);
-                    bool x_26149 = sle64((int64_t) 0, gt_arg1_26148);
-                    bool y_26150 = slt64(gt_arg1_26148, block_sizze_26089);
-                    bool bounds_check_26151 = x_26149 && y_26150;
-                    bool index_certs_26152;
+            if (!cond_25935) {
+                for (int64_t i_25962 = 0; i_25962 < distance_25938; i_25962++) {
+                    int64_t gt_arg1_25965 = add64((int64_t) 1, i_25962);
+                    bool x_25966 = sle64((int64_t) 0, gt_arg1_25965);
+                    bool y_25967 = slt64(gt_arg1_25965, block_sizze_25906);
+                    bool bounds_check_25968 = x_25966 && y_25967;
+                    bool index_certs_25969;
                     
-                    if (!bounds_check_26151) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) gt_arg1_26148, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:31-37\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+                    if (!bounds_check_25968) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) gt_arg1_25965, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:31-37\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
                     
-                    bool y_26154 = slt64(i_26145, block_sizze_26089);
-                    bool index_certs_26155;
+                    bool y_25971 = slt64(i_25962, block_sizze_25906);
+                    bool index_certs_25972;
                     
-                    if (!y_26154) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26145, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:26-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+                    if (!y_25971) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_25962, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:26-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
                     
-                    int32_t gt_arg1_26153 = ((int32_t *) mem_26993)[gt_arg1_26148];
-                    int32_t gt_arg0_26156 = ((int32_t *) mem_26993)[i_26145];
-                    bool defunc_0_leq_res_26157 = sle32(gt_arg0_26156, gt_arg1_26153);
-                    bool defunc_0_lifted_gt_res_26158 = !defunc_0_leq_res_26157;
-                    bool s_26159;
-                    int64_t s_26162;
-                    bool loop_while_26163;
-                    int64_t j_26166;
+                    int32_t gt_arg1_25970 = ((int32_t *) mem_26810)[gt_arg1_25965];
+                    int32_t gt_arg0_25973 = ((int32_t *) mem_26810)[i_25962];
+                    bool defunc_0_leq_res_25974 = sle32(gt_arg0_25973, gt_arg1_25970);
+                    bool defunc_0_lifted_gt_res_25975 = !defunc_0_leq_res_25974;
+                    bool s_25976;
+                    int64_t s_25979;
+                    bool loop_while_25980;
+                    int64_t j_25983;
                     
-                    loop_while_26163 = defunc_0_lifted_gt_res_26158;
-                    j_26166 = i_26145;
-                    while (loop_while_26163) {
-                        bool x_26167 = sle64((int64_t) 0, j_26166);
-                        bool y_26168 = slt64(j_26166, block_sizze_26089);
-                        bool bounds_check_26169 = x_26167 && y_26168;
-                        bool index_certs_26170;
+                    loop_while_25980 = defunc_0_lifted_gt_res_25975;
+                    j_25983 = i_25962;
+                    while (loop_while_25980) {
+                        bool x_25984 = sle64((int64_t) 0, j_25983);
+                        bool y_25985 = slt64(j_25983, block_sizze_25906);
+                        bool bounds_check_25986 = x_25984 && y_25985;
+                        bool index_certs_25987;
                         
-                        if (!bounds_check_26169) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26166, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:170:24-28\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+                        if (!bounds_check_25986) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_25983, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:170:24-28\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t copy_arg0_26173 = add64((int64_t) 1, j_26166);
-                        bool x_26174 = sle64((int64_t) 0, copy_arg0_26173);
-                        bool y_26175 = slt64(copy_arg0_26173, block_sizze_26089);
-                        bool bounds_check_26176 = x_26174 && y_26175;
-                        bool index_certs_26177;
+                        int64_t copy_arg0_25990 = add64((int64_t) 1, j_25983);
+                        bool x_25991 = sle64((int64_t) 0, copy_arg0_25990);
+                        bool y_25992 = slt64(copy_arg0_25990, block_sizze_25906);
+                        bool bounds_check_25993 = x_25991 && y_25992;
+                        bool index_certs_25994;
                         
-                        if (!bounds_check_26176) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) copy_arg0_26173, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:171:35-41\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+                        if (!bounds_check_25993) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) copy_arg0_25990, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:171:35-41\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int32_t copy_arg0_26171 = ((int32_t *) mem_26993)[j_26166];
-                        int64_t copy_arg0_26172 = ((int64_t *) mem_26995)[j_26166];
-                        int32_t copy_arg0_26178 = ((int32_t *) mem_26993)[copy_arg0_26173];
-                        int64_t copy_arg0_26179 = ((int64_t *) mem_26995)[copy_arg0_26173];
+                        int32_t copy_arg0_25988 = ((int32_t *) mem_26810)[j_25983];
+                        int64_t copy_arg0_25989 = ((int64_t *) mem_26812)[j_25983];
+                        int32_t copy_arg0_25995 = ((int32_t *) mem_26810)[copy_arg0_25990];
+                        int64_t copy_arg0_25996 = ((int64_t *) mem_26812)[copy_arg0_25990];
                         
-                        ((int32_t *) mem_26993)[j_26166] = copy_arg0_26178;
-                        ((int64_t *) mem_26995)[j_26166] = copy_arg0_26179;
-                        ((int32_t *) mem_26993)[copy_arg0_26173] = copy_arg0_26171;
-                        ((int64_t *) mem_26995)[copy_arg0_26173] = copy_arg0_26172;
+                        ((int32_t *) mem_26810)[j_25983] = copy_arg0_25995;
+                        ((int64_t *) mem_26812)[j_25983] = copy_arg0_25996;
+                        ((int32_t *) mem_26810)[copy_arg0_25990] = copy_arg0_25988;
+                        ((int64_t *) mem_26812)[copy_arg0_25990] = copy_arg0_25989;
                         
-                        int64_t tmp_26184 = sub64(j_26166, (int64_t) 1);
-                        bool cond_26185 = sle64((int64_t) 0, tmp_26184);
-                        bool loop_cond_26186;
+                        int64_t tmp_26001 = sub64(j_25983, (int64_t) 1);
+                        bool cond_26002 = sle64((int64_t) 0, tmp_26001);
+                        bool loop_cond_26003;
                         
-                        if (cond_26185) {
-                            bool y_26600 = slt64(tmp_26184, block_sizze_26089);
-                            bool bounds_check_26601 = cond_26185 && y_26600;
-                            bool index_certs_26602;
+                        if (cond_26002) {
+                            bool y_26417 = slt64(tmp_26001, block_sizze_25906);
+                            bool bounds_check_26418 = cond_26002 && y_26417;
+                            bool index_certs_26419;
                             
-                            if (!bounds_check_26601) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_26184, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:26-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+                            if (!bounds_check_26418) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_26001, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:26-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int32_t gt_arg1_26599 = ((int32_t *) mem_26993)[j_26166];
-                            int32_t gt_arg0_26603 = ((int32_t *) mem_26993)[tmp_26184];
-                            bool defunc_0_leq_res_26604 = sle32(gt_arg0_26603, gt_arg1_26599);
-                            bool defunc_0_lifted_gt_res_26605 = !defunc_0_leq_res_26604;
+                            int32_t gt_arg1_26416 = ((int32_t *) mem_26810)[j_25983];
+                            int32_t gt_arg0_26420 = ((int32_t *) mem_26810)[tmp_26001];
+                            bool defunc_0_leq_res_26421 = sle32(gt_arg0_26420, gt_arg1_26416);
+                            bool defunc_0_lifted_gt_res_26422 = !defunc_0_leq_res_26421;
                             
-                            loop_cond_26186 = defunc_0_lifted_gt_res_26605;
+                            loop_cond_26003 = defunc_0_lifted_gt_res_26422;
                         } else {
-                            loop_cond_26186 = 0;
+                            loop_cond_26003 = 0;
                         }
                         
-                        bool loop_while_tmp_27259 = loop_cond_26186;
-                        int64_t j_tmp_27262 = tmp_26184;
+                        bool loop_while_tmp_27076 = loop_cond_26003;
+                        int64_t j_tmp_27079 = tmp_26001;
                         
-                        loop_while_26163 = loop_while_tmp_27259;
-                        j_26166 = j_tmp_27262;
+                        loop_while_25980 = loop_while_tmp_27076;
+                        j_25983 = j_tmp_27079;
                     }
-                    s_26159 = loop_while_26163;
-                    s_26162 = j_26166;
+                    s_25976 = loop_while_25980;
+                    s_25979 = j_25983;
                 }
             }
-            lmad_copy_4b(ctx, 1, (uint32_t *) mem_26980, i_26916 * block_sizze_26089, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_26993, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {block_sizze_26089});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_26983, i_26916 * block_sizze_26089, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_26995, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {block_sizze_26089});
+            lmad_copy_4b(ctx, 1, (uint32_t *) mem_26797, i_26733 * block_sizze_25906, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_26810, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {block_sizze_25906});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_26800, i_26733 * block_sizze_25906, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_26812, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {block_sizze_25906});
         }
-        if (memblock_alloc(ctx, &mem_27048, bytes_26979, "mem_27048")) {
+        if (memblock_alloc(ctx, &mem_26865, bytes_26796, "mem_26865")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_4b(ctx, 2, (uint32_t *) mem_27048.mem, (int64_t) 0, (int64_t []) {block_sizze_26089, (int64_t) 1}, (uint32_t *) mem_26980, (int64_t) 0, (int64_t []) {block_sizze_26089, (int64_t) 1}, (int64_t []) {smallest_pow_2_geq_than_res_26079, block_sizze_26089});
-        if (memblock_alloc(ctx, &mem_27052, bytes_26982, "mem_27052")) {
+        lmad_copy_4b(ctx, 2, (uint32_t *) mem_26865.mem, (int64_t) 0, (int64_t []) {block_sizze_25906, (int64_t) 1}, (uint32_t *) mem_26797, (int64_t) 0, (int64_t []) {block_sizze_25906, (int64_t) 1}, (int64_t []) {smallest_pow_2_geq_than_res_25896, block_sizze_25906});
+        if (memblock_alloc(ctx, &mem_26869, bytes_26799, "mem_26869")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_8b(ctx, 2, (uint64_t *) mem_27052.mem, (int64_t) 0, (int64_t []) {block_sizze_26089, (int64_t) 1}, (uint64_t *) mem_26983, (int64_t) 0, (int64_t []) {block_sizze_26089, (int64_t) 1}, (int64_t []) {smallest_pow_2_geq_than_res_26079, block_sizze_26089});
+        lmad_copy_8b(ctx, 2, (uint64_t *) mem_26869.mem, (int64_t) 0, (int64_t []) {block_sizze_25906, (int64_t) 1}, (uint64_t *) mem_26800, (int64_t) 0, (int64_t []) {block_sizze_25906, (int64_t) 1}, (int64_t []) {smallest_pow_2_geq_than_res_25896, block_sizze_25906});
         
-        int64_t data_26199;
-        bool data_26200;
-        int64_t data_26203;
-        int64_t loop_dz2084Uz2082U_26204;
-        bool loop_while_26205;
-        int64_t stride_26208;
+        int64_t data_26016;
+        bool data_26017;
+        int64_t data_26020;
+        int64_t loop_dz2084Uz2082U_26021;
+        bool loop_while_26022;
+        int64_t stride_26025;
         
-        if (memblock_set(ctx, &mem_param_27056, &mem_27048, "mem_27048") != 0)
+        if (memblock_set(ctx, &mem_param_26873, &mem_26865, "mem_26865") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_27059, &mem_27052, "mem_27052") != 0)
+        if (memblock_set(ctx, &mem_param_26876, &mem_26869, "mem_26869") != 0)
             return 1;
-        loop_dz2084Uz2082U_26204 = flat_dim_26090;
-        loop_while_26205 = loop_cond_26196;
-        stride_26208 = block_sizze_26089;
-        while (loop_while_26205) {
-            int64_t next_stride_26209 = mul64((int64_t) 2, stride_26208);
-            bool zzero_26210 = next_stride_26209 == (int64_t) 0;
-            bool nonzzero_26211 = !zzero_26210;
-            bool nonzzero_cert_26212;
+        loop_dz2084Uz2082U_26021 = flat_dim_25907;
+        loop_while_26022 = loop_cond_26013;
+        stride_26025 = block_sizze_25906;
+        while (loop_while_26022) {
+            int64_t next_stride_26026 = mul64((int64_t) 2, stride_26025);
+            bool zzero_26027 = next_stride_26026 == (int64_t) 0;
+            bool nonzzero_26028 = !zzero_26027;
+            bool nonzzero_cert_26029;
             
-            if (!nonzzero_26211) {
-                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:254:33-46\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:28:40-44\n   #5  test_sort.fut:26:1-29:27\n"));
+            if (!nonzzero_26028) {
+                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:254:33-46\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:34:40-44\n   #5  test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t num_merges_26213 = sdiv64(flat_dim_26090, next_stride_26209);
-            bool bounds_invalid_upwards_26214 = slt64(num_merges_26213, (int64_t) 0);
-            bool valid_26215 = !bounds_invalid_upwards_26214;
-            bool range_valid_c_26216;
+            int64_t num_merges_26030 = sdiv64(flat_dim_25907, next_stride_26026);
+            bool bounds_invalid_upwards_26031 = slt64(num_merges_26030, (int64_t) 0);
+            bool valid_26032 = !bounds_invalid_upwards_26031;
+            bool range_valid_c_26033;
             
-            if (!valid_26215) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) num_merges_26213, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:28:40-44\n   #6  test_sort.fut:26:1-29:27\n"));
+            if (!valid_26032) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) num_merges_26030, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:34:40-44\n   #6  test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t m_26218 = sub64(next_stride_26209, (int64_t) 1);
-            bool zzero_leq_i_p_m_t_s_26219 = sle64((int64_t) 0, m_26218);
-            bool cond_26221 = slt64(next_stride_26209, (int64_t) 10);
-            bool protect_assert_disj_26222 = nonzzero_26198 || cond_26221;
-            bool nonzzero_cert_26223;
+            int64_t m_26035 = sub64(next_stride_26026, (int64_t) 1);
+            bool zzero_leq_i_p_m_t_s_26036 = sle64((int64_t) 0, m_26035);
+            bool cond_26038 = slt64(next_stride_26026, (int64_t) 10);
+            bool protect_assert_disj_26039 = nonzzero_26015 || cond_26038;
+            bool nonzzero_cert_26040;
             
-            if (!protect_assert_disj_26222) {
-                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:147:30-42\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26039) {
+                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:147:30-42\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t zeze_lhs_26224 = smod_safe64(next_stride_26209, merge_block_sizze_26094);
-            bool num_blocks_26225 = zeze_lhs_26224 == (int64_t) 0;
-            bool protect_assert_disj_26226 = cond_26221 || num_blocks_26225;
-            bool assert_c_26227;
+            int64_t zeze_lhs_26041 = smod_safe64(next_stride_26026, merge_block_sizze_25911);
+            bool num_blocks_26042 = zeze_lhs_26041 == (int64_t) 0;
+            bool protect_assert_disj_26043 = cond_26038 || num_blocks_26042;
+            bool assert_c_26044;
             
-            if (!protect_assert_disj_26226) {
-                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Assertion is false: (n % block_size == 0)", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:147:20-65\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26043) {
+                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Assertion is false: (n % block_size == 0)", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:147:20-65\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t num_blocks_26229 = sdiv_safe64(next_stride_26209, merge_block_sizze_26094);
-            int64_t dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230 = add64((int64_t) 1, num_blocks_26229);
-            int64_t j_m_i_26231 = sub64(next_stride_26209, stride_26208);
-            int64_t flat_dim_26232 = merge_block_sizze_26094 * num_blocks_26229;
-            bool bounds_invalid_upwards_26233 = slt64(dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230, (int64_t) 0);
-            bool empty_slice_26234 = j_m_i_26231 == (int64_t) 0;
-            int64_t m_26235 = sub64(j_m_i_26231, (int64_t) 1);
-            bool zzero_lte_i_26236 = sle64((int64_t) 0, stride_26208);
-            bool i_lte_j_26237 = sle64(stride_26208, next_stride_26209);
-            bool empty_slice_26238 = stride_26208 == (int64_t) 0;
-            int64_t m_26239 = sub64(stride_26208, (int64_t) 1);
-            bool bounds_invalid_upwards_26240 = slt64(num_blocks_26229, (int64_t) 0);
-            bool cond_26241 = slt64((int64_t) 0, stride_26208);
-            bool valid_26242 = !bounds_invalid_upwards_26233;
-            int64_t i_p_m_t_s_26243 = add64(stride_26208, m_26235);
-            bool zzero_leq_i_p_m_t_s_26244 = sle64((int64_t) 0, m_26239);
-            bool i_p_m_t_s_leq_w_26245 = slt64(m_26239, next_stride_26209);
-            bool valid_26246 = !bounds_invalid_upwards_26240;
-            bool i_p_m_t_s_leq_w_26247 = slt64(m_26218, flat_dim_26232);
-            bool y_26248 = slt64((int64_t) 0, j_m_i_26231);
-            bool protect_assert_disj_26249 = cond_26221 || valid_26242;
-            bool range_valid_c_26250;
+            int64_t num_blocks_26046 = sdiv_safe64(next_stride_26026, merge_block_sizze_25911);
+            int64_t dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047 = add64((int64_t) 1, num_blocks_26046);
+            int64_t j_m_i_26048 = sub64(next_stride_26026, stride_26025);
+            int64_t flat_dim_26049 = merge_block_sizze_25911 * num_blocks_26046;
+            bool bounds_invalid_upwards_26050 = slt64(dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047, (int64_t) 0);
+            bool empty_slice_26051 = j_m_i_26048 == (int64_t) 0;
+            int64_t m_26052 = sub64(j_m_i_26048, (int64_t) 1);
+            bool zzero_lte_i_26053 = sle64((int64_t) 0, stride_26025);
+            bool i_lte_j_26054 = sle64(stride_26025, next_stride_26026);
+            bool empty_slice_26055 = stride_26025 == (int64_t) 0;
+            int64_t m_26056 = sub64(stride_26025, (int64_t) 1);
+            bool bounds_invalid_upwards_26057 = slt64(num_blocks_26046, (int64_t) 0);
+            bool cond_26058 = slt64((int64_t) 0, stride_26025);
+            bool valid_26059 = !bounds_invalid_upwards_26050;
+            int64_t i_p_m_t_s_26060 = add64(stride_26025, m_26052);
+            bool zzero_leq_i_p_m_t_s_26061 = sle64((int64_t) 0, m_26056);
+            bool i_p_m_t_s_leq_w_26062 = slt64(m_26056, next_stride_26026);
+            bool valid_26063 = !bounds_invalid_upwards_26057;
+            bool i_p_m_t_s_leq_w_26064 = slt64(m_26035, flat_dim_26049);
+            bool y_26065 = slt64((int64_t) 0, j_m_i_26048);
+            bool protect_assert_disj_26066 = cond_26038 || valid_26059;
+            bool range_valid_c_26067;
             
-            if (!protect_assert_disj_26249) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:28:40-44\n   #10 test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26066) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:34:40-44\n   #10 test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool zzero_leq_i_p_m_t_s_26251 = sle64((int64_t) 0, i_p_m_t_s_26243);
-            bool i_p_m_t_s_leq_w_26252 = slt64(i_p_m_t_s_26243, next_stride_26209);
-            bool y_26253 = zzero_leq_i_p_m_t_s_26244 && i_p_m_t_s_leq_w_26245;
-            bool protect_assert_disj_26254 = cond_26221 || valid_26246;
-            bool range_valid_c_26255;
+            bool zzero_leq_i_p_m_t_s_26068 = sle64((int64_t) 0, i_p_m_t_s_26060);
+            bool i_p_m_t_s_leq_w_26069 = slt64(i_p_m_t_s_26060, next_stride_26026);
+            bool y_26070 = zzero_leq_i_p_m_t_s_26061 && i_p_m_t_s_leq_w_26062;
+            bool protect_assert_disj_26071 = cond_26038 || valid_26063;
+            bool range_valid_c_26072;
             
-            if (!protect_assert_disj_26254) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) num_blocks_26229, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:28:40-44\n   #9  test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26071) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) num_blocks_26046, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:34:40-44\n   #9  test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool y_26256 = zzero_leq_i_p_m_t_s_26219 && i_p_m_t_s_leq_w_26247;
-            bool y_26257 = zzero_lte_i_26236 && i_p_m_t_s_leq_w_26252;
-            bool forwards_ok_26258 = zzero_lte_i_26236 && y_26253;
-            bool ok_or_empty_26259 = zzero_26210 || y_26256;
-            bool protect_assert_disj_26260 = cond_26241 || y_26248;
-            bool y_26261 = zzero_leq_i_p_m_t_s_26251 && y_26257;
-            bool ok_or_empty_26262 = empty_slice_26238 || forwards_ok_26258;
-            bool protect_assert_disj_26263 = cond_26221 || ok_or_empty_26259;
-            bool index_certs_26264;
+            bool y_26073 = zzero_leq_i_p_m_t_s_26036 && i_p_m_t_s_leq_w_26064;
+            bool y_26074 = zzero_lte_i_26053 && i_p_m_t_s_leq_w_26069;
+            bool forwards_ok_26075 = zzero_lte_i_26053 && y_26070;
+            bool ok_or_empty_26076 = zzero_26027 || y_26073;
+            bool protect_assert_disj_26077 = cond_26058 || y_26065;
+            bool y_26078 = zzero_leq_i_p_m_t_s_26068 && y_26074;
+            bool ok_or_empty_26079 = empty_slice_26055 || forwards_ok_26075;
+            bool protect_assert_disj_26080 = cond_26038 || ok_or_empty_26076;
+            bool index_certs_26081;
             
-            if (!protect_assert_disj_26263) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) next_stride_26209, "] out of bounds for array of shape [", (long long) flat_dim_26232, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:155:3-46\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:28:40-44\n   #9  test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26080) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) next_stride_26026, "] out of bounds for array of shape [", (long long) flat_dim_26049, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:155:3-46\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:34:40-44\n   #9  test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool loop_not_taken_26265 = !cond_26221;
-            bool protect_assert_disj_26266 = protect_assert_disj_26260 || loop_not_taken_26265;
-            bool index_certs_26267;
+            bool loop_not_taken_26082 = !cond_26038;
+            bool protect_assert_disj_26083 = protect_assert_disj_26077 || loop_not_taken_26082;
+            bool index_certs_26084;
             
-            if (!protect_assert_disj_26266) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:48-54\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:28:40-44\n   #10 test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26083) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:48-54\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:34:40-44\n   #10 test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool forwards_ok_26268 = i_lte_j_26237 && y_26261;
-            bool protect_assert_disj_26269 = cond_26221 || ok_or_empty_26262;
-            bool index_certs_26270;
+            bool forwards_ok_26085 = i_lte_j_26054 && y_26078;
+            bool protect_assert_disj_26086 = cond_26038 || ok_or_empty_26079;
+            bool index_certs_26087;
             
-            if (!protect_assert_disj_26269) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) stride_26208, "] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:52-59\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:28:40-44\n   #11 test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26086) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) stride_26025, "] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:52-59\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:34:40-44\n   #11 test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool protect_assert_disj_26271 = ok_or_empty_26262 || loop_not_taken_26265;
-            bool index_certs_26272;
+            bool protect_assert_disj_26088 = ok_or_empty_26079 || loop_not_taken_26082;
+            bool index_certs_26089;
             
-            if (!protect_assert_disj_26271) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) stride_26208, "] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:26-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26088) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) stride_26025, "] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:26-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool ok_or_empty_26273 = empty_slice_26234 || forwards_ok_26268;
-            bool protect_assert_disj_26274 = cond_26221 || ok_or_empty_26273;
-            bool index_certs_26275;
+            bool ok_or_empty_26090 = empty_slice_26051 || forwards_ok_26085;
+            bool protect_assert_disj_26091 = cond_26038 || ok_or_empty_26090;
+            bool index_certs_26092;
             
-            if (!protect_assert_disj_26274) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) stride_26208, ":] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:60-67\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:28:40-44\n   #11 test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26091) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) stride_26025, ":] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:60-67\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:34:40-44\n   #11 test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool protect_assert_disj_26276 = loop_not_taken_26265 || ok_or_empty_26273;
-            bool index_certs_26277;
+            bool protect_assert_disj_26093 = loop_not_taken_26082 || ok_or_empty_26090;
+            bool index_certs_26094;
             
-            if (!protect_assert_disj_26276) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) stride_26208, ":] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:34-41\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+            if (!protect_assert_disj_26093) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) stride_26025, ":] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:34-41\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t binop_x_27060 = (int64_t) 4 * num_merges_26213;
-            int64_t bytes_27061 = next_stride_26209 * binop_x_27060;
-            int64_t binop_x_27063 = (int64_t) 8 * num_merges_26213;
-            int64_t bytes_27064 = next_stride_26209 * binop_x_27063;
-            bool i_lte_j_26220 = sle64((int64_t) 0, next_stride_26209);
+            int64_t binop_x_26877 = (int64_t) 4 * num_merges_26030;
+            int64_t bytes_26878 = next_stride_26026 * binop_x_26877;
+            int64_t binop_x_26880 = (int64_t) 8 * num_merges_26030;
+            int64_t bytes_26881 = next_stride_26026 * binop_x_26880;
+            bool i_lte_j_26037 = sle64((int64_t) 0, next_stride_26026);
             
-            if (mem_27062_cached_sizze_27300 < bytes_27061) {
-                err = lexical_realloc(ctx, &mem_27062, &mem_27062_cached_sizze_27300, bytes_27061);
+            if (mem_26879_cached_sizze_27117 < bytes_26878) {
+                err = lexical_realloc(ctx, &mem_26879, &mem_26879_cached_sizze_27117, bytes_26878);
                 if (err != FUTHARK_SUCCESS)
                     goto cleanup;
             }
-            if (mem_27065_cached_sizze_27301 < bytes_27064) {
-                err = lexical_realloc(ctx, &mem_27065, &mem_27065_cached_sizze_27301, bytes_27064);
+            if (mem_26882_cached_sizze_27118 < bytes_26881) {
+                err = lexical_realloc(ctx, &mem_26882, &mem_26882_cached_sizze_27118, bytes_26881);
                 if (err != FUTHARK_SUCCESS)
                     goto cleanup;
             }
             
-            int64_t bytes_27074 = (int64_t) 8 * dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230;
-            int64_t binop_x_27090 = (int64_t) 4 * num_blocks_26229;
-            int64_t bytes_27091 = merge_block_sizze_26094 * binop_x_27090;
-            int64_t binop_x_27093 = (int64_t) 8 * num_blocks_26229;
-            int64_t bytes_27094 = merge_block_sizze_26094 * binop_x_27093;
-            int64_t bytes_27136 = (int64_t) 8 * stride_26208;
-            int64_t bytes_27138 = (int64_t) 16 * stride_26208;
+            int64_t bytes_26891 = (int64_t) 8 * dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047;
+            int64_t binop_x_26907 = (int64_t) 4 * num_blocks_26046;
+            int64_t bytes_26908 = merge_block_sizze_25911 * binop_x_26907;
+            int64_t binop_x_26910 = (int64_t) 8 * num_blocks_26046;
+            int64_t bytes_26911 = merge_block_sizze_25911 * binop_x_26910;
+            int64_t bytes_26953 = (int64_t) 8 * stride_26025;
+            int64_t bytes_26955 = (int64_t) 16 * stride_26025;
             
-            for (int64_t i_26937 = 0; i_26937 < num_merges_26213; i_26937++) {
-                int64_t start_26281 = mul64(next_stride_26209, i_26937);
-                int64_t j_m_i_26282 = sub64(loop_dz2084Uz2082U_26204, start_26281);
-                bool empty_slice_26283 = j_m_i_26282 == (int64_t) 0;
-                int64_t m_26284 = sub64(j_m_i_26282, (int64_t) 1);
-                int64_t i_p_m_t_s_26285 = add64(start_26281, m_26284);
-                bool zzero_leq_i_p_m_t_s_26286 = sle64((int64_t) 0, i_p_m_t_s_26285);
-                bool i_p_m_t_s_leq_w_26287 = slt64(i_p_m_t_s_26285, loop_dz2084Uz2082U_26204);
-                bool zzero_lte_i_26288 = sle64((int64_t) 0, start_26281);
-                bool i_lte_j_26289 = sle64(start_26281, loop_dz2084Uz2082U_26204);
-                bool y_26290 = i_p_m_t_s_leq_w_26287 && zzero_lte_i_26288;
-                bool y_26291 = zzero_leq_i_p_m_t_s_26286 && y_26290;
-                bool forwards_ok_26292 = i_lte_j_26289 && y_26291;
-                bool ok_or_empty_26293 = empty_slice_26283 || forwards_ok_26292;
-                bool index_certs_26294;
+            for (int64_t i_26754 = 0; i_26754 < num_merges_26030; i_26754++) {
+                int64_t start_26098 = mul64(next_stride_26026, i_26754);
+                int64_t j_m_i_26099 = sub64(loop_dz2084Uz2082U_26021, start_26098);
+                bool empty_slice_26100 = j_m_i_26099 == (int64_t) 0;
+                int64_t m_26101 = sub64(j_m_i_26099, (int64_t) 1);
+                int64_t i_p_m_t_s_26102 = add64(start_26098, m_26101);
+                bool zzero_leq_i_p_m_t_s_26103 = sle64((int64_t) 0, i_p_m_t_s_26102);
+                bool i_p_m_t_s_leq_w_26104 = slt64(i_p_m_t_s_26102, loop_dz2084Uz2082U_26021);
+                bool zzero_lte_i_26105 = sle64((int64_t) 0, start_26098);
+                bool i_lte_j_26106 = sle64(start_26098, loop_dz2084Uz2082U_26021);
+                bool y_26107 = i_p_m_t_s_leq_w_26104 && zzero_lte_i_26105;
+                bool y_26108 = zzero_leq_i_p_m_t_s_26103 && y_26107;
+                bool forwards_ok_26109 = i_lte_j_26106 && y_26108;
+                bool ok_or_empty_26110 = empty_slice_26100 || forwards_ok_26109;
+                bool index_certs_26111;
                 
-                if (!ok_or_empty_26293) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) start_26281, ":] out of bounds for array of shape [", (long long) loop_dz2084Uz2082U_26204, "].", "-> #0  /prelude/array.fut:52:49-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:258:41-56\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+                if (!ok_or_empty_26110) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) start_26098, ":] out of bounds for array of shape [", (long long) loop_dz2084Uz2082U_26021, "].", "-> #0  /prelude/array.fut:52:49-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:258:41-56\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
                 
-                bool i_p_m_t_s_leq_w_26295 = slt64(m_26218, j_m_i_26282);
-                bool y_26296 = zzero_leq_i_p_m_t_s_26219 && i_p_m_t_s_leq_w_26295;
-                bool forwards_ok_26297 = i_lte_j_26220 && y_26296;
-                bool ok_or_empty_26298 = zzero_26210 || forwards_ok_26297;
-                bool index_certs_26299;
+                bool i_p_m_t_s_leq_w_26112 = slt64(m_26035, j_m_i_26099);
+                bool y_26113 = zzero_leq_i_p_m_t_s_26036 && i_p_m_t_s_leq_w_26112;
+                bool forwards_ok_26114 = i_lte_j_26037 && y_26113;
+                bool ok_or_empty_26115 = zzero_26027 || forwards_ok_26114;
+                bool index_certs_26116;
                 
-                if (!ok_or_empty_26298) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) next_stride_26209, "] out of bounds for array of shape [", (long long) j_m_i_26282, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:258:23-56\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:28:40-44\n   #8  test_sort.fut:26:1-29:27\n"));
+                if (!ok_or_empty_26115) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) next_stride_26026, "] out of bounds for array of shape [", (long long) j_m_i_26099, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:258:23-56\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:34:40-44\n   #8  test_sort.fut:32:1-35:27\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
-                if (cond_26221) {
-                    int32_t dummy_26631;
-                    int64_t dummy_26632;
+                if (cond_26038) {
+                    int32_t dummy_26448;
+                    int64_t dummy_26449;
                     
-                    if (cond_26241) {
-                        int32_t head_res_26633 = ((int32_t *) mem_param_27056.mem)[start_26281];
-                        int64_t head_res_26634 = ((int64_t *) mem_param_27059.mem)[start_26281];
+                    if (cond_26058) {
+                        int32_t head_res_26450 = ((int32_t *) mem_param_26873.mem)[start_26098];
+                        int64_t head_res_26451 = ((int64_t *) mem_param_26876.mem)[start_26098];
                         
-                        dummy_26631 = head_res_26633;
-                        dummy_26632 = head_res_26634;
+                        dummy_26448 = head_res_26450;
+                        dummy_26449 = head_res_26451;
                     } else {
-                        int64_t slice_26635 = stride_26208 + start_26281;
-                        int32_t head_res_26636 = ((int32_t *) mem_param_27056.mem)[slice_26635];
-                        int64_t head_res_26637 = ((int64_t *) mem_param_27059.mem)[slice_26635];
+                        int64_t slice_26452 = stride_26025 + start_26098;
+                        int32_t head_res_26453 = ((int32_t *) mem_param_26873.mem)[slice_26452];
+                        int64_t head_res_26454 = ((int64_t *) mem_param_26876.mem)[slice_26452];
                         
-                        dummy_26631 = head_res_26636;
-                        dummy_26632 = head_res_26637;
+                        dummy_26448 = head_res_26453;
+                        dummy_26449 = head_res_26454;
                     }
-                    if (memblock_alloc(ctx, &mem_27137, bytes_27136, "mem_27137")) {
+                    if (memblock_alloc(ctx, &mem_26954, bytes_26953, "mem_26954")) {
                         err = 1;
                         goto cleanup;
                     }
-                    for (int64_t nest_i_27272 = 0; nest_i_27272 < next_stride_26209; nest_i_27272++) {
-                        ((int32_t *) mem_27137.mem)[nest_i_27272] = dummy_26631;
+                    for (int64_t nest_i_27089 = 0; nest_i_27089 < next_stride_26026; nest_i_27089++) {
+                        ((int32_t *) mem_26954.mem)[nest_i_27089] = dummy_26448;
                     }
-                    if (memblock_alloc(ctx, &mem_27139, bytes_27138, "mem_27139")) {
+                    if (memblock_alloc(ctx, &mem_26956, bytes_26955, "mem_26956")) {
                         err = 1;
                         goto cleanup;
                     }
-                    for (int64_t nest_i_27273 = 0; nest_i_27273 < next_stride_26209; nest_i_27273++) {
-                        ((int64_t *) mem_27139.mem)[nest_i_27273] = dummy_26632;
+                    for (int64_t nest_i_27090 = 0; nest_i_27090 < next_stride_26026; nest_i_27090++) {
+                        ((int64_t *) mem_26956.mem)[nest_i_27090] = dummy_26449;
                     }
                     
-                    int64_t data_26640;
-                    int64_t i_26644 = (int64_t) 0;
+                    int64_t data_26457;
+                    int64_t i_26461 = (int64_t) 0;
                     
-                    for (int64_t k_26643 = 0; k_26643 < next_stride_26209; k_26643++) {
-                        int64_t j_26647 = sub64(k_26643, i_26644);
-                        bool cond_26648 = j_26647 == j_m_i_26231;
-                        bool cond_26649;
+                    for (int64_t k_26460 = 0; k_26460 < next_stride_26026; k_26460++) {
+                        int64_t j_26464 = sub64(k_26460, i_26461);
+                        bool cond_26465 = j_26464 == j_m_i_26048;
+                        bool cond_26466;
                         
-                        if (cond_26648) {
-                            cond_26649 = 1;
+                        if (cond_26465) {
+                            cond_26466 = 1;
                         } else {
-                            bool cond_26650 = slt64(i_26644, stride_26208);
-                            bool cond_f_res_26651;
+                            bool cond_26467 = slt64(i_26461, stride_26025);
+                            bool cond_f_res_26468;
                             
-                            if (cond_26650) {
-                                bool x_26652 = sle64((int64_t) 0, j_26647);
-                                bool y_26653 = slt64(j_26647, j_m_i_26231);
-                                bool bounds_check_26654 = x_26652 && y_26653;
-                                bool index_certs_26655;
+                            if (cond_26467) {
+                                bool x_26469 = sle64((int64_t) 0, j_26464);
+                                bool y_26470 = slt64(j_26464, j_m_i_26048);
+                                bool bounds_check_26471 = x_26469 && y_26470;
+                                bool index_certs_26472;
                                 
-                                if (!bounds_check_26654) {
-                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26647, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:55-59\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:28:40-44\n   #9  test_sort.fut:26:1-29:27\n"));
+                                if (!bounds_check_26471) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26464, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:55-59\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:34:40-44\n   #9  test_sort.fut:32:1-35:27\n"));
                                     err = FUTHARK_PROGRAM_ERROR;
                                     goto cleanup;
                                 }
                                 
-                                bool x_26659 = sle64((int64_t) 0, i_26644);
-                                bool bounds_check_26660 = cond_26650 && x_26659;
-                                bool index_certs_26661;
+                                bool x_26476 = sle64((int64_t) 0, i_26461);
+                                bool bounds_check_26477 = cond_26467 && x_26476;
+                                bool index_certs_26478;
                                 
-                                if (!bounds_check_26660) {
-                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26644, "] out of bounds for array of shape [", (long long) stride_26208, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:50-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:28:40-44\n   #9  test_sort.fut:26:1-29:27\n"));
+                                if (!bounds_check_26477) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26461, "] out of bounds for array of shape [", (long long) stride_26025, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:50-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:34:40-44\n   #9  test_sort.fut:32:1-35:27\n"));
                                     err = FUTHARK_PROGRAM_ERROR;
                                     goto cleanup;
                                 }
                                 
-                                int64_t slice_26656 = stride_26208 + j_26647;
-                                int64_t slice_26657 = start_26281 + slice_26656;
-                                int32_t leq_arg1_26658 = ((int32_t *) mem_param_27056.mem)[slice_26657];
-                                int64_t slice_26662 = start_26281 + i_26644;
-                                int32_t leq_arg0_26663 = ((int32_t *) mem_param_27056.mem)[slice_26662];
-                                bool defunc_0_leq_res_26664 = sle32(leq_arg0_26663, leq_arg1_26658);
+                                int64_t slice_26473 = stride_26025 + j_26464;
+                                int64_t slice_26474 = start_26098 + slice_26473;
+                                int32_t leq_arg1_26475 = ((int32_t *) mem_param_26873.mem)[slice_26474];
+                                int64_t slice_26479 = start_26098 + i_26461;
+                                int32_t leq_arg0_26480 = ((int32_t *) mem_param_26873.mem)[slice_26479];
+                                bool defunc_0_leq_res_26481 = sle32(leq_arg0_26480, leq_arg1_26475);
                                 
-                                cond_f_res_26651 = defunc_0_leq_res_26664;
+                                cond_f_res_26468 = defunc_0_leq_res_26481;
                             } else {
-                                cond_f_res_26651 = 0;
+                                cond_f_res_26468 = 0;
                             }
-                            cond_26649 = cond_f_res_26651;
+                            cond_26466 = cond_f_res_26468;
                         }
                         
-                        int64_t loopres_26665;
-                        int32_t loopres_26666;
-                        int64_t loopres_26667;
+                        int64_t loopres_26482;
+                        int32_t loopres_26483;
+                        int64_t loopres_26484;
                         
-                        if (cond_26649) {
-                            bool x_26669 = sle64((int64_t) 0, i_26644);
-                            bool y_26670 = slt64(i_26644, stride_26208);
-                            bool bounds_check_26671 = x_26669 && y_26670;
-                            bool index_certs_26672;
+                        if (cond_26466) {
+                            bool x_26486 = sle64((int64_t) 0, i_26461);
+                            bool y_26487 = slt64(i_26461, stride_26025);
+                            bool bounds_check_26488 = x_26486 && y_26487;
+                            bool index_certs_26489;
                             
-                            if (!bounds_check_26671) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26644, "] out of bounds for array of shape [", (long long) stride_26208, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:106:17-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:28:40-44\n   #9  test_sort.fut:26:1-29:27\n"));
+                            if (!bounds_check_26488) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26461, "] out of bounds for array of shape [", (long long) stride_26025, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:106:17-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:34:40-44\n   #9  test_sort.fut:32:1-35:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t tmp_26668 = add64((int64_t) 1, i_26644);
-                            int64_t slice_26673 = start_26281 + i_26644;
-                            int32_t tmp_26674 = ((int32_t *) mem_param_27056.mem)[slice_26673];
-                            int64_t tmp_26675 = ((int64_t *) mem_param_27059.mem)[slice_26673];
+                            int64_t tmp_26485 = add64((int64_t) 1, i_26461);
+                            int64_t slice_26490 = start_26098 + i_26461;
+                            int32_t tmp_26491 = ((int32_t *) mem_param_26873.mem)[slice_26490];
+                            int64_t tmp_26492 = ((int64_t *) mem_param_26876.mem)[slice_26490];
                             
-                            loopres_26665 = tmp_26668;
-                            loopres_26666 = tmp_26674;
-                            loopres_26667 = tmp_26675;
+                            loopres_26482 = tmp_26485;
+                            loopres_26483 = tmp_26491;
+                            loopres_26484 = tmp_26492;
                         } else {
-                            bool x_26676 = sle64((int64_t) 0, j_26647);
-                            bool y_26677 = slt64(j_26647, j_m_i_26231);
-                            bool bounds_check_26678 = x_26676 && y_26677;
-                            bool index_certs_26679;
+                            bool x_26493 = sle64((int64_t) 0, j_26464);
+                            bool y_26494 = slt64(j_26464, j_m_i_26048);
+                            bool bounds_check_26495 = x_26493 && y_26494;
+                            bool index_certs_26496;
                             
-                            if (!bounds_check_26678) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26647, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:108:15-19\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:28:40-44\n   #9  test_sort.fut:26:1-29:27\n"));
+                            if (!bounds_check_26495) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26464, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:108:15-19\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:34:40-44\n   #9  test_sort.fut:32:1-35:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t slice_26680 = stride_26208 + j_26647;
-                            int64_t slice_26681 = start_26281 + slice_26680;
-                            int32_t tmp_26682 = ((int32_t *) mem_param_27056.mem)[slice_26681];
-                            int64_t tmp_26683 = ((int64_t *) mem_param_27059.mem)[slice_26681];
+                            int64_t slice_26497 = stride_26025 + j_26464;
+                            int64_t slice_26498 = start_26098 + slice_26497;
+                            int32_t tmp_26499 = ((int32_t *) mem_param_26873.mem)[slice_26498];
+                            int64_t tmp_26500 = ((int64_t *) mem_param_26876.mem)[slice_26498];
                             
-                            loopres_26665 = i_26644;
-                            loopres_26666 = tmp_26682;
-                            loopres_26667 = tmp_26683;
+                            loopres_26482 = i_26461;
+                            loopres_26483 = tmp_26499;
+                            loopres_26484 = tmp_26500;
                         }
-                        ((int32_t *) mem_27137.mem)[k_26643] = loopres_26666;
-                        ((int64_t *) mem_27139.mem)[k_26643] = loopres_26667;
+                        ((int32_t *) mem_26954.mem)[k_26460] = loopres_26483;
+                        ((int64_t *) mem_26956.mem)[k_26460] = loopres_26484;
                         
-                        int64_t i_tmp_27274 = loopres_26665;
+                        int64_t i_tmp_27091 = loopres_26482;
                         
-                        i_26644 = i_tmp_27274;
+                        i_26461 = i_tmp_27091;
                     }
-                    data_26640 = i_26644;
-                    if (memblock_set(ctx, &ext_mem_27157, &mem_27137, "mem_27137") != 0)
+                    data_26457 = i_26461;
+                    if (memblock_set(ctx, &ext_mem_26974, &mem_26954, "mem_26954") != 0)
                         return 1;
-                    if (memblock_set(ctx, &ext_mem_27154, &mem_27139, "mem_27139") != 0)
+                    if (memblock_set(ctx, &ext_mem_26971, &mem_26956, "mem_26956") != 0)
                         return 1;
                 } else {
-                    if (mem_27075_cached_sizze_27302 < bytes_27074) {
-                        err = lexical_realloc(ctx, &mem_27075, &mem_27075_cached_sizze_27302, bytes_27074);
+                    if (mem_26892_cached_sizze_27119 < bytes_26891) {
+                        err = lexical_realloc(ctx, &mem_26892, &mem_26892_cached_sizze_27119, bytes_26891);
                         if (err != FUTHARK_SUCCESS)
                             goto cleanup;
                     }
-                    if (mem_27077_cached_sizze_27303 < bytes_27074) {
-                        err = lexical_realloc(ctx, &mem_27077, &mem_27077_cached_sizze_27303, bytes_27074);
+                    if (mem_26894_cached_sizze_27120 < bytes_26891) {
+                        err = lexical_realloc(ctx, &mem_26894, &mem_26894_cached_sizze_27120, bytes_26891);
                         if (err != FUTHARK_SUCCESS)
                             goto cleanup;
                     }
-                    for (int64_t i_26923 = 0; i_26923 < dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230; i_26923++) {
-                        int64_t split_count_arg3_26361 = mul64(merge_block_sizze_26094, i_26923);
-                        int64_t defunc_0_split_count_res_26362;
-                        int64_t defunc_0_split_count_res_26363;
-                        int64_t defunc_0_split_count_res_26364;
-                        int64_t defunc_0_split_count_res_26365;
-                        int64_t defunc_0_split_count_res_26366;
+                    for (int64_t i_26740 = 0; i_26740 < dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047; i_26740++) {
+                        int64_t split_count_arg3_26178 = mul64(merge_block_sizze_25911, i_26740);
+                        int64_t defunc_0_split_count_res_26179;
+                        int64_t defunc_0_split_count_res_26180;
+                        int64_t defunc_0_split_count_res_26181;
+                        int64_t defunc_0_split_count_res_26182;
+                        int64_t defunc_0_split_count_res_26183;
                         
-                        if (futrts_lifted_normalizze_7703(ctx, &defunc_0_split_count_res_26362, &defunc_0_split_count_res_26363, &defunc_0_split_count_res_26364, &defunc_0_split_count_res_26365, &defunc_0_split_count_res_26366, (int64_t) 0, stride_26208, (int64_t) 0, j_m_i_26231, split_count_arg3_26361) != 0) {
+                        if (futrts_lifted_normalizze_7715(ctx, &defunc_0_split_count_res_26179, &defunc_0_split_count_res_26180, &defunc_0_split_count_res_26181, &defunc_0_split_count_res_26182, &defunc_0_split_count_res_26183, (int64_t) 0, stride_26025, (int64_t) 0, j_m_i_26048, split_count_arg3_26178) != 0) {
                             err = 1;
                             goto cleanup;
                         }
                         
-                        bool loop_cond_26367 = slt64((int64_t) 0, defunc_0_split_count_res_26366);
-                        bool defunc_0_split_count_res_26368;
-                        int64_t defunc_0_split_count_res_26369;
-                        int64_t defunc_0_split_count_res_26370;
-                        int64_t defunc_0_split_count_res_26371;
-                        int64_t defunc_0_split_count_res_26372;
-                        int64_t defunc_0_split_count_res_26373;
-                        bool loop_while_26374;
-                        int64_t ss_26375;
-                        int64_t ss_26376;
-                        int64_t tt_26377;
-                        int64_t tt_26378;
-                        int64_t count_26379;
+                        bool loop_cond_26184 = slt64((int64_t) 0, defunc_0_split_count_res_26183);
+                        bool defunc_0_split_count_res_26185;
+                        int64_t defunc_0_split_count_res_26186;
+                        int64_t defunc_0_split_count_res_26187;
+                        int64_t defunc_0_split_count_res_26188;
+                        int64_t defunc_0_split_count_res_26189;
+                        int64_t defunc_0_split_count_res_26190;
+                        bool loop_while_26191;
+                        int64_t ss_26192;
+                        int64_t ss_26193;
+                        int64_t tt_26194;
+                        int64_t tt_26195;
+                        int64_t count_26196;
                         
-                        loop_while_26374 = loop_cond_26367;
-                        ss_26375 = defunc_0_split_count_res_26362;
-                        ss_26376 = defunc_0_split_count_res_26363;
-                        tt_26377 = defunc_0_split_count_res_26364;
-                        tt_26378 = defunc_0_split_count_res_26365;
-                        count_26379 = defunc_0_split_count_res_26366;
-                        while (loop_while_26374) {
-                            int64_t zlze_lhs_26380 = sub64(ss_26376, ss_26375);
-                            bool cond_26381 = sle64(zlze_lhs_26380, (int64_t) 0);
-                            int64_t defunc_0_lifted_step_res_26382;
-                            int64_t defunc_0_lifted_step_res_26383;
-                            int64_t defunc_0_lifted_step_res_26384;
-                            int64_t defunc_0_lifted_step_res_26385;
+                        loop_while_26191 = loop_cond_26184;
+                        ss_26192 = defunc_0_split_count_res_26179;
+                        ss_26193 = defunc_0_split_count_res_26180;
+                        tt_26194 = defunc_0_split_count_res_26181;
+                        tt_26195 = defunc_0_split_count_res_26182;
+                        count_26196 = defunc_0_split_count_res_26183;
+                        while (loop_while_26191) {
+                            int64_t zlze_lhs_26197 = sub64(ss_26193, ss_26192);
+                            bool cond_26198 = sle64(zlze_lhs_26197, (int64_t) 0);
+                            int64_t defunc_0_lifted_step_res_26199;
+                            int64_t defunc_0_lifted_step_res_26200;
+                            int64_t defunc_0_lifted_step_res_26201;
+                            int64_t defunc_0_lifted_step_res_26202;
                             
-                            if (cond_26381) {
-                                int64_t tmp_26686 = add64(tt_26377, count_26379);
+                            if (cond_26198) {
+                                int64_t tmp_26503 = add64(tt_26194, count_26196);
                                 
-                                defunc_0_lifted_step_res_26382 = ss_26375;
-                                defunc_0_lifted_step_res_26383 = tmp_26686;
-                                defunc_0_lifted_step_res_26384 = tt_26378;
-                                defunc_0_lifted_step_res_26385 = (int64_t) 0;
+                                defunc_0_lifted_step_res_26199 = ss_26192;
+                                defunc_0_lifted_step_res_26200 = tmp_26503;
+                                defunc_0_lifted_step_res_26201 = tt_26195;
+                                defunc_0_lifted_step_res_26202 = (int64_t) 0;
                             } else {
-                                int64_t zlze_lhs_26387 = sub64(tt_26378, tt_26377);
-                                bool cond_26388 = sle64(zlze_lhs_26387, (int64_t) 0);
-                                int64_t defunc_0_lifted_step_res_f_res_26389;
-                                int64_t defunc_0_lifted_step_res_f_res_26390;
-                                int64_t defunc_0_lifted_step_res_f_res_26391;
-                                int64_t defunc_0_lifted_step_res_f_res_26392;
+                                int64_t zlze_lhs_26204 = sub64(tt_26195, tt_26194);
+                                bool cond_26205 = sle64(zlze_lhs_26204, (int64_t) 0);
+                                int64_t defunc_0_lifted_step_res_f_res_26206;
+                                int64_t defunc_0_lifted_step_res_f_res_26207;
+                                int64_t defunc_0_lifted_step_res_f_res_26208;
+                                int64_t defunc_0_lifted_step_res_f_res_26209;
                                 
-                                if (cond_26388) {
-                                    int64_t tmp_26687 = add64(ss_26375, count_26379);
+                                if (cond_26205) {
+                                    int64_t tmp_26504 = add64(ss_26192, count_26196);
                                     
-                                    defunc_0_lifted_step_res_f_res_26389 = tmp_26687;
-                                    defunc_0_lifted_step_res_f_res_26390 = tt_26377;
-                                    defunc_0_lifted_step_res_f_res_26391 = tt_26378;
-                                    defunc_0_lifted_step_res_f_res_26392 = (int64_t) 0;
+                                    defunc_0_lifted_step_res_f_res_26206 = tmp_26504;
+                                    defunc_0_lifted_step_res_f_res_26207 = tt_26194;
+                                    defunc_0_lifted_step_res_f_res_26208 = tt_26195;
+                                    defunc_0_lifted_step_res_f_res_26209 = (int64_t) 0;
                                 } else {
-                                    bool cond_26394 = count_26379 == (int64_t) 1;
-                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26395;
-                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26396;
-                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26397;
-                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26398;
+                                    bool cond_26211 = count_26196 == (int64_t) 1;
+                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26212;
+                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26213;
+                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26214;
+                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26215;
                                     
-                                    if (cond_26394) {
-                                        bool x_26689 = sle64((int64_t) 0, ss_26375);
-                                        bool y_26690 = slt64(ss_26375, stride_26208);
-                                        bool bounds_check_26691 = x_26689 && y_26690;
-                                        bool index_certs_26692;
+                                    if (cond_26211) {
+                                        bool x_26506 = sle64((int64_t) 0, ss_26192);
+                                        bool y_26507 = slt64(ss_26192, stride_26025);
+                                        bool bounds_check_26508 = x_26506 && y_26507;
+                                        bool index_certs_26509;
                                         
-                                        if (!bounds_check_26691) {
-                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) ss_26375, "] out of bounds for array of shape [", (long long) stride_26208, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:53:21-27\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:28:40-44\n   #13 test_sort.fut:26:1-29:27\n"));
+                                        if (!bounds_check_26508) {
+                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) ss_26192, "] out of bounds for array of shape [", (long long) stride_26025, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:53:21-27\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:34:40-44\n   #13 test_sort.fut:32:1-35:27\n"));
                                             err = FUTHARK_PROGRAM_ERROR;
                                             goto cleanup;
                                         }
                                         
-                                        bool x_26695 = sle64((int64_t) 0, tt_26377);
-                                        bool y_26696 = slt64(tt_26377, j_m_i_26231);
-                                        bool bounds_check_26697 = x_26695 && y_26696;
-                                        bool index_certs_26698;
+                                        bool x_26512 = sle64((int64_t) 0, tt_26194);
+                                        bool y_26513 = slt64(tt_26194, j_m_i_26048);
+                                        bool bounds_check_26514 = x_26512 && y_26513;
+                                        bool index_certs_26515;
                                         
-                                        if (!bounds_check_26697) {
-                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tt_26377, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:53:14-20\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:28:40-44\n   #13 test_sort.fut:26:1-29:27\n"));
+                                        if (!bounds_check_26514) {
+                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tt_26194, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:53:14-20\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:34:40-44\n   #13 test_sort.fut:32:1-35:27\n"));
                                             err = FUTHARK_PROGRAM_ERROR;
                                             goto cleanup;
                                         }
                                         
-                                        int64_t slice_26693 = start_26281 + ss_26375;
-                                        int32_t leq_arg1_26694 = ((int32_t *) mem_param_27056.mem)[slice_26693];
-                                        int64_t slice_26699 = stride_26208 + tt_26377;
-                                        int64_t slice_26700 = start_26281 + slice_26699;
-                                        int32_t leq_arg0_26701 = ((int32_t *) mem_param_27056.mem)[slice_26700];
-                                        bool defunc_0_leq_res_26702 = sle32(leq_arg0_26701, leq_arg1_26694);
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_t_res_26703;
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_t_res_26704;
+                                        int64_t slice_26510 = start_26098 + ss_26192;
+                                        int32_t leq_arg1_26511 = ((int32_t *) mem_param_26873.mem)[slice_26510];
+                                        int64_t slice_26516 = stride_26025 + tt_26194;
+                                        int64_t slice_26517 = start_26098 + slice_26516;
+                                        int32_t leq_arg0_26518 = ((int32_t *) mem_param_26873.mem)[slice_26517];
+                                        bool defunc_0_leq_res_26519 = sle32(leq_arg0_26518, leq_arg1_26511);
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_t_res_26520;
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_t_res_26521;
                                         
-                                        if (defunc_0_leq_res_26702) {
-                                            int64_t tmp_26705 = add64((int64_t) 1, tt_26377);
+                                        if (defunc_0_leq_res_26519) {
+                                            int64_t tmp_26522 = add64((int64_t) 1, tt_26194);
                                             
-                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26703 = ss_26375;
-                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26704 = tmp_26705;
+                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26520 = ss_26192;
+                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26521 = tmp_26522;
                                         } else {
-                                            int64_t tmp_26706 = add64((int64_t) 1, ss_26375);
+                                            int64_t tmp_26523 = add64((int64_t) 1, ss_26192);
                                             
-                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26703 = tmp_26706;
-                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26704 = tt_26377;
+                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26520 = tmp_26523;
+                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26521 = tt_26194;
                                         }
-                                        defunc_0_lifted_step_res_f_res_f_res_26395 = defunc_0_lifted_step_res_f_res_f_res_t_res_26703;
-                                        defunc_0_lifted_step_res_f_res_f_res_26396 = defunc_0_lifted_step_res_f_res_f_res_t_res_26704;
-                                        defunc_0_lifted_step_res_f_res_f_res_26397 = tt_26378;
-                                        defunc_0_lifted_step_res_f_res_f_res_26398 = (int64_t) 0;
+                                        defunc_0_lifted_step_res_f_res_f_res_26212 = defunc_0_lifted_step_res_f_res_f_res_t_res_26520;
+                                        defunc_0_lifted_step_res_f_res_f_res_26213 = defunc_0_lifted_step_res_f_res_f_res_t_res_26521;
+                                        defunc_0_lifted_step_res_f_res_f_res_26214 = tt_26195;
+                                        defunc_0_lifted_step_res_f_res_f_res_26215 = (int64_t) 0;
                                     } else {
-                                        int64_t m_26417 = sdiv64(count_26379, (int64_t) 2);
-                                        int64_t n_26418 = sub64(count_26379, m_26417);
-                                        bool cond_26419 = n_26418 == (int64_t) 0;
-                                        int64_t zgze_lhs_26420 = add64(ss_26375, m_26417);
-                                        bool cond_f_res_26421 = sle64(ss_26376, zgze_lhs_26420);
-                                        bool x_26422 = !cond_26419;
-                                        bool y_26423 = cond_f_res_26421 && x_26422;
-                                        bool cond_26424 = cond_26419 || y_26423;
-                                        bool leq_y_x_26425;
+                                        int64_t m_26234 = sdiv64(count_26196, (int64_t) 2);
+                                        int64_t n_26235 = sub64(count_26196, m_26234);
+                                        bool cond_26236 = n_26235 == (int64_t) 0;
+                                        int64_t zgze_lhs_26237 = add64(ss_26192, m_26234);
+                                        bool cond_f_res_26238 = sle64(ss_26193, zgze_lhs_26237);
+                                        bool x_26239 = !cond_26236;
+                                        bool y_26240 = cond_f_res_26238 && x_26239;
+                                        bool cond_26241 = cond_26236 || y_26240;
+                                        bool leq_y_x_26242;
                                         
-                                        if (cond_26424) {
-                                            leq_y_x_26425 = 1;
+                                        if (cond_26241) {
+                                            leq_y_x_26242 = 1;
                                         } else {
-                                            bool x_26426 = sle64((int64_t) 0, zgze_lhs_26420);
-                                            bool y_26427 = slt64(zgze_lhs_26420, stride_26208);
-                                            bool bounds_check_26428 = x_26426 && y_26427;
-                                            bool index_certs_26429;
+                                            bool x_26243 = sle64((int64_t) 0, zgze_lhs_26237);
+                                            bool y_26244 = slt64(zgze_lhs_26237, stride_26025);
+                                            bool bounds_check_26245 = x_26243 && y_26244;
+                                            bool index_certs_26246;
                                             
-                                            if (!bounds_check_26428) {
-                                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zgze_lhs_26420, "] out of bounds for array of shape [", (long long) stride_26208, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:73:22-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:28:40-44\n   #13 test_sort.fut:26:1-29:27\n"));
+                                            if (!bounds_check_26245) {
+                                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zgze_lhs_26237, "] out of bounds for array of shape [", (long long) stride_26025, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:73:22-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:34:40-44\n   #13 test_sort.fut:32:1-35:27\n"));
                                                 err = FUTHARK_PROGRAM_ERROR;
                                                 goto cleanup;
                                             }
                                             
-                                            int64_t zm_lhs_26432 = add64(tt_26377, n_26418);
-                                            int64_t leq_arg0_26433 = sub64(zm_lhs_26432, (int64_t) 1);
-                                            bool x_26434 = sle64((int64_t) 0, leq_arg0_26433);
-                                            bool y_26435 = slt64(leq_arg0_26433, j_m_i_26231);
-                                            bool bounds_check_26436 = x_26434 && y_26435;
-                                            bool index_certs_26437;
+                                            int64_t zm_lhs_26249 = add64(tt_26194, n_26235);
+                                            int64_t leq_arg0_26250 = sub64(zm_lhs_26249, (int64_t) 1);
+                                            bool x_26251 = sle64((int64_t) 0, leq_arg0_26250);
+                                            bool y_26252 = slt64(leq_arg0_26250, j_m_i_26048);
+                                            bool bounds_check_26253 = x_26251 && y_26252;
+                                            bool index_certs_26254;
                                             
-                                            if (!bounds_check_26436) {
-                                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) leq_arg0_26433, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:73:11-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:28:40-44\n   #13 test_sort.fut:26:1-29:27\n"));
+                                            if (!bounds_check_26253) {
+                                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) leq_arg0_26250, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:73:11-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:34:40-44\n   #13 test_sort.fut:32:1-35:27\n"));
                                                 err = FUTHARK_PROGRAM_ERROR;
                                                 goto cleanup;
                                             }
                                             
-                                            int64_t slice_26430 = start_26281 + zgze_lhs_26420;
-                                            int32_t leq_arg1_26431 = ((int32_t *) mem_param_27056.mem)[slice_26430];
-                                            int64_t slice_26438 = stride_26208 + leq_arg0_26433;
-                                            int64_t slice_26439 = start_26281 + slice_26438;
-                                            int32_t leq_arg0_26440 = ((int32_t *) mem_param_27056.mem)[slice_26439];
-                                            bool defunc_0_leq_res_26441 = sle32(leq_arg0_26440, leq_arg1_26431);
+                                            int64_t slice_26247 = start_26098 + zgze_lhs_26237;
+                                            int32_t leq_arg1_26248 = ((int32_t *) mem_param_26873.mem)[slice_26247];
+                                            int64_t slice_26255 = stride_26025 + leq_arg0_26250;
+                                            int64_t slice_26256 = start_26098 + slice_26255;
+                                            int32_t leq_arg0_26257 = ((int32_t *) mem_param_26873.mem)[slice_26256];
+                                            bool defunc_0_leq_res_26258 = sle32(leq_arg0_26257, leq_arg1_26248);
                                             
-                                            leq_y_x_26425 = defunc_0_leq_res_26441;
+                                            leq_y_x_26242 = defunc_0_leq_res_26258;
                                         }
                                         
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26442;
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26443;
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26444;
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26259;
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26260;
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26261;
                                         
-                                        if (leq_y_x_26425) {
-                                            int64_t tmp_26707 = add64(tt_26377, n_26418);
-                                            int64_t tmp_26708 = sub64(count_26379, n_26418);
+                                        if (leq_y_x_26242) {
+                                            int64_t tmp_26524 = add64(tt_26194, n_26235);
+                                            int64_t tmp_26525 = sub64(count_26196, n_26235);
                                             
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26442 = tmp_26707;
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26443 = tt_26378;
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26444 = tmp_26708;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26259 = tmp_26524;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26260 = tt_26195;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26261 = tmp_26525;
                                         } else {
-                                            int64_t tmp_26447 = add64(tt_26377, n_26418);
+                                            int64_t tmp_26264 = add64(tt_26194, n_26235);
                                             
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26442 = tt_26377;
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26443 = tmp_26447;
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26444 = count_26379;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26259 = tt_26194;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26260 = tmp_26264;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26261 = count_26196;
                                         }
-                                        defunc_0_lifted_step_res_f_res_f_res_26395 = ss_26375;
-                                        defunc_0_lifted_step_res_f_res_f_res_26396 = defunc_0_lifted_step_res_f_res_f_res_f_res_26442;
-                                        defunc_0_lifted_step_res_f_res_f_res_26397 = defunc_0_lifted_step_res_f_res_f_res_f_res_26443;
-                                        defunc_0_lifted_step_res_f_res_f_res_26398 = defunc_0_lifted_step_res_f_res_f_res_f_res_26444;
+                                        defunc_0_lifted_step_res_f_res_f_res_26212 = ss_26192;
+                                        defunc_0_lifted_step_res_f_res_f_res_26213 = defunc_0_lifted_step_res_f_res_f_res_f_res_26259;
+                                        defunc_0_lifted_step_res_f_res_f_res_26214 = defunc_0_lifted_step_res_f_res_f_res_f_res_26260;
+                                        defunc_0_lifted_step_res_f_res_f_res_26215 = defunc_0_lifted_step_res_f_res_f_res_f_res_26261;
                                     }
-                                    defunc_0_lifted_step_res_f_res_26389 = defunc_0_lifted_step_res_f_res_f_res_26395;
-                                    defunc_0_lifted_step_res_f_res_26390 = defunc_0_lifted_step_res_f_res_f_res_26396;
-                                    defunc_0_lifted_step_res_f_res_26391 = defunc_0_lifted_step_res_f_res_f_res_26397;
-                                    defunc_0_lifted_step_res_f_res_26392 = defunc_0_lifted_step_res_f_res_f_res_26398;
+                                    defunc_0_lifted_step_res_f_res_26206 = defunc_0_lifted_step_res_f_res_f_res_26212;
+                                    defunc_0_lifted_step_res_f_res_26207 = defunc_0_lifted_step_res_f_res_f_res_26213;
+                                    defunc_0_lifted_step_res_f_res_26208 = defunc_0_lifted_step_res_f_res_f_res_26214;
+                                    defunc_0_lifted_step_res_f_res_26209 = defunc_0_lifted_step_res_f_res_f_res_26215;
                                 }
-                                defunc_0_lifted_step_res_26382 = defunc_0_lifted_step_res_f_res_26389;
-                                defunc_0_lifted_step_res_26383 = defunc_0_lifted_step_res_f_res_26390;
-                                defunc_0_lifted_step_res_26384 = defunc_0_lifted_step_res_f_res_26391;
-                                defunc_0_lifted_step_res_26385 = defunc_0_lifted_step_res_f_res_26392;
+                                defunc_0_lifted_step_res_26199 = defunc_0_lifted_step_res_f_res_26206;
+                                defunc_0_lifted_step_res_26200 = defunc_0_lifted_step_res_f_res_26207;
+                                defunc_0_lifted_step_res_26201 = defunc_0_lifted_step_res_f_res_26208;
+                                defunc_0_lifted_step_res_26202 = defunc_0_lifted_step_res_f_res_26209;
                             }
                             
-                            int64_t loopres_26448;
-                            int64_t loopres_26449;
-                            int64_t loopres_26450;
-                            int64_t loopres_26451;
-                            int64_t loopres_26452;
+                            int64_t loopres_26265;
+                            int64_t loopres_26266;
+                            int64_t loopres_26267;
+                            int64_t loopres_26268;
+                            int64_t loopres_26269;
                             
-                            if (futrts_lifted_normalizze_7703(ctx, &loopres_26448, &loopres_26449, &loopres_26450, &loopres_26451, &loopres_26452, defunc_0_lifted_step_res_26382, ss_26376, defunc_0_lifted_step_res_26383, defunc_0_lifted_step_res_26384, defunc_0_lifted_step_res_26385) != 0) {
+                            if (futrts_lifted_normalizze_7715(ctx, &loopres_26265, &loopres_26266, &loopres_26267, &loopres_26268, &loopres_26269, defunc_0_lifted_step_res_26199, ss_26193, defunc_0_lifted_step_res_26200, defunc_0_lifted_step_res_26201, defunc_0_lifted_step_res_26202) != 0) {
                                 err = 1;
                                 goto cleanup;
                             }
                             
-                            bool loop_cond_26453 = slt64((int64_t) 0, loopres_26452);
-                            bool loop_while_tmp_27279 = loop_cond_26453;
-                            int64_t ss_tmp_27280 = loopres_26448;
-                            int64_t ss_tmp_27281 = loopres_26449;
-                            int64_t tt_tmp_27282 = loopres_26450;
-                            int64_t tt_tmp_27283 = loopres_26451;
-                            int64_t count_tmp_27284 = loopres_26452;
+                            bool loop_cond_26270 = slt64((int64_t) 0, loopres_26269);
+                            bool loop_while_tmp_27096 = loop_cond_26270;
+                            int64_t ss_tmp_27097 = loopres_26265;
+                            int64_t ss_tmp_27098 = loopres_26266;
+                            int64_t tt_tmp_27099 = loopres_26267;
+                            int64_t tt_tmp_27100 = loopres_26268;
+                            int64_t count_tmp_27101 = loopres_26269;
                             
-                            loop_while_26374 = loop_while_tmp_27279;
-                            ss_26375 = ss_tmp_27280;
-                            ss_26376 = ss_tmp_27281;
-                            tt_26377 = tt_tmp_27282;
-                            tt_26378 = tt_tmp_27283;
-                            count_26379 = count_tmp_27284;
+                            loop_while_26191 = loop_while_tmp_27096;
+                            ss_26192 = ss_tmp_27097;
+                            ss_26193 = ss_tmp_27098;
+                            tt_26194 = tt_tmp_27099;
+                            tt_26195 = tt_tmp_27100;
+                            count_26196 = count_tmp_27101;
                         }
-                        defunc_0_split_count_res_26368 = loop_while_26374;
-                        defunc_0_split_count_res_26369 = ss_26375;
-                        defunc_0_split_count_res_26370 = ss_26376;
-                        defunc_0_split_count_res_26371 = tt_26377;
-                        defunc_0_split_count_res_26372 = tt_26378;
-                        defunc_0_split_count_res_26373 = count_26379;
-                        ((int64_t *) mem_27075)[i_26923] = defunc_0_split_count_res_26369;
-                        ((int64_t *) mem_27077)[i_26923] = defunc_0_split_count_res_26371;
+                        defunc_0_split_count_res_26185 = loop_while_26191;
+                        defunc_0_split_count_res_26186 = ss_26192;
+                        defunc_0_split_count_res_26187 = ss_26193;
+                        defunc_0_split_count_res_26188 = tt_26194;
+                        defunc_0_split_count_res_26189 = tt_26195;
+                        defunc_0_split_count_res_26190 = count_26196;
+                        ((int64_t *) mem_26892)[i_26740] = defunc_0_split_count_res_26186;
+                        ((int64_t *) mem_26894)[i_26740] = defunc_0_split_count_res_26188;
                     }
-                    if (mem_27092_cached_sizze_27304 < bytes_27091) {
-                        err = lexical_realloc(ctx, &mem_27092, &mem_27092_cached_sizze_27304, bytes_27091);
+                    if (mem_26909_cached_sizze_27121 < bytes_26908) {
+                        err = lexical_realloc(ctx, &mem_26909, &mem_26909_cached_sizze_27121, bytes_26908);
                         if (err != FUTHARK_SUCCESS)
                             goto cleanup;
                     }
-                    if (mem_27095_cached_sizze_27305 < bytes_27094) {
-                        err = lexical_realloc(ctx, &mem_27095, &mem_27095_cached_sizze_27305, bytes_27094);
+                    if (mem_26912_cached_sizze_27122 < bytes_26911) {
+                        err = lexical_realloc(ctx, &mem_26912, &mem_26912_cached_sizze_27122, bytes_26911);
                         if (err != FUTHARK_SUCCESS)
                             goto cleanup;
                     }
-                    for (int64_t i_26930 = 0; i_26930 < num_blocks_26229; i_26930++) {
-                        bool y_26459 = slt64(i_26930, dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230);
-                        bool index_certs_26461;
+                    for (int64_t i_26747 = 0; i_26747 < num_blocks_26046; i_26747++) {
+                        bool y_26276 = slt64(i_26747, dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047);
+                        bool index_certs_26278;
                         
-                        if (!y_26459) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26930, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:151:22-34\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:28:40-44\n   #10 test_sort.fut:26:1-29:27\n"));
+                        if (!y_26276) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26747, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:151:22-34\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:34:40-44\n   #10 test_sort.fut:32:1-35:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t defunc_0_f_res_26462 = ((int64_t *) mem_27075)[i_26930];
-                        int64_t defunc_0_f_res_26463 = ((int64_t *) mem_27077)[i_26930];
-                        int64_t tmp_26464 = add64((int64_t) 1, i_26930);
-                        bool x_26465 = sle64((int64_t) 0, tmp_26464);
-                        bool y_26466 = slt64(tmp_26464, dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230);
-                        bool bounds_check_26467 = x_26465 && y_26466;
-                        bool index_certs_26468;
+                        int64_t defunc_0_f_res_26279 = ((int64_t *) mem_26892)[i_26747];
+                        int64_t defunc_0_f_res_26280 = ((int64_t *) mem_26894)[i_26747];
+                        int64_t tmp_26281 = add64((int64_t) 1, i_26747);
+                        bool x_26282 = sle64((int64_t) 0, tmp_26281);
+                        bool y_26283 = slt64(tmp_26281, dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047);
+                        bool bounds_check_26284 = x_26282 && y_26283;
+                        bool index_certs_26285;
                         
-                        if (!bounds_check_26467) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_26464, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:152:22-36\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:28:40-44\n   #10 test_sort.fut:26:1-29:27\n"));
+                        if (!bounds_check_26284) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_26281, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:152:22-36\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:34:40-44\n   #10 test_sort.fut:32:1-35:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t defunc_0_f_res_26469 = ((int64_t *) mem_27075)[tmp_26464];
-                        int64_t defunc_0_f_res_26470 = ((int64_t *) mem_27077)[tmp_26464];
-                        int64_t merge_sequential_arg2_26471 = add64(stride_26208, defunc_0_f_res_26463);
-                        int64_t merge_sequential_arg2_26472 = add64(stride_26208, defunc_0_f_res_26470);
-                        int64_t j_m_i_26473 = sub64(merge_sequential_arg2_26472, merge_sequential_arg2_26471);
-                        bool empty_slice_26474 = j_m_i_26473 == (int64_t) 0;
-                        int64_t m_26475 = sub64(j_m_i_26473, (int64_t) 1);
-                        int64_t i_p_m_t_s_26476 = add64(merge_sequential_arg2_26471, m_26475);
-                        bool zzero_leq_i_p_m_t_s_26477 = sle64((int64_t) 0, i_p_m_t_s_26476);
-                        bool i_p_m_t_s_leq_w_26478 = slt64(i_p_m_t_s_26476, next_stride_26209);
-                        bool zzero_lte_i_26479 = sle64((int64_t) 0, merge_sequential_arg2_26471);
-                        bool i_lte_j_26480 = sle64(merge_sequential_arg2_26471, merge_sequential_arg2_26472);
-                        bool y_26481 = i_p_m_t_s_leq_w_26478 && zzero_lte_i_26479;
-                        bool y_26482 = zzero_leq_i_p_m_t_s_26477 && y_26481;
-                        bool forwards_ok_26483 = i_lte_j_26480 && y_26482;
-                        bool ok_or_empty_26484 = empty_slice_26474 || forwards_ok_26483;
-                        bool index_certs_26485;
+                        int64_t defunc_0_f_res_26286 = ((int64_t *) mem_26892)[tmp_26281];
+                        int64_t defunc_0_f_res_26287 = ((int64_t *) mem_26894)[tmp_26281];
+                        int64_t merge_sequential_arg2_26288 = add64(stride_26025, defunc_0_f_res_26280);
+                        int64_t merge_sequential_arg2_26289 = add64(stride_26025, defunc_0_f_res_26287);
+                        int64_t j_m_i_26290 = sub64(merge_sequential_arg2_26289, merge_sequential_arg2_26288);
+                        bool empty_slice_26291 = j_m_i_26290 == (int64_t) 0;
+                        int64_t m_26292 = sub64(j_m_i_26290, (int64_t) 1);
+                        int64_t i_p_m_t_s_26293 = add64(merge_sequential_arg2_26288, m_26292);
+                        bool zzero_leq_i_p_m_t_s_26294 = sle64((int64_t) 0, i_p_m_t_s_26293);
+                        bool i_p_m_t_s_leq_w_26295 = slt64(i_p_m_t_s_26293, next_stride_26026);
+                        bool zzero_lte_i_26296 = sle64((int64_t) 0, merge_sequential_arg2_26288);
+                        bool i_lte_j_26297 = sle64(merge_sequential_arg2_26288, merge_sequential_arg2_26289);
+                        bool y_26298 = i_p_m_t_s_leq_w_26295 && zzero_lte_i_26296;
+                        bool y_26299 = zzero_leq_i_p_m_t_s_26294 && y_26298;
+                        bool forwards_ok_26300 = i_lte_j_26297 && y_26299;
+                        bool ok_or_empty_26301 = empty_slice_26291 || forwards_ok_26300;
+                        bool index_certs_26302;
                         
-                        if (!ok_or_empty_26484) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) merge_sequential_arg2_26471, ":", (long long) merge_sequential_arg2_26472, "] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:40-58\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:28:40-44\n   #10 test_sort.fut:26:1-29:27\n"));
+                        if (!ok_or_empty_26301) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) merge_sequential_arg2_26288, ":", (long long) merge_sequential_arg2_26289, "] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:40-58\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:34:40-44\n   #10 test_sort.fut:32:1-35:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t j_m_i_26486 = sub64(defunc_0_f_res_26469, defunc_0_f_res_26462);
-                        bool empty_slice_26487 = j_m_i_26486 == (int64_t) 0;
-                        int64_t m_26488 = sub64(j_m_i_26486, (int64_t) 1);
-                        int64_t i_p_m_t_s_26489 = add64(defunc_0_f_res_26462, m_26488);
-                        bool zzero_leq_i_p_m_t_s_26490 = sle64((int64_t) 0, i_p_m_t_s_26489);
-                        bool i_p_m_t_s_leq_w_26491 = slt64(i_p_m_t_s_26489, next_stride_26209);
-                        bool zzero_lte_i_26492 = sle64((int64_t) 0, defunc_0_f_res_26462);
-                        bool i_lte_j_26493 = sle64(defunc_0_f_res_26462, defunc_0_f_res_26469);
-                        bool y_26494 = i_p_m_t_s_leq_w_26491 && zzero_lte_i_26492;
-                        bool y_26495 = zzero_leq_i_p_m_t_s_26490 && y_26494;
-                        bool forwards_ok_26496 = i_lte_j_26493 && y_26495;
-                        bool ok_or_empty_26497 = empty_slice_26487 || forwards_ok_26496;
-                        bool index_certs_26498;
+                        int64_t j_m_i_26303 = sub64(defunc_0_f_res_26286, defunc_0_f_res_26279);
+                        bool empty_slice_26304 = j_m_i_26303 == (int64_t) 0;
+                        int64_t m_26305 = sub64(j_m_i_26303, (int64_t) 1);
+                        int64_t i_p_m_t_s_26306 = add64(defunc_0_f_res_26279, m_26305);
+                        bool zzero_leq_i_p_m_t_s_26307 = sle64((int64_t) 0, i_p_m_t_s_26306);
+                        bool i_p_m_t_s_leq_w_26308 = slt64(i_p_m_t_s_26306, next_stride_26026);
+                        bool zzero_lte_i_26309 = sle64((int64_t) 0, defunc_0_f_res_26279);
+                        bool i_lte_j_26310 = sle64(defunc_0_f_res_26279, defunc_0_f_res_26286);
+                        bool y_26311 = i_p_m_t_s_leq_w_26308 && zzero_lte_i_26309;
+                        bool y_26312 = zzero_leq_i_p_m_t_s_26307 && y_26311;
+                        bool forwards_ok_26313 = i_lte_j_26310 && y_26312;
+                        bool ok_or_empty_26314 = empty_slice_26304 || forwards_ok_26313;
+                        bool index_certs_26315;
                         
-                        if (!ok_or_empty_26497) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_26462, ":", (long long) defunc_0_f_res_26469, "] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:29-39\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:28:40-44\n   #10 test_sort.fut:26:1-29:27\n"));
+                        if (!ok_or_empty_26314) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_26279, ":", (long long) defunc_0_f_res_26286, "] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:29-39\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:34:40-44\n   #10 test_sort.fut:32:1-35:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        bool cond_26499 = slt64((int64_t) 0, j_m_i_26486);
-                        int32_t dummy_26500;
-                        int64_t dummy_26501;
+                        bool cond_26316 = slt64((int64_t) 0, j_m_i_26303);
+                        int32_t dummy_26317;
+                        int64_t dummy_26318;
                         
-                        if (cond_26499) {
-                            bool index_certs_26709;
+                        if (cond_26316) {
+                            bool index_certs_26526;
                             
-                            if (!cond_26499) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26486, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:36-42\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #6  /prelude/soacs.fut:59:9-11\n   #7  /prelude/array.fut:241:11-17\n   #8  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #9  /prelude/functional.fut:9:44-45\n   #10 ../../joins/ftSMJ.fut:104:60-63\n   #11 test_sort.fut:28:40-44\n   #12 test_sort.fut:26:1-29:27\n"));
+                            if (!cond_26316) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26303, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:36-42\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #6  /prelude/soacs.fut:59:9-11\n   #7  /prelude/array.fut:241:11-17\n   #8  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #9  /prelude/functional.fut:9:44-45\n   #10 ../../joins/ftSMJ.fut:104:60-63\n   #11 test_sort.fut:34:40-44\n   #12 test_sort.fut:32:1-35:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t slice_26710 = start_26281 + defunc_0_f_res_26462;
-                            int32_t head_res_26711 = ((int32_t *) mem_param_27056.mem)[slice_26710];
-                            int64_t head_res_26712 = ((int64_t *) mem_param_27059.mem)[slice_26710];
+                            int64_t slice_26527 = start_26098 + defunc_0_f_res_26279;
+                            int32_t head_res_26528 = ((int32_t *) mem_param_26873.mem)[slice_26527];
+                            int64_t head_res_26529 = ((int64_t *) mem_param_26876.mem)[slice_26527];
                             
-                            dummy_26500 = head_res_26711;
-                            dummy_26501 = head_res_26712;
+                            dummy_26317 = head_res_26528;
+                            dummy_26318 = head_res_26529;
                         } else {
-                            bool y_26506 = slt64((int64_t) 0, j_m_i_26473);
-                            bool index_certs_26507;
+                            bool y_26323 = slt64((int64_t) 0, j_m_i_26290);
+                            bool index_certs_26324;
                             
-                            if (!y_26506) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26473, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:48-54\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #6  /prelude/soacs.fut:59:9-11\n   #7  /prelude/array.fut:241:11-17\n   #8  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #9  /prelude/functional.fut:9:44-45\n   #10 ../../joins/ftSMJ.fut:104:60-63\n   #11 test_sort.fut:28:40-44\n   #12 test_sort.fut:26:1-29:27\n"));
+                            if (!y_26323) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26290, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:48-54\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #6  /prelude/soacs.fut:59:9-11\n   #7  /prelude/array.fut:241:11-17\n   #8  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #9  /prelude/functional.fut:9:44-45\n   #10 ../../joins/ftSMJ.fut:104:60-63\n   #11 test_sort.fut:34:40-44\n   #12 test_sort.fut:32:1-35:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t slice_26508 = start_26281 + merge_sequential_arg2_26471;
-                            int32_t head_res_26509 = ((int32_t *) mem_param_27056.mem)[slice_26508];
-                            int64_t head_res_26510 = ((int64_t *) mem_param_27059.mem)[slice_26508];
+                            int64_t slice_26325 = start_26098 + merge_sequential_arg2_26288;
+                            int32_t head_res_26326 = ((int32_t *) mem_param_26873.mem)[slice_26325];
+                            int64_t head_res_26327 = ((int64_t *) mem_param_26876.mem)[slice_26325];
                             
-                            dummy_26500 = head_res_26509;
-                            dummy_26501 = head_res_26510;
+                            dummy_26317 = head_res_26326;
+                            dummy_26318 = head_res_26327;
                         }
-                        for (int64_t nest_i_27287 = 0; nest_i_27287 < merge_block_sizze_26094; nest_i_27287++) {
-                            ((int32_t *) mem_27092)[i_26930 * merge_block_sizze_26094 + nest_i_27287] = dummy_26500;
+                        for (int64_t nest_i_27104 = 0; nest_i_27104 < merge_block_sizze_25911; nest_i_27104++) {
+                            ((int32_t *) mem_26909)[i_26747 * merge_block_sizze_25911 + nest_i_27104] = dummy_26317;
                         }
-                        for (int64_t nest_i_27288 = 0; nest_i_27288 < merge_block_sizze_26094; nest_i_27288++) {
-                            ((int64_t *) mem_27095)[i_26930 * merge_block_sizze_26094 + nest_i_27288] = dummy_26501;
+                        for (int64_t nest_i_27105 = 0; nest_i_27105 < merge_block_sizze_25911; nest_i_27105++) {
+                            ((int64_t *) mem_26912)[i_26747 * merge_block_sizze_25911 + nest_i_27105] = dummy_26318;
                         }
                         
-                        int64_t data_26513;
-                        int64_t i_26517 = (int64_t) 0;
+                        int64_t data_26330;
+                        int64_t i_26334 = (int64_t) 0;
                         
-                        for (int64_t k_26516 = 0; k_26516 < merge_block_sizze_26094; k_26516++) {
-                            int64_t j_26520 = sub64(k_26516, i_26517);
-                            bool cond_26521 = j_26520 == j_m_i_26473;
-                            bool cond_26522;
+                        for (int64_t k_26333 = 0; k_26333 < merge_block_sizze_25911; k_26333++) {
+                            int64_t j_26337 = sub64(k_26333, i_26334);
+                            bool cond_26338 = j_26337 == j_m_i_26290;
+                            bool cond_26339;
                             
-                            if (cond_26521) {
-                                cond_26522 = 1;
+                            if (cond_26338) {
+                                cond_26339 = 1;
                             } else {
-                                bool cond_26523 = slt64(i_26517, j_m_i_26486);
-                                bool cond_f_res_26524;
+                                bool cond_26340 = slt64(i_26334, j_m_i_26303);
+                                bool cond_f_res_26341;
                                 
-                                if (cond_26523) {
-                                    bool x_26713 = sle64((int64_t) 0, j_26520);
-                                    bool y_26714 = slt64(j_26520, j_m_i_26473);
-                                    bool bounds_check_26715 = x_26713 && y_26714;
-                                    bool index_certs_26716;
+                                if (cond_26340) {
+                                    bool x_26530 = sle64((int64_t) 0, j_26337);
+                                    bool y_26531 = slt64(j_26337, j_m_i_26290);
+                                    bool bounds_check_26532 = x_26530 && y_26531;
+                                    bool index_certs_26533;
                                     
-                                    if (!bounds_check_26715) {
-                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26520, "] out of bounds for array of shape [", (long long) j_m_i_26473, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:55-59\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:28:40-44\n   #11 test_sort.fut:26:1-29:27\n"));
+                                    if (!bounds_check_26532) {
+                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26337, "] out of bounds for array of shape [", (long long) j_m_i_26290, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:55-59\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:34:40-44\n   #11 test_sort.fut:32:1-35:27\n"));
                                         err = FUTHARK_PROGRAM_ERROR;
                                         goto cleanup;
                                     }
                                     
-                                    bool x_26720 = sle64((int64_t) 0, i_26517);
-                                    bool bounds_check_26721 = cond_26523 && x_26720;
-                                    bool index_certs_26722;
+                                    bool x_26537 = sle64((int64_t) 0, i_26334);
+                                    bool bounds_check_26538 = cond_26340 && x_26537;
+                                    bool index_certs_26539;
                                     
-                                    if (!bounds_check_26721) {
-                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26517, "] out of bounds for array of shape [", (long long) j_m_i_26486, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:50-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:28:40-44\n   #11 test_sort.fut:26:1-29:27\n"));
+                                    if (!bounds_check_26538) {
+                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26334, "] out of bounds for array of shape [", (long long) j_m_i_26303, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:50-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:34:40-44\n   #11 test_sort.fut:32:1-35:27\n"));
                                         err = FUTHARK_PROGRAM_ERROR;
                                         goto cleanup;
                                     }
                                     
-                                    int64_t slice_26717 = merge_sequential_arg2_26471 + j_26520;
-                                    int64_t slice_26718 = start_26281 + slice_26717;
-                                    int32_t leq_arg1_26719 = ((int32_t *) mem_param_27056.mem)[slice_26718];
-                                    int64_t slice_26723 = defunc_0_f_res_26462 + i_26517;
-                                    int64_t slice_26724 = start_26281 + slice_26723;
-                                    int32_t leq_arg0_26725 = ((int32_t *) mem_param_27056.mem)[slice_26724];
-                                    bool defunc_0_leq_res_26726 = sle32(leq_arg0_26725, leq_arg1_26719);
+                                    int64_t slice_26534 = merge_sequential_arg2_26288 + j_26337;
+                                    int64_t slice_26535 = start_26098 + slice_26534;
+                                    int32_t leq_arg1_26536 = ((int32_t *) mem_param_26873.mem)[slice_26535];
+                                    int64_t slice_26540 = defunc_0_f_res_26279 + i_26334;
+                                    int64_t slice_26541 = start_26098 + slice_26540;
+                                    int32_t leq_arg0_26542 = ((int32_t *) mem_param_26873.mem)[slice_26541];
+                                    bool defunc_0_leq_res_26543 = sle32(leq_arg0_26542, leq_arg1_26536);
                                     
-                                    cond_f_res_26524 = defunc_0_leq_res_26726;
+                                    cond_f_res_26341 = defunc_0_leq_res_26543;
                                 } else {
-                                    cond_f_res_26524 = 0;
+                                    cond_f_res_26341 = 0;
                                 }
-                                cond_26522 = cond_f_res_26524;
+                                cond_26339 = cond_f_res_26341;
                             }
                             
-                            int64_t loopres_26539;
-                            int32_t loopres_26540;
-                            int64_t loopres_26541;
+                            int64_t loopres_26356;
+                            int32_t loopres_26357;
+                            int64_t loopres_26358;
                             
-                            if (cond_26522) {
-                                bool x_26728 = sle64((int64_t) 0, i_26517);
-                                bool y_26729 = slt64(i_26517, j_m_i_26486);
-                                bool bounds_check_26730 = x_26728 && y_26729;
-                                bool index_certs_26731;
+                            if (cond_26339) {
+                                bool x_26545 = sle64((int64_t) 0, i_26334);
+                                bool y_26546 = slt64(i_26334, j_m_i_26303);
+                                bool bounds_check_26547 = x_26545 && y_26546;
+                                bool index_certs_26548;
                                 
-                                if (!bounds_check_26730) {
-                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26517, "] out of bounds for array of shape [", (long long) j_m_i_26486, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:106:17-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:28:40-44\n   #11 test_sort.fut:26:1-29:27\n"));
+                                if (!bounds_check_26547) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26334, "] out of bounds for array of shape [", (long long) j_m_i_26303, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:106:17-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:34:40-44\n   #11 test_sort.fut:32:1-35:27\n"));
                                     err = FUTHARK_PROGRAM_ERROR;
                                     goto cleanup;
                                 }
                                 
-                                int64_t tmp_26727 = add64((int64_t) 1, i_26517);
-                                int64_t slice_26732 = defunc_0_f_res_26462 + i_26517;
-                                int64_t slice_26733 = start_26281 + slice_26732;
-                                int32_t tmp_26734 = ((int32_t *) mem_param_27056.mem)[slice_26733];
-                                int64_t tmp_26735 = ((int64_t *) mem_param_27059.mem)[slice_26733];
+                                int64_t tmp_26544 = add64((int64_t) 1, i_26334);
+                                int64_t slice_26549 = defunc_0_f_res_26279 + i_26334;
+                                int64_t slice_26550 = start_26098 + slice_26549;
+                                int32_t tmp_26551 = ((int32_t *) mem_param_26873.mem)[slice_26550];
+                                int64_t tmp_26552 = ((int64_t *) mem_param_26876.mem)[slice_26550];
                                 
-                                loopres_26539 = tmp_26727;
-                                loopres_26540 = tmp_26734;
-                                loopres_26541 = tmp_26735;
+                                loopres_26356 = tmp_26544;
+                                loopres_26357 = tmp_26551;
+                                loopres_26358 = tmp_26552;
                             } else {
-                                bool x_26551 = sle64((int64_t) 0, j_26520);
-                                bool y_26552 = slt64(j_26520, j_m_i_26473);
-                                bool bounds_check_26553 = x_26551 && y_26552;
-                                bool index_certs_26554;
+                                bool x_26368 = sle64((int64_t) 0, j_26337);
+                                bool y_26369 = slt64(j_26337, j_m_i_26290);
+                                bool bounds_check_26370 = x_26368 && y_26369;
+                                bool index_certs_26371;
                                 
-                                if (!bounds_check_26553) {
-                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26520, "] out of bounds for array of shape [", (long long) j_m_i_26473, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:108:15-19\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:28:40-44\n   #11 test_sort.fut:26:1-29:27\n"));
+                                if (!bounds_check_26370) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26337, "] out of bounds for array of shape [", (long long) j_m_i_26290, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:108:15-19\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:34:40-44\n   #11 test_sort.fut:32:1-35:27\n"));
                                     err = FUTHARK_PROGRAM_ERROR;
                                     goto cleanup;
                                 }
                                 
-                                int64_t slice_26555 = merge_sequential_arg2_26471 + j_26520;
-                                int64_t slice_26556 = start_26281 + slice_26555;
-                                int32_t tmp_26557 = ((int32_t *) mem_param_27056.mem)[slice_26556];
-                                int64_t tmp_26558 = ((int64_t *) mem_param_27059.mem)[slice_26556];
+                                int64_t slice_26372 = merge_sequential_arg2_26288 + j_26337;
+                                int64_t slice_26373 = start_26098 + slice_26372;
+                                int32_t tmp_26374 = ((int32_t *) mem_param_26873.mem)[slice_26373];
+                                int64_t tmp_26375 = ((int64_t *) mem_param_26876.mem)[slice_26373];
                                 
-                                loopres_26539 = i_26517;
-                                loopres_26540 = tmp_26557;
-                                loopres_26541 = tmp_26558;
+                                loopres_26356 = i_26334;
+                                loopres_26357 = tmp_26374;
+                                loopres_26358 = tmp_26375;
                             }
-                            ((int32_t *) mem_27092)[i_26930 * merge_block_sizze_26094 + k_26516] = loopres_26540;
-                            ((int64_t *) mem_27095)[i_26930 * merge_block_sizze_26094 + k_26516] = loopres_26541;
+                            ((int32_t *) mem_26909)[i_26747 * merge_block_sizze_25911 + k_26333] = loopres_26357;
+                            ((int64_t *) mem_26912)[i_26747 * merge_block_sizze_25911 + k_26333] = loopres_26358;
                             
-                            int64_t i_tmp_27289 = loopres_26539;
+                            int64_t i_tmp_27106 = loopres_26356;
                             
-                            i_26517 = i_tmp_27289;
+                            i_26334 = i_tmp_27106;
                         }
-                        data_26513 = i_26517;
+                        data_26330 = i_26334;
                     }
-                    if (memblock_alloc(ctx, &mem_27130, bytes_27091, "mem_27130")) {
+                    if (memblock_alloc(ctx, &mem_26947, bytes_26908, "mem_26947")) {
                         err = 1;
                         goto cleanup;
                     }
-                    lmad_copy_4b(ctx, 2, (uint32_t *) mem_27130.mem, (int64_t) 0, (int64_t []) {merge_block_sizze_26094, (int64_t) 1}, (uint32_t *) mem_27092, (int64_t) 0, (int64_t []) {merge_block_sizze_26094, (int64_t) 1}, (int64_t []) {num_blocks_26229, merge_block_sizze_26094});
-                    if (memblock_alloc(ctx, &mem_27134, bytes_27094, "mem_27134")) {
+                    lmad_copy_4b(ctx, 2, (uint32_t *) mem_26947.mem, (int64_t) 0, (int64_t []) {merge_block_sizze_25911, (int64_t) 1}, (uint32_t *) mem_26909, (int64_t) 0, (int64_t []) {merge_block_sizze_25911, (int64_t) 1}, (int64_t []) {num_blocks_26046, merge_block_sizze_25911});
+                    if (memblock_alloc(ctx, &mem_26951, bytes_26911, "mem_26951")) {
                         err = 1;
                         goto cleanup;
                     }
-                    lmad_copy_8b(ctx, 2, (uint64_t *) mem_27134.mem, (int64_t) 0, (int64_t []) {merge_block_sizze_26094, (int64_t) 1}, (uint64_t *) mem_27095, (int64_t) 0, (int64_t []) {merge_block_sizze_26094, (int64_t) 1}, (int64_t []) {num_blocks_26229, merge_block_sizze_26094});
-                    if (memblock_set(ctx, &ext_mem_27157, &mem_27130, "mem_27130") != 0)
+                    lmad_copy_8b(ctx, 2, (uint64_t *) mem_26951.mem, (int64_t) 0, (int64_t []) {merge_block_sizze_25911, (int64_t) 1}, (uint64_t *) mem_26912, (int64_t) 0, (int64_t []) {merge_block_sizze_25911, (int64_t) 1}, (int64_t []) {num_blocks_26046, merge_block_sizze_25911});
+                    if (memblock_set(ctx, &ext_mem_26974, &mem_26947, "mem_26947") != 0)
                         return 1;
-                    if (memblock_set(ctx, &ext_mem_27154, &mem_27134, "mem_27134") != 0)
+                    if (memblock_set(ctx, &ext_mem_26971, &mem_26951, "mem_26951") != 0)
                         return 1;
                 }
-                lmad_copy_4b(ctx, 1, (uint32_t *) mem_27062, i_26937 * next_stride_26209, (int64_t []) {(int64_t) 1}, (uint32_t *) ext_mem_27157.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {next_stride_26209});
-                if (memblock_unref(ctx, &ext_mem_27157, "ext_mem_27157") != 0)
+                lmad_copy_4b(ctx, 1, (uint32_t *) mem_26879, i_26754 * next_stride_26026, (int64_t []) {(int64_t) 1}, (uint32_t *) ext_mem_26974.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {next_stride_26026});
+                if (memblock_unref(ctx, &ext_mem_26974, "ext_mem_26974") != 0)
                     return 1;
-                lmad_copy_8b(ctx, 1, (uint64_t *) mem_27065, i_26937 * next_stride_26209, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_27154.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {next_stride_26209});
-                if (memblock_unref(ctx, &ext_mem_27154, "ext_mem_27154") != 0)
+                lmad_copy_8b(ctx, 1, (uint64_t *) mem_26882, i_26754 * next_stride_26026, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_26971.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {next_stride_26026});
+                if (memblock_unref(ctx, &ext_mem_26971, "ext_mem_26971") != 0)
                     return 1;
             }
             
-            int64_t flat_dim_26565 = next_stride_26209 * num_merges_26213;
+            int64_t flat_dim_26382 = next_stride_26026 * num_merges_26030;
             
-            if (memblock_alloc(ctx, &mem_27168, bytes_27061, "mem_27168")) {
+            if (memblock_alloc(ctx, &mem_26985, bytes_26878, "mem_26985")) {
                 err = 1;
                 goto cleanup;
             }
-            lmad_copy_4b(ctx, 2, (uint32_t *) mem_27168.mem, (int64_t) 0, (int64_t []) {next_stride_26209, (int64_t) 1}, (uint32_t *) mem_27062, (int64_t) 0, (int64_t []) {next_stride_26209, (int64_t) 1}, (int64_t []) {num_merges_26213, next_stride_26209});
-            if (memblock_alloc(ctx, &mem_27172, bytes_27064, "mem_27172")) {
+            lmad_copy_4b(ctx, 2, (uint32_t *) mem_26985.mem, (int64_t) 0, (int64_t []) {next_stride_26026, (int64_t) 1}, (uint32_t *) mem_26879, (int64_t) 0, (int64_t []) {next_stride_26026, (int64_t) 1}, (int64_t []) {num_merges_26030, next_stride_26026});
+            if (memblock_alloc(ctx, &mem_26989, bytes_26881, "mem_26989")) {
                 err = 1;
                 goto cleanup;
             }
-            lmad_copy_8b(ctx, 2, (uint64_t *) mem_27172.mem, (int64_t) 0, (int64_t []) {next_stride_26209, (int64_t) 1}, (uint64_t *) mem_27065, (int64_t) 0, (int64_t []) {next_stride_26209, (int64_t) 1}, (int64_t []) {num_merges_26213, next_stride_26209});
+            lmad_copy_8b(ctx, 2, (uint64_t *) mem_26989.mem, (int64_t) 0, (int64_t []) {next_stride_26026, (int64_t) 1}, (uint64_t *) mem_26882, (int64_t) 0, (int64_t []) {next_stride_26026, (int64_t) 1}, (int64_t []) {num_merges_26030, next_stride_26026});
             
-            bool loop_cond_26568 = slt64(next_stride_26209, flat_dim_26090);
+            bool loop_cond_26385 = slt64(next_stride_26026, flat_dim_25907);
             
-            if (memblock_set(ctx, &mem_param_tmp_27263, &mem_27168, "mem_27168") != 0)
+            if (memblock_set(ctx, &mem_param_tmp_27080, &mem_26985, "mem_26985") != 0)
                 return 1;
-            if (memblock_set(ctx, &mem_param_tmp_27264, &mem_27172, "mem_27172") != 0)
+            if (memblock_set(ctx, &mem_param_tmp_27081, &mem_26989, "mem_26989") != 0)
                 return 1;
             
-            int64_t loop_dz2084Uz2082U_tmp_27265 = flat_dim_26565;
-            bool loop_while_tmp_27266 = loop_cond_26568;
-            int64_t stride_tmp_27269 = next_stride_26209;
+            int64_t loop_dz2084Uz2082U_tmp_27082 = flat_dim_26382;
+            bool loop_while_tmp_27083 = loop_cond_26385;
+            int64_t stride_tmp_27086 = next_stride_26026;
             
-            if (memblock_set(ctx, &mem_param_27056, &mem_param_tmp_27263, "mem_param_tmp_27263") != 0)
+            if (memblock_set(ctx, &mem_param_26873, &mem_param_tmp_27080, "mem_param_tmp_27080") != 0)
                 return 1;
-            if (memblock_set(ctx, &mem_param_27059, &mem_param_tmp_27264, "mem_param_tmp_27264") != 0)
+            if (memblock_set(ctx, &mem_param_26876, &mem_param_tmp_27081, "mem_param_tmp_27081") != 0)
                 return 1;
-            loop_dz2084Uz2082U_26204 = loop_dz2084Uz2082U_tmp_27265;
-            loop_while_26205 = loop_while_tmp_27266;
-            stride_26208 = stride_tmp_27269;
+            loop_dz2084Uz2082U_26021 = loop_dz2084Uz2082U_tmp_27082;
+            loop_while_26022 = loop_while_tmp_27083;
+            stride_26025 = stride_tmp_27086;
         }
-        if (memblock_set(ctx, &ext_mem_27179, &mem_param_27056, "mem_param_27056") != 0)
+        if (memblock_set(ctx, &ext_mem_26996, &mem_param_26873, "mem_param_26873") != 0)
             return 1;
-        if (memblock_set(ctx, &ext_mem_27178, &mem_param_27059, "mem_param_27059") != 0)
+        if (memblock_set(ctx, &ext_mem_26995, &mem_param_26876, "mem_param_26876") != 0)
             return 1;
-        data_26199 = loop_dz2084Uz2082U_26204;
-        data_26200 = loop_while_26205;
-        data_26203 = stride_26208;
-        if (memblock_unref(ctx, &mem_27048, "mem_27048") != 0)
+        data_26016 = loop_dz2084Uz2082U_26021;
+        data_26017 = loop_while_26022;
+        data_26020 = stride_26025;
+        if (memblock_unref(ctx, &mem_26865, "mem_26865") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27052, "mem_27052") != 0)
+        if (memblock_unref(ctx, &mem_26869, "mem_26869") != 0)
             return 1;
         
-        bool empty_slice_26569 = n_16379 == (int64_t) 0;
-        bool zzero_leq_i_p_m_t_s_26570 = sle64((int64_t) 0, zs_lhs_26074);
-        bool i_p_m_t_s_leq_w_26571 = slt64(zs_lhs_26074, data_26199);
-        bool y_26572 = zzero_leq_i_p_m_t_s_26570 && i_p_m_t_s_leq_w_26571;
-        bool ok_or_empty_26573 = empty_slice_26569 || y_26572;
-        bool index_certs_26574;
+        bool empty_slice_26386 = n_16308 == (int64_t) 0;
+        bool zzero_leq_i_p_m_t_s_26387 = sle64((int64_t) 0, zs_lhs_25891);
+        bool i_p_m_t_s_leq_w_26388 = slt64(zs_lhs_25891, data_26016);
+        bool y_26389 = zzero_leq_i_p_m_t_s_26387 && i_p_m_t_s_leq_w_26388;
+        bool ok_or_empty_26390 = empty_slice_26386 || y_26389;
+        bool index_certs_26391;
         
-        if (!ok_or_empty_26573) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) n_16379, "] out of bounds for array of shape [", (long long) data_26199, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:265:3-14\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:28:40-44\n   #6  test_sort.fut:26:1-29:27\n"));
+        if (!ok_or_empty_26390) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) n_16308, "] out of bounds for array of shape [", (long long) data_26016, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:265:3-14\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:34:40-44\n   #6  test_sort.fut:32:1-35:27\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
-        if (memblock_set(ctx, &ext_mem_27182, &ext_mem_27178, "ext_mem_27178") != 0)
+        if (memblock_set(ctx, &ext_mem_26999, &ext_mem_26995, "ext_mem_26995") != 0)
             return 1;
     }
-    if (memblock_unref(ctx, &mem_26977, "mem_26977") != 0)
+    if (memblock_unref(ctx, &mem_26794, "mem_26794") != 0)
         return 1;
-    if (memblock_alloc(ctx, &mem_27184, bytes_27183, "mem_27184")) {
+    if (memblock_alloc(ctx, &mem_27001, bytes_27000, "mem_27001")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc(ctx, &mem_27186, bytes_27185, "mem_27186")) {
+    if (memblock_alloc(ctx, &mem_27003, bytes_27002, "mem_27003")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t i_26944 = 0; i_26944 < n_16379; i_26944++) {
-        int64_t eta_p_26582 = ((int64_t *) ext_mem_27182.mem)[i_26944];
-        bool x_26583 = sle64((int64_t) 0, eta_p_26582);
-        bool y_26584 = slt64(eta_p_26582, n_16379);
-        bool bounds_check_26585 = x_26583 && y_26584;
-        bool index_certs_26586;
+    for (int64_t i_26761 = 0; i_26761 < n_16308; i_26761++) {
+        int64_t eta_p_26399 = ((int64_t *) ext_mem_26999.mem)[i_26761];
+        bool x_26400 = sle64((int64_t) 0, eta_p_26399);
+        bool y_26401 = slt64(eta_p_26399, n_16308);
+        bool bounds_check_26402 = x_26400 && y_26401;
+        bool index_certs_26403;
         
-        if (!bounds_check_26585) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_26582, "] out of bounds for array of shape [", (long long) n_16379, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:277:24-28\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:277:8-29\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:28:40-44\n   #5  test_sort.fut:26:1-29:27\n"));
+        if (!bounds_check_26402) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_26399, "] out of bounds for array of shape [", (long long) n_16308, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:277:24-28\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:277:8-29\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:34:40-44\n   #5  test_sort.fut:32:1-35:27\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
         
-        int32_t lifted_lambda_res_26587 = ((int32_t *) ks_mem_26974.mem)[eta_p_26582];
+        int32_t lifted_lambda_res_26404 = ((int32_t *) ks_mem_26791.mem)[eta_p_26399];
         
-        ((int32_t *) mem_27184.mem)[i_26944] = lifted_lambda_res_26587;
-        lmad_copy_1b(ctx, 1, (uint8_t *) mem_27186.mem, i_26944 * b_16380, (int64_t []) {(int64_t) 1}, (uint8_t *) pL_mem_26975.mem, eta_p_26582 * b_16380, (int64_t []) {(int64_t) 1}, (int64_t []) {b_16380});
+        ((int32_t *) mem_27001.mem)[i_26761] = lifted_lambda_res_26404;
+        lmad_copy_1b(ctx, 1, (uint8_t *) mem_27003.mem, i_26761 * b_16309, (int64_t []) {(int64_t) 1}, (uint8_t *) pL_mem_26792.mem, eta_p_26399 * b_16309, (int64_t []) {(int64_t) 1}, (int64_t []) {b_16309});
     }
-    if (memblock_unref(ctx, &ext_mem_27182, "ext_mem_27182") != 0)
+    if (memblock_unref(ctx, &ext_mem_26999, "ext_mem_26999") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_27245, &mem_27184, "mem_27184") != 0)
+    if (memblock_set(ctx, &mem_out_27062, &mem_27001, "mem_27001") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_27246, &mem_27186, "mem_27186") != 0)
+    if (memblock_set(ctx, &mem_out_27063, &mem_27003, "mem_27003") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_27294, &mem_out_27245, "mem_out_27245") != 0)
+    if (memblock_set(ctx, &*mem_out_p_27111, &mem_out_27062, "mem_out_27062") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_27295, &mem_out_27246, "mem_out_27246") != 0)
+    if (memblock_set(ctx, &*mem_out_p_27112, &mem_out_27063, "mem_out_27063") != 0)
         return 1;
     
   cleanup:
     {
-        free(mem_26980);
-        free(mem_26983);
-        free(mem_26993);
-        free(mem_26995);
-        free(mem_27062);
-        free(mem_27065);
-        free(mem_27075);
-        free(mem_27077);
-        free(mem_27092);
-        free(mem_27095);
-        if (memblock_unref(ctx, &mem_27186, "mem_27186") != 0)
+        free(mem_26797);
+        free(mem_26800);
+        free(mem_26810);
+        free(mem_26812);
+        free(mem_26879);
+        free(mem_26882);
+        free(mem_26892);
+        free(mem_26894);
+        free(mem_26909);
+        free(mem_26912);
+        if (memblock_unref(ctx, &mem_27003, "mem_27003") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27184, "mem_27184") != 0)
+        if (memblock_unref(ctx, &mem_27001, "mem_27001") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27264, "mem_param_tmp_27264") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27081, "mem_param_tmp_27081") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27263, "mem_param_tmp_27263") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27080, "mem_param_tmp_27080") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27172, "mem_27172") != 0)
+        if (memblock_unref(ctx, &mem_26989, "mem_26989") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27168, "mem_27168") != 0)
+        if (memblock_unref(ctx, &mem_26985, "mem_26985") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27134, "mem_27134") != 0)
+        if (memblock_unref(ctx, &mem_26951, "mem_26951") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27130, "mem_27130") != 0)
+        if (memblock_unref(ctx, &mem_26947, "mem_26947") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27139, "mem_27139") != 0)
+        if (memblock_unref(ctx, &mem_26956, "mem_26956") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27137, "mem_27137") != 0)
+        if (memblock_unref(ctx, &mem_26954, "mem_26954") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27154, "ext_mem_27154") != 0)
+        if (memblock_unref(ctx, &ext_mem_26971, "ext_mem_26971") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27157, "ext_mem_27157") != 0)
+        if (memblock_unref(ctx, &ext_mem_26974, "ext_mem_26974") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_27059, "mem_param_27059") != 0)
+        if (memblock_unref(ctx, &mem_param_26876, "mem_param_26876") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_27056, "mem_param_27056") != 0)
+        if (memblock_unref(ctx, &mem_param_26873, "mem_param_26873") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27178, "ext_mem_27178") != 0)
+        if (memblock_unref(ctx, &ext_mem_26995, "ext_mem_26995") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27179, "ext_mem_27179") != 0)
+        if (memblock_unref(ctx, &ext_mem_26996, "ext_mem_26996") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27052, "mem_27052") != 0)
+        if (memblock_unref(ctx, &mem_26869, "mem_26869") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27048, "mem_27048") != 0)
+        if (memblock_unref(ctx, &mem_26865, "mem_26865") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27182, "ext_mem_27182") != 0)
+        if (memblock_unref(ctx, &ext_mem_26999, "ext_mem_26999") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_26977, "mem_26977") != 0)
+        if (memblock_unref(ctx, &mem_26794, "mem_26794") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_27246, "mem_out_27246") != 0)
+        if (memblock_unref(ctx, &mem_out_27063, "mem_out_27063") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_27245, "mem_out_27245") != 0)
+        if (memblock_unref(ctx, &mem_out_27062, "mem_out_27062") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_merge_sort_i64(struct futhark_context *ctx, struct memblock *mem_out_p_27306, struct memblock *mem_out_p_27307, struct memblock ks_mem_26974, struct memblock pL_mem_26975, int64_t n_18759, int64_t b_18760)
+FUTHARK_FUN_ATTR int futrts_entry_merge_sort_i64(struct futhark_context *ctx, struct memblock *mem_out_p_27123, struct memblock *mem_out_p_27124, struct memblock ks_mem_26791, struct memblock pL_mem_26792, int64_t n_18688, int64_t b_18689)
 {
     (void) ctx;
     
     int err = 0;
-    int64_t mem_26980_cached_sizze_27308 = 0;
-    unsigned char *mem_26980 = NULL;
-    int64_t mem_26983_cached_sizze_27309 = 0;
-    unsigned char *mem_26983 = NULL;
-    int64_t mem_26993_cached_sizze_27310 = 0;
-    unsigned char *mem_26993 = NULL;
-    int64_t mem_26995_cached_sizze_27311 = 0;
-    unsigned char *mem_26995 = NULL;
-    int64_t mem_27062_cached_sizze_27312 = 0;
-    unsigned char *mem_27062 = NULL;
-    int64_t mem_27065_cached_sizze_27313 = 0;
-    unsigned char *mem_27065 = NULL;
-    int64_t mem_27075_cached_sizze_27314 = 0;
-    unsigned char *mem_27075 = NULL;
-    int64_t mem_27077_cached_sizze_27315 = 0;
-    unsigned char *mem_27077 = NULL;
-    int64_t mem_27092_cached_sizze_27316 = 0;
-    unsigned char *mem_27092 = NULL;
-    int64_t mem_27095_cached_sizze_27317 = 0;
-    unsigned char *mem_27095 = NULL;
-    struct memblock mem_27186;
+    int64_t mem_26797_cached_sizze_27125 = 0;
+    unsigned char *mem_26797 = NULL;
+    int64_t mem_26800_cached_sizze_27126 = 0;
+    unsigned char *mem_26800 = NULL;
+    int64_t mem_26810_cached_sizze_27127 = 0;
+    unsigned char *mem_26810 = NULL;
+    int64_t mem_26812_cached_sizze_27128 = 0;
+    unsigned char *mem_26812 = NULL;
+    int64_t mem_26879_cached_sizze_27129 = 0;
+    unsigned char *mem_26879 = NULL;
+    int64_t mem_26882_cached_sizze_27130 = 0;
+    unsigned char *mem_26882 = NULL;
+    int64_t mem_26892_cached_sizze_27131 = 0;
+    unsigned char *mem_26892 = NULL;
+    int64_t mem_26894_cached_sizze_27132 = 0;
+    unsigned char *mem_26894 = NULL;
+    int64_t mem_26909_cached_sizze_27133 = 0;
+    unsigned char *mem_26909 = NULL;
+    int64_t mem_26912_cached_sizze_27134 = 0;
+    unsigned char *mem_26912 = NULL;
+    struct memblock mem_27003;
     
-    mem_27186.references = NULL;
+    mem_27003.references = NULL;
     
-    struct memblock mem_27184;
+    struct memblock mem_27001;
     
-    mem_27184.references = NULL;
+    mem_27001.references = NULL;
     
-    struct memblock mem_param_tmp_27264;
+    struct memblock mem_param_tmp_27081;
     
-    mem_param_tmp_27264.references = NULL;
+    mem_param_tmp_27081.references = NULL;
     
-    struct memblock mem_param_tmp_27263;
+    struct memblock mem_param_tmp_27080;
     
-    mem_param_tmp_27263.references = NULL;
+    mem_param_tmp_27080.references = NULL;
     
-    struct memblock mem_27172;
+    struct memblock mem_26989;
     
-    mem_27172.references = NULL;
+    mem_26989.references = NULL;
     
-    struct memblock mem_27168;
+    struct memblock mem_26985;
     
-    mem_27168.references = NULL;
+    mem_26985.references = NULL;
     
-    struct memblock mem_27134;
+    struct memblock mem_26951;
     
-    mem_27134.references = NULL;
+    mem_26951.references = NULL;
     
-    struct memblock mem_27130;
+    struct memblock mem_26947;
     
-    mem_27130.references = NULL;
+    mem_26947.references = NULL;
     
-    struct memblock mem_27139;
+    struct memblock mem_26956;
     
-    mem_27139.references = NULL;
+    mem_26956.references = NULL;
     
-    struct memblock mem_27137;
+    struct memblock mem_26954;
     
-    mem_27137.references = NULL;
+    mem_26954.references = NULL;
     
-    struct memblock ext_mem_27154;
+    struct memblock ext_mem_26971;
     
-    ext_mem_27154.references = NULL;
+    ext_mem_26971.references = NULL;
     
-    struct memblock ext_mem_27157;
+    struct memblock ext_mem_26974;
     
-    ext_mem_27157.references = NULL;
+    ext_mem_26974.references = NULL;
     
-    struct memblock mem_param_27059;
+    struct memblock mem_param_26876;
     
-    mem_param_27059.references = NULL;
+    mem_param_26876.references = NULL;
     
-    struct memblock mem_param_27056;
+    struct memblock mem_param_26873;
     
-    mem_param_27056.references = NULL;
+    mem_param_26873.references = NULL;
     
-    struct memblock ext_mem_27178;
+    struct memblock ext_mem_26995;
     
-    ext_mem_27178.references = NULL;
+    ext_mem_26995.references = NULL;
     
-    struct memblock ext_mem_27179;
+    struct memblock ext_mem_26996;
     
-    ext_mem_27179.references = NULL;
+    ext_mem_26996.references = NULL;
     
-    struct memblock mem_27052;
+    struct memblock mem_26869;
     
-    mem_27052.references = NULL;
+    mem_26869.references = NULL;
     
-    struct memblock mem_27048;
+    struct memblock mem_26865;
     
-    mem_27048.references = NULL;
+    mem_26865.references = NULL;
     
-    struct memblock ext_mem_27182;
+    struct memblock ext_mem_26999;
     
-    ext_mem_27182.references = NULL;
+    ext_mem_26999.references = NULL;
     
-    struct memblock mem_26977;
+    struct memblock mem_26794;
     
-    mem_26977.references = NULL;
+    mem_26794.references = NULL;
     
-    struct memblock mem_out_27246;
+    struct memblock mem_out_27063;
     
-    mem_out_27246.references = NULL;
+    mem_out_27063.references = NULL;
     
-    struct memblock mem_out_27245;
+    struct memblock mem_out_27062;
     
-    mem_out_27245.references = NULL;
+    mem_out_27062.references = NULL;
     
-    int64_t bytes_26976 = (int64_t) 8 * n_18759;
-    bool cond_26073 = sle64(n_18759, (int64_t) 1);
-    int64_t zs_lhs_26074 = sub64(n_18759, (int64_t) 1);
-    int64_t zp_rhs_26075 = sdiv_safe64(zs_lhs_26074, (int64_t) 20);
-    int64_t min_num_blocks_26076 = add64((int64_t) 1, zp_rhs_26075);
-    bool loop_cond_26077 = slt64((int64_t) 1, min_num_blocks_26076);
-    bool smallest_pow_2_geq_than_res_26078;
-    int64_t smallest_pow_2_geq_than_res_26079;
-    bool loop_while_26080;
-    int64_t x_26081;
+    int64_t bytes_26793 = (int64_t) 8 * n_18688;
+    bool cond_25890 = sle64(n_18688, (int64_t) 1);
+    int64_t zs_lhs_25891 = sub64(n_18688, (int64_t) 1);
+    int64_t zp_rhs_25892 = sdiv_safe64(zs_lhs_25891, (int64_t) 20);
+    int64_t min_num_blocks_25893 = add64((int64_t) 1, zp_rhs_25892);
+    bool loop_cond_25894 = slt64((int64_t) 1, min_num_blocks_25893);
+    bool smallest_pow_2_geq_than_res_25895;
+    int64_t smallest_pow_2_geq_than_res_25896;
+    bool loop_while_25897;
+    int64_t x_25898;
     
-    loop_while_26080 = loop_cond_26077;
-    x_26081 = (int64_t) 1;
-    while (loop_while_26080) {
-        int64_t loopres_26082 = mul64((int64_t) 2, x_26081);
-        bool loop_cond_26083 = slt64(loopres_26082, min_num_blocks_26076);
-        bool loop_while_tmp_27247 = loop_cond_26083;
-        int64_t x_tmp_27248 = loopres_26082;
+    loop_while_25897 = loop_cond_25894;
+    x_25898 = (int64_t) 1;
+    while (loop_while_25897) {
+        int64_t loopres_25899 = mul64((int64_t) 2, x_25898);
+        bool loop_cond_25900 = slt64(loopres_25899, min_num_blocks_25893);
+        bool loop_while_tmp_27064 = loop_cond_25900;
+        int64_t x_tmp_27065 = loopres_25899;
         
-        loop_while_26080 = loop_while_tmp_27247;
-        x_26081 = x_tmp_27248;
+        loop_while_25897 = loop_while_tmp_27064;
+        x_25898 = x_tmp_27065;
     }
-    smallest_pow_2_geq_than_res_26078 = loop_while_26080;
-    smallest_pow_2_geq_than_res_26079 = x_26081;
+    smallest_pow_2_geq_than_res_25895 = loop_while_25897;
+    smallest_pow_2_geq_than_res_25896 = x_25898;
     
-    bool zzero_26084 = smallest_pow_2_geq_than_res_26079 == (int64_t) 0;
-    bool nonzzero_26085 = !zzero_26084;
-    bool protect_assert_disj_26086 = cond_26073 || nonzzero_26085;
-    bool nonzzero_cert_26087;
+    bool zzero_25901 = smallest_pow_2_geq_than_res_25896 == (int64_t) 0;
+    bool nonzzero_25902 = !zzero_25901;
+    bool protect_assert_disj_25903 = cond_25890 || nonzzero_25902;
+    bool nonzzero_cert_25904;
     
-    if (!protect_assert_disj_26086) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:234:30-42\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:51:40-44\n   #5  test_sort.fut:49:1-52:27\n"));
+    if (!protect_assert_disj_25903) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:234:30-42\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:63:40-44\n   #5  test_sort.fut:61:1-64:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t zp_rhs_26088 = sdiv_safe64(zs_lhs_26074, smallest_pow_2_geq_than_res_26079);
-    int64_t block_sizze_26089 = add64((int64_t) 1, zp_rhs_26088);
-    bool y_26095 = slt64((int64_t) 0, n_18759);
-    bool protect_assert_disj_27218 = cond_26073 || y_26095;
-    bool index_certs_26096;
+    int64_t zp_rhs_25905 = sdiv_safe64(zs_lhs_25891, smallest_pow_2_geq_than_res_25896);
+    int64_t block_sizze_25906 = add64((int64_t) 1, zp_rhs_25905);
+    bool y_25912 = slt64((int64_t) 0, n_18688);
+    bool protect_assert_disj_27035 = cond_25890 || y_25912;
+    bool index_certs_25913;
     
-    if (!protect_assert_disj_27218) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) n_18759, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:240:60-64\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:51:40-44\n   #5  test_sort.fut:49:1-52:27\n"));
+    if (!protect_assert_disj_27035) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) n_18688, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:240:60-64\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:63:40-44\n   #5  test_sort.fut:61:1-64:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    bool bounds_invalid_upwards_26110 = slt64(smallest_pow_2_geq_than_res_26079, (int64_t) 0);
-    bool valid_26111 = !bounds_invalid_upwards_26110;
-    bool protect_assert_disj_27226 = cond_26073 || valid_26111;
-    bool range_valid_c_26112;
+    bool bounds_invalid_upwards_25927 = slt64(smallest_pow_2_geq_than_res_25896, (int64_t) 0);
+    bool valid_25928 = !bounds_invalid_upwards_25927;
+    bool protect_assert_disj_27043 = cond_25890 || valid_25928;
+    bool range_valid_c_25929;
     
-    if (!protect_assert_disj_27226) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) smallest_pow_2_geq_than_res_26079, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:51:40-44\n   #6  test_sort.fut:49:1-52:27\n"));
+    if (!protect_assert_disj_27043) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) smallest_pow_2_geq_than_res_25896, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:63:40-44\n   #6  test_sort.fut:61:1-64:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    bool bounds_invalid_upwards_26114 = slt64(block_sizze_26089, (int64_t) 0);
-    bool valid_26115 = !bounds_invalid_upwards_26114;
-    bool protect_assert_disj_27228 = cond_26073 || valid_26115;
-    bool range_valid_c_26116;
+    bool bounds_invalid_upwards_25931 = slt64(block_sizze_25906, (int64_t) 0);
+    bool valid_25932 = !bounds_invalid_upwards_25931;
+    bool protect_assert_disj_27045 = cond_25890 || valid_25932;
+    bool range_valid_c_25933;
     
-    if (!protect_assert_disj_27228) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) block_sizze_26089, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+    if (!protect_assert_disj_27045) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) block_sizze_25906, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    bool cond_26118 = sle64(block_sizze_26089, (int64_t) 1);
-    int64_t tmp_26119 = sub64(block_sizze_26089, (int64_t) 2);
-    bool bounds_invalid_upwards_26120 = slt64(tmp_26119, (int64_t) 0);
-    bool valid_26122 = !bounds_invalid_upwards_26120;
-    bool protect_assert_disj_26123 = cond_26118 || valid_26122;
-    bool protect_assert_disj_27230 = cond_26073 || protect_assert_disj_26123;
-    bool range_valid_c_26124;
+    bool cond_25935 = sle64(block_sizze_25906, (int64_t) 1);
+    int64_t tmp_25936 = sub64(block_sizze_25906, (int64_t) 2);
+    bool bounds_invalid_upwards_25937 = slt64(tmp_25936, (int64_t) 0);
+    bool valid_25939 = !bounds_invalid_upwards_25937;
+    bool protect_assert_disj_25940 = cond_25935 || valid_25939;
+    bool protect_assert_disj_27047 = cond_25890 || protect_assert_disj_25940;
+    bool range_valid_c_25941;
     
-    if (!protect_assert_disj_27230) {
-        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "...", (long long) tmp_26119, " is invalid.", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:166:19-28\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+    if (!protect_assert_disj_27047) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "...", (long long) tmp_25936, " is invalid.", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:166:19-28\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t bytes_27185 = n_18759 * b_18760;
+    int64_t bytes_27002 = n_18688 * b_18689;
     
-    if (memblock_alloc(ctx, &mem_26977, bytes_26976, "mem_26977")) {
+    if (memblock_alloc(ctx, &mem_26794, bytes_26793, "mem_26794")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t i_27249 = 0; i_27249 < n_18759; i_27249++) {
-        int64_t x_27250 = (int64_t) 0 + i_27249 * (int64_t) 1;
+    for (int64_t i_27066 = 0; i_27066 < n_18688; i_27066++) {
+        int64_t x_27067 = (int64_t) 0 + i_27066 * (int64_t) 1;
         
-        ((int64_t *) mem_26977.mem)[i_27249] = x_27250;
+        ((int64_t *) mem_26794.mem)[i_27066] = x_27067;
     }
     
-    int64_t flat_dim_26090 = smallest_pow_2_geq_than_res_26079 * block_sizze_26089;
-    bool x_27213 = !cond_26073;
-    int64_t greatest_divisor_leq_than_arg1_26093 = mul64((int64_t) 2, block_sizze_26089);
-    int64_t merge_block_sizze_26094;
+    int64_t flat_dim_25907 = smallest_pow_2_geq_than_res_25896 * block_sizze_25906;
+    bool x_27030 = !cond_25890;
+    int64_t greatest_divisor_leq_than_arg1_25910 = mul64((int64_t) 2, block_sizze_25906);
+    int64_t merge_block_sizze_25911;
     
-    if (x_27213) {
-        int64_t x_27215;
+    if (x_27030) {
+        int64_t x_27032;
         
-        if (futrts_greatest_divisor_leq_than_5346(ctx, &x_27215, (int64_t) 8, greatest_divisor_leq_than_arg1_26093) != 0) {
+        if (futrts_greatest_divisor_leq_than_5346(ctx, &x_27032, (int64_t) 8, greatest_divisor_leq_than_arg1_25910) != 0) {
             err = 1;
             goto cleanup;
         }
-        merge_block_sizze_26094 = x_27215;
+        merge_block_sizze_25911 = x_27032;
     } else {
-        merge_block_sizze_26094 = (int64_t) 0;
+        merge_block_sizze_25911 = (int64_t) 0;
     }
     
-    int64_t reduce_arg1_26097;
+    int64_t reduce_arg1_25914;
     
-    if (x_27213) {
-        int64_t x_27219 = ((int64_t *) ks_mem_26974.mem)[(int64_t) 0];
+    if (x_27030) {
+        int64_t x_27036 = ((int64_t *) ks_mem_26791.mem)[(int64_t) 0];
         
-        reduce_arg1_26097 = x_27219;
+        reduce_arg1_25914 = x_27036;
     } else {
-        reduce_arg1_26097 = (int64_t) 0;
+        reduce_arg1_25914 = (int64_t) 0;
     }
     
-    int64_t defunc_0_reduce_res_26742;
-    int64_t defunc_0_reduce_res_26743;
+    int64_t defunc_0_reduce_res_26559;
+    int64_t defunc_0_reduce_res_26560;
     
-    if (x_27213) {
-        int64_t x_27221;
-        int64_t x_27222;
-        int64_t redout_26902;
-        int64_t redout_26903;
+    if (x_27030) {
+        int64_t x_27038;
+        int64_t x_27039;
+        int64_t redout_26719;
+        int64_t redout_26720;
         
-        redout_26902 = reduce_arg1_26097;
-        redout_26903 = (int64_t) 0;
-        for (int64_t i_26904 = 0; i_26904 < n_18759; i_26904++) {
-            int64_t x_26101 = ((int64_t *) ks_mem_26974.mem)[i_26904];
-            bool defunc_0_leq_res_26107 = sle64(redout_26902, x_26101);
-            int64_t defunc_0_op_res_26108;
+        redout_26719 = reduce_arg1_25914;
+        redout_26720 = (int64_t) 0;
+        for (int64_t i_26721 = 0; i_26721 < n_18688; i_26721++) {
+            int64_t x_25918 = ((int64_t *) ks_mem_26791.mem)[i_26721];
+            bool defunc_0_leq_res_25924 = sle64(redout_26719, x_25918);
+            int64_t defunc_0_op_res_25925;
             
-            if (defunc_0_leq_res_26107) {
-                defunc_0_op_res_26108 = x_26101;
+            if (defunc_0_leq_res_25924) {
+                defunc_0_op_res_25925 = x_25918;
             } else {
-                defunc_0_op_res_26108 = redout_26902;
+                defunc_0_op_res_25925 = redout_26719;
             }
             
-            int64_t defunc_0_op_res_26109;
+            int64_t defunc_0_op_res_25926;
             
-            if (defunc_0_leq_res_26107) {
-                defunc_0_op_res_26109 = i_26904;
+            if (defunc_0_leq_res_25924) {
+                defunc_0_op_res_25926 = i_26721;
             } else {
-                defunc_0_op_res_26109 = redout_26903;
+                defunc_0_op_res_25926 = redout_26720;
             }
             
-            int64_t redout_tmp_27251 = defunc_0_op_res_26108;
-            int64_t redout_tmp_27252 = defunc_0_op_res_26109;
+            int64_t redout_tmp_27068 = defunc_0_op_res_25925;
+            int64_t redout_tmp_27069 = defunc_0_op_res_25926;
             
-            redout_26902 = redout_tmp_27251;
-            redout_26903 = redout_tmp_27252;
+            redout_26719 = redout_tmp_27068;
+            redout_26720 = redout_tmp_27069;
         }
-        x_27221 = redout_26902;
-        x_27222 = redout_26903;
-        defunc_0_reduce_res_26742 = x_27221;
-        defunc_0_reduce_res_26743 = x_27222;
+        x_27038 = redout_26719;
+        x_27039 = redout_26720;
+        defunc_0_reduce_res_26559 = x_27038;
+        defunc_0_reduce_res_26560 = x_27039;
     } else {
-        defunc_0_reduce_res_26742 = (int64_t) 0;
-        defunc_0_reduce_res_26743 = (int64_t) 0;
+        defunc_0_reduce_res_26559 = (int64_t) 0;
+        defunc_0_reduce_res_26560 = (int64_t) 0;
     }
     
-    int64_t distance_26121 = add64((int64_t) 1, tmp_26119);
-    int64_t binop_x_26978 = (int64_t) 8 * smallest_pow_2_geq_than_res_26079;
-    int64_t bytes_26979 = block_sizze_26089 * binop_x_26978;
-    int64_t bytes_26992 = (int64_t) 8 * block_sizze_26089;
-    bool loop_cond_26196 = slt64(block_sizze_26089, flat_dim_26090);
-    bool zzero_26197 = merge_block_sizze_26094 == (int64_t) 0;
-    bool nonzzero_26198 = !zzero_26197;
+    int64_t distance_25938 = add64((int64_t) 1, tmp_25936);
+    int64_t binop_x_26795 = (int64_t) 8 * smallest_pow_2_geq_than_res_25896;
+    int64_t bytes_26796 = block_sizze_25906 * binop_x_26795;
+    int64_t bytes_26809 = (int64_t) 8 * block_sizze_25906;
+    bool loop_cond_26013 = slt64(block_sizze_25906, flat_dim_25907);
+    bool zzero_26014 = merge_block_sizze_25911 == (int64_t) 0;
+    bool nonzzero_26015 = !zzero_26014;
     
-    if (cond_26073) {
-        if (memblock_set(ctx, &ext_mem_27182, &mem_26977, "mem_26977") != 0)
+    if (cond_25890) {
+        if (memblock_set(ctx, &ext_mem_26999, &mem_26794, "mem_26794") != 0)
             return 1;
     } else {
-        if (mem_26980_cached_sizze_27308 < bytes_26979) {
-            err = lexical_realloc(ctx, &mem_26980, &mem_26980_cached_sizze_27308, bytes_26979);
+        if (mem_26797_cached_sizze_27125 < bytes_26796) {
+            err = lexical_realloc(ctx, &mem_26797, &mem_26797_cached_sizze_27125, bytes_26796);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
-        if (mem_26983_cached_sizze_27309 < bytes_26979) {
-            err = lexical_realloc(ctx, &mem_26983, &mem_26983_cached_sizze_27309, bytes_26979);
+        if (mem_26800_cached_sizze_27126 < bytes_26796) {
+            err = lexical_realloc(ctx, &mem_26800, &mem_26800_cached_sizze_27126, bytes_26796);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
-        if (mem_26993_cached_sizze_27310 < bytes_26992) {
-            err = lexical_realloc(ctx, &mem_26993, &mem_26993_cached_sizze_27310, bytes_26992);
+        if (mem_26810_cached_sizze_27127 < bytes_26809) {
+            err = lexical_realloc(ctx, &mem_26810, &mem_26810_cached_sizze_27127, bytes_26809);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
-        if (mem_26995_cached_sizze_27311 < bytes_26992) {
-            err = lexical_realloc(ctx, &mem_26995, &mem_26995_cached_sizze_27311, bytes_26992);
+        if (mem_26812_cached_sizze_27128 < bytes_26809) {
+            err = lexical_realloc(ctx, &mem_26812, &mem_26812_cached_sizze_27128, bytes_26809);
             if (err != FUTHARK_SUCCESS)
                 goto cleanup;
         }
-        for (int64_t i_26916 = 0; i_26916 < smallest_pow_2_geq_than_res_26079; i_26916++) {
-            int64_t zp_lhs_26128 = mul64(block_sizze_26089, i_26916);
+        for (int64_t i_26733 = 0; i_26733 < smallest_pow_2_geq_than_res_25896; i_26733++) {
+            int64_t zp_lhs_25945 = mul64(block_sizze_25906, i_26733);
             
-            for (int64_t i_26909 = 0; i_26909 < block_sizze_26089; i_26909++) {
-                int64_t k_26132 = add64(zp_lhs_26128, i_26909);
-                bool cond_26133 = slt64(k_26132, n_18759);
-                int64_t lifted_lambda_res_26134;
-                int64_t lifted_lambda_res_26135;
+            for (int64_t i_26726 = 0; i_26726 < block_sizze_25906; i_26726++) {
+                int64_t k_25949 = add64(zp_lhs_25945, i_26726);
+                bool cond_25950 = slt64(k_25949, n_18688);
+                int64_t lifted_lambda_res_25951;
+                int64_t lifted_lambda_res_25952;
                 
-                if (cond_26133) {
-                    bool x_26595 = sle64((int64_t) 0, k_26132);
-                    bool bounds_check_26596 = cond_26133 && x_26595;
-                    bool index_certs_26597;
+                if (cond_25950) {
+                    bool x_26412 = sle64((int64_t) 0, k_25949);
+                    bool bounds_check_26413 = cond_25950 && x_26412;
+                    bool index_certs_26414;
                     
-                    if (!bounds_check_26596) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) k_26132, "] out of bounds for array of shape [", (long long) n_18759, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:246:26-30\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:51:40-44\n   #9  test_sort.fut:49:1-52:27\n"));
+                    if (!bounds_check_26413) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) k_25949, "] out of bounds for array of shape [", (long long) n_18688, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:246:26-30\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:63:40-44\n   #9  test_sort.fut:61:1-64:27\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
                     
-                    int64_t lifted_lambda_res_t_res_26598 = ((int64_t *) ks_mem_26974.mem)[k_26132];
+                    int64_t lifted_lambda_res_t_res_26415 = ((int64_t *) ks_mem_26791.mem)[k_25949];
                     
-                    lifted_lambda_res_26134 = lifted_lambda_res_t_res_26598;
-                    lifted_lambda_res_26135 = k_26132;
+                    lifted_lambda_res_25951 = lifted_lambda_res_t_res_26415;
+                    lifted_lambda_res_25952 = k_25949;
                 } else {
-                    lifted_lambda_res_26134 = defunc_0_reduce_res_26742;
-                    lifted_lambda_res_26135 = defunc_0_reduce_res_26743;
+                    lifted_lambda_res_25951 = defunc_0_reduce_res_26559;
+                    lifted_lambda_res_25952 = defunc_0_reduce_res_26560;
                 }
-                ((int64_t *) mem_26993)[i_26909] = lifted_lambda_res_26134;
-                ((int64_t *) mem_26995)[i_26909] = lifted_lambda_res_26135;
+                ((int64_t *) mem_26810)[i_26726] = lifted_lambda_res_25951;
+                ((int64_t *) mem_26812)[i_26726] = lifted_lambda_res_25952;
             }
-            if (!cond_26118) {
-                for (int64_t i_26145 = 0; i_26145 < distance_26121; i_26145++) {
-                    int64_t gt_arg1_26148 = add64((int64_t) 1, i_26145);
-                    bool x_26149 = sle64((int64_t) 0, gt_arg1_26148);
-                    bool y_26150 = slt64(gt_arg1_26148, block_sizze_26089);
-                    bool bounds_check_26151 = x_26149 && y_26150;
-                    bool index_certs_26152;
+            if (!cond_25935) {
+                for (int64_t i_25962 = 0; i_25962 < distance_25938; i_25962++) {
+                    int64_t gt_arg1_25965 = add64((int64_t) 1, i_25962);
+                    bool x_25966 = sle64((int64_t) 0, gt_arg1_25965);
+                    bool y_25967 = slt64(gt_arg1_25965, block_sizze_25906);
+                    bool bounds_check_25968 = x_25966 && y_25967;
+                    bool index_certs_25969;
                     
-                    if (!bounds_check_26151) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) gt_arg1_26148, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:31-37\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+                    if (!bounds_check_25968) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) gt_arg1_25965, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:31-37\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
                     
-                    bool y_26154 = slt64(i_26145, block_sizze_26089);
-                    bool index_certs_26155;
+                    bool y_25971 = slt64(i_25962, block_sizze_25906);
+                    bool index_certs_25972;
                     
-                    if (!y_26154) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26145, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:26-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+                    if (!y_25971) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_25962, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:26-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
                     
-                    int64_t gt_arg1_26153 = ((int64_t *) mem_26993)[gt_arg1_26148];
-                    int64_t gt_arg0_26156 = ((int64_t *) mem_26993)[i_26145];
-                    bool defunc_0_leq_res_26157 = sle64(gt_arg0_26156, gt_arg1_26153);
-                    bool defunc_0_lifted_gt_res_26158 = !defunc_0_leq_res_26157;
-                    bool s_26159;
-                    int64_t s_26162;
-                    bool loop_while_26163;
-                    int64_t j_26166;
+                    int64_t gt_arg1_25970 = ((int64_t *) mem_26810)[gt_arg1_25965];
+                    int64_t gt_arg0_25973 = ((int64_t *) mem_26810)[i_25962];
+                    bool defunc_0_leq_res_25974 = sle64(gt_arg0_25973, gt_arg1_25970);
+                    bool defunc_0_lifted_gt_res_25975 = !defunc_0_leq_res_25974;
+                    bool s_25976;
+                    int64_t s_25979;
+                    bool loop_while_25980;
+                    int64_t j_25983;
                     
-                    loop_while_26163 = defunc_0_lifted_gt_res_26158;
-                    j_26166 = i_26145;
-                    while (loop_while_26163) {
-                        bool x_26167 = sle64((int64_t) 0, j_26166);
-                        bool y_26168 = slt64(j_26166, block_sizze_26089);
-                        bool bounds_check_26169 = x_26167 && y_26168;
-                        bool index_certs_26170;
+                    loop_while_25980 = defunc_0_lifted_gt_res_25975;
+                    j_25983 = i_25962;
+                    while (loop_while_25980) {
+                        bool x_25984 = sle64((int64_t) 0, j_25983);
+                        bool y_25985 = slt64(j_25983, block_sizze_25906);
+                        bool bounds_check_25986 = x_25984 && y_25985;
+                        bool index_certs_25987;
                         
-                        if (!bounds_check_26169) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26166, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:170:24-28\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+                        if (!bounds_check_25986) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_25983, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:170:24-28\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t copy_arg0_26173 = add64((int64_t) 1, j_26166);
-                        bool x_26174 = sle64((int64_t) 0, copy_arg0_26173);
-                        bool y_26175 = slt64(copy_arg0_26173, block_sizze_26089);
-                        bool bounds_check_26176 = x_26174 && y_26175;
-                        bool index_certs_26177;
+                        int64_t copy_arg0_25990 = add64((int64_t) 1, j_25983);
+                        bool x_25991 = sle64((int64_t) 0, copy_arg0_25990);
+                        bool y_25992 = slt64(copy_arg0_25990, block_sizze_25906);
+                        bool bounds_check_25993 = x_25991 && y_25992;
+                        bool index_certs_25994;
                         
-                        if (!bounds_check_26176) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) copy_arg0_26173, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:171:35-41\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+                        if (!bounds_check_25993) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) copy_arg0_25990, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:171:35-41\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t copy_arg0_26171 = ((int64_t *) mem_26993)[j_26166];
-                        int64_t copy_arg0_26172 = ((int64_t *) mem_26995)[j_26166];
-                        int64_t copy_arg0_26178 = ((int64_t *) mem_26993)[copy_arg0_26173];
-                        int64_t copy_arg0_26179 = ((int64_t *) mem_26995)[copy_arg0_26173];
+                        int64_t copy_arg0_25988 = ((int64_t *) mem_26810)[j_25983];
+                        int64_t copy_arg0_25989 = ((int64_t *) mem_26812)[j_25983];
+                        int64_t copy_arg0_25995 = ((int64_t *) mem_26810)[copy_arg0_25990];
+                        int64_t copy_arg0_25996 = ((int64_t *) mem_26812)[copy_arg0_25990];
                         
-                        ((int64_t *) mem_26993)[j_26166] = copy_arg0_26178;
-                        ((int64_t *) mem_26995)[j_26166] = copy_arg0_26179;
-                        ((int64_t *) mem_26993)[copy_arg0_26173] = copy_arg0_26171;
-                        ((int64_t *) mem_26995)[copy_arg0_26173] = copy_arg0_26172;
+                        ((int64_t *) mem_26810)[j_25983] = copy_arg0_25995;
+                        ((int64_t *) mem_26812)[j_25983] = copy_arg0_25996;
+                        ((int64_t *) mem_26810)[copy_arg0_25990] = copy_arg0_25988;
+                        ((int64_t *) mem_26812)[copy_arg0_25990] = copy_arg0_25989;
                         
-                        int64_t tmp_26184 = sub64(j_26166, (int64_t) 1);
-                        bool cond_26185 = sle64((int64_t) 0, tmp_26184);
-                        bool loop_cond_26186;
+                        int64_t tmp_26001 = sub64(j_25983, (int64_t) 1);
+                        bool cond_26002 = sle64((int64_t) 0, tmp_26001);
+                        bool loop_cond_26003;
                         
-                        if (cond_26185) {
-                            bool y_26600 = slt64(tmp_26184, block_sizze_26089);
-                            bool bounds_check_26601 = cond_26185 && y_26600;
-                            bool index_certs_26602;
+                        if (cond_26002) {
+                            bool y_26417 = slt64(tmp_26001, block_sizze_25906);
+                            bool bounds_check_26418 = cond_26002 && y_26417;
+                            bool index_certs_26419;
                             
-                            if (!bounds_check_26601) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_26184, "] out of bounds for array of shape [", (long long) block_sizze_26089, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:26-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+                            if (!bounds_check_26418) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_26001, "] out of bounds for array of shape [", (long long) block_sizze_25906, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:169:26-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:248:32-37\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t gt_arg1_26599 = ((int64_t *) mem_26993)[j_26166];
-                            int64_t gt_arg0_26603 = ((int64_t *) mem_26993)[tmp_26184];
-                            bool defunc_0_leq_res_26604 = sle64(gt_arg0_26603, gt_arg1_26599);
-                            bool defunc_0_lifted_gt_res_26605 = !defunc_0_leq_res_26604;
+                            int64_t gt_arg1_26416 = ((int64_t *) mem_26810)[j_25983];
+                            int64_t gt_arg0_26420 = ((int64_t *) mem_26810)[tmp_26001];
+                            bool defunc_0_leq_res_26421 = sle64(gt_arg0_26420, gt_arg1_26416);
+                            bool defunc_0_lifted_gt_res_26422 = !defunc_0_leq_res_26421;
                             
-                            loop_cond_26186 = defunc_0_lifted_gt_res_26605;
+                            loop_cond_26003 = defunc_0_lifted_gt_res_26422;
                         } else {
-                            loop_cond_26186 = 0;
+                            loop_cond_26003 = 0;
                         }
                         
-                        bool loop_while_tmp_27259 = loop_cond_26186;
-                        int64_t j_tmp_27262 = tmp_26184;
+                        bool loop_while_tmp_27076 = loop_cond_26003;
+                        int64_t j_tmp_27079 = tmp_26001;
                         
-                        loop_while_26163 = loop_while_tmp_27259;
-                        j_26166 = j_tmp_27262;
+                        loop_while_25980 = loop_while_tmp_27076;
+                        j_25983 = j_tmp_27079;
                     }
-                    s_26159 = loop_while_26163;
-                    s_26162 = j_26166;
+                    s_25976 = loop_while_25980;
+                    s_25979 = j_25983;
                 }
             }
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_26980, i_26916 * block_sizze_26089, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_26993, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {block_sizze_26089});
-            lmad_copy_8b(ctx, 1, (uint64_t *) mem_26983, i_26916 * block_sizze_26089, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_26995, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {block_sizze_26089});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_26797, i_26733 * block_sizze_25906, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_26810, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {block_sizze_25906});
+            lmad_copy_8b(ctx, 1, (uint64_t *) mem_26800, i_26733 * block_sizze_25906, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_26812, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {block_sizze_25906});
         }
-        if (memblock_alloc(ctx, &mem_27048, bytes_26979, "mem_27048")) {
+        if (memblock_alloc(ctx, &mem_26865, bytes_26796, "mem_26865")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_8b(ctx, 2, (uint64_t *) mem_27048.mem, (int64_t) 0, (int64_t []) {block_sizze_26089, (int64_t) 1}, (uint64_t *) mem_26980, (int64_t) 0, (int64_t []) {block_sizze_26089, (int64_t) 1}, (int64_t []) {smallest_pow_2_geq_than_res_26079, block_sizze_26089});
-        if (memblock_alloc(ctx, &mem_27052, bytes_26979, "mem_27052")) {
+        lmad_copy_8b(ctx, 2, (uint64_t *) mem_26865.mem, (int64_t) 0, (int64_t []) {block_sizze_25906, (int64_t) 1}, (uint64_t *) mem_26797, (int64_t) 0, (int64_t []) {block_sizze_25906, (int64_t) 1}, (int64_t []) {smallest_pow_2_geq_than_res_25896, block_sizze_25906});
+        if (memblock_alloc(ctx, &mem_26869, bytes_26796, "mem_26869")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_8b(ctx, 2, (uint64_t *) mem_27052.mem, (int64_t) 0, (int64_t []) {block_sizze_26089, (int64_t) 1}, (uint64_t *) mem_26983, (int64_t) 0, (int64_t []) {block_sizze_26089, (int64_t) 1}, (int64_t []) {smallest_pow_2_geq_than_res_26079, block_sizze_26089});
+        lmad_copy_8b(ctx, 2, (uint64_t *) mem_26869.mem, (int64_t) 0, (int64_t []) {block_sizze_25906, (int64_t) 1}, (uint64_t *) mem_26800, (int64_t) 0, (int64_t []) {block_sizze_25906, (int64_t) 1}, (int64_t []) {smallest_pow_2_geq_than_res_25896, block_sizze_25906});
         
-        int64_t data_26199;
-        bool data_26200;
-        int64_t data_26203;
-        int64_t loop_dz2084Uz2082U_26204;
-        bool loop_while_26205;
-        int64_t stride_26208;
+        int64_t data_26016;
+        bool data_26017;
+        int64_t data_26020;
+        int64_t loop_dz2084Uz2082U_26021;
+        bool loop_while_26022;
+        int64_t stride_26025;
         
-        if (memblock_set(ctx, &mem_param_27056, &mem_27048, "mem_27048") != 0)
+        if (memblock_set(ctx, &mem_param_26873, &mem_26865, "mem_26865") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_27059, &mem_27052, "mem_27052") != 0)
+        if (memblock_set(ctx, &mem_param_26876, &mem_26869, "mem_26869") != 0)
             return 1;
-        loop_dz2084Uz2082U_26204 = flat_dim_26090;
-        loop_while_26205 = loop_cond_26196;
-        stride_26208 = block_sizze_26089;
-        while (loop_while_26205) {
-            int64_t next_stride_26209 = mul64((int64_t) 2, stride_26208);
-            bool zzero_26210 = next_stride_26209 == (int64_t) 0;
-            bool nonzzero_26211 = !zzero_26210;
-            bool nonzzero_cert_26212;
+        loop_dz2084Uz2082U_26021 = flat_dim_25907;
+        loop_while_26022 = loop_cond_26013;
+        stride_26025 = block_sizze_25906;
+        while (loop_while_26022) {
+            int64_t next_stride_26026 = mul64((int64_t) 2, stride_26025);
+            bool zzero_26027 = next_stride_26026 == (int64_t) 0;
+            bool nonzzero_26028 = !zzero_26027;
+            bool nonzzero_cert_26029;
             
-            if (!nonzzero_26211) {
-                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:254:33-46\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:51:40-44\n   #5  test_sort.fut:49:1-52:27\n"));
+            if (!nonzzero_26028) {
+                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:254:33-46\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #2  /prelude/functional.fut:9:44-45\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:63:40-44\n   #5  test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t num_merges_26213 = sdiv64(flat_dim_26090, next_stride_26209);
-            bool bounds_invalid_upwards_26214 = slt64(num_merges_26213, (int64_t) 0);
-            bool valid_26215 = !bounds_invalid_upwards_26214;
-            bool range_valid_c_26216;
+            int64_t num_merges_26030 = sdiv64(flat_dim_25907, next_stride_26026);
+            bool bounds_invalid_upwards_26031 = slt64(num_merges_26030, (int64_t) 0);
+            bool valid_26032 = !bounds_invalid_upwards_26031;
+            bool range_valid_c_26033;
             
-            if (!valid_26215) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) num_merges_26213, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:51:40-44\n   #6  test_sort.fut:49:1-52:27\n"));
+            if (!valid_26032) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) num_merges_26030, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:63:40-44\n   #6  test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t m_26218 = sub64(next_stride_26209, (int64_t) 1);
-            bool zzero_leq_i_p_m_t_s_26219 = sle64((int64_t) 0, m_26218);
-            bool cond_26221 = slt64(next_stride_26209, (int64_t) 10);
-            bool protect_assert_disj_26222 = nonzzero_26198 || cond_26221;
-            bool nonzzero_cert_26223;
+            int64_t m_26035 = sub64(next_stride_26026, (int64_t) 1);
+            bool zzero_leq_i_p_m_t_s_26036 = sle64((int64_t) 0, m_26035);
+            bool cond_26038 = slt64(next_stride_26026, (int64_t) 10);
+            bool protect_assert_disj_26039 = nonzzero_26015 || cond_26038;
+            bool nonzzero_cert_26040;
             
-            if (!protect_assert_disj_26222) {
-                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:147:30-42\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26039) {
+                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:147:30-42\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t zeze_lhs_26224 = smod_safe64(next_stride_26209, merge_block_sizze_26094);
-            bool num_blocks_26225 = zeze_lhs_26224 == (int64_t) 0;
-            bool protect_assert_disj_26226 = cond_26221 || num_blocks_26225;
-            bool assert_c_26227;
+            int64_t zeze_lhs_26041 = smod_safe64(next_stride_26026, merge_block_sizze_25911);
+            bool num_blocks_26042 = zeze_lhs_26041 == (int64_t) 0;
+            bool protect_assert_disj_26043 = cond_26038 || num_blocks_26042;
+            bool assert_c_26044;
             
-            if (!protect_assert_disj_26226) {
-                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Assertion is false: (n % block_size == 0)", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:147:20-65\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26043) {
+                set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Assertion is false: (n % block_size == 0)", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:147:20-65\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t num_blocks_26229 = sdiv_safe64(next_stride_26209, merge_block_sizze_26094);
-            int64_t dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230 = add64((int64_t) 1, num_blocks_26229);
-            int64_t j_m_i_26231 = sub64(next_stride_26209, stride_26208);
-            int64_t flat_dim_26232 = merge_block_sizze_26094 * num_blocks_26229;
-            bool bounds_invalid_upwards_26233 = slt64(dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230, (int64_t) 0);
-            bool empty_slice_26234 = j_m_i_26231 == (int64_t) 0;
-            int64_t m_26235 = sub64(j_m_i_26231, (int64_t) 1);
-            bool zzero_lte_i_26236 = sle64((int64_t) 0, stride_26208);
-            bool i_lte_j_26237 = sle64(stride_26208, next_stride_26209);
-            bool empty_slice_26238 = stride_26208 == (int64_t) 0;
-            int64_t m_26239 = sub64(stride_26208, (int64_t) 1);
-            bool bounds_invalid_upwards_26240 = slt64(num_blocks_26229, (int64_t) 0);
-            bool cond_26241 = slt64((int64_t) 0, stride_26208);
-            bool valid_26242 = !bounds_invalid_upwards_26233;
-            int64_t i_p_m_t_s_26243 = add64(stride_26208, m_26235);
-            bool zzero_leq_i_p_m_t_s_26244 = sle64((int64_t) 0, m_26239);
-            bool i_p_m_t_s_leq_w_26245 = slt64(m_26239, next_stride_26209);
-            bool valid_26246 = !bounds_invalid_upwards_26240;
-            bool i_p_m_t_s_leq_w_26247 = slt64(m_26218, flat_dim_26232);
-            bool y_26248 = slt64((int64_t) 0, j_m_i_26231);
-            bool protect_assert_disj_26249 = cond_26221 || valid_26242;
-            bool range_valid_c_26250;
+            int64_t num_blocks_26046 = sdiv_safe64(next_stride_26026, merge_block_sizze_25911);
+            int64_t dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047 = add64((int64_t) 1, num_blocks_26046);
+            int64_t j_m_i_26048 = sub64(next_stride_26026, stride_26025);
+            int64_t flat_dim_26049 = merge_block_sizze_25911 * num_blocks_26046;
+            bool bounds_invalid_upwards_26050 = slt64(dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047, (int64_t) 0);
+            bool empty_slice_26051 = j_m_i_26048 == (int64_t) 0;
+            int64_t m_26052 = sub64(j_m_i_26048, (int64_t) 1);
+            bool zzero_lte_i_26053 = sle64((int64_t) 0, stride_26025);
+            bool i_lte_j_26054 = sle64(stride_26025, next_stride_26026);
+            bool empty_slice_26055 = stride_26025 == (int64_t) 0;
+            int64_t m_26056 = sub64(stride_26025, (int64_t) 1);
+            bool bounds_invalid_upwards_26057 = slt64(num_blocks_26046, (int64_t) 0);
+            bool cond_26058 = slt64((int64_t) 0, stride_26025);
+            bool valid_26059 = !bounds_invalid_upwards_26050;
+            int64_t i_p_m_t_s_26060 = add64(stride_26025, m_26052);
+            bool zzero_leq_i_p_m_t_s_26061 = sle64((int64_t) 0, m_26056);
+            bool i_p_m_t_s_leq_w_26062 = slt64(m_26056, next_stride_26026);
+            bool valid_26063 = !bounds_invalid_upwards_26057;
+            bool i_p_m_t_s_leq_w_26064 = slt64(m_26035, flat_dim_26049);
+            bool y_26065 = slt64((int64_t) 0, j_m_i_26048);
+            bool protect_assert_disj_26066 = cond_26038 || valid_26059;
+            bool range_valid_c_26067;
             
-            if (!protect_assert_disj_26249) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:51:40-44\n   #10 test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26066) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:63:40-44\n   #10 test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool zzero_leq_i_p_m_t_s_26251 = sle64((int64_t) 0, i_p_m_t_s_26243);
-            bool i_p_m_t_s_leq_w_26252 = slt64(i_p_m_t_s_26243, next_stride_26209);
-            bool y_26253 = zzero_leq_i_p_m_t_s_26244 && i_p_m_t_s_leq_w_26245;
-            bool protect_assert_disj_26254 = cond_26221 || valid_26246;
-            bool range_valid_c_26255;
+            bool zzero_leq_i_p_m_t_s_26068 = sle64((int64_t) 0, i_p_m_t_s_26060);
+            bool i_p_m_t_s_leq_w_26069 = slt64(i_p_m_t_s_26060, next_stride_26026);
+            bool y_26070 = zzero_leq_i_p_m_t_s_26061 && i_p_m_t_s_leq_w_26062;
+            bool protect_assert_disj_26071 = cond_26038 || valid_26063;
+            bool range_valid_c_26072;
             
-            if (!protect_assert_disj_26254) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) num_blocks_26229, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:51:40-44\n   #9  test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26071) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) num_blocks_26046, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  /prelude/array.fut:241:11-17\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:63:40-44\n   #9  test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool y_26256 = zzero_leq_i_p_m_t_s_26219 && i_p_m_t_s_leq_w_26247;
-            bool y_26257 = zzero_lte_i_26236 && i_p_m_t_s_leq_w_26252;
-            bool forwards_ok_26258 = zzero_lte_i_26236 && y_26253;
-            bool ok_or_empty_26259 = zzero_26210 || y_26256;
-            bool protect_assert_disj_26260 = cond_26241 || y_26248;
-            bool y_26261 = zzero_leq_i_p_m_t_s_26251 && y_26257;
-            bool ok_or_empty_26262 = empty_slice_26238 || forwards_ok_26258;
-            bool protect_assert_disj_26263 = cond_26221 || ok_or_empty_26259;
-            bool index_certs_26264;
+            bool y_26073 = zzero_leq_i_p_m_t_s_26036 && i_p_m_t_s_leq_w_26064;
+            bool y_26074 = zzero_lte_i_26053 && i_p_m_t_s_leq_w_26069;
+            bool forwards_ok_26075 = zzero_lte_i_26053 && y_26070;
+            bool ok_or_empty_26076 = zzero_26027 || y_26073;
+            bool protect_assert_disj_26077 = cond_26058 || y_26065;
+            bool y_26078 = zzero_leq_i_p_m_t_s_26068 && y_26074;
+            bool ok_or_empty_26079 = empty_slice_26055 || forwards_ok_26075;
+            bool protect_assert_disj_26080 = cond_26038 || ok_or_empty_26076;
+            bool index_certs_26081;
             
-            if (!protect_assert_disj_26263) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) next_stride_26209, "] out of bounds for array of shape [", (long long) flat_dim_26232, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:155:3-46\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:51:40-44\n   #9  test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26080) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) next_stride_26026, "] out of bounds for array of shape [", (long long) flat_dim_26049, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:155:3-46\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:63:40-44\n   #9  test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool loop_not_taken_26265 = !cond_26221;
-            bool protect_assert_disj_26266 = protect_assert_disj_26260 || loop_not_taken_26265;
-            bool index_certs_26267;
+            bool loop_not_taken_26082 = !cond_26038;
+            bool protect_assert_disj_26083 = protect_assert_disj_26077 || loop_not_taken_26082;
+            bool index_certs_26084;
             
-            if (!protect_assert_disj_26266) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:48-54\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:51:40-44\n   #10 test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26083) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:48-54\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:63:40-44\n   #10 test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool forwards_ok_26268 = i_lte_j_26237 && y_26261;
-            bool protect_assert_disj_26269 = cond_26221 || ok_or_empty_26262;
-            bool index_certs_26270;
+            bool forwards_ok_26085 = i_lte_j_26054 && y_26078;
+            bool protect_assert_disj_26086 = cond_26038 || ok_or_empty_26079;
+            bool index_certs_26087;
             
-            if (!protect_assert_disj_26269) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) stride_26208, "] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:52-59\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:51:40-44\n   #11 test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26086) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) stride_26025, "] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:52-59\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:63:40-44\n   #11 test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool protect_assert_disj_26271 = ok_or_empty_26262 || loop_not_taken_26265;
-            bool index_certs_26272;
+            bool protect_assert_disj_26088 = ok_or_empty_26079 || loop_not_taken_26082;
+            bool index_certs_26089;
             
-            if (!protect_assert_disj_26271) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) stride_26208, "] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:26-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26088) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) stride_26025, "] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:26-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool ok_or_empty_26273 = empty_slice_26234 || forwards_ok_26268;
-            bool protect_assert_disj_26274 = cond_26221 || ok_or_empty_26273;
-            bool index_certs_26275;
+            bool ok_or_empty_26090 = empty_slice_26051 || forwards_ok_26085;
+            bool protect_assert_disj_26091 = cond_26038 || ok_or_empty_26090;
+            bool index_certs_26092;
             
-            if (!protect_assert_disj_26274) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) stride_26208, ":] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:60-67\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:51:40-44\n   #11 test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26091) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) stride_26025, ":] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:60-67\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:63:40-44\n   #11 test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            bool protect_assert_disj_26276 = loop_not_taken_26265 || ok_or_empty_26273;
-            bool index_certs_26277;
+            bool protect_assert_disj_26093 = loop_not_taken_26082 || ok_or_empty_26090;
+            bool index_certs_26094;
             
-            if (!protect_assert_disj_26276) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) stride_26208, ":] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:34-41\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+            if (!protect_assert_disj_26093) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) stride_26025, ":] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:34-41\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
             
-            int64_t binop_x_27060 = (int64_t) 8 * num_merges_26213;
-            int64_t bytes_27061 = next_stride_26209 * binop_x_27060;
-            bool i_lte_j_26220 = sle64((int64_t) 0, next_stride_26209);
+            int64_t binop_x_26877 = (int64_t) 8 * num_merges_26030;
+            int64_t bytes_26878 = next_stride_26026 * binop_x_26877;
+            bool i_lte_j_26037 = sle64((int64_t) 0, next_stride_26026);
             
-            if (mem_27062_cached_sizze_27312 < bytes_27061) {
-                err = lexical_realloc(ctx, &mem_27062, &mem_27062_cached_sizze_27312, bytes_27061);
+            if (mem_26879_cached_sizze_27129 < bytes_26878) {
+                err = lexical_realloc(ctx, &mem_26879, &mem_26879_cached_sizze_27129, bytes_26878);
                 if (err != FUTHARK_SUCCESS)
                     goto cleanup;
             }
-            if (mem_27065_cached_sizze_27313 < bytes_27061) {
-                err = lexical_realloc(ctx, &mem_27065, &mem_27065_cached_sizze_27313, bytes_27061);
+            if (mem_26882_cached_sizze_27130 < bytes_26878) {
+                err = lexical_realloc(ctx, &mem_26882, &mem_26882_cached_sizze_27130, bytes_26878);
                 if (err != FUTHARK_SUCCESS)
                     goto cleanup;
             }
             
-            int64_t bytes_27074 = (int64_t) 8 * dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230;
-            int64_t binop_x_27090 = (int64_t) 8 * num_blocks_26229;
-            int64_t bytes_27091 = merge_block_sizze_26094 * binop_x_27090;
-            int64_t bytes_27136 = (int64_t) 16 * stride_26208;
+            int64_t bytes_26891 = (int64_t) 8 * dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047;
+            int64_t binop_x_26907 = (int64_t) 8 * num_blocks_26046;
+            int64_t bytes_26908 = merge_block_sizze_25911 * binop_x_26907;
+            int64_t bytes_26953 = (int64_t) 16 * stride_26025;
             
-            for (int64_t i_26937 = 0; i_26937 < num_merges_26213; i_26937++) {
-                int64_t start_26281 = mul64(next_stride_26209, i_26937);
-                int64_t j_m_i_26282 = sub64(loop_dz2084Uz2082U_26204, start_26281);
-                bool empty_slice_26283 = j_m_i_26282 == (int64_t) 0;
-                int64_t m_26284 = sub64(j_m_i_26282, (int64_t) 1);
-                int64_t i_p_m_t_s_26285 = add64(start_26281, m_26284);
-                bool zzero_leq_i_p_m_t_s_26286 = sle64((int64_t) 0, i_p_m_t_s_26285);
-                bool i_p_m_t_s_leq_w_26287 = slt64(i_p_m_t_s_26285, loop_dz2084Uz2082U_26204);
-                bool zzero_lte_i_26288 = sle64((int64_t) 0, start_26281);
-                bool i_lte_j_26289 = sle64(start_26281, loop_dz2084Uz2082U_26204);
-                bool y_26290 = i_p_m_t_s_leq_w_26287 && zzero_lte_i_26288;
-                bool y_26291 = zzero_leq_i_p_m_t_s_26286 && y_26290;
-                bool forwards_ok_26292 = i_lte_j_26289 && y_26291;
-                bool ok_or_empty_26293 = empty_slice_26283 || forwards_ok_26292;
-                bool index_certs_26294;
+            for (int64_t i_26754 = 0; i_26754 < num_merges_26030; i_26754++) {
+                int64_t start_26098 = mul64(next_stride_26026, i_26754);
+                int64_t j_m_i_26099 = sub64(loop_dz2084Uz2082U_26021, start_26098);
+                bool empty_slice_26100 = j_m_i_26099 == (int64_t) 0;
+                int64_t m_26101 = sub64(j_m_i_26099, (int64_t) 1);
+                int64_t i_p_m_t_s_26102 = add64(start_26098, m_26101);
+                bool zzero_leq_i_p_m_t_s_26103 = sle64((int64_t) 0, i_p_m_t_s_26102);
+                bool i_p_m_t_s_leq_w_26104 = slt64(i_p_m_t_s_26102, loop_dz2084Uz2082U_26021);
+                bool zzero_lte_i_26105 = sle64((int64_t) 0, start_26098);
+                bool i_lte_j_26106 = sle64(start_26098, loop_dz2084Uz2082U_26021);
+                bool y_26107 = i_p_m_t_s_leq_w_26104 && zzero_lte_i_26105;
+                bool y_26108 = zzero_leq_i_p_m_t_s_26103 && y_26107;
+                bool forwards_ok_26109 = i_lte_j_26106 && y_26108;
+                bool ok_or_empty_26110 = empty_slice_26100 || forwards_ok_26109;
+                bool index_certs_26111;
                 
-                if (!ok_or_empty_26293) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) start_26281, ":] out of bounds for array of shape [", (long long) loop_dz2084Uz2082U_26204, "].", "-> #0  /prelude/array.fut:52:49-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:258:41-56\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+                if (!ok_or_empty_26110) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) start_26098, ":] out of bounds for array of shape [", (long long) loop_dz2084Uz2082U_26021, "].", "-> #0  /prelude/array.fut:52:49-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:258:41-56\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
                 
-                bool i_p_m_t_s_leq_w_26295 = slt64(m_26218, j_m_i_26282);
-                bool y_26296 = zzero_leq_i_p_m_t_s_26219 && i_p_m_t_s_leq_w_26295;
-                bool forwards_ok_26297 = i_lte_j_26220 && y_26296;
-                bool ok_or_empty_26298 = zzero_26210 || forwards_ok_26297;
-                bool index_certs_26299;
+                bool i_p_m_t_s_leq_w_26112 = slt64(m_26035, j_m_i_26099);
+                bool y_26113 = zzero_leq_i_p_m_t_s_26036 && i_p_m_t_s_leq_w_26112;
+                bool forwards_ok_26114 = i_lte_j_26037 && y_26113;
+                bool ok_or_empty_26115 = zzero_26027 || forwards_ok_26114;
+                bool index_certs_26116;
                 
-                if (!ok_or_empty_26298) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) next_stride_26209, "] out of bounds for array of shape [", (long long) j_m_i_26282, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:258:23-56\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:51:40-44\n   #8  test_sort.fut:49:1-52:27\n"));
+                if (!ok_or_empty_26115) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) next_stride_26026, "] out of bounds for array of shape [", (long long) j_m_i_26099, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:258:23-56\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #5  /prelude/functional.fut:9:44-45\n   #6  ../../joins/ftSMJ.fut:104:60-63\n   #7  test_sort.fut:63:40-44\n   #8  test_sort.fut:61:1-64:27\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
-                if (cond_26221) {
-                    int64_t dummy_26631;
-                    int64_t dummy_26632;
+                if (cond_26038) {
+                    int64_t dummy_26448;
+                    int64_t dummy_26449;
                     
-                    if (cond_26241) {
-                        int64_t head_res_26633 = ((int64_t *) mem_param_27056.mem)[start_26281];
-                        int64_t head_res_26634 = ((int64_t *) mem_param_27059.mem)[start_26281];
+                    if (cond_26058) {
+                        int64_t head_res_26450 = ((int64_t *) mem_param_26873.mem)[start_26098];
+                        int64_t head_res_26451 = ((int64_t *) mem_param_26876.mem)[start_26098];
                         
-                        dummy_26631 = head_res_26633;
-                        dummy_26632 = head_res_26634;
+                        dummy_26448 = head_res_26450;
+                        dummy_26449 = head_res_26451;
                     } else {
-                        int64_t slice_26635 = stride_26208 + start_26281;
-                        int64_t head_res_26636 = ((int64_t *) mem_param_27056.mem)[slice_26635];
-                        int64_t head_res_26637 = ((int64_t *) mem_param_27059.mem)[slice_26635];
+                        int64_t slice_26452 = stride_26025 + start_26098;
+                        int64_t head_res_26453 = ((int64_t *) mem_param_26873.mem)[slice_26452];
+                        int64_t head_res_26454 = ((int64_t *) mem_param_26876.mem)[slice_26452];
                         
-                        dummy_26631 = head_res_26636;
-                        dummy_26632 = head_res_26637;
+                        dummy_26448 = head_res_26453;
+                        dummy_26449 = head_res_26454;
                     }
-                    if (memblock_alloc(ctx, &mem_27137, bytes_27136, "mem_27137")) {
+                    if (memblock_alloc(ctx, &mem_26954, bytes_26953, "mem_26954")) {
                         err = 1;
                         goto cleanup;
                     }
-                    for (int64_t nest_i_27272 = 0; nest_i_27272 < next_stride_26209; nest_i_27272++) {
-                        ((int64_t *) mem_27137.mem)[nest_i_27272] = dummy_26631;
+                    for (int64_t nest_i_27089 = 0; nest_i_27089 < next_stride_26026; nest_i_27089++) {
+                        ((int64_t *) mem_26954.mem)[nest_i_27089] = dummy_26448;
                     }
-                    if (memblock_alloc(ctx, &mem_27139, bytes_27136, "mem_27139")) {
+                    if (memblock_alloc(ctx, &mem_26956, bytes_26953, "mem_26956")) {
                         err = 1;
                         goto cleanup;
                     }
-                    for (int64_t nest_i_27273 = 0; nest_i_27273 < next_stride_26209; nest_i_27273++) {
-                        ((int64_t *) mem_27139.mem)[nest_i_27273] = dummy_26632;
+                    for (int64_t nest_i_27090 = 0; nest_i_27090 < next_stride_26026; nest_i_27090++) {
+                        ((int64_t *) mem_26956.mem)[nest_i_27090] = dummy_26449;
                     }
                     
-                    int64_t data_26640;
-                    int64_t i_26644 = (int64_t) 0;
+                    int64_t data_26457;
+                    int64_t i_26461 = (int64_t) 0;
                     
-                    for (int64_t k_26643 = 0; k_26643 < next_stride_26209; k_26643++) {
-                        int64_t j_26647 = sub64(k_26643, i_26644);
-                        bool cond_26648 = j_26647 == j_m_i_26231;
-                        bool cond_26649;
+                    for (int64_t k_26460 = 0; k_26460 < next_stride_26026; k_26460++) {
+                        int64_t j_26464 = sub64(k_26460, i_26461);
+                        bool cond_26465 = j_26464 == j_m_i_26048;
+                        bool cond_26466;
                         
-                        if (cond_26648) {
-                            cond_26649 = 1;
+                        if (cond_26465) {
+                            cond_26466 = 1;
                         } else {
-                            bool cond_26650 = slt64(i_26644, stride_26208);
-                            bool cond_f_res_26651;
+                            bool cond_26467 = slt64(i_26461, stride_26025);
+                            bool cond_f_res_26468;
                             
-                            if (cond_26650) {
-                                bool x_26652 = sle64((int64_t) 0, j_26647);
-                                bool y_26653 = slt64(j_26647, j_m_i_26231);
-                                bool bounds_check_26654 = x_26652 && y_26653;
-                                bool index_certs_26655;
+                            if (cond_26467) {
+                                bool x_26469 = sle64((int64_t) 0, j_26464);
+                                bool y_26470 = slt64(j_26464, j_m_i_26048);
+                                bool bounds_check_26471 = x_26469 && y_26470;
+                                bool index_certs_26472;
                                 
-                                if (!bounds_check_26654) {
-                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26647, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:55-59\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:51:40-44\n   #9  test_sort.fut:49:1-52:27\n"));
+                                if (!bounds_check_26471) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26464, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:55-59\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:63:40-44\n   #9  test_sort.fut:61:1-64:27\n"));
                                     err = FUTHARK_PROGRAM_ERROR;
                                     goto cleanup;
                                 }
                                 
-                                bool x_26659 = sle64((int64_t) 0, i_26644);
-                                bool bounds_check_26660 = cond_26650 && x_26659;
-                                bool index_certs_26661;
+                                bool x_26476 = sle64((int64_t) 0, i_26461);
+                                bool bounds_check_26477 = cond_26467 && x_26476;
+                                bool index_certs_26478;
                                 
-                                if (!bounds_check_26660) {
-                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26644, "] out of bounds for array of shape [", (long long) stride_26208, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:50-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:51:40-44\n   #9  test_sort.fut:49:1-52:27\n"));
+                                if (!bounds_check_26477) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26461, "] out of bounds for array of shape [", (long long) stride_26025, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:50-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:63:40-44\n   #9  test_sort.fut:61:1-64:27\n"));
                                     err = FUTHARK_PROGRAM_ERROR;
                                     goto cleanup;
                                 }
                                 
-                                int64_t slice_26656 = stride_26208 + j_26647;
-                                int64_t slice_26657 = start_26281 + slice_26656;
-                                int64_t leq_arg1_26658 = ((int64_t *) mem_param_27056.mem)[slice_26657];
-                                int64_t slice_26662 = start_26281 + i_26644;
-                                int64_t leq_arg0_26663 = ((int64_t *) mem_param_27056.mem)[slice_26662];
-                                bool defunc_0_leq_res_26664 = sle64(leq_arg0_26663, leq_arg1_26658);
+                                int64_t slice_26473 = stride_26025 + j_26464;
+                                int64_t slice_26474 = start_26098 + slice_26473;
+                                int64_t leq_arg1_26475 = ((int64_t *) mem_param_26873.mem)[slice_26474];
+                                int64_t slice_26479 = start_26098 + i_26461;
+                                int64_t leq_arg0_26480 = ((int64_t *) mem_param_26873.mem)[slice_26479];
+                                bool defunc_0_leq_res_26481 = sle64(leq_arg0_26480, leq_arg1_26475);
                                 
-                                cond_f_res_26651 = defunc_0_leq_res_26664;
+                                cond_f_res_26468 = defunc_0_leq_res_26481;
                             } else {
-                                cond_f_res_26651 = 0;
+                                cond_f_res_26468 = 0;
                             }
-                            cond_26649 = cond_f_res_26651;
+                            cond_26466 = cond_f_res_26468;
                         }
                         
-                        int64_t loopres_26665;
-                        int64_t loopres_26666;
-                        int64_t loopres_26667;
+                        int64_t loopres_26482;
+                        int64_t loopres_26483;
+                        int64_t loopres_26484;
                         
-                        if (cond_26649) {
-                            bool x_26669 = sle64((int64_t) 0, i_26644);
-                            bool y_26670 = slt64(i_26644, stride_26208);
-                            bool bounds_check_26671 = x_26669 && y_26670;
-                            bool index_certs_26672;
+                        if (cond_26466) {
+                            bool x_26486 = sle64((int64_t) 0, i_26461);
+                            bool y_26487 = slt64(i_26461, stride_26025);
+                            bool bounds_check_26488 = x_26486 && y_26487;
+                            bool index_certs_26489;
                             
-                            if (!bounds_check_26671) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26644, "] out of bounds for array of shape [", (long long) stride_26208, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:106:17-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:51:40-44\n   #9  test_sort.fut:49:1-52:27\n"));
+                            if (!bounds_check_26488) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26461, "] out of bounds for array of shape [", (long long) stride_26025, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:106:17-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:63:40-44\n   #9  test_sort.fut:61:1-64:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t tmp_26668 = add64((int64_t) 1, i_26644);
-                            int64_t slice_26673 = start_26281 + i_26644;
-                            int64_t tmp_26674 = ((int64_t *) mem_param_27056.mem)[slice_26673];
-                            int64_t tmp_26675 = ((int64_t *) mem_param_27059.mem)[slice_26673];
+                            int64_t tmp_26485 = add64((int64_t) 1, i_26461);
+                            int64_t slice_26490 = start_26098 + i_26461;
+                            int64_t tmp_26491 = ((int64_t *) mem_param_26873.mem)[slice_26490];
+                            int64_t tmp_26492 = ((int64_t *) mem_param_26876.mem)[slice_26490];
                             
-                            loopres_26665 = tmp_26668;
-                            loopres_26666 = tmp_26674;
-                            loopres_26667 = tmp_26675;
+                            loopres_26482 = tmp_26485;
+                            loopres_26483 = tmp_26491;
+                            loopres_26484 = tmp_26492;
                         } else {
-                            bool x_26676 = sle64((int64_t) 0, j_26647);
-                            bool y_26677 = slt64(j_26647, j_m_i_26231);
-                            bool bounds_check_26678 = x_26676 && y_26677;
-                            bool index_certs_26679;
+                            bool x_26493 = sle64((int64_t) 0, j_26464);
+                            bool y_26494 = slt64(j_26464, j_m_i_26048);
+                            bool bounds_check_26495 = x_26493 && y_26494;
+                            bool index_certs_26496;
                             
-                            if (!bounds_check_26678) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26647, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:108:15-19\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:51:40-44\n   #9  test_sort.fut:49:1-52:27\n"));
+                            if (!bounds_check_26495) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26464, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:108:15-19\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:145:42-43\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #6  /prelude/functional.fut:9:44-45\n   #7  ../../joins/ftSMJ.fut:104:60-63\n   #8  test_sort.fut:63:40-44\n   #9  test_sort.fut:61:1-64:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t slice_26680 = stride_26208 + j_26647;
-                            int64_t slice_26681 = start_26281 + slice_26680;
-                            int64_t tmp_26682 = ((int64_t *) mem_param_27056.mem)[slice_26681];
-                            int64_t tmp_26683 = ((int64_t *) mem_param_27059.mem)[slice_26681];
+                            int64_t slice_26497 = stride_26025 + j_26464;
+                            int64_t slice_26498 = start_26098 + slice_26497;
+                            int64_t tmp_26499 = ((int64_t *) mem_param_26873.mem)[slice_26498];
+                            int64_t tmp_26500 = ((int64_t *) mem_param_26876.mem)[slice_26498];
                             
-                            loopres_26665 = i_26644;
-                            loopres_26666 = tmp_26682;
-                            loopres_26667 = tmp_26683;
+                            loopres_26482 = i_26461;
+                            loopres_26483 = tmp_26499;
+                            loopres_26484 = tmp_26500;
                         }
-                        ((int64_t *) mem_27137.mem)[k_26643] = loopres_26666;
-                        ((int64_t *) mem_27139.mem)[k_26643] = loopres_26667;
+                        ((int64_t *) mem_26954.mem)[k_26460] = loopres_26483;
+                        ((int64_t *) mem_26956.mem)[k_26460] = loopres_26484;
                         
-                        int64_t i_tmp_27274 = loopres_26665;
+                        int64_t i_tmp_27091 = loopres_26482;
                         
-                        i_26644 = i_tmp_27274;
+                        i_26461 = i_tmp_27091;
                     }
-                    data_26640 = i_26644;
-                    if (memblock_set(ctx, &ext_mem_27157, &mem_27137, "mem_27137") != 0)
+                    data_26457 = i_26461;
+                    if (memblock_set(ctx, &ext_mem_26974, &mem_26954, "mem_26954") != 0)
                         return 1;
-                    if (memblock_set(ctx, &ext_mem_27154, &mem_27139, "mem_27139") != 0)
+                    if (memblock_set(ctx, &ext_mem_26971, &mem_26956, "mem_26956") != 0)
                         return 1;
                 } else {
-                    if (mem_27075_cached_sizze_27314 < bytes_27074) {
-                        err = lexical_realloc(ctx, &mem_27075, &mem_27075_cached_sizze_27314, bytes_27074);
+                    if (mem_26892_cached_sizze_27131 < bytes_26891) {
+                        err = lexical_realloc(ctx, &mem_26892, &mem_26892_cached_sizze_27131, bytes_26891);
                         if (err != FUTHARK_SUCCESS)
                             goto cleanup;
                     }
-                    if (mem_27077_cached_sizze_27315 < bytes_27074) {
-                        err = lexical_realloc(ctx, &mem_27077, &mem_27077_cached_sizze_27315, bytes_27074);
+                    if (mem_26894_cached_sizze_27132 < bytes_26891) {
+                        err = lexical_realloc(ctx, &mem_26894, &mem_26894_cached_sizze_27132, bytes_26891);
                         if (err != FUTHARK_SUCCESS)
                             goto cleanup;
                     }
-                    for (int64_t i_26923 = 0; i_26923 < dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230; i_26923++) {
-                        int64_t split_count_arg3_26361 = mul64(merge_block_sizze_26094, i_26923);
-                        int64_t defunc_0_split_count_res_26362;
-                        int64_t defunc_0_split_count_res_26363;
-                        int64_t defunc_0_split_count_res_26364;
-                        int64_t defunc_0_split_count_res_26365;
-                        int64_t defunc_0_split_count_res_26366;
+                    for (int64_t i_26740 = 0; i_26740 < dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047; i_26740++) {
+                        int64_t split_count_arg3_26178 = mul64(merge_block_sizze_25911, i_26740);
+                        int64_t defunc_0_split_count_res_26179;
+                        int64_t defunc_0_split_count_res_26180;
+                        int64_t defunc_0_split_count_res_26181;
+                        int64_t defunc_0_split_count_res_26182;
+                        int64_t defunc_0_split_count_res_26183;
                         
-                        if (futrts_lifted_normalizze_7703(ctx, &defunc_0_split_count_res_26362, &defunc_0_split_count_res_26363, &defunc_0_split_count_res_26364, &defunc_0_split_count_res_26365, &defunc_0_split_count_res_26366, (int64_t) 0, stride_26208, (int64_t) 0, j_m_i_26231, split_count_arg3_26361) != 0) {
+                        if (futrts_lifted_normalizze_7715(ctx, &defunc_0_split_count_res_26179, &defunc_0_split_count_res_26180, &defunc_0_split_count_res_26181, &defunc_0_split_count_res_26182, &defunc_0_split_count_res_26183, (int64_t) 0, stride_26025, (int64_t) 0, j_m_i_26048, split_count_arg3_26178) != 0) {
                             err = 1;
                             goto cleanup;
                         }
                         
-                        bool loop_cond_26367 = slt64((int64_t) 0, defunc_0_split_count_res_26366);
-                        bool defunc_0_split_count_res_26368;
-                        int64_t defunc_0_split_count_res_26369;
-                        int64_t defunc_0_split_count_res_26370;
-                        int64_t defunc_0_split_count_res_26371;
-                        int64_t defunc_0_split_count_res_26372;
-                        int64_t defunc_0_split_count_res_26373;
-                        bool loop_while_26374;
-                        int64_t ss_26375;
-                        int64_t ss_26376;
-                        int64_t tt_26377;
-                        int64_t tt_26378;
-                        int64_t count_26379;
+                        bool loop_cond_26184 = slt64((int64_t) 0, defunc_0_split_count_res_26183);
+                        bool defunc_0_split_count_res_26185;
+                        int64_t defunc_0_split_count_res_26186;
+                        int64_t defunc_0_split_count_res_26187;
+                        int64_t defunc_0_split_count_res_26188;
+                        int64_t defunc_0_split_count_res_26189;
+                        int64_t defunc_0_split_count_res_26190;
+                        bool loop_while_26191;
+                        int64_t ss_26192;
+                        int64_t ss_26193;
+                        int64_t tt_26194;
+                        int64_t tt_26195;
+                        int64_t count_26196;
                         
-                        loop_while_26374 = loop_cond_26367;
-                        ss_26375 = defunc_0_split_count_res_26362;
-                        ss_26376 = defunc_0_split_count_res_26363;
-                        tt_26377 = defunc_0_split_count_res_26364;
-                        tt_26378 = defunc_0_split_count_res_26365;
-                        count_26379 = defunc_0_split_count_res_26366;
-                        while (loop_while_26374) {
-                            int64_t zlze_lhs_26380 = sub64(ss_26376, ss_26375);
-                            bool cond_26381 = sle64(zlze_lhs_26380, (int64_t) 0);
-                            int64_t defunc_0_lifted_step_res_26382;
-                            int64_t defunc_0_lifted_step_res_26383;
-                            int64_t defunc_0_lifted_step_res_26384;
-                            int64_t defunc_0_lifted_step_res_26385;
+                        loop_while_26191 = loop_cond_26184;
+                        ss_26192 = defunc_0_split_count_res_26179;
+                        ss_26193 = defunc_0_split_count_res_26180;
+                        tt_26194 = defunc_0_split_count_res_26181;
+                        tt_26195 = defunc_0_split_count_res_26182;
+                        count_26196 = defunc_0_split_count_res_26183;
+                        while (loop_while_26191) {
+                            int64_t zlze_lhs_26197 = sub64(ss_26193, ss_26192);
+                            bool cond_26198 = sle64(zlze_lhs_26197, (int64_t) 0);
+                            int64_t defunc_0_lifted_step_res_26199;
+                            int64_t defunc_0_lifted_step_res_26200;
+                            int64_t defunc_0_lifted_step_res_26201;
+                            int64_t defunc_0_lifted_step_res_26202;
                             
-                            if (cond_26381) {
-                                int64_t tmp_26686 = add64(tt_26377, count_26379);
+                            if (cond_26198) {
+                                int64_t tmp_26503 = add64(tt_26194, count_26196);
                                 
-                                defunc_0_lifted_step_res_26382 = ss_26375;
-                                defunc_0_lifted_step_res_26383 = tmp_26686;
-                                defunc_0_lifted_step_res_26384 = tt_26378;
-                                defunc_0_lifted_step_res_26385 = (int64_t) 0;
+                                defunc_0_lifted_step_res_26199 = ss_26192;
+                                defunc_0_lifted_step_res_26200 = tmp_26503;
+                                defunc_0_lifted_step_res_26201 = tt_26195;
+                                defunc_0_lifted_step_res_26202 = (int64_t) 0;
                             } else {
-                                int64_t zlze_lhs_26387 = sub64(tt_26378, tt_26377);
-                                bool cond_26388 = sle64(zlze_lhs_26387, (int64_t) 0);
-                                int64_t defunc_0_lifted_step_res_f_res_26389;
-                                int64_t defunc_0_lifted_step_res_f_res_26390;
-                                int64_t defunc_0_lifted_step_res_f_res_26391;
-                                int64_t defunc_0_lifted_step_res_f_res_26392;
+                                int64_t zlze_lhs_26204 = sub64(tt_26195, tt_26194);
+                                bool cond_26205 = sle64(zlze_lhs_26204, (int64_t) 0);
+                                int64_t defunc_0_lifted_step_res_f_res_26206;
+                                int64_t defunc_0_lifted_step_res_f_res_26207;
+                                int64_t defunc_0_lifted_step_res_f_res_26208;
+                                int64_t defunc_0_lifted_step_res_f_res_26209;
                                 
-                                if (cond_26388) {
-                                    int64_t tmp_26687 = add64(ss_26375, count_26379);
+                                if (cond_26205) {
+                                    int64_t tmp_26504 = add64(ss_26192, count_26196);
                                     
-                                    defunc_0_lifted_step_res_f_res_26389 = tmp_26687;
-                                    defunc_0_lifted_step_res_f_res_26390 = tt_26377;
-                                    defunc_0_lifted_step_res_f_res_26391 = tt_26378;
-                                    defunc_0_lifted_step_res_f_res_26392 = (int64_t) 0;
+                                    defunc_0_lifted_step_res_f_res_26206 = tmp_26504;
+                                    defunc_0_lifted_step_res_f_res_26207 = tt_26194;
+                                    defunc_0_lifted_step_res_f_res_26208 = tt_26195;
+                                    defunc_0_lifted_step_res_f_res_26209 = (int64_t) 0;
                                 } else {
-                                    bool cond_26394 = count_26379 == (int64_t) 1;
-                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26395;
-                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26396;
-                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26397;
-                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26398;
+                                    bool cond_26211 = count_26196 == (int64_t) 1;
+                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26212;
+                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26213;
+                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26214;
+                                    int64_t defunc_0_lifted_step_res_f_res_f_res_26215;
                                     
-                                    if (cond_26394) {
-                                        bool x_26689 = sle64((int64_t) 0, ss_26375);
-                                        bool y_26690 = slt64(ss_26375, stride_26208);
-                                        bool bounds_check_26691 = x_26689 && y_26690;
-                                        bool index_certs_26692;
+                                    if (cond_26211) {
+                                        bool x_26506 = sle64((int64_t) 0, ss_26192);
+                                        bool y_26507 = slt64(ss_26192, stride_26025);
+                                        bool bounds_check_26508 = x_26506 && y_26507;
+                                        bool index_certs_26509;
                                         
-                                        if (!bounds_check_26691) {
-                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) ss_26375, "] out of bounds for array of shape [", (long long) stride_26208, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:53:21-27\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:51:40-44\n   #13 test_sort.fut:49:1-52:27\n"));
+                                        if (!bounds_check_26508) {
+                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) ss_26192, "] out of bounds for array of shape [", (long long) stride_26025, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:53:21-27\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:63:40-44\n   #13 test_sort.fut:61:1-64:27\n"));
                                             err = FUTHARK_PROGRAM_ERROR;
                                             goto cleanup;
                                         }
                                         
-                                        bool x_26695 = sle64((int64_t) 0, tt_26377);
-                                        bool y_26696 = slt64(tt_26377, j_m_i_26231);
-                                        bool bounds_check_26697 = x_26695 && y_26696;
-                                        bool index_certs_26698;
+                                        bool x_26512 = sle64((int64_t) 0, tt_26194);
+                                        bool y_26513 = slt64(tt_26194, j_m_i_26048);
+                                        bool bounds_check_26514 = x_26512 && y_26513;
+                                        bool index_certs_26515;
                                         
-                                        if (!bounds_check_26697) {
-                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tt_26377, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:53:14-20\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:51:40-44\n   #13 test_sort.fut:49:1-52:27\n"));
+                                        if (!bounds_check_26514) {
+                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tt_26194, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:53:14-20\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:63:40-44\n   #13 test_sort.fut:61:1-64:27\n"));
                                             err = FUTHARK_PROGRAM_ERROR;
                                             goto cleanup;
                                         }
                                         
-                                        int64_t slice_26693 = start_26281 + ss_26375;
-                                        int64_t leq_arg1_26694 = ((int64_t *) mem_param_27056.mem)[slice_26693];
-                                        int64_t slice_26699 = stride_26208 + tt_26377;
-                                        int64_t slice_26700 = start_26281 + slice_26699;
-                                        int64_t leq_arg0_26701 = ((int64_t *) mem_param_27056.mem)[slice_26700];
-                                        bool defunc_0_leq_res_26702 = sle64(leq_arg0_26701, leq_arg1_26694);
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_t_res_26703;
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_t_res_26704;
+                                        int64_t slice_26510 = start_26098 + ss_26192;
+                                        int64_t leq_arg1_26511 = ((int64_t *) mem_param_26873.mem)[slice_26510];
+                                        int64_t slice_26516 = stride_26025 + tt_26194;
+                                        int64_t slice_26517 = start_26098 + slice_26516;
+                                        int64_t leq_arg0_26518 = ((int64_t *) mem_param_26873.mem)[slice_26517];
+                                        bool defunc_0_leq_res_26519 = sle64(leq_arg0_26518, leq_arg1_26511);
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_t_res_26520;
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_t_res_26521;
                                         
-                                        if (defunc_0_leq_res_26702) {
-                                            int64_t tmp_26705 = add64((int64_t) 1, tt_26377);
+                                        if (defunc_0_leq_res_26519) {
+                                            int64_t tmp_26522 = add64((int64_t) 1, tt_26194);
                                             
-                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26703 = ss_26375;
-                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26704 = tmp_26705;
+                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26520 = ss_26192;
+                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26521 = tmp_26522;
                                         } else {
-                                            int64_t tmp_26706 = add64((int64_t) 1, ss_26375);
+                                            int64_t tmp_26523 = add64((int64_t) 1, ss_26192);
                                             
-                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26703 = tmp_26706;
-                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26704 = tt_26377;
+                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26520 = tmp_26523;
+                                            defunc_0_lifted_step_res_f_res_f_res_t_res_26521 = tt_26194;
                                         }
-                                        defunc_0_lifted_step_res_f_res_f_res_26395 = defunc_0_lifted_step_res_f_res_f_res_t_res_26703;
-                                        defunc_0_lifted_step_res_f_res_f_res_26396 = defunc_0_lifted_step_res_f_res_f_res_t_res_26704;
-                                        defunc_0_lifted_step_res_f_res_f_res_26397 = tt_26378;
-                                        defunc_0_lifted_step_res_f_res_f_res_26398 = (int64_t) 0;
+                                        defunc_0_lifted_step_res_f_res_f_res_26212 = defunc_0_lifted_step_res_f_res_f_res_t_res_26520;
+                                        defunc_0_lifted_step_res_f_res_f_res_26213 = defunc_0_lifted_step_res_f_res_f_res_t_res_26521;
+                                        defunc_0_lifted_step_res_f_res_f_res_26214 = tt_26195;
+                                        defunc_0_lifted_step_res_f_res_f_res_26215 = (int64_t) 0;
                                     } else {
-                                        int64_t m_26417 = sdiv64(count_26379, (int64_t) 2);
-                                        int64_t n_26418 = sub64(count_26379, m_26417);
-                                        bool cond_26419 = n_26418 == (int64_t) 0;
-                                        int64_t zgze_lhs_26420 = add64(ss_26375, m_26417);
-                                        bool cond_f_res_26421 = sle64(ss_26376, zgze_lhs_26420);
-                                        bool x_26422 = !cond_26419;
-                                        bool y_26423 = cond_f_res_26421 && x_26422;
-                                        bool cond_26424 = cond_26419 || y_26423;
-                                        bool leq_y_x_26425;
+                                        int64_t m_26234 = sdiv64(count_26196, (int64_t) 2);
+                                        int64_t n_26235 = sub64(count_26196, m_26234);
+                                        bool cond_26236 = n_26235 == (int64_t) 0;
+                                        int64_t zgze_lhs_26237 = add64(ss_26192, m_26234);
+                                        bool cond_f_res_26238 = sle64(ss_26193, zgze_lhs_26237);
+                                        bool x_26239 = !cond_26236;
+                                        bool y_26240 = cond_f_res_26238 && x_26239;
+                                        bool cond_26241 = cond_26236 || y_26240;
+                                        bool leq_y_x_26242;
                                         
-                                        if (cond_26424) {
-                                            leq_y_x_26425 = 1;
+                                        if (cond_26241) {
+                                            leq_y_x_26242 = 1;
                                         } else {
-                                            bool x_26426 = sle64((int64_t) 0, zgze_lhs_26420);
-                                            bool y_26427 = slt64(zgze_lhs_26420, stride_26208);
-                                            bool bounds_check_26428 = x_26426 && y_26427;
-                                            bool index_certs_26429;
+                                            bool x_26243 = sle64((int64_t) 0, zgze_lhs_26237);
+                                            bool y_26244 = slt64(zgze_lhs_26237, stride_26025);
+                                            bool bounds_check_26245 = x_26243 && y_26244;
+                                            bool index_certs_26246;
                                             
-                                            if (!bounds_check_26428) {
-                                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zgze_lhs_26420, "] out of bounds for array of shape [", (long long) stride_26208, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:73:22-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:51:40-44\n   #13 test_sort.fut:49:1-52:27\n"));
+                                            if (!bounds_check_26245) {
+                                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zgze_lhs_26237, "] out of bounds for array of shape [", (long long) stride_26025, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:73:22-30\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:63:40-44\n   #13 test_sort.fut:61:1-64:27\n"));
                                                 err = FUTHARK_PROGRAM_ERROR;
                                                 goto cleanup;
                                             }
                                             
-                                            int64_t zm_lhs_26432 = add64(tt_26377, n_26418);
-                                            int64_t leq_arg0_26433 = sub64(zm_lhs_26432, (int64_t) 1);
-                                            bool x_26434 = sle64((int64_t) 0, leq_arg0_26433);
-                                            bool y_26435 = slt64(leq_arg0_26433, j_m_i_26231);
-                                            bool bounds_check_26436 = x_26434 && y_26435;
-                                            bool index_certs_26437;
+                                            int64_t zm_lhs_26249 = add64(tt_26194, n_26235);
+                                            int64_t leq_arg0_26250 = sub64(zm_lhs_26249, (int64_t) 1);
+                                            bool x_26251 = sle64((int64_t) 0, leq_arg0_26250);
+                                            bool y_26252 = slt64(leq_arg0_26250, j_m_i_26048);
+                                            bool bounds_check_26253 = x_26251 && y_26252;
+                                            bool index_certs_26254;
                                             
-                                            if (!bounds_check_26436) {
-                                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) leq_arg0_26433, "] out of bounds for array of shape [", (long long) j_m_i_26231, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:73:11-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:51:40-44\n   #13 test_sort.fut:49:1-52:27\n"));
+                                            if (!bounds_check_26253) {
+                                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) leq_arg0_26250, "] out of bounds for array of shape [", (long long) j_m_i_26048, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:73:11-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:83:23-38\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:71-83\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:149:30-84\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #7  /prelude/soacs.fut:59:9-11\n   #8  /prelude/array.fut:241:11-17\n   #9  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #10 /prelude/functional.fut:9:44-45\n   #11 ../../joins/ftSMJ.fut:104:60-63\n   #12 test_sort.fut:63:40-44\n   #13 test_sort.fut:61:1-64:27\n"));
                                                 err = FUTHARK_PROGRAM_ERROR;
                                                 goto cleanup;
                                             }
                                             
-                                            int64_t slice_26430 = start_26281 + zgze_lhs_26420;
-                                            int64_t leq_arg1_26431 = ((int64_t *) mem_param_27056.mem)[slice_26430];
-                                            int64_t slice_26438 = stride_26208 + leq_arg0_26433;
-                                            int64_t slice_26439 = start_26281 + slice_26438;
-                                            int64_t leq_arg0_26440 = ((int64_t *) mem_param_27056.mem)[slice_26439];
-                                            bool defunc_0_leq_res_26441 = sle64(leq_arg0_26440, leq_arg1_26431);
+                                            int64_t slice_26247 = start_26098 + zgze_lhs_26237;
+                                            int64_t leq_arg1_26248 = ((int64_t *) mem_param_26873.mem)[slice_26247];
+                                            int64_t slice_26255 = stride_26025 + leq_arg0_26250;
+                                            int64_t slice_26256 = start_26098 + slice_26255;
+                                            int64_t leq_arg0_26257 = ((int64_t *) mem_param_26873.mem)[slice_26256];
+                                            bool defunc_0_leq_res_26258 = sle64(leq_arg0_26257, leq_arg1_26248);
                                             
-                                            leq_y_x_26425 = defunc_0_leq_res_26441;
+                                            leq_y_x_26242 = defunc_0_leq_res_26258;
                                         }
                                         
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26442;
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26443;
-                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26444;
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26259;
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26260;
+                                        int64_t defunc_0_lifted_step_res_f_res_f_res_f_res_26261;
                                         
-                                        if (leq_y_x_26425) {
-                                            int64_t tmp_26707 = add64(tt_26377, n_26418);
-                                            int64_t tmp_26708 = sub64(count_26379, n_26418);
+                                        if (leq_y_x_26242) {
+                                            int64_t tmp_26524 = add64(tt_26194, n_26235);
+                                            int64_t tmp_26525 = sub64(count_26196, n_26235);
                                             
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26442 = tmp_26707;
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26443 = tt_26378;
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26444 = tmp_26708;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26259 = tmp_26524;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26260 = tt_26195;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26261 = tmp_26525;
                                         } else {
-                                            int64_t tmp_26447 = add64(tt_26377, n_26418);
+                                            int64_t tmp_26264 = add64(tt_26194, n_26235);
                                             
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26442 = tt_26377;
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26443 = tmp_26447;
-                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26444 = count_26379;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26259 = tt_26194;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26260 = tmp_26264;
+                                            defunc_0_lifted_step_res_f_res_f_res_f_res_26261 = count_26196;
                                         }
-                                        defunc_0_lifted_step_res_f_res_f_res_26395 = ss_26375;
-                                        defunc_0_lifted_step_res_f_res_f_res_26396 = defunc_0_lifted_step_res_f_res_f_res_f_res_26442;
-                                        defunc_0_lifted_step_res_f_res_f_res_26397 = defunc_0_lifted_step_res_f_res_f_res_f_res_26443;
-                                        defunc_0_lifted_step_res_f_res_f_res_26398 = defunc_0_lifted_step_res_f_res_f_res_f_res_26444;
+                                        defunc_0_lifted_step_res_f_res_f_res_26212 = ss_26192;
+                                        defunc_0_lifted_step_res_f_res_f_res_26213 = defunc_0_lifted_step_res_f_res_f_res_f_res_26259;
+                                        defunc_0_lifted_step_res_f_res_f_res_26214 = defunc_0_lifted_step_res_f_res_f_res_f_res_26260;
+                                        defunc_0_lifted_step_res_f_res_f_res_26215 = defunc_0_lifted_step_res_f_res_f_res_f_res_26261;
                                     }
-                                    defunc_0_lifted_step_res_f_res_26389 = defunc_0_lifted_step_res_f_res_f_res_26395;
-                                    defunc_0_lifted_step_res_f_res_26390 = defunc_0_lifted_step_res_f_res_f_res_26396;
-                                    defunc_0_lifted_step_res_f_res_26391 = defunc_0_lifted_step_res_f_res_f_res_26397;
-                                    defunc_0_lifted_step_res_f_res_26392 = defunc_0_lifted_step_res_f_res_f_res_26398;
+                                    defunc_0_lifted_step_res_f_res_26206 = defunc_0_lifted_step_res_f_res_f_res_26212;
+                                    defunc_0_lifted_step_res_f_res_26207 = defunc_0_lifted_step_res_f_res_f_res_26213;
+                                    defunc_0_lifted_step_res_f_res_26208 = defunc_0_lifted_step_res_f_res_f_res_26214;
+                                    defunc_0_lifted_step_res_f_res_26209 = defunc_0_lifted_step_res_f_res_f_res_26215;
                                 }
-                                defunc_0_lifted_step_res_26382 = defunc_0_lifted_step_res_f_res_26389;
-                                defunc_0_lifted_step_res_26383 = defunc_0_lifted_step_res_f_res_26390;
-                                defunc_0_lifted_step_res_26384 = defunc_0_lifted_step_res_f_res_26391;
-                                defunc_0_lifted_step_res_26385 = defunc_0_lifted_step_res_f_res_26392;
+                                defunc_0_lifted_step_res_26199 = defunc_0_lifted_step_res_f_res_26206;
+                                defunc_0_lifted_step_res_26200 = defunc_0_lifted_step_res_f_res_26207;
+                                defunc_0_lifted_step_res_26201 = defunc_0_lifted_step_res_f_res_26208;
+                                defunc_0_lifted_step_res_26202 = defunc_0_lifted_step_res_f_res_26209;
                             }
                             
-                            int64_t loopres_26448;
-                            int64_t loopres_26449;
-                            int64_t loopres_26450;
-                            int64_t loopres_26451;
-                            int64_t loopres_26452;
+                            int64_t loopres_26265;
+                            int64_t loopres_26266;
+                            int64_t loopres_26267;
+                            int64_t loopres_26268;
+                            int64_t loopres_26269;
                             
-                            if (futrts_lifted_normalizze_7703(ctx, &loopres_26448, &loopres_26449, &loopres_26450, &loopres_26451, &loopres_26452, defunc_0_lifted_step_res_26382, ss_26376, defunc_0_lifted_step_res_26383, defunc_0_lifted_step_res_26384, defunc_0_lifted_step_res_26385) != 0) {
+                            if (futrts_lifted_normalizze_7715(ctx, &loopres_26265, &loopres_26266, &loopres_26267, &loopres_26268, &loopres_26269, defunc_0_lifted_step_res_26199, ss_26193, defunc_0_lifted_step_res_26200, defunc_0_lifted_step_res_26201, defunc_0_lifted_step_res_26202) != 0) {
                                 err = 1;
                                 goto cleanup;
                             }
                             
-                            bool loop_cond_26453 = slt64((int64_t) 0, loopres_26452);
-                            bool loop_while_tmp_27279 = loop_cond_26453;
-                            int64_t ss_tmp_27280 = loopres_26448;
-                            int64_t ss_tmp_27281 = loopres_26449;
-                            int64_t tt_tmp_27282 = loopres_26450;
-                            int64_t tt_tmp_27283 = loopres_26451;
-                            int64_t count_tmp_27284 = loopres_26452;
+                            bool loop_cond_26270 = slt64((int64_t) 0, loopres_26269);
+                            bool loop_while_tmp_27096 = loop_cond_26270;
+                            int64_t ss_tmp_27097 = loopres_26265;
+                            int64_t ss_tmp_27098 = loopres_26266;
+                            int64_t tt_tmp_27099 = loopres_26267;
+                            int64_t tt_tmp_27100 = loopres_26268;
+                            int64_t count_tmp_27101 = loopres_26269;
                             
-                            loop_while_26374 = loop_while_tmp_27279;
-                            ss_26375 = ss_tmp_27280;
-                            ss_26376 = ss_tmp_27281;
-                            tt_26377 = tt_tmp_27282;
-                            tt_26378 = tt_tmp_27283;
-                            count_26379 = count_tmp_27284;
+                            loop_while_26191 = loop_while_tmp_27096;
+                            ss_26192 = ss_tmp_27097;
+                            ss_26193 = ss_tmp_27098;
+                            tt_26194 = tt_tmp_27099;
+                            tt_26195 = tt_tmp_27100;
+                            count_26196 = count_tmp_27101;
                         }
-                        defunc_0_split_count_res_26368 = loop_while_26374;
-                        defunc_0_split_count_res_26369 = ss_26375;
-                        defunc_0_split_count_res_26370 = ss_26376;
-                        defunc_0_split_count_res_26371 = tt_26377;
-                        defunc_0_split_count_res_26372 = tt_26378;
-                        defunc_0_split_count_res_26373 = count_26379;
-                        ((int64_t *) mem_27075)[i_26923] = defunc_0_split_count_res_26369;
-                        ((int64_t *) mem_27077)[i_26923] = defunc_0_split_count_res_26371;
+                        defunc_0_split_count_res_26185 = loop_while_26191;
+                        defunc_0_split_count_res_26186 = ss_26192;
+                        defunc_0_split_count_res_26187 = ss_26193;
+                        defunc_0_split_count_res_26188 = tt_26194;
+                        defunc_0_split_count_res_26189 = tt_26195;
+                        defunc_0_split_count_res_26190 = count_26196;
+                        ((int64_t *) mem_26892)[i_26740] = defunc_0_split_count_res_26186;
+                        ((int64_t *) mem_26894)[i_26740] = defunc_0_split_count_res_26188;
                     }
-                    if (mem_27092_cached_sizze_27316 < bytes_27091) {
-                        err = lexical_realloc(ctx, &mem_27092, &mem_27092_cached_sizze_27316, bytes_27091);
+                    if (mem_26909_cached_sizze_27133 < bytes_26908) {
+                        err = lexical_realloc(ctx, &mem_26909, &mem_26909_cached_sizze_27133, bytes_26908);
                         if (err != FUTHARK_SUCCESS)
                             goto cleanup;
                     }
-                    if (mem_27095_cached_sizze_27317 < bytes_27091) {
-                        err = lexical_realloc(ctx, &mem_27095, &mem_27095_cached_sizze_27317, bytes_27091);
+                    if (mem_26912_cached_sizze_27134 < bytes_26908) {
+                        err = lexical_realloc(ctx, &mem_26912, &mem_26912_cached_sizze_27134, bytes_26908);
                         if (err != FUTHARK_SUCCESS)
                             goto cleanup;
                     }
-                    for (int64_t i_26930 = 0; i_26930 < num_blocks_26229; i_26930++) {
-                        bool y_26459 = slt64(i_26930, dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230);
-                        bool index_certs_26461;
+                    for (int64_t i_26747 = 0; i_26747 < num_blocks_26046; i_26747++) {
+                        bool y_26276 = slt64(i_26747, dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047);
+                        bool index_certs_26278;
                         
-                        if (!y_26459) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26930, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:151:22-34\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:51:40-44\n   #10 test_sort.fut:49:1-52:27\n"));
+                        if (!y_26276) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26747, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:151:22-34\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:63:40-44\n   #10 test_sort.fut:61:1-64:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t defunc_0_f_res_26462 = ((int64_t *) mem_27075)[i_26930];
-                        int64_t defunc_0_f_res_26463 = ((int64_t *) mem_27077)[i_26930];
-                        int64_t tmp_26464 = add64((int64_t) 1, i_26930);
-                        bool x_26465 = sle64((int64_t) 0, tmp_26464);
-                        bool y_26466 = slt64(tmp_26464, dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230);
-                        bool bounds_check_26467 = x_26465 && y_26466;
-                        bool index_certs_26468;
+                        int64_t defunc_0_f_res_26279 = ((int64_t *) mem_26892)[i_26747];
+                        int64_t defunc_0_f_res_26280 = ((int64_t *) mem_26894)[i_26747];
+                        int64_t tmp_26281 = add64((int64_t) 1, i_26747);
+                        bool x_26282 = sle64((int64_t) 0, tmp_26281);
+                        bool y_26283 = slt64(tmp_26281, dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047);
+                        bool bounds_check_26284 = x_26282 && y_26283;
+                        bool index_certs_26285;
                         
-                        if (!bounds_check_26467) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_26464, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26230, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:152:22-36\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:51:40-44\n   #10 test_sort.fut:49:1-52:27\n"));
+                        if (!bounds_check_26284) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_26281, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20U1z20Unum_blocksz7dUzg_26047, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:152:22-36\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:63:40-44\n   #10 test_sort.fut:61:1-64:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t defunc_0_f_res_26469 = ((int64_t *) mem_27075)[tmp_26464];
-                        int64_t defunc_0_f_res_26470 = ((int64_t *) mem_27077)[tmp_26464];
-                        int64_t merge_sequential_arg2_26471 = add64(stride_26208, defunc_0_f_res_26463);
-                        int64_t merge_sequential_arg2_26472 = add64(stride_26208, defunc_0_f_res_26470);
-                        int64_t j_m_i_26473 = sub64(merge_sequential_arg2_26472, merge_sequential_arg2_26471);
-                        bool empty_slice_26474 = j_m_i_26473 == (int64_t) 0;
-                        int64_t m_26475 = sub64(j_m_i_26473, (int64_t) 1);
-                        int64_t i_p_m_t_s_26476 = add64(merge_sequential_arg2_26471, m_26475);
-                        bool zzero_leq_i_p_m_t_s_26477 = sle64((int64_t) 0, i_p_m_t_s_26476);
-                        bool i_p_m_t_s_leq_w_26478 = slt64(i_p_m_t_s_26476, next_stride_26209);
-                        bool zzero_lte_i_26479 = sle64((int64_t) 0, merge_sequential_arg2_26471);
-                        bool i_lte_j_26480 = sle64(merge_sequential_arg2_26471, merge_sequential_arg2_26472);
-                        bool y_26481 = i_p_m_t_s_leq_w_26478 && zzero_lte_i_26479;
-                        bool y_26482 = zzero_leq_i_p_m_t_s_26477 && y_26481;
-                        bool forwards_ok_26483 = i_lte_j_26480 && y_26482;
-                        bool ok_or_empty_26484 = empty_slice_26474 || forwards_ok_26483;
-                        bool index_certs_26485;
+                        int64_t defunc_0_f_res_26286 = ((int64_t *) mem_26892)[tmp_26281];
+                        int64_t defunc_0_f_res_26287 = ((int64_t *) mem_26894)[tmp_26281];
+                        int64_t merge_sequential_arg2_26288 = add64(stride_26025, defunc_0_f_res_26280);
+                        int64_t merge_sequential_arg2_26289 = add64(stride_26025, defunc_0_f_res_26287);
+                        int64_t j_m_i_26290 = sub64(merge_sequential_arg2_26289, merge_sequential_arg2_26288);
+                        bool empty_slice_26291 = j_m_i_26290 == (int64_t) 0;
+                        int64_t m_26292 = sub64(j_m_i_26290, (int64_t) 1);
+                        int64_t i_p_m_t_s_26293 = add64(merge_sequential_arg2_26288, m_26292);
+                        bool zzero_leq_i_p_m_t_s_26294 = sle64((int64_t) 0, i_p_m_t_s_26293);
+                        bool i_p_m_t_s_leq_w_26295 = slt64(i_p_m_t_s_26293, next_stride_26026);
+                        bool zzero_lte_i_26296 = sle64((int64_t) 0, merge_sequential_arg2_26288);
+                        bool i_lte_j_26297 = sle64(merge_sequential_arg2_26288, merge_sequential_arg2_26289);
+                        bool y_26298 = i_p_m_t_s_leq_w_26295 && zzero_lte_i_26296;
+                        bool y_26299 = zzero_leq_i_p_m_t_s_26294 && y_26298;
+                        bool forwards_ok_26300 = i_lte_j_26297 && y_26299;
+                        bool ok_or_empty_26301 = empty_slice_26291 || forwards_ok_26300;
+                        bool index_certs_26302;
                         
-                        if (!ok_or_empty_26484) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) merge_sequential_arg2_26471, ":", (long long) merge_sequential_arg2_26472, "] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:40-58\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:51:40-44\n   #10 test_sort.fut:49:1-52:27\n"));
+                        if (!ok_or_empty_26301) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) merge_sequential_arg2_26288, ":", (long long) merge_sequential_arg2_26289, "] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:40-58\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:63:40-44\n   #10 test_sort.fut:61:1-64:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        int64_t j_m_i_26486 = sub64(defunc_0_f_res_26469, defunc_0_f_res_26462);
-                        bool empty_slice_26487 = j_m_i_26486 == (int64_t) 0;
-                        int64_t m_26488 = sub64(j_m_i_26486, (int64_t) 1);
-                        int64_t i_p_m_t_s_26489 = add64(defunc_0_f_res_26462, m_26488);
-                        bool zzero_leq_i_p_m_t_s_26490 = sle64((int64_t) 0, i_p_m_t_s_26489);
-                        bool i_p_m_t_s_leq_w_26491 = slt64(i_p_m_t_s_26489, next_stride_26209);
-                        bool zzero_lte_i_26492 = sle64((int64_t) 0, defunc_0_f_res_26462);
-                        bool i_lte_j_26493 = sle64(defunc_0_f_res_26462, defunc_0_f_res_26469);
-                        bool y_26494 = i_p_m_t_s_leq_w_26491 && zzero_lte_i_26492;
-                        bool y_26495 = zzero_leq_i_p_m_t_s_26490 && y_26494;
-                        bool forwards_ok_26496 = i_lte_j_26493 && y_26495;
-                        bool ok_or_empty_26497 = empty_slice_26487 || forwards_ok_26496;
-                        bool index_certs_26498;
+                        int64_t j_m_i_26303 = sub64(defunc_0_f_res_26286, defunc_0_f_res_26279);
+                        bool empty_slice_26304 = j_m_i_26303 == (int64_t) 0;
+                        int64_t m_26305 = sub64(j_m_i_26303, (int64_t) 1);
+                        int64_t i_p_m_t_s_26306 = add64(defunc_0_f_res_26279, m_26305);
+                        bool zzero_leq_i_p_m_t_s_26307 = sle64((int64_t) 0, i_p_m_t_s_26306);
+                        bool i_p_m_t_s_leq_w_26308 = slt64(i_p_m_t_s_26306, next_stride_26026);
+                        bool zzero_lte_i_26309 = sle64((int64_t) 0, defunc_0_f_res_26279);
+                        bool i_lte_j_26310 = sle64(defunc_0_f_res_26279, defunc_0_f_res_26286);
+                        bool y_26311 = i_p_m_t_s_leq_w_26308 && zzero_lte_i_26309;
+                        bool y_26312 = zzero_leq_i_p_m_t_s_26307 && y_26311;
+                        bool forwards_ok_26313 = i_lte_j_26310 && y_26312;
+                        bool ok_or_empty_26314 = empty_slice_26304 || forwards_ok_26313;
+                        bool index_certs_26315;
                         
-                        if (!ok_or_empty_26497) {
-                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_26462, ":", (long long) defunc_0_f_res_26469, "] out of bounds for array of shape [", (long long) next_stride_26209, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:29-39\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:51:40-44\n   #10 test_sort.fut:49:1-52:27\n"));
+                        if (!ok_or_empty_26314) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_26279, ":", (long long) defunc_0_f_res_26286, "] out of bounds for array of shape [", (long long) next_stride_26026, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:29-39\n   #1  /prelude/soacs.fut:59:9-11\n   #2  /prelude/array.fut:241:11-17\n   #3  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #4  /prelude/soacs.fut:59:9-11\n   #5  /prelude/array.fut:241:11-17\n   #6  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #7  /prelude/functional.fut:9:44-45\n   #8  ../../joins/ftSMJ.fut:104:60-63\n   #9  test_sort.fut:63:40-44\n   #10 test_sort.fut:61:1-64:27\n"));
                             err = FUTHARK_PROGRAM_ERROR;
                             goto cleanup;
                         }
                         
-                        bool cond_26499 = slt64((int64_t) 0, j_m_i_26486);
-                        int64_t dummy_26500;
-                        int64_t dummy_26501;
+                        bool cond_26316 = slt64((int64_t) 0, j_m_i_26303);
+                        int64_t dummy_26317;
+                        int64_t dummy_26318;
                         
-                        if (cond_26499) {
-                            bool index_certs_26709;
+                        if (cond_26316) {
+                            bool index_certs_26526;
                             
-                            if (!cond_26499) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26486, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:36-42\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #6  /prelude/soacs.fut:59:9-11\n   #7  /prelude/array.fut:241:11-17\n   #8  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #9  /prelude/functional.fut:9:44-45\n   #10 ../../joins/ftSMJ.fut:104:60-63\n   #11 test_sort.fut:51:40-44\n   #12 test_sort.fut:49:1-52:27\n"));
+                            if (!cond_26316) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26303, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:36-42\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #6  /prelude/soacs.fut:59:9-11\n   #7  /prelude/array.fut:241:11-17\n   #8  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #9  /prelude/functional.fut:9:44-45\n   #10 ../../joins/ftSMJ.fut:104:60-63\n   #11 test_sort.fut:63:40-44\n   #12 test_sort.fut:61:1-64:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t slice_26710 = start_26281 + defunc_0_f_res_26462;
-                            int64_t head_res_26711 = ((int64_t *) mem_param_27056.mem)[slice_26710];
-                            int64_t head_res_26712 = ((int64_t *) mem_param_27059.mem)[slice_26710];
+                            int64_t slice_26527 = start_26098 + defunc_0_f_res_26279;
+                            int64_t head_res_26528 = ((int64_t *) mem_param_26873.mem)[slice_26527];
+                            int64_t head_res_26529 = ((int64_t *) mem_param_26876.mem)[slice_26527];
                             
-                            dummy_26500 = head_res_26711;
-                            dummy_26501 = head_res_26712;
+                            dummy_26317 = head_res_26528;
+                            dummy_26318 = head_res_26529;
                         } else {
-                            bool y_26506 = slt64((int64_t) 0, j_m_i_26473);
-                            bool index_certs_26507;
+                            bool y_26323 = slt64((int64_t) 0, j_m_i_26290);
+                            bool index_certs_26324;
                             
-                            if (!y_26506) {
-                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26473, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:48-54\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #6  /prelude/soacs.fut:59:9-11\n   #7  /prelude/array.fut:241:11-17\n   #8  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #9  /prelude/functional.fut:9:44-45\n   #10 ../../joins/ftSMJ.fut:104:60-63\n   #11 test_sort.fut:51:40-44\n   #12 test_sort.fut:49:1-52:27\n"));
+                            if (!y_26323) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) j_m_i_26290, "].", "-> #0  /prelude/array.fut:22:29-33\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:100:48-54\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #3  /prelude/soacs.fut:59:9-11\n   #4  /prelude/array.fut:241:11-17\n   #5  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #6  /prelude/soacs.fut:59:9-11\n   #7  /prelude/array.fut:241:11-17\n   #8  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #9  /prelude/functional.fut:9:44-45\n   #10 ../../joins/ftSMJ.fut:104:60-63\n   #11 test_sort.fut:63:40-44\n   #12 test_sort.fut:61:1-64:27\n"));
                                 err = FUTHARK_PROGRAM_ERROR;
                                 goto cleanup;
                             }
                             
-                            int64_t slice_26508 = start_26281 + merge_sequential_arg2_26471;
-                            int64_t head_res_26509 = ((int64_t *) mem_param_27056.mem)[slice_26508];
-                            int64_t head_res_26510 = ((int64_t *) mem_param_27059.mem)[slice_26508];
+                            int64_t slice_26325 = start_26098 + merge_sequential_arg2_26288;
+                            int64_t head_res_26326 = ((int64_t *) mem_param_26873.mem)[slice_26325];
+                            int64_t head_res_26327 = ((int64_t *) mem_param_26876.mem)[slice_26325];
                             
-                            dummy_26500 = head_res_26509;
-                            dummy_26501 = head_res_26510;
+                            dummy_26317 = head_res_26326;
+                            dummy_26318 = head_res_26327;
                         }
-                        for (int64_t nest_i_27287 = 0; nest_i_27287 < merge_block_sizze_26094; nest_i_27287++) {
-                            ((int64_t *) mem_27092)[i_26930 * merge_block_sizze_26094 + nest_i_27287] = dummy_26500;
+                        for (int64_t nest_i_27104 = 0; nest_i_27104 < merge_block_sizze_25911; nest_i_27104++) {
+                            ((int64_t *) mem_26909)[i_26747 * merge_block_sizze_25911 + nest_i_27104] = dummy_26317;
                         }
-                        for (int64_t nest_i_27288 = 0; nest_i_27288 < merge_block_sizze_26094; nest_i_27288++) {
-                            ((int64_t *) mem_27095)[i_26930 * merge_block_sizze_26094 + nest_i_27288] = dummy_26501;
+                        for (int64_t nest_i_27105 = 0; nest_i_27105 < merge_block_sizze_25911; nest_i_27105++) {
+                            ((int64_t *) mem_26912)[i_26747 * merge_block_sizze_25911 + nest_i_27105] = dummy_26318;
                         }
                         
-                        int64_t data_26513;
-                        int64_t i_26517 = (int64_t) 0;
+                        int64_t data_26330;
+                        int64_t i_26334 = (int64_t) 0;
                         
-                        for (int64_t k_26516 = 0; k_26516 < merge_block_sizze_26094; k_26516++) {
-                            int64_t j_26520 = sub64(k_26516, i_26517);
-                            bool cond_26521 = j_26520 == j_m_i_26473;
-                            bool cond_26522;
+                        for (int64_t k_26333 = 0; k_26333 < merge_block_sizze_25911; k_26333++) {
+                            int64_t j_26337 = sub64(k_26333, i_26334);
+                            bool cond_26338 = j_26337 == j_m_i_26290;
+                            bool cond_26339;
                             
-                            if (cond_26521) {
-                                cond_26522 = 1;
+                            if (cond_26338) {
+                                cond_26339 = 1;
                             } else {
-                                bool cond_26523 = slt64(i_26517, j_m_i_26486);
-                                bool cond_f_res_26524;
+                                bool cond_26340 = slt64(i_26334, j_m_i_26303);
+                                bool cond_f_res_26341;
                                 
-                                if (cond_26523) {
-                                    bool x_26713 = sle64((int64_t) 0, j_26520);
-                                    bool y_26714 = slt64(j_26520, j_m_i_26473);
-                                    bool bounds_check_26715 = x_26713 && y_26714;
-                                    bool index_certs_26716;
+                                if (cond_26340) {
+                                    bool x_26530 = sle64((int64_t) 0, j_26337);
+                                    bool y_26531 = slt64(j_26337, j_m_i_26290);
+                                    bool bounds_check_26532 = x_26530 && y_26531;
+                                    bool index_certs_26533;
                                     
-                                    if (!bounds_check_26715) {
-                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26520, "] out of bounds for array of shape [", (long long) j_m_i_26473, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:55-59\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:51:40-44\n   #11 test_sort.fut:49:1-52:27\n"));
+                                    if (!bounds_check_26532) {
+                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26337, "] out of bounds for array of shape [", (long long) j_m_i_26290, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:55-59\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:63:40-44\n   #11 test_sort.fut:61:1-64:27\n"));
                                         err = FUTHARK_PROGRAM_ERROR;
                                         goto cleanup;
                                     }
                                     
-                                    bool x_26720 = sle64((int64_t) 0, i_26517);
-                                    bool bounds_check_26721 = cond_26523 && x_26720;
-                                    bool index_certs_26722;
+                                    bool x_26537 = sle64((int64_t) 0, i_26334);
+                                    bool bounds_check_26538 = cond_26340 && x_26537;
+                                    bool index_certs_26539;
                                     
-                                    if (!bounds_check_26721) {
-                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26517, "] out of bounds for array of shape [", (long long) j_m_i_26486, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:50-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:51:40-44\n   #11 test_sort.fut:49:1-52:27\n"));
+                                    if (!bounds_check_26538) {
+                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26334, "] out of bounds for array of shape [", (long long) j_m_i_26303, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:105:50-54\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:63:40-44\n   #11 test_sort.fut:61:1-64:27\n"));
                                         err = FUTHARK_PROGRAM_ERROR;
                                         goto cleanup;
                                     }
                                     
-                                    int64_t slice_26717 = merge_sequential_arg2_26471 + j_26520;
-                                    int64_t slice_26718 = start_26281 + slice_26717;
-                                    int64_t leq_arg1_26719 = ((int64_t *) mem_param_27056.mem)[slice_26718];
-                                    int64_t slice_26723 = defunc_0_f_res_26462 + i_26517;
-                                    int64_t slice_26724 = start_26281 + slice_26723;
-                                    int64_t leq_arg0_26725 = ((int64_t *) mem_param_27056.mem)[slice_26724];
-                                    bool defunc_0_leq_res_26726 = sle64(leq_arg0_26725, leq_arg1_26719);
+                                    int64_t slice_26534 = merge_sequential_arg2_26288 + j_26337;
+                                    int64_t slice_26535 = start_26098 + slice_26534;
+                                    int64_t leq_arg1_26536 = ((int64_t *) mem_param_26873.mem)[slice_26535];
+                                    int64_t slice_26540 = defunc_0_f_res_26279 + i_26334;
+                                    int64_t slice_26541 = start_26098 + slice_26540;
+                                    int64_t leq_arg0_26542 = ((int64_t *) mem_param_26873.mem)[slice_26541];
+                                    bool defunc_0_leq_res_26543 = sle64(leq_arg0_26542, leq_arg1_26536);
                                     
-                                    cond_f_res_26524 = defunc_0_leq_res_26726;
+                                    cond_f_res_26341 = defunc_0_leq_res_26543;
                                 } else {
-                                    cond_f_res_26524 = 0;
+                                    cond_f_res_26341 = 0;
                                 }
-                                cond_26522 = cond_f_res_26524;
+                                cond_26339 = cond_f_res_26341;
                             }
                             
-                            int64_t loopres_26539;
-                            int64_t loopres_26540;
-                            int64_t loopres_26541;
+                            int64_t loopres_26356;
+                            int64_t loopres_26357;
+                            int64_t loopres_26358;
                             
-                            if (cond_26522) {
-                                bool x_26728 = sle64((int64_t) 0, i_26517);
-                                bool y_26729 = slt64(i_26517, j_m_i_26486);
-                                bool bounds_check_26730 = x_26728 && y_26729;
-                                bool index_certs_26731;
+                            if (cond_26339) {
+                                bool x_26545 = sle64((int64_t) 0, i_26334);
+                                bool y_26546 = slt64(i_26334, j_m_i_26303);
+                                bool bounds_check_26547 = x_26545 && y_26546;
+                                bool index_certs_26548;
                                 
-                                if (!bounds_check_26730) {
-                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26517, "] out of bounds for array of shape [", (long long) j_m_i_26486, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:106:17-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:51:40-44\n   #11 test_sort.fut:49:1-52:27\n"));
+                                if (!bounds_check_26547) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_26334, "] out of bounds for array of shape [", (long long) j_m_i_26303, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:106:17-21\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:63:40-44\n   #11 test_sort.fut:61:1-64:27\n"));
                                     err = FUTHARK_PROGRAM_ERROR;
                                     goto cleanup;
                                 }
                                 
-                                int64_t tmp_26727 = add64((int64_t) 1, i_26517);
-                                int64_t slice_26732 = defunc_0_f_res_26462 + i_26517;
-                                int64_t slice_26733 = start_26281 + slice_26732;
-                                int64_t tmp_26734 = ((int64_t *) mem_param_27056.mem)[slice_26733];
-                                int64_t tmp_26735 = ((int64_t *) mem_param_27059.mem)[slice_26733];
+                                int64_t tmp_26544 = add64((int64_t) 1, i_26334);
+                                int64_t slice_26549 = defunc_0_f_res_26279 + i_26334;
+                                int64_t slice_26550 = start_26098 + slice_26549;
+                                int64_t tmp_26551 = ((int64_t *) mem_param_26873.mem)[slice_26550];
+                                int64_t tmp_26552 = ((int64_t *) mem_param_26876.mem)[slice_26550];
                                 
-                                loopres_26539 = tmp_26727;
-                                loopres_26540 = tmp_26734;
-                                loopres_26541 = tmp_26735;
+                                loopres_26356 = tmp_26544;
+                                loopres_26357 = tmp_26551;
+                                loopres_26358 = tmp_26552;
                             } else {
-                                bool x_26551 = sle64((int64_t) 0, j_26520);
-                                bool y_26552 = slt64(j_26520, j_m_i_26473);
-                                bool bounds_check_26553 = x_26551 && y_26552;
-                                bool index_certs_26554;
+                                bool x_26368 = sle64((int64_t) 0, j_26337);
+                                bool y_26369 = slt64(j_26337, j_m_i_26290);
+                                bool bounds_check_26370 = x_26368 && y_26369;
+                                bool index_certs_26371;
                                 
-                                if (!bounds_check_26553) {
-                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26520, "] out of bounds for array of shape [", (long long) j_m_i_26473, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:108:15-19\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:51:40-44\n   #11 test_sort.fut:49:1-52:27\n"));
+                                if (!bounds_check_26370) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) j_26337, "] out of bounds for array of shape [", (long long) j_m_i_26290, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:108:15-19\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:153:59-69\n   #2  /prelude/soacs.fut:59:9-11\n   #3  /prelude/array.fut:241:11-17\n   #4  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:260:43-59\n   #5  /prelude/soacs.fut:59:9-11\n   #6  /prelude/array.fut:241:11-17\n   #7  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #8  /prelude/functional.fut:9:44-45\n   #9  ../../joins/ftSMJ.fut:104:60-63\n   #10 test_sort.fut:63:40-44\n   #11 test_sort.fut:61:1-64:27\n"));
                                     err = FUTHARK_PROGRAM_ERROR;
                                     goto cleanup;
                                 }
                                 
-                                int64_t slice_26555 = merge_sequential_arg2_26471 + j_26520;
-                                int64_t slice_26556 = start_26281 + slice_26555;
-                                int64_t tmp_26557 = ((int64_t *) mem_param_27056.mem)[slice_26556];
-                                int64_t tmp_26558 = ((int64_t *) mem_param_27059.mem)[slice_26556];
+                                int64_t slice_26372 = merge_sequential_arg2_26288 + j_26337;
+                                int64_t slice_26373 = start_26098 + slice_26372;
+                                int64_t tmp_26374 = ((int64_t *) mem_param_26873.mem)[slice_26373];
+                                int64_t tmp_26375 = ((int64_t *) mem_param_26876.mem)[slice_26373];
                                 
-                                loopres_26539 = i_26517;
-                                loopres_26540 = tmp_26557;
-                                loopres_26541 = tmp_26558;
+                                loopres_26356 = i_26334;
+                                loopres_26357 = tmp_26374;
+                                loopres_26358 = tmp_26375;
                             }
-                            ((int64_t *) mem_27092)[i_26930 * merge_block_sizze_26094 + k_26516] = loopres_26540;
-                            ((int64_t *) mem_27095)[i_26930 * merge_block_sizze_26094 + k_26516] = loopres_26541;
+                            ((int64_t *) mem_26909)[i_26747 * merge_block_sizze_25911 + k_26333] = loopres_26357;
+                            ((int64_t *) mem_26912)[i_26747 * merge_block_sizze_25911 + k_26333] = loopres_26358;
                             
-                            int64_t i_tmp_27289 = loopres_26539;
+                            int64_t i_tmp_27106 = loopres_26356;
                             
-                            i_26517 = i_tmp_27289;
+                            i_26334 = i_tmp_27106;
                         }
-                        data_26513 = i_26517;
+                        data_26330 = i_26334;
                     }
-                    if (memblock_alloc(ctx, &mem_27130, bytes_27091, "mem_27130")) {
+                    if (memblock_alloc(ctx, &mem_26947, bytes_26908, "mem_26947")) {
                         err = 1;
                         goto cleanup;
                     }
-                    lmad_copy_8b(ctx, 2, (uint64_t *) mem_27130.mem, (int64_t) 0, (int64_t []) {merge_block_sizze_26094, (int64_t) 1}, (uint64_t *) mem_27092, (int64_t) 0, (int64_t []) {merge_block_sizze_26094, (int64_t) 1}, (int64_t []) {num_blocks_26229, merge_block_sizze_26094});
-                    if (memblock_alloc(ctx, &mem_27134, bytes_27091, "mem_27134")) {
+                    lmad_copy_8b(ctx, 2, (uint64_t *) mem_26947.mem, (int64_t) 0, (int64_t []) {merge_block_sizze_25911, (int64_t) 1}, (uint64_t *) mem_26909, (int64_t) 0, (int64_t []) {merge_block_sizze_25911, (int64_t) 1}, (int64_t []) {num_blocks_26046, merge_block_sizze_25911});
+                    if (memblock_alloc(ctx, &mem_26951, bytes_26908, "mem_26951")) {
                         err = 1;
                         goto cleanup;
                     }
-                    lmad_copy_8b(ctx, 2, (uint64_t *) mem_27134.mem, (int64_t) 0, (int64_t []) {merge_block_sizze_26094, (int64_t) 1}, (uint64_t *) mem_27095, (int64_t) 0, (int64_t []) {merge_block_sizze_26094, (int64_t) 1}, (int64_t []) {num_blocks_26229, merge_block_sizze_26094});
-                    if (memblock_set(ctx, &ext_mem_27157, &mem_27130, "mem_27130") != 0)
+                    lmad_copy_8b(ctx, 2, (uint64_t *) mem_26951.mem, (int64_t) 0, (int64_t []) {merge_block_sizze_25911, (int64_t) 1}, (uint64_t *) mem_26912, (int64_t) 0, (int64_t []) {merge_block_sizze_25911, (int64_t) 1}, (int64_t []) {num_blocks_26046, merge_block_sizze_25911});
+                    if (memblock_set(ctx, &ext_mem_26974, &mem_26947, "mem_26947") != 0)
                         return 1;
-                    if (memblock_set(ctx, &ext_mem_27154, &mem_27134, "mem_27134") != 0)
+                    if (memblock_set(ctx, &ext_mem_26971, &mem_26951, "mem_26951") != 0)
                         return 1;
                 }
-                lmad_copy_8b(ctx, 1, (uint64_t *) mem_27062, i_26937 * next_stride_26209, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_27157.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {next_stride_26209});
-                if (memblock_unref(ctx, &ext_mem_27157, "ext_mem_27157") != 0)
+                lmad_copy_8b(ctx, 1, (uint64_t *) mem_26879, i_26754 * next_stride_26026, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_26974.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {next_stride_26026});
+                if (memblock_unref(ctx, &ext_mem_26974, "ext_mem_26974") != 0)
                     return 1;
-                lmad_copy_8b(ctx, 1, (uint64_t *) mem_27065, i_26937 * next_stride_26209, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_27154.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {next_stride_26209});
-                if (memblock_unref(ctx, &ext_mem_27154, "ext_mem_27154") != 0)
+                lmad_copy_8b(ctx, 1, (uint64_t *) mem_26882, i_26754 * next_stride_26026, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_26971.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {next_stride_26026});
+                if (memblock_unref(ctx, &ext_mem_26971, "ext_mem_26971") != 0)
                     return 1;
             }
             
-            int64_t flat_dim_26565 = next_stride_26209 * num_merges_26213;
+            int64_t flat_dim_26382 = next_stride_26026 * num_merges_26030;
             
-            if (memblock_alloc(ctx, &mem_27168, bytes_27061, "mem_27168")) {
+            if (memblock_alloc(ctx, &mem_26985, bytes_26878, "mem_26985")) {
                 err = 1;
                 goto cleanup;
             }
-            lmad_copy_8b(ctx, 2, (uint64_t *) mem_27168.mem, (int64_t) 0, (int64_t []) {next_stride_26209, (int64_t) 1}, (uint64_t *) mem_27062, (int64_t) 0, (int64_t []) {next_stride_26209, (int64_t) 1}, (int64_t []) {num_merges_26213, next_stride_26209});
-            if (memblock_alloc(ctx, &mem_27172, bytes_27061, "mem_27172")) {
+            lmad_copy_8b(ctx, 2, (uint64_t *) mem_26985.mem, (int64_t) 0, (int64_t []) {next_stride_26026, (int64_t) 1}, (uint64_t *) mem_26879, (int64_t) 0, (int64_t []) {next_stride_26026, (int64_t) 1}, (int64_t []) {num_merges_26030, next_stride_26026});
+            if (memblock_alloc(ctx, &mem_26989, bytes_26878, "mem_26989")) {
                 err = 1;
                 goto cleanup;
             }
-            lmad_copy_8b(ctx, 2, (uint64_t *) mem_27172.mem, (int64_t) 0, (int64_t []) {next_stride_26209, (int64_t) 1}, (uint64_t *) mem_27065, (int64_t) 0, (int64_t []) {next_stride_26209, (int64_t) 1}, (int64_t []) {num_merges_26213, next_stride_26209});
+            lmad_copy_8b(ctx, 2, (uint64_t *) mem_26989.mem, (int64_t) 0, (int64_t []) {next_stride_26026, (int64_t) 1}, (uint64_t *) mem_26882, (int64_t) 0, (int64_t []) {next_stride_26026, (int64_t) 1}, (int64_t []) {num_merges_26030, next_stride_26026});
             
-            bool loop_cond_26568 = slt64(next_stride_26209, flat_dim_26090);
+            bool loop_cond_26385 = slt64(next_stride_26026, flat_dim_25907);
             
-            if (memblock_set(ctx, &mem_param_tmp_27263, &mem_27168, "mem_27168") != 0)
+            if (memblock_set(ctx, &mem_param_tmp_27080, &mem_26985, "mem_26985") != 0)
                 return 1;
-            if (memblock_set(ctx, &mem_param_tmp_27264, &mem_27172, "mem_27172") != 0)
+            if (memblock_set(ctx, &mem_param_tmp_27081, &mem_26989, "mem_26989") != 0)
                 return 1;
             
-            int64_t loop_dz2084Uz2082U_tmp_27265 = flat_dim_26565;
-            bool loop_while_tmp_27266 = loop_cond_26568;
-            int64_t stride_tmp_27269 = next_stride_26209;
+            int64_t loop_dz2084Uz2082U_tmp_27082 = flat_dim_26382;
+            bool loop_while_tmp_27083 = loop_cond_26385;
+            int64_t stride_tmp_27086 = next_stride_26026;
             
-            if (memblock_set(ctx, &mem_param_27056, &mem_param_tmp_27263, "mem_param_tmp_27263") != 0)
+            if (memblock_set(ctx, &mem_param_26873, &mem_param_tmp_27080, "mem_param_tmp_27080") != 0)
                 return 1;
-            if (memblock_set(ctx, &mem_param_27059, &mem_param_tmp_27264, "mem_param_tmp_27264") != 0)
+            if (memblock_set(ctx, &mem_param_26876, &mem_param_tmp_27081, "mem_param_tmp_27081") != 0)
                 return 1;
-            loop_dz2084Uz2082U_26204 = loop_dz2084Uz2082U_tmp_27265;
-            loop_while_26205 = loop_while_tmp_27266;
-            stride_26208 = stride_tmp_27269;
+            loop_dz2084Uz2082U_26021 = loop_dz2084Uz2082U_tmp_27082;
+            loop_while_26022 = loop_while_tmp_27083;
+            stride_26025 = stride_tmp_27086;
         }
-        if (memblock_set(ctx, &ext_mem_27179, &mem_param_27056, "mem_param_27056") != 0)
+        if (memblock_set(ctx, &ext_mem_26996, &mem_param_26873, "mem_param_26873") != 0)
             return 1;
-        if (memblock_set(ctx, &ext_mem_27178, &mem_param_27059, "mem_param_27059") != 0)
+        if (memblock_set(ctx, &ext_mem_26995, &mem_param_26876, "mem_param_26876") != 0)
             return 1;
-        data_26199 = loop_dz2084Uz2082U_26204;
-        data_26200 = loop_while_26205;
-        data_26203 = stride_26208;
-        if (memblock_unref(ctx, &mem_27048, "mem_27048") != 0)
+        data_26016 = loop_dz2084Uz2082U_26021;
+        data_26017 = loop_while_26022;
+        data_26020 = stride_26025;
+        if (memblock_unref(ctx, &mem_26865, "mem_26865") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27052, "mem_27052") != 0)
+        if (memblock_unref(ctx, &mem_26869, "mem_26869") != 0)
             return 1;
         
-        bool empty_slice_26569 = n_18759 == (int64_t) 0;
-        bool zzero_leq_i_p_m_t_s_26570 = sle64((int64_t) 0, zs_lhs_26074);
-        bool i_p_m_t_s_leq_w_26571 = slt64(zs_lhs_26074, data_26199);
-        bool y_26572 = zzero_leq_i_p_m_t_s_26570 && i_p_m_t_s_leq_w_26571;
-        bool ok_or_empty_26573 = empty_slice_26569 || y_26572;
-        bool index_certs_26574;
+        bool empty_slice_26386 = n_18688 == (int64_t) 0;
+        bool zzero_leq_i_p_m_t_s_26387 = sle64((int64_t) 0, zs_lhs_25891);
+        bool i_p_m_t_s_leq_w_26388 = slt64(zs_lhs_25891, data_26016);
+        bool y_26389 = zzero_leq_i_p_m_t_s_26387 && i_p_m_t_s_leq_w_26388;
+        bool ok_or_empty_26390 = empty_slice_26386 || y_26389;
+        bool index_certs_26391;
         
-        if (!ok_or_empty_26573) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) n_18759, "] out of bounds for array of shape [", (long long) data_26199, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:265:3-14\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:51:40-44\n   #6  test_sort.fut:49:1-52:27\n"));
+        if (!ok_or_empty_26390) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) n_18688, "] out of bounds for array of shape [", (long long) data_26016, "].", "-> #0  /prelude/array.fut:46:45-51\n   #1  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:265:3-14\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:272:74-75\n   #3  /prelude/functional.fut:9:44-45\n   #4  ../../joins/ftSMJ.fut:104:60-63\n   #5  test_sort.fut:63:40-44\n   #6  test_sort.fut:61:1-64:27\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
-        if (memblock_set(ctx, &ext_mem_27182, &ext_mem_27178, "ext_mem_27178") != 0)
+        if (memblock_set(ctx, &ext_mem_26999, &ext_mem_26995, "ext_mem_26995") != 0)
             return 1;
     }
-    if (memblock_unref(ctx, &mem_26977, "mem_26977") != 0)
+    if (memblock_unref(ctx, &mem_26794, "mem_26794") != 0)
         return 1;
-    if (memblock_alloc(ctx, &mem_27184, bytes_26976, "mem_27184")) {
+    if (memblock_alloc(ctx, &mem_27001, bytes_26793, "mem_27001")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc(ctx, &mem_27186, bytes_27185, "mem_27186")) {
+    if (memblock_alloc(ctx, &mem_27003, bytes_27002, "mem_27003")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t i_26944 = 0; i_26944 < n_18759; i_26944++) {
-        int64_t eta_p_26582 = ((int64_t *) ext_mem_27182.mem)[i_26944];
-        bool x_26583 = sle64((int64_t) 0, eta_p_26582);
-        bool y_26584 = slt64(eta_p_26582, n_18759);
-        bool bounds_check_26585 = x_26583 && y_26584;
-        bool index_certs_26586;
+    for (int64_t i_26761 = 0; i_26761 < n_18688; i_26761++) {
+        int64_t eta_p_26399 = ((int64_t *) ext_mem_26999.mem)[i_26761];
+        bool x_26400 = sle64((int64_t) 0, eta_p_26399);
+        bool y_26401 = slt64(eta_p_26399, n_18688);
+        bool bounds_check_26402 = x_26400 && y_26401;
+        bool index_certs_26403;
         
-        if (!bounds_check_26585) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_26582, "] out of bounds for array of shape [", (long long) n_18759, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:277:24-28\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:277:8-29\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:51:40-44\n   #5  test_sort.fut:49:1-52:27\n"));
+        if (!bounds_check_26402) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_26399, "] out of bounds for array of shape [", (long long) n_18688, "].", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:277:24-28\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:277:8-29\n   #3  ../../joins/ftSMJ.fut:104:60-63\n   #4  test_sort.fut:63:40-44\n   #5  test_sort.fut:61:1-64:27\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
         
-        int64_t lifted_lambda_res_26587 = ((int64_t *) ks_mem_26974.mem)[eta_p_26582];
+        int64_t lifted_lambda_res_26404 = ((int64_t *) ks_mem_26791.mem)[eta_p_26399];
         
-        ((int64_t *) mem_27184.mem)[i_26944] = lifted_lambda_res_26587;
-        lmad_copy_1b(ctx, 1, (uint8_t *) mem_27186.mem, i_26944 * b_18760, (int64_t []) {(int64_t) 1}, (uint8_t *) pL_mem_26975.mem, eta_p_26582 * b_18760, (int64_t []) {(int64_t) 1}, (int64_t []) {b_18760});
+        ((int64_t *) mem_27001.mem)[i_26761] = lifted_lambda_res_26404;
+        lmad_copy_1b(ctx, 1, (uint8_t *) mem_27003.mem, i_26761 * b_18689, (int64_t []) {(int64_t) 1}, (uint8_t *) pL_mem_26792.mem, eta_p_26399 * b_18689, (int64_t []) {(int64_t) 1}, (int64_t []) {b_18689});
     }
-    if (memblock_unref(ctx, &ext_mem_27182, "ext_mem_27182") != 0)
+    if (memblock_unref(ctx, &ext_mem_26999, "ext_mem_26999") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_27245, &mem_27184, "mem_27184") != 0)
+    if (memblock_set(ctx, &mem_out_27062, &mem_27001, "mem_27001") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_27246, &mem_27186, "mem_27186") != 0)
+    if (memblock_set(ctx, &mem_out_27063, &mem_27003, "mem_27003") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_27306, &mem_out_27245, "mem_out_27245") != 0)
+    if (memblock_set(ctx, &*mem_out_p_27123, &mem_out_27062, "mem_out_27062") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_27307, &mem_out_27246, "mem_out_27246") != 0)
+    if (memblock_set(ctx, &*mem_out_p_27124, &mem_out_27063, "mem_out_27063") != 0)
         return 1;
     
   cleanup:
     {
-        free(mem_26980);
-        free(mem_26983);
-        free(mem_26993);
-        free(mem_26995);
-        free(mem_27062);
-        free(mem_27065);
-        free(mem_27075);
-        free(mem_27077);
-        free(mem_27092);
-        free(mem_27095);
-        if (memblock_unref(ctx, &mem_27186, "mem_27186") != 0)
+        free(mem_26797);
+        free(mem_26800);
+        free(mem_26810);
+        free(mem_26812);
+        free(mem_26879);
+        free(mem_26882);
+        free(mem_26892);
+        free(mem_26894);
+        free(mem_26909);
+        free(mem_26912);
+        if (memblock_unref(ctx, &mem_27003, "mem_27003") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27184, "mem_27184") != 0)
+        if (memblock_unref(ctx, &mem_27001, "mem_27001") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27264, "mem_param_tmp_27264") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27081, "mem_param_tmp_27081") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27263, "mem_param_tmp_27263") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27080, "mem_param_tmp_27080") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27172, "mem_27172") != 0)
+        if (memblock_unref(ctx, &mem_26989, "mem_26989") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27168, "mem_27168") != 0)
+        if (memblock_unref(ctx, &mem_26985, "mem_26985") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27134, "mem_27134") != 0)
+        if (memblock_unref(ctx, &mem_26951, "mem_26951") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27130, "mem_27130") != 0)
+        if (memblock_unref(ctx, &mem_26947, "mem_26947") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27139, "mem_27139") != 0)
+        if (memblock_unref(ctx, &mem_26956, "mem_26956") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27137, "mem_27137") != 0)
+        if (memblock_unref(ctx, &mem_26954, "mem_26954") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27154, "ext_mem_27154") != 0)
+        if (memblock_unref(ctx, &ext_mem_26971, "ext_mem_26971") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27157, "ext_mem_27157") != 0)
+        if (memblock_unref(ctx, &ext_mem_26974, "ext_mem_26974") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_27059, "mem_param_27059") != 0)
+        if (memblock_unref(ctx, &mem_param_26876, "mem_param_26876") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_27056, "mem_param_27056") != 0)
+        if (memblock_unref(ctx, &mem_param_26873, "mem_param_26873") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27178, "ext_mem_27178") != 0)
+        if (memblock_unref(ctx, &ext_mem_26995, "ext_mem_26995") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27179, "ext_mem_27179") != 0)
+        if (memblock_unref(ctx, &ext_mem_26996, "ext_mem_26996") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27052, "mem_27052") != 0)
+        if (memblock_unref(ctx, &mem_26869, "mem_26869") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27048, "mem_27048") != 0)
+        if (memblock_unref(ctx, &mem_26865, "mem_26865") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27182, "ext_mem_27182") != 0)
+        if (memblock_unref(ctx, &ext_mem_26999, "ext_mem_26999") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_26977, "mem_26977") != 0)
+        if (memblock_unref(ctx, &mem_26794, "mem_26794") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_27246, "mem_out_27246") != 0)
+        if (memblock_unref(ctx, &mem_out_27063, "mem_out_27063") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_27245, "mem_out_27245") != 0)
+        if (memblock_unref(ctx, &mem_out_27062, "mem_out_27062") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_radix_sort_i32(struct futhark_context *ctx, struct memblock *mem_out_p_27318, struct memblock *mem_out_p_27319, struct memblock ks_mem_26974, struct memblock pL_mem_26975, int64_t n_19742, int64_t b_19743)
+FUTHARK_FUN_ATTR int futrts_entry_radix_sort_i32(struct futhark_context *ctx, struct memblock *mem_out_p_27135, struct memblock *mem_out_p_27136, struct memblock ks_mem_26791, struct memblock pL_mem_26792, int64_t n_19615, int64_t b_19616)
 {
     (void) ctx;
     
     int err = 0;
-    int64_t mem_26985_cached_sizze_27320 = 0;
-    unsigned char *mem_26985 = NULL;
-    int64_t mem_27017_cached_sizze_27321 = 0;
-    unsigned char *mem_27017 = NULL;
-    struct memblock mem_27035;
+    int64_t mem_26802_cached_sizze_27137 = 0;
+    unsigned char *mem_26802 = NULL;
+    int64_t mem_26834_cached_sizze_27138 = 0;
+    unsigned char *mem_26834 = NULL;
+    struct memblock mem_26852;
     
-    mem_27035.references = NULL;
+    mem_26852.references = NULL;
     
-    struct memblock mem_27033;
+    struct memblock mem_26850;
     
-    mem_27033.references = NULL;
+    mem_26850.references = NULL;
     
-    struct memblock mem_param_tmp_27249;
+    struct memblock mem_param_tmp_27066;
     
-    mem_param_tmp_27249.references = NULL;
+    mem_param_tmp_27066.references = NULL;
     
-    struct memblock mem_param_tmp_27248;
+    struct memblock mem_param_tmp_27065;
     
-    mem_param_tmp_27248.references = NULL;
+    mem_param_tmp_27065.references = NULL;
     
-    struct memblock mem_27009;
+    struct memblock mem_26826;
     
-    mem_27009.references = NULL;
+    mem_26826.references = NULL;
     
-    struct memblock mem_27007;
+    struct memblock mem_26824;
     
-    mem_27007.references = NULL;
+    mem_26824.references = NULL;
     
-    struct memblock mem_param_tmp_27254;
+    struct memblock mem_param_tmp_27071;
     
-    mem_param_tmp_27254.references = NULL;
+    mem_param_tmp_27071.references = NULL;
     
-    struct memblock mem_26996;
+    struct memblock mem_26813;
     
-    mem_26996.references = NULL;
+    mem_26813.references = NULL;
     
-    struct memblock mem_param_26994;
+    struct memblock mem_param_26811;
     
-    mem_param_26994.references = NULL;
+    mem_param_26811.references = NULL;
     
-    struct memblock ext_mem_27005;
+    struct memblock ext_mem_26822;
     
-    ext_mem_27005.references = NULL;
+    ext_mem_26822.references = NULL;
     
-    struct memblock mem_param_26984;
+    struct memblock mem_param_26801;
     
-    mem_param_26984.references = NULL;
+    mem_param_26801.references = NULL;
     
-    struct memblock mem_param_26980;
+    struct memblock mem_param_26797;
     
-    mem_param_26980.references = NULL;
+    mem_param_26797.references = NULL;
     
-    struct memblock ext_mem_27030;
+    struct memblock ext_mem_26847;
     
-    ext_mem_27030.references = NULL;
+    ext_mem_26847.references = NULL;
     
-    struct memblock ext_mem_27031;
+    struct memblock ext_mem_26848;
     
-    ext_mem_27031.references = NULL;
+    ext_mem_26848.references = NULL;
     
-    struct memblock mem_26977;
+    struct memblock mem_26794;
     
-    mem_26977.references = NULL;
+    mem_26794.references = NULL;
     
-    struct memblock mem_out_27246;
+    struct memblock mem_out_27063;
     
-    mem_out_27246.references = NULL;
+    mem_out_27063.references = NULL;
     
-    struct memblock mem_out_27245;
+    struct memblock mem_out_27062;
     
-    mem_out_27245.references = NULL;
+    mem_out_27062.references = NULL;
     
-    int64_t bytes_26976 = (int64_t) 8 * n_19742;
-    int64_t bytes_27032 = (int64_t) 4 * n_19742;
-    int64_t bytes_27034 = n_19742 * b_19743;
+    int64_t bytes_26793 = (int64_t) 8 * n_19615;
+    int64_t bytes_26849 = (int64_t) 4 * n_19615;
+    int64_t bytes_26851 = n_19615 * b_19616;
     
-    if (memblock_alloc(ctx, &mem_26977, bytes_26976, "mem_26977")) {
+    if (memblock_alloc(ctx, &mem_26794, bytes_26793, "mem_26794")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t nest_i_27247 = 0; nest_i_27247 < n_19742; nest_i_27247++) {
-        ((int64_t *) mem_26977.mem)[nest_i_27247] = (int64_t) 0;
+    for (int64_t nest_i_27064 = 0; nest_i_27064 < n_19615; nest_i_27064++) {
+        ((int64_t *) mem_26794.mem)[nest_i_27064] = (int64_t) 0;
     }
-    if (mem_26985_cached_sizze_27320 < n_19742) {
-        err = lexical_realloc(ctx, &mem_26985, &mem_26985_cached_sizze_27320, n_19742);
+    if (mem_26802_cached_sizze_27137 < n_19615) {
+        err = lexical_realloc(ctx, &mem_26802, &mem_26802_cached_sizze_27137, n_19615);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
-    if (mem_27017_cached_sizze_27321 < b_19743) {
-        err = lexical_realloc(ctx, &mem_27017, &mem_27017_cached_sizze_27321, b_19743);
+    if (mem_26834_cached_sizze_27138 < b_19616) {
+        err = lexical_realloc(ctx, &mem_26834, &mem_26834_cached_sizze_27138, b_19616);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
-    if (memblock_set(ctx, &mem_param_26980, &ks_mem_26974, "ks_mem_26974") != 0)
+    if (memblock_set(ctx, &mem_param_26797, &ks_mem_26791, "ks_mem_26791") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_param_26984, &pL_mem_26975, "pL_mem_26975") != 0)
+    if (memblock_set(ctx, &mem_param_26801, &pL_mem_26792, "pL_mem_26792") != 0)
         return 1;
-    for (int64_t i_22702 = 0; i_22702 < (int64_t) 16; i_22702++) {
-        int32_t binop_x_22705 = sext_i64_i32(i_22702);
-        int32_t binop_x_22706 = mul32(2, binop_x_22705);
-        int32_t zp_lhs_22707 = sub32(32, binop_x_22706);
-        int32_t ij_bits_22708 = add32(1, zp_lhs_22707);
-        int32_t up_to_22709 = shl32(1, ij_bits_22708);
-        int64_t tmp_22710 = sext_i32_i64(zp_lhs_22707);
-        bool bounds_invalid_upwards_22711 = slt32(zp_lhs_22707, 0);
-        bool valid_22713 = !bounds_invalid_upwards_22711;
-        bool range_valid_c_22714;
+    for (int64_t i_22100 = 0; i_22100 < (int64_t) 16; i_22100++) {
+        int32_t binop_x_22103 = sext_i64_i32(i_22100);
+        int32_t binop_x_22104 = mul32(2, binop_x_22103);
+        int32_t zp_lhs_22105 = sub32(32, binop_x_22104);
+        int32_t ij_bits_22106 = add32(1, zp_lhs_22105);
+        int32_t up_to_22107 = shl32(1, ij_bits_22106);
+        int64_t tmp_22108 = sext_i32_i64(zp_lhs_22105);
+        bool bounds_invalid_upwards_22109 = slt32(zp_lhs_22105, 0);
+        bool valid_22111 = !bounds_invalid_upwards_22109;
+        bool range_valid_c_22112;
         
-        if (!valid_22713) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "...", (long long) tmp_22710, " is invalid.", "-> #0  ../../ftbasics.fut:178:17-26\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../joins/ftSMJ.fut:18:97-99\n   #3  ../../joins/ftSMJ.fut:32:60-62\n   #4  ../../joins/ftSMJ.fut:86:88-91\n   #5  test_sort.fut:77:76-87\n   #6  test_sort.fut:75:1-78:27\n"));
+        if (!valid_22111) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "...", (long long) tmp_22108, " is invalid.", "-> #0  ../../ftbasics.fut:178:17-26\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../joins/ftSMJ.fut:18:97-99\n   #3  ../../joins/ftSMJ.fut:32:60-62\n   #4  test_sort.fut:95:89-91\n   #5  test_sort.fut:93:1-96:21\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
         
-        int64_t up_to_22728 = sext_i32_i64(up_to_22709);
-        bool bounds_invalid_upwards_22729 = slt32(up_to_22709, 0);
-        bool valid_22730 = !bounds_invalid_upwards_22729;
-        bool range_valid_c_22731;
+        int64_t up_to_22128 = sext_i32_i64(up_to_22107);
+        bool bounds_invalid_upwards_22129 = slt32(up_to_22107, 0);
+        bool valid_22130 = !bounds_invalid_upwards_22129;
+        bool range_valid_c_22131;
         
-        if (!valid_22730) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..<", (long long) up_to_22728, " is invalid.", "-> #0  ../../ftbasics.fut:200:21-30\n   #1  ../../joins/ftSMJ.fut:18:97-99\n   #2  ../../joins/ftSMJ.fut:32:60-62\n   #3  ../../joins/ftSMJ.fut:86:88-91\n   #4  test_sort.fut:77:76-87\n   #5  test_sort.fut:75:1-78:27\n"));
+        if (!valid_22130) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..<", (long long) up_to_22128, " is invalid.", "-> #0  ../../ftbasics.fut:200:21-30\n   #1  ../../joins/ftSMJ.fut:18:97-99\n   #2  ../../joins/ftSMJ.fut:32:60-62\n   #3  test_sort.fut:95:89-91\n   #4  test_sort.fut:93:1-96:21\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
         
-        int64_t distance_22712 = add64((int64_t) 1, tmp_22710);
+        int64_t distance_22110 = add64((int64_t) 1, tmp_22108);
         
-        for (int64_t i_26904 = 0; i_26904 < n_19742; i_26904++) {
-            int32_t eta_p_22716 = ((int32_t *) mem_param_26980.mem)[i_26904];
-            int8_t defunc_0_f_res_22717;
-            int8_t y_22719 = (int8_t) 0;
+        for (int64_t i_26721 = 0; i_26721 < n_19615; i_26721++) {
+            int32_t eta_p_22115 = ((int32_t *) mem_param_26797.mem)[i_26721];
+            int8_t defunc_0_f_res_22116;
+            int8_t y_22118 = (int8_t) 0;
             
-            for (int64_t i_22718 = 0; i_22718 < distance_22712; i_22718++) {
-                int32_t binop_x_22720 = sext_i64_i32(i_22718);
-                int32_t get_bit_arg0_22721 = add32(binop_x_22706, binop_x_22720);
-                int32_t zgzg_res_22722 = ashr32(eta_p_22716, get_bit_arg0_22721);
-                int32_t za_res_22723 = 1 & zgzg_res_22722;
-                bool cond_22724 = get_bit_arg0_22721 == 31;
-                int32_t defunc_0_get_bit_res_22725;
+            for (int64_t i_22117 = 0; i_22117 < distance_22110; i_22117++) {
+                int32_t binop_x_22119 = sext_i64_i32(i_22117);
+                int32_t get_bit_arg0_22120 = add32(binop_x_22104, binop_x_22119);
+                int32_t zgzg_res_22121 = ashr32(eta_p_22115, get_bit_arg0_22120);
+                int32_t za_res_22122 = 1 & zgzg_res_22121;
+                bool cond_22123 = get_bit_arg0_22120 == 31;
+                int32_t defunc_0_get_bit_res_22124;
                 
-                if (cond_22724) {
-                    int32_t defunc_0_get_bit_res_t_res_26891 = 1 ^ za_res_22723;
+                if (cond_22123) {
+                    int32_t defunc_0_get_bit_res_t_res_26708 = 1 ^ za_res_22122;
                     
-                    defunc_0_get_bit_res_22725 = defunc_0_get_bit_res_t_res_26891;
+                    defunc_0_get_bit_res_22124 = defunc_0_get_bit_res_t_res_26708;
                 } else {
-                    defunc_0_get_bit_res_22725 = za_res_22723;
+                    defunc_0_get_bit_res_22124 = za_res_22122;
                 }
                 
-                int8_t loopres_22727;
+                int8_t loopres_22126;
                 
-                if (futrts_set_bit_2464(ctx, &loopres_22727, binop_x_22720, y_22719, defunc_0_get_bit_res_22725) != 0) {
+                if (futrts_set_bit_2464(ctx, &loopres_22126, binop_x_22119, y_22118, defunc_0_get_bit_res_22124) != 0) {
                     err = 1;
                     goto cleanup;
                 }
                 
-                int8_t y_tmp_27253 = loopres_22727;
+                int8_t y_tmp_27070 = loopres_22126;
                 
-                y_22719 = y_tmp_27253;
+                y_22118 = y_tmp_27070;
             }
-            defunc_0_f_res_22717 = y_22719;
-            ((int8_t *) mem_26985)[i_26904] = defunc_0_f_res_22717;
+            defunc_0_f_res_22116 = y_22118;
+            ((int8_t *) mem_26802)[i_26721] = defunc_0_f_res_22116;
         }
         
-        int64_t defunc_0_radix_sort_multistep_res_22732;
-        int64_t offs_22735;
+        int64_t defunc_0_radix_sort_multistep_res_22132;
+        int64_t offs_22135;
         
-        if (memblock_set(ctx, &mem_param_26994, &mem_26977, "mem_26977") != 0)
+        if (memblock_set(ctx, &mem_param_26811, &mem_26794, "mem_26794") != 0)
             return 1;
-        offs_22735 = (int64_t) 0;
-        for (int64_t i_22734 = 0; i_22734 < up_to_22728; i_22734++) {
-            int32_t binop_x_22737 = sext_i64_i32(i_22734);
-            int8_t index_primexp_22738 = zext_i32_i8(binop_x_22737);
+        offs_22135 = (int64_t) 0;
+        for (int64_t i_22134 = 0; i_22134 < up_to_22128; i_22134++) {
+            int32_t binop_x_22137 = sext_i64_i32(i_22134);
+            int8_t index_primexp_22138 = zext_i32_i8(binop_x_22137);
             
-            if (memblock_alloc(ctx, &mem_26996, bytes_26976, "mem_26996")) {
+            if (memblock_alloc(ctx, &mem_26813, bytes_26793, "mem_26813")) {
                 err = 1;
                 goto cleanup;
             }
             
-            int64_t inpacc_26896;
-            int64_t defunc_0_reduce_res_26897;
-            int64_t inpacc_26792;
-            int64_t inpacc_26793;
+            int64_t inpacc_26713;
+            int64_t defunc_0_reduce_res_26714;
+            int64_t inpacc_26609;
+            int64_t inpacc_26610;
             
-            inpacc_26792 = (int64_t) 0;
-            inpacc_26793 = (int64_t) 0;
-            for (int64_t i_26922 = 0; i_26922 < n_19742; i_26922++) {
-                int8_t eta_p_26952 = ((int8_t *) mem_26985)[i_26922];
-                bool lifted_lambda_res_26953 = eta_p_26952 == index_primexp_22738;
-                int64_t bool_res_26954 = btoi_bool_i64(lifted_lambda_res_26953);
-                int64_t eta_p_26967 = ((int64_t *) mem_param_26994.mem)[i_26922];
-                int64_t defunc_0_op_res_26968 = add64(inpacc_26792, bool_res_26954);
-                int64_t zm_lhs_26969 = add64(offs_22735, defunc_0_op_res_26968);
-                int64_t lifted_lambda_res_26970 = sub64(zm_lhs_26969, (int64_t) 1);
-                int64_t defunc_0_f_res_26971 = mul64(bool_res_26954, lifted_lambda_res_26970);
-                int64_t defunc_0_f_res_26972 = add64(eta_p_26967, defunc_0_f_res_26971);
-                int64_t defunc_0_op_res_26841 = add64(inpacc_26793, bool_res_26954);
+            inpacc_26609 = (int64_t) 0;
+            inpacc_26610 = (int64_t) 0;
+            for (int64_t i_26739 = 0; i_26739 < n_19615; i_26739++) {
+                int8_t eta_p_26769 = ((int8_t *) mem_26802)[i_26739];
+                bool lifted_lambda_res_26770 = eta_p_26769 == index_primexp_22138;
+                int64_t bool_res_26771 = btoi_bool_i64(lifted_lambda_res_26770);
+                int64_t eta_p_26784 = ((int64_t *) mem_param_26811.mem)[i_26739];
+                int64_t defunc_0_op_res_26785 = add64(inpacc_26609, bool_res_26771);
+                int64_t zm_lhs_26786 = add64(offs_22135, defunc_0_op_res_26785);
+                int64_t lifted_lambda_res_26787 = sub64(zm_lhs_26786, (int64_t) 1);
+                int64_t defunc_0_f_res_26788 = mul64(bool_res_26771, lifted_lambda_res_26787);
+                int64_t defunc_0_f_res_26789 = add64(eta_p_26784, defunc_0_f_res_26788);
+                int64_t defunc_0_op_res_26658 = add64(inpacc_26610, bool_res_26771);
                 
-                ((int64_t *) mem_26996.mem)[i_26922] = defunc_0_f_res_26972;
+                ((int64_t *) mem_26813.mem)[i_26739] = defunc_0_f_res_26789;
                 
-                int64_t inpacc_tmp_27257 = defunc_0_op_res_26968;
-                int64_t inpacc_tmp_27258 = defunc_0_op_res_26841;
+                int64_t inpacc_tmp_27074 = defunc_0_op_res_26785;
+                int64_t inpacc_tmp_27075 = defunc_0_op_res_26658;
                 
-                inpacc_26792 = inpacc_tmp_27257;
-                inpacc_26793 = inpacc_tmp_27258;
+                inpacc_26609 = inpacc_tmp_27074;
+                inpacc_26610 = inpacc_tmp_27075;
             }
-            inpacc_26896 = inpacc_26792;
-            defunc_0_reduce_res_26897 = inpacc_26793;
+            inpacc_26713 = inpacc_26609;
+            defunc_0_reduce_res_26714 = inpacc_26610;
             
-            int64_t tmp_22763 = add64(offs_22735, defunc_0_reduce_res_26897);
+            int64_t tmp_22163 = add64(offs_22135, defunc_0_reduce_res_26714);
             
-            if (memblock_set(ctx, &mem_param_tmp_27254, &mem_26996, "mem_26996") != 0)
+            if (memblock_set(ctx, &mem_param_tmp_27071, &mem_26813, "mem_26813") != 0)
                 return 1;
             
-            int64_t offs_tmp_27255 = tmp_22763;
+            int64_t offs_tmp_27072 = tmp_22163;
             
-            if (memblock_set(ctx, &mem_param_26994, &mem_param_tmp_27254, "mem_param_tmp_27254") != 0)
+            if (memblock_set(ctx, &mem_param_26811, &mem_param_tmp_27071, "mem_param_tmp_27071") != 0)
                 return 1;
-            offs_22735 = offs_tmp_27255;
+            offs_22135 = offs_tmp_27072;
         }
-        if (memblock_set(ctx, &ext_mem_27005, &mem_param_26994, "mem_param_26994") != 0)
+        if (memblock_set(ctx, &ext_mem_26822, &mem_param_26811, "mem_param_26811") != 0)
             return 1;
-        defunc_0_radix_sort_multistep_res_22732 = offs_22735;
-        if (memblock_alloc(ctx, &mem_27007, bytes_27032, "mem_27007")) {
+        defunc_0_radix_sort_multistep_res_22132 = offs_22135;
+        if (memblock_alloc(ctx, &mem_26824, bytes_26849, "mem_26824")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_4b(ctx, 1, (uint32_t *) mem_27007.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_param_26980.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n_19742});
-        if (memblock_alloc(ctx, &mem_27009, bytes_27034, "mem_27009")) {
+        lmad_copy_4b(ctx, 1, (uint32_t *) mem_26824.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) mem_param_26797.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n_19615});
+        if (memblock_alloc(ctx, &mem_26826, bytes_26851, "mem_26826")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_1b(ctx, 2, (uint8_t *) mem_27009.mem, (int64_t) 0, (int64_t []) {b_19743, (int64_t) 1}, (uint8_t *) mem_param_26984.mem, (int64_t) 0, (int64_t []) {b_19743, (int64_t) 1}, (int64_t []) {n_19742, b_19743});
-        for (int64_t write_iter_26924 = 0; write_iter_26924 < n_19742; write_iter_26924++) {
-            int64_t write_iv_26927 = ((int64_t *) ext_mem_27005.mem)[write_iter_26924];
-            int32_t write_iv_26928 = ((int32_t *) mem_param_26980.mem)[write_iter_26924];
+        lmad_copy_1b(ctx, 2, (uint8_t *) mem_26826.mem, (int64_t) 0, (int64_t []) {b_19616, (int64_t) 1}, (uint8_t *) mem_param_26801.mem, (int64_t) 0, (int64_t []) {b_19616, (int64_t) 1}, (int64_t []) {n_19615, b_19616});
+        for (int64_t write_iter_26741 = 0; write_iter_26741 < n_19615; write_iter_26741++) {
+            int64_t write_iv_26744 = ((int64_t *) ext_mem_26822.mem)[write_iter_26741];
+            int32_t write_iv_26745 = ((int32_t *) mem_param_26797.mem)[write_iter_26741];
             
-            lmad_copy_1b(ctx, 1, (uint8_t *) mem_27017, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_param_26984.mem, (int64_t) 0 + write_iter_26924 * b_19743, (int64_t []) {(int64_t) 1}, (int64_t []) {b_19743});
-            if (sle64((int64_t) 0, write_iv_26927) && slt64(write_iv_26927, n_19742)) {
-                ((int32_t *) mem_27007.mem)[write_iv_26927] = write_iv_26928;
+            lmad_copy_1b(ctx, 1, (uint8_t *) mem_26834, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_param_26801.mem, (int64_t) 0 + write_iter_26741 * b_19616, (int64_t []) {(int64_t) 1}, (int64_t []) {b_19616});
+            if (sle64((int64_t) 0, write_iv_26744) && slt64(write_iv_26744, n_19615)) {
+                ((int32_t *) mem_26824.mem)[write_iv_26744] = write_iv_26745;
             }
-            if ((sle64((int64_t) 0, write_iv_26927) && slt64(write_iv_26927, n_19742)) && (sle64((int64_t) 0, (int64_t) 0) && slt64(b_19743 - (int64_t) 1, b_19743))) {
-                lmad_copy_1b(ctx, 1, (uint8_t *) mem_27009.mem, write_iv_26927 * b_19743, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_27017, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {b_19743});
+            if ((sle64((int64_t) 0, write_iv_26744) && slt64(write_iv_26744, n_19615)) && (sle64((int64_t) 0, (int64_t) 0) && slt64(b_19616 - (int64_t) 1, b_19616))) {
+                lmad_copy_1b(ctx, 1, (uint8_t *) mem_26826.mem, write_iv_26744 * b_19616, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_26834, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {b_19616});
             }
         }
-        if (memblock_unref(ctx, &ext_mem_27005, "ext_mem_27005") != 0)
+        if (memblock_unref(ctx, &ext_mem_26822, "ext_mem_26822") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_tmp_27248, &mem_27007, "mem_27007") != 0)
+        if (memblock_set(ctx, &mem_param_tmp_27065, &mem_26824, "mem_26824") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_tmp_27249, &mem_27009, "mem_27009") != 0)
+        if (memblock_set(ctx, &mem_param_tmp_27066, &mem_26826, "mem_26826") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_26980, &mem_param_tmp_27248, "mem_param_tmp_27248") != 0)
+        if (memblock_set(ctx, &mem_param_26797, &mem_param_tmp_27065, "mem_param_tmp_27065") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_26984, &mem_param_tmp_27249, "mem_param_tmp_27249") != 0)
+        if (memblock_set(ctx, &mem_param_26801, &mem_param_tmp_27066, "mem_param_tmp_27066") != 0)
             return 1;
     }
-    if (memblock_set(ctx, &ext_mem_27031, &mem_param_26980, "mem_param_26980") != 0)
+    if (memblock_set(ctx, &ext_mem_26848, &mem_param_26797, "mem_param_26797") != 0)
         return 1;
-    if (memblock_set(ctx, &ext_mem_27030, &mem_param_26984, "mem_param_26984") != 0)
+    if (memblock_set(ctx, &ext_mem_26847, &mem_param_26801, "mem_param_26801") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_26977, "mem_26977") != 0)
+    if (memblock_unref(ctx, &mem_26794, "mem_26794") != 0)
         return 1;
-    if (memblock_alloc(ctx, &mem_27033, bytes_27032, "mem_27033")) {
+    if (memblock_alloc(ctx, &mem_26850, bytes_26849, "mem_26850")) {
         err = 1;
         goto cleanup;
     }
-    lmad_copy_4b(ctx, 1, (uint32_t *) mem_27033.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) ext_mem_27031.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n_19742});
-    if (memblock_unref(ctx, &ext_mem_27031, "ext_mem_27031") != 0)
+    lmad_copy_4b(ctx, 1, (uint32_t *) mem_26850.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint32_t *) ext_mem_26848.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n_19615});
+    if (memblock_unref(ctx, &ext_mem_26848, "ext_mem_26848") != 0)
         return 1;
-    if (memblock_alloc(ctx, &mem_27035, bytes_27034, "mem_27035")) {
+    if (memblock_alloc(ctx, &mem_26852, bytes_26851, "mem_26852")) {
         err = 1;
         goto cleanup;
     }
-    lmad_copy_1b(ctx, 2, (uint8_t *) mem_27035.mem, (int64_t) 0, (int64_t []) {b_19743, (int64_t) 1}, (uint8_t *) ext_mem_27030.mem, (int64_t) 0, (int64_t []) {b_19743, (int64_t) 1}, (int64_t []) {n_19742, b_19743});
-    if (memblock_unref(ctx, &ext_mem_27030, "ext_mem_27030") != 0)
+    lmad_copy_1b(ctx, 2, (uint8_t *) mem_26852.mem, (int64_t) 0, (int64_t []) {b_19616, (int64_t) 1}, (uint8_t *) ext_mem_26847.mem, (int64_t) 0, (int64_t []) {b_19616, (int64_t) 1}, (int64_t []) {n_19615, b_19616});
+    if (memblock_unref(ctx, &ext_mem_26847, "ext_mem_26847") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_27245, &mem_27033, "mem_27033") != 0)
+    if (memblock_set(ctx, &mem_out_27062, &mem_26850, "mem_26850") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_27246, &mem_27035, "mem_27035") != 0)
+    if (memblock_set(ctx, &mem_out_27063, &mem_26852, "mem_26852") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_27318, &mem_out_27245, "mem_out_27245") != 0)
+    if (memblock_set(ctx, &*mem_out_p_27135, &mem_out_27062, "mem_out_27062") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_27319, &mem_out_27246, "mem_out_27246") != 0)
+    if (memblock_set(ctx, &*mem_out_p_27136, &mem_out_27063, "mem_out_27063") != 0)
         return 1;
     
   cleanup:
     {
-        free(mem_26985);
-        free(mem_27017);
-        if (memblock_unref(ctx, &mem_27035, "mem_27035") != 0)
+        free(mem_26802);
+        free(mem_26834);
+        if (memblock_unref(ctx, &mem_26852, "mem_26852") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27033, "mem_27033") != 0)
+        if (memblock_unref(ctx, &mem_26850, "mem_26850") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27249, "mem_param_tmp_27249") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27066, "mem_param_tmp_27066") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27248, "mem_param_tmp_27248") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27065, "mem_param_tmp_27065") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27009, "mem_27009") != 0)
+        if (memblock_unref(ctx, &mem_26826, "mem_26826") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27007, "mem_27007") != 0)
+        if (memblock_unref(ctx, &mem_26824, "mem_26824") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27254, "mem_param_tmp_27254") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27071, "mem_param_tmp_27071") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_26996, "mem_26996") != 0)
+        if (memblock_unref(ctx, &mem_26813, "mem_26813") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_26994, "mem_param_26994") != 0)
+        if (memblock_unref(ctx, &mem_param_26811, "mem_param_26811") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27005, "ext_mem_27005") != 0)
+        if (memblock_unref(ctx, &ext_mem_26822, "ext_mem_26822") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_26984, "mem_param_26984") != 0)
+        if (memblock_unref(ctx, &mem_param_26801, "mem_param_26801") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_26980, "mem_param_26980") != 0)
+        if (memblock_unref(ctx, &mem_param_26797, "mem_param_26797") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27030, "ext_mem_27030") != 0)
+        if (memblock_unref(ctx, &ext_mem_26847, "ext_mem_26847") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27031, "ext_mem_27031") != 0)
+        if (memblock_unref(ctx, &ext_mem_26848, "ext_mem_26848") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_26977, "mem_26977") != 0)
+        if (memblock_unref(ctx, &mem_26794, "mem_26794") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_27246, "mem_out_27246") != 0)
+        if (memblock_unref(ctx, &mem_out_27063, "mem_out_27063") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_27245, "mem_out_27245") != 0)
+        if (memblock_unref(ctx, &mem_out_27062, "mem_out_27062") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_entry_radix_sort_i64(struct futhark_context *ctx, struct memblock *mem_out_p_27322, struct memblock *mem_out_p_27323, struct memblock ks_mem_26974, struct memblock pL_mem_26975, int64_t n_20621, int64_t b_20622)
+FUTHARK_FUN_ATTR int futrts_entry_radix_sort_i64(struct futhark_context *ctx, struct memblock *mem_out_p_27139, struct memblock *mem_out_p_27140, struct memblock ks_mem_26791, struct memblock pL_mem_26792, int64_t n_20438, int64_t b_20439)
 {
     (void) ctx;
     
     int err = 0;
-    int64_t mem_26985_cached_sizze_27324 = 0;
-    unsigned char *mem_26985 = NULL;
-    int64_t mem_27017_cached_sizze_27325 = 0;
-    unsigned char *mem_27017 = NULL;
-    struct memblock mem_27035;
+    int64_t mem_26802_cached_sizze_27141 = 0;
+    unsigned char *mem_26802 = NULL;
+    int64_t mem_26834_cached_sizze_27142 = 0;
+    unsigned char *mem_26834 = NULL;
+    struct memblock mem_26852;
     
-    mem_27035.references = NULL;
+    mem_26852.references = NULL;
     
-    struct memblock mem_27033;
+    struct memblock mem_26850;
     
-    mem_27033.references = NULL;
+    mem_26850.references = NULL;
     
-    struct memblock mem_param_tmp_27249;
+    struct memblock mem_param_tmp_27066;
     
-    mem_param_tmp_27249.references = NULL;
+    mem_param_tmp_27066.references = NULL;
     
-    struct memblock mem_param_tmp_27248;
+    struct memblock mem_param_tmp_27065;
     
-    mem_param_tmp_27248.references = NULL;
+    mem_param_tmp_27065.references = NULL;
     
-    struct memblock mem_27009;
+    struct memblock mem_26826;
     
-    mem_27009.references = NULL;
+    mem_26826.references = NULL;
     
-    struct memblock mem_27007;
+    struct memblock mem_26824;
     
-    mem_27007.references = NULL;
+    mem_26824.references = NULL;
     
-    struct memblock mem_param_tmp_27254;
+    struct memblock mem_param_tmp_27071;
     
-    mem_param_tmp_27254.references = NULL;
+    mem_param_tmp_27071.references = NULL;
     
-    struct memblock mem_26996;
+    struct memblock mem_26813;
     
-    mem_26996.references = NULL;
+    mem_26813.references = NULL;
     
-    struct memblock mem_param_26994;
+    struct memblock mem_param_26811;
     
-    mem_param_26994.references = NULL;
+    mem_param_26811.references = NULL;
     
-    struct memblock ext_mem_27005;
+    struct memblock ext_mem_26822;
     
-    ext_mem_27005.references = NULL;
+    ext_mem_26822.references = NULL;
     
-    struct memblock mem_param_26984;
+    struct memblock mem_param_26801;
     
-    mem_param_26984.references = NULL;
+    mem_param_26801.references = NULL;
     
-    struct memblock mem_param_26980;
+    struct memblock mem_param_26797;
     
-    mem_param_26980.references = NULL;
+    mem_param_26797.references = NULL;
     
-    struct memblock ext_mem_27030;
+    struct memblock ext_mem_26847;
     
-    ext_mem_27030.references = NULL;
+    ext_mem_26847.references = NULL;
     
-    struct memblock ext_mem_27031;
+    struct memblock ext_mem_26848;
     
-    ext_mem_27031.references = NULL;
+    ext_mem_26848.references = NULL;
     
-    struct memblock mem_26977;
+    struct memblock mem_26794;
     
-    mem_26977.references = NULL;
+    mem_26794.references = NULL;
     
-    struct memblock mem_out_27246;
+    struct memblock mem_out_27063;
     
-    mem_out_27246.references = NULL;
+    mem_out_27063.references = NULL;
     
-    struct memblock mem_out_27245;
+    struct memblock mem_out_27062;
     
-    mem_out_27245.references = NULL;
+    mem_out_27062.references = NULL;
     
-    int64_t bytes_26976 = (int64_t) 8 * n_20621;
-    int64_t bytes_27034 = n_20621 * b_20622;
+    int64_t bytes_26793 = (int64_t) 8 * n_20438;
+    int64_t bytes_26851 = n_20438 * b_20439;
     
-    if (memblock_alloc(ctx, &mem_26977, bytes_26976, "mem_26977")) {
+    if (memblock_alloc(ctx, &mem_26794, bytes_26793, "mem_26794")) {
         err = 1;
         goto cleanup;
     }
-    for (int64_t nest_i_27247 = 0; nest_i_27247 < n_20621; nest_i_27247++) {
-        ((int64_t *) mem_26977.mem)[nest_i_27247] = (int64_t) 0;
+    for (int64_t nest_i_27064 = 0; nest_i_27064 < n_20438; nest_i_27064++) {
+        ((int64_t *) mem_26794.mem)[nest_i_27064] = (int64_t) 0;
     }
-    if (mem_26985_cached_sizze_27324 < n_20621) {
-        err = lexical_realloc(ctx, &mem_26985, &mem_26985_cached_sizze_27324, n_20621);
+    if (mem_26802_cached_sizze_27141 < n_20438) {
+        err = lexical_realloc(ctx, &mem_26802, &mem_26802_cached_sizze_27141, n_20438);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
-    if (mem_27017_cached_sizze_27325 < b_20622) {
-        err = lexical_realloc(ctx, &mem_27017, &mem_27017_cached_sizze_27325, b_20622);
+    if (mem_26834_cached_sizze_27142 < b_20439) {
+        err = lexical_realloc(ctx, &mem_26834, &mem_26834_cached_sizze_27142, b_20439);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
-    if (memblock_set(ctx, &mem_param_26980, &ks_mem_26974, "ks_mem_26974") != 0)
+    if (memblock_set(ctx, &mem_param_26797, &ks_mem_26791, "ks_mem_26791") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_param_26984, &pL_mem_26975, "pL_mem_26975") != 0)
+    if (memblock_set(ctx, &mem_param_26801, &pL_mem_26792, "pL_mem_26792") != 0)
         return 1;
-    for (int64_t i_22702 = 0; i_22702 < (int64_t) 32; i_22702++) {
-        int32_t binop_x_22705 = sext_i64_i32(i_22702);
-        int32_t binop_x_22706 = mul32(2, binop_x_22705);
-        int32_t zp_lhs_22707 = sub32(64, binop_x_22706);
-        int32_t ij_bits_22708 = add32(1, zp_lhs_22707);
-        int32_t up_to_22709 = shl32(1, ij_bits_22708);
-        int64_t tmp_22710 = sext_i32_i64(zp_lhs_22707);
-        bool bounds_invalid_upwards_22711 = slt32(zp_lhs_22707, 0);
-        bool valid_22713 = !bounds_invalid_upwards_22711;
-        bool range_valid_c_22714;
+    for (int64_t i_22100 = 0; i_22100 < (int64_t) 32; i_22100++) {
+        int32_t binop_x_22103 = sext_i64_i32(i_22100);
+        int32_t binop_x_22104 = mul32(2, binop_x_22103);
+        int32_t zp_lhs_22105 = sub32(64, binop_x_22104);
+        int32_t ij_bits_22106 = add32(1, zp_lhs_22105);
+        int32_t up_to_22107 = shl32(1, ij_bits_22106);
+        int64_t tmp_22108 = sext_i32_i64(zp_lhs_22105);
+        bool bounds_invalid_upwards_22109 = slt32(zp_lhs_22105, 0);
+        bool valid_22111 = !bounds_invalid_upwards_22109;
+        bool range_valid_c_22112;
         
-        if (!valid_22713) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "...", (long long) tmp_22710, " is invalid.", "-> #0  ../../ftbasics.fut:178:17-26\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../joins/ftSMJ.fut:18:97-99\n   #3  ../../joins/ftSMJ.fut:32:60-62\n   #4  ../../joins/ftSMJ.fut:86:88-91\n   #5  test_sort.fut:100:76-87\n   #6  test_sort.fut:98:1-101:27\n"));
+        if (!valid_22111) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "...", (long long) tmp_22108, " is invalid.", "-> #0  ../../ftbasics.fut:178:17-26\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../joins/ftSMJ.fut:18:97-99\n   #3  ../../joins/ftSMJ.fut:32:60-62\n   #4  test_sort.fut:124:89-91\n   #5  test_sort.fut:122:1-125:21\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
         
-        int64_t up_to_22730 = sext_i32_i64(up_to_22709);
-        bool bounds_invalid_upwards_22731 = slt32(up_to_22709, 0);
-        bool valid_22732 = !bounds_invalid_upwards_22731;
-        bool range_valid_c_22733;
+        int64_t up_to_22130 = sext_i32_i64(up_to_22107);
+        bool bounds_invalid_upwards_22131 = slt32(up_to_22107, 0);
+        bool valid_22132 = !bounds_invalid_upwards_22131;
+        bool range_valid_c_22133;
         
-        if (!valid_22732) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..<", (long long) up_to_22730, " is invalid.", "-> #0  ../../ftbasics.fut:200:21-30\n   #1  ../../joins/ftSMJ.fut:18:97-99\n   #2  ../../joins/ftSMJ.fut:32:60-62\n   #3  ../../joins/ftSMJ.fut:86:88-91\n   #4  test_sort.fut:100:76-87\n   #5  test_sort.fut:98:1-101:27\n"));
+        if (!valid_22132) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..<", (long long) up_to_22130, " is invalid.", "-> #0  ../../ftbasics.fut:200:21-30\n   #1  ../../joins/ftSMJ.fut:18:97-99\n   #2  ../../joins/ftSMJ.fut:32:60-62\n   #3  test_sort.fut:124:89-91\n   #4  test_sort.fut:122:1-125:21\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
         
-        int64_t distance_22712 = add64((int64_t) 1, tmp_22710);
+        int64_t distance_22110 = add64((int64_t) 1, tmp_22108);
         
-        for (int64_t i_26904 = 0; i_26904 < n_20621; i_26904++) {
-            int64_t eta_p_22716 = ((int64_t *) mem_param_26980.mem)[i_26904];
-            int8_t defunc_0_f_res_22717;
-            int8_t y_22719 = (int8_t) 0;
+        for (int64_t i_26721 = 0; i_26721 < n_20438; i_26721++) {
+            int64_t eta_p_22115 = ((int64_t *) mem_param_26797.mem)[i_26721];
+            int8_t defunc_0_f_res_22116;
+            int8_t y_22118 = (int8_t) 0;
             
-            for (int64_t i_22718 = 0; i_22718 < distance_22712; i_22718++) {
-                int32_t binop_x_22720 = sext_i64_i32(i_22718);
-                int32_t get_bit_arg0_22721 = add32(binop_x_22706, binop_x_22720);
-                int64_t i32_res_22722 = sext_i32_i64(get_bit_arg0_22721);
-                int64_t zgzg_res_22723 = ashr64(eta_p_22716, i32_res_22722);
-                int64_t za_res_22724 = (int64_t) 1 & zgzg_res_22723;
-                int32_t to_i32_res_22725 = sext_i64_i32(za_res_22724);
-                bool cond_22726 = get_bit_arg0_22721 == 63;
-                int32_t defunc_0_get_bit_res_22727;
+            for (int64_t i_22117 = 0; i_22117 < distance_22110; i_22117++) {
+                int32_t binop_x_22119 = sext_i64_i32(i_22117);
+                int32_t get_bit_arg0_22120 = add32(binop_x_22104, binop_x_22119);
+                int64_t i32_res_22121 = sext_i32_i64(get_bit_arg0_22120);
+                int64_t zgzg_res_22122 = ashr64(eta_p_22115, i32_res_22121);
+                int64_t za_res_22123 = (int64_t) 1 & zgzg_res_22122;
+                int32_t to_i32_res_22124 = sext_i64_i32(za_res_22123);
+                bool cond_22125 = get_bit_arg0_22120 == 63;
+                int32_t defunc_0_get_bit_res_22126;
                 
-                if (cond_22726) {
-                    int32_t defunc_0_get_bit_res_t_res_26891 = 1 ^ to_i32_res_22725;
+                if (cond_22125) {
+                    int32_t defunc_0_get_bit_res_t_res_26708 = 1 ^ to_i32_res_22124;
                     
-                    defunc_0_get_bit_res_22727 = defunc_0_get_bit_res_t_res_26891;
+                    defunc_0_get_bit_res_22126 = defunc_0_get_bit_res_t_res_26708;
                 } else {
-                    defunc_0_get_bit_res_22727 = to_i32_res_22725;
+                    defunc_0_get_bit_res_22126 = to_i32_res_22124;
                 }
                 
-                int8_t loopres_22729;
+                int8_t loopres_22128;
                 
-                if (futrts_set_bit_2464(ctx, &loopres_22729, binop_x_22720, y_22719, defunc_0_get_bit_res_22727) != 0) {
+                if (futrts_set_bit_2464(ctx, &loopres_22128, binop_x_22119, y_22118, defunc_0_get_bit_res_22126) != 0) {
                     err = 1;
                     goto cleanup;
                 }
                 
-                int8_t y_tmp_27253 = loopres_22729;
+                int8_t y_tmp_27070 = loopres_22128;
                 
-                y_22719 = y_tmp_27253;
+                y_22118 = y_tmp_27070;
             }
-            defunc_0_f_res_22717 = y_22719;
-            ((int8_t *) mem_26985)[i_26904] = defunc_0_f_res_22717;
+            defunc_0_f_res_22116 = y_22118;
+            ((int8_t *) mem_26802)[i_26721] = defunc_0_f_res_22116;
         }
         
-        int64_t defunc_0_radix_sort_multistep_res_22734;
-        int64_t offs_22737;
+        int64_t defunc_0_radix_sort_multistep_res_22134;
+        int64_t offs_22137;
         
-        if (memblock_set(ctx, &mem_param_26994, &mem_26977, "mem_26977") != 0)
+        if (memblock_set(ctx, &mem_param_26811, &mem_26794, "mem_26794") != 0)
             return 1;
-        offs_22737 = (int64_t) 0;
-        for (int64_t i_22736 = 0; i_22736 < up_to_22730; i_22736++) {
-            int32_t binop_x_22739 = sext_i64_i32(i_22736);
-            int8_t index_primexp_22740 = zext_i32_i8(binop_x_22739);
+        offs_22137 = (int64_t) 0;
+        for (int64_t i_22136 = 0; i_22136 < up_to_22130; i_22136++) {
+            int32_t binop_x_22139 = sext_i64_i32(i_22136);
+            int8_t index_primexp_22140 = zext_i32_i8(binop_x_22139);
             
-            if (memblock_alloc(ctx, &mem_26996, bytes_26976, "mem_26996")) {
+            if (memblock_alloc(ctx, &mem_26813, bytes_26793, "mem_26813")) {
                 err = 1;
                 goto cleanup;
             }
             
-            int64_t inpacc_26896;
-            int64_t defunc_0_reduce_res_26897;
-            int64_t inpacc_26792;
-            int64_t inpacc_26793;
+            int64_t inpacc_26713;
+            int64_t defunc_0_reduce_res_26714;
+            int64_t inpacc_26609;
+            int64_t inpacc_26610;
             
-            inpacc_26792 = (int64_t) 0;
-            inpacc_26793 = (int64_t) 0;
-            for (int64_t i_26922 = 0; i_26922 < n_20621; i_26922++) {
-                int8_t eta_p_26952 = ((int8_t *) mem_26985)[i_26922];
-                bool lifted_lambda_res_26953 = eta_p_26952 == index_primexp_22740;
-                int64_t bool_res_26954 = btoi_bool_i64(lifted_lambda_res_26953);
-                int64_t eta_p_26967 = ((int64_t *) mem_param_26994.mem)[i_26922];
-                int64_t defunc_0_op_res_26968 = add64(inpacc_26792, bool_res_26954);
-                int64_t zm_lhs_26969 = add64(offs_22737, defunc_0_op_res_26968);
-                int64_t lifted_lambda_res_26970 = sub64(zm_lhs_26969, (int64_t) 1);
-                int64_t defunc_0_f_res_26971 = mul64(bool_res_26954, lifted_lambda_res_26970);
-                int64_t defunc_0_f_res_26972 = add64(eta_p_26967, defunc_0_f_res_26971);
-                int64_t defunc_0_op_res_26841 = add64(inpacc_26793, bool_res_26954);
+            inpacc_26609 = (int64_t) 0;
+            inpacc_26610 = (int64_t) 0;
+            for (int64_t i_26739 = 0; i_26739 < n_20438; i_26739++) {
+                int8_t eta_p_26769 = ((int8_t *) mem_26802)[i_26739];
+                bool lifted_lambda_res_26770 = eta_p_26769 == index_primexp_22140;
+                int64_t bool_res_26771 = btoi_bool_i64(lifted_lambda_res_26770);
+                int64_t eta_p_26784 = ((int64_t *) mem_param_26811.mem)[i_26739];
+                int64_t defunc_0_op_res_26785 = add64(inpacc_26609, bool_res_26771);
+                int64_t zm_lhs_26786 = add64(offs_22137, defunc_0_op_res_26785);
+                int64_t lifted_lambda_res_26787 = sub64(zm_lhs_26786, (int64_t) 1);
+                int64_t defunc_0_f_res_26788 = mul64(bool_res_26771, lifted_lambda_res_26787);
+                int64_t defunc_0_f_res_26789 = add64(eta_p_26784, defunc_0_f_res_26788);
+                int64_t defunc_0_op_res_26658 = add64(inpacc_26610, bool_res_26771);
                 
-                ((int64_t *) mem_26996.mem)[i_26922] = defunc_0_f_res_26972;
+                ((int64_t *) mem_26813.mem)[i_26739] = defunc_0_f_res_26789;
                 
-                int64_t inpacc_tmp_27257 = defunc_0_op_res_26968;
-                int64_t inpacc_tmp_27258 = defunc_0_op_res_26841;
+                int64_t inpacc_tmp_27074 = defunc_0_op_res_26785;
+                int64_t inpacc_tmp_27075 = defunc_0_op_res_26658;
                 
-                inpacc_26792 = inpacc_tmp_27257;
-                inpacc_26793 = inpacc_tmp_27258;
+                inpacc_26609 = inpacc_tmp_27074;
+                inpacc_26610 = inpacc_tmp_27075;
             }
-            inpacc_26896 = inpacc_26792;
-            defunc_0_reduce_res_26897 = inpacc_26793;
+            inpacc_26713 = inpacc_26609;
+            defunc_0_reduce_res_26714 = inpacc_26610;
             
-            int64_t tmp_22765 = add64(offs_22737, defunc_0_reduce_res_26897);
+            int64_t tmp_22165 = add64(offs_22137, defunc_0_reduce_res_26714);
             
-            if (memblock_set(ctx, &mem_param_tmp_27254, &mem_26996, "mem_26996") != 0)
+            if (memblock_set(ctx, &mem_param_tmp_27071, &mem_26813, "mem_26813") != 0)
                 return 1;
             
-            int64_t offs_tmp_27255 = tmp_22765;
+            int64_t offs_tmp_27072 = tmp_22165;
             
-            if (memblock_set(ctx, &mem_param_26994, &mem_param_tmp_27254, "mem_param_tmp_27254") != 0)
+            if (memblock_set(ctx, &mem_param_26811, &mem_param_tmp_27071, "mem_param_tmp_27071") != 0)
                 return 1;
-            offs_22737 = offs_tmp_27255;
+            offs_22137 = offs_tmp_27072;
         }
-        if (memblock_set(ctx, &ext_mem_27005, &mem_param_26994, "mem_param_26994") != 0)
+        if (memblock_set(ctx, &ext_mem_26822, &mem_param_26811, "mem_param_26811") != 0)
             return 1;
-        defunc_0_radix_sort_multistep_res_22734 = offs_22737;
-        if (memblock_alloc(ctx, &mem_27007, bytes_26976, "mem_27007")) {
+        defunc_0_radix_sort_multistep_res_22134 = offs_22137;
+        if (memblock_alloc(ctx, &mem_26824, bytes_26793, "mem_26824")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_8b(ctx, 1, (uint64_t *) mem_27007.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_param_26980.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n_20621});
-        if (memblock_alloc(ctx, &mem_27009, bytes_27034, "mem_27009")) {
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_26824.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_param_26797.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n_20438});
+        if (memblock_alloc(ctx, &mem_26826, bytes_26851, "mem_26826")) {
             err = 1;
             goto cleanup;
         }
-        lmad_copy_1b(ctx, 2, (uint8_t *) mem_27009.mem, (int64_t) 0, (int64_t []) {b_20622, (int64_t) 1}, (uint8_t *) mem_param_26984.mem, (int64_t) 0, (int64_t []) {b_20622, (int64_t) 1}, (int64_t []) {n_20621, b_20622});
-        for (int64_t write_iter_26924 = 0; write_iter_26924 < n_20621; write_iter_26924++) {
-            int64_t write_iv_26927 = ((int64_t *) ext_mem_27005.mem)[write_iter_26924];
-            int64_t write_iv_26928 = ((int64_t *) mem_param_26980.mem)[write_iter_26924];
+        lmad_copy_1b(ctx, 2, (uint8_t *) mem_26826.mem, (int64_t) 0, (int64_t []) {b_20439, (int64_t) 1}, (uint8_t *) mem_param_26801.mem, (int64_t) 0, (int64_t []) {b_20439, (int64_t) 1}, (int64_t []) {n_20438, b_20439});
+        for (int64_t write_iter_26741 = 0; write_iter_26741 < n_20438; write_iter_26741++) {
+            int64_t write_iv_26744 = ((int64_t *) ext_mem_26822.mem)[write_iter_26741];
+            int64_t write_iv_26745 = ((int64_t *) mem_param_26797.mem)[write_iter_26741];
             
-            lmad_copy_1b(ctx, 1, (uint8_t *) mem_27017, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_param_26984.mem, (int64_t) 0 + write_iter_26924 * b_20622, (int64_t []) {(int64_t) 1}, (int64_t []) {b_20622});
-            if (sle64((int64_t) 0, write_iv_26927) && slt64(write_iv_26927, n_20621)) {
-                ((int64_t *) mem_27007.mem)[write_iv_26927] = write_iv_26928;
+            lmad_copy_1b(ctx, 1, (uint8_t *) mem_26834, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_param_26801.mem, (int64_t) 0 + write_iter_26741 * b_20439, (int64_t []) {(int64_t) 1}, (int64_t []) {b_20439});
+            if (sle64((int64_t) 0, write_iv_26744) && slt64(write_iv_26744, n_20438)) {
+                ((int64_t *) mem_26824.mem)[write_iv_26744] = write_iv_26745;
             }
-            if ((sle64((int64_t) 0, write_iv_26927) && slt64(write_iv_26927, n_20621)) && (sle64((int64_t) 0, (int64_t) 0) && slt64(b_20622 - (int64_t) 1, b_20622))) {
-                lmad_copy_1b(ctx, 1, (uint8_t *) mem_27009.mem, write_iv_26927 * b_20622, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_27017, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {b_20622});
+            if ((sle64((int64_t) 0, write_iv_26744) && slt64(write_iv_26744, n_20438)) && (sle64((int64_t) 0, (int64_t) 0) && slt64(b_20439 - (int64_t) 1, b_20439))) {
+                lmad_copy_1b(ctx, 1, (uint8_t *) mem_26826.mem, write_iv_26744 * b_20439, (int64_t []) {(int64_t) 1}, (uint8_t *) mem_26834, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {b_20439});
             }
         }
-        if (memblock_unref(ctx, &ext_mem_27005, "ext_mem_27005") != 0)
+        if (memblock_unref(ctx, &ext_mem_26822, "ext_mem_26822") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_tmp_27248, &mem_27007, "mem_27007") != 0)
+        if (memblock_set(ctx, &mem_param_tmp_27065, &mem_26824, "mem_26824") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_tmp_27249, &mem_27009, "mem_27009") != 0)
+        if (memblock_set(ctx, &mem_param_tmp_27066, &mem_26826, "mem_26826") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_26980, &mem_param_tmp_27248, "mem_param_tmp_27248") != 0)
+        if (memblock_set(ctx, &mem_param_26797, &mem_param_tmp_27065, "mem_param_tmp_27065") != 0)
             return 1;
-        if (memblock_set(ctx, &mem_param_26984, &mem_param_tmp_27249, "mem_param_tmp_27249") != 0)
+        if (memblock_set(ctx, &mem_param_26801, &mem_param_tmp_27066, "mem_param_tmp_27066") != 0)
             return 1;
     }
-    if (memblock_set(ctx, &ext_mem_27031, &mem_param_26980, "mem_param_26980") != 0)
+    if (memblock_set(ctx, &ext_mem_26848, &mem_param_26797, "mem_param_26797") != 0)
         return 1;
-    if (memblock_set(ctx, &ext_mem_27030, &mem_param_26984, "mem_param_26984") != 0)
+    if (memblock_set(ctx, &ext_mem_26847, &mem_param_26801, "mem_param_26801") != 0)
         return 1;
-    if (memblock_unref(ctx, &mem_26977, "mem_26977") != 0)
+    if (memblock_unref(ctx, &mem_26794, "mem_26794") != 0)
         return 1;
-    if (memblock_alloc(ctx, &mem_27033, bytes_26976, "mem_27033")) {
+    if (memblock_alloc(ctx, &mem_26850, bytes_26793, "mem_26850")) {
         err = 1;
         goto cleanup;
     }
-    lmad_copy_8b(ctx, 1, (uint64_t *) mem_27033.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_27031.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n_20621});
-    if (memblock_unref(ctx, &ext_mem_27031, "ext_mem_27031") != 0)
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_26850.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_26848.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n_20438});
+    if (memblock_unref(ctx, &ext_mem_26848, "ext_mem_26848") != 0)
         return 1;
-    if (memblock_alloc(ctx, &mem_27035, bytes_27034, "mem_27035")) {
+    if (memblock_alloc(ctx, &mem_26852, bytes_26851, "mem_26852")) {
         err = 1;
         goto cleanup;
     }
-    lmad_copy_1b(ctx, 2, (uint8_t *) mem_27035.mem, (int64_t) 0, (int64_t []) {b_20622, (int64_t) 1}, (uint8_t *) ext_mem_27030.mem, (int64_t) 0, (int64_t []) {b_20622, (int64_t) 1}, (int64_t []) {n_20621, b_20622});
-    if (memblock_unref(ctx, &ext_mem_27030, "ext_mem_27030") != 0)
+    lmad_copy_1b(ctx, 2, (uint8_t *) mem_26852.mem, (int64_t) 0, (int64_t []) {b_20439, (int64_t) 1}, (uint8_t *) ext_mem_26847.mem, (int64_t) 0, (int64_t []) {b_20439, (int64_t) 1}, (int64_t []) {n_20438, b_20439});
+    if (memblock_unref(ctx, &ext_mem_26847, "ext_mem_26847") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_27245, &mem_27033, "mem_27033") != 0)
+    if (memblock_set(ctx, &mem_out_27062, &mem_26850, "mem_26850") != 0)
         return 1;
-    if (memblock_set(ctx, &mem_out_27246, &mem_27035, "mem_27035") != 0)
+    if (memblock_set(ctx, &mem_out_27063, &mem_26852, "mem_26852") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_27322, &mem_out_27245, "mem_out_27245") != 0)
+    if (memblock_set(ctx, &*mem_out_p_27139, &mem_out_27062, "mem_out_27062") != 0)
         return 1;
-    if (memblock_set(ctx, &*mem_out_p_27323, &mem_out_27246, "mem_out_27246") != 0)
+    if (memblock_set(ctx, &*mem_out_p_27140, &mem_out_27063, "mem_out_27063") != 0)
         return 1;
     
   cleanup:
     {
-        free(mem_26985);
-        free(mem_27017);
-        if (memblock_unref(ctx, &mem_27035, "mem_27035") != 0)
+        free(mem_26802);
+        free(mem_26834);
+        if (memblock_unref(ctx, &mem_26852, "mem_26852") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27033, "mem_27033") != 0)
+        if (memblock_unref(ctx, &mem_26850, "mem_26850") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27249, "mem_param_tmp_27249") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27066, "mem_param_tmp_27066") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27248, "mem_param_tmp_27248") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27065, "mem_param_tmp_27065") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27009, "mem_27009") != 0)
+        if (memblock_unref(ctx, &mem_26826, "mem_26826") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_27007, "mem_27007") != 0)
+        if (memblock_unref(ctx, &mem_26824, "mem_26824") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_tmp_27254, "mem_param_tmp_27254") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_27071, "mem_param_tmp_27071") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_26996, "mem_26996") != 0)
+        if (memblock_unref(ctx, &mem_26813, "mem_26813") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_26994, "mem_param_26994") != 0)
+        if (memblock_unref(ctx, &mem_param_26811, "mem_param_26811") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27005, "ext_mem_27005") != 0)
+        if (memblock_unref(ctx, &ext_mem_26822, "ext_mem_26822") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_26984, "mem_param_26984") != 0)
+        if (memblock_unref(ctx, &mem_param_26801, "mem_param_26801") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_param_26980, "mem_param_26980") != 0)
+        if (memblock_unref(ctx, &mem_param_26797, "mem_param_26797") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27030, "ext_mem_27030") != 0)
+        if (memblock_unref(ctx, &ext_mem_26847, "ext_mem_26847") != 0)
             return 1;
-        if (memblock_unref(ctx, &ext_mem_27031, "ext_mem_27031") != 0)
+        if (memblock_unref(ctx, &ext_mem_26848, "ext_mem_26848") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_26977, "mem_26977") != 0)
+        if (memblock_unref(ctx, &mem_26794, "mem_26794") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_27246, "mem_out_27246") != 0)
+        if (memblock_unref(ctx, &mem_out_27063, "mem_out_27063") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_27245, "mem_out_27245") != 0)
+        if (memblock_unref(ctx, &mem_out_27062, "mem_out_27062") != 0)
             return 1;
     }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_greatest_divisor_leq_than_5346(struct futhark_context *ctx, int64_t *out_prim_out_27326, int64_t upper_bound_13924, int64_t n_13925)
+FUTHARK_FUN_ATTR int futrts_greatest_divisor_leq_than_5346(struct futhark_context *ctx, int64_t *out_prim_out_27143, int64_t upper_bound_13853, int64_t n_13854)
 {
     (void) ctx;
     
     int err = 0;
-    int64_t prim_out_27245;
-    bool upper_bound_13926 = sle64((int64_t) 1, upper_bound_13924);
-    bool assert_c_13928;
+    int64_t prim_out_27062;
+    bool upper_bound_13855 = sle64((int64_t) 1, upper_bound_13853);
+    bool assert_c_13857;
     
-    if (!upper_bound_13926) {
+    if (!upper_bound_13855) {
         set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Assertion is false: (upper_bound >= 1)", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:189:21-58\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    bool cond_13937 = slt64(upper_bound_13924, n_13925);
-    bool d_13946;
-    int64_t d_13947;
-    bool loop_while_13948;
-    int64_t d_13949;
+    bool cond_13866 = slt64(upper_bound_13853, n_13854);
+    bool d_13875;
+    int64_t d_13876;
+    bool loop_while_13877;
+    int64_t d_13878;
     
-    loop_while_13948 = cond_13937;
-    d_13949 = (int64_t) 1;
-    while (loop_while_13948) {
-        int64_t loopres_13950 = add64((int64_t) 1, d_13949);
-        bool zzero_13952 = loopres_13950 == (int64_t) 0;
-        bool nonzzero_13953 = !zzero_13952;
-        bool nonzzero_cert_13954;
+    loop_while_13877 = cond_13866;
+    d_13878 = (int64_t) 1;
+    while (loop_while_13877) {
+        int64_t loopres_13879 = add64((int64_t) 1, d_13878);
+        bool zzero_13881 = loopres_13879 == (int64_t) 0;
+        bool nonzzero_13882 = !zzero_13881;
+        bool nonzzero_cert_13883;
         
-        if (!nonzzero_13953) {
+        if (!nonzzero_13882) {
             set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:190:36-38\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
         
-        int64_t zg_lhs_13955 = sdiv64(n_13925, loopres_13950);
-        bool cond_13957 = slt64(upper_bound_13924, zg_lhs_13955);
-        bool loop_cond_13958;
+        int64_t zg_lhs_13884 = sdiv64(n_13854, loopres_13879);
+        bool cond_13886 = slt64(upper_bound_13853, zg_lhs_13884);
+        bool loop_cond_13887;
         
-        if (cond_13957) {
-            loop_cond_13958 = 1;
+        if (cond_13886) {
+            loop_cond_13887 = 1;
         } else {
-            int64_t znze_lhs_13962 = smod64(n_13925, loopres_13950);
-            bool loop_cond_f_res_13964 = znze_lhs_13962 == (int64_t) 0;
-            bool loop_cond_f_res_13965 = !loop_cond_f_res_13964;
+            int64_t znze_lhs_13891 = smod64(n_13854, loopres_13879);
+            bool loop_cond_f_res_13893 = znze_lhs_13891 == (int64_t) 0;
+            bool loop_cond_f_res_13894 = !loop_cond_f_res_13893;
             
-            loop_cond_13958 = loop_cond_f_res_13965;
+            loop_cond_13887 = loop_cond_f_res_13894;
         }
         
-        bool loop_while_tmp_27246 = loop_cond_13958;
-        int64_t d_tmp_27247 = loopres_13950;
+        bool loop_while_tmp_27063 = loop_cond_13887;
+        int64_t d_tmp_27064 = loopres_13879;
         
-        loop_while_13948 = loop_while_tmp_27246;
-        d_13949 = d_tmp_27247;
+        loop_while_13877 = loop_while_tmp_27063;
+        d_13878 = d_tmp_27064;
     }
-    d_13946 = loop_while_13948;
-    d_13947 = d_13949;
+    d_13875 = loop_while_13877;
+    d_13876 = d_13878;
     
-    bool zzero_13967 = d_13947 == (int64_t) 0;
-    bool nonzzero_13968 = !zzero_13967;
-    bool nonzzero_cert_13969;
+    bool zzero_13896 = d_13876 == (int64_t) 0;
+    bool nonzzero_13897 = !zzero_13896;
+    bool nonzzero_cert_13898;
     
-    if (!nonzzero_13968) {
+    if (!nonzzero_13897) {
         set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "division by zero", "-> #0  ../../lib/github.com/diku-dk/sorts/merge_sort.fut:191:7-9\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t greatest_divisor_leq_than_res_13970 = sdiv64(n_13925, d_13947);
+    int64_t greatest_divisor_leq_than_res_13899 = sdiv64(n_13854, d_13876);
     
-    prim_out_27245 = greatest_divisor_leq_than_res_13970;
-    *out_prim_out_27326 = prim_out_27245;
-    
-  cleanup:
-    { }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_lifted_normalizze_7703(struct futhark_context *ctx, int64_t *out_prim_out_27327, int64_t *out_prim_out_27328, int64_t *out_prim_out_27329, int64_t *out_prim_out_27330, int64_t *out_prim_out_27331, int64_t slo_14157, int64_t shi_14158, int64_t tlo_14159, int64_t thi_14160, int64_t count_14161)
-{
-    (void) ctx;
-    
-    int err = 0;
-    int64_t prim_out_27245;
-    int64_t prim_out_27246;
-    int64_t prim_out_27247;
-    int64_t prim_out_27248;
-    int64_t prim_out_27249;
-    int64_t min_arg1_14164 = add64(slo_14157, count_14161);
-    int64_t min_res_20648 = smin64(shi_14158, min_arg1_14164);
-    int64_t min_arg1_14168 = add64(tlo_14159, count_14161);
-    int64_t min_res_20651 = smin64(thi_14160, min_arg1_14168);
-    int64_t zp_lhs_14172 = sub64(min_res_20648, slo_14157);
-    int64_t zp_rhs_14174 = sub64(min_res_20651, tlo_14159);
-    int64_t zm_lhs_14176 = add64(zp_lhs_14172, zp_rhs_14174);
-    int64_t slack_14178 = sub64(zm_lhs_14176, count_14161);
-    int64_t min_res_20654 = smin64(zp_lhs_14172, slack_14178);
-    int64_t min_res_20657 = smin64(zp_rhs_14174, min_res_20654);
-    int64_t max_arg1_14188 = sub64(min_res_20648, min_res_20657);
-    int64_t max_res_20660 = smax64(slo_14157, max_arg1_14188);
-    int64_t max_arg1_14192 = sub64(min_res_20651, min_res_20657);
-    int64_t max_res_20663 = smax64(tlo_14159, max_arg1_14192);
-    int64_t zm_rhs_14196 = sub64(max_res_20660, slo_14157);
-    int64_t zm_lhs_14198 = sub64(count_14161, zm_rhs_14196);
-    int64_t zm_rhs_14200 = sub64(max_res_20663, tlo_14159);
-    int64_t count_14202 = sub64(zm_lhs_14198, zm_rhs_14200);
-    
-    prim_out_27245 = max_res_20660;
-    prim_out_27246 = min_res_20648;
-    prim_out_27247 = max_res_20663;
-    prim_out_27248 = min_res_20651;
-    prim_out_27249 = count_14202;
-    *out_prim_out_27327 = prim_out_27245;
-    *out_prim_out_27328 = prim_out_27246;
-    *out_prim_out_27329 = prim_out_27247;
-    *out_prim_out_27330 = prim_out_27248;
-    *out_prim_out_27331 = prim_out_27249;
+    prim_out_27062 = greatest_divisor_leq_than_res_13899;
+    *out_prim_out_27143 = prim_out_27062;
     
   cleanup:
     { }
     return err;
 }
-FUTHARK_FUN_ATTR int futrts_set_bit_2464(struct futhark_context *ctx, int8_t *out_prim_out_27332, int32_t bit_18795, int8_t x_18796, int32_t b_18797)
+FUTHARK_FUN_ATTR int futrts_lifted_normalizze_7715(struct futhark_context *ctx, int64_t *out_prim_out_27144, int64_t *out_prim_out_27145, int64_t *out_prim_out_27146, int64_t *out_prim_out_27147, int64_t *out_prim_out_27148, int64_t slo_14086, int64_t shi_14087, int64_t tlo_14088, int64_t thi_14089, int64_t count_14090)
 {
     (void) ctx;
     
     int err = 0;
-    int8_t prim_out_27245;
-    int32_t i32_arg0_18798 = shl32(1, bit_18795);
-    int32_t i32_arg_18800 = ~i32_arg0_18798;
-    int8_t unsign_arg0_20749 = zext_i32_i8(i32_arg_18800);
-    int8_t unsign_arg0_20752 = x_18796 & unsign_arg0_20749;
-    int32_t i32_arg0_18805 = shl32(b_18797, bit_18795);
-    int8_t unsign_arg0_20754 = zext_i32_i8(i32_arg0_18805);
-    int8_t unsign_arg0_20757 = unsign_arg0_20752 | unsign_arg0_20754;
+    int64_t prim_out_27062;
+    int64_t prim_out_27063;
+    int64_t prim_out_27064;
+    int64_t prim_out_27065;
+    int64_t prim_out_27066;
+    int64_t min_arg1_14093 = add64(slo_14086, count_14090);
+    int64_t min_res_20465 = smin64(shi_14087, min_arg1_14093);
+    int64_t min_arg1_14097 = add64(tlo_14088, count_14090);
+    int64_t min_res_20468 = smin64(thi_14089, min_arg1_14097);
+    int64_t zp_lhs_14101 = sub64(min_res_20465, slo_14086);
+    int64_t zp_rhs_14103 = sub64(min_res_20468, tlo_14088);
+    int64_t zm_lhs_14105 = add64(zp_lhs_14101, zp_rhs_14103);
+    int64_t slack_14107 = sub64(zm_lhs_14105, count_14090);
+    int64_t min_res_20471 = smin64(zp_lhs_14101, slack_14107);
+    int64_t min_res_20474 = smin64(zp_rhs_14103, min_res_20471);
+    int64_t max_arg1_14117 = sub64(min_res_20465, min_res_20474);
+    int64_t max_res_20477 = smax64(slo_14086, max_arg1_14117);
+    int64_t max_arg1_14121 = sub64(min_res_20468, min_res_20474);
+    int64_t max_res_20480 = smax64(tlo_14088, max_arg1_14121);
+    int64_t zm_rhs_14125 = sub64(max_res_20477, slo_14086);
+    int64_t zm_lhs_14127 = sub64(count_14090, zm_rhs_14125);
+    int64_t zm_rhs_14129 = sub64(max_res_20480, tlo_14088);
+    int64_t count_14131 = sub64(zm_lhs_14127, zm_rhs_14129);
     
-    prim_out_27245 = unsign_arg0_20757;
-    *out_prim_out_27332 = prim_out_27245;
+    prim_out_27062 = max_res_20477;
+    prim_out_27063 = min_res_20465;
+    prim_out_27064 = max_res_20480;
+    prim_out_27065 = min_res_20468;
+    prim_out_27066 = count_14131;
+    *out_prim_out_27144 = prim_out_27062;
+    *out_prim_out_27145 = prim_out_27063;
+    *out_prim_out_27146 = prim_out_27064;
+    *out_prim_out_27147 = prim_out_27065;
+    *out_prim_out_27148 = prim_out_27066;
+    
+  cleanup:
+    { }
+    return err;
+}
+FUTHARK_FUN_ATTR int futrts_set_bit_2464(struct futhark_context *ctx, int8_t *out_prim_out_27149, int32_t bit_18749, int8_t x_18750, int32_t b_18751)
+{
+    (void) ctx;
+    
+    int err = 0;
+    int8_t prim_out_27062;
+    int32_t i32_arg0_18752 = shl32(1, bit_18749);
+    int32_t i32_arg_18754 = ~i32_arg0_18752;
+    int8_t unsign_arg0_20566 = zext_i32_i8(i32_arg_18754);
+    int8_t unsign_arg0_20569 = x_18750 & unsign_arg0_20566;
+    int32_t i32_arg0_18759 = shl32(b_18751, bit_18749);
+    int8_t unsign_arg0_20571 = zext_i32_i8(i32_arg0_18759);
+    int8_t unsign_arg0_20574 = unsign_arg0_20569 | unsign_arg0_20571;
+    
+    prim_out_27062 = unsign_arg0_20574;
+    *out_prim_out_27149 = prim_out_27062;
     
   cleanup:
     { }
@@ -11878,46 +11878,46 @@ FUTHARK_FUN_ATTR int futrts_set_bit_2464(struct futhark_context *ctx, int8_t *ou
 
 int futhark_entry_merge_sort_i32(struct futhark_context *ctx, struct futhark_i32_1d **out0, struct futhark_u8_2d **out1, const struct futhark_i32_1d *in0, const struct futhark_u8_2d *in1)
 {
-    int64_t n_16379 = (int64_t) 0;
-    int64_t b_16380 = (int64_t) 0;
+    int64_t n_16308 = (int64_t) 0;
+    int64_t b_16309 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_27246;
+    struct memblock mem_out_27063;
     
-    mem_out_27246.references = NULL;
+    mem_out_27063.references = NULL;
     
-    struct memblock mem_out_27245;
+    struct memblock mem_out_27062;
     
-    mem_out_27245.references = NULL;
+    mem_out_27062.references = NULL;
     
-    struct memblock pL_mem_26975;
+    struct memblock pL_mem_26792;
     
-    pL_mem_26975.references = NULL;
+    pL_mem_26792.references = NULL;
     
-    struct memblock ks_mem_26974;
+    struct memblock ks_mem_26791;
     
-    ks_mem_26974.references = NULL;
-    ks_mem_26974 = in0->mem;
-    n_16379 = in0->shape[0];
-    pL_mem_26975 = in1->mem;
-    n_16379 = in1->shape[0];
-    b_16380 = in1->shape[1];
-    if (!(n_16379 == in0->shape[0] && (n_16379 == in1->shape[0] && b_16380 == in1->shape[1]))) {
+    ks_mem_26791.references = NULL;
+    ks_mem_26791 = in0->mem;
+    n_16308 = in0->shape[0];
+    pL_mem_26792 = in1->mem;
+    n_16308 = in1->shape[0];
+    b_16309 = in1->shape[1];
+    if (!(n_16308 == in0->shape[0] && (n_16308 == in1->shape[0] && b_16309 == in1->shape[1]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_merge_sort_i32(ctx, &mem_out_27245, &mem_out_27246, ks_mem_26974, pL_mem_26975, n_16379, b_16380);
+        ret = futrts_entry_merge_sort_i32(ctx, &mem_out_27062, &mem_out_27063, ks_mem_26791, pL_mem_26792, n_16308, b_16309);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->mem = mem_out_27245;
-            (*out0)->shape[0] = n_16379;
+            (*out0)->mem = mem_out_27062;
+            (*out0)->shape[0] = n_16308;
             assert((*out1 = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d))) != NULL);
-            (*out1)->mem = mem_out_27246;
-            (*out1)->shape[0] = n_16379;
-            (*out1)->shape[1] = b_16380;
+            (*out1)->mem = mem_out_27063;
+            (*out1)->shape[0] = n_16308;
+            (*out1)->shape[1] = b_16309;
         }
     }
     lock_unlock(&ctx->lock);
@@ -11925,46 +11925,46 @@ int futhark_entry_merge_sort_i32(struct futhark_context *ctx, struct futhark_i32
 }
 int futhark_entry_merge_sort_i64(struct futhark_context *ctx, struct futhark_i64_1d **out0, struct futhark_u8_2d **out1, const struct futhark_i64_1d *in0, const struct futhark_u8_2d *in1)
 {
-    int64_t n_18759 = (int64_t) 0;
-    int64_t b_18760 = (int64_t) 0;
+    int64_t n_18688 = (int64_t) 0;
+    int64_t b_18689 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_27246;
+    struct memblock mem_out_27063;
     
-    mem_out_27246.references = NULL;
+    mem_out_27063.references = NULL;
     
-    struct memblock mem_out_27245;
+    struct memblock mem_out_27062;
     
-    mem_out_27245.references = NULL;
+    mem_out_27062.references = NULL;
     
-    struct memblock pL_mem_26975;
+    struct memblock pL_mem_26792;
     
-    pL_mem_26975.references = NULL;
+    pL_mem_26792.references = NULL;
     
-    struct memblock ks_mem_26974;
+    struct memblock ks_mem_26791;
     
-    ks_mem_26974.references = NULL;
-    ks_mem_26974 = in0->mem;
-    n_18759 = in0->shape[0];
-    pL_mem_26975 = in1->mem;
-    n_18759 = in1->shape[0];
-    b_18760 = in1->shape[1];
-    if (!(n_18759 == in0->shape[0] && (n_18759 == in1->shape[0] && b_18760 == in1->shape[1]))) {
+    ks_mem_26791.references = NULL;
+    ks_mem_26791 = in0->mem;
+    n_18688 = in0->shape[0];
+    pL_mem_26792 = in1->mem;
+    n_18688 = in1->shape[0];
+    b_18689 = in1->shape[1];
+    if (!(n_18688 == in0->shape[0] && (n_18688 == in1->shape[0] && b_18689 == in1->shape[1]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_merge_sort_i64(ctx, &mem_out_27245, &mem_out_27246, ks_mem_26974, pL_mem_26975, n_18759, b_18760);
+        ret = futrts_entry_merge_sort_i64(ctx, &mem_out_27062, &mem_out_27063, ks_mem_26791, pL_mem_26792, n_18688, b_18689);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->mem = mem_out_27245;
-            (*out0)->shape[0] = n_18759;
+            (*out0)->mem = mem_out_27062;
+            (*out0)->shape[0] = n_18688;
             assert((*out1 = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d))) != NULL);
-            (*out1)->mem = mem_out_27246;
-            (*out1)->shape[0] = n_18759;
-            (*out1)->shape[1] = b_18760;
+            (*out1)->mem = mem_out_27063;
+            (*out1)->shape[0] = n_18688;
+            (*out1)->shape[1] = b_18689;
         }
     }
     lock_unlock(&ctx->lock);
@@ -11972,46 +11972,46 @@ int futhark_entry_merge_sort_i64(struct futhark_context *ctx, struct futhark_i64
 }
 int futhark_entry_radix_sort_i32(struct futhark_context *ctx, struct futhark_i32_1d **out0, struct futhark_u8_2d **out1, const struct futhark_i32_1d *in0, const struct futhark_u8_2d *in1)
 {
-    int64_t n_19742 = (int64_t) 0;
-    int64_t b_19743 = (int64_t) 0;
+    int64_t n_19615 = (int64_t) 0;
+    int64_t b_19616 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_27246;
+    struct memblock mem_out_27063;
     
-    mem_out_27246.references = NULL;
+    mem_out_27063.references = NULL;
     
-    struct memblock mem_out_27245;
+    struct memblock mem_out_27062;
     
-    mem_out_27245.references = NULL;
+    mem_out_27062.references = NULL;
     
-    struct memblock pL_mem_26975;
+    struct memblock pL_mem_26792;
     
-    pL_mem_26975.references = NULL;
+    pL_mem_26792.references = NULL;
     
-    struct memblock ks_mem_26974;
+    struct memblock ks_mem_26791;
     
-    ks_mem_26974.references = NULL;
-    ks_mem_26974 = in0->mem;
-    n_19742 = in0->shape[0];
-    pL_mem_26975 = in1->mem;
-    n_19742 = in1->shape[0];
-    b_19743 = in1->shape[1];
-    if (!(n_19742 == in0->shape[0] && (n_19742 == in1->shape[0] && b_19743 == in1->shape[1]))) {
+    ks_mem_26791.references = NULL;
+    ks_mem_26791 = in0->mem;
+    n_19615 = in0->shape[0];
+    pL_mem_26792 = in1->mem;
+    n_19615 = in1->shape[0];
+    b_19616 = in1->shape[1];
+    if (!(n_19615 == in0->shape[0] && (n_19615 == in1->shape[0] && b_19616 == in1->shape[1]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_radix_sort_i32(ctx, &mem_out_27245, &mem_out_27246, ks_mem_26974, pL_mem_26975, n_19742, b_19743);
+        ret = futrts_entry_radix_sort_i32(ctx, &mem_out_27062, &mem_out_27063, ks_mem_26791, pL_mem_26792, n_19615, b_19616);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->mem = mem_out_27245;
-            (*out0)->shape[0] = n_19742;
+            (*out0)->mem = mem_out_27062;
+            (*out0)->shape[0] = n_19615;
             assert((*out1 = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d))) != NULL);
-            (*out1)->mem = mem_out_27246;
-            (*out1)->shape[0] = n_19742;
-            (*out1)->shape[1] = b_19743;
+            (*out1)->mem = mem_out_27063;
+            (*out1)->shape[0] = n_19615;
+            (*out1)->shape[1] = b_19616;
         }
     }
     lock_unlock(&ctx->lock);
@@ -12019,46 +12019,46 @@ int futhark_entry_radix_sort_i32(struct futhark_context *ctx, struct futhark_i32
 }
 int futhark_entry_radix_sort_i64(struct futhark_context *ctx, struct futhark_i64_1d **out0, struct futhark_u8_2d **out1, const struct futhark_i64_1d *in0, const struct futhark_u8_2d *in1)
 {
-    int64_t n_20621 = (int64_t) 0;
-    int64_t b_20622 = (int64_t) 0;
+    int64_t n_20438 = (int64_t) 0;
+    int64_t b_20439 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_27246;
+    struct memblock mem_out_27063;
     
-    mem_out_27246.references = NULL;
+    mem_out_27063.references = NULL;
     
-    struct memblock mem_out_27245;
+    struct memblock mem_out_27062;
     
-    mem_out_27245.references = NULL;
+    mem_out_27062.references = NULL;
     
-    struct memblock pL_mem_26975;
+    struct memblock pL_mem_26792;
     
-    pL_mem_26975.references = NULL;
+    pL_mem_26792.references = NULL;
     
-    struct memblock ks_mem_26974;
+    struct memblock ks_mem_26791;
     
-    ks_mem_26974.references = NULL;
-    ks_mem_26974 = in0->mem;
-    n_20621 = in0->shape[0];
-    pL_mem_26975 = in1->mem;
-    n_20621 = in1->shape[0];
-    b_20622 = in1->shape[1];
-    if (!(n_20621 == in0->shape[0] && (n_20621 == in1->shape[0] && b_20622 == in1->shape[1]))) {
+    ks_mem_26791.references = NULL;
+    ks_mem_26791 = in0->mem;
+    n_20438 = in0->shape[0];
+    pL_mem_26792 = in1->mem;
+    n_20438 = in1->shape[0];
+    b_20439 = in1->shape[1];
+    if (!(n_20438 == in0->shape[0] && (n_20438 == in1->shape[0] && b_20439 == in1->shape[1]))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_radix_sort_i64(ctx, &mem_out_27245, &mem_out_27246, ks_mem_26974, pL_mem_26975, n_20621, b_20622);
+        ret = futrts_entry_radix_sort_i64(ctx, &mem_out_27062, &mem_out_27063, ks_mem_26791, pL_mem_26792, n_20438, b_20439);
         if (ret == 0) {
             assert((*out0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->mem = mem_out_27245;
-            (*out0)->shape[0] = n_20621;
+            (*out0)->mem = mem_out_27062;
+            (*out0)->shape[0] = n_20438;
             assert((*out1 = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d))) != NULL);
-            (*out1)->mem = mem_out_27246;
-            (*out1)->shape[0] = n_20621;
-            (*out1)->shape[1] = b_20622;
+            (*out1)->mem = mem_out_27063;
+            (*out1)->shape[0] = n_20438;
+            (*out1)->shape[1] = b_20439;
         }
     }
     lock_unlock(&ctx->lock);
