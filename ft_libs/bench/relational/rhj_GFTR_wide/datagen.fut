@@ -1,24 +1,31 @@
 import "../../../ftbasics"
 import "../../../joins/ftHashJoin"
 
--- Datagen, 4&8-byte integer keys.
+-- Datagen, 4-byte integer keys.
 -- Going by Wu et al's paper:
 -- 2 relations, sized n-2n
 -- 100% match rate (output size = 2*n)
--- Narrow join (no payloads).
+-- Wide-join - payloads vary from 4-8 bytes.
 -- Generated data is partitioned, and hash-join structures are computed.
 -- 
 -- ==
 -- entry: rhj0
--- compiled input { 33554432i64 }
+-- random input { [33554432][8]u8 [67108864][8]u8 }
 -- auto output
--- compiled input { 67108864i64 }
+-- random input { [33554432][16]u8 [67108864][16]u8 }
 -- auto output
--- compiled input { 134217728i64 }
+-- random input { [67108864][8]u8 [134217728][8]u8 }
+-- auto output
+-- random input { [67108864][16]u8 [134217728][16]u8 }
+-- auto output
+-- random input { [134217728][8]u8 [268435456][8]u8 }
+-- auto output
+-- random input { [134217728][16]u8 [268435456][16]u8 }
 -- auto output
 
-entry rhj0
-	(n : i64)
+entry rhj0 [n]
+	(pL1_ : [n][]u8)
+	(pL2_ : [2*n][]u8)
 =
 	let ks1_ : [n][4]u8 =   iota n
 		|> map (\i -> [(i/256/256/256)%256,(i/256/256)%256,(i/256)%256,i%256])
@@ -29,8 +36,6 @@ entry rhj0
 		|> map (\i -> [(i/256/256/256)%256,(i/256/256)%256,(i/256)%256,i%256])
 		|> map (map u8.i64)
 		|> sized (2*n)
-	let pL1_ : [n][0]u8 = (replicate n [])
-	let pL2_ : [2*n][0]u8 = (replicate (2*n) [])
 	let (ks1,pL1) = partition_and_deepen (i16.highest) (i64.highest) 16 ks1_ pL1_ 5000 2 2
 	let (ks2,pL2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ pL2_ 5000 2 2
 	let info2 = calc_partInfo 16 ks2 0 5000 2

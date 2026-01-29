@@ -7,7 +7,7 @@ if [ "$1" ] && [ "$1" -eq 0 ]; then
 	mv 'data/datagen:smj0_i64-#1_("67108864i64").out' data/i64_1.in
 	mv 'data/datagen:smj0_i64-#2_("134217728i64").out' data/i64_2.in
 elif [ "$1" ] && [ "$1" -eq 1 ]; then
-	futhark bench --backend=cuda --runs=50 test_matching.fut
+	futhark bench --backend=cuda --runs=25 test_matching.fut
 	rm -f data/i*.in
 	mv data/test_matching:smj1_i32-data_i32_0.in.out data/i32_0.in
 	mv data/test_matching:smj1_i32-data_i32_1.in.out data/i32_1.in

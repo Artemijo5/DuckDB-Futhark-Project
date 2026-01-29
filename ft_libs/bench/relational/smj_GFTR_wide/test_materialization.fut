@@ -17,10 +17,10 @@ import "../../../ftbasics"
 -- input @data/i32_3_2.in
 -- auto output
 
-entry smj3_i32 [n]
+entry smj3_i32 [n] [b]
 	(_ : [n]i32) (ix : [n]i64) (iy : [n]i64)
-	(pL1 : [][]u8) (pL2 : [][]u8)
+	(pL1 : [][b]u8) (pL2 : [][b]u8)
 =
-	let gpL1 = gather pL1 ix
-	let gpL2 = gather pL2 iy
+	let gpL1 = gather (replicate b 0) pL1 ix
+	let gpL2 = gather (replicate b 0) pL2 iy
 	in (gpL1, gpL2)
