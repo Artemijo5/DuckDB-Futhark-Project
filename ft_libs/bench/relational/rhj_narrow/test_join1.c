@@ -66,14 +66,21 @@ int futhark_values_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *ar
 int futhark_index_i64_1d(struct futhark_context *ctx, int64_t *out, struct futhark_i64_1d *arr, int64_t i0);
 unsigned char *futhark_values_raw_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
 const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_i64_1d *arr);
+struct futhark_u8_2d;
+struct futhark_u8_2d *futhark_new_u8_2d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1);
+struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, unsigned char *data, int64_t dim0, int64_t dim1);
+int futhark_free_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
+int futhark_values_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr, uint8_t *data);
+int futhark_index_u8_2d(struct futhark_context *ctx, uint8_t *out, struct futhark_u8_2d *arr, int64_t i0, int64_t i1);
+unsigned char *futhark_values_raw_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
+const int64_t *futhark_shape_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr);
 
 // Opaque values
 
 
 
 // Entry points
-int futhark_entry_smj2_i32(struct futhark_context *ctx, struct futhark_i32_1d **out0, struct futhark_i64_1d **out1, struct futhark_i64_1d **out2, const struct futhark_i32_1d *in0, const struct futhark_i64_1d *in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3);
-int futhark_entry_smj2_i64(struct futhark_context *ctx, struct futhark_i64_1d **out0, struct futhark_i64_1d **out1, struct futhark_i64_1d **out2, const struct futhark_i64_1d *in0, const struct futhark_i64_1d *in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3);
+int futhark_entry_rhj(struct futhark_context *ctx, struct futhark_u8_2d **out0, struct futhark_i64_1d **out1, struct futhark_i64_1d **out2, const struct futhark_u8_2d *in0, const struct futhark_u8_2d *in1, const struct futhark_u8_2d *in2, const struct futhark_u8_2d *in3, const int32_t in4, const struct futhark_i64_1d *in5, const struct futhark_i32_1d *in6, const struct futhark_i64_1d *in7, const struct futhark_i64_1d *in8);
 
 // Miscellaneous
 int futhark_context_sync(struct futhark_context *ctx);
@@ -2933,8 +2940,15 @@ static char* load_tuning_file(const char *fname,
 
 // End of tuning.h.
 
+const struct type type_ZMZNZMZNu8;
 const struct type type_ZMZNi32;
 const struct type type_ZMZNi64;
+void *futhark_new_u8_2d_wrap(struct futhark_context *ctx, const void *p, const int64_t *shape)
+{
+    return futhark_new_u8_2d(ctx, p, shape[0], shape[1]);
+}
+const struct array_aux type_ZMZNZMZNu8_aux = {.name ="[][]u8", .rank =2, .info =&u8_info, .new =(array_new_fn) futhark_new_u8_2d_wrap, .free =(array_free_fn) futhark_free_u8_2d, .shape =(array_shape_fn) futhark_shape_u8_2d, .values =(array_values_fn) futhark_values_u8_2d};
+const struct type type_ZMZNZMZNu8 = {.name ="[][]u8", .restore =(restore_fn) restore_array, .store =(store_fn) store_array, .free =(free_fn) free_array, .aux =&type_ZMZNZMZNu8_aux};
 void *futhark_new_i32_1d_wrap(struct futhark_context *ctx, const void *p, const int64_t *shape)
 {
     return futhark_new_i32_1d(ctx, p, shape[0]);
@@ -2947,42 +2961,30 @@ void *futhark_new_i64_1d_wrap(struct futhark_context *ctx, const void *p, const 
 }
 const struct array_aux type_ZMZNi64_aux = {.name ="[]i64", .rank =1, .info =&i64_info, .new =(array_new_fn) futhark_new_i64_1d_wrap, .free =(array_free_fn) futhark_free_i64_1d, .shape =(array_shape_fn) futhark_shape_i64_1d, .values =(array_values_fn) futhark_values_i64_1d};
 const struct type type_ZMZNi64 = {.name ="[]i64", .restore =(restore_fn) restore_array, .store =(store_fn) store_array, .free =(free_fn) free_array, .aux =&type_ZMZNi64_aux};
-const struct type *smj2_i32_out_types[] = {&type_ZMZNi32, &type_ZMZNi64, &type_ZMZNi64, NULL};
-bool smj2_i32_out_unique[] = {false, false, false};
-const struct type *smj2_i32_in_types[] = {&type_ZMZNi32, &type_ZMZNi64, &type_ZMZNi64, &type_ZMZNi64, NULL};
-bool smj2_i32_in_unique[] = {false, false, false, false};
-const char *smj2_i32_tuning_params[] = {NULL};
-int call_smj2_i32(struct futhark_context *ctx, void **outs, void **ins)
+const struct type *rhj_out_types[] = {&type_ZMZNZMZNu8, &type_ZMZNi64, &type_ZMZNi64, NULL};
+bool rhj_out_unique[] = {false, false, false};
+const struct type *rhj_in_types[] = {&type_ZMZNZMZNu8, &type_ZMZNZMZNu8, &type_ZMZNZMZNu8, &type_ZMZNZMZNu8, &type_i32, &type_ZMZNi64, &type_ZMZNi32, &type_ZMZNi64, &type_ZMZNi64, NULL};
+bool rhj_in_unique[] = {false, false, false, false, false, false, false, false, false};
+const char *rhj_tuning_params[] = {NULL};
+int call_rhj(struct futhark_context *ctx, void **outs, void **ins)
 {
-    struct futhark_i32_1d * *out0 = outs[0];
+    struct futhark_u8_2d * *out0 = outs[0];
     struct futhark_i64_1d * *out1 = outs[1];
     struct futhark_i64_1d * *out2 = outs[2];
-    struct futhark_i32_1d * in0 = *(struct futhark_i32_1d * *) ins[0];
-    struct futhark_i64_1d * in1 = *(struct futhark_i64_1d * *) ins[1];
-    struct futhark_i64_1d * in2 = *(struct futhark_i64_1d * *) ins[2];
-    struct futhark_i64_1d * in3 = *(struct futhark_i64_1d * *) ins[3];
+    struct futhark_u8_2d * in0 = *(struct futhark_u8_2d * *) ins[0];
+    struct futhark_u8_2d * in1 = *(struct futhark_u8_2d * *) ins[1];
+    struct futhark_u8_2d * in2 = *(struct futhark_u8_2d * *) ins[2];
+    struct futhark_u8_2d * in3 = *(struct futhark_u8_2d * *) ins[3];
+    int32_t in4 = *(int32_t *) ins[4];
+    struct futhark_i64_1d * in5 = *(struct futhark_i64_1d * *) ins[5];
+    struct futhark_i32_1d * in6 = *(struct futhark_i32_1d * *) ins[6];
+    struct futhark_i64_1d * in7 = *(struct futhark_i64_1d * *) ins[7];
+    struct futhark_i64_1d * in8 = *(struct futhark_i64_1d * *) ins[8];
     
-    return futhark_entry_smj2_i32(ctx, out0, out1, out2, in0, in1, in2, in3);
+    return futhark_entry_rhj(ctx, out0, out1, out2, in0, in1, in2, in3, in4, in5, in6, in7, in8);
 }
-const struct type *smj2_i64_out_types[] = {&type_ZMZNi64, &type_ZMZNi64, &type_ZMZNi64, NULL};
-bool smj2_i64_out_unique[] = {false, false, false};
-const struct type *smj2_i64_in_types[] = {&type_ZMZNi64, &type_ZMZNi64, &type_ZMZNi64, &type_ZMZNi64, NULL};
-bool smj2_i64_in_unique[] = {false, false, false, false};
-const char *smj2_i64_tuning_params[] = {NULL};
-int call_smj2_i64(struct futhark_context *ctx, void **outs, void **ins)
-{
-    struct futhark_i64_1d * *out0 = outs[0];
-    struct futhark_i64_1d * *out1 = outs[1];
-    struct futhark_i64_1d * *out2 = outs[2];
-    struct futhark_i64_1d * in0 = *(struct futhark_i64_1d * *) ins[0];
-    struct futhark_i64_1d * in1 = *(struct futhark_i64_1d * *) ins[1];
-    struct futhark_i64_1d * in2 = *(struct futhark_i64_1d * *) ins[2];
-    struct futhark_i64_1d * in3 = *(struct futhark_i64_1d * *) ins[3];
-    
-    return futhark_entry_smj2_i64(ctx, out0, out1, out2, in0, in1, in2, in3);
-}
-const struct type *types[] = {&type_i8, &type_i16, &type_i32, &type_i64, &type_u8, &type_u16, &type_u32, &type_u64, &type_f16, &type_f32, &type_f64, &type_bool, &type_ZMZNi32, &type_ZMZNi64, NULL};
-struct entry_point entry_points[] = {{.name ="smj2_i32", .f =call_smj2_i32, .tuning_params =smj2_i32_tuning_params, .in_types =smj2_i32_in_types, .out_types =smj2_i32_out_types, .in_unique =smj2_i32_in_unique, .out_unique =smj2_i32_out_unique}, {.name ="smj2_i64", .f =call_smj2_i64, .tuning_params =smj2_i64_tuning_params, .in_types =smj2_i64_in_types, .out_types =smj2_i64_out_types, .in_unique =smj2_i64_in_unique, .out_unique =smj2_i64_out_unique}, {.name =NULL}};
+const struct type *types[] = {&type_i8, &type_i16, &type_i32, &type_i64, &type_u8, &type_u16, &type_u32, &type_u64, &type_f16, &type_f32, &type_f64, &type_bool, &type_ZMZNZMZNu8, &type_ZMZNi32, &type_ZMZNi64, NULL};
+struct entry_point entry_points[] = {{.name ="rhj", .f =call_rhj, .tuning_params =rhj_tuning_params, .in_types =rhj_in_types, .out_types =rhj_out_types, .in_unique =rhj_in_unique, .out_unique =rhj_out_unique}, {.name =NULL}};
 struct futhark_prog prog = {.types =types, .entry_points =entry_points};
 int parse_options(struct futhark_context_config *cfg, int argc, char *const argv[])
 {
@@ -7801,9 +7803,7 @@ GEN_LMAD_COPY(8b, uint64_t)
 
 #define FUTHARK_FUN_ATTR static
 
-FUTHARK_FUN_ATTR int futrts_entry_smj2_i32(struct futhark_context *ctx, struct memblock *mem_out_p_10472, struct memblock *mem_out_p_10473, struct memblock *mem_out_p_10474, int64_t *out_prim_out_10475, struct memblock vs_mem_10425, struct memblock ix_mem_10426, struct memblock iy_mem_10427, struct memblock cm_mem_10428, int64_t n_9457);
-FUTHARK_FUN_ATTR int futrts_entry_smj2_i64(struct futhark_context *ctx, struct memblock *mem_out_p_10476, struct memblock *mem_out_p_10477, struct memblock *mem_out_p_10478, int64_t *out_prim_out_10479, struct memblock vs_mem_10425, struct memblock ix_mem_10426, struct memblock iy_mem_10427, struct memblock cm_mem_10428, int64_t n_9758);
-FUTHARK_FUN_ATTR int futrts_replicated_iota_7742(struct futhark_context *ctx, struct memblock *mem_out_p_10480, int64_t *out_prim_out_10481, struct memblock reps_mem_10425, int64_t n_8955);
+FUTHARK_FUN_ATTR int futrts_entry_rhj(struct futhark_context *ctx, struct memblock *mem_out_p_24020, struct memblock *mem_out_p_24021, struct memblock *mem_out_p_24022, int64_t *out_prim_out_24023, struct memblock ks1_mem_23557, struct memblock nameless_mem_23558, struct memblock ks2_mem_23559, struct memblock nameless_mem_23560, struct memblock bounds2_mem_23561, struct memblock depths2_mem_23562, struct memblock first_idx2_mem_23563, struct memblock last_idx2_mem_23564, int64_t n1_16484, int64_t b_16485, int64_t dz2080U_16486, int64_t n2_16487, int64_t dz2081U_16488, int64_t dz2082U_16489, int64_t dz2083U_16490, int64_t coercez2081Uz2088U_16491, int64_t coercez2082Uz2081U_16492, int32_t maxDepth2_16497);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -7819,6 +7819,93 @@ static int free_constants(struct futhark_context *ctx)
 {
     (void) ctx;
     return 0;
+}
+struct futhark_u8_2d {
+    struct memblock mem;
+    int64_t shape[2];
+};
+struct futhark_u8_2d *futhark_new_u8_2d(struct futhark_context *ctx, const uint8_t *data, int64_t dim0, int64_t dim1)
+{
+    int err = 0;
+    struct futhark_u8_2d *bad = NULL;
+    struct futhark_u8_2d *arr = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, dim0 * dim1 * 1, "arr->mem"))
+        err = 1;
+    arr->shape[0] = dim0;
+    arr->shape[1] = dim1;
+    if ((size_t) (dim0 * dim1) * 1 > 0)
+        memmove(arr->mem.mem + 0, (const unsigned char *) data + 0, (size_t) (dim0 * dim1) * 1);
+    lock_unlock(&ctx->lock);
+    if (err != 0) {
+        free(arr);
+        return bad;
+    }
+    return arr;
+}
+struct futhark_u8_2d *futhark_new_raw_u8_2d(struct futhark_context *ctx, unsigned char *data, int64_t dim0, int64_t dim1)
+{
+    int err = 0;
+    struct futhark_u8_2d *bad = NULL;
+    struct futhark_u8_2d *arr = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    arr->mem.mem = data;
+    arr->shape[0] = dim0;
+    arr->shape[1] = dim1;
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+int futhark_free_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr)
+{
+    lock_lock(&ctx->lock);
+    if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
+        return 1;
+    lock_unlock(&ctx->lock);
+    free(arr);
+    return 0;
+}
+int futhark_values_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr, uint8_t *data)
+{
+    int err = 0;
+    
+    lock_lock(&ctx->lock);
+    if ((size_t) (arr->shape[0] * arr->shape[1]) * 1 > 0)
+        memmove((unsigned char *) data + 0, arr->mem.mem + 0, (size_t) (arr->shape[0] * arr->shape[1]) * 1);
+    lock_unlock(&ctx->lock);
+    return err;
+}
+int futhark_index_u8_2d(struct futhark_context *ctx, uint8_t *out, struct futhark_u8_2d *arr, int64_t i0, int64_t i1)
+{
+    int err = 0;
+    
+    if ((i0 >= 0 && i0 < arr->shape[0]) && (i1 >= 0 && i1 < arr->shape[1])) {
+        lock_lock(&ctx->lock);
+        if (1 > 0)
+            memmove((unsigned char *) out + 0, arr->mem.mem + 1 * (i0 * arr->shape[1] + i1 * 1), 1);
+        lock_unlock(&ctx->lock);
+    } else {
+        err = 1;
+        set_error(ctx, strdup("Index out of bounds."));
+    }
+    return err;
+}
+unsigned char *futhark_values_raw_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr)
+{
+    (void) ctx;
+    return arr->mem.mem;
+}
+const int64_t *futhark_shape_u8_2d(struct futhark_context *ctx, struct futhark_u8_2d *arr)
+{
+    (void) ctx;
+    return arr->shape;
 }
 struct futhark_i32_1d {
     struct memblock mem;
@@ -7991,699 +8078,2590 @@ const int64_t *futhark_shape_i64_1d(struct futhark_context *ctx, struct futhark_
     return arr->shape;
 }
 
-FUTHARK_FUN_ATTR int futrts_entry_smj2_i32(struct futhark_context *ctx, struct memblock *mem_out_p_10472, struct memblock *mem_out_p_10473, struct memblock *mem_out_p_10474, int64_t *out_prim_out_10475, struct memblock vs_mem_10425, struct memblock ix_mem_10426, struct memblock iy_mem_10427, struct memblock cm_mem_10428, int64_t n_9457)
+FUTHARK_FUN_ATTR int futrts_entry_rhj(struct futhark_context *ctx, struct memblock *mem_out_p_24020, struct memblock *mem_out_p_24021, struct memblock *mem_out_p_24022, int64_t *out_prim_out_24023, struct memblock ks1_mem_23557, struct memblock nameless_mem_23558, struct memblock ks2_mem_23559, struct memblock nameless_mem_23560, struct memblock bounds2_mem_23561, struct memblock depths2_mem_23562, struct memblock first_idx2_mem_23563, struct memblock last_idx2_mem_23564, int64_t n1_16484, int64_t b_16485, int64_t dz2080U_16486, int64_t n2_16487, int64_t dz2081U_16488, int64_t dz2082U_16489, int64_t dz2083U_16490, int64_t coercez2081Uz2088U_16491, int64_t coercez2082Uz2081U_16492, int32_t maxDepth2_16497)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock mem_10441;
+    int64_t mem_23568_cached_sizze_24024 = 0;
+    unsigned char *mem_23568 = NULL;
+    int64_t mem_23575_cached_sizze_24025 = 0;
+    unsigned char *mem_23575 = NULL;
+    int64_t mem_23620_cached_sizze_24026 = 0;
+    unsigned char *mem_23620 = NULL;
+    int64_t mem_23621_cached_sizze_24027 = 0;
+    unsigned char *mem_23621 = NULL;
+    int64_t mem_23634_cached_sizze_24028 = 0;
+    unsigned char *mem_23634 = NULL;
+    int64_t mem_23641_cached_sizze_24029 = 0;
+    unsigned char *mem_23641 = NULL;
+    int64_t mem_23642_cached_sizze_24030 = 0;
+    unsigned char *mem_23642 = NULL;
+    int64_t mem_23655_cached_sizze_24031 = 0;
+    unsigned char *mem_23655 = NULL;
+    int64_t mem_23656_cached_sizze_24032 = 0;
+    unsigned char *mem_23656 = NULL;
+    int64_t mem_23669_cached_sizze_24033 = 0;
+    unsigned char *mem_23669 = NULL;
+    int64_t mem_23670_cached_sizze_24034 = 0;
+    unsigned char *mem_23670 = NULL;
+    int64_t mem_23683_cached_sizze_24035 = 0;
+    unsigned char *mem_23683 = NULL;
+    int64_t mem_23706_cached_sizze_24036 = 0;
+    unsigned char *mem_23706 = NULL;
+    int64_t mem_23723_cached_sizze_24037 = 0;
+    unsigned char *mem_23723 = NULL;
+    int64_t mem_23724_cached_sizze_24038 = 0;
+    unsigned char *mem_23724 = NULL;
+    int64_t mem_23737_cached_sizze_24039 = 0;
+    unsigned char *mem_23737 = NULL;
+    int64_t mem_23751_cached_sizze_24040 = 0;
+    unsigned char *mem_23751 = NULL;
+    int64_t mem_23753_cached_sizze_24041 = 0;
+    unsigned char *mem_23753 = NULL;
+    int64_t mem_23755_cached_sizze_24042 = 0;
+    unsigned char *mem_23755 = NULL;
+    int64_t mem_23775_cached_sizze_24043 = 0;
+    unsigned char *mem_23775 = NULL;
+    int64_t mem_23783_cached_sizze_24044 = 0;
+    unsigned char *mem_23783 = NULL;
+    int64_t mem_23785_cached_sizze_24045 = 0;
+    unsigned char *mem_23785 = NULL;
+    int64_t mem_23870_cached_sizze_24046 = 0;
+    unsigned char *mem_23870 = NULL;
+    int64_t mem_23871_cached_sizze_24047 = 0;
+    unsigned char *mem_23871 = NULL;
+    int64_t mem_23884_cached_sizze_24048 = 0;
+    unsigned char *mem_23884 = NULL;
+    struct memblock mem_23904;
     
-    mem_10441.references = NULL;
+    mem_23904.references = NULL;
     
-    struct memblock mem_10439;
+    struct memblock mem_param_tmp_24011;
     
-    mem_10439.references = NULL;
+    mem_param_tmp_24011.references = NULL;
     
-    struct memblock mem_10431;
+    struct memblock mem_param_tmp_24010;
     
-    mem_10431.references = NULL;
+    mem_param_tmp_24010.references = NULL;
     
-    struct memblock ext_mem_10429;
+    struct memblock mem_23863;
     
-    ext_mem_10429.references = NULL;
+    mem_23863.references = NULL;
     
-    struct memblock mem_out_10465;
+    struct memblock mem_23861;
     
-    mem_out_10465.references = NULL;
+    mem_23861.references = NULL;
     
-    struct memblock mem_out_10464;
+    struct memblock mem_param_23859;
     
-    mem_out_10464.references = NULL;
+    mem_param_23859.references = NULL;
     
-    struct memblock mem_out_10463;
+    struct memblock mem_param_23856;
     
-    mem_out_10463.references = NULL;
+    mem_param_23856.references = NULL;
     
-    int64_t prim_out_10466;
-    int64_t defunc_0_reduce_res_10341;
-    int64_t redout_10349 = (int64_t) 0;
+    struct memblock ext_mem_23901;
     
-    for (int64_t i_10350 = 0; i_10350 < n_9457; i_10350++) {
-        int64_t x_9984 = ((int64_t *) cm_mem_10428.mem)[i_10350];
-        int64_t defunc_0_op_res_9987 = add64(x_9984, redout_10349);
-        int64_t redout_tmp_10467 = defunc_0_op_res_9987;
-        
-        redout_10349 = redout_tmp_10467;
-    }
-    defunc_0_reduce_res_10341 = redout_10349;
+    ext_mem_23901.references = NULL;
     
-    int64_t ix_withoutOffs_9988;
+    struct memblock ext_mem_23902;
     
-    if (futrts_replicated_iota_7742(ctx, &ext_mem_10429, &ix_withoutOffs_9988, cm_mem_10428, n_9457) != 0) {
-        err = 1;
-        goto cleanup;
-    }
+    ext_mem_23902.references = NULL;
     
-    bool dim_match_10008 = defunc_0_reduce_res_10341 == ix_withoutOffs_9988;
-    bool empty_or_match_cert_10009;
+    struct memblock mem_23839;
     
-    if (!dim_match_10008) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  unknown location\n   #1  ../../../joins/ftSMJ.fut:332:10-88\n   #2  test_expansion.fut:18:13-19:60\n   #3  test_expansion.fut:15:1-20:36\n"));
+    mem_23839.references = NULL;
+    
+    struct memblock mem_23837;
+    
+    mem_23837.references = NULL;
+    
+    struct memblock mem_param_tmp_24003;
+    
+    mem_param_tmp_24003.references = NULL;
+    
+    struct memblock mem_param_tmp_24002;
+    
+    mem_param_tmp_24002.references = NULL;
+    
+    struct memblock mem_23817;
+    
+    mem_23817.references = NULL;
+    
+    struct memblock mem_23815;
+    
+    mem_23815.references = NULL;
+    
+    struct memblock mem_param_23813;
+    
+    mem_param_23813.references = NULL;
+    
+    struct memblock mem_param_23810;
+    
+    mem_param_23810.references = NULL;
+    
+    struct memblock ext_mem_23834;
+    
+    ext_mem_23834.references = NULL;
+    
+    struct memblock ext_mem_23835;
+    
+    ext_mem_23835.references = NULL;
+    
+    struct memblock mem_23807;
+    
+    mem_23807.references = NULL;
+    
+    struct memblock mem_23799;
+    
+    mem_23799.references = NULL;
+    
+    struct memblock mem_param_tmp_23982;
+    
+    mem_param_tmp_23982.references = NULL;
+    
+    struct memblock mem_23719;
+    
+    mem_23719.references = NULL;
+    
+    struct memblock mem_param_23717;
+    
+    mem_param_23717.references = NULL;
+    
+    struct memblock ext_mem_23749;
+    
+    ext_mem_23749.references = NULL;
+    
+    struct memblock mem_23714;
+    
+    mem_23714.references = NULL;
+    
+    struct memblock mem_param_tmp_23944;
+    
+    mem_param_tmp_23944.references = NULL;
+    
+    struct memblock mem_param_tmp_23943;
+    
+    mem_param_tmp_23943.references = NULL;
+    
+    struct memblock mem_23607;
+    
+    mem_23607.references = NULL;
+    
+    struct memblock mem_23605;
+    
+    mem_23605.references = NULL;
+    
+    struct memblock mem_param_23603;
+    
+    mem_param_23603.references = NULL;
+    
+    struct memblock mem_param_23600;
+    
+    mem_param_23600.references = NULL;
+    
+    struct memblock ext_mem_23700;
+    
+    ext_mem_23700.references = NULL;
+    
+    struct memblock ext_mem_23701;
+    
+    ext_mem_23701.references = NULL;
+    
+    struct memblock mem_23597;
+    
+    mem_23597.references = NULL;
+    
+    struct memblock mem_23589;
+    
+    mem_23589.references = NULL;
+    
+    struct memblock ext_mem_23704;
+    
+    ext_mem_23704.references = NULL;
+    
+    struct memblock mem_23566;
+    
+    mem_23566.references = NULL;
+    
+    struct memblock mem_out_23934;
+    
+    mem_out_23934.references = NULL;
+    
+    struct memblock mem_out_23933;
+    
+    mem_out_23933.references = NULL;
+    
+    struct memblock mem_out_23932;
+    
+    mem_out_23932.references = NULL;
+    
+    int64_t prim_out_23935;
+    double i64_res_19771 = sitofp_i64_f64(coercez2081Uz2088U_16491);
+    double log2_res_19772 = futrts_log2_64(i64_res_19771);
+    int32_t f64_res_19773 = fptosi_f64_i32(log2_res_19772);
+    int64_t i32_res_19774 = sext_i32_i64(f64_res_19773);
+    bool nonnegative_19775 = sle64((int64_t) 0, i32_res_19774);
+    bool nonzzero_cert_19776;
+    
+    if (!nonnegative_19775) {
+        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "negative exponent", "-> #0  test_join1.fut:25:49-72\n   #1  test_join1.fut:16:1-29:36\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t bytes_10430 = (int64_t) 8 * defunc_0_reduce_res_10341;
-    int64_t bytes_10438 = (int64_t) 8 * ix_withoutOffs_9988;
-    int64_t bytes_10440 = (int64_t) 4 * ix_withoutOffs_9988;
+    int64_t dzlz7bUZLztztZRz20U2z20UZLi32z20Uradix_sizzeZRz7dUzg_19777 = shl64((int64_t) 1, i32_res_19774);
+    bool dim_match_19778 = dzlz7bUZLztztZRz20U2z20UZLi32z20Uradix_sizzeZRz7dUzg_19777 == coercez2081Uz2088U_16491;
+    bool empty_or_match_cert_19779;
     
-    if (memblock_alloc(ctx, &mem_10431, bytes_10430, "mem_10431")) {
-        err = 1;
-        goto cleanup;
-    }
-    
-    int64_t inpacc_10343;
-    int64_t inpacc_10219 = (int64_t) 0;
-    
-    for (int64_t i_10368 = 0; i_10368 < defunc_0_reduce_res_10341; i_10368++) {
-        int64_t eta_p_10412 = ((int64_t *) ext_mem_10429.mem)[i_10368];
-        bool x_10416 = sle64((int64_t) 0, eta_p_10412);
-        bool y_10417 = slt64(eta_p_10412, n_9457);
-        bool bounds_check_10418 = x_10416 && y_10417;
-        bool index_certs_10419;
-        
-        if (!bounds_check_10418) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_10412, "] out of bounds for array of shape [", (long long) n_9457, "].", "-> #0  ../../../joins/ftSMJ.fut:334:55-65\n   #1  test_expansion.fut:18:13-19:60\n   #2  test_expansion.fut:15:1-20:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        bool cond_10384 = i_10368 == (int64_t) 0;
-        bool lifted_lambda_res_10385;
-        
-        if (cond_10384) {
-            lifted_lambda_res_10385 = 0;
-        } else {
-            bool y_10387 = slt64(i_10368, ix_withoutOffs_9988);
-            bool index_certs_10389;
-            
-            if (!y_10387) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_10368, "] out of bounds for array of shape [", (long long) ix_withoutOffs_9988, "].", "-> #0  ../../../joins/ftSMJ.fut:332:46-63\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftSMJ.fut:332:10-88\n   #3  test_expansion.fut:18:13-19:60\n   #4  test_expansion.fut:15:1-20:36\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            int64_t znze_rhs_10391 = sub64(i_10368, (int64_t) 1);
-            bool x_10392 = sle64((int64_t) 0, znze_rhs_10391);
-            bool y_10393 = slt64(znze_rhs_10391, ix_withoutOffs_9988);
-            bool bounds_check_10394 = x_10392 && y_10393;
-            bool index_certs_10395;
-            
-            if (!bounds_check_10394) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) znze_rhs_10391, "] out of bounds for array of shape [", (long long) ix_withoutOffs_9988, "].", "-> #0  ../../../joins/ftSMJ.fut:332:67-86\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftSMJ.fut:332:10-88\n   #3  test_expansion.fut:18:13-19:60\n   #4  test_expansion.fut:15:1-20:36\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            int64_t znze_rhs_10396 = ((int64_t *) ext_mem_10429.mem)[znze_rhs_10391];
-            bool lifted_lambda_res_f_res_10397 = eta_p_10412 == znze_rhs_10396;
-            bool lifted_lambda_res_f_res_10398 = !lifted_lambda_res_f_res_10397;
-            
-            lifted_lambda_res_10385 = lifted_lambda_res_f_res_10398;
-        }
-        
-        int64_t tmp_10413;
-        
-        if (lifted_lambda_res_10385) {
-            tmp_10413 = (int64_t) 1;
-        } else {
-            int64_t defunc_0_op_res_10414 = add64((int64_t) 1, inpacc_10219);
-            
-            tmp_10413 = defunc_0_op_res_10414;
-        }
-        
-        int64_t lifted_lambda_res_10415 = sub64(tmp_10413, (int64_t) 1);
-        int64_t lifted_lambda_res_10420 = ((int64_t *) iy_mem_10427.mem)[eta_p_10412];
-        int64_t defunc_0_f_res_10421 = add64(lifted_lambda_res_10415, lifted_lambda_res_10420);
-        int64_t tmp_10272;
-        
-        if (lifted_lambda_res_10385) {
-            tmp_10272 = (int64_t) 1;
-        } else {
-            int64_t defunc_0_op_res_10273 = add64((int64_t) 1, inpacc_10219);
-            
-            tmp_10272 = defunc_0_op_res_10273;
-        }
-        ((int64_t *) mem_10431.mem)[i_10368] = defunc_0_f_res_10421;
-        
-        int64_t inpacc_tmp_10468 = tmp_10272;
-        
-        inpacc_10219 = inpacc_tmp_10468;
-    }
-    inpacc_10343 = inpacc_10219;
-    if (memblock_alloc(ctx, &mem_10439, bytes_10438, "mem_10439")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc(ctx, &mem_10441, bytes_10440, "mem_10441")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_10374 = 0; i_10374 < ix_withoutOffs_9988; i_10374++) {
-        int64_t eta_p_10289 = ((int64_t *) ext_mem_10429.mem)[i_10374];
-        bool x_10291 = sle64((int64_t) 0, eta_p_10289);
-        bool y_10292 = slt64(eta_p_10289, n_9457);
-        bool bounds_check_10293 = x_10291 && y_10292;
-        bool index_certs_10294;
-        
-        if (!bounds_check_10293) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_10289, "] out of bounds for array of shape [", (long long) n_9457, "].", "-> #0  ../../../joins/ftSMJ.fut:335:47-57\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftSMJ.fut:335:36-58\n   #3  test_expansion.fut:18:13-19:60\n   #4  test_expansion.fut:15:1-20:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        bool index_certs_10300;
-        
-        if (!bounds_check_10293) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_10289, "] out of bounds for array of shape [", (long long) n_9457, "].", "-> #0  ../../../joins/ftSMJ.fut:336:47-57\n   #1  test_expansion.fut:18:13-19:60\n   #2  test_expansion.fut:15:1-20:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int32_t lifted_lambda_res_10295 = ((int32_t *) vs_mem_10425.mem)[eta_p_10289];
-        int64_t lifted_lambda_res_10301 = ((int64_t *) ix_mem_10426.mem)[eta_p_10289];
-        
-        ((int64_t *) mem_10439.mem)[i_10374] = lifted_lambda_res_10301;
-        ((int32_t *) mem_10441.mem)[i_10374] = lifted_lambda_res_10295;
-    }
-    if (memblock_unref(ctx, &ext_mem_10429, "ext_mem_10429") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_10463, &mem_10441, "mem_10441") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_10464, &mem_10439, "mem_10439") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_10465, &mem_10431, "mem_10431") != 0)
-        return 1;
-    prim_out_10466 = defunc_0_reduce_res_10341;
-    if (memblock_set(ctx, &*mem_out_p_10472, &mem_out_10463, "mem_out_10463") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_10473, &mem_out_10464, "mem_out_10464") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_10474, &mem_out_10465, "mem_out_10465") != 0)
-        return 1;
-    *out_prim_out_10475 = prim_out_10466;
-    
-  cleanup:
-    {
-        if (memblock_unref(ctx, &mem_10441, "mem_10441") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_10439, "mem_10439") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_10431, "mem_10431") != 0)
-            return 1;
-        if (memblock_unref(ctx, &ext_mem_10429, "ext_mem_10429") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_10465, "mem_out_10465") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_10464, "mem_out_10464") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_10463, "mem_out_10463") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_entry_smj2_i64(struct futhark_context *ctx, struct memblock *mem_out_p_10476, struct memblock *mem_out_p_10477, struct memblock *mem_out_p_10478, int64_t *out_prim_out_10479, struct memblock vs_mem_10425, struct memblock ix_mem_10426, struct memblock iy_mem_10427, struct memblock cm_mem_10428, int64_t n_9758)
-{
-    (void) ctx;
-    
-    int err = 0;
-    struct memblock mem_10441;
-    
-    mem_10441.references = NULL;
-    
-    struct memblock mem_10439;
-    
-    mem_10439.references = NULL;
-    
-    struct memblock mem_10431;
-    
-    mem_10431.references = NULL;
-    
-    struct memblock ext_mem_10429;
-    
-    ext_mem_10429.references = NULL;
-    
-    struct memblock mem_out_10465;
-    
-    mem_out_10465.references = NULL;
-    
-    struct memblock mem_out_10464;
-    
-    mem_out_10464.references = NULL;
-    
-    struct memblock mem_out_10463;
-    
-    mem_out_10463.references = NULL;
-    
-    int64_t prim_out_10466;
-    int64_t defunc_0_reduce_res_10341;
-    int64_t redout_10349 = (int64_t) 0;
-    
-    for (int64_t i_10350 = 0; i_10350 < n_9758; i_10350++) {
-        int64_t x_9984 = ((int64_t *) cm_mem_10428.mem)[i_10350];
-        int64_t defunc_0_op_res_9987 = add64(x_9984, redout_10349);
-        int64_t redout_tmp_10467 = defunc_0_op_res_9987;
-        
-        redout_10349 = redout_tmp_10467;
-    }
-    defunc_0_reduce_res_10341 = redout_10349;
-    
-    int64_t ix_withoutOffs_9988;
-    
-    if (futrts_replicated_iota_7742(ctx, &ext_mem_10429, &ix_withoutOffs_9988, cm_mem_10428, n_9758) != 0) {
-        err = 1;
-        goto cleanup;
-    }
-    
-    bool dim_match_10008 = defunc_0_reduce_res_10341 == ix_withoutOffs_9988;
-    bool empty_or_match_cert_10009;
-    
-    if (!dim_match_10008) {
-        set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  unknown location\n   #1  ../../../joins/ftSMJ.fut:332:10-88\n   #2  test_expansion.fut:36:13-37:60\n   #3  test_expansion.fut:33:1-38:36\n"));
+    if (!dim_match_19778) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) coercez2081Uz2088U_16491, "] cannot match shape of type `[", (long long) dzlz7bUZLztztZRz20U2z20UZLi32z20Uradix_sizzeZRz7dUzg_19777, "]i64`.", "-> #0  test_join1.fut:25:34-76\n   #1  test_join1.fut:16:1-29:36\n"));
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t bytes_10430 = (int64_t) 8 * defunc_0_reduce_res_10341;
-    int64_t bytes_10438 = (int64_t) 8 * ix_withoutOffs_9988;
+    bool dim_match_19780 = dzlz7bUZLztztZRz20U2z20UZLi32z20Uradix_sizzeZRz7dUzg_19777 == coercez2082Uz2081U_16492;
+    bool empty_or_match_cert_19781;
     
-    if (memblock_alloc(ctx, &mem_10431, bytes_10430, "mem_10431")) {
-        err = 1;
+    if (!dim_match_19780) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Value of (desugared) shape [", (long long) coercez2082Uz2081U_16492, "] cannot match shape of type `[", (long long) dzlz7bUZLztztZRz20U2z20UZLi32z20Uradix_sizzeZRz7dUzg_19777, "]i64`.", "-> #0  test_join1.fut:26:33-74\n   #1  test_join1.fut:16:1-29:36\n"));
+        err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t inpacc_10343;
-    int64_t inpacc_10219 = (int64_t) 0;
+    int32_t getRadix_arg1_19782 = sub32(f64_res_19773, 1);
+    int32_t zm_lhs_19783 = add32(8, f64_res_19773);
+    int32_t zs_lhs_19784 = sub32(zm_lhs_19783, 1);
+    int32_t i32_arg0_19785 = sdiv32(zs_lhs_19784, 8);
+    int64_t i32_res_19786 = sext_i32_i64(i32_arg0_19785);
+    bool bounds_invalid_upwards_19787 = slt64(i32_res_19786, (int64_t) 0);
+    bool valid_19788 = !bounds_invalid_upwards_19787;
+    bool range_valid_c_19789;
     
-    for (int64_t i_10368 = 0; i_10368 < defunc_0_reduce_res_10341; i_10368++) {
-        int64_t eta_p_10412 = ((int64_t *) ext_mem_10429.mem)[i_10368];
-        bool x_10416 = sle64((int64_t) 0, eta_p_10412);
-        bool y_10417 = slt64(eta_p_10412, n_9758);
-        bool bounds_check_10418 = x_10416 && y_10417;
-        bool index_certs_10419;
-        
-        if (!bounds_check_10418) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_10412, "] out of bounds for array of shape [", (long long) n_9758, "].", "-> #0  ../../../joins/ftSMJ.fut:334:55-65\n   #1  test_expansion.fut:36:13-37:60\n   #2  test_expansion.fut:33:1-38:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        bool cond_10384 = i_10368 == (int64_t) 0;
-        bool lifted_lambda_res_10385;
-        
-        if (cond_10384) {
-            lifted_lambda_res_10385 = 0;
-        } else {
-            bool y_10387 = slt64(i_10368, ix_withoutOffs_9988);
-            bool index_certs_10389;
-            
-            if (!y_10387) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i_10368, "] out of bounds for array of shape [", (long long) ix_withoutOffs_9988, "].", "-> #0  ../../../joins/ftSMJ.fut:332:46-63\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftSMJ.fut:332:10-88\n   #3  test_expansion.fut:36:13-37:60\n   #4  test_expansion.fut:33:1-38:36\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            int64_t znze_rhs_10391 = sub64(i_10368, (int64_t) 1);
-            bool x_10392 = sle64((int64_t) 0, znze_rhs_10391);
-            bool y_10393 = slt64(znze_rhs_10391, ix_withoutOffs_9988);
-            bool bounds_check_10394 = x_10392 && y_10393;
-            bool index_certs_10395;
-            
-            if (!bounds_check_10394) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) znze_rhs_10391, "] out of bounds for array of shape [", (long long) ix_withoutOffs_9988, "].", "-> #0  ../../../joins/ftSMJ.fut:332:67-86\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftSMJ.fut:332:10-88\n   #3  test_expansion.fut:36:13-37:60\n   #4  test_expansion.fut:33:1-38:36\n"));
-                err = FUTHARK_PROGRAM_ERROR;
-                goto cleanup;
-            }
-            
-            int64_t znze_rhs_10396 = ((int64_t *) ext_mem_10429.mem)[znze_rhs_10391];
-            bool lifted_lambda_res_f_res_10397 = eta_p_10412 == znze_rhs_10396;
-            bool lifted_lambda_res_f_res_10398 = !lifted_lambda_res_f_res_10397;
-            
-            lifted_lambda_res_10385 = lifted_lambda_res_f_res_10398;
-        }
-        
-        int64_t tmp_10413;
-        
-        if (lifted_lambda_res_10385) {
-            tmp_10413 = (int64_t) 1;
-        } else {
-            int64_t defunc_0_op_res_10414 = add64((int64_t) 1, inpacc_10219);
-            
-            tmp_10413 = defunc_0_op_res_10414;
-        }
-        
-        int64_t lifted_lambda_res_10415 = sub64(tmp_10413, (int64_t) 1);
-        int64_t lifted_lambda_res_10420 = ((int64_t *) iy_mem_10427.mem)[eta_p_10412];
-        int64_t defunc_0_f_res_10421 = add64(lifted_lambda_res_10415, lifted_lambda_res_10420);
-        int64_t tmp_10272;
-        
-        if (lifted_lambda_res_10385) {
-            tmp_10272 = (int64_t) 1;
-        } else {
-            int64_t defunc_0_op_res_10273 = add64((int64_t) 1, inpacc_10219);
-            
-            tmp_10272 = defunc_0_op_res_10273;
-        }
-        ((int64_t *) mem_10431.mem)[i_10368] = defunc_0_f_res_10421;
-        
-        int64_t inpacc_tmp_10468 = tmp_10272;
-        
-        inpacc_10219 = inpacc_tmp_10468;
+    if (!valid_19788) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..<", (long long) i32_res_19786, " is invalid.", "-> #0  ../../../joins/ftHashJoin.fut:41:17-32\n   #1  ../../../joins/ftHashJoin.fut:422:21-46\n   #2  /prelude/functional.fut:9:44-45\n   #3  test_join1.fut:16:1-29:36\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
     }
-    inpacc_10343 = inpacc_10219;
-    if (memblock_alloc(ctx, &mem_10439, bytes_10438, "mem_10439")) {
+    
+    int32_t i64_res_20350 = sext_i64_i32(b_16485);
+    int32_t zm_lhs_20351 = mul32(8, i64_res_20350);
+    int32_t min_arg1_20352 = sub32(zm_lhs_20351, 1);
+    int32_t min_res_20353 = smin32(getRadix_arg1_19782, min_arg1_20352);
+    int32_t i32_arg0_20357 = sub32(i64_res_20350, 1);
+    int64_t i32_res_20358 = sext_i32_i64(i32_arg0_20357);
+    int32_t zm_rhs_20360 = sdiv32(min_res_20353, 8);
+    int32_t zm_lhs_20361 = sub32(i64_res_20350, zm_rhs_20360);
+    int32_t i32_arg0_20362 = sub32(zm_lhs_20361, 1);
+    int64_t i32_res_20363 = sext_i32_i64(i32_arg0_20362);
+    int64_t zm_lhs_20364 = mul64((int64_t) 8, b_16485);
+    int64_t min_arg1_20365 = sub64(zm_lhs_20364, (int64_t) 1);
+    int64_t min_res_20366 = smin64(i32_res_20363, min_arg1_20365);
+    int32_t lastBit_20368 = smod32(min_res_20353, 8);
+    int32_t zm_lhs_20371 = sub32(8, lastBit_20368);
+    int32_t i32_arg0_20372 = sub32(zm_lhs_20371, 1);
+    int8_t unsign_arg0_20373 = zext_i32_i8(i32_arg0_20372);
+    int8_t unsign_arg0_20374 = lshr8((int8_t) -1, unsign_arg0_20373);
+    bool x_20383 = sle64((int64_t) 0, i32_res_20358);
+    bool y_20384 = slt64(i32_res_20358, b_16485);
+    bool bounds_check_20385 = x_20383 && y_20384;
+    bool index_certs_20386;
+    
+    if (!bounds_check_20385) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_20358, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:32:50-66\n   #1  test_join1.fut:16:1-29:36\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    bool x_20394 = sle64((int64_t) 0, min_res_20366);
+    bool y_20395 = slt64(min_res_20366, b_16485);
+    bool bounds_check_20396 = x_20394 && y_20395;
+    bool index_certs_20397;
+    
+    if (!bounds_check_20396) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) min_res_20366, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:33:40-56\n   #1  test_join1.fut:16:1-29:36\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_23565 = (int64_t) 8 * n1_16484;
+    
+    if (memblock_alloc(ctx, &mem_23566, bytes_23565, "mem_23566")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc(ctx, &mem_10441, bytes_10438, "mem_10441")) {
-        err = 1;
-        goto cleanup;
-    }
-    for (int64_t i_10374 = 0; i_10374 < ix_withoutOffs_9988; i_10374++) {
-        int64_t eta_p_10289 = ((int64_t *) ext_mem_10429.mem)[i_10374];
-        bool x_10291 = sle64((int64_t) 0, eta_p_10289);
-        bool y_10292 = slt64(eta_p_10289, n_9758);
-        bool bounds_check_10293 = x_10291 && y_10292;
-        bool index_certs_10294;
-        
-        if (!bounds_check_10293) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_10289, "] out of bounds for array of shape [", (long long) n_9758, "].", "-> #0  ../../../joins/ftSMJ.fut:335:47-57\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftSMJ.fut:335:36-58\n   #3  test_expansion.fut:36:13-37:60\n   #4  test_expansion.fut:33:1-38:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
+    if (mem_23568_cached_sizze_24024 < bytes_23565) {
+        err = lexical_realloc(ctx, &mem_23568, &mem_23568_cached_sizze_24024, bytes_23565);
+        if (err != FUTHARK_SUCCESS)
             goto cleanup;
-        }
-        
-        bool index_certs_10300;
-        
-        if (!bounds_check_10293) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_10289, "] out of bounds for array of shape [", (long long) n_9758, "].", "-> #0  ../../../joins/ftSMJ.fut:336:47-57\n   #1  test_expansion.fut:36:13-37:60\n   #2  test_expansion.fut:33:1-38:36\n"));
-            err = FUTHARK_PROGRAM_ERROR;
-            goto cleanup;
-        }
-        
-        int64_t lifted_lambda_res_10295 = ((int64_t *) vs_mem_10425.mem)[eta_p_10289];
-        int64_t lifted_lambda_res_10301 = ((int64_t *) ix_mem_10426.mem)[eta_p_10289];
-        
-        ((int64_t *) mem_10439.mem)[i_10374] = lifted_lambda_res_10301;
-        ((int64_t *) mem_10441.mem)[i_10374] = lifted_lambda_res_10295;
     }
-    if (memblock_unref(ctx, &ext_mem_10429, "ext_mem_10429") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_10463, &mem_10441, "mem_10441") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_10464, &mem_10439, "mem_10439") != 0)
-        return 1;
-    if (memblock_set(ctx, &mem_out_10465, &mem_10431, "mem_10431") != 0)
-        return 1;
-    prim_out_10466 = defunc_0_reduce_res_10341;
-    if (memblock_set(ctx, &*mem_out_p_10476, &mem_out_10463, "mem_out_10463") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_10477, &mem_out_10464, "mem_out_10464") != 0)
-        return 1;
-    if (memblock_set(ctx, &*mem_out_p_10478, &mem_out_10465, "mem_out_10465") != 0)
-        return 1;
-    *out_prim_out_10479 = prim_out_10466;
-    
-  cleanup:
-    {
-        if (memblock_unref(ctx, &mem_10441, "mem_10441") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_10439, "mem_10439") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_10431, "mem_10431") != 0)
-            return 1;
-        if (memblock_unref(ctx, &ext_mem_10429, "ext_mem_10429") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_10465, "mem_out_10465") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_10464, "mem_out_10464") != 0)
-            return 1;
-        if (memblock_unref(ctx, &mem_out_10463, "mem_out_10463") != 0)
-            return 1;
-    }
-    return err;
-}
-FUTHARK_FUN_ATTR int futrts_replicated_iota_7742(struct futhark_context *ctx, struct memblock *mem_out_p_10480, int64_t *out_prim_out_10481, struct memblock reps_mem_10425, int64_t n_8955)
-{
-    (void) ctx;
-    
-    int err = 0;
-    int64_t mem_10427_cached_sizze_10482 = 0;
-    unsigned char *mem_10427 = NULL;
-    int64_t mem_10435_cached_sizze_10483 = 0;
-    unsigned char *mem_10435 = NULL;
-    struct memblock mem_10443;
-    
-    mem_10443.references = NULL;
-    
-    struct memblock mem_out_10463;
-    
-    mem_out_10463.references = NULL;
-    
-    int64_t prim_out_10464;
-    int64_t bytes_10426 = (int64_t) 8 * n_8955;
-    
-    if (mem_10427_cached_sizze_10482 < bytes_10426) {
-        err = lexical_realloc(ctx, &mem_10427, &mem_10427_cached_sizze_10482, bytes_10426);
+    if (mem_23575_cached_sizze_24025 < b_16485) {
+        err = lexical_realloc(ctx, &mem_23575, &mem_23575_cached_sizze_24025, b_16485);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
     
-    int64_t discard_10355;
-    int64_t defunc_0_reduce_res_10092;
-    int64_t scanacc_10350;
-    int64_t redout_10352;
+    bool defunc_0_reduce_res_23370;
+    bool redout_23389 = 0;
     
-    scanacc_10350 = (int64_t) 0;
-    redout_10352 = (int64_t) 0;
-    for (int64_t i_10353 = 0; i_10353 < n_8955; i_10353++) {
-        int64_t x_10089 = ((int64_t *) reps_mem_10425.mem)[i_10353];
-        int64_t defunc_0_op_res_9844 = add64(x_10089, scanacc_10350);
-        int64_t defunc_0_op_res_9835 = add64(x_10089, redout_10352);
+    for (int64_t i_23392 = 0; i_23392 < n1_16484; i_23392++) {
+        for (int64_t i_23385 = 0; i_23385 < b_16485; i_23385++) {
+            int8_t eta_p_21286 = ((int8_t *) ks1_mem_23557.mem)[i_23392 * b_16485 + i_23385];
+            bool cond_21287 = sle64(i_23385, i32_res_20358);
+            bool cond_t_res_21288 = sle64(min_res_20366, i_23385);
+            bool x_21289 = cond_21287 && cond_t_res_21288;
+            int8_t lifted_lambda_res_21290;
+            
+            if (x_21289) {
+                lifted_lambda_res_21290 = eta_p_21286;
+            } else {
+                lifted_lambda_res_21290 = (int8_t) 0;
+            }
+            ((int8_t *) mem_23575)[i_23385] = lifted_lambda_res_21290;
+        }
         
-        ((int64_t *) mem_10427)[i_10353] = defunc_0_op_res_9844;
+        int8_t za_lhs_21291 = ((int8_t *) mem_23575)[i32_res_20358];
+        int8_t mod1_x_21292 = (int8_t) -1 & za_lhs_21291;
         
-        int64_t scanacc_tmp_10465 = defunc_0_op_res_9844;
-        int64_t redout_tmp_10467 = defunc_0_op_res_9835;
+        ((int8_t *) mem_23575)[i32_res_20358] = mod1_x_21292;
         
-        scanacc_10350 = scanacc_tmp_10465;
-        redout_10352 = redout_tmp_10467;
+        int8_t za_lhs_21294 = ((int8_t *) mem_23575)[min_res_20366];
+        int8_t tmp_21295 = unsign_arg0_20374 & za_lhs_21294;
+        
+        ((int8_t *) mem_23575)[min_res_20366] = tmp_21295;
+        
+        int64_t radix_to_idx_res_21297;
+        int64_t y_21299 = (int64_t) 0;
+        
+        for (int64_t i_21298 = 0; i_21298 < i32_res_19786; i_21298++) {
+            int64_t zm_lhs_21300 = sub64(b_16485, i_21298);
+            int64_t u8_arg0_21301 = sub64(zm_lhs_21300, (int64_t) 1);
+            bool x_21302 = sle64((int64_t) 0, u8_arg0_21301);
+            bool y_21303 = slt64(u8_arg0_21301, b_16485);
+            bool bounds_check_21304 = x_21302 && y_21303;
+            bool index_certs_21305;
+            
+            if (!bounds_check_21304) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) u8_arg0_21301, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:42:25-35\n   #1  ../../../joins/ftHashJoin.fut:422:21-46\n   #2  /prelude/functional.fut:9:44-45\n   #3  test_join1.fut:16:1-29:36\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            int8_t u8_arg0_21306 = ((int8_t *) mem_23575)[u8_arg0_21301];
+            int64_t u8_res_21307 = zext_i8_i64(u8_arg0_21306);
+            int64_t zlzl_rhs_21308 = mul64((int64_t) 8, i_21298);
+            int64_t r_21309 = shl64(u8_res_21307, zlzl_rhs_21308);
+            int64_t loopres_21310 = y_21299 | r_21309;
+            int64_t y_tmp_23940 = loopres_21310;
+            
+            y_21299 = y_tmp_23940;
+        }
+        radix_to_idx_res_21297 = y_21299;
+        
+        bool x_21312 = sle64((int64_t) 0, radix_to_idx_res_21297);
+        bool y_21313 = slt64(radix_to_idx_res_21297, dzlz7bUZLztztZRz20U2z20UZLi32z20Uradix_sizzeZRz7dUzg_19777);
+        bool bounds_check_21314 = x_21312 && y_21313;
+        bool index_certs_21315;
+        
+        if (!bounds_check_21314) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) radix_to_idx_res_21297, "] out of bounds for array of shape [", (long long) dzlz7bUZLztztZRz20U2z20UZLi32z20Uradix_sizzeZRz7dUzg_19777, "].", "-> #0  ../../../joins/ftHashJoin.fut:423:23-46\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftHashJoin.fut:423:10-72\n   #3  test_join1.fut:16:1-29:36\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int64_t tmp_21316 = ((int64_t *) first_idx2_mem_23563.mem)[radix_to_idx_res_21297];
+        int64_t tmp_21317 = ((int64_t *) last_idx2_mem_23564.mem)[radix_to_idx_res_21297];
+        bool lifted_lambda_res_21320 = tmp_21316 == tmp_21317;
+        bool lifted_lambda_res_21321 = !lifted_lambda_res_21320;
+        bool defunc_0_op_res_19825 = lifted_lambda_res_21321 || redout_23389;
+        
+        ((int64_t *) mem_23566.mem)[i_23392] = tmp_21316;
+        ((int64_t *) mem_23568)[i_23392] = tmp_21317;
+        
+        bool redout_tmp_23936 = defunc_0_op_res_19825;
+        
+        redout_23389 = redout_tmp_23936;
     }
-    discard_10355 = scanacc_10350;
-    defunc_0_reduce_res_10092 = redout_10352;
+    defunc_0_reduce_res_23370 = redout_23389;
     
-    int64_t bytes_10434 = (int64_t) 8 * defunc_0_reduce_res_10092;
+    bool cond_19826 = !defunc_0_reduce_res_23370;
+    int64_t map2_arg2_20883 = add64((int64_t) 1, i32_res_20358);
     
-    if (mem_10435_cached_sizze_10483 < bytes_10434) {
-        err = lexical_realloc(ctx, &mem_10435, &mem_10435_cached_sizze_10483, bytes_10434);
+    if (cond_19826) {
+        if (memblock_set(ctx, &ext_mem_23704, &mem_23566, "mem_23566") != 0)
+            return 1;
+    } else {
+        if (memblock_alloc(ctx, &mem_23589, bytes_23565, "mem_23589")) {
+            err = 1;
+            goto cleanup;
+        }
+        
+        int64_t defunc_0_reduce_res_23312;
+        int64_t redout_23396 = (int64_t) -9223372036854775808;
+        
+        for (int64_t i_23398 = 0; i_23398 < n1_16484; i_23398++) {
+            int64_t eta_p_21381 = ((int64_t *) mem_23566.mem)[i_23398];
+            int64_t eta_p_21382 = ((int64_t *) mem_23568)[i_23398];
+            int64_t zp_lhs_21383 = sub64(eta_p_21382, eta_p_21381);
+            int64_t lifted_lambda_res_21384 = add64((int64_t) 1, zp_lhs_21383);
+            int64_t max_res_19837 = smax64(lifted_lambda_res_21384, redout_23396);
+            
+            ((int64_t *) mem_23589.mem)[i_23398] = lifted_lambda_res_21384;
+            
+            int64_t redout_tmp_23941 = max_res_19837;
+            
+            redout_23396 = redout_tmp_23941;
+        }
+        defunc_0_reduce_res_23312 = redout_23396;
+        
+        double i64_res_19838 = sitofp_i64_f64(defunc_0_reduce_res_23312);
+        double log2_res_19839 = futrts_log2_64(i64_res_19838);
+        double ceil_res_19840 = futrts_ceil64(log2_res_19839);
+        int64_t f64_res_19841 = fptosi_f64_i64(ceil_res_19840);
+        int64_t num_iter_19842 = add64((int64_t) 1, f64_res_19841);
+        
+        if (memblock_alloc(ctx, &mem_23597, bytes_23565, "mem_23597")) {
+            err = 1;
+            goto cleanup;
+        }
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_23597.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_23566.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {n1_16484});
+        if (memblock_set(ctx, &mem_param_23600, &mem_23597, "mem_23597") != 0)
+            return 1;
+        if (memblock_set(ctx, &mem_param_23603, &mem_23589, "mem_23589") != 0)
+            return 1;
+        for (int64_t i_19846 = 0; i_19846 < num_iter_19842; i_19846++) {
+            if (memblock_alloc(ctx, &mem_23605, bytes_23565, "mem_23605")) {
+                err = 1;
+                goto cleanup;
+            }
+            if (memblock_alloc(ctx, &mem_23607, bytes_23565, "mem_23607")) {
+                err = 1;
+                goto cleanup;
+            }
+            for (int64_t i_23440 = 0; i_23440 < n1_16484; i_23440++) {
+                int64_t eta_p_21861 = ((int64_t *) mem_param_23600.mem)[i_23440];
+                int64_t eta_p_21862 = ((int64_t *) mem_23566.mem)[i_23440];
+                bool cond_21869 = slt64(eta_p_21861, (int64_t) 0);
+                bool cond_21878 = eta_p_21861 == eta_p_21862;
+                int64_t tmp_21885 = sub64(eta_p_21861, (int64_t) 1);
+                bool x_21886 = sle64((int64_t) 0, tmp_21885);
+                bool y_21887 = slt64(tmp_21885, dz2082U_16489);
+                bool bounds_check_21888 = x_21886 && y_21887;
+                bool protect_assert_disj_23918 = cond_21878 || bounds_check_21888;
+                bool protect_assert_disj_23924 = cond_21869 || protect_assert_disj_23918;
+                bool index_certs_21889;
+                
+                if (!protect_assert_disj_23924) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_21885, "] out of bounds for array of shape [", (long long) dz2082U_16489, "].", "-> #0  ../../../joins/ftHashJoin.fut:438:66-80\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                bool x_21903 = sle64((int64_t) 0, eta_p_21861);
+                bool y_21904 = slt64(eta_p_21861, dz2082U_16489);
+                bool bounds_check_21905 = x_21903 && y_21904;
+                bool protect_assert_disj_23927 = cond_21869 || bounds_check_21905;
+                bool index_certs_21906;
+                
+                if (!protect_assert_disj_23927) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_21861, "] out of bounds for array of shape [", (long long) dz2082U_16489, "].", "-> #0  ../../../joins/ftHashJoin.fut:440:33-45\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                int64_t eta_p_21860 = ((int64_t *) mem_param_23603.mem)[i_23440];
+                int64_t eta_p_21864 = ((int64_t *) mem_23568)[i_23440];
+                int64_t max_arg1_21865 = sdiv64(eta_p_21860, (int64_t) 2);
+                int64_t max_res_21866 = smax64((int64_t) 1, max_arg1_21865);
+                int64_t lifted_lambda_res_21870;
+                
+                if (cond_21869) {
+                    lifted_lambda_res_21870 = (int64_t) -1;
+                } else {
+                    lifted_lambda_res_21870 = eta_p_21861;
+                }
+                
+                bool x_23921 = !cond_21869;
+                bool x_23915 = !cond_21878;
+                bool protect_cond_conj_23925 = x_23915 && x_23921;
+                int64_t tmp_21890;
+                
+                if (protect_cond_conj_23925) {
+                    int64_t x_23919 = ((int64_t *) bounds2_mem_23561.mem)[tmp_21885];
+                    
+                    tmp_21890 = x_23919;
+                } else {
+                    tmp_21890 = (int64_t) 0;
+                }
+                
+                int64_t lmad_ext_23614 = b_16485 * tmp_21890;
+                int64_t lmad_ext_23615 = b_16485 * eta_p_21862;
+                int64_t cur_elem_21907;
+                
+                if (x_23921) {
+                    int64_t x_23928 = ((int64_t *) bounds2_mem_23561.mem)[eta_p_21861];
+                    
+                    cur_elem_21907 = x_23928;
+                } else {
+                    cur_elem_21907 = (int64_t) 0;
+                }
+                
+                int64_t lmad_ext_23617 = b_16485 * cur_elem_21907;
+                int64_t ext_23618;
+                
+                if (cond_21869) {
+                    ext_23618 = (int64_t) 0;
+                } else {
+                    ext_23618 = lmad_ext_23617;
+                }
+                
+                int64_t ext_23616;
+                
+                if (cond_21878) {
+                    ext_23616 = lmad_ext_23615;
+                } else {
+                    ext_23616 = lmad_ext_23614;
+                }
+                
+                int64_t ext_23619;
+                
+                if (cond_21869) {
+                    ext_23619 = (int64_t) 0;
+                } else {
+                    ext_23619 = ext_23616;
+                }
+                
+                int32_t lifted_lambda_res_21873;
+                int32_t lifted_lambda_res_21874;
+                
+                if (cond_21869) {
+                    bool y_23191 = slt64((int64_t) 0, n2_16487);
+                    bool index_certs_23192;
+                    
+                    if (!y_23191) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, "] out of bounds for array of shape [", (long long) n2_16487, "].", "-> #0  ../../../joins/ftHashJoin.fut:437:33-38\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  test_join1.fut:16:1-29:36\n"));
+                        err = FUTHARK_PROGRAM_ERROR;
+                        goto cleanup;
+                    }
+                    lifted_lambda_res_21873 = 0;
+                    lifted_lambda_res_21874 = 0;
+                } else {
+                    bool x_21908 = sle64((int64_t) 0, cur_elem_21907);
+                    bool y_21909 = slt64(cur_elem_21907, n2_16487);
+                    bool bounds_check_21910 = x_21908 && y_21909;
+                    bool index_certs_21911;
+                    
+                    if (!bounds_check_21910) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) cur_elem_21907, "] out of bounds for array of shape [", (long long) n2_16487, "].", "-> #0  ../../../joins/ftHashJoin.fut:440:30-46\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  test_join1.fut:16:1-29:36\n"));
+                        err = FUTHARK_PROGRAM_ERROR;
+                        goto cleanup;
+                    }
+                    
+                    bool y_21913 = slt64(eta_p_21861, dz2083U_16490);
+                    bool bounds_check_21914 = x_21903 && y_21913;
+                    bool index_certs_21915;
+                    
+                    if (!bounds_check_21914) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_21861, "] out of bounds for array of shape [", (long long) dz2083U_16490, "].", "-> #0  ../../../joins/ftHashJoin.fut:441:31-43\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  test_join1.fut:16:1-29:36\n"));
+                        err = FUTHARK_PROGRAM_ERROR;
+                        goto cleanup;
+                    }
+                    if (cond_21878) {
+                        bool x_23194 = sle64((int64_t) 0, eta_p_21862);
+                        bool y_23195 = slt64(eta_p_21862, n2_16487);
+                        bool bounds_check_23196 = x_23194 && y_23195;
+                        bool index_certs_23197;
+                        
+                        if (!bounds_check_23196) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_21862, "] out of bounds for array of shape [", (long long) n2_16487, "].", "-> #0  ../../../joins/ftHashJoin.fut:438:48-57\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  test_join1.fut:16:1-29:36\n"));
+                            err = FUTHARK_PROGRAM_ERROR;
+                            goto cleanup;
+                        }
+                    } else {
+                        bool x_21891 = sle64((int64_t) 0, tmp_21890);
+                        bool y_21892 = slt64(tmp_21890, n2_16487);
+                        bool bounds_check_21893 = x_21891 && y_21892;
+                        bool index_certs_21894;
+                        
+                        if (!bounds_check_21893) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_21890, "] out of bounds for array of shape [", (long long) n2_16487, "].", "-> #0  ../../../joins/ftHashJoin.fut:438:63-81\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  test_join1.fut:16:1-29:36\n"));
+                            err = FUTHARK_PROGRAM_ERROR;
+                            goto cleanup;
+                        }
+                    }
+                    
+                    int32_t prev_depth_21896;
+                    
+                    if (cond_21878) {
+                        prev_depth_21896 = 0;
+                    } else {
+                        bool y_21899 = slt64(tmp_21885, dz2083U_16490);
+                        bool bounds_check_21900 = x_21886 && y_21899;
+                        bool index_certs_21901;
+                        
+                        if (!bounds_check_21900) {
+                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_21885, "] out of bounds for array of shape [", (long long) dz2083U_16490, "].", "-> #0  ../../../joins/ftHashJoin.fut:439:56-70\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  test_join1.fut:16:1-29:36\n"));
+                            err = FUTHARK_PROGRAM_ERROR;
+                            goto cleanup;
+                        }
+                        
+                        int32_t prev_depth_f_res_21902 = ((int32_t *) depths2_mem_23562.mem)[tmp_21885];
+                        
+                        prev_depth_21896 = prev_depth_f_res_21902;
+                    }
+                    
+                    int32_t cur_depth_21916 = ((int32_t *) depths2_mem_23562.mem)[eta_p_21861];
+                    
+                    lifted_lambda_res_21873 = prev_depth_21896;
+                    lifted_lambda_res_21874 = cur_depth_21916;
+                }
+                
+                bool cond_21922 = slt64(lifted_lambda_res_21870, (int64_t) 0);
+                int32_t zm_lhs_21923 = mul32(f64_res_19773, lifted_lambda_res_21874);
+                int32_t byteSeq_eq_arg1_21924 = sub32(zm_lhs_21923, 1);
+                int32_t zm_rhs_21925 = sdiv32(byteSeq_eq_arg1_21924, 8);
+                int32_t zm_lhs_21926 = sub32(i64_res_20350, zm_rhs_21925);
+                int32_t i32_arg0_21927 = sub32(zm_lhs_21926, 1);
+                int64_t i32_res_21928 = sext_i32_i64(i32_arg0_21927);
+                int64_t j_m_i_21929 = sub64(map2_arg2_20883, i32_res_21928);
+                int64_t lifted_lambda_res_21930;
+                
+                if (cond_21922) {
+                    lifted_lambda_res_21930 = (int64_t) -1;
+                } else {
+                    int32_t min_res_21934 = smin32(min_arg1_20352, byteSeq_eq_arg1_21924);
+                    int32_t zm_rhs_21937 = sdiv32(min_res_21934, 8);
+                    int32_t zm_lhs_21938 = sub32(i64_res_20350, zm_rhs_21937);
+                    int32_t i32_arg0_21939 = sub32(zm_lhs_21938, 1);
+                    int64_t i32_res_21940 = sext_i32_i64(i32_arg0_21939);
+                    int64_t min_res_21943 = smin64(min_arg1_20365, i32_res_21940);
+                    bool x_21964 = sle64((int64_t) 0, min_res_21943);
+                    bool y_21965 = slt64(min_res_21943, b_16485);
+                    bool bounds_check_21966 = x_21964 && y_21965;
+                    bool index_certs_21967;
+                    
+                    if (!bounds_check_21966) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) min_res_21943, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:33:40-56\n   #1  test_join1.fut:16:1-29:36\n"));
+                        err = FUTHARK_PROGRAM_ERROR;
+                        goto cleanup;
+                    }
+                    
+                    bool empty_slice_21984 = j_m_i_21929 == (int64_t) 0;
+                    int64_t m_21985 = sub64(j_m_i_21929, (int64_t) 1);
+                    int64_t i_p_m_t_s_21986 = add64(i32_res_21928, m_21985);
+                    bool zzero_leq_i_p_m_t_s_21987 = sle64((int64_t) 0, i_p_m_t_s_21986);
+                    bool i_p_m_t_s_leq_w_21988 = slt64(i_p_m_t_s_21986, b_16485);
+                    bool zzero_lte_i_21989 = sle64((int64_t) 0, i32_res_21928);
+                    bool i_lte_j_21990 = sle64(i32_res_21928, map2_arg2_20883);
+                    bool y_21991 = i_p_m_t_s_leq_w_21988 && zzero_lte_i_21989;
+                    bool y_21992 = zzero_leq_i_p_m_t_s_21987 && y_21991;
+                    bool forwards_ok_21993 = i_lte_j_21990 && y_21992;
+                    bool ok_or_empty_21994 = empty_slice_21984 || forwards_ok_21993;
+                    bool index_certs_21995;
+                    
+                    if (!ok_or_empty_21994) {
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_21928, ":", (long long) map2_arg2_20883, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:51:49-60\n   #1  test_join1.fut:16:1-29:36\n"));
+                        err = FUTHARK_PROGRAM_ERROR;
+                        goto cleanup;
+                    }
+                    
+                    int32_t lastBit_21944 = smod32(min_res_21934, 8);
+                    int32_t zm_lhs_21945 = sub32(8, lastBit_21944);
+                    int32_t i32_arg0_21946 = sub32(zm_lhs_21945, 1);
+                    int8_t unsign_arg0_21947 = zext_i32_i8(i32_arg0_21946);
+                    int8_t unsign_arg0_21948 = lshr8((int8_t) -1, unsign_arg0_21947);
+                    
+                    if (mem_23620_cached_sizze_24026 < b_16485) {
+                        err = lexical_realloc(ctx, &mem_23620, &mem_23620_cached_sizze_24026, b_16485);
+                        if (err != FUTHARK_SUCCESS)
+                            goto cleanup;
+                    }
+                    if (mem_23621_cached_sizze_24027 < b_16485) {
+                        err = lexical_realloc(ctx, &mem_23621, &mem_23621_cached_sizze_24027, b_16485);
+                        if (err != FUTHARK_SUCCESS)
+                            goto cleanup;
+                    }
+                    for (int64_t i_23404 = 0; i_23404 < b_16485; i_23404++) {
+                        int8_t eta_p_22356 = ((int8_t *) ks1_mem_23557.mem)[i_23440 * b_16485 + i_23404];
+                        int8_t eta_p_22357 = ((int8_t *) ks2_mem_23559.mem)[ext_23618 + i_23404];
+                        bool cond_22359 = sle64(i_23404, i32_res_20358);
+                        bool cond_t_res_22360 = sle64(min_res_21943, i_23404);
+                        bool x_22361 = cond_22359 && cond_t_res_22360;
+                        int8_t lifted_lambda_res_22362;
+                        
+                        if (x_22361) {
+                            lifted_lambda_res_22362 = eta_p_22356;
+                        } else {
+                            lifted_lambda_res_22362 = (int8_t) 0;
+                        }
+                        
+                        int8_t lifted_lambda_res_22367;
+                        
+                        if (x_22361) {
+                            lifted_lambda_res_22367 = eta_p_22357;
+                        } else {
+                            lifted_lambda_res_22367 = (int8_t) 0;
+                        }
+                        ((int8_t *) mem_23620)[i_23404] = lifted_lambda_res_22367;
+                        ((int8_t *) mem_23621)[i_23404] = lifted_lambda_res_22362;
+                    }
+                    
+                    int8_t za_lhs_21961 = ((int8_t *) mem_23621)[i32_res_20358];
+                    int8_t mod1_x_21962 = (int8_t) -1 & za_lhs_21961;
+                    
+                    ((int8_t *) mem_23621)[i32_res_20358] = mod1_x_21962;
+                    
+                    int8_t za_lhs_21968 = ((int8_t *) mem_23621)[min_res_21943];
+                    int8_t tmp_21969 = unsign_arg0_21948 & za_lhs_21968;
+                    
+                    ((int8_t *) mem_23621)[min_res_21943] = tmp_21969;
+                    
+                    int8_t za_lhs_21978 = ((int8_t *) mem_23620)[i32_res_20358];
+                    int8_t mod1_x_21979 = (int8_t) -1 & za_lhs_21978;
+                    
+                    ((int8_t *) mem_23620)[i32_res_20358] = mod1_x_21979;
+                    
+                    int8_t za_lhs_21981 = ((int8_t *) mem_23620)[min_res_21943];
+                    int8_t tmp_21982 = unsign_arg0_21948 & za_lhs_21981;
+                    
+                    ((int8_t *) mem_23620)[min_res_21943] = tmp_21982;
+                    if (mem_23634_cached_sizze_24028 < j_m_i_21929) {
+                        err = lexical_realloc(ctx, &mem_23634, &mem_23634_cached_sizze_24028, j_m_i_21929);
+                        if (err != FUTHARK_SUCCESS)
+                            goto cleanup;
+                    }
+                    for (int64_t i_23409 = 0; i_23409 < j_m_i_21929; i_23409++) {
+                        int64_t slice_23552 = i32_res_21928 + i_23409;
+                        int8_t eta_p_21999 = ((int8_t *) mem_23621)[slice_23552];
+                        int8_t eta_p_22000 = ((int8_t *) mem_23620)[slice_23552];
+                        bool defunc_0_f_res_22001 = eta_p_21999 == eta_p_22000;
+                        
+                        ((bool *) mem_23634)[i_23409] = defunc_0_f_res_22001;
+                    }
+                    
+                    bool defunc_0_foldl_res_22002;
+                    bool acc_22004 = 1;
+                    
+                    for (int64_t i_22003 = 0; i_22003 < j_m_i_21929; i_22003++) {
+                        bool b_22005 = ((bool *) mem_23634)[i_22003];
+                        bool x_22006 = acc_22004 && b_22005;
+                        bool acc_tmp_23952 = x_22006;
+                        
+                        acc_22004 = acc_tmp_23952;
+                    }
+                    defunc_0_foldl_res_22002 = acc_22004;
+                    
+                    bool loop_cond_t_res_22085 = slt32(0, lifted_lambda_res_21874);
+                    int64_t lifted_lambda_res_f_res_22007;
+                    
+                    if (defunc_0_foldl_res_22002) {
+                        bool eq_x_y_23204 = eta_p_21862 == (int64_t) -1;
+                        bool eq_x_zz_23205 = eta_p_21862 == eta_p_21861;
+                        bool p_and_eq_x_y_23206 = cond_21869 && eq_x_y_23204;
+                        bool p_and_eq_x_y_23208 = eq_x_zz_23205 && x_23921;
+                        bool cond_23209 = p_and_eq_x_y_23206 || p_and_eq_x_y_23208;
+                        int32_t zm_lhs_23210 = mul32(f64_res_19773, lifted_lambda_res_21873);
+                        int32_t byteSeq_neq_arg1_23211 = sub32(zm_lhs_23210, 1);
+                        int32_t zm_rhs_23212 = sdiv32(byteSeq_neq_arg1_23211, 8);
+                        int32_t zm_lhs_23213 = sub32(i64_res_20350, zm_rhs_23212);
+                        int32_t i32_arg0_23214 = sub32(zm_lhs_23213, 1);
+                        int64_t i32_res_23215 = sext_i32_i64(i32_arg0_23214);
+                        int64_t j_m_i_23217 = sub64(map2_arg2_20883, i32_res_23215);
+                        bool cond_23218;
+                        
+                        if (cond_23209) {
+                            cond_23218 = 1;
+                        } else {
+                            int32_t min_res_23219 = smin32(min_arg1_20352, byteSeq_neq_arg1_23211);
+                            int32_t zm_rhs_23220 = sdiv32(min_res_23219, 8);
+                            int32_t zm_lhs_23221 = sub32(i64_res_20350, zm_rhs_23220);
+                            int32_t i32_arg0_23222 = sub32(zm_lhs_23221, 1);
+                            int64_t i32_res_23223 = sext_i32_i64(i32_arg0_23222);
+                            int64_t min_res_23224 = smin64(min_arg1_20365, i32_res_23223);
+                            bool x_23248 = sle64((int64_t) 0, min_res_23224);
+                            bool y_23249 = slt64(min_res_23224, b_16485);
+                            bool bounds_check_23250 = x_23248 && y_23249;
+                            bool index_certs_23251;
+                            
+                            if (!bounds_check_23250) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) min_res_23224, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:33:40-56\n   #1  test_join1.fut:16:1-29:36\n"));
+                                err = FUTHARK_PROGRAM_ERROR;
+                                goto cleanup;
+                            }
+                            
+                            bool empty_slice_23261 = j_m_i_23217 == (int64_t) 0;
+                            int64_t m_23262 = sub64(j_m_i_23217, (int64_t) 1);
+                            int64_t i_p_m_t_s_23263 = add64(i32_res_23215, m_23262);
+                            bool zzero_leq_i_p_m_t_s_23264 = sle64((int64_t) 0, i_p_m_t_s_23263);
+                            bool i_p_m_t_s_leq_w_23265 = slt64(i_p_m_t_s_23263, b_16485);
+                            bool zzero_lte_i_23266 = sle64((int64_t) 0, i32_res_23215);
+                            bool i_lte_j_23267 = sle64(i32_res_23215, map2_arg2_20883);
+                            bool y_23268 = i_p_m_t_s_leq_w_23265 && zzero_lte_i_23266;
+                            bool y_23269 = zzero_leq_i_p_m_t_s_23264 && y_23268;
+                            bool forwards_ok_23270 = i_lte_j_23267 && y_23269;
+                            bool ok_or_empty_23271 = empty_slice_23261 || forwards_ok_23270;
+                            bool index_certs_23272;
+                            
+                            if (!ok_or_empty_23271) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_23215, ":", (long long) map2_arg2_20883, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:59:50-61\n   #1  ../../../joins/ftHashJoin.fut:141:5-43\n   #2  ../../../joins/ftHashJoin.fut:449:31-73\n   #3  /prelude/soacs.fut:83:33-34\n   #4  /prelude/soacs.fut:83:37-53\n   #5  test_join1.fut:16:1-29:36\n"));
+                                err = FUTHARK_PROGRAM_ERROR;
+                                goto cleanup;
+                            }
+                            
+                            int32_t lastBit_23225 = smod32(min_res_23219, 8);
+                            int32_t zm_lhs_23226 = sub32(8, lastBit_23225);
+                            int32_t i32_arg0_23227 = sub32(zm_lhs_23226, 1);
+                            int8_t unsign_arg0_23228 = zext_i32_i8(i32_arg0_23227);
+                            int8_t unsign_arg0_23229 = lshr8((int8_t) -1, unsign_arg0_23228);
+                            
+                            if (mem_23669_cached_sizze_24033 < b_16485) {
+                                err = lexical_realloc(ctx, &mem_23669, &mem_23669_cached_sizze_24033, b_16485);
+                                if (err != FUTHARK_SUCCESS)
+                                    goto cleanup;
+                            }
+                            if (mem_23670_cached_sizze_24034 < b_16485) {
+                                err = lexical_realloc(ctx, &mem_23670, &mem_23670_cached_sizze_24034, b_16485);
+                                if (err != FUTHARK_SUCCESS)
+                                    goto cleanup;
+                            }
+                            for (int64_t i_23415 = 0; i_23415 < b_16485; i_23415++) {
+                                int8_t eta_p_23233 = ((int8_t *) ks1_mem_23557.mem)[i_23440 * b_16485 + i_23415];
+                                int8_t eta_p_23234 = ((int8_t *) ks2_mem_23559.mem)[ext_23619 + i_23415];
+                                bool cond_23235 = sle64(i_23415, i32_res_20358);
+                                bool cond_t_res_23236 = sle64(min_res_23224, i_23415);
+                                bool x_23237 = cond_23235 && cond_t_res_23236;
+                                int8_t lifted_lambda_res_23238;
+                                
+                                if (x_23237) {
+                                    lifted_lambda_res_23238 = eta_p_23233;
+                                } else {
+                                    lifted_lambda_res_23238 = (int8_t) 0;
+                                }
+                                
+                                int8_t lifted_lambda_res_23242;
+                                
+                                if (x_23237) {
+                                    lifted_lambda_res_23242 = eta_p_23234;
+                                } else {
+                                    lifted_lambda_res_23242 = (int8_t) 0;
+                                }
+                                ((int8_t *) mem_23669)[i_23415] = lifted_lambda_res_23242;
+                                ((int8_t *) mem_23670)[i_23415] = lifted_lambda_res_23238;
+                            }
+                            
+                            int8_t za_lhs_23245 = ((int8_t *) mem_23670)[i32_res_20358];
+                            int8_t mod1_x_23246 = (int8_t) -1 & za_lhs_23245;
+                            
+                            ((int8_t *) mem_23670)[i32_res_20358] = mod1_x_23246;
+                            
+                            int8_t za_lhs_23252 = ((int8_t *) mem_23670)[min_res_23224];
+                            int8_t tmp_23253 = unsign_arg0_23229 & za_lhs_23252;
+                            
+                            ((int8_t *) mem_23670)[min_res_23224] = tmp_23253;
+                            
+                            int8_t za_lhs_23255 = ((int8_t *) mem_23669)[i32_res_20358];
+                            int8_t mod1_x_23256 = (int8_t) -1 & za_lhs_23255;
+                            
+                            ((int8_t *) mem_23669)[i32_res_20358] = mod1_x_23256;
+                            
+                            int8_t za_lhs_23258 = ((int8_t *) mem_23669)[min_res_23224];
+                            int8_t tmp_23259 = unsign_arg0_23229 & za_lhs_23258;
+                            
+                            ((int8_t *) mem_23669)[min_res_23224] = tmp_23259;
+                            if (mem_23683_cached_sizze_24035 < j_m_i_23217) {
+                                err = lexical_realloc(ctx, &mem_23683, &mem_23683_cached_sizze_24035, j_m_i_23217);
+                                if (err != FUTHARK_SUCCESS)
+                                    goto cleanup;
+                            }
+                            for (int64_t i_23420 = 0; i_23420 < j_m_i_23217; i_23420++) {
+                                int64_t slice_23544 = i32_res_23215 + i_23420;
+                                int8_t eta_p_23276 = ((int8_t *) mem_23670)[slice_23544];
+                                int8_t eta_p_23277 = ((int8_t *) mem_23669)[slice_23544];
+                                bool defunc_0_f_res_23278 = eta_p_23276 == eta_p_23277;
+                                bool defunc_0_f_res_23279 = !defunc_0_f_res_23278;
+                                
+                                ((bool *) mem_23683)[i_23420] = defunc_0_f_res_23279;
+                            }
+                            
+                            bool defunc_0_foldl_res_23281;
+                            bool acc_23283 = 0;
+                            
+                            for (int64_t i_23282 = 0; i_23282 < j_m_i_23217; i_23282++) {
+                                bool b_23284 = ((bool *) mem_23683)[i_23282];
+                                bool defunc_0_f_res_23285 = acc_23283 || b_23284;
+                                bool acc_tmp_23956 = defunc_0_f_res_23285;
+                                
+                                acc_23283 = acc_tmp_23956;
+                            }
+                            defunc_0_foldl_res_23281 = acc_23283;
+                            cond_23218 = defunc_0_foldl_res_23281;
+                        }
+                        
+                        int64_t lifted_lambda_res_f_res_t_res_23286;
+                        
+                        if (cond_23218) {
+                            lifted_lambda_res_f_res_t_res_23286 = lifted_lambda_res_21870;
+                        } else {
+                            int64_t lifted_lambda_res_f_res_t_res_f_res_23287 = sub64(lifted_lambda_res_21870, max_res_21866);
+                            
+                            lifted_lambda_res_f_res_t_res_23286 = lifted_lambda_res_f_res_t_res_f_res_23287;
+                        }
+                        lifted_lambda_res_f_res_22007 = lifted_lambda_res_f_res_t_res_23286;
+                    } else {
+                        if (mem_23641_cached_sizze_24029 < b_16485) {
+                            err = lexical_realloc(ctx, &mem_23641, &mem_23641_cached_sizze_24029, b_16485);
+                            if (err != FUTHARK_SUCCESS)
+                                goto cleanup;
+                        }
+                        if (mem_23642_cached_sizze_24030 < b_16485) {
+                            err = lexical_realloc(ctx, &mem_23642, &mem_23642_cached_sizze_24030, b_16485);
+                            if (err != FUTHARK_SUCCESS)
+                                goto cleanup;
+                        }
+                        
+                        bool radix_gt_res_22086;
+                        int32_t radix_gt_res_22087;
+                        bool radix_gt_res_22088;
+                        bool loop_while_22089;
+                        int32_t p_22090;
+                        bool p_22091;
+                        
+                        loop_while_22089 = loop_cond_t_res_22085;
+                        p_22090 = 0;
+                        p_22091 = 0;
+                        while (loop_while_22089) {
+                            int32_t zt_rhs_22092 = add32(1, p_22090);
+                            int32_t zm_lhs_22093 = mul32(f64_res_19773, zt_rhs_22092);
+                            int32_t byteSeq_lt_arg1_22094 = sub32(zm_lhs_22093, 1);
+                            int32_t byteSeq_lt_arg0_22095 = mul32(f64_res_19773, p_22090);
+                            int32_t min_res_22096 = smin32(min_arg1_20352, byteSeq_lt_arg1_22094);
+                            int32_t zm_rhs_22097 = sdiv32(byteSeq_lt_arg0_22095, 8);
+                            int32_t zm_lhs_22098 = sub32(i64_res_20350, zm_rhs_22097);
+                            int32_t i32_arg0_22099 = sub32(zm_lhs_22098, 1);
+                            int64_t i32_res_22100 = sext_i32_i64(i32_arg0_22099);
+                            int32_t zm_rhs_22101 = sdiv32(min_res_22096, 8);
+                            int32_t zm_lhs_22102 = sub32(i64_res_20350, zm_rhs_22101);
+                            int32_t i32_arg0_22103 = sub32(zm_lhs_22102, 1);
+                            int64_t i32_res_22104 = sext_i32_i64(i32_arg0_22103);
+                            int64_t min_res_22105 = smin64(min_arg1_20365, i32_res_22104);
+                            bool x_22121 = sle64((int64_t) 0, i32_res_22100);
+                            bool y_22122 = slt64(i32_res_22100, b_16485);
+                            bool bounds_check_22123 = x_22121 && y_22122;
+                            bool index_certs_22124;
+                            
+                            if (!bounds_check_22123) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_22100, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:32:50-66\n   #1  test_join1.fut:16:1-29:36\n"));
+                                err = FUTHARK_PROGRAM_ERROR;
+                                goto cleanup;
+                            }
+                            
+                            bool x_22128 = sle64((int64_t) 0, min_res_22105);
+                            bool y_22129 = slt64(min_res_22105, b_16485);
+                            bool bounds_check_22130 = x_22128 && y_22129;
+                            bool index_certs_22131;
+                            
+                            if (!bounds_check_22130) {
+                                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) min_res_22105, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:33:40-56\n   #1  test_join1.fut:16:1-29:36\n"));
+                                err = FUTHARK_PROGRAM_ERROR;
+                                goto cleanup;
+                            }
+                            
+                            int32_t firstBit_22106 = smod32(byteSeq_lt_arg0_22095, 8);
+                            int32_t lastBit_22107 = smod32(min_res_22096, 8);
+                            int8_t unsign_arg0_22108 = zext_i32_i8(firstBit_22106);
+                            int8_t first_bitMask_22109 = shl8((int8_t) -1, unsign_arg0_22108);
+                            int32_t zm_lhs_22110 = sub32(8, lastBit_22107);
+                            int32_t i32_arg0_22111 = sub32(zm_lhs_22110, 1);
+                            int8_t unsign_arg0_22112 = zext_i32_i8(i32_arg0_22111);
+                            int8_t unsign_arg0_22113 = lshr8((int8_t) -1, unsign_arg0_22112);
+                            
+                            for (int64_t i_23426 = 0; i_23426 < b_16485; i_23426++) {
+                                int8_t eta_p_22481 = ((int8_t *) ks1_mem_23557.mem)[i_23440 * b_16485 + i_23426];
+                                int8_t eta_p_22482 = ((int8_t *) ks2_mem_23559.mem)[ext_23618 + i_23426];
+                                bool cond_22484 = sle64(i_23426, i32_res_22100);
+                                bool cond_t_res_22485 = sle64(min_res_22105, i_23426);
+                                bool x_22486 = cond_22484 && cond_t_res_22485;
+                                int8_t lifted_lambda_res_22487;
+                                
+                                if (x_22486) {
+                                    lifted_lambda_res_22487 = eta_p_22481;
+                                } else {
+                                    lifted_lambda_res_22487 = (int8_t) 0;
+                                }
+                                
+                                int8_t lifted_lambda_res_22492;
+                                
+                                if (x_22486) {
+                                    lifted_lambda_res_22492 = eta_p_22482;
+                                } else {
+                                    lifted_lambda_res_22492 = (int8_t) 0;
+                                }
+                                ((int8_t *) mem_23641)[i_23426] = lifted_lambda_res_22492;
+                                ((int8_t *) mem_23642)[i_23426] = lifted_lambda_res_22487;
+                            }
+                            
+                            int8_t za_lhs_22125 = ((int8_t *) mem_23642)[i32_res_22100];
+                            int8_t mod1_x_22126 = first_bitMask_22109 & za_lhs_22125;
+                            
+                            ((int8_t *) mem_23642)[i32_res_22100] = mod1_x_22126;
+                            
+                            int8_t za_lhs_22132 = ((int8_t *) mem_23642)[min_res_22105];
+                            int8_t tmp_22133 = unsign_arg0_22113 & za_lhs_22132;
+                            
+                            ((int8_t *) mem_23642)[min_res_22105] = tmp_22133;
+                            
+                            int8_t za_lhs_22142 = ((int8_t *) mem_23641)[i32_res_22100];
+                            int8_t mod1_x_22143 = first_bitMask_22109 & za_lhs_22142;
+                            
+                            ((int8_t *) mem_23641)[i32_res_22100] = mod1_x_22143;
+                            
+                            int8_t za_lhs_22145 = ((int8_t *) mem_23641)[min_res_22105];
+                            int8_t tmp_22146 = unsign_arg0_22113 & za_lhs_22145;
+                            
+                            ((int8_t *) mem_23641)[min_res_22105] = tmp_22146;
+                            
+                            int32_t zm_rhs_22148 = sdiv32(byteSeq_lt_arg1_22094, 8);
+                            int32_t zm_lhs_22149 = sub32(i64_res_20350, zm_rhs_22148);
+                            int32_t i32_arg0_22150 = sub32(zm_lhs_22149, 1);
+                            int64_t i32_res_22151 = sext_i32_i64(i32_arg0_22150);
+                            bool loop_cond_t_res_22152 = sle64(i32_res_22151, i32_res_22100);
+                            bool byteSeq_lt_res_22153;
+                            int64_t byteSeq_lt_res_22154;
+                            bool byteSeq_lt_res_22155;
+                            bool loop_while_22156;
+                            int64_t p_22157;
+                            bool p_22158;
+                            
+                            loop_while_22156 = loop_cond_t_res_22152;
+                            p_22157 = i32_res_22151;
+                            p_22158 = 0;
+                            while (loop_while_22156) {
+                                bool x_22159 = sle64((int64_t) 0, p_22157);
+                                bool y_22160 = slt64(p_22157, b_16485);
+                                bool bounds_check_22161 = x_22159 && y_22160;
+                                bool index_certs_22162;
+                                
+                                if (!bounds_check_22161) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) p_22157, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:89:19-29\n   #1  ../../../joins/ftHashJoin.fut:192:19-85\n   #2  ../../../joins/ftHashJoin.fut:452:22-61\n   #3  /prelude/soacs.fut:83:33-34\n   #4  /prelude/soacs.fut:83:37-53\n   #5  test_join1.fut:16:1-29:36\n"));
+                                    err = FUTHARK_PROGRAM_ERROR;
+                                    goto cleanup;
+                                }
+                                
+                                int8_t zl_lhs_22163 = ((int8_t *) mem_23642)[p_22157];
+                                int8_t zl_rhs_22164 = ((int8_t *) mem_23641)[p_22157];
+                                bool dlt_22165 = ult8(zl_lhs_22163, zl_rhs_22164);
+                                bool dgt_22166 = ult8(zl_rhs_22164, zl_lhs_22163);
+                                bool tmp_22167 = dlt_22165 || dgt_22166;
+                                bool cond_22168 = !tmp_22167;
+                                int64_t tmp_22169;
+                                
+                                if (cond_22168) {
+                                    int64_t tmp_t_res_23288 = add64((int64_t) 1, p_22157);
+                                    
+                                    tmp_22169 = tmp_t_res_23288;
+                                } else {
+                                    int64_t tmp_f_res_22171 = add64((int64_t) 1, i32_res_22100);
+                                    
+                                    tmp_22169 = tmp_f_res_22171;
+                                }
+                                
+                                bool cond_22172 = !dlt_22165;
+                                bool loop_cond_t_res_22173 = sle64(tmp_22169, i32_res_22100);
+                                bool x_22174 = cond_22172 && loop_cond_t_res_22173;
+                                bool loop_while_tmp_23962 = x_22174;
+                                int64_t p_tmp_23963 = tmp_22169;
+                                bool p_tmp_23964 = dlt_22165;
+                                
+                                loop_while_22156 = loop_while_tmp_23962;
+                                p_22157 = p_tmp_23963;
+                                p_22158 = p_tmp_23964;
+                            }
+                            byteSeq_lt_res_22153 = loop_while_22156;
+                            byteSeq_lt_res_22154 = p_22157;
+                            byteSeq_lt_res_22155 = p_22158;
+                            
+                            bool byteSeq_gt_res_22175;
+                            int64_t byteSeq_gt_res_22176;
+                            bool byteSeq_gt_res_22177;
+                            bool loop_while_22178;
+                            int64_t p_22179;
+                            bool p_22180;
+                            
+                            loop_while_22178 = loop_cond_t_res_22152;
+                            p_22179 = i32_res_22151;
+                            p_22180 = 0;
+                            while (loop_while_22178) {
+                                bool x_22181 = sle64((int64_t) 0, p_22179);
+                                bool y_22182 = slt64(p_22179, b_16485);
+                                bool bounds_check_22183 = x_22181 && y_22182;
+                                bool index_certs_22184;
+                                
+                                if (!bounds_check_22183) {
+                                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) p_22179, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:126:19-29\n   #1  ../../../joins/ftHashJoin.fut:193:19-85\n   #2  ../../../joins/ftHashJoin.fut:452:22-61\n   #3  /prelude/soacs.fut:83:33-34\n   #4  /prelude/soacs.fut:83:37-53\n   #5  test_join1.fut:16:1-29:36\n"));
+                                    err = FUTHARK_PROGRAM_ERROR;
+                                    goto cleanup;
+                                }
+                                
+                                int8_t zl_lhs_22185 = ((int8_t *) mem_23642)[p_22179];
+                                int8_t zl_rhs_22186 = ((int8_t *) mem_23641)[p_22179];
+                                bool dlt_22187 = ult8(zl_lhs_22185, zl_rhs_22186);
+                                bool dgt_22188 = ult8(zl_rhs_22186, zl_lhs_22185);
+                                bool tmp_22189 = dlt_22187 || dgt_22188;
+                                bool cond_22190 = !tmp_22189;
+                                int64_t tmp_22191;
+                                
+                                if (cond_22190) {
+                                    int64_t tmp_t_res_23289 = add64((int64_t) 1, p_22179);
+                                    
+                                    tmp_22191 = tmp_t_res_23289;
+                                } else {
+                                    int64_t tmp_f_res_22193 = add64((int64_t) 1, i32_res_22100);
+                                    
+                                    tmp_22191 = tmp_f_res_22193;
+                                }
+                                
+                                bool cond_22194 = !dgt_22188;
+                                bool loop_cond_t_res_22195 = sle64(tmp_22191, i32_res_22100);
+                                bool x_22196 = cond_22194 && loop_cond_t_res_22195;
+                                bool loop_while_tmp_23965 = x_22196;
+                                int64_t p_tmp_23966 = tmp_22191;
+                                bool p_tmp_23967 = dgt_22188;
+                                
+                                loop_while_22178 = loop_while_tmp_23965;
+                                p_22179 = p_tmp_23966;
+                                p_22180 = p_tmp_23967;
+                            }
+                            byteSeq_gt_res_22175 = loop_while_22178;
+                            byteSeq_gt_res_22176 = p_22179;
+                            byteSeq_gt_res_22177 = p_22180;
+                            
+                            bool tmp_22197 = byteSeq_lt_res_22155 || byteSeq_gt_res_22177;
+                            bool cond_22198 = !tmp_22197;
+                            int32_t tmp_22199;
+                            
+                            if (cond_22198) {
+                                tmp_22199 = zt_rhs_22092;
+                            } else {
+                                tmp_22199 = lifted_lambda_res_21874;
+                            }
+                            
+                            bool cond_22200 = !byteSeq_gt_res_22177;
+                            bool loop_cond_t_res_22201 = slt32(tmp_22199, lifted_lambda_res_21874);
+                            bool x_22202 = cond_22200 && loop_cond_t_res_22201;
+                            bool loop_while_tmp_23957 = x_22202;
+                            int32_t p_tmp_23958 = tmp_22199;
+                            bool p_tmp_23959 = byteSeq_gt_res_22177;
+                            
+                            loop_while_22089 = loop_while_tmp_23957;
+                            p_22090 = p_tmp_23958;
+                            p_22091 = p_tmp_23959;
+                        }
+                        radix_gt_res_22086 = loop_while_22089;
+                        radix_gt_res_22087 = p_22090;
+                        radix_gt_res_22088 = p_22091;
+                        
+                        int64_t lifted_lambda_res_f_res_f_res_22203;
+                        
+                        if (radix_gt_res_22088) {
+                            bool eq_x_y_23292 = eta_p_21864 == (int64_t) -1;
+                            bool eq_x_zz_23293 = eta_p_21864 == eta_p_21861;
+                            bool p_and_eq_x_y_23294 = cond_21869 && eq_x_y_23292;
+                            bool p_and_eq_x_y_23296 = eq_x_zz_23293 && x_23921;
+                            bool cond_23297 = p_and_eq_x_y_23294 || p_and_eq_x_y_23296;
+                            int64_t lifted_lambda_res_f_res_f_res_t_res_23298;
+                            
+                            if (cond_23297) {
+                                lifted_lambda_res_f_res_f_res_t_res_23298 = (int64_t) -1;
+                            } else {
+                                int64_t min_arg1_23299 = add64(max_res_21866, lifted_lambda_res_21870);
+                                int64_t min_res_23300 = smin64(eta_p_21864, min_arg1_23299);
+                                
+                                lifted_lambda_res_f_res_f_res_t_res_23298 = min_res_23300;
+                            }
+                            lifted_lambda_res_f_res_f_res_22203 = lifted_lambda_res_f_res_f_res_t_res_23298;
+                        } else {
+                            bool eq_x_zz_22342 = (int64_t) 0 == eta_p_21861;
+                            bool p_and_eq_x_y_22345 = eq_x_zz_22342 && x_23921;
+                            bool loop_cond_t_res_22210 = slt32(0, lifted_lambda_res_21873);
+                            bool cond_22209;
+                            
+                            if (p_and_eq_x_y_22345) {
+                                cond_22209 = 1;
+                            } else {
+                                if (mem_23655_cached_sizze_24031 < b_16485) {
+                                    err = lexical_realloc(ctx, &mem_23655, &mem_23655_cached_sizze_24031, b_16485);
+                                    if (err != FUTHARK_SUCCESS)
+                                        goto cleanup;
+                                }
+                                if (mem_23656_cached_sizze_24032 < b_16485) {
+                                    err = lexical_realloc(ctx, &mem_23656, &mem_23656_cached_sizze_24032, b_16485);
+                                    if (err != FUTHARK_SUCCESS)
+                                        goto cleanup;
+                                }
+                                
+                                bool radix_gt_res_22211;
+                                int32_t radix_gt_res_22212;
+                                bool radix_gt_res_22213;
+                                bool loop_while_22214;
+                                int32_t p_22215;
+                                bool p_22216;
+                                
+                                loop_while_22214 = loop_cond_t_res_22210;
+                                p_22215 = 0;
+                                p_22216 = 0;
+                                while (loop_while_22214) {
+                                    int32_t zt_rhs_22217 = add32(1, p_22215);
+                                    int32_t zm_lhs_22218 = mul32(f64_res_19773, zt_rhs_22217);
+                                    int32_t byteSeq_lt_arg1_22219 = sub32(zm_lhs_22218, 1);
+                                    int32_t byteSeq_lt_arg0_22220 = mul32(f64_res_19773, p_22215);
+                                    int32_t min_res_22221 = smin32(min_arg1_20352, byteSeq_lt_arg1_22219);
+                                    int32_t zm_rhs_22222 = sdiv32(byteSeq_lt_arg0_22220, 8);
+                                    int32_t zm_lhs_22223 = sub32(i64_res_20350, zm_rhs_22222);
+                                    int32_t i32_arg0_22224 = sub32(zm_lhs_22223, 1);
+                                    int64_t i32_res_22225 = sext_i32_i64(i32_arg0_22224);
+                                    int32_t zm_rhs_22226 = sdiv32(min_res_22221, 8);
+                                    int32_t zm_lhs_22227 = sub32(i64_res_20350, zm_rhs_22226);
+                                    int32_t i32_arg0_22228 = sub32(zm_lhs_22227, 1);
+                                    int64_t i32_res_22229 = sext_i32_i64(i32_arg0_22228);
+                                    int64_t min_res_22230 = smin64(min_arg1_20365, i32_res_22229);
+                                    bool x_22246 = sle64((int64_t) 0, i32_res_22225);
+                                    bool y_22247 = slt64(i32_res_22225, b_16485);
+                                    bool bounds_check_22248 = x_22246 && y_22247;
+                                    bool index_certs_22249;
+                                    
+                                    if (!bounds_check_22248) {
+                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_22225, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:32:50-66\n   #1  test_join1.fut:16:1-29:36\n"));
+                                        err = FUTHARK_PROGRAM_ERROR;
+                                        goto cleanup;
+                                    }
+                                    
+                                    bool x_22253 = sle64((int64_t) 0, min_res_22230);
+                                    bool y_22254 = slt64(min_res_22230, b_16485);
+                                    bool bounds_check_22255 = x_22253 && y_22254;
+                                    bool index_certs_22256;
+                                    
+                                    if (!bounds_check_22255) {
+                                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) min_res_22230, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:33:40-56\n   #1  test_join1.fut:16:1-29:36\n"));
+                                        err = FUTHARK_PROGRAM_ERROR;
+                                        goto cleanup;
+                                    }
+                                    
+                                    int32_t firstBit_22231 = smod32(byteSeq_lt_arg0_22220, 8);
+                                    int32_t lastBit_22232 = smod32(min_res_22221, 8);
+                                    int8_t unsign_arg0_22233 = zext_i32_i8(firstBit_22231);
+                                    int8_t first_bitMask_22234 = shl8((int8_t) -1, unsign_arg0_22233);
+                                    int32_t zm_lhs_22235 = sub32(8, lastBit_22232);
+                                    int32_t i32_arg0_22236 = sub32(zm_lhs_22235, 1);
+                                    int8_t unsign_arg0_22237 = zext_i32_i8(i32_arg0_22236);
+                                    int8_t unsign_arg0_22238 = lshr8((int8_t) -1, unsign_arg0_22237);
+                                    
+                                    for (int64_t i_23433 = 0; i_23433 < b_16485; i_23433++) {
+                                        int8_t eta_p_22510 = ((int8_t *) ks1_mem_23557.mem)[i_23440 * b_16485 + i_23433];
+                                        int8_t eta_p_22511 = ((int8_t *) ks2_mem_23559.mem)[ext_23619 + i_23433];
+                                        bool cond_22513 = sle64(i_23433, i32_res_22225);
+                                        bool cond_t_res_22514 = sle64(min_res_22230, i_23433);
+                                        bool x_22515 = cond_22513 && cond_t_res_22514;
+                                        int8_t lifted_lambda_res_22516;
+                                        
+                                        if (x_22515) {
+                                            lifted_lambda_res_22516 = eta_p_22510;
+                                        } else {
+                                            lifted_lambda_res_22516 = (int8_t) 0;
+                                        }
+                                        
+                                        int8_t lifted_lambda_res_22521;
+                                        
+                                        if (x_22515) {
+                                            lifted_lambda_res_22521 = eta_p_22511;
+                                        } else {
+                                            lifted_lambda_res_22521 = (int8_t) 0;
+                                        }
+                                        ((int8_t *) mem_23655)[i_23433] = lifted_lambda_res_22521;
+                                        ((int8_t *) mem_23656)[i_23433] = lifted_lambda_res_22516;
+                                    }
+                                    
+                                    int8_t za_lhs_22250 = ((int8_t *) mem_23656)[i32_res_22225];
+                                    int8_t mod1_x_22251 = first_bitMask_22234 & za_lhs_22250;
+                                    
+                                    ((int8_t *) mem_23656)[i32_res_22225] = mod1_x_22251;
+                                    
+                                    int8_t za_lhs_22257 = ((int8_t *) mem_23656)[min_res_22230];
+                                    int8_t tmp_22258 = unsign_arg0_22238 & za_lhs_22257;
+                                    
+                                    ((int8_t *) mem_23656)[min_res_22230] = tmp_22258;
+                                    
+                                    int8_t za_lhs_22267 = ((int8_t *) mem_23655)[i32_res_22225];
+                                    int8_t mod1_x_22268 = first_bitMask_22234 & za_lhs_22267;
+                                    
+                                    ((int8_t *) mem_23655)[i32_res_22225] = mod1_x_22268;
+                                    
+                                    int8_t za_lhs_22270 = ((int8_t *) mem_23655)[min_res_22230];
+                                    int8_t tmp_22271 = unsign_arg0_22238 & za_lhs_22270;
+                                    
+                                    ((int8_t *) mem_23655)[min_res_22230] = tmp_22271;
+                                    
+                                    int32_t zm_rhs_22273 = sdiv32(byteSeq_lt_arg1_22219, 8);
+                                    int32_t zm_lhs_22274 = sub32(i64_res_20350, zm_rhs_22273);
+                                    int32_t i32_arg0_22275 = sub32(zm_lhs_22274, 1);
+                                    int64_t i32_res_22276 = sext_i32_i64(i32_arg0_22275);
+                                    bool loop_cond_t_res_22277 = sle64(i32_res_22276, i32_res_22225);
+                                    bool byteSeq_lt_res_22278;
+                                    int64_t byteSeq_lt_res_22279;
+                                    bool byteSeq_lt_res_22280;
+                                    bool loop_while_22281;
+                                    int64_t p_22282;
+                                    bool p_22283;
+                                    
+                                    loop_while_22281 = loop_cond_t_res_22277;
+                                    p_22282 = i32_res_22276;
+                                    p_22283 = 0;
+                                    while (loop_while_22281) {
+                                        bool x_22284 = sle64((int64_t) 0, p_22282);
+                                        bool y_22285 = slt64(p_22282, b_16485);
+                                        bool bounds_check_22286 = x_22284 && y_22285;
+                                        bool index_certs_22287;
+                                        
+                                        if (!bounds_check_22286) {
+                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) p_22282, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:89:19-29\n   #1  ../../../joins/ftHashJoin.fut:192:19-85\n   #2  ../../../joins/ftHashJoin.fut:457:27-68\n   #3  /prelude/soacs.fut:83:33-34\n   #4  /prelude/soacs.fut:83:37-53\n   #5  test_join1.fut:16:1-29:36\n"));
+                                            err = FUTHARK_PROGRAM_ERROR;
+                                            goto cleanup;
+                                        }
+                                        
+                                        int8_t zl_lhs_22288 = ((int8_t *) mem_23656)[p_22282];
+                                        int8_t zl_rhs_22289 = ((int8_t *) mem_23655)[p_22282];
+                                        bool dlt_22290 = ult8(zl_lhs_22288, zl_rhs_22289);
+                                        bool dgt_22291 = ult8(zl_rhs_22289, zl_lhs_22288);
+                                        bool tmp_22292 = dlt_22290 || dgt_22291;
+                                        bool cond_22293 = !tmp_22292;
+                                        int64_t tmp_22294;
+                                        
+                                        if (cond_22293) {
+                                            int64_t tmp_t_res_23301 = add64((int64_t) 1, p_22282);
+                                            
+                                            tmp_22294 = tmp_t_res_23301;
+                                        } else {
+                                            int64_t tmp_f_res_22296 = add64((int64_t) 1, i32_res_22225);
+                                            
+                                            tmp_22294 = tmp_f_res_22296;
+                                        }
+                                        
+                                        bool cond_22297 = !dlt_22290;
+                                        bool loop_cond_t_res_22298 = sle64(tmp_22294, i32_res_22225);
+                                        bool x_22299 = cond_22297 && loop_cond_t_res_22298;
+                                        bool loop_while_tmp_23973 = x_22299;
+                                        int64_t p_tmp_23974 = tmp_22294;
+                                        bool p_tmp_23975 = dlt_22290;
+                                        
+                                        loop_while_22281 = loop_while_tmp_23973;
+                                        p_22282 = p_tmp_23974;
+                                        p_22283 = p_tmp_23975;
+                                    }
+                                    byteSeq_lt_res_22278 = loop_while_22281;
+                                    byteSeq_lt_res_22279 = p_22282;
+                                    byteSeq_lt_res_22280 = p_22283;
+                                    
+                                    bool byteSeq_gt_res_22300;
+                                    int64_t byteSeq_gt_res_22301;
+                                    bool byteSeq_gt_res_22302;
+                                    bool loop_while_22303;
+                                    int64_t p_22304;
+                                    bool p_22305;
+                                    
+                                    loop_while_22303 = loop_cond_t_res_22277;
+                                    p_22304 = i32_res_22276;
+                                    p_22305 = 0;
+                                    while (loop_while_22303) {
+                                        bool x_22306 = sle64((int64_t) 0, p_22304);
+                                        bool y_22307 = slt64(p_22304, b_16485);
+                                        bool bounds_check_22308 = x_22306 && y_22307;
+                                        bool index_certs_22309;
+                                        
+                                        if (!bounds_check_22308) {
+                                            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) p_22304, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:126:19-29\n   #1  ../../../joins/ftHashJoin.fut:193:19-85\n   #2  ../../../joins/ftHashJoin.fut:457:27-68\n   #3  /prelude/soacs.fut:83:33-34\n   #4  /prelude/soacs.fut:83:37-53\n   #5  test_join1.fut:16:1-29:36\n"));
+                                            err = FUTHARK_PROGRAM_ERROR;
+                                            goto cleanup;
+                                        }
+                                        
+                                        int8_t zl_lhs_22310 = ((int8_t *) mem_23656)[p_22304];
+                                        int8_t zl_rhs_22311 = ((int8_t *) mem_23655)[p_22304];
+                                        bool dlt_22312 = ult8(zl_lhs_22310, zl_rhs_22311);
+                                        bool dgt_22313 = ult8(zl_rhs_22311, zl_lhs_22310);
+                                        bool tmp_22314 = dlt_22312 || dgt_22313;
+                                        bool cond_22315 = !tmp_22314;
+                                        int64_t tmp_22316;
+                                        
+                                        if (cond_22315) {
+                                            int64_t tmp_t_res_23302 = add64((int64_t) 1, p_22304);
+                                            
+                                            tmp_22316 = tmp_t_res_23302;
+                                        } else {
+                                            int64_t tmp_f_res_22318 = add64((int64_t) 1, i32_res_22225);
+                                            
+                                            tmp_22316 = tmp_f_res_22318;
+                                        }
+                                        
+                                        bool cond_22319 = !dgt_22313;
+                                        bool loop_cond_t_res_22320 = sle64(tmp_22316, i32_res_22225);
+                                        bool x_22321 = cond_22319 && loop_cond_t_res_22320;
+                                        bool loop_while_tmp_23976 = x_22321;
+                                        int64_t p_tmp_23977 = tmp_22316;
+                                        bool p_tmp_23978 = dgt_22313;
+                                        
+                                        loop_while_22303 = loop_while_tmp_23976;
+                                        p_22304 = p_tmp_23977;
+                                        p_22305 = p_tmp_23978;
+                                    }
+                                    byteSeq_gt_res_22300 = loop_while_22303;
+                                    byteSeq_gt_res_22301 = p_22304;
+                                    byteSeq_gt_res_22302 = p_22305;
+                                    
+                                    bool tmp_22322 = byteSeq_lt_res_22280 || byteSeq_gt_res_22302;
+                                    bool cond_22323 = !tmp_22322;
+                                    int32_t tmp_22324;
+                                    
+                                    if (cond_22323) {
+                                        tmp_22324 = zt_rhs_22217;
+                                    } else {
+                                        tmp_22324 = lifted_lambda_res_21873;
+                                    }
+                                    
+                                    bool cond_22325 = !byteSeq_gt_res_22302;
+                                    bool loop_cond_t_res_22326 = slt32(tmp_22324, lifted_lambda_res_21873);
+                                    bool x_22327 = cond_22325 && loop_cond_t_res_22326;
+                                    bool loop_while_tmp_23968 = x_22327;
+                                    int32_t p_tmp_23969 = tmp_22324;
+                                    bool p_tmp_23970 = byteSeq_gt_res_22302;
+                                    
+                                    loop_while_22214 = loop_while_tmp_23968;
+                                    p_22215 = p_tmp_23969;
+                                    p_22216 = p_tmp_23970;
+                                }
+                                radix_gt_res_22211 = loop_while_22214;
+                                radix_gt_res_22212 = p_22215;
+                                radix_gt_res_22213 = p_22216;
+                                cond_22209 = radix_gt_res_22213;
+                            }
+                            
+                            int64_t lifted_lambda_res_f_res_f_res_f_res_22328;
+                            
+                            if (cond_22209) {
+                                lifted_lambda_res_f_res_f_res_f_res_22328 = (int64_t) -1;
+                            } else {
+                                int64_t max_arg1_22329 = sub64(lifted_lambda_res_21870, max_res_21866);
+                                int64_t max_res_22330 = smax64(eta_p_21862, max_arg1_22329);
+                                
+                                lifted_lambda_res_f_res_f_res_f_res_22328 = max_res_22330;
+                            }
+                            lifted_lambda_res_f_res_f_res_22203 = lifted_lambda_res_f_res_f_res_f_res_22328;
+                        }
+                        lifted_lambda_res_f_res_22007 = lifted_lambda_res_f_res_f_res_22203;
+                    }
+                    lifted_lambda_res_21930 = lifted_lambda_res_f_res_22007;
+                }
+                ((int64_t *) mem_23605.mem)[i_23440] = lifted_lambda_res_21930;
+                ((int64_t *) mem_23607.mem)[i_23440] = max_res_21866;
+            }
+            if (memblock_set(ctx, &mem_param_tmp_23943, &mem_23605, "mem_23605") != 0)
+                return 1;
+            if (memblock_set(ctx, &mem_param_tmp_23944, &mem_23607, "mem_23607") != 0)
+                return 1;
+            if (memblock_set(ctx, &mem_param_23600, &mem_param_tmp_23943, "mem_param_tmp_23943") != 0)
+                return 1;
+            if (memblock_set(ctx, &mem_param_23603, &mem_param_tmp_23944, "mem_param_tmp_23944") != 0)
+                return 1;
+        }
+        if (memblock_set(ctx, &ext_mem_23701, &mem_param_23600, "mem_param_23600") != 0)
+            return 1;
+        if (memblock_set(ctx, &ext_mem_23700, &mem_param_23603, "mem_param_23603") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23589, "mem_23589") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23597, "mem_23597") != 0)
+            return 1;
+        if (memblock_set(ctx, &ext_mem_23704, &ext_mem_23701, "ext_mem_23701") != 0)
+            return 1;
+    }
+    if (memblock_unref(ctx, &mem_23566, "mem_23566") != 0)
+        return 1;
+    if (mem_23706_cached_sizze_24036 < bytes_23565) {
+        err = lexical_realloc(ctx, &mem_23706, &mem_23706_cached_sizze_24036, bytes_23565);
         if (err != FUTHARK_SUCCESS)
             goto cleanup;
     }
-    for (int64_t nest_i_10468 = 0; nest_i_10468 < defunc_0_reduce_res_10092; nest_i_10468++) {
-        ((int64_t *) mem_10435)[nest_i_10468] = (int64_t) 0;
-    }
-    for (int64_t iter_10356 = 0; iter_10356 < n_8955; iter_10356++) {
-        int64_t zv_lhs_10080 = add64((int64_t) -1, iter_10356);
-        int64_t tmp_10081 = smod64(zv_lhs_10080, n_8955);
-        int64_t lifted_lambda_res_10082 = ((int64_t *) mem_10427)[tmp_10081];
-        bool cond_10085 = iter_10356 == (int64_t) 0;
-        int64_t lifted_lambda_res_10086;
+    
+    int64_t defunc_0_reduce_res_23373;
+    int64_t redout_23444 = (int64_t) -9223372036854775808;
+    
+    for (int64_t i_23446 = 0; i_23446 < n1_16484; i_23446++) {
+        int64_t eta_p_21324 = ((int64_t *) ext_mem_23704.mem)[i_23446];
+        bool cond_21326 = slt64(eta_p_21324, (int64_t) 0);
+        int64_t lifted_lambda_res_21327;
+        int64_t lifted_lambda_res_21328;
         
-        if (cond_10085) {
-            lifted_lambda_res_10086 = (int64_t) 0;
+        if (cond_21326) {
+            lifted_lambda_res_21327 = (int64_t) -1;
+            lifted_lambda_res_21328 = (int64_t) -1;
         } else {
-            lifted_lambda_res_10086 = lifted_lambda_res_10082;
-        }
-        
-        bool less_than_zzero_10359 = slt64(lifted_lambda_res_10086, (int64_t) 0);
-        bool greater_than_sizze_10360 = sle64(defunc_0_reduce_res_10092, lifted_lambda_res_10086);
-        bool outside_bounds_dim_10361 = less_than_zzero_10359 || greater_than_sizze_10360;
-        
-        if (!outside_bounds_dim_10361) {
-            int64_t read_hist_10363 = ((int64_t *) mem_10435)[lifted_lambda_res_10086];
-            int64_t max_res_9860 = smax64(iter_10356, read_hist_10363);
+            bool x_21329 = sle64((int64_t) 0, eta_p_21324);
+            bool y_21330 = slt64(eta_p_21324, dz2082U_16489);
+            bool bounds_check_21331 = x_21329 && y_21330;
+            bool index_certs_21332;
             
-            ((int64_t *) mem_10435)[lifted_lambda_res_10086] = max_res_9860;
+            if (!bounds_check_21331) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_21324, "] out of bounds for array of shape [", (long long) dz2082U_16489, "].", "-> #0  ../../../joins/ftHashJoin.fut:465:47-59\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftHashJoin.fut:465:10-103\n   #3  test_join1.fut:16:1-29:36\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            int64_t tmp_21333 = ((int64_t *) bounds2_mem_23561.mem)[eta_p_21324];
+            int64_t zeze_rhs_21334 = sub64(dz2082U_16489, (int64_t) 1);
+            bool cond_21335 = eta_p_21324 == zeze_rhs_21334;
+            int64_t tmp_21336;
+            
+            if (cond_21335) {
+                tmp_21336 = n2_16487;
+            } else {
+                int64_t tmp_21337 = add64((int64_t) 1, eta_p_21324);
+                bool x_21338 = sle64((int64_t) 0, tmp_21337);
+                bool y_21339 = slt64(tmp_21337, dz2082U_16489);
+                bool bounds_check_21340 = x_21338 && y_21339;
+                bool index_certs_21341;
+                
+                if (!bounds_check_21340) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_21337, "] out of bounds for array of shape [", (long long) dz2082U_16489, "].", "-> #0  ../../../joins/ftHashJoin.fut:465:87-101\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftHashJoin.fut:465:10-103\n   #3  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                int64_t tmp_f_res_21342 = ((int64_t *) bounds2_mem_23561.mem)[tmp_21337];
+                
+                tmp_21336 = tmp_f_res_21342;
+            }
+            lifted_lambda_res_21327 = tmp_21333;
+            lifted_lambda_res_21328 = tmp_21336;
         }
+        
+        int64_t lifted_lambda_res_21345 = sub64(lifted_lambda_res_21328, lifted_lambda_res_21327);
+        int64_t lifted_lambda_res_21348;
+        
+        if (cond_21326) {
+            lifted_lambda_res_21348 = (int64_t) -1;
+        } else {
+            bool x_21349 = sle64((int64_t) 0, eta_p_21324);
+            bool y_21350 = slt64(eta_p_21324, dz2082U_16489);
+            bool bounds_check_21351 = x_21349 && y_21350;
+            bool index_certs_21352;
+            
+            if (!bounds_check_21351) {
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_21324, "] out of bounds for array of shape [", (long long) dz2082U_16489, "].", "-> #0  ../../../joins/ftHashJoin.fut:468:79-91\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftHashJoin.fut:468:46-92\n   #3  test_join1.fut:16:1-29:36\n"));
+                err = FUTHARK_PROGRAM_ERROR;
+                goto cleanup;
+            }
+            
+            int64_t lifted_lambda_res_f_res_21353 = ((int64_t *) bounds2_mem_23561.mem)[eta_p_21324];
+            
+            lifted_lambda_res_21348 = lifted_lambda_res_f_res_21353;
+        }
+        
+        int64_t max_res_20148 = smax64(lifted_lambda_res_21345, redout_23444);
+        
+        ((int64_t *) mem_23706)[i_23446] = lifted_lambda_res_21348;
+        
+        int64_t redout_tmp_23979 = max_res_20148;
+        
+        redout_23444 = redout_tmp_23979;
     }
-    if (memblock_alloc(ctx, &mem_10443, bytes_10434, "mem_10443")) {
+    defunc_0_reduce_res_23373 = redout_23444;
+    if (memblock_unref(ctx, &ext_mem_23704, "ext_mem_23704") != 0)
+        return 1;
+    if (memblock_alloc(ctx, &mem_23714, bytes_23565, "mem_23714")) {
         err = 1;
         goto cleanup;
     }
-    
-    int64_t discard_10376;
-    int64_t scanacc_10369 = (int64_t) 0;
-    
-    for (int64_t i_10372 = 0; i_10372 < defunc_0_reduce_res_10092; i_10372++) {
-        int64_t eta_p_10066 = ((int64_t *) mem_10435)[i_10372];
-        bool lifted_lambda_res_10068 = slt64((int64_t) 0, eta_p_10066);
-        int64_t tmp_9908;
-        
-        if (lifted_lambda_res_10068) {
-            tmp_9908 = eta_p_10066;
-        } else {
-            int64_t defunc_0_op_res_9909 = add64(eta_p_10066, scanacc_10369);
-            
-            tmp_9908 = defunc_0_op_res_9909;
-        }
-        ((int64_t *) mem_10443.mem)[i_10372] = tmp_9908;
-        
-        int64_t scanacc_tmp_10470 = tmp_9908;
-        
-        scanacc_10369 = scanacc_tmp_10470;
+    for (int64_t nest_i_23981 = 0; nest_i_23981 < n1_16484; nest_i_23981++) {
+        ((int64_t *) mem_23714.mem)[nest_i_23981] = (int64_t) 0;
     }
-    discard_10376 = scanacc_10369;
-    if (memblock_set(ctx, &mem_out_10463, &mem_10443, "mem_10443") != 0)
+    
+    bool bounds_invalid_upwards_20159 = slt64(defunc_0_reduce_res_23373, (int64_t) 0);
+    bool valid_20160 = !bounds_invalid_upwards_20159;
+    bool range_valid_c_20161;
+    
+    if (!valid_20160) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) defunc_0_reduce_res_23373, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ../../../joins/ftHashJoin.fut:472:17-40\n   #2  test_join1.fut:16:1-29:36\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int32_t zm_rhs_21024 = sdiv32(min_arg1_20352, 8);
+    int32_t zm_lhs_21025 = sub32(i64_res_20350, zm_rhs_21024);
+    int32_t i32_arg0_21026 = sub32(zm_lhs_21025, 1);
+    int64_t i32_res_21027 = sext_i32_i64(i32_arg0_21026);
+    int64_t j_m_i_21033 = sub64(map2_arg2_20883, i32_res_21027);
+    
+    if (memblock_set(ctx, &mem_param_23717, &mem_23714, "mem_23714") != 0)
         return 1;
-    prim_out_10464 = defunc_0_reduce_res_10092;
-    if (memblock_set(ctx, &*mem_out_p_10480, &mem_out_10463, "mem_out_10463") != 0)
+    for (int64_t i_20163 = 0; i_20163 < defunc_0_reduce_res_23373; i_20163++) {
+        if (memblock_alloc(ctx, &mem_23719, bytes_23565, "mem_23719")) {
+            err = 1;
+            goto cleanup;
+        }
+        for (int64_t i_23461 = 0; i_23461 < n1_16484; i_23461++) {
+            int64_t eta_p_20166 = ((int64_t *) mem_23706)[i_23461];
+            int64_t eta_p_20167 = ((int64_t *) mem_param_23717.mem)[i_23461];
+            bool cond_20169 = slt64(eta_p_20166, (int64_t) 0);
+            int64_t zgze_lhs_20170 = add64(i_20163, eta_p_20166);
+            bool cond_f_res_20171 = sle64(n2_16487, zgze_lhs_20170);
+            bool x_20172 = !cond_20169;
+            bool y_20173 = cond_f_res_20171 && x_20172;
+            bool cond_20174 = cond_20169 || y_20173;
+            int64_t lifted_lambda_res_20175;
+            
+            if (cond_20174) {
+                lifted_lambda_res_20175 = eta_p_20167;
+            } else {
+                bool x_20176 = sle64((int64_t) 0, zgze_lhs_20170);
+                bool y_20177 = slt64(zgze_lhs_20170, n2_16487);
+                bool bounds_check_20178 = x_20176 && y_20177;
+                bool index_certs_20179;
+                
+                if (!bounds_check_20178) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zgze_lhs_20170, "] out of bounds for array of shape [", (long long) n2_16487, "].", "-> #0  ../../../joins/ftHashJoin.fut:475:20-27\n   #1  /prelude/soacs.fut:75:28-29\n   #2  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                int32_t min_arg1_20915 = sub32(zm_lhs_20351, 1);
+                int32_t min_res_20916 = smin32(min_arg1_20352, min_arg1_20915);
+                int32_t zm_rhs_20923 = sdiv32(min_res_20916, 8);
+                int32_t zm_lhs_20924 = sub32(i64_res_20350, zm_rhs_20923);
+                int32_t i32_arg0_20925 = sub32(zm_lhs_20924, 1);
+                int64_t i32_res_20926 = sext_i32_i64(i32_arg0_20925);
+                int64_t min_res_20929 = smin64(min_arg1_20365, i32_res_20926);
+                int64_t i32_res_20921 = sext_i32_i64(i32_arg0_20357);
+                bool x_20946 = sle64((int64_t) 0, i32_res_20921);
+                bool y_20947 = slt64(i32_res_20921, b_16485);
+                bool bounds_check_20948 = x_20946 && y_20947;
+                bool index_certs_20949;
+                
+                if (!bounds_check_20948) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_20921, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:32:50-66\n   #1  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                bool x_20957 = sle64((int64_t) 0, min_res_20929);
+                bool y_20958 = slt64(min_res_20929, b_16485);
+                bool bounds_check_20959 = x_20957 && y_20958;
+                bool index_certs_20960;
+                
+                if (!bounds_check_20959) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) min_res_20929, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:33:40-56\n   #1  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                bool empty_slice_21034 = j_m_i_21033 == (int64_t) 0;
+                int64_t m_21035 = sub64(j_m_i_21033, (int64_t) 1);
+                int64_t i_p_m_t_s_21036 = add64(i32_res_21027, m_21035);
+                bool zzero_leq_i_p_m_t_s_21037 = sle64((int64_t) 0, i_p_m_t_s_21036);
+                bool i_p_m_t_s_leq_w_21038 = slt64(i_p_m_t_s_21036, b_16485);
+                bool zzero_lte_i_21039 = sle64((int64_t) 0, i32_res_21027);
+                bool i_lte_j_21040 = sle64(i32_res_21027, map2_arg2_20883);
+                bool y_21041 = i_p_m_t_s_leq_w_21038 && zzero_lte_i_21039;
+                bool y_21042 = zzero_leq_i_p_m_t_s_21037 && y_21041;
+                bool forwards_ok_21043 = i_lte_j_21040 && y_21042;
+                bool ok_or_empty_21044 = empty_slice_21034 || forwards_ok_21043;
+                bool index_certs_21045;
+                
+                if (!ok_or_empty_21044) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_21027, ":", (long long) map2_arg2_20883, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:51:49-60\n   #1  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                if (mem_23723_cached_sizze_24037 < b_16485) {
+                    err = lexical_realloc(ctx, &mem_23723, &mem_23723_cached_sizze_24037, b_16485);
+                    if (err != FUTHARK_SUCCESS)
+                        goto cleanup;
+                }
+                if (mem_23724_cached_sizze_24038 < b_16485) {
+                    err = lexical_realloc(ctx, &mem_23724, &mem_23724_cached_sizze_24038, b_16485);
+                    if (err != FUTHARK_SUCCESS)
+                        goto cleanup;
+                }
+                for (int64_t i_23452 = 0; i_23452 < b_16485; i_23452++) {
+                    int8_t eta_p_23044 = ((int8_t *) ks1_mem_23557.mem)[i_23461 * b_16485 + i_23452];
+                    int8_t eta_p_23045 = ((int8_t *) ks2_mem_23559.mem)[zgze_lhs_20170 * b_16485 + i_23452];
+                    bool cond_23047 = sle64(i_23452, i32_res_20921);
+                    bool cond_t_res_23048 = sle64(min_res_20929, i_23452);
+                    bool x_23049 = cond_23047 && cond_t_res_23048;
+                    int8_t lifted_lambda_res_23050;
+                    
+                    if (x_23049) {
+                        lifted_lambda_res_23050 = eta_p_23045;
+                    } else {
+                        lifted_lambda_res_23050 = (int8_t) 0;
+                    }
+                    
+                    int8_t lifted_lambda_res_23055;
+                    
+                    if (x_23049) {
+                        lifted_lambda_res_23055 = eta_p_23044;
+                    } else {
+                        lifted_lambda_res_23055 = (int8_t) 0;
+                    }
+                    ((int8_t *) mem_23723)[i_23452] = lifted_lambda_res_23055;
+                    ((int8_t *) mem_23724)[i_23452] = lifted_lambda_res_23050;
+                }
+                
+                int32_t lastBit_20931 = smod32(min_res_20916, 8);
+                int32_t zm_lhs_20934 = sub32(8, lastBit_20931);
+                int32_t i32_arg0_20935 = sub32(zm_lhs_20934, 1);
+                int8_t unsign_arg0_20936 = zext_i32_i8(i32_arg0_20935);
+                int8_t unsign_arg0_20937 = lshr8((int8_t) -1, unsign_arg0_20936);
+                int8_t za_lhs_20950 = ((int8_t *) mem_23723)[i32_res_20921];
+                int8_t mod1_x_20951 = (int8_t) -1 & za_lhs_20950;
+                
+                ((int8_t *) mem_23723)[i32_res_20921] = mod1_x_20951;
+                
+                int8_t za_lhs_20961 = ((int8_t *) mem_23723)[min_res_20929];
+                int8_t tmp_20962 = unsign_arg0_20937 & za_lhs_20961;
+                
+                ((int8_t *) mem_23723)[min_res_20929] = tmp_20962;
+                
+                int8_t za_lhs_21005 = ((int8_t *) mem_23724)[i32_res_20921];
+                int8_t mod1_x_21006 = (int8_t) -1 & za_lhs_21005;
+                
+                ((int8_t *) mem_23724)[i32_res_20921] = mod1_x_21006;
+                
+                int8_t za_lhs_21016 = ((int8_t *) mem_23724)[min_res_20929];
+                int8_t tmp_21017 = unsign_arg0_20937 & za_lhs_21016;
+                
+                ((int8_t *) mem_23724)[min_res_20929] = tmp_21017;
+                if (mem_23737_cached_sizze_24039 < j_m_i_21033) {
+                    err = lexical_realloc(ctx, &mem_23737, &mem_23737_cached_sizze_24039, j_m_i_21033);
+                    if (err != FUTHARK_SUCCESS)
+                        goto cleanup;
+                }
+                for (int64_t i_23457 = 0; i_23457 < j_m_i_21033; i_23457++) {
+                    int64_t slice_23540 = i32_res_21027 + i_23457;
+                    int8_t eta_p_21049 = ((int8_t *) mem_23723)[slice_23540];
+                    int8_t eta_p_21050 = ((int8_t *) mem_23724)[slice_23540];
+                    bool defunc_0_f_res_21051 = eta_p_21049 == eta_p_21050;
+                    
+                    ((bool *) mem_23737)[i_23457] = defunc_0_f_res_21051;
+                }
+                
+                bool defunc_0_foldl_res_21052;
+                bool acc_21054 = 1;
+                
+                for (int64_t i_21053 = 0; i_21053 < j_m_i_21033; i_21053++) {
+                    bool b_21055 = ((bool *) mem_23737)[i_21053];
+                    bool x_21056 = acc_21054 && b_21055;
+                    bool acc_tmp_23988 = x_21056;
+                    
+                    acc_21054 = acc_tmp_23988;
+                }
+                defunc_0_foldl_res_21052 = acc_21054;
+                
+                int64_t lifted_lambda_res_f_res_20185;
+                
+                if (defunc_0_foldl_res_21052) {
+                    int64_t lifted_lambda_res_f_res_t_res_23314 = add64((int64_t) 1, eta_p_20167);
+                    
+                    lifted_lambda_res_f_res_20185 = lifted_lambda_res_f_res_t_res_23314;
+                } else {
+                    lifted_lambda_res_f_res_20185 = eta_p_20167;
+                }
+                lifted_lambda_res_20175 = lifted_lambda_res_f_res_20185;
+            }
+            ((int64_t *) mem_23719.mem)[i_23461] = lifted_lambda_res_20175;
+        }
+        if (memblock_set(ctx, &mem_param_tmp_23982, &mem_23719, "mem_23719") != 0)
+            return 1;
+        if (memblock_set(ctx, &mem_param_23717, &mem_param_tmp_23982, "mem_param_tmp_23982") != 0)
+            return 1;
+    }
+    if (memblock_set(ctx, &ext_mem_23749, &mem_param_23717, "mem_param_23717") != 0)
         return 1;
-    *out_prim_out_10481 = prim_out_10464;
+    if (memblock_unref(ctx, &mem_23714, "mem_23714") != 0)
+        return 1;
+    if (mem_23751_cached_sizze_24040 < bytes_23565) {
+        err = lexical_realloc(ctx, &mem_23751, &mem_23751_cached_sizze_24040, bytes_23565);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_23753_cached_sizze_24041 < bytes_23565) {
+        err = lexical_realloc(ctx, &mem_23753, &mem_23753_cached_sizze_24041, bytes_23565);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    if (mem_23755_cached_sizze_24042 < bytes_23565) {
+        err = lexical_realloc(ctx, &mem_23755, &mem_23755_cached_sizze_24042, bytes_23565);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    
+    int64_t discard_23476;
+    int64_t discard_23477;
+    int64_t defunc_res_23377;
+    int64_t scanacc_23466;
+    int64_t scanacc_23467;
+    int64_t redout_23470;
+    
+    scanacc_23466 = (int64_t) 0;
+    scanacc_23467 = (int64_t) 0;
+    redout_23470 = (int64_t) 0;
+    for (int64_t i_23472 = 0; i_23472 < n1_16484; i_23472++) {
+        int64_t eta_p_21359 = ((int64_t *) ext_mem_23749.mem)[i_23472];
+        bool lifted_lambda_res_21362 = slt64((int64_t) 1, eta_p_21359);
+        int64_t defunc_0_f_res_21363 = btoi_bool_i64(lifted_lambda_res_21362);
+        int64_t defunc_0_op_res_20191 = add64(eta_p_21359, scanacc_23466);
+        int64_t defunc_0_op_res_20221 = add64(defunc_0_f_res_21363, scanacc_23467);
+        int64_t zp_res_20212 = add64(eta_p_21359, redout_23470);
+        
+        ((int64_t *) mem_23751)[i_23472] = defunc_0_op_res_20191;
+        ((int64_t *) mem_23753)[i_23472] = defunc_0_op_res_20221;
+        ((int64_t *) mem_23755)[i_23472] = defunc_0_f_res_21363;
+        
+        int64_t scanacc_tmp_23989 = defunc_0_op_res_20191;
+        int64_t scanacc_tmp_23990 = defunc_0_op_res_20221;
+        int64_t redout_tmp_23993 = zp_res_20212;
+        
+        scanacc_23466 = scanacc_tmp_23989;
+        scanacc_23467 = scanacc_tmp_23990;
+        redout_23470 = redout_tmp_23993;
+    }
+    discard_23476 = scanacc_23466;
+    discard_23477 = scanacc_23467;
+    defunc_res_23377 = redout_23470;
+    
+    bool cond_20222 = n1_16484 == (int64_t) 0;
+    bool x_20223 = !cond_20222;
+    int64_t tmp_20224 = sub64(n1_16484, (int64_t) 1);
+    bool x_20225 = sle64((int64_t) 0, tmp_20224);
+    bool y_20226 = slt64(tmp_20224, n1_16484);
+    bool bounds_check_20227 = x_20225 && y_20226;
+    bool protect_assert_disj_20228 = cond_20222 || bounds_check_20227;
+    bool index_certs_20229;
+    
+    if (!protect_assert_disj_20228) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_20224, "] out of bounds for array of shape [", (long long) n1_16484, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  test_join1.fut:16:1-29:36\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t m_f_res_20230;
+    
+    if (x_20223) {
+        int64_t x_23322 = ((int64_t *) mem_23753)[tmp_20224];
+        
+        m_f_res_20230 = x_23322;
+    } else {
+        m_f_res_20230 = (int64_t) 0;
+    }
+    
+    int64_t m_20232;
+    
+    if (cond_20222) {
+        m_20232 = (int64_t) 0;
+    } else {
+        m_20232 = m_f_res_20230;
+    }
+    
+    bool cond_20255 = slt64((int64_t) 0, m_20232);
+    int64_t m_20242 = sub64(m_20232, (int64_t) 1);
+    bool i_p_m_t_s_leq_w_20244 = slt64(m_20242, n1_16484);
+    bool zzero_leq_i_p_m_t_s_20243 = sle64((int64_t) 0, m_20242);
+    bool y_20246 = zzero_leq_i_p_m_t_s_20243 && i_p_m_t_s_leq_w_20244;
+    bool i_lte_j_20245 = sle64((int64_t) 0, m_20232);
+    bool forwards_ok_20247 = i_lte_j_20245 && y_20246;
+    bool eq_x_zz_20239 = (int64_t) 0 == m_f_res_20230;
+    bool p_and_eq_x_y_20240 = x_20223 && eq_x_zz_20239;
+    bool empty_slice_20241 = cond_20222 || p_and_eq_x_y_20240;
+    bool ok_or_empty_20248 = empty_slice_20241 || forwards_ok_20247;
+    bool index_certs_20249;
+    
+    if (!ok_or_empty_20248) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_20232, "] out of bounds for array of shape [", (long long) n1_16484, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  test_join1.fut:16:1-29:36\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_23782 = (int64_t) 8 * m_20232;
+    
+    if (mem_23783_cached_sizze_24044 < bytes_23782) {
+        err = lexical_realloc(ctx, &mem_23783, &mem_23783_cached_sizze_24044, bytes_23782);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_23783, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_23749.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {m_20232});
+    
+    int64_t max_mult_t_res_20256;
+    
+    if (cond_20255) {
+        if (mem_23785_cached_sizze_24045 < bytes_23565) {
+            err = lexical_realloc(ctx, &mem_23785, &mem_23785_cached_sizze_24045, bytes_23565);
+            if (err != FUTHARK_SUCCESS)
+                goto cleanup;
+        }
+        for (int64_t i_23484 = 0; i_23484 < n1_16484; i_23484++) {
+            int64_t eta_p_23328 = ((int64_t *) mem_23755)[i_23484];
+            int64_t eta_p_23329 = ((int64_t *) mem_23753)[i_23484];
+            bool cond_23330 = eta_p_23328 == (int64_t) 1;
+            int64_t lifted_lambda_res_23331;
+            
+            if (cond_23330) {
+                int64_t lifted_lambda_res_t_res_23332 = sub64(eta_p_23329, (int64_t) 1);
+                
+                lifted_lambda_res_23331 = lifted_lambda_res_t_res_23332;
+            } else {
+                lifted_lambda_res_23331 = (int64_t) -1;
+            }
+            ((int64_t *) mem_23785)[i_23484] = lifted_lambda_res_23331;
+        }
+        for (int64_t write_iter_23486 = 0; write_iter_23486 < n1_16484; write_iter_23486++) {
+            int64_t write_iv_23488 = ((int64_t *) mem_23785)[write_iter_23486];
+            int64_t write_iv_23489 = ((int64_t *) ext_mem_23749.mem)[write_iter_23486];
+            
+            if (sle64((int64_t) 0, write_iv_23488) && slt64(write_iv_23488, m_20232)) {
+                ((int64_t *) mem_23783)[write_iv_23488] = write_iv_23489;
+            }
+        }
+        
+        int64_t defunc_0_reduce_res_23342;
+        int64_t redout_23491 = (int64_t) -9223372036854775808;
+        
+        for (int64_t i_23492 = 0; i_23492 < m_20232; i_23492++) {
+            int64_t x_23343 = ((int64_t *) mem_23783)[i_23492];
+            int64_t max_res_23346 = smax64(x_23343, redout_23491);
+            int64_t redout_tmp_23997 = max_res_23346;
+            
+            redout_23491 = redout_tmp_23997;
+        }
+        defunc_0_reduce_res_23342 = redout_23491;
+        max_mult_t_res_20256 = defunc_0_reduce_res_23342;
+    } else {
+        max_mult_t_res_20256 = (int64_t) 0;
+    }
+    
+    int64_t max_mult_20262;
+    
+    if (cond_20255) {
+        max_mult_20262 = max_mult_t_res_20256;
+    } else {
+        max_mult_20262 = (int64_t) 1;
+    }
+    
+    int64_t bytes_23798 = (int64_t) 8 * defunc_res_23377;
+    bool bounds_invalid_upwards_20268 = slt64(max_mult_20262, (int64_t) 1);
+    bool valid_20270 = !bounds_invalid_upwards_20268;
+    bool range_valid_c_20271;
+    
+    if (!valid_20270) {
+        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 1, "..<", (long long) max_mult_20262, " is invalid.", "-> #0  ../../../joins/ftHashJoin.fut:493:20-32\n   #1  test_join1.fut:16:1-29:36\n"));
+        err = FUTHARK_PROGRAM_ERROR;
+        goto cleanup;
+    }
+    
+    int64_t bytes_23836 = b_16485 * defunc_res_23377;
+    
+    if (mem_23775_cached_sizze_24043 < bytes_23565) {
+        err = lexical_realloc(ctx, &mem_23775, &mem_23775_cached_sizze_24043, bytes_23565);
+        if (err != FUTHARK_SUCCESS)
+            goto cleanup;
+    }
+    for (int64_t i_23480 = 0; i_23480 < n1_16484; i_23480++) {
+        int64_t eta_p_21222 = ((int64_t *) ext_mem_23749.mem)[i_23480];
+        int64_t zv_lhs_21224 = add64((int64_t) -1, i_23480);
+        int64_t tmp_21225 = smod64(zv_lhs_21224, n1_16484);
+        int64_t lifted_lambda_res_21226 = ((int64_t *) mem_23751)[tmp_21225];
+        bool cond_21228 = i_23480 == (int64_t) 0;
+        int64_t lifted_lambda_res_21229;
+        
+        if (cond_21228) {
+            lifted_lambda_res_21229 = (int64_t) 0;
+        } else {
+            lifted_lambda_res_21229 = lifted_lambda_res_21226;
+        }
+        
+        bool cond_21231 = slt64((int64_t) 0, eta_p_21222);
+        int64_t lifted_lambda_res_21232;
+        
+        if (cond_21231) {
+            lifted_lambda_res_21232 = lifted_lambda_res_21229;
+        } else {
+            lifted_lambda_res_21232 = (int64_t) -1;
+        }
+        ((int64_t *) mem_23775)[i_23480] = lifted_lambda_res_21232;
+    }
+    if (memblock_alloc(ctx, &mem_23799, bytes_23798, "mem_23799")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t nest_i_23999 = 0; nest_i_23999 < defunc_res_23377; nest_i_23999++) {
+        ((int64_t *) mem_23799.mem)[nest_i_23999] = (int64_t) 0;
+    }
+    for (int64_t write_iter_23493 = 0; write_iter_23493 < n1_16484; write_iter_23493++) {
+        int64_t write_iv_23495 = ((int64_t *) mem_23775)[write_iter_23493];
+        
+        if (sle64((int64_t) 0, write_iv_23495) && slt64(write_iv_23495, defunc_res_23377)) {
+            ((int64_t *) mem_23799.mem)[write_iv_23495] = write_iter_23493;
+        }
+    }
+    if (memblock_alloc(ctx, &mem_23807, bytes_23798, "mem_23807")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t nest_i_24001 = 0; nest_i_24001 < defunc_res_23377; nest_i_24001++) {
+        ((int64_t *) mem_23807.mem)[nest_i_24001] = (int64_t) 1;
+    }
+    
+    int64_t distance_20269 = sub64(max_mult_20262, (int64_t) 1);
+    
+    if (memblock_set(ctx, &mem_param_23810, &mem_23807, "mem_23807") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_param_23813, &mem_23799, "mem_23799") != 0)
+        return 1;
+    for (int64_t i_20274 = 0; i_20274 < distance_20269; i_20274++) {
+        int64_t index_primexp_20277 = add64((int64_t) 1, i_20274);
+        
+        if (memblock_alloc(ctx, &mem_23815, bytes_23798, "mem_23815")) {
+            err = 1;
+            goto cleanup;
+        }
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_23815.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_param_23813.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_res_23377});
+        if (memblock_alloc(ctx, &mem_23817, bytes_23798, "mem_23817")) {
+            err = 1;
+            goto cleanup;
+        }
+        lmad_copy_8b(ctx, 1, (uint64_t *) mem_23817.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) mem_param_23810.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_res_23377});
+        
+        int64_t replicate_arg1_20289 = add64((int64_t) 2, i_20274);
+        
+        for (int64_t write_iter_23498 = 0; write_iter_23498 < n1_16484; write_iter_23498++) {
+            int64_t zlze_lhs_23117 = ((int64_t *) ext_mem_23749.mem)[write_iter_23498];
+            bool cond_23118 = sle64(zlze_lhs_23117, index_primexp_20277);
+            int64_t lifted_lambda_res_23119;
+            
+            if (cond_23118) {
+                lifted_lambda_res_23119 = (int64_t) -1;
+            } else {
+                int64_t zp_lhs_23120 = ((int64_t *) mem_23775)[write_iter_23498];
+                int64_t lifted_lambda_res_f_res_23121 = add64(index_primexp_20277, zp_lhs_23120);
+                
+                lifted_lambda_res_23119 = lifted_lambda_res_f_res_23121;
+            }
+            if (sle64((int64_t) 0, lifted_lambda_res_23119) && slt64(lifted_lambda_res_23119, defunc_res_23377)) {
+                ((int64_t *) mem_23817.mem)[lifted_lambda_res_23119] = replicate_arg1_20289;
+            }
+            if (sle64((int64_t) 0, lifted_lambda_res_23119) && slt64(lifted_lambda_res_23119, defunc_res_23377)) {
+                ((int64_t *) mem_23815.mem)[lifted_lambda_res_23119] = write_iter_23498;
+            }
+        }
+        if (memblock_set(ctx, &mem_param_tmp_24002, &mem_23817, "mem_23817") != 0)
+            return 1;
+        if (memblock_set(ctx, &mem_param_tmp_24003, &mem_23815, "mem_23815") != 0)
+            return 1;
+        if (memblock_set(ctx, &mem_param_23810, &mem_param_tmp_24002, "mem_param_tmp_24002") != 0)
+            return 1;
+        if (memblock_set(ctx, &mem_param_23813, &mem_param_tmp_24003, "mem_param_tmp_24003") != 0)
+            return 1;
+    }
+    if (memblock_set(ctx, &ext_mem_23835, &mem_param_23810, "mem_param_23810") != 0)
+        return 1;
+    if (memblock_set(ctx, &ext_mem_23834, &mem_param_23813, "mem_param_23813") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_23749, "ext_mem_23749") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_23799, "mem_23799") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_23807, "mem_23807") != 0)
+        return 1;
+    if (memblock_alloc(ctx, &mem_23837, bytes_23836, "mem_23837")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc(ctx, &mem_23839, bytes_23798, "mem_23839")) {
+        err = 1;
+        goto cleanup;
+    }
+    for (int64_t i_23508 = 0; i_23508 < defunc_res_23377; i_23508++) {
+        int64_t eta_p_21366 = ((int64_t *) ext_mem_23834.mem)[i_23508];
+        bool x_21368 = sle64((int64_t) 0, eta_p_21366);
+        bool y_21369 = slt64(eta_p_21366, n1_16484);
+        bool bounds_check_21370 = x_21368 && y_21369;
+        bool index_certs_21371;
+        
+        if (!bounds_check_21370) {
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_21366, "] out of bounds for array of shape [", (long long) n1_16484, "].", "-> #0  ../../../joins/ftHashJoin.fut:502:58-70\n   #1  /prelude/functional.fut:9:44-45\n   #2  ../../../joins/ftHashJoin.fut:502:41-74\n   #3  test_join1.fut:16:1-29:36\n"));
+            err = FUTHARK_PROGRAM_ERROR;
+            goto cleanup;
+        }
+        
+        int64_t tmp_21372 = ((int64_t *) mem_23706)[eta_p_21366];
+        
+        lmad_copy_1b(ctx, 1, (uint8_t *) mem_23837.mem, i_23508 * b_16485, (int64_t []) {(int64_t) 1}, (uint8_t *) ks1_mem_23557.mem, eta_p_21366 * b_16485, (int64_t []) {(int64_t) 1}, (int64_t []) {b_16485});
+        ((int64_t *) mem_23839.mem)[i_23508] = tmp_21372;
+    }
+    
+    int32_t zm_rhs_21173 = sdiv32(i32_arg0_20357, 8);
+    int32_t zm_lhs_21174 = sub32(i64_res_20350, zm_rhs_21173);
+    int32_t i32_arg0_21175 = sub32(zm_lhs_21174, 1);
+    int64_t i32_res_21176 = sext_i32_i64(i32_arg0_21175);
+    int64_t j_m_i_21182 = sub64(map2_arg2_20883, i32_res_21176);
+    
+    if (memblock_set(ctx, &mem_param_23856, &mem_23839, "mem_23839") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_param_23859, &ext_mem_23835, "ext_mem_23835") != 0)
+        return 1;
+    for (int64_t i_20305 = 0; i_20305 < defunc_0_reduce_res_23373; i_20305++) {
+        if (memblock_alloc(ctx, &mem_23861, bytes_23798, "mem_23861")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (memblock_alloc(ctx, &mem_23863, bytes_23798, "mem_23863")) {
+            err = 1;
+            goto cleanup;
+        }
+        for (int64_t i_23526 = 0; i_23526 < defunc_res_23377; i_23526++) {
+            int64_t eta_p_20310 = ((int64_t *) mem_param_23856.mem)[i_23526];
+            int64_t eta_p_20311 = ((int64_t *) ext_mem_23834.mem)[i_23526];
+            int64_t eta_p_20312 = ((int64_t *) mem_param_23859.mem)[i_23526];
+            bool cond_20313 = sle64(eta_p_20312, (int64_t) 0);
+            int64_t lifted_lambda_res_20314;
+            int64_t lifted_lambda_res_20315;
+            
+            if (cond_20313) {
+                lifted_lambda_res_20314 = eta_p_20310;
+                lifted_lambda_res_20315 = eta_p_20312;
+            } else {
+                bool x_20316 = sle64((int64_t) 0, eta_p_20311);
+                bool y_20317 = slt64(eta_p_20311, n1_16484);
+                bool bounds_check_20318 = x_20316 && y_20317;
+                bool index_certs_20319;
+                
+                if (!bounds_check_20318) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_20311, "] out of bounds for array of shape [", (long long) n1_16484, "].", "-> #0  ../../../joins/ftHashJoin.fut:506:20-26\n   #1  /prelude/soacs.fut:75:28-29\n   #2  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                int32_t min_res_21065 = smin32(min_arg1_20352, i32_arg0_20357);
+                int32_t zm_rhs_21072 = sdiv32(min_res_21065, 8);
+                int32_t zm_lhs_21073 = sub32(i64_res_20350, zm_rhs_21072);
+                int32_t i32_arg0_21074 = sub32(zm_lhs_21073, 1);
+                int64_t i32_res_21075 = sext_i32_i64(i32_arg0_21074);
+                int64_t min_res_21078 = smin64(min_arg1_20365, i32_res_21075);
+                bool y_20322 = slt64(eta_p_20310, n2_16487);
+                bool x_20321 = sle64((int64_t) 0, eta_p_20310);
+                bool bounds_check_20323 = x_20321 && y_20322;
+                bool index_certs_20324;
+                
+                if (!bounds_check_20323) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_20310, "] out of bounds for array of shape [", (long long) n2_16487, "].", "-> #0  ../../../joins/ftHashJoin.fut:507:20-27\n   #1  /prelude/soacs.fut:75:28-29\n   #2  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                bool x_21106 = sle64((int64_t) 0, min_res_21078);
+                bool y_21107 = slt64(min_res_21078, b_16485);
+                bool bounds_check_21108 = x_21106 && y_21107;
+                bool index_certs_21109;
+                
+                if (!bounds_check_21108) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) min_res_21078, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:33:40-56\n   #1  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                
+                bool empty_slice_21183 = j_m_i_21182 == (int64_t) 0;
+                int64_t m_21184 = sub64(j_m_i_21182, (int64_t) 1);
+                int64_t i_p_m_t_s_21185 = add64(i32_res_21176, m_21184);
+                bool zzero_leq_i_p_m_t_s_21186 = sle64((int64_t) 0, i_p_m_t_s_21185);
+                bool i_p_m_t_s_leq_w_21187 = slt64(i_p_m_t_s_21185, b_16485);
+                bool zzero_lte_i_21188 = sle64((int64_t) 0, i32_res_21176);
+                bool i_lte_j_21189 = sle64(i32_res_21176, map2_arg2_20883);
+                bool y_21190 = i_p_m_t_s_leq_w_21187 && zzero_lte_i_21188;
+                bool y_21191 = zzero_leq_i_p_m_t_s_21186 && y_21190;
+                bool forwards_ok_21192 = i_lte_j_21189 && y_21191;
+                bool ok_or_empty_21193 = empty_slice_21183 || forwards_ok_21192;
+                bool index_certs_21194;
+                
+                if (!ok_or_empty_21193) {
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) i32_res_21176, ":", (long long) map2_arg2_20883, "] out of bounds for array of shape [", (long long) b_16485, "].", "-> #0  ../../../joins/ftHashJoin.fut:51:49-60\n   #1  test_join1.fut:16:1-29:36\n"));
+                    err = FUTHARK_PROGRAM_ERROR;
+                    goto cleanup;
+                }
+                if (mem_23870_cached_sizze_24046 < b_16485) {
+                    err = lexical_realloc(ctx, &mem_23870, &mem_23870_cached_sizze_24046, b_16485);
+                    if (err != FUTHARK_SUCCESS)
+                        goto cleanup;
+                }
+                if (mem_23871_cached_sizze_24047 < b_16485) {
+                    err = lexical_realloc(ctx, &mem_23871, &mem_23871_cached_sizze_24047, b_16485);
+                    if (err != FUTHARK_SUCCESS)
+                        goto cleanup;
+                }
+                for (int64_t i_23515 = 0; i_23515 < b_16485; i_23515++) {
+                    int8_t eta_p_23127 = ((int8_t *) ks1_mem_23557.mem)[eta_p_20311 * b_16485 + i_23515];
+                    int8_t eta_p_23128 = ((int8_t *) ks2_mem_23559.mem)[eta_p_20310 * b_16485 + i_23515];
+                    bool cond_23130 = sle64(i_23515, i32_res_20358);
+                    bool cond_t_res_23131 = sle64(min_res_21078, i_23515);
+                    bool x_23132 = cond_23130 && cond_t_res_23131;
+                    int8_t lifted_lambda_res_23133;
+                    
+                    if (x_23132) {
+                        lifted_lambda_res_23133 = eta_p_23127;
+                    } else {
+                        lifted_lambda_res_23133 = (int8_t) 0;
+                    }
+                    
+                    int8_t lifted_lambda_res_23138;
+                    
+                    if (x_23132) {
+                        lifted_lambda_res_23138 = eta_p_23128;
+                    } else {
+                        lifted_lambda_res_23138 = (int8_t) 0;
+                    }
+                    ((int8_t *) mem_23870)[i_23515] = lifted_lambda_res_23138;
+                    ((int8_t *) mem_23871)[i_23515] = lifted_lambda_res_23133;
+                }
+                
+                int32_t lastBit_21080 = smod32(min_res_21065, 8);
+                int32_t zm_lhs_21083 = sub32(8, lastBit_21080);
+                int32_t i32_arg0_21084 = sub32(zm_lhs_21083, 1);
+                int8_t unsign_arg0_21085 = zext_i32_i8(i32_arg0_21084);
+                int8_t unsign_arg0_21086 = lshr8((int8_t) -1, unsign_arg0_21085);
+                int8_t za_lhs_21099 = ((int8_t *) mem_23871)[i32_res_20358];
+                int8_t mod1_x_21100 = (int8_t) -1 & za_lhs_21099;
+                
+                ((int8_t *) mem_23871)[i32_res_20358] = mod1_x_21100;
+                
+                int8_t za_lhs_21110 = ((int8_t *) mem_23871)[min_res_21078];
+                int8_t tmp_21111 = unsign_arg0_21086 & za_lhs_21110;
+                
+                ((int8_t *) mem_23871)[min_res_21078] = tmp_21111;
+                
+                int8_t za_lhs_21154 = ((int8_t *) mem_23870)[i32_res_20358];
+                int8_t mod1_x_21155 = (int8_t) -1 & za_lhs_21154;
+                
+                ((int8_t *) mem_23870)[i32_res_20358] = mod1_x_21155;
+                
+                int8_t za_lhs_21165 = ((int8_t *) mem_23870)[min_res_21078];
+                int8_t tmp_21166 = unsign_arg0_21086 & za_lhs_21165;
+                
+                ((int8_t *) mem_23870)[min_res_21078] = tmp_21166;
+                if (mem_23884_cached_sizze_24048 < j_m_i_21182) {
+                    err = lexical_realloc(ctx, &mem_23884, &mem_23884_cached_sizze_24048, j_m_i_21182);
+                    if (err != FUTHARK_SUCCESS)
+                        goto cleanup;
+                }
+                for (int64_t i_23520 = 0; i_23520 < j_m_i_21182; i_23520++) {
+                    int64_t slice_23530 = i32_res_21176 + i_23520;
+                    int8_t eta_p_21198 = ((int8_t *) mem_23871)[slice_23530];
+                    int8_t eta_p_21199 = ((int8_t *) mem_23870)[slice_23530];
+                    bool defunc_0_f_res_21200 = eta_p_21198 == eta_p_21199;
+                    
+                    ((bool *) mem_23884)[i_23520] = defunc_0_f_res_21200;
+                }
+                
+                bool defunc_0_foldl_res_21201;
+                bool acc_21203 = 1;
+                
+                for (int64_t i_21202 = 0; i_21202 < j_m_i_21182; i_21202++) {
+                    bool b_21204 = ((bool *) mem_23884)[i_21202];
+                    bool x_21205 = acc_21203 && b_21204;
+                    bool acc_tmp_24019 = x_21205;
+                    
+                    acc_21203 = acc_tmp_24019;
+                }
+                defunc_0_foldl_res_21201 = acc_21203;
+                
+                int64_t lifted_lambda_res_f_res_20329;
+                int64_t lifted_lambda_res_f_res_20330;
+                
+                if (defunc_0_foldl_res_21201) {
+                    bool cond_23355 = eta_p_20312 == (int64_t) 1;
+                    int64_t lifted_lambda_res_f_res_t_res_23356;
+                    int64_t lifted_lambda_res_f_res_t_res_23357;
+                    
+                    if (cond_23355) {
+                        int64_t tmp_23358 = sub64(eta_p_20312, (int64_t) 1);
+                        
+                        lifted_lambda_res_f_res_t_res_23356 = eta_p_20310;
+                        lifted_lambda_res_f_res_t_res_23357 = tmp_23358;
+                    } else {
+                        int64_t tmp_23359 = add64((int64_t) 1, eta_p_20310);
+                        int64_t tmp_23360 = sub64(eta_p_20312, (int64_t) 1);
+                        
+                        lifted_lambda_res_f_res_t_res_23356 = tmp_23359;
+                        lifted_lambda_res_f_res_t_res_23357 = tmp_23360;
+                    }
+                    lifted_lambda_res_f_res_20329 = lifted_lambda_res_f_res_t_res_23356;
+                    lifted_lambda_res_f_res_20330 = lifted_lambda_res_f_res_t_res_23357;
+                } else {
+                    int64_t tmp_20337 = add64((int64_t) 1, eta_p_20310);
+                    
+                    lifted_lambda_res_f_res_20329 = tmp_20337;
+                    lifted_lambda_res_f_res_20330 = eta_p_20312;
+                }
+                lifted_lambda_res_20314 = lifted_lambda_res_f_res_20329;
+                lifted_lambda_res_20315 = lifted_lambda_res_f_res_20330;
+            }
+            ((int64_t *) mem_23861.mem)[i_23526] = lifted_lambda_res_20314;
+            ((int64_t *) mem_23863.mem)[i_23526] = lifted_lambda_res_20315;
+        }
+        if (memblock_set(ctx, &mem_param_tmp_24010, &mem_23861, "mem_23861") != 0)
+            return 1;
+        if (memblock_set(ctx, &mem_param_tmp_24011, &mem_23863, "mem_23863") != 0)
+            return 1;
+        if (memblock_set(ctx, &mem_param_23856, &mem_param_tmp_24010, "mem_param_tmp_24010") != 0)
+            return 1;
+        if (memblock_set(ctx, &mem_param_23859, &mem_param_tmp_24011, "mem_param_tmp_24011") != 0)
+            return 1;
+    }
+    if (memblock_set(ctx, &ext_mem_23902, &mem_param_23856, "mem_param_23856") != 0)
+        return 1;
+    if (memblock_set(ctx, &ext_mem_23901, &mem_param_23859, "mem_param_23859") != 0)
+        return 1;
+    if (memblock_unref(ctx, &ext_mem_23835, "ext_mem_23835") != 0)
+        return 1;
+    if (memblock_unref(ctx, &mem_23839, "mem_23839") != 0)
+        return 1;
+    if (memblock_alloc(ctx, &mem_23904, bytes_23798, "mem_23904")) {
+        err = 1;
+        goto cleanup;
+    }
+    lmad_copy_8b(ctx, 1, (uint64_t *) mem_23904.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (uint64_t *) ext_mem_23834.mem, (int64_t) 0, (int64_t []) {(int64_t) 1}, (int64_t []) {defunc_res_23377});
+    if (memblock_unref(ctx, &ext_mem_23834, "ext_mem_23834") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_out_23932, &mem_23837, "mem_23837") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_out_23933, &mem_23904, "mem_23904") != 0)
+        return 1;
+    if (memblock_set(ctx, &mem_out_23934, &ext_mem_23902, "ext_mem_23902") != 0)
+        return 1;
+    prim_out_23935 = defunc_res_23377;
+    if (memblock_set(ctx, &*mem_out_p_24020, &mem_out_23932, "mem_out_23932") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_24021, &mem_out_23933, "mem_out_23933") != 0)
+        return 1;
+    if (memblock_set(ctx, &*mem_out_p_24022, &mem_out_23934, "mem_out_23934") != 0)
+        return 1;
+    *out_prim_out_24023 = prim_out_23935;
     
   cleanup:
     {
-        free(mem_10427);
-        free(mem_10435);
-        if (memblock_unref(ctx, &mem_10443, "mem_10443") != 0)
+        free(mem_23568);
+        free(mem_23575);
+        free(mem_23620);
+        free(mem_23621);
+        free(mem_23634);
+        free(mem_23641);
+        free(mem_23642);
+        free(mem_23655);
+        free(mem_23656);
+        free(mem_23669);
+        free(mem_23670);
+        free(mem_23683);
+        free(mem_23706);
+        free(mem_23723);
+        free(mem_23724);
+        free(mem_23737);
+        free(mem_23751);
+        free(mem_23753);
+        free(mem_23755);
+        free(mem_23775);
+        free(mem_23783);
+        free(mem_23785);
+        free(mem_23870);
+        free(mem_23871);
+        free(mem_23884);
+        if (memblock_unref(ctx, &mem_23904, "mem_23904") != 0)
             return 1;
-        if (memblock_unref(ctx, &mem_out_10463, "mem_out_10463") != 0)
+        if (memblock_unref(ctx, &mem_param_tmp_24011, "mem_param_tmp_24011") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_tmp_24010, "mem_param_tmp_24010") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23863, "mem_23863") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23861, "mem_23861") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_23859, "mem_param_23859") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_23856, "mem_param_23856") != 0)
+            return 1;
+        if (memblock_unref(ctx, &ext_mem_23901, "ext_mem_23901") != 0)
+            return 1;
+        if (memblock_unref(ctx, &ext_mem_23902, "ext_mem_23902") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23839, "mem_23839") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23837, "mem_23837") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_tmp_24003, "mem_param_tmp_24003") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_tmp_24002, "mem_param_tmp_24002") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23817, "mem_23817") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23815, "mem_23815") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_23813, "mem_param_23813") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_23810, "mem_param_23810") != 0)
+            return 1;
+        if (memblock_unref(ctx, &ext_mem_23834, "ext_mem_23834") != 0)
+            return 1;
+        if (memblock_unref(ctx, &ext_mem_23835, "ext_mem_23835") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23807, "mem_23807") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23799, "mem_23799") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_tmp_23982, "mem_param_tmp_23982") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23719, "mem_23719") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_23717, "mem_param_23717") != 0)
+            return 1;
+        if (memblock_unref(ctx, &ext_mem_23749, "ext_mem_23749") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23714, "mem_23714") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_tmp_23944, "mem_param_tmp_23944") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_tmp_23943, "mem_param_tmp_23943") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23607, "mem_23607") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23605, "mem_23605") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_23603, "mem_param_23603") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_param_23600, "mem_param_23600") != 0)
+            return 1;
+        if (memblock_unref(ctx, &ext_mem_23700, "ext_mem_23700") != 0)
+            return 1;
+        if (memblock_unref(ctx, &ext_mem_23701, "ext_mem_23701") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23597, "mem_23597") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23589, "mem_23589") != 0)
+            return 1;
+        if (memblock_unref(ctx, &ext_mem_23704, "ext_mem_23704") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_23566, "mem_23566") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_23934, "mem_out_23934") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_23933, "mem_out_23933") != 0)
+            return 1;
+        if (memblock_unref(ctx, &mem_out_23932, "mem_out_23932") != 0)
             return 1;
     }
     return err;
 }
 
-int futhark_entry_smj2_i32(struct futhark_context *ctx, struct futhark_i32_1d **out0, struct futhark_i64_1d **out1, struct futhark_i64_1d **out2, const struct futhark_i32_1d *in0, const struct futhark_i64_1d *in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3)
+int futhark_entry_rhj(struct futhark_context *ctx, struct futhark_u8_2d **out0, struct futhark_i64_1d **out1, struct futhark_i64_1d **out2, const struct futhark_u8_2d *in0, const struct futhark_u8_2d *in1, const struct futhark_u8_2d *in2, const struct futhark_u8_2d *in3, const int32_t in4, const struct futhark_i64_1d *in5, const struct futhark_i32_1d *in6, const struct futhark_i64_1d *in7, const struct futhark_i64_1d *in8)
 {
-    int64_t n_9457 = (int64_t) 0;
-    int64_t prim_out_10466 = (int64_t) 0;
+    int64_t n1_16484 = (int64_t) 0;
+    int64_t b_16485 = (int64_t) 0;
+    int64_t dz2080U_16486 = (int64_t) 0;
+    int64_t n2_16487 = (int64_t) 0;
+    int64_t dz2081U_16488 = (int64_t) 0;
+    int64_t dz2082U_16489 = (int64_t) 0;
+    int64_t dz2083U_16490 = (int64_t) 0;
+    int64_t coercez2081Uz2088U_16491 = (int64_t) 0;
+    int64_t coercez2082Uz2081U_16492 = (int64_t) 0;
+    int32_t maxDepth2_16497 = 0;
+    int64_t prim_out_23935 = (int64_t) 0;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock mem_out_10465;
+    struct memblock mem_out_23934;
     
-    mem_out_10465.references = NULL;
+    mem_out_23934.references = NULL;
     
-    struct memblock mem_out_10464;
+    struct memblock mem_out_23933;
     
-    mem_out_10464.references = NULL;
+    mem_out_23933.references = NULL;
     
-    struct memblock mem_out_10463;
+    struct memblock mem_out_23932;
     
-    mem_out_10463.references = NULL;
+    mem_out_23932.references = NULL;
     
-    struct memblock cm_mem_10428;
+    struct memblock last_idx2_mem_23564;
     
-    cm_mem_10428.references = NULL;
+    last_idx2_mem_23564.references = NULL;
     
-    struct memblock iy_mem_10427;
+    struct memblock first_idx2_mem_23563;
     
-    iy_mem_10427.references = NULL;
+    first_idx2_mem_23563.references = NULL;
     
-    struct memblock ix_mem_10426;
+    struct memblock depths2_mem_23562;
     
-    ix_mem_10426.references = NULL;
+    depths2_mem_23562.references = NULL;
     
-    struct memblock vs_mem_10425;
+    struct memblock bounds2_mem_23561;
     
-    vs_mem_10425.references = NULL;
-    vs_mem_10425 = in0->mem;
-    n_9457 = in0->shape[0];
-    ix_mem_10426 = in1->mem;
-    n_9457 = in1->shape[0];
-    iy_mem_10427 = in2->mem;
-    n_9457 = in2->shape[0];
-    cm_mem_10428 = in3->mem;
-    n_9457 = in3->shape[0];
-    if (!(n_9457 == in0->shape[0] && (n_9457 == in1->shape[0] && (n_9457 == in2->shape[0] && n_9457 == in3->shape[0])))) {
+    bounds2_mem_23561.references = NULL;
+    
+    struct memblock nameless_mem_23560;
+    
+    nameless_mem_23560.references = NULL;
+    
+    struct memblock ks2_mem_23559;
+    
+    ks2_mem_23559.references = NULL;
+    
+    struct memblock nameless_mem_23558;
+    
+    nameless_mem_23558.references = NULL;
+    
+    struct memblock ks1_mem_23557;
+    
+    ks1_mem_23557.references = NULL;
+    ks1_mem_23557 = in0->mem;
+    n1_16484 = in0->shape[0];
+    b_16485 = in0->shape[1];
+    nameless_mem_23558 = in1->mem;
+    n1_16484 = in1->shape[0];
+    dz2080U_16486 = in1->shape[1];
+    ks2_mem_23559 = in2->mem;
+    n2_16487 = in2->shape[0];
+    b_16485 = in2->shape[1];
+    nameless_mem_23560 = in3->mem;
+    n2_16487 = in3->shape[0];
+    dz2081U_16488 = in3->shape[1];
+    maxDepth2_16497 = in4;
+    bounds2_mem_23561 = in5->mem;
+    dz2082U_16489 = in5->shape[0];
+    depths2_mem_23562 = in6->mem;
+    dz2083U_16490 = in6->shape[0];
+    first_idx2_mem_23563 = in7->mem;
+    coercez2081Uz2088U_16491 = in7->shape[0];
+    last_idx2_mem_23564 = in8->mem;
+    coercez2082Uz2081U_16492 = in8->shape[0];
+    if (!((n1_16484 == in0->shape[0] && b_16485 == in0->shape[1]) && ((n1_16484 == in1->shape[0] && dz2080U_16486 == in1->shape[1]) && ((n2_16487 == in2->shape[0] && b_16485 == in2->shape[1]) && ((n2_16487 == in3->shape[0] && dz2081U_16488 == in3->shape[1]) && (dz2082U_16489 == in5->shape[0] && (dz2083U_16490 == in6->shape[0] && (coercez2081Uz2088U_16491 == in7->shape[0] && coercez2082Uz2081U_16492 == in8->shape[0])))))))) {
         ret = 1;
         set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
     }
     if (ret == 0) {
-        ret = futrts_entry_smj2_i32(ctx, &mem_out_10463, &mem_out_10464, &mem_out_10465, &prim_out_10466, vs_mem_10425, ix_mem_10426, iy_mem_10427, cm_mem_10428, n_9457);
+        ret = futrts_entry_rhj(ctx, &mem_out_23932, &mem_out_23933, &mem_out_23934, &prim_out_23935, ks1_mem_23557, nameless_mem_23558, ks2_mem_23559, nameless_mem_23560, bounds2_mem_23561, depths2_mem_23562, first_idx2_mem_23563, last_idx2_mem_23564, n1_16484, b_16485, dz2080U_16486, n2_16487, dz2081U_16488, dz2082U_16489, dz2083U_16490, coercez2081Uz2088U_16491, coercez2082Uz2081U_16492, maxDepth2_16497);
         if (ret == 0) {
-            assert((*out0 = (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) != NULL);
-            (*out0)->mem = mem_out_10463;
-            (*out0)->shape[0] = prim_out_10466;
+            assert((*out0 = (struct futhark_u8_2d *) malloc(sizeof(struct futhark_u8_2d))) != NULL);
+            (*out0)->mem = mem_out_23932;
+            (*out0)->shape[0] = prim_out_23935;
+            (*out0)->shape[1] = b_16485;
             assert((*out1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out1)->mem = mem_out_10464;
-            (*out1)->shape[0] = prim_out_10466;
+            (*out1)->mem = mem_out_23933;
+            (*out1)->shape[0] = prim_out_23935;
             assert((*out2 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out2)->mem = mem_out_10465;
-            (*out2)->shape[0] = prim_out_10466;
-        }
-    }
-    lock_unlock(&ctx->lock);
-    return ret;
-}
-int futhark_entry_smj2_i64(struct futhark_context *ctx, struct futhark_i64_1d **out0, struct futhark_i64_1d **out1, struct futhark_i64_1d **out2, const struct futhark_i64_1d *in0, const struct futhark_i64_1d *in1, const struct futhark_i64_1d *in2, const struct futhark_i64_1d *in3)
-{
-    int64_t n_9758 = (int64_t) 0;
-    int64_t prim_out_10466 = (int64_t) 0;
-    int ret = 0;
-    
-    lock_lock(&ctx->lock);
-    
-    struct memblock mem_out_10465;
-    
-    mem_out_10465.references = NULL;
-    
-    struct memblock mem_out_10464;
-    
-    mem_out_10464.references = NULL;
-    
-    struct memblock mem_out_10463;
-    
-    mem_out_10463.references = NULL;
-    
-    struct memblock cm_mem_10428;
-    
-    cm_mem_10428.references = NULL;
-    
-    struct memblock iy_mem_10427;
-    
-    iy_mem_10427.references = NULL;
-    
-    struct memblock ix_mem_10426;
-    
-    ix_mem_10426.references = NULL;
-    
-    struct memblock vs_mem_10425;
-    
-    vs_mem_10425.references = NULL;
-    vs_mem_10425 = in0->mem;
-    n_9758 = in0->shape[0];
-    ix_mem_10426 = in1->mem;
-    n_9758 = in1->shape[0];
-    iy_mem_10427 = in2->mem;
-    n_9758 = in2->shape[0];
-    cm_mem_10428 = in3->mem;
-    n_9758 = in3->shape[0];
-    if (!(n_9758 == in0->shape[0] && (n_9758 == in1->shape[0] && (n_9758 == in2->shape[0] && n_9758 == in3->shape[0])))) {
-        ret = 1;
-        set_error(ctx, msgprintf("Error: entry point arguments have invalid sizes.\n"));
-    }
-    if (ret == 0) {
-        ret = futrts_entry_smj2_i64(ctx, &mem_out_10463, &mem_out_10464, &mem_out_10465, &prim_out_10466, vs_mem_10425, ix_mem_10426, iy_mem_10427, cm_mem_10428, n_9758);
-        if (ret == 0) {
-            assert((*out0 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out0)->mem = mem_out_10463;
-            (*out0)->shape[0] = prim_out_10466;
-            assert((*out1 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out1)->mem = mem_out_10464;
-            (*out1)->shape[0] = prim_out_10466;
-            assert((*out2 = (struct futhark_i64_1d *) malloc(sizeof(struct futhark_i64_1d))) != NULL);
-            (*out2)->mem = mem_out_10465;
-            (*out2)->shape[0] = prim_out_10466;
+            (*out2)->mem = mem_out_23934;
+            (*out2)->shape[0] = prim_out_23935;
         }
     }
     lock_unlock(&ctx->lock);
