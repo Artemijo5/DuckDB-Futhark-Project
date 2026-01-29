@@ -21,6 +21,6 @@ entry smj3_i32 [n]
 	(_ : [n]i32) (ix : [n]i64) (iy : [n]i64)
 	(pL1 : [][]u8) (pL2 : [][]u8)
 =
-	let pL1 = gather pL1 ix
-	let pL2 = gather pL2 iy
-	in (pL1, pL2)
+	let gpL1 = gather pL1 ix
+	let gpL2 = gather pL2 iy
+	in (gpL1, gpL2)
