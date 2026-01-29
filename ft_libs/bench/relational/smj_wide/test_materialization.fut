@@ -1,0 +1,26 @@
+import "../../../ftbasics"
+
+-- Materialization (gather payloads).
+--
+-- ==
+-- entry: smj3_i32
+-- input @data/i32_1_1.in
+-- auto output
+-- input @data/i32_1_2.in
+-- auto output
+-- input @data/i32_2_1.in
+-- auto output
+-- input @data/i32_2_2.in
+-- auto output
+-- input @data/i32_3_1.in
+-- auto output
+-- input @data/i32_3_2.in
+-- auto output
+
+entry smj3_i32 [n]
+	(_ : [n]i32) (ix : [n]i64) (iy : [n]i64)
+	(pL1 : [][]u8) (pL2 : [][]u8)
+=
+	let pL1 = gather pL1 ix
+	let pL2 = gather pL2 iy
+	in (pL1, pL2)
