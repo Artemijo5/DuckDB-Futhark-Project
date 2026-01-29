@@ -35,14 +35,14 @@ entry part1_16 [n] [b] [pL_b] (ks : [n][b]u8) (pL : [n][pL_b]u8) =
 entry part2_8 [n] [b] [pL_b] (ks : [n][b]u8) (pL : [n][pL_b]u8) =
 	let b_ = i32.i64 b in
 	partition_and_deepen
-		(i16.highest) (i64.highest) 8 ks pL 0 b_ 2
+		(i16.highest) (i64.highest) 8 ks pL 2048 b_ 2
 
 entry part2_12 [n] [b] [pL_b] (ks : [n][b]u8) (pL : [n][pL_b]u8) =
 	let b_ = i32.i64 b in
 	partition_and_deepen
-		(i16.highest) (i64.highest) 12 ks pL 0 (3*(b_)/4) 2
+		(i16.highest) (i64.highest) 12 ks pL 2048 (3*(b_)/4) 2
 
 entry part2_16 [n] [b] [pL_b] (ks : [n][b]u8) (pL : [n][pL_b]u8) =
 	let b_ = i32.i64 b in
 	partition_and_deepen
-		(i16.highest) (i64.highest) 16 ks pL 0 ((b_)/2) 2
+		(i16.highest) (i64.highest) 16 ks pL 2048 ((b_)/2) 2
