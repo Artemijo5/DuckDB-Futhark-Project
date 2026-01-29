@@ -6,11 +6,11 @@ import "../../../joins/ftHashJoin"
 --
 -- ==
 -- entry: rhj
--- input @data/data8.in
+-- input @data/data1.in
 -- auto output
--- input @data/data12.in
+-- input @data/data2.in
 -- auto output
--- input @data/data16.in
+-- input @data/data3.in
 -- auto output
 
 entry rhj [n1] [n2] [b]
