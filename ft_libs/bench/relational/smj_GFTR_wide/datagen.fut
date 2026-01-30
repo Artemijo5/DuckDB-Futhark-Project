@@ -24,7 +24,7 @@ import "../../../joins/ftSMJ"
 
 entry smj0_i32 [n]
 	(pL1 : [n][]u8)
-	(pL1 : [2*n][]u8)
+	(pL2 : [2*n][]u8)
 =
 	let ks1 : [n]i32 =   (0..1..<(i32.i64 n))
 		|> sized n
@@ -37,7 +37,7 @@ entry smj0_i32 [n]
 
 entry smj0_i64 [n]
 	(pL1 : [n][]u8)
-	(pL1 : [2*n][]u8)
+	(pL2 : [2*n][]u8)
 =
 	let ks1 : [n]i64 =   (0..1..<n)
 		|> sized n
