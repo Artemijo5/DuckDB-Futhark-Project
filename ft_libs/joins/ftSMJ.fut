@@ -101,7 +101,7 @@ import "../ftbasics"
     (leq: a -> a -> bool)
    : sortStruct [n] [b] a =
     let xys : [n](a, [b]u8) = zip xs.k xs.pL
-    let sorted_xys = merge_sort_by_key (\xy -> xy.0) (leq) xys
+    let sorted_xys = merge_sort (\xy1 xy2 -> xy1.0 `leq` xy1.1) xys
     let un_xys : ([n]a, [n][]u8) = unzip sorted_xys
     in {k = un_xys.0, pL = un_xys.1}
 
@@ -148,7 +148,7 @@ import "../ftbasics"
     (leq: a -> a -> bool)
    : sortInfo [n] a =
     let ixs = xs |> zip (idx_t.indicesWithIncrement incr xs)
-    let sorted_ixs = merge_sort_by_key (\ixs -> ixs.1) (leq) ixs
+    let sorted_ixs = merge_sort (\ix1 ix2 -> ix1.0 `leq` ix1.1) ixs
     let un_ixs = unzip sorted_ixs
     in {is = un_ixs.0, xs = un_ixs.1}
 

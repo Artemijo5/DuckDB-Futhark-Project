@@ -503,7 +503,7 @@ module dbscan_plus (F : float) = {
 			(m_size : i64)
 		: [n1]i64 =
 			let extPar = i64.max 1 (m_size/(i64.max n2 1))
-			let num_iter = (extPar + n1 - 1)/extPar
+			let num_iter = i64.max 0 ((extPar + n1 - 1)/extPar)
 			in loop nnBuff = (replicate n1 0) for j in (iota num_iter) do
 				let inf = j*extPar
 				let sup = i64.min n1 (inf+extPar)
@@ -731,7 +731,7 @@ module dbscan_plus (F : float) = {
 			let cluster_head_tm = cluster_head
 				|> filter (\(_,pt) -> isMarginal_func pt eps)
 			let extPar_tm = i64.max 1 (m_size/(i64.max 1 (length cluster_head_tm)))
-			let numIter1 = (extPar_tm + fn - 1)/extPar_tm
+			let numIter1 = i64.max 0 ((extPar_tm + fn - 1)/extPar_tm)
 			let f_cids =
 				loop buff = (replicate fn (-1)) for j in (iota numIter1) do
 				let inf = j*extPar_tm
@@ -748,7 +748,7 @@ module dbscan_plus (F : float) = {
 				) |> map (.0)
 				in buff with [inf:sup] = cur_upd
 			-- assign cids to partition points
-			let numIter2 = (extPar + pn - 1)/extPar
+			let numIter2 = i64.max 0 ((extPar + pn - 1)/extPar)
 			let p_cids =
 				loop buff = (replicate pn (-1)) for j in (iota numIter2) do
 				let inf = j*extPar
