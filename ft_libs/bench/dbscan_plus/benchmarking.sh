@@ -10,8 +10,8 @@ dataBounds_2d_dense=368
 #dataBounds_2d_sparse=200
 #dataBounds_2d_dense=150
 
-ft_backend=c
-num_runs=10
+ft_backend=cuda
+num_runs=25
 
 mkdir -p data
 
