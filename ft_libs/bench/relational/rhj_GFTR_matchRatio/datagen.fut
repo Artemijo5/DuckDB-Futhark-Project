@@ -15,11 +15,10 @@ import "../../../joins/ftHashJoin"
 
 entry rhj0_matchRatio [n]
 	(matchRate : f16)
-	(prob_ : [n]f16)
+	(prob : [n]f16)
 	(pL1_ : [n][]u8)
 	(pL2_ : [n][]u8)
 =
-	let prob = prob_ |> map (\p -> (f16.abs p) / f16.highest)
 	let ks1_ : [n][4]u8 =   (iota n)
 		|> map (\i -> [(i/256/256/256)%256,(i/256/256)%256,(i/256)%256,i%256])
 		|> map (map u8.i64)

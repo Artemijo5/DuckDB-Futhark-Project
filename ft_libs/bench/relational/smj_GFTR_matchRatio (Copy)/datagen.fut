@@ -9,7 +9,7 @@ import "../../../joins/ftSMJ"
 -- 
 -- ==
 -- entry: smj0_100 smj0_50 smj0_25 smj0_125 smj0_625
--- random input { [134217728]f16 [134217728][16]u8 [134217728][16]u8 }
+-- random input { [128000]f16 [128000][16]u8 [128000][16]u8 }
 -- auto output
 
 def smj0_matchRate [n]
