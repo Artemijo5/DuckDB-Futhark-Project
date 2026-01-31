@@ -1066,6 +1066,79 @@ module dbscan_plus (F : float) = {
 	: [n]i64 =
 		dbscanPlus_double.rectify_cluster_ids chain_ids colTbl gather_psize
 
+	-- one-liner version that
+	-- TODO put inside the module
+	entry internal_DBSCAN_double [n]
+		(subdiv_x : i64) (subdiv_y : i64)
+		(isEuclidean : bool) (isRadians : bool) (radius : f64)
+		(eps : f64) (minPts : i64)
+		(m_size : i64) (compact_list : bool)
+		(xs : [n]f64) (ys : [n]f64)
+	: flushedData_double =
+		let pts = zip xs ys
+		let maxval_x = f64.maximum xs
+		let maxval_y = f64.maximum ys
+		let minval_x = f64.minimum xs
+		let minval_y = f64.minimum ys
+		let subdv_x : f64 = f64.i64 subdiv_x -- grid subdivisions per dimension
+		let subdv_y : f64 = f64.i64 subdiv_y -- grid subdivisions per dimension
+		let part_no : i64 = subdiv_x * subdiv_y
+		let step_x = (maxval_x-minval_x) / subdv_x
+		let step_y = (maxval_y-minval_y) / subdv_y
+		-- sort pts by grid id - approximation of an index
+		let get_grid_id ((x,y) : (f64,f64)) : i64 =
+			(x/step_x |> f64.floor) + ((y/step_y)*subdv_x |> f64.floor)
+			|> i64.f64
+		let pts_byGrid = merge_sort_by_key (get_grid_id) (<=) pts
+		let inf_byPart = hist
+			(\i1 i2 -> if i1<i2 then i1 else i2)
+			n
+			part_no
+			(pts_byGrid |> map (\pt -> get_grid_id pt))
+			(iota n)
+		-- do dbscan
+		let clHandler_ = dbscanPlus_double.mk_dbcHandler
+				minval_x minval_y maxval_x maxval_y subdiv_x subdiv_y
+				(if isEuclidean then #euclidean else #haversine)
+				(if isRadians then #radians else #degrees)
+				radius
+				eps minPts m_size
+		let (ret_pts, ret_ids, cc, _, _)
+		=
+		loop (flushed_pts, flushed_ids, collisions, old_clHandler, next_part)
+		= ([],[],{ncc=0,chain_id=[],replaceWith=[]},clHandler_,0)
+		while next_part>=0 do
+			let inf = inf_byPart[next_part]
+			let sup = if next_part==part_no-1 then n else inf_byPart[next_part+1]
+			let (new_xs, new_ys) = pts_byGrid[inf:sup] |> unzip
+			let clHandler = dbscanPlus_double.add_next_partition old_clHandler next_part new_xs new_ys
+			let (this_fpts_preDBSCAN, this_fcids_preDBSCAN) =
+				let this_flushed = dbscanPlus_double.flush_dat clHandler false
+				in (zip this_flushed.xs this_flushed.ys, this_flushed.chain_ids)
+			let clHandler1 = dbscanPlus_double.do_DBSCAN clHandler (i64.highest) compact_list
+			let next_next_part = dbscanPlus_double.next_partition_to_read clHandler1
+			let (this_fpts, this_fcids) =
+				if next_next_part >= 0
+				then (this_fpts_preDBSCAN, this_fcids_preDBSCAN)
+				else
+					let this_flushed = dbscanPlus_double.flush_dat clHandler1 true
+					let (this_fpts_postDBSCAN, this_fcids_postDBSCAN)
+						= (zip this_flushed.xs this_flushed.ys, this_flushed.chain_ids)
+					in (this_fpts_preDBSCAN ++ this_fpts_postDBSCAN, this_fcids_preDBSCAN ++ this_fcids_postDBSCAN)
+			let next_cc =
+				if next_next_part >= 0
+				then collisions
+				else let new_col = dbscanPlus_double.make_collisions_compact clHandler1
+					in {
+						ncc = collisions.ncc + new_col.ncc,
+						chain_id = collisions.chain_id ++ new_col.chain_id,
+						replaceWith = collisions.replaceWith ++ new_col.replaceWith
+					}
+			in (flushed_pts ++ this_fpts, flushed_ids ++ this_fcids, next_cc, clHandler1, next_next_part)
+		-- rectification pass
+		let final_cids = dbscanPlus_double.rectify_cluster_ids ret_ids cc (i64.highest)
+		in {n=n,xs=ret_pts |> map (.0),ys = ret_pts |> map(.1), chain_ids = final_cids}
+
 -- Tests
 	def test_handler = mk_dbcHandler_double
 		0.0 0.0 30.0 30.0
