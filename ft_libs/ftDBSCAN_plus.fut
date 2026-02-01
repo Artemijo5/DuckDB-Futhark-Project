@@ -1090,6 +1090,9 @@ module dbscan_plus (F : float) = {
 			(x/step_x |> f64.floor) + ((y/step_y)*subdv_x |> f64.floor)
 			|> i64.f64
 		let pts_byGrid = merge_sort_by_key (get_grid_id) (<=) pts
+		-- NOTE
+		-- in case of empty partition, its id will be n
+		-- in that case, need to avoid array slicing in the loop
 		let inf_byPart = hist
 			(\i1 i2 -> if i1<i2 then i1 else i2)
 			n
@@ -1103,14 +1106,16 @@ module dbscan_plus (F : float) = {
 				(if isRadians then #radians else #degrees)
 				radius
 				eps minPts m_size
-		let (ret_pts, ret_ids, cc, _, _)
+		let (_, ret_pts, ret_ids, cc, _, _)
 		=
-		loop (flushed_pts, flushed_ids, collisions, old_clHandler, next_part)
-		= ([],[],{ncc=0,chain_id=[],replaceWith=[]},clHandler_,0)
-		while next_part>=0 do
+		loop (num_flushed, flushed_pts, flushed_ids, collisions, old_clHandler, next_part)
+		= (0, (replicate n (0,0)),(replicate n (-1)),{ncc=0,chain_id=[],replaceWith=[]},clHandler_,0)
+		while next_part>=0 && next_part<part_no do
 			let inf = inf_byPart[next_part]
 			let sup = if next_part==part_no-1 then n else inf_byPart[next_part+1]
-			let (new_xs, new_ys) = pts_byGrid[inf:sup] |> unzip
+			-- if partition is empty, its inf will be n, its sup might be within the array
+			-- in that case assign empty arrays to avoid array slicing
+			let (new_xs, new_ys) = if inf==n then ([],[]) else pts_byGrid[inf:sup] |> unzip
 			let clHandler = dbscanPlus_double.add_next_partition old_clHandler next_part new_xs new_ys
 			let (this_fpts_preDBSCAN, this_fcids_preDBSCAN) =
 				let this_flushed = dbscanPlus_double.flush_dat clHandler false
@@ -1128,13 +1133,16 @@ module dbscan_plus (F : float) = {
 			let next_cc =
 				if next_next_part >= 0
 				then collisions
-				else let new_col = dbscanPlus_double.make_collisions_compact clHandler1
-					in {
-						ncc = collisions.ncc + new_col.ncc,
-						chain_id = collisions.chain_id ++ new_col.chain_id,
-						replaceWith = collisions.replaceWith ++ new_col.replaceWith
-					}
-			in (flushed_pts ++ this_fpts, flushed_ids ++ this_fcids, next_cc, clHandler1, next_next_part)
+				else dbscanPlus_double.make_collisions_compact clHandler1
+			let new_numFlushed = num_flushed + length this_fpts
+			in (
+				new_numFlushed,
+				(copy flushed_pts) with [num_flushed:new_numFlushed] = this_fpts,
+				(copy flushed_ids) with [num_flushed:new_numFlushed] = this_fcids,
+				next_cc,
+				clHandler1,
+				next_next_part
+			)
 		-- rectification pass
 		let final_cids = dbscanPlus_double.rectify_cluster_ids ret_ids cc (i64.highest)
 		in {n=n,xs=ret_pts |> map (.0),ys = ret_pts |> map(.1), chain_ids = final_cids}

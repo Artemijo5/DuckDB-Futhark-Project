@@ -1,6 +1,10 @@
-num_elems=65536
-dataBounds_2d_sparse=566
-dataBounds_2d_dense=368
+num_elems=1048576
+dataBounds_2d_sparse=2264
+dataBounds_2d_dense=1472
+
+#num_elems=65536
+#dataBounds_2d_sparse=566
+#dataBounds_2d_dense=368
 
 #num_elems=32767
 #dataBounds_2d_sparse=400
