@@ -1,5 +1,5 @@
-futhark_backend=c
-num_runs=10
+futhark_backend=cuda
+num_runs=25
 dsize=33554432
 
 futhark bench datagen.fut --backend=$futhark_backend --runs=1
