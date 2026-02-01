@@ -48,7 +48,7 @@ entry part2 [n] [b] [pL_b] (ks : [n][b]u8) (pL : [n][pL_b]u8) =
 		16
 		ks
 		pL
-		(n / 65536 * 100 / 95)
+		(n / 65536 * 100 / 85)
 		((b_)/2) 2
 
 -- TODO

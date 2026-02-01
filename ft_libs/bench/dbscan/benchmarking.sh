@@ -4,11 +4,17 @@
 #dataBounds_3d_sparse=60
 #dataBounds_3d_dense=39
 
-num_elems=65536
-dataBounds_2d_sparse=566
-dataBounds_2d_dense=368
+num_elems=32768
+dataBounds_2d_sparse=400
+dataBounds_2d_dense=260
 dataBounds_3d_sparse=120
 dataBounds_3d_dense=78
+
+#num_elems=65536
+#dataBounds_2d_sparse=566
+#dataBounds_2d_dense=368
+#dataBounds_3d_sparse=120
+#dataBounds_3d_dense=78
 
 ft_backend=cuda
 num_runs=25
