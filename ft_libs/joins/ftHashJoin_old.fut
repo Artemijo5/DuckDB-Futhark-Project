@@ -284,8 +284,8 @@ def partition_and_deepen 't [n] [b]
           |> sized nr
           |> map2 (+) (pids |> map (\i -> pinds[i]) |> sized nr)
       -- gather partitions & apply repartitioning
-        let xips = gather_idx
-          |> map (\i -> (pXs[i], (pids[i], pPs[i])))
+        let xips = indices gather_idx
+          |> map (\i -> (pXs[gather_idx[i]], (pids[i], pPs[gather_idx[i]])))
           |> unzip
         let (new_xips)
           = radix_part gather_psize xips.0 xips.1 new_i new_j bit_step
@@ -294,12 +294,13 @@ def partition_and_deepen 't [n] [b]
         let (new_xs, new_pLs) =
           if nt == 1
           then new_xips |> map (\(x,(_,pL)) -> (x, pL)) |> unzip
-          else new_xips
+          else
+            new_xips
             |> merge_sort (\(_,(pid1,_)) (_,(pid2,_)) -> pid1<=pid2)
             |> map (\(x,(_,pL)) -> (x, pL))
             |> unzip
       -- identify if there are any new taidade partitions
-        let curBounds = (getPartitionBounds dp new_xs new_i new_j).bounds
+        let curBounds = (getPartitionBounds dp new_xs 0 new_j).bounds
         let n_xinBufen = length curBounds
         let xin_taidade = if dp==max_depth-1 then []
           else indices curBounds
@@ -1023,11 +1024,12 @@ def test1 =
   let tab1 = calc_radixHashTab 8 xs1 inf1 256
   in radix_hash_join 8 xs2 xs1 inf1 tab1
 
-def test2 (depth : i32) =
+def test2 (nbits: i32) (depth : i32) =
   let xs1_:[][]u8= [[4,1],[0,3],[1,4],[1,4],[1,4],[5,4],[2,3],[4,3],[6,3],[1,2],[2,2],[4,2],[3,2],[0,1],[0,1],[0,1]]
   let xs2_:[][]u8= [[4,1],[5,1],[0,1],[0,1],[5,4],[5,4],[1,4],[2,4],[2,2],[2,2],[2,2],[2,2],[5,3],[7,3],[1,3],[3,3]]
-  let (xs1,is1) = partition_and_deepen (i16.highest) (i64.highest) 8 xs1_ (indices xs1_) 0 depth 2
-  let (xs2,is2) = partition_and_deepen (i16.highest) (i64.highest) 8 xs2_ (indices xs2_) 0 depth 2
-  let inf1 = calc_partInfo 8 xs1 0 0 depth
-  let tab1 = calc_radixHashTab 8 xs1 inf1 256
-  in (radix_hash_join 8 xs2 xs1 inf1 tab1, xs1, xs2, inf1, tab1.first_info_idx[0:10], tab1.last_info_idx[0:10])
+  let (xs1,is1) = partition_and_deepen (i16.highest) (i64.highest) nbits xs1_ (indices xs1_) 1 depth 2
+  let (xs2,is2) = partition_and_deepen (i16.highest) (i64.highest) nbits xs2_ (indices xs2_) 1 depth 2
+  let inf1 = calc_partInfo nbits xs1 0 1 depth
+  let tab1 = calc_radixHashTab nbits xs1 inf1 256
+  --in (radix_hash_join 8 xs2 xs1 inf1 tab1, xs1, xs2, inf1, tab1.first_info_idx[0:10], tab1.last_info_idx[0:10])
+  in (radix_hash_join nbits xs2 xs1 inf1 tab1, inf1, tab1.first_info_idx[1:5], tab1.last_info_idx[1:5], xs1, xs2)
