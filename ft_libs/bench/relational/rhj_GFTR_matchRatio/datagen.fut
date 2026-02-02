@@ -1,5 +1,5 @@
 import "../../../ftbasics"
-import "../../../joins/ftHashJoin"
+import "../../../joins/ftHashJoin_old"
 
 -- Datagen, 4-byte integer keys.
 -- Going by Wu et al's paper:

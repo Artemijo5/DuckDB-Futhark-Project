@@ -1,5 +1,5 @@
 import "../../../ftbasics"
-import "../../../joins/ftHashJoin"
+import "../../../joins/ftHashJoin_old"
 
 -- radix partition works just fine
 -- so why does radix sort not compile?
