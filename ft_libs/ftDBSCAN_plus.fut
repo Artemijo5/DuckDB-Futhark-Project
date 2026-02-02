@@ -1110,7 +1110,7 @@ module dbscan_plus (F : float) = {
 		=
 		loop (num_flushed, flushed_pts, flushed_ids, collisions, old_clHandler, next_part)
 		= (0, (replicate n (0,0)),(replicate n (-1)),{ncc=0,chain_id=[],replaceWith=[]},clHandler_,0)
-		while next_part>=0 && next_part<part_no do
+		while next_part>=0 && num_flushed<n do
 			let inf = inf_byPart[next_part]
 			let sup = if next_part==part_no-1 then n else inf_byPart[next_part+1]
 			-- if partition is empty, its inf will be n, its sup might be within the array
@@ -1120,7 +1120,10 @@ module dbscan_plus (F : float) = {
 			let (this_fpts_preDBSCAN, this_fcids_preDBSCAN) =
 				let this_flushed = dbscanPlus_double.flush_dat clHandler false
 				in (zip this_flushed.xs this_flushed.ys, this_flushed.chain_ids)
-			let clHandler1 = dbscanPlus_double.do_DBSCAN clHandler (i64.highest) compact_list
+			let clHandler1 =
+				if inf==n
+				then clHandler -- if partition is empty, do nothing
+				else dbscanPlus_double.do_DBSCAN clHandler (i64.highest) compact_list
 			let next_next_part = dbscanPlus_double.next_partition_to_read clHandler1
 			let (this_fpts, this_fcids) =
 				if next_next_part >= 0

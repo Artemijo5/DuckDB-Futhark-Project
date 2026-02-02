@@ -1,4 +1,6 @@
 import "../ftbasics"
+import "../lib/github.com/diku-dk/sorts/merge_sort"
+import "../lib/github.com/diku-dk/segmented/segmented"
 
 type~ partitionInfo = {maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 
@@ -249,70 +251,68 @@ def getPartitionRadix [n] [b]
   let totalRadix = i32.min (radix_size*curDepth) ((i32.i64 b)*u8.num_bits)
   in getRadix 0 (totalRadix-1) pXs[boundIdx]
 
-def deepen_step 't [m] [b]
-  (block_size: i16)
-  (gather_psize: idx_t.t)
-  (radix_size: i32)
-  (curDepth: i32)
-  (x_bufen: ([m](byteSeq [b]), [m]t))
-  (size_thresh: idx_t.t)
-  (bit_step: i32)
-: ([m](byteSeq [b]), [m]t, [](idx_t.t, idx_t.t)) =
-  let newDepth = curDepth+1
-  let new_i = radix_size*curDepth
-  let new_j = radix_size*(curDepth+1) - 1
-  let x_xinbufen = radix_part
-    gather_psize
-    x_bufen.0
-    x_bufen.1
-    new_i
-    new_j
-    bit_step
-  let newBounds = (getPartitionBounds newDepth x_xinbufen.0 new_i new_j).bounds
-  let taidade = -- partitions that exceed size_thresh, represented by lb (inclusive) & ub (exlusive)
-    indices newBounds
-    |> map (\i -> (newBounds[i], if (i<(length newBounds)-1) then newBounds[i+1] else (m)))
-    |> filter (\(lb, ub) -> ub-lb > size_thresh)
-  in (x_xinbufen.0, x_xinbufen.1, taidade)
-
 def partition_and_deepen 't [n] [b]
   (block_size: i16)
   (gather_psize: idx_t.t)
   (radix_size: i32)
   (xs: [n](byteSeq [b]))
-  (pL: [n]t)
+  (pLs: [n]t)
   (size_thresh: idx_t.t)
-  (max_depth: i32)
+  (max_depth_: i32)
   (bit_step: i32)
 : ([n](byteSeq [b]), [n]t) =
-  let xps = (xs, pL)
-  let loop_over : {pXs: [n](byteSeq [b]), pPs: [n]t, taidade: [](idx_t.t, idx_t.t), dp: i32}
-  = loop p = {pXs = xps.0, pPs = xps.1, taidade = [(0,n)], dp = 0}
-  while (length p.taidade > 0) && (p.dp<max_depth) do
-    -- Iterate over xis
-    -- deepen_step over taidade ranges, leave other ranges unchanged
-    let inner_loop : {xbuff: [n](byteSeq [b]), pbuff: [n]t, new_taidade: [](idx_t.t, idx_t.t)}
-    = loop q = {xbuff = p.pXs, pbuff = p.pPs, new_taidade = []}
-    for bounds in p.taidade do
-      let m = bounds.1 - bounds.0
-      let x_bufen = q.xbuff[bounds.0:bounds.1] :> [m](byteSeq [b])
-      let p_bufen = q.pbuff[bounds.0:bounds.1] :> [m]t
-      let res = deepen_step block_size gather_psize radix_size p.dp (x_bufen, p_bufen) size_thresh bit_step
-      in {
-        xbuff = (copy q.xbuff) with [bounds.0:bounds.1] = res.0,
-        pbuff = (copy q.pbuff) with [bounds.0:bounds.1] = res.1,
-        new_taidade = q.new_taidade ++ (res.2 |> map (\(lb, ub) -> (lb + bounds.0, ub + bounds.0)))
-      }
-    in {
-      pXs = inner_loop.xbuff :> [n](byteSeq [b]),
-      pPs = inner_loop.pbuff :> [n]t,
-      taidade = inner_loop.new_taidade,
-      dp = p.dp + 1
-    }
-  in (
-    loop_over.pXs,
-    loop_over.pPs
-  )
+  let max_J = (i32.i64 b)*u8.num_bits - 1
+  let max_depth = i32.min max_depth_ (((i32.i64 b)*u8.num_bits + radix_size - 1)/radix_size)
+  -- recursively subdivide partitions that are too large
+  -- starting with the entire dataset as one too large partition
+  let loop_over : ([n](byteSeq [b]), [n]t, [](idx_t.t, idx_t.t),  i32)
+    = loop (pXs, pPs, taidade, dp) = (xs, pLs, [(0,n)], 0)
+    while (length taidade > 0) && (dp<max_depth) do
+        let nt = length taidade
+        let new_i = radix_size*dp
+        let new_j = i32.min max_J (new_i + radix_size - 1)
+      -- get indices & lens of all taidade partitions
+        let pinds = taidade |> map (.0)
+        let plens = taidade |> map (.1)
+      -- create gather/scatter indices via segmented iota
+      -- as well as replicated taidade partition ids
+        let pids = plens |> replicated_iota
+        let nr = length pids
+        let gather_idx = indices pids
+          |> map (\i -> if i==0 then false else (pids[i-1]!=pids[i]))
+          |> segmented_iota
+          |> sized nr
+          |> map2 (+) (pids |> map (\i -> pinds[i]) |> sized nr)
+      -- gather partitions & apply repartitioning
+        let xips = gather_idx
+          |> map (\i -> (pXs[i], (pids[i], pPs[i])))
+          |> unzip
+        let (new_xips)
+          = radix_part gather_psize xips.0 xips.1 new_i new_j bit_step
+          |> (\ret -> zip ret.0 ret.1)
+      -- if more than 1 partition, sort them by part id
+        let (new_xs, new_pLs) =
+          if nt == 1
+          then new_xips |> map (\(x,(_,pL)) -> (x, pL)) |> unzip
+          else new_xips
+            |> merge_sort (\(_,(pid1,_)) (_,(pid2,_)) -> pid1<=pid2)
+            |> map (\(x,(_,pL)) -> (x, pL))
+            |> unzip
+      -- identify if there are any new taidade partitions
+        let curBounds = (getPartitionBounds dp new_xs new_i new_j).bounds
+        let n_xinBufen = length curBounds
+        let xin_taidade = if dp==max_depth-1 then []
+          else indices curBounds
+          |> map (\i -> if i==n_xinBufen-1 then (curBounds[i],nr) else (curBounds[i],curBounds[i+1]))
+          |> map (\(inf,sup) -> sup-inf)
+          |> zip (indices curBounds)
+          |> map (\(i,s) -> (gather_idx[curBounds[i]], s))
+          |> filter (\(_,s) -> s>size_thresh)
+      -- scatter & move on to the next iteration
+        let xin_pXs = scatter (copy pXs) gather_idx new_xs
+        let xin_pPs = scatter (copy pPs) gather_idx new_pLs
+        in (xin_pXs, xin_pPs, xin_taidade, dp+1)
+  in (loop_over.0, loop_over.1)
 
 type partitionedSet_GFTR [n] [b] [pL_b] = {ks: [n](byteSeq [b]), pL: [n](byteSeq [pL_b])}
 type partitionedSet_GFUR [n] [b] = {ks: [n](byteSeq [b]), idx: [n]idx_t.t}
@@ -323,8 +323,9 @@ def calc_partInfo [n] [b]
   (pXs: [n](byteSeq [b]))
   (offset: idx_t.t)
   (size_thresh: idx_t.t)
-  (max_depth: i32)
+  (max_depth_: i32)
 : partitionInfo =
+  let max_depth = i32.min max_depth_ (((i32.i64 b)*u8.num_bits + radix_size - 1)/radix_size)
   let recursive_info : (partitionInfo, bool)
   = loop p = (getPartitionBounds 1 pXs 0 (radix_size-1), true)
   while (p.0.maxDepth < max_depth && p.1) do
@@ -334,6 +335,8 @@ def calc_partInfo [n] [b]
       |> filter (\(lb, ub, _) -> ub-lb > size_thresh)
     let (inner_info : partitionInfo, _: idx_t.t, _: idx_t.t)
     = loop (q, ad, ox) = (p.0, 0, 0)
+    -- TODO can probably be more parallelised, like with partition_and_deepen
+    -- actually though, it's going to require stitching anyway (even if it might be better with exscans)
     for bounds in taidade do
       let m = bounds.1-bounds.0
       let x_bufen = pXs[bounds.0:bounds.1] :> [m](byteSeq [b])
@@ -512,7 +515,6 @@ def u32_radix_eq radix_bits cur_depth x1 x2
 def u64_radix_eq radix_bits cur_depth x1 x2
   = prim_radix_eq radix_bits cur_depth x1 x2 (==) (\bits moj -> bits & (moj-1))
 
-
 def rv_partitionMatchBounds [nR] [pR] 't
   (as_index_ : t -> i64)
   (get_radix_ : i32 -> t -> t)
@@ -555,35 +557,36 @@ def rv_partitionMatchBounds [nR] [pR] 't
             else (heshi+step, idx_t.max 1 (step/2))
     in bsearch
 
-def u8_rv_partitionMatchBounds  rv tS bounds_S depths_S ht_S =
+def u8_rv_partitionMatchBounds radix_size rv tS bounds_S depths_S ht_S =
   let this_as_index = (i64.u8)
   let this_get_radix = (u8_get_radix)
   let this_eq = (u8_radix_eq)
   let this_gt = (u8_radix_gt)
   let this_lt = (u8_radix_lt)
-  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (this_eq) (this_gt) (this_lt) rv tS bounds_S depths_S ht_S
-def u16_rv_partitionMatchBounds rv tS bounds_S depths_S ht_S =
+  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (this_eq) (this_gt) (this_lt) radix_size rv tS bounds_S depths_S ht_S
+def u16_rv_partitionMatchBounds radix_size rv tS bounds_S depths_S ht_S =
   let this_as_index = (i64.u16)
   let this_get_radix = (u16_get_radix)
   let this_eq = (u16_radix_eq)
   let this_gt = (u16_radix_gt)
   let this_lt = (u16_radix_lt)
-  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (this_eq) (this_gt) (this_lt) rv tS bounds_S depths_S ht_S
-def u32_rv_partitionMatchBounds rv tS bounds_S depths_S ht_S =
+  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (this_eq) (this_gt) (this_lt) radix_size rv tS bounds_S depths_S ht_S
+def u32_rv_partitionMatchBounds radix_size rv tS bounds_S depths_S ht_S =
   let this_as_index = (i64.u32)
   let this_get_radix = (u32_get_radix)
   let this_eq = (u32_radix_eq)
   let this_gt = (u32_radix_gt)
   let this_lt = (u32_radix_lt)
-  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (this_eq) (this_gt) (this_lt) rv tS bounds_S depths_S ht_S
-def u64_rv_partitionMatchBounds rv tS bounds_S depths_S ht_S =
+  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (this_eq) (this_gt) (this_lt) radix_size rv tS bounds_S depths_S ht_S
+def u64_rv_partitionMatchBounds radix_size rv tS bounds_S depths_S ht_S =
   let this_as_index = (i64.u64)
   let this_get_radix = (u64_get_radix)
   let this_eq = (u64_radix_eq)
   let this_gt = (u64_radix_gt)
   let this_lt = (u64_radix_lt)
-  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (this_eq) (this_gt) (this_lt) rv tS bounds_S depths_S ht_S
+  in rv_partitionMatchBounds (this_as_index) (this_get_radix) (this_eq) (this_gt) (this_lt) radix_size rv tS bounds_S depths_S ht_S
 
+#[noinline]
 def radix_hash_join_u8 [nR] [nS] [b]
  (radix_size : i32)
  (tR : [nR](byteSeq [b]))
@@ -607,31 +610,13 @@ def radix_hash_join_u8 [nR] [nS] [b]
           in (next_j, next_duome, i+1)
       in if sm<sup then (sm,cm) else (-1,0)
     ) |> unzip
-  let starting_pos = 
-    map2 (\c z -> if c>0 then z else (-1))
-      counts_per_r
-      (exscan (+) 0 counts_per_r)
-  let count_pairs = idx_t.sum counts_per_r
-  let pairsWithMultiplicity = counts_per_r
-    |> zip starting_pos
-    |> filter (\(_, c) -> c>1)
-  let max_mult =
-    if (length pairsWithMultiplicity > 0)
-    then pairsWithMultiplicity
-      |> map (\(_,c) -> c)
-      |> idx_t.maximum
-    else 1
-  let r_inds : [count_pairs](idx_t.t, idx_t.t)
-    = loop curBuff = (scatter (replicate count_pairs 0) starting_pos (iota nR))
-      |> zip (replicate count_pairs (1))
-    for iter in (1..<max_mult) do
-      let this_scatter_idxs = iota nR
-        |> map (\i ->
-          if counts_per_r[i]<=iter
-          then (-1)
-          else (starting_pos[i]+iter)
-        )
-      in scatter (copy curBuff) this_scatter_idxs (zip (replicate nR (iter+1)) (iota nR))
+  let r_inds =
+    let base_inds = replicated_iota counts_per_r
+    let seg_inds = indices base_inds
+      |> map (\i -> if i==0 then false else base_inds[i-1]!=base_inds[i])
+      |> segmented_iota
+      |> map (\k -> k+1)
+    in zip seg_inds base_inds
   let s_inds = r_inds
     |> map (\(k, ir) ->
       let rv = tR_int[ir]
@@ -648,6 +633,7 @@ def radix_hash_join_u8 [nR] [nS] [b]
       ix = r_inds |> map (.1),
       iy = s_inds
     }
+#[noinline]
 def radix_hash_join_u16 [nR] [nS] [b]
  (radix_size : i32)
  (tR : [nR](byteSeq [b]))
@@ -671,31 +657,13 @@ def radix_hash_join_u16 [nR] [nS] [b]
           in (next_j, next_duome, i+1)
       in if sm<sup then (sm,cm) else (-1,0)
     ) |> unzip
-  let starting_pos = 
-    map2 (\c z -> if c>0 then z else (-1))
-      counts_per_r
-      (exscan (+) 0 counts_per_r)
-  let count_pairs = idx_t.sum counts_per_r
-  let pairsWithMultiplicity = counts_per_r
-    |> zip starting_pos
-    |> filter (\(_, c) -> c>1)
-  let max_mult =
-    if (length pairsWithMultiplicity > 0)
-    then pairsWithMultiplicity
-      |> map (\(_,c) -> c)
-      |> idx_t.maximum
-    else 1
-  let r_inds : [count_pairs](idx_t.t, idx_t.t)
-    = loop curBuff = (scatter (replicate count_pairs 0) starting_pos (iota nR))
-      |> zip (replicate count_pairs (1))
-    for iter in (1..<max_mult) do
-      let this_scatter_idxs = iota nR
-        |> map (\i ->
-          if counts_per_r[i]<=iter
-          then (-1)
-          else (starting_pos[i]+iter)
-        )
-      in scatter (copy curBuff) this_scatter_idxs (zip (replicate nR (iter+1)) (iota nR))
+  let r_inds =
+    let base_inds = replicated_iota counts_per_r
+    let seg_inds = indices base_inds
+      |> map (\i -> if i==0 then false else base_inds[i-1]!=base_inds[i])
+      |> segmented_iota
+      |> map (\k -> k+1)
+    in zip seg_inds base_inds
   let s_inds = r_inds
     |> map (\(k, ir) ->
       let rv = tR_int[ir]
@@ -712,6 +680,7 @@ def radix_hash_join_u16 [nR] [nS] [b]
       ix = r_inds |> map (.1),
       iy = s_inds
     }
+#[noinline]
 def radix_hash_join_u32 [nR] [nS] [b]
  (radix_size : i32)
  (tR : [nR](byteSeq [b]))
@@ -725,7 +694,7 @@ def radix_hash_join_u32 [nR] [nS] [b]
   let (first_match_per_r, counts_per_r) = tR_int
     |> map (\rv->
       let heshi = u32_rv_partitionMatchBounds radix_size rv tS_int pS.bounds pS.depths ht_S
-      let inf = if heshi<=0 then 0 else pS.bounds[heshi]
+      let inf = if heshi<0 then 0 else pS.bounds[heshi]
       let sup = if heshi==n_pS-1 then nS else pS.bounds[heshi+1]
       let (sm,cm,_) =
         loop (j,duome,i)=(inf,0,inf) while (i<sup) do
@@ -735,31 +704,13 @@ def radix_hash_join_u32 [nR] [nS] [b]
           in (next_j, next_duome, i+1)
       in if sm<sup then (sm,cm) else (-1,0)
     ) |> unzip
-  let starting_pos = 
-    map2 (\c z -> if c>0 then z else (-1))
-      counts_per_r
-      (exscan (+) 0 counts_per_r)
-  let count_pairs = idx_t.sum counts_per_r
-  let pairsWithMultiplicity = counts_per_r
-    |> zip starting_pos
-    |> filter (\(_, c) -> c>1)
-  let max_mult =
-    if (length pairsWithMultiplicity > 0)
-    then pairsWithMultiplicity
-      |> map (\(_,c) -> c)
-      |> idx_t.maximum
-    else 1
-  let r_inds : [count_pairs](idx_t.t, idx_t.t)
-    = loop curBuff = (scatter (replicate count_pairs 0) starting_pos (iota nR))
-      |> zip (replicate count_pairs (1))
-    for iter in (1..<max_mult) do
-      let this_scatter_idxs = iota nR
-        |> map (\i ->
-          if counts_per_r[i]<=iter
-          then (-1)
-          else (starting_pos[i]+iter)
-        )
-      in scatter (copy curBuff) this_scatter_idxs (zip (replicate nR (iter+1)) (iota nR))
+  let r_inds =
+    let base_inds = replicated_iota counts_per_r
+    let seg_inds = indices base_inds
+      |> map (\i -> if i==0 then false else base_inds[i-1]!=base_inds[i])
+      |> segmented_iota
+      |> map (\k -> k+1)
+    in zip seg_inds base_inds
   let s_inds = r_inds
     |> map (\(k, ir) ->
       let rv = tR_int[ir]
@@ -776,6 +727,7 @@ def radix_hash_join_u32 [nR] [nS] [b]
       ix = r_inds |> map (.1),
       iy = s_inds
     }
+#[noinline]
 def radix_hash_join_u64 [nR] [nS] [b]
  (radix_size : i32)
  (tR : [nR](byteSeq [b]))
@@ -799,31 +751,13 @@ def radix_hash_join_u64 [nR] [nS] [b]
           in (next_j, next_duome, i+1)
       in if sm<sup then (sm,cm) else (-1,0)
     ) |> unzip
-  let starting_pos = 
-    map2 (\c z -> if c>0 then z else (-1))
-      counts_per_r
-      (exscan (+) 0 counts_per_r)
-  let count_pairs = idx_t.sum counts_per_r
-  let pairsWithMultiplicity = counts_per_r
-    |> zip starting_pos
-    |> filter (\(_, c) -> c>1)
-  let max_mult =
-    if (length pairsWithMultiplicity > 0)
-    then pairsWithMultiplicity
-      |> map (\(_,c) -> c)
-      |> idx_t.maximum
-    else 1
-  let r_inds : [count_pairs](idx_t.t, idx_t.t)
-    = loop curBuff = (scatter (replicate count_pairs 0) starting_pos (iota nR))
-      |> zip (replicate count_pairs (1))
-    for iter in (1..<max_mult) do
-      let this_scatter_idxs = iota nR
-        |> map (\i ->
-          if counts_per_r[i]<=iter
-          then (-1)
-          else (starting_pos[i]+iter)
-        )
-      in scatter (copy curBuff) this_scatter_idxs (zip (replicate nR (iter+1)) (iota nR))
+  let r_inds =
+    let base_inds = replicated_iota counts_per_r
+    let seg_inds = indices base_inds
+      |> map (\i -> if i==0 then false else base_inds[i-1]!=base_inds[i])
+      |> segmented_iota
+      |> map (\k -> k+1)
+    in zip seg_inds base_inds
   let s_inds = r_inds
     |> map (\(k, ir) ->
       let rv = tR_int[ir]
@@ -853,6 +787,7 @@ def radix_hash_join [b]
   else if b<=4 then radix_hash_join_u32 radix_size tR tS pS ht_S
   else radix_hash_join_u64 radix_size tR tS pS ht_S
 
+#[noinline]
 def radix_hash_join_with_S_keys_unique_u8 [nR] [nS] [b]
   (radix_size : i32)
   (tR : [nR](byteSeq [b]))
@@ -883,6 +818,7 @@ def radix_hash_join_with_S_keys_unique_u8 [nR] [nS] [b]
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
   in {vs=vs_, ix=ix_, iy=iy_}
+#[noinline]
 def radix_hash_join_with_S_keys_unique_u16 [nR] [nS] [b]
   (radix_size : i32)
   (tR : [nR](byteSeq [b]))
@@ -913,6 +849,7 @@ def radix_hash_join_with_S_keys_unique_u16 [nR] [nS] [b]
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
   in {vs=vs_, ix=ix_, iy=iy_}
+#[noinline]
 def radix_hash_join_with_S_keys_unique_u32 [nR] [nS] [b]
   (radix_size : i32)
   (tR : [nR](byteSeq [b]))
@@ -943,6 +880,7 @@ def radix_hash_join_with_S_keys_unique_u32 [nR] [nS] [b]
   let iy_ = scatter (replicate count_pairs (-1)) zuowei match_in_iy
   let vs_ = gather (dummy_byteSeq b) tR ix_
   in {vs=vs_, ix=ix_, iy=iy_}
+#[noinline]
 def radix_hash_join_with_S_keys_unique_u64 [nR] [nS] [b]
   (radix_size : i32)
   (tR : [nR](byteSeq [b]))
@@ -1078,9 +1016,18 @@ def u128_radix_lt radix_bits cur_depth (x1:(u64,u64)) (x2:(u64,u64))
 
 -- ################################################################################################################
 
-def test =
+def test1 =
   let xs1:[][]u8= [[0,1],[0,1],[0,1],[4,1],[1,2],[2,2],[3,2],[4,2],[0,3],[2,3],[4,3],[6,3],[1,4],[1,4],[1,4],[5,4]]
   let xs2:[][]u8= [[0,1],[0,1],[4,1],[5,1],[2,2],[2,2],[2,2],[2,2],[1,3],[3,3],[5,3],[7,3],[1,4],[2,4],[5,4],[5,4]]
-  let inf1 = calc_partInfo 4 xs1 0 2 3
-  let tab1 = calc_radixHashTab 4 xs1 inf1 256
-  in radix_hash_join 4 xs2 xs1 inf1 tab1
+  let inf1 = calc_partInfo 8 xs1 0 2 3
+  let tab1 = calc_radixHashTab 8 xs1 inf1 256
+  in radix_hash_join 8 xs2 xs1 inf1 tab1
+
+def test2 (depth : i32) =
+  let xs1_:[][]u8= [[4,1],[0,3],[1,4],[1,4],[1,4],[5,4],[2,3],[4,3],[6,3],[1,2],[2,2],[4,2],[3,2],[0,1],[0,1],[0,1]]
+  let xs2_:[][]u8= [[4,1],[5,1],[0,1],[0,1],[5,4],[5,4],[1,4],[2,4],[2,2],[2,2],[2,2],[2,2],[5,3],[7,3],[1,3],[3,3]]
+  let (xs1,is1) = partition_and_deepen (i16.highest) (i64.highest) 8 xs1_ (indices xs1_) 0 depth 2
+  let (xs2,is2) = partition_and_deepen (i16.highest) (i64.highest) 8 xs2_ (indices xs2_) 0 depth 2
+  let inf1 = calc_partInfo 8 xs1 0 0 depth
+  let tab1 = calc_radixHashTab 8 xs1 inf1 256
+  in (radix_hash_join 8 xs2 xs1 inf1 tab1, xs1, xs2, inf1, tab1.first_info_idx[0:10], tab1.last_info_idx[0:10])

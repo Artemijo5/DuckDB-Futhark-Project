@@ -13,6 +13,10 @@
 #include <unistd.h>
 #include <getopt.h>
 
+// TODO
+// 1. previously there was a bug with setting max_depth too high, see if it's still there & fix (seems not)
+// 2. utilize duckdb index for multipass
+
 #define default_LOGFILE "stdout"//"logs/radix_hash_join.log.txt"
 
 #define CHUNK_SIZE duckdb_vector_size()
@@ -21,13 +25,11 @@
 #define default_S_TABLE_SIZE 1*CHUNK_SIZE//4*CHUNK_SIZE
 
 #define default_BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define default_MAX_PARTITION_SIZE (idx_t)64
+#define default_MAX_PARTITION_SIZE (idx_t)0
 #define default_SCATTER_PSIZE (idx_t)320000000
 
-#define default_RADIX_BITS 14
-// TODO for some reason repartitioning past a threshold (different per try) omits result tuples...
-// possibly the useful threshold?
-#define default_MAX_DEPTH 2
+#define default_RADIX_BITS 16
+#define default_MAX_DEPTH 3
 
 #define default_R_TBL_NAME "R2_tbl"
 #define default_S_TBL_NAME "S2_tbl"
@@ -207,13 +209,13 @@ int main(int argc, char *argv[]) {
   char S_init_query[1000 + strlen(S_TBL_NAME)];
   sprintf(
     R_init_query,
-    "INSERT INTO %s (SELECT 4000000000*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 4096*random(), 10000*random(), 1000000*random(), 10000*random() FROM range(%ld) t(i));",
     R_TBL_NAME,
     R_TABLE_SIZE
   );
   sprintf(
     S_init_query,
-    "INSERT INTO %s (SELECT 4000000000*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
+    "INSERT INTO %s (SELECT 4096*random(), 1000000*random(), 10000*random(), 10000*random() FROM range(%ld) t(i));",
     S_TBL_NAME,
     S_TABLE_SIZE
   );
@@ -334,7 +336,7 @@ int main(int argc, char *argv[]) {
 // ############################################################################################################
 
   mylog(logfile, "EXPERIMENT $1 -- CPU-base join.");
-  char joinQ[1000];
+  char joinQ[1000 + strlen(R_TBL_NAME) + strlen(S_TBL_NAME) + strlen(R_KEY) + 2*strlen(S_KEY)];
   sprintf(joinQ, "CREATE OR REPLACE TABLE CPU_joinRes_RHJ AS (SELECT r.*, s.* EXCLUDE s.%s FROM %s r JOIN %s s ON (r.%s == s.%s));",
     S_KEY, R_TBL_NAME, S_TBL_NAME, R_KEY, S_KEY);
   if(duckdb_query(con, joinQ, NULL) == DuckDBError) {
