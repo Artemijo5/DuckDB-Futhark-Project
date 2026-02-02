@@ -13,9 +13,8 @@
 #include <unistd.h>
 #include <getopt.h>
 
-// TODO
-// 1. previously there was a bug with setting max_depth too high, see if it's still there & fix (seems not)
-// 2. utilize duckdb index for multipass
+// TODO (bug)
+// results mysteriously disappear when allowed to repartition up until the final byte (...)
 
 #define default_LOGFILE "stdout"//"logs/radix_hash_join.log.txt"
 
@@ -25,7 +24,7 @@
 #define default_S_TABLE_SIZE 1*CHUNK_SIZE//4*CHUNK_SIZE
 
 #define default_BLOCK_SIZE (int16_t)2084 // used for multi-pass gather and scatter operations (and by extension blocked sorting)
-#define default_MAX_PARTITION_SIZE (idx_t)0
+#define default_MAX_PARTITION_SIZE (idx_t)1
 #define default_SCATTER_PSIZE (idx_t)320000000
 
 #define default_RADIX_BITS 16
