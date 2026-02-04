@@ -247,7 +247,7 @@ import "../ftbasics"
           )
         let cmps = map2 (\kv (i, cv, nv) ->
             if i<0 then (-1) else
-            if (kv `eq` cv) && (i==(nS-1) || (nv `gt` kv))
+            if (kv `eq` cv) && (i==(nS-1) || (kv `lt` nv))
               then i
             else if (kv `eq` cv)
               then i64.min (nS-1) (i+this_step)

@@ -5,18 +5,7 @@ import "../../../joins/ftSMJ_str"
 -- SMJ for strings.
 -- ==
 -- entry: smj_strs
--- input @data/avg10.in
--- auto output
--- input @data/avg35.in
--- auto output
--- input @data/avg100.in
--- auto output
--- input @data/det10.in
--- auto output
--- input @data/det35.in
--- auto output
--- input @data/det100.in
--- auto output
+-- input @data/strDat.in
 
 entry smj_strs
 	(str_con1 : []u8) (str_idx1 : []i64) (is1 : []i64)

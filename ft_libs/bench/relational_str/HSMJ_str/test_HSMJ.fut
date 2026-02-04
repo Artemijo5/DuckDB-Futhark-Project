@@ -4,21 +4,11 @@ import "../../../joins/ftHashJoin_str"
 
 -- SMJ for strings.
 -- ==
--- entry: smj_strs
--- input @data/avg10.in
--- auto output
--- input @data/avg35.in
--- auto output
--- input @data/avg100.in
--- auto output
--- input @data/det10.in
--- auto output
--- input @data/det35.in
--- auto output
--- input @data/det100.in
--- auto output
+-- entry: hsmj_strs
+-- input @data/strDat_nl.in
+-- input @data/strDat_yl.in
 
-entry smj_strs [b]
+entry hsmj_strs [b]
 	(str_con1 : []u8) (str_idx1 : []i64)
 	(str_con2 : []u8) (str_idx2 : []i64)
 	(sxs1 : [][b]u8) (is1 : []i64)
