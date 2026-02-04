@@ -4,18 +4,7 @@ import "../../../ftbasics"
 --
 -- ==
 -- entry: smj3_i32
--- input @data/i32_1_1.in
--- auto output
--- input @data/i32_1_2.in
--- auto output
--- input @data/i32_2_1.in
--- auto output
--- input @data/i32_2_2.in
--- auto output
--- input @data/i32_3_1.in
--- auto output
--- input @data/i32_3_2.in
--- auto output
+-- input @data/smjdat.in
 
 entry smj3_i32 [n] [b]
 	(_ : [n]i32) (ix : [n]i64) (iy : [n]i64)

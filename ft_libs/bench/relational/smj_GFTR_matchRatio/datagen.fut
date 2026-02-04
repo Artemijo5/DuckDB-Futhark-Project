@@ -8,15 +8,14 @@ import "../../../joins/ftSMJ"
 -- Narrow join (no payloads).
 -- 
 -- ==
--- entry: smj0_100 smj0_50 smj0_25 smj0_125 smj0_625
--- random input { [134217728]f16 [134217728][16]u8 [134217728][16]u8 }
+-- entry: smj0_100 smj0_50 smj0_25 smj0_125
+-- input @data/datagen.in
 -- auto output
 
 def smj0_matchRate [n]
 	(matchRate : f16)
 	(prob : [n]f16)
-	(pL1 : [n][]u8)
-	(pL2 : [n][]u8)
+	(pL : [n][]u8)
 =
 	let ks1 : [n]i32 =   (0..2..<(i32.i64 (2*n)))
 		|> sized n
@@ -25,20 +24,20 @@ def smj0_matchRate [n]
 		|> map2 (\p v ->
 			if p<=matchRate then v else (v+1)
 		) prob
-	in (ks1, pL1, ks2, pL2)
+	in (ks1, pL, ks2, pL)
 
 
-entry smj0_100 [n] (prob : [n]f16) (pL1 : [n][]u8) (pL2 : [n][]u8)
-= smj0_matchRate 1.0 prob pL1 pL2
+entry smj0_100 [n] (prob : [n]f16) (pL : [n][]u8)
+= smj0_matchRate 1.0 prob pL
 
-entry smj0_50 [n] (prob : [n]f16) (pL1 : [n][]u8) (pL2 : [n][]u8)
-= smj0_matchRate 0.5 prob pL1 pL2
+entry smj0_50 [n] (prob : [n]f16) (pL : [n][]u8)
+= smj0_matchRate 0.5 prob pL
 
-entry smj0_25 [n] (prob : [n]f16) (pL1 : [n][]u8) (pL2 : [n][]u8)
-= smj0_matchRate 0.25 prob pL1 pL2
+entry smj0_25 [n] (prob : [n]f16) (pL : [n][]u8)
+= smj0_matchRate 0.25 prob pL
 
-entry smj0_125 [n] (prob : [n]f16) (pL1 : [n][]u8) (pL2 : [n][]u8)
-= smj0_matchRate 0.125 prob pL1 pL2
+entry smj0_125 [n] (prob : [n]f16) (pL : [n][]u8)
+= smj0_matchRate 0.125 prob pL
 
-entry smj0_625 [n] (prob : [n]f16) (pL1 : [n][]u8) (pL2 : [n][]u8)
-= smj0_matchRate 0.0625 prob pL1 pL2
+entry smj0_625 [n] (prob : [n]f16) (pL : [n][]u8)
+= smj0_matchRate 0.0625 prob pL

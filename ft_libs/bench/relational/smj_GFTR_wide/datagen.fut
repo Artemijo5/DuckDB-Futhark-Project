@@ -1,5 +1,5 @@
 import "../../../ftbasics"
-import "../../../joins/ftSMJ"
+import "../../../lib/github.com/diku-dk/sorts/merge_sort"
 
 -- Datagen, 4&8-byte integer keys.
 -- Going by Wu et al's paper:
@@ -9,41 +9,27 @@ import "../../../joins/ftSMJ"
 -- 
 -- ==
 -- entry: smj0_i32
--- random input { [33554432][8]u8 [67108864][8]u8 }
--- auto output
--- random input { [33554432][16]u8 [67108864][16]u8 }
--- auto output
--- random input { [67108864][8]u8 [134217728][8]u8 }
--- auto output
--- random input { [67108864][16]u8 [134217728][16]u8 }
--- auto output
--- random input { [134217728][8]u8 [268435456][8]u8 }
--- auto output
--- random input { [134217728][16]u8 [268435456][16]u8 }
+-- input @data/datagen.in
 -- auto output
 
 entry smj0_i32 [n]
-	(pL1 : [n][]u8)
-	(pL2 : [2*n][]u8)
+	(pL : [n][]u8)
 =
-	let ks1 : [n]i32 =   (0..1..<(i32.i64 n))
-		|> sized n
-	let ks2 : [2*n]i32 = (0..1..<(i32.i64 n))
-		|> sized n
-		|> map (\i -> (replicate 2 i))
+	let ks1 : [n/2]i32 = iota (n/2)
+		|> map (i32.i64)
+	let ks2 : [n]i32 = iota (n/2)
+		|> map (\i -> replicate 2 i)
 		|> flatten
-		|> sized (2*n)
-	in (ks1, pL1, ks2, pL2)
+		|> map (i32.i64)
+		|> sized n
+	in (ks1, pL, ks2, pL[0:n])
 
 entry smj0_i64 [n]
-	(pL1 : [n][]u8)
-	(pL2 : [2*n][]u8)
+	(pL : [n][]u8)
 =
-	let ks1 : [n]i64 =   (0..1..<n)
-		|> sized n
-	let ks2 : [2*n]i64 = (0..1..<n)
-		|> sized n
-		|> map (\i -> (replicate 2 i))
+	let ks1 : [n/2]i64 = iota (n/2)
+	let ks2 : [n]i64 = iota (n/2)
+		|> map (\i -> replicate 2 i)
 		|> flatten
-		|> sized (2*n)
-	in (ks1, pL1, ks2, pL2)
+		|> sized n
+	in (ks1, pL, ks2, pL[0:n])

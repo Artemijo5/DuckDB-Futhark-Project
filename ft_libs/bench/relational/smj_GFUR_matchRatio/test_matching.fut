@@ -22,8 +22,8 @@ import "../../../joins/ftSMJ"
 -- auto output
 
 entry smj1_i32
-	(ks1 : []i32) (pL1 : [][]u8)
-	(ks2 : []i32) (pL2 : [][]u8)
+	(ks1 : []i32) (is1 : []i64) (pL1 : [][]u8)
+	(ks2 : []i32) (is2 : []i64) (pL2 : [][]u8)
 =
 	let res = mergeJoin i32.num_bits ks1 ks2 0 0 (i64.highest) (==) (>) (<)
-	in (res.vs, res.ix, res.iy, res.cm, pL1, pL2)
+	in (res.vs, res.ix, res.iy, res.cm, is1, is2, pL1, pL2)

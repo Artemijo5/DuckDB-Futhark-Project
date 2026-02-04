@@ -9,17 +9,7 @@ import "../../../joins/ftSMJ"
 --
 -- ==
 -- entry: smj1_i32
--- input @data/i32_1_1.in
--- auto output
--- input @data/i32_1_2.in
--- auto output
--- input @data/i32_2_1.in
--- auto output
--- input @data/i32_2_2.in
--- auto output
--- input @data/i32_3_1.in
--- auto output
--- input @data/i32_3_2.in
+-- input @data/smjdat.in
 -- auto output
 
 entry smj1_i32

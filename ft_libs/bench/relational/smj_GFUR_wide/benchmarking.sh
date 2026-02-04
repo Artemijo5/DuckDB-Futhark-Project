@@ -9,7 +9,8 @@ payload_bytes=$2
 mkdir -p data
 
 if [ "$3" ] && [ "$3" -eq 0 ]; then
-	futhark dataset -b -g \[$((2*num_elem))\]\[$payload_bytes\]u8 > data/datagen.in
+	futhark dataset -b -g \[$num_elem\]i64 -b -g \[$((2*num_elem))\]i64 \
+	 -b -g \[$((2*num_elem))\]\[$payload_bytes\]u8 > data/datagen.in
 	futhark bench --backend=$futhark_backend --runs=1 datagen.fut
 	rm -f data/*.in
 	mv data/datagen:smj0_$type-data_datagen.in.out data/smjdat.in
