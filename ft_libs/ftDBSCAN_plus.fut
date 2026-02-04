@@ -771,6 +771,17 @@ module dbscan_plus (F : float) = {
 			(gather_psize : i64)
 			(compact_list : bool)
 		: dbcHandler [n] [part_no] =
+			-- if partition is empty, skip
+			if n==0 then
+			{
+				clBase = clHandler.clBase,
+				clProc = clHandler.clProc,
+				current_partition = clHandler.current_partition,
+				toFlush_dat = [],
+				toFlush_ids = [],
+				chain_collisions = clHandler.chain_collisions
+			}
+			else
 			let clBase = clHandler.clBase
 			let clProc = clHandler.clProc
 			let cur_part = clHandler.current_partition
@@ -1002,6 +1013,91 @@ module dbscan_plus (F : float) = {
 			        in (cmps, this_step)
 			in partitioned_gather_over_array (num_bits * 2) gather_psize
 				chain_ids colTbl.replaceWith bsearch
+
+	def internal_DBSCAN [n]
+		(subdiv_x : i64) (subdiv_y : i64)
+		(isEuclidean : bool) (isRadians : bool) (radius : t)
+		(eps : t) (minPts : i64)
+		(m_size : i64) (compact_list : bool)
+		(xs : [n]t) (ys : [n]t)
+	: flushedData =
+		let pts = zip xs ys
+		let maxval_x = F.maximum xs
+		let maxval_y = F.maximum ys
+		let minval_x = F.minimum xs
+		let minval_y = F.minimum ys
+		let subdv_x : t = from_i64 subdiv_x -- grid subdivisions per dimension
+		let subdv_y : t = from_i64 subdiv_y -- grid subdivisions per dimension
+		let part_no : i64 = subdiv_x * subdiv_y
+		let step_x = (maxval_x `minus` minval_x) `over` subdv_x
+		let step_y = (maxval_y `minus` minval_y) `over` subdv_y
+		-- sort pts by grid id - approximation of an index
+		let get_grid_id ((x,y) : (t,t)) : i64 =
+			((x `over` step_x) |> F.floor) |> plus ((y `over` step_y) |> times subdv_x |> F.floor)
+			|> to_i64
+		let pts_byGrid = merge_sort_by_key (get_grid_id) (<=) pts
+		-- NOTE
+		-- in case of empty partition, its id will be n
+		-- in that case, need to avoid array slicing in the loop
+		let inf_byPart = hist
+			(\i1 i2 -> if i1<i2 then i1 else i2)
+			n
+			part_no
+			(pts_byGrid |> map (\pt -> get_grid_id pt))
+			(iota n)
+		-- do dbscan
+		let clHandler_ = mk_dbcHandler
+				minval_x minval_y maxval_x maxval_y subdiv_x subdiv_y
+				(if isEuclidean then #euclidean else #haversine)
+				(if isRadians then #radians else #degrees)
+				radius
+				eps minPts m_size
+		let (_, ret_pts, ret_ids, cc, _, _)
+		=
+		loop (num_flushed, flushed_pts, flushed_ids, collisions, old_clHandler, next_part)
+		= (0, (replicate n (zero,zero)),(replicate n (-1)),{ncc=0,chain_id=[],replaceWith=[]},clHandler_,0)
+		while next_part>=0 && num_flushed<n do
+			let inf = inf_byPart[next_part]
+			-- obtain sup from next non-empty partition
+			let (sup,_) =
+				if inf==n then (n,-1) else
+				loop (vs,is)=(n,next_part) while (vs==n && is<part_no) do
+					let n_is = is+1
+					let n_vs = if n_is < part_no then inf_byPart[n_is] else n
+					in (n_vs, n_is)
+			-- if partition is empty, its inf will be n, its sup might be within the array
+			-- in that case assign empty arrays to avoid array slicing
+			let (new_xs, new_ys) = if inf==n then ([],[]) else pts_byGrid[inf:sup] |> unzip
+			let clHandler = add_next_partition old_clHandler next_part new_xs new_ys
+			let (this_fpts_preDBSCAN, this_fcids_preDBSCAN) =
+				let this_flushed = flush_dat clHandler false
+				in (zip this_flushed.xs this_flushed.ys, this_flushed.chain_ids)
+			let clHandler1 = do_DBSCAN clHandler (i64.highest) compact_list
+			let next_next_part = next_partition_to_read clHandler1
+			let (this_fpts, this_fcids) =
+				if next_next_part >= 0
+				then (this_fpts_preDBSCAN, this_fcids_preDBSCAN)
+				else
+					let this_flushed = flush_dat clHandler1 true
+					let (this_fpts_postDBSCAN, this_fcids_postDBSCAN)
+						= (zip this_flushed.xs this_flushed.ys, this_flushed.chain_ids)
+					in (this_fpts_preDBSCAN ++ this_fpts_postDBSCAN, this_fcids_preDBSCAN ++ this_fcids_postDBSCAN)
+			let next_cc =
+				if next_next_part >= 0
+				then collisions
+				else make_collisions_compact clHandler1
+			let new_numFlushed = num_flushed + length this_fpts
+			in (
+				new_numFlushed,
+				(copy flushed_pts) with [num_flushed:new_numFlushed] = this_fpts,
+				(copy flushed_ids) with [num_flushed:new_numFlushed] = this_fcids,
+				next_cc,
+				clHandler1,
+				next_next_part
+			)
+		-- rectification pass
+		let final_cids = rectify_cluster_ids ret_ids cc (i64.highest)
+		in {n=n,xs=ret_pts |> map (.0),ys = ret_pts |> map(.1), chain_ids = final_cids}
 }
 
 -- Double Entry Points
@@ -1075,80 +1171,8 @@ module dbscan_plus (F : float) = {
 		(m_size : i64) (compact_list : bool)
 		(xs : [n]f64) (ys : [n]f64)
 	: flushedData_double =
-		let pts = zip xs ys
-		let maxval_x = f64.maximum xs
-		let maxval_y = f64.maximum ys
-		let minval_x = f64.minimum xs
-		let minval_y = f64.minimum ys
-		let subdv_x : f64 = f64.i64 subdiv_x -- grid subdivisions per dimension
-		let subdv_y : f64 = f64.i64 subdiv_y -- grid subdivisions per dimension
-		let part_no : i64 = subdiv_x * subdiv_y
-		let step_x = (maxval_x-minval_x) / subdv_x
-		let step_y = (maxval_y-minval_y) / subdv_y
-		-- sort pts by grid id - approximation of an index
-		let get_grid_id ((x,y) : (f64,f64)) : i64 =
-			(x/step_x |> f64.floor) + ((y/step_y)*subdv_x |> f64.floor)
-			|> i64.f64
-		let pts_byGrid = merge_sort_by_key (get_grid_id) (<=) pts
-		-- NOTE
-		-- in case of empty partition, its id will be n
-		-- in that case, need to avoid array slicing in the loop
-		let inf_byPart = hist
-			(\i1 i2 -> if i1<i2 then i1 else i2)
-			n
-			part_no
-			(pts_byGrid |> map (\pt -> get_grid_id pt))
-			(iota n)
-		-- do dbscan
-		let clHandler_ = dbscanPlus_double.mk_dbcHandler
-				minval_x minval_y maxval_x maxval_y subdiv_x subdiv_y
-				(if isEuclidean then #euclidean else #haversine)
-				(if isRadians then #radians else #degrees)
-				radius
-				eps minPts m_size
-		let (_, ret_pts, ret_ids, cc, _, _)
-		=
-		loop (num_flushed, flushed_pts, flushed_ids, collisions, old_clHandler, next_part)
-		= (0, (replicate n (0,0)),(replicate n (-1)),{ncc=0,chain_id=[],replaceWith=[]},clHandler_,0)
-		while next_part>=0 && num_flushed<n do
-			let inf = inf_byPart[next_part]
-			let sup = if next_part==part_no-1 then n else inf_byPart[next_part+1]
-			-- if partition is empty, its inf will be n, its sup might be within the array
-			-- in that case assign empty arrays to avoid array slicing
-			let (new_xs, new_ys) = if inf==n then ([],[]) else pts_byGrid[inf:sup] |> unzip
-			let clHandler = dbscanPlus_double.add_next_partition old_clHandler next_part new_xs new_ys
-			let (this_fpts_preDBSCAN, this_fcids_preDBSCAN) =
-				let this_flushed = dbscanPlus_double.flush_dat clHandler false
-				in (zip this_flushed.xs this_flushed.ys, this_flushed.chain_ids)
-			let clHandler1 =
-				if inf==n
-				then clHandler -- if partition is empty, do nothing
-				else dbscanPlus_double.do_DBSCAN clHandler (i64.highest) compact_list
-			let next_next_part = dbscanPlus_double.next_partition_to_read clHandler1
-			let (this_fpts, this_fcids) =
-				if next_next_part >= 0
-				then (this_fpts_preDBSCAN, this_fcids_preDBSCAN)
-				else
-					let this_flushed = dbscanPlus_double.flush_dat clHandler1 true
-					let (this_fpts_postDBSCAN, this_fcids_postDBSCAN)
-						= (zip this_flushed.xs this_flushed.ys, this_flushed.chain_ids)
-					in (this_fpts_preDBSCAN ++ this_fpts_postDBSCAN, this_fcids_preDBSCAN ++ this_fcids_postDBSCAN)
-			let next_cc =
-				if next_next_part >= 0
-				then collisions
-				else dbscanPlus_double.make_collisions_compact clHandler1
-			let new_numFlushed = num_flushed + length this_fpts
-			in (
-				new_numFlushed,
-				(copy flushed_pts) with [num_flushed:new_numFlushed] = this_fpts,
-				(copy flushed_ids) with [num_flushed:new_numFlushed] = this_fcids,
-				next_cc,
-				clHandler1,
-				next_next_part
-			)
-		-- rectification pass
-		let final_cids = dbscanPlus_double.rectify_cluster_ids ret_ids cc (i64.highest)
-		in {n=n,xs=ret_pts |> map (.0),ys = ret_pts |> map(.1), chain_ids = final_cids}
+		dbscanPlus_double.internal_DBSCAN
+			subdiv_x subdiv_y isEuclidean isRadians radius eps minPts m_size compact_list xs ys
 
 -- Tests
 	def test_handler = mk_dbcHandler_double
