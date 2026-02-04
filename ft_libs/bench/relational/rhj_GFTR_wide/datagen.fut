@@ -10,17 +10,7 @@ import "../../../joins/ftHashJoin_old"
 -- 
 -- ==
 -- entry: rhj0
--- random input { [33554432][8]u8 [67108864][8]u8 }
--- auto output
--- random input { [33554432][16]u8 [67108864][16]u8 }
--- auto output
--- random input { [67108864][8]u8 [134217728][8]u8 }
--- auto output
--- random input { [67108864][16]u8 [134217728][16]u8 }
--- auto output
--- random input { [134217728][8]u8 [268435456][8]u8 }
--- auto output
--- random input { [134217728][16]u8 [268435456][16]u8 }
+-- input @data/datagen.in
 -- auto output
 
 entry rhj0 [n]

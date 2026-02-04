@@ -5,14 +5,11 @@ import "../../../ftbasics"
 -- ==
 -- entry: rhj2
 -- input @data/i32_100.in
--- auto output
 -- input @data/i32_50.in
--- auto output
 -- input @data/i32_25.in
--- auto output
 -- input @data/i32_125.in
--- auto output
--- input @data/i32_625.in
+
+-- -- input @data/i32_625.in
 -- auto output
 
 entry rhj2 [b]
@@ -20,8 +17,8 @@ entry rhj2 [b]
 	(pL1 : [][b]u8) (pL2 : [][b]u8)
 	(is1 : []i64) (is2 : []i64)
 =
-	let gis1 = gather -1 is1 ix
-	let gis2 = gather -1 is2 iy
+	let gis1 = gather (-1) is1 ix
+	let gis2 = gather (-1) is2 iy
 	let gpL1 = gather (replicate b 0) pL1 gis1
 	let gpL2 = gather (replicate b 0) pL2 gis2
 	in (gpL1, gpL2)

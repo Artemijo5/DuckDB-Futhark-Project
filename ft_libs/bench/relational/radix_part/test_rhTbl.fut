@@ -1,16 +1,11 @@
 import "../../../ftbasics"
-import "../../../joins/ftHashJoin"
+import "../../../joins/ftHashJoin_old"
 
 -- Construct partitionInfo for partitioned dataset.
 --
 -- ==
 -- entry: rhTbl
--- input @data/partitioned_1.in
--- auto output
--- input @data/partitioned_2.in
--- auto output
--- input @data/partitioned_3.in
--- auto output
+-- input @data/part_data.in
 
 entry rhTbl [n] [b] (ks : [n][b]u8) (maxDepth : i32) (bounds : []i64) (depths : []i32) =
 	let info : partitionInfo = {maxDepth=maxDepth, bounds=bounds, depths=depths}

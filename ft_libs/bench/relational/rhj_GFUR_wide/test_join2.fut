@@ -2,21 +2,11 @@ import "../../../ftbasics"
 import "../../../joins/ftHashJoin_old"
 
 -- Radix-hash join.
--- Narrow joins, 100% match rate.
+-- Wide joins, 100% match rate.
 --
 -- ==
 -- entry: rhj
--- input @data/data1_1.in
--- auto output
--- input @data/data1_2.in
--- auto output
--- input @data/data2_1.in
--- auto output
--- input @data/data2_2.in
--- auto output
--- input @data/data3_1.in
--- auto output
--- input @data/data3_2.in
+-- input @data/rhj_data.in
 -- auto output
 
 entry rhj [n1] [n2] [b]

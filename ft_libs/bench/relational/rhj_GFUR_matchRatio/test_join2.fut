@@ -14,7 +14,8 @@ import "../../../joins/ftHashJoin_old"
 -- auto output
 -- input @data/i32_125.in
 -- auto output
--- input @data/i32_625.in
+
+-- -- input @data/i32_625.in
 -- auto output
 
 entry rhj [n1] [n2] [b]

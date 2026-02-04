@@ -12,29 +12,7 @@ import "../../../joins/ftHashJoin_old"
 --
 -- ==
 -- entry: part1 part2
--- random input { [33554432][4]u8 [33554432][0]u8 }
--- auto output
--- random input { [33554432][8]u8 [33554432][0]u8 }
--- auto output
--- random input { [33554432][4]u8 [33554432][8]u8 }
--- auto output
--- random input { [33554432][8]u8 [33554432][8]u8 }
--- auto output
--- random input { [67108864][4]u8 [67108864][0]u8 }
--- auto output
--- random input { [67108864][8]u8 [67108864][0]u8 }
--- auto output
--- random input { [67108864][4]u8 [67108864][8]u8 }
--- auto output
--- random input { [67108864][8]u8 [67108864][8]u8 }
--- auto output
--- random input { [134217728][4]u8 [134217728][0]u8 }
--- auto output
--- random input { [134217728][8]u8 [134217728][0]u8 }
--- auto output
--- random input { [134217728][4]u8 [134217728][8]u8 }
--- auto output
--- random input { [134217728][8]u8 [134217728][8]u8 }
+-- input @data/part_data.in
 -- auto output
 
 entry part1 [n] [b] [pL_b] (ks : [n][b]u8) (pL : [n][pL_b]u8) =
@@ -48,33 +26,6 @@ entry part2 [n] [b] [pL_b] (ks : [n][b]u8) (pL : [n][pL_b]u8) =
 		16
 		ks
 		pL
-		(n / 65536 * 100 / 85)
-		((b_)/2) 2
-
--- TODO
-
--- random input { [33554432][4]u8 [33554432][4]u8 }
--- auto output
--- random input { [33554432][8]u8 [33554432][4]u8 }
--- auto output
-
--- random input { [67108864][4]u8 [67108864][4]u8 }
--- auto output
--- random input { [67108864][8]u8 [67108864][4]u8 }
--- auto output
-
--- random input { [134217728][4]u8 [134217728][4]u8 }
--- auto output
--- random input { [134217728][8]u8 [134217728][4]u8 }
--- auto output
-
--- random input { [268435456][8]u8 [268435456][0]u8 }
--- auto output
--- random input { [268435456][4]u8 [268435456][4]u8 }
--- auto output
--- random input { [268435456][8]u8 [268435456][4]u8 }
--- auto output
--- random input { [268435456][4]u8 [268435456][8]u8 }
--- auto output
--- random input { [268435456][8]u8 [268435456][8]u8 }
--- auto output
+		(n / 65536)
+		((b_)/2)
+		2

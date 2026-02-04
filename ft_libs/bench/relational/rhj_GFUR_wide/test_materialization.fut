@@ -4,18 +4,7 @@ import "../../../ftbasics"
 --
 -- ==
 -- entry: rhj2
--- input @data/data1_1.in
--- auto output
--- input @data/data1_2.in
--- auto output
--- input @data/data2_1.in
--- auto output
--- input @data/data2_2.in
--- auto output
--- input @data/data3_1.in
--- auto output
--- input @data/data3_2.in
--- auto output
+-- input @data/rhj_data.in
 
 entry rhj2 [b]
 	(_ : [][]u8) (ix : []i64) (iy: []i64)

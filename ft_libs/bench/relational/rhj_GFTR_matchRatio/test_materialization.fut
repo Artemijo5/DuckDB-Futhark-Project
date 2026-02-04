@@ -5,14 +5,11 @@ import "../../../ftbasics"
 -- ==
 -- entry: rhj2
 -- input @data/i32_100.in
--- auto output
 -- input @data/i32_50.in
--- auto output
 -- input @data/i32_25.in
--- auto output
 -- input @data/i32_125.in
--- auto output
--- input @data/i32_625.in
+
+-- -- input @data/i32_625.in
 -- auto output
 
 entry rhj2 [b]

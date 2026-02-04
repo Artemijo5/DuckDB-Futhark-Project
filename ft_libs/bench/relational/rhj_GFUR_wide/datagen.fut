@@ -1,5 +1,6 @@
 import "../../../ftbasics"
 import "../../../joins/ftHashJoin_old"
+import "../../../lib/github.com/diku-dk/sorts/merge_sort" 
 
 -- Datagen, 4-byte integer keys.
 -- Going by Wu et al's paper:
@@ -10,22 +11,14 @@ import "../../../joins/ftHashJoin_old"
 -- 
 -- ==
 -- entry: rhj0
--- random input { [33554432][8]u8 [67108864][8]u8 }
--- auto output
--- random input { [33554432][16]u8 [67108864][16]u8 }
--- auto output
--- random input { [67108864][8]u8 [134217728][8]u8 }
--- auto output
--- random input { [67108864][16]u8 [134217728][16]u8 }
--- auto output
--- random input { [134217728][8]u8 [268435456][8]u8 }
--- auto output
--- random input { [134217728][16]u8 [268435456][16]u8 }
+-- input @data/datagen.in
 -- auto output
 
 entry rhj0 [n]
-	(pL1 : [n][]u8)
-	(pL2 : [2*n][]u8)
+	(inds1 : [n]i64)
+	(inds2 : [2*n]i64)
+	(pL1_ : [n][]u8)
+	(pL2_ : [2*n][]u8)
 =
 	let ks1_ : [n][4]u8 =   iota n
 		|> map (\i -> [(i/256/256/256)%256,(i/256/256)%256,(i/256)%256,i%256])
@@ -36,10 +29,18 @@ entry rhj0 [n]
 		|> map (\i -> [(i/256/256/256)%256,(i/256/256)%256,(i/256)%256,i%256])
 		|> map (map u8.i64)
 		|> sized (2*n)
-	let (ks1,is1) = partition_and_deepen (i16.highest) (i64.highest) 16 ks1_ (iota n) 5000 2 2
-	let (ks2,is2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ (iota (2*n)) 5000 2 2
+	let (ks1,pL1) = partition_and_deepen (i16.highest) (i64.highest) 16 ks1_ pL1_ 5000 2 2
+	let (ks2,pL2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ pL2_ 5000 2 2
 	let info2 = calc_partInfo 16 ks2 0 5000 2
 	let tab2 = calc_radixHashTab 16 ks2 info2 (i64.highest)
+	let is1 = inds1
+		|> zip (iota n)
+		|> merge_sort (\(_,ind1) (_,ind2) -> ind1 <= ind2)
+		|> map (.0)
+	let is2 = inds2
+		|> zip (iota (2*n))
+		|> merge_sort (\(_,ind1) (_,ind2) -> ind1 <= ind2)
+		|> map (.0)
 	in (
 		ks1, pL1, ks2, pL2,
 		info2.maxDepth, info2.bounds, info2.depths,
