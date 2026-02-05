@@ -16,7 +16,7 @@ entry smj1_i32
 	(ks1 : []i32) (pL1 : [][]u8)
 	(ks2 : []i32) (pL2 : [][]u8)
 =
-	let res = mergeJoin i32.num_bits ks1 ks2 0 0 (536870912) (==) (>) (<)
+	let res = mergeJoin i32.num_bits ks1 ks2 0 0 i64.highest (==) (>) (<)
 	in (res.vs, res.ix, res.iy, res.cm, pL1, pL2)
 
 -- Match-finding, 8-byte integer keys.
@@ -30,5 +30,5 @@ entry smj1_i64
 	(ks1 : []i64) (pL1 : [][]u8)
 	(ks2 : []i64) (pL2 : [][]u8)
 =
-	let res = mergeJoin i32.num_bits ks1 ks2 0 0 (1073741824) (==) (>) (<)
+	let res = mergeJoin i32.num_bits ks1 ks2 0 0 i64.highest (==) (>) (<)
 	in (res.vs, res.ix, res.iy, res.cm, pL1, pL2)
