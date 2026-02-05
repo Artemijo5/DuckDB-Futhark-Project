@@ -327,6 +327,82 @@ def calc_partInfo [n] [b]
   (max_depth_: i32)
 : partitionInfo =
   let max_depth = i32.min max_depth_ (((i32.i64 b)*u8.num_bits + radix_size - 1)/radix_size)
+  let (part_info, _) : (partitionInfo, []bool)
+  = loop (rec_info, taidade) = ({maxDepth=0, bounds=[0], depths=[0]}, [true])
+  while rec_info.maxDepth<max_depth && any (id) taidade do
+    let new_i = radix_size*(rec_info.maxDepth)
+    let new_j = i32.min (u8.num_bits*(i32.i64 b) - 1) (new_i + radix_size - 1)
+    let deeper_info = getPartitionBounds (rec_info.maxDepth+1) pXs 0 new_j
+    let n_cur = length deeper_info.bounds
+    let flags_keep =
+      -- TODO currently assumes at most 64-bit radix
+      let radix_is = deeper_info.bounds
+        |> map (\i -> pXs[i])
+        |> map (\x -> if new_i==0 then 0 else radix_to_idx new_i x)
+      let old_radix_is = rec_info.bounds
+        |> map (\i -> pXs[i])
+        |> map (\x -> if new_i==0 then 0 else radix_to_idx new_i x)
+      -- binary search to find corresponding partition in previous rec_info
+      let n_old = length old_radix_is
+      let num_iter = 1 + (n_old |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+      let (bsearch_is,_) =
+        loop (search_is,last_step) 
+        : ([n_cur]i64,i64) = (replicate n_cur 0, n_old)
+        for j in iota num_iter do
+          let this_step = (last_step + 1) / 2
+          let cmps_ = search_is
+            |> map (\i ->
+              let prev_elem = if i<=0 then old_radix_is[0] else old_radix_is[i-1]
+              let cur_elem = if i<0 then old_radix_is[0] else old_radix_is[i]
+              in (i, prev_elem, cur_elem)
+            )
+          let cmps = map2 (\kv (i,pv,cv) ->
+            -- failure cases (-1) omitted since guaranteed to find a match
+            if (kv == cv) && (i==0 || (kv > pv))
+              then i
+            else if (kv == cv)
+              then i64.max 0 (i-this_step)
+            else if (kv > cv) then
+              i64.min (n_old-1) (i+this_step)
+            else -- kv < cv
+              i64.max 0 (i-this_step)
+          ) (radix_is :> [n_cur]i64) (cmps_ :> [n_cur](i64,i64,i64))
+          in (cmps, this_step)
+      -- also preserve first ones
+      let isFirst = iota n_cur
+        |> map (\i -> if i==0 then true else radix_is[i-1] != radix_is[i])
+      in bsearch_is |> map (\i -> taidade[i])
+        |> zip isFirst
+        |> map (\(isf, tdd) -> tdd || isf)
+    let (new_bounds, new_depths) = zip3
+      (deeper_info.bounds |> sized n_cur)
+      (deeper_info.depths |> sized n_cur)
+      (flags_keep |> sized n_cur)
+      |> filter (.2)
+      |> map (\(b,d,_) -> (b,d))
+      |> unzip
+    let new_info = {maxDepth=rec_info.maxDepth+1, bounds=new_bounds, depths=new_depths}
+    let n_xin = length new_bounds
+    let new_taidade = iota n_xin
+      |> map (\i -> if i==n_xin-1 then (new_bounds[i],n) else (new_bounds[i], new_bounds[i+1]))
+      |> map (\(inf,sup) -> sup-inf > size_thresh)
+    in (new_info, new_taidade)
+  let info_len = length part_info.bounds
+  let part_info_with_offset = {
+    maxDepth = part_info.maxDepth,
+    bounds = part_info.bounds |> map (\b -> b + offset) :> [info_len]idx_t.t,
+    depths = part_info.depths :> [info_len]i32
+  }
+  in part_info_with_offset
+
+def old_calc_partInfo [n] [b]
+  (radix_size: i32)
+  (pXs: [n](byteSeq [b]))
+  (offset: idx_t.t)
+  (size_thresh: idx_t.t)
+  (max_depth_: i32)
+: partitionInfo =
+  let max_depth = i32.min max_depth_ (((i32.i64 b)*u8.num_bits + radix_size - 1)/radix_size)
   let recursive_info : (partitionInfo, bool)
   = loop p = (getPartitionBounds 1 pXs 0 (radix_size-1), true)
   while (p.0.maxDepth < max_depth && p.1) do
@@ -336,8 +412,6 @@ def calc_partInfo [n] [b]
       |> filter (\(lb, ub, _) -> ub-lb > size_thresh)
     let (inner_info : partitionInfo, _: idx_t.t, _: idx_t.t)
     = loop (q, ad, ox) = (p.0, 0, 0)
-    -- TODO can probably be more parallelised, like with partition_and_deepen
-    -- actually though, it's going to require stitching anyway (even if it might be better with exscans)
     for bounds in taidade do
       let m = bounds.1-bounds.0
       let x_bufen = pXs[bounds.0:bounds.1] :> [m](byteSeq [b])
