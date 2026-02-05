@@ -17,8 +17,8 @@ import "../../../lib/github.com/diku-dk/sorts/merge_sort"
 entry rhj0 [n]
 	(inds1 : [n]i64)
 	(inds2 : [2*n]i64)
-	(pL1_ : [n][]u8)
-	(pL2_ : [2*n][]u8)
+	(pL1 : [n][]u8)
+	(pL2 : [2*n][]u8)
 =
 	let ks1_ : [n][4]u8 =   iota n
 		|> map (\i -> [(i/256/256/256)%256,(i/256/256)%256,(i/256)%256,i%256])
@@ -29,18 +29,19 @@ entry rhj0 [n]
 		|> map (\i -> [(i/256/256/256)%256,(i/256/256)%256,(i/256)%256,i%256])
 		|> map (map u8.i64)
 		|> sized (2*n)
-	let (ks1,pL1) = partition_and_deepen (i16.highest) (i64.highest) 16 ks1_ pL1_ 5000 2 2
-	let (ks2,pL2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ pL2_ 5000 2 2
-	let info2 = calc_partInfo 16 ks2 0 5000 2
-	let tab2 = calc_radixHashTab 16 ks2 info2 (i64.highest)
-	let is1 = inds1
+	let is1_ = inds1
 		|> zip (iota n)
 		|> merge_sort (\(_,ind1) (_,ind2) -> ind1 <= ind2)
 		|> map (.0)
-	let is2 = inds2
+	let is2_ = inds2
 		|> zip (iota (2*n))
 		|> merge_sort (\(_,ind1) (_,ind2) -> ind1 <= ind2)
 		|> map (.0)
+	let (ks1,is1) = partition_and_deepen (i16.highest) (i64.highest) 16 ks1_ is1_ 5000 2 2
+	let (ks2,is2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ is2_ 5000 2 2
+	let info2 = calc_partInfo 16 ks2 0 5000 2
+	let tab2 = calc_radixHashTab 16 ks2 info2 (i64.highest)
+	
 	in (
 		ks1, pL1, ks2, pL2,
 		info2.maxDepth, info2.bounds, info2.depths,

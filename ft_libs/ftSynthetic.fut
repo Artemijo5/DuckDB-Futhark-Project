@@ -127,18 +127,26 @@ def zipf_skewed [n] [n_hot] 't
 	(s : f64)
 	(q : f64)
 : [n]t =
-	let h_n = iota (i64.max num_keys (n_hot+1))
+	let h_n = iota (i64.max num_keys n_hot)
 		|> map (\n -> 1/((q+(f64.i64 (n+1)))**s))
 		|> f64.sum
 	let prob_k = (iota n_hot)
 		|> map (\i -> 1.0/((((f64.i64 i)+q)**s)*h_n))
 		|> scan (+) 0.0
 	in map2 (\x p ->
-		let (newV,_) =
-			loop (y,j) = (x,0) while j < n_hot do
-				if p<prob_k[j]
-				then (hot_keys[j],n_hot)
-				else (y,j+1)
+		-- binary search
+		-- note: not really coalesced
+		let (newV,_,_) =
+			loop (y,j,s)=(x,0,(n_hot+1)/2)
+			while s>0 do
+				if p<prob_k[j] && (j==0 || p>=prob_k[j-1]) then
+					(hot_keys[j],j, 0)
+				else if p>= prob_k[j] && j==n_hot-1 then
+					(y, n_hot, 0)
+				else if p<prob_k[j] then
+					(y, i64.max 0 (j-s), (s+1)/2)
+				else -- p>= prob_k[j]
+					(y, i64.min (n_hot-1) (j+s), (s+1)/2)
 		in newV
 	) xs r_prob
 
