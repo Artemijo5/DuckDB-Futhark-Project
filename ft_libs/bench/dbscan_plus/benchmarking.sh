@@ -1,3 +1,7 @@
+#num_elems=16777216
+#dataBounds_2d_sparse=9056
+#dataBounds_2d_dense=5888
+
 num_elems=1048576
 dataBounds_2d_sparse=2264
 dataBounds_2d_dense=1472
@@ -12,14 +16,14 @@ dataBounds_2d_dense=1472
 
 #num_elems=8192
 #dataBounds_2d_sparse=200
-#dataBounds_2d_dense=150
+#dataBounds_2d_dense=130
 
 #num_elems=2048
 #dataBounds_2d_sparse=100
 #dataBounds_2d_dense=75
 
-ft_backend=c
-num_runs=1
+ft_backend=cuda
+num_runs=25
 
 mkdir -p data
 

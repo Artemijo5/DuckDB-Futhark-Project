@@ -32,7 +32,7 @@ module dbscan_real (F : real) = {
 		(eps : t)
 		(extPar : i64)
 	: [n]i64 =
-		let num_iter = (extPar + n - 1)/extPar
+		let num_iter = i64.max 1 ((extPar + n - 1)/extPar)
 		in loop nnBuff = (replicate n 0) for j in (iota num_iter) do
 			let inf = j*extPar
 			let sup = i64.min n (inf+extPar)
@@ -63,7 +63,7 @@ module dbscan_real (F : real) = {
 		(extPar : i64)
 		(gather_psize : i64)
 	: [n]i64 =
-		let inner_iter = (extPar + n - 1)/extPar
+		let inner_iter = i64.max 1 ((extPar + n - 1)/extPar)
 		-- Each core point starts with itself as cluster head
 		-- In each iteration, it changes to the smallest cluster head in its neighbourhood
 		-- Until convergence
@@ -99,7 +99,7 @@ module dbscan_real (F : real) = {
 		(eps : t)
 		(extPar : i64)
 	: ([n]i64, []i64) = -- returns compact neighbour list + starting indices of each pt
-		let inner_iter = (extPar + n - 1)/extPar
+		let inner_iter = i64.max 1 ((extPar + n - 1)/extPar)
 		let (neighcounts, graph) : ([n]i64, []i64) =
 			loop (iter_nc, iter_graph) = (replicate n 0, [])
 			for j in iota inner_iter do
@@ -172,7 +172,7 @@ module dbscan_real (F : real) = {
 		(eps : t)
 		(extPar : i64)
 	: [n]i64 =
-		let num_iter = (extPar + n - 1)/extPar
+		let num_iter = i64.max 1 ((extPar + n - 1)/extPar)
 		in loop buff = (replicate n (-1)) for j in (iota num_iter) do
 			let inf = j*extPar
 			let sup = i64.min n (inf+extPar)
