@@ -45,6 +45,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 		(sorted_ks : [n]t)
 		(eq : t -> t -> bool)
 		(gt : t -> t -> bool)
+		(lt : t -> t -> bool)
 	: ([key_no]idx_t.t, [key_no]idx_t.t) = -- returns index & size of each group
 		-- Binary Search Loop Inversion
 		let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
@@ -65,7 +66,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 						else if (kv `eq` cv)
 							then i64.max 0 (i-this_step)
 						else if (kv `gt` cv) then
-							if (i == n-1 || (nv `gt` kv))
+							if (i == n-1 || (kv `lt` nv))
 							then -1
 							else i64.min (n-1) (i+this_step)
 						else -- cv `gt` kv
@@ -85,7 +86,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 					)
 				let cmps = map2 (\kv (i, cv, nv) ->
 						if i<0 then (-1) else
-						if (kv `eq` cv) && (i==(n-1) || (nv `gt` kv))
+						if (kv `eq` cv) && (i==(n-1) || (kv `lt` nv))
 							then i
 						else if (kv `eq` cv)
 							then i64.min (n-1) (i+this_step)

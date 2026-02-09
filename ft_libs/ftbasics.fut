@@ -15,39 +15,30 @@ local module param_idx_t (it: integral) = {
 module idx_t = param_idx_t i64
 
 -- | Gather operation (based on futhark example).
+-- Use dummy value for invalid indices.
 def gather 't [ni] [n] (dummy_elem: t) (xs: [n]t) (is: [ni](idx_t.t)) =
   is |> map (\i -> if (i>=0 && i<n) then xs[i] else dummy_elem)
--- | Multi-pass gather operation (better cache-locality) - uses base array rather than dummy value.
--- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
--- by Bingsheng He et al.
+
+-- | Gather values on pre-existent array.
+-- Parameters n_bits, psize are unused.
+-- Coalesced traversal is left to futhark.
 def partitioned_gather_over_array [ni] [n] 'a
   (n_bits : i32) (psize : idx_t.t) (dest: [ni]a) (xs : [n]a) (is : [ni]idx_t.t)
 =
-  -- TODO temporary code to debug gather slowness...
-  if true then (is |> map2 (\d i -> if (i<0 || i>=n) then d else xs[i]) dest) else
-  -- TODO why does this delay so much?!?!?!
-  let psize_ = i64.max 1 (psize / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits) ))
-  let max_iter = (n+psize_-1) / psize_
-  in loop buff = dest for j in (iota max_iter) do
-    let inf = j*psize_
-    let sup = idx_t.min n (inf + psize_)
-    in buff
-      |> zip (is)
-      |> map (\(j,v) ->
-        if (inf<=j && sup>j)
-        then xs[j]
-        else v
-      )
--- | Multi-pass gather operation (better cache-locality).
--- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
--- by Bingsheng He et al.
+  is |> map2 (\d i -> if (i<0 || i>=n) then d else xs[i]) dest
+
+-- | Gather values without pre-existent array.
+-- Uses dummy value for invalid indices.
+-- Parameters n_bits, psize are unused.
+-- Coalesced traversal is left to futhark.
 def partitioned_gather [ni] [n] 'a
   (n_bits : i32) (psize : idx_t.t) (dummy_elem: a) (xs : [n]a) (is : [ni]idx_t.t)
 =
   partitioned_gather_over_array n_bits psize (replicate ni dummy_elem) xs is
--- | Multi-pass scatter operation (better cache-locality).
--- Based on 2007 paper 'Efficient gather and scatter operations on graphics processors'
--- by Bingsheng He et al.
+
+-- | Scatter values.
+-- Parameters n_bits, psize are unused.
+-- Coalesced traversal is left to futhark.
 def partitioned_scatter [nd] [n] 'a
   (n_bits: i32)
   (psize: idx_t.t) 
@@ -55,15 +46,7 @@ def partitioned_scatter [nd] [n] 'a
   (is: [n]idx_t.t)
   (vs: [n]a)
 : *[]a =
-  if true then scatter dest is vs else
-  let psize_ = psize / (i64.i32 ((n_bits+u8.num_bits-1)/u8.num_bits) )
-  let max_iter = (nd+psize_-1) / psize_
-  in loop buff = dest for j in (iota max_iter) do
-    let inf = j*psize_
-    let sup = idx_t.min nd (inf + psize_)
-    let shifted_is = is |> map (\i -> i-inf)
-    in buff with [inf:sup] = scatter (copy buff[inf:sup]) shifted_is vs
-
+  scatter dest is vs
 
 -- | Function to gather the payload columns of a relation after the join.
 def gather_payloads [ni] [n] 't
@@ -98,16 +81,17 @@ def exscan f ne xs =
     -- [ne] ++ (scan f ne xs[0:((length xs) - 1)]) -- TODO ???
 
 -- | Function to count elements that satisfy a property.
-def countFor 't (p: t -> bool) (xs: []t) : idx_t.t =
-  idx_t.sum (xs |> map (p >-> idx_t.bool))
+def countFor 't (p: t -> bool) (xs: []t) : i64 =
+  idx_t.sum (xs |> map (p >-> i64.bool))
 
--- argmin - for getting chunk replacement priorities in 2-pass sort (maybe better left to be sequential?)
+-- | Index of minimum element - smallest index in case of draw.
+-- Based on Futhark by Example.
 def argmin [n] 't
     (lt: t -> t -> bool)
     (eq: t -> t -> bool)
     (highest: t)
     (ks: [n]t)
-    : idx_t.t = 
+    : i64 = 
   let ne = (n, highest)
   let iks = ks
     |> zip (idx_t.indices ks)
@@ -181,7 +165,7 @@ def get_radix 't (i : i32) (j : i32) (get_bit : i32 -> t -> i32) (x : t) : u8 =
 -- | Performs a radix sort step, sorting over multiple bits at a time.
 -- Based on radix-sort in futhark-by-example.
 -- Substitutes the 'radix-partition' primitive.
--- Doing multiple bits per step vastly reduces scatter writes, though increases comparisons.
+-- Doing multiple bits per step reduces scatter writes, but increases scans.
 -- Note: radix size must be 1 byte at most!
 def radix_sort_multistep [n] 't
   (block_size : idx_t.t)

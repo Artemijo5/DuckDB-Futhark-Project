@@ -292,23 +292,23 @@ import "joins/ftHashJoin_str"
 
     entry sortgroup_find_known_key_counts_short (k_ids : []i16) (ks : []i16)
     : sortgroupInfo =
-      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>))
+      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>) (<))
       in {group_idx = gidx, group_count = gsize}
     entry sortgroup_find_known_key_counts_int (k_ids : []i32) (ks : []i32)
     : sortgroupInfo =
-      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>))
+      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>) (<))
       in {group_idx = gidx, group_count = gsize}
     entry sortgroup_find_known_key_counts_long (k_ids : []i64) (ks : []i64)
     : sortgroupInfo =
-      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>))
+      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>) (<))
       in {group_idx = gidx, group_count = gsize}
     entry sortgroup_find_known_key_counts_float (k_ids : []f32) (ks : []f32)
     : sortgroupInfo =
-      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>))
+      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>) (<))
       in {group_idx = gidx, group_count = gsize}
     entry sortgroup_find_known_key_counts_double (k_ids : []f64) (ks : []f64)
     : sortgroupInfo =
-      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>))
+      let (gidx,gsize) = (sortgroup_find_known_key_counts k_ids ks (==) (>) (<))
       in {group_idx = gidx, group_count = gsize}
 
     entry sortgroup_find_unknown_key_counts_short (ks : []i16)
