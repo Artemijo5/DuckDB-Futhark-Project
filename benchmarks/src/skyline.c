@@ -39,7 +39,7 @@
 #define default_TABLE_NAME "skyTbl"
 
 #define default_DBFILE "testdb.db"
-#define default_DDB_MEMSIZE "4GB"
+#define default_DDB_MEMSIZE "20GB"
 #define default_DDB_TEMPDIR "/tps_tempdir"
 
 #define default_VERBOSE false

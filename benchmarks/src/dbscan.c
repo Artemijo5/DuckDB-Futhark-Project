@@ -35,7 +35,7 @@
 #define default_OMIT_BORDER false
 
 #define default_DBFILE "testdb.db"
-#define default_DDB_MEMSIZE "4GB"
+#define default_DDB_MEMSIZE "20GB"
 #define default_DDB_TEMPDIR "tps_tempdir"
 
 int main(int argc, char *argv[]) {

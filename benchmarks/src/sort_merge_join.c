@@ -48,7 +48,7 @@
 #define default_S_JOIN_BUFFER 16*CHUNK_SIZE
 
 #define default_DBFILE "testdb.db"
-#define default_DDB_MEMSIZE "4GB"
+#define default_DDB_MEMSIZE "20GB"
 #define default_DDB_TEMPDIR "tps_tempdir"
 
 #define default_VERBOSE false

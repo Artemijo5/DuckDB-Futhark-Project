@@ -11,7 +11,7 @@
 #define TABLE_SIZE 32*512*CHUNK_SIZE
 
 #define DBFILE "testdb.db"
-#define DDB_MEMSIZE "6GB"
+#define DDB_MEMSIZE "20GB"
 #define DDB_TEMPDIR "tps_tempdir"
 
 // TODO appenders flush every <100 chunks

@@ -18,7 +18,7 @@
 #define default_NUM_KEYS (int64_t)25
 
 #define default_DBFILE "testdb.db"
-#define default_DDB_MEMSIZE "4GB"
+#define default_DDB_MEMSIZE "20GB"
 #define default_DDB_TEMPDIR "tps_tempdir"
 
 #define default_VERBOSE false
