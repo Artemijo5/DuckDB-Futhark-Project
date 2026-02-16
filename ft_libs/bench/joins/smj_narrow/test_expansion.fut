@@ -21,7 +21,7 @@ entry smj2_i32 [n]
 
 -- Expansion, 8-byte integer keys.
 --
--- ==
+--
 -- entry: smj2_i64
 -- input @data/i64_0.in
 -- auto output

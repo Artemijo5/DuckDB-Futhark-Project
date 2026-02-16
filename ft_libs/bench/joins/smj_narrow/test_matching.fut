@@ -29,7 +29,7 @@ entry smj1_i32 [n1] [n2]
 -- 100% match rate (output size = n)
 -- Narrow join (no payloads).
 --
--- ==
+-- 
 -- entry: smj1_i64
 -- input @data/i64_0.in
 -- auto output
