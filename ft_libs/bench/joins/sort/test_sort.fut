@@ -10,30 +10,7 @@ import "../../../joins/ftSMJ"
 --
 -- ==
 -- entry: merge_sort_i32
--- random input { [33554432]i32 [33554432][0]u8 }
--- auto output
--- random input { [33554432]i32 [33554432][4]u8 }
--- auto output
--- random input { [33554432]i32 [33554432][8]u8 }
--- auto output
--- random input { [67108864]i32 [67108864][0]u8 }
--- auto output
--- random input { [67108864]i32 [67108864][4]u8 }
--- auto output
--- random input { [67108864]i32 [67108864][8]u8 }
--- auto output
--- random input { [134217728]i32 [134217728][0]u8 }
--- auto output
--- random input { [134217728]i32 [134217728][4]u8 }
--- auto output
--- random input { [134217728]i32 [134217728][8]u8 }
--- auto output
--- random input { [268435456]i32 [268435456][0]u8 }
--- auto output
--- random input { [268435456]i32 [268435456][4]u8 }
--- auto output
--- random input { [268435456]i32 [268435456][8]u8 }
--- auto output
+-- input @data/dat_i32.in
 
 entry merge_sort_i32 [n] [b] (ks : [n]i32) (pL : [n][b]u8) =
 	let xs : sortStruct_int [n] [b] = {k = ks, pL = pL}
@@ -45,30 +22,7 @@ entry merge_sort_i32 [n] [b] (ks : [n]i32) (pL : [n][b]u8) =
 --
 -- ==
 -- entry: merge_sort_i64
--- random input { [33554432]i64 [33554432][0]u8 }
--- auto output
--- random input { [33554432]i64 [33554432][4]u8 }
--- auto output
--- random input { [33554432]i64 [33554432][8]u8 }
--- auto output
--- random input { [67108864]i64 [67108864][0]u8 }
--- auto output
--- random input { [67108864]i64 [67108864][4]u8 }
--- auto output
--- random input { [67108864]i64 [67108864][8]u8 }
--- auto output
--- random input { [134217728]i64 [134217728][0]u8 }
--- auto output
--- random input { [134217728]i64 [134217728][4]u8 }
--- auto output
--- random input { [134217728]i64 [134217728][8]u8 }
--- auto output
--- random input { [268435456]i64 [268435456][0]u8 }
--- auto output
--- random input { [268435456]i64 [268435456][4]u8 }
--- auto output
--- random input { [268435456]i64 [268435456][8]u8 }
--- auto output
+-- input @data/dat_i64.in
 
 entry merge_sort_i64 [n] [b] (ks : [n]i64) (pL : [n][b]u8) =
 	let xs : sortStruct_long [n] [b] = {k = ks, pL = pL}
