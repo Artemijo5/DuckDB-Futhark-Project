@@ -18,7 +18,7 @@ elif [ "$1" ] && [ "$1" -eq 1 ]; then
 	mv data/test_matching:smj1_i64-data_i64_0.in.out data/i64_0.in
 	mv data/test_matching:smj1_i64-data_i64_1.in.out data/i64_1.in
 	mv data/test_matching:smj1_i64-data_i64_2.in.out data/i64_2.in
-elif [ "$1" ] &&; then
+elif [ "$1" ]; then
 	futhark bench --backend=$futhark_backend --runs=$num_runs test_expansion.fut
 	rm -f data/*
 else

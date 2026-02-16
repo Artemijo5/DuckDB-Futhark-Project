@@ -8,7 +8,7 @@ import "../../../joins/ftSMJ"
 -- Narrow join (no payloads).
 -- 
 -- ==
--- entry: smj0_i32 smj0_i64
+-- entry: smj0_i32
 -- compiled input { 33554432i64 }
 -- auto output
 -- compiled input { 67108864i64 }
