@@ -99,6 +99,21 @@ int main(int argc, char *argv[]) {
       return -1;
     }
 
+	// Set up futhark core
+		struct futhark_context_config *cfg = futhark_context_config_new();
+    struct futhark_context *ctx = futhark_context_new(cfg);
+    char *ctxErr = futhark_context_get_error(ctx);
+    if(ctxErr) {
+      perror(ctxErr);
+      free(ctxErr);
+      mylog(logfile, "Futhark context initialization failed.");
+      futhark_context_free(ctx);
+      futhark_context_config_free(cfg);
+      logclose(logfile);
+      return -1;
+    }
+    mylog(logfile, "Set up futhark context & config.");
+
 	// DuckDB initialisation
 	    duckdb_database db;
 	  	duckdb_connection con;
@@ -107,6 +122,9 @@ int main(int argc, char *argv[]) {
 	    // set config
 	    if (duckdb_create_config(&config) == DuckDBError) {
 	      perror("Failed to create config.\n");
+	      futhark_context_free(ctx);
+		    futhark_context_config_free(cfg);
+		    logclose(logfile);
 	      return -1;
 	    }
 	    duckdb_set_config(config, "max_memory", DDB_MEMSIZE);
@@ -115,6 +133,10 @@ int main(int argc, char *argv[]) {
 	  	//duckdb_open(NULL, &db);
 	    if(duckdb_open_ext(DBFILE, &db, config, NULL) == DuckDBError) {
 	      perror("Failed to open database with configuration options.\n");
+	      futhark_context_free(ctx);
+		    futhark_context_config_free(cfg);
+		    logclose(logfile);
+		    duckdb_destroy_config(&config);
 	      return -1;
 	    }
 	    duckdb_destroy_config(&config);
@@ -133,6 +155,11 @@ int main(int argc, char *argv[]) {
 	    if( duckdb_query(con, queryStr, NULL) == DuckDBError ) {
 		    perror("Failed to create buffer table.\n");
 		    perror(queryStr);
+		    futhark_context_free(ctx);
+		    futhark_context_config_free(cfg);
+		    logclose(logfile);
+		    duckdb_disconnect(&con);
+	  		duckdb_close(&db);
 		    return -1;
 	    }
 
@@ -149,14 +176,14 @@ int main(int argc, char *argv[]) {
 	    if( duckdb_query(con, insertQueryStr, NULL) == DuckDBError ) {
 	    	perror("Failed to insert data into the buffer table.\n");
 	    	perror(insertQueryStr);
+	    	futhark_context_free(ctx);
+		    futhark_context_config_free(cfg);
+		    logclose(logfile);
+		    duckdb_disconnect(&con);
+	  		duckdb_close(&db);
 	    	return -1;
 	    }
 		mylog(logfile, "Created test table.");
-
-	// Set up futhark core
-		struct futhark_context_config *cfg = futhark_context_config_new();
-		struct futhark_context *ctx = futhark_context_new(cfg);
-		mylog(logfile, "Set up futhark context & config.");
 
 	// Create dest table & appender
 		mylog(logfile, "Creating destination table...");
@@ -169,12 +196,22 @@ int main(int argc, char *argv[]) {
 	    if( duckdb_query(con, finalQueryStr, NULL) == DuckDBError ) {
 	      perror("Failed to create final result table.\n");
 	      perror(finalQueryStr);
+	      futhark_context_free(ctx);
+		    futhark_context_config_free(cfg);
+		    logclose(logfile);
+		    duckdb_disconnect(&con);
+	  		duckdb_close(&db);
 	      return -1;
 	    }
 
 	    duckdb_appender dest_appender;
 	    if( duckdb_appender_create(con, NULL, TABLE_NAME, &dest_appender) == DuckDBError ) {
 		    perror("Failed to create appender.\n");
+		    futhark_context_free(ctx);
+		    futhark_context_config_free(cfg);
+		    logclose(logfile);
+		    duckdb_disconnect(&con);
+	  		duckdb_close(&db);
 		    return -1;
 	    }
 	    mylog(logfile, "Created appender.");
@@ -296,6 +333,7 @@ int main(int argc, char *argv[]) {
 	    duckdb_appender_destroy(&dest_appender);
 	    mylog(logfile, "Destroyed result & appender.");
 
+	    futhark_context_sync(ctx);
 	    futhark_context_free(ctx);
 	    futhark_context_config_free(cfg);
 	    mylog(logfile, "Freed futhark core.");

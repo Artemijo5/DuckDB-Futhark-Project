@@ -93,6 +93,21 @@ int main(int argc, char *argv[]) {
   );
   mylog(logfile, log_param);
 
+  // Set up futhark core
+    struct futhark_context_config *cfg = futhark_context_config_new();
+    struct futhark_context *ctx = futhark_context_new(cfg);
+    char *ctxErr = futhark_context_get_error(ctx);
+    if(ctxErr) {
+      perror(ctxErr);
+      free(ctxErr);
+      mylog(logfile, "Futhark context initialization failed.");
+      futhark_context_free(ctx);
+      futhark_context_config_free(cfg);
+      logclose(logfile);
+      return -1;
+    }
+    mylog(logfile, "Set up futhark context & config.");
+
   // DuckDB initialisation
     duckdb_database db;
   	duckdb_connection con;
@@ -101,6 +116,9 @@ int main(int argc, char *argv[]) {
     // set config
     if (duckdb_create_config(&config) == DuckDBError) {
       perror("Failed to create config.");
+      futhark_context_free(ctx);
+      futhark_context_config_free(cfg);
+      logclose(logfile);
       return -1;
     }
     duckdb_set_config(config, "max_memory", DDB_MEMSIZE);
@@ -109,6 +127,10 @@ int main(int argc, char *argv[]) {
   	//duckdb_open(NULL, &db);
     if(duckdb_open_ext(DBFILE, &db, config, NULL) == DuckDBError) {
       perror("Failed to open database with configuration options.");
+      duckdb_destroy_config(&config);
+      futhark_context_free(ctx);
+      futhark_context_config_free(cfg);
+      logclose(logfile);
       return -1;
     }
     duckdb_destroy_config(&config);
@@ -132,6 +154,10 @@ int main(int argc, char *argv[]) {
       )
       {
         perror("Failed to initialise the table.");
+        futhark_context_free(ctx);
+        duckdb_disconnect(&con);
+        duckdb_close(&db);
+        logclose(logfile);
         return 1;
       }
       duckdb_bind_int32(init_stmt, 1, TABLE_SIZE);
@@ -139,12 +165,6 @@ int main(int argc, char *argv[]) {
       mylog(logfile, "Created test table.");
       duckdb_destroy_prepare(&init_stmt);
     } else {mylog(logfile, "Skipped table creation.");}
-
-  // Set up futhark core
-    struct futhark_context_config *cfg = futhark_context_config_new();
-    struct futhark_context *ctx = futhark_context_new(cfg);
-    mylog(logfile, "Set up futhark context & config.");
-
 
   mylog(logfile, "EXPERIMENT #1 -- duckdb-native CPU sorting (without payloads).");
   duckdb_query(con, "CREATE OR REPLACE TEMP TABLE CPU_withoutPL AS (SELECT k FROM tbl ORDER BY k);", NULL);
@@ -221,6 +241,7 @@ int main(int argc, char *argv[]) {
   );*/
 
   // Clean-up
+  futhark_context_sync(ctx);
   futhark_context_free(ctx);
   futhark_context_config_free(cfg);
   mylog(logfile, "Freed futhark core.");
