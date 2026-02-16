@@ -27,8 +27,8 @@ entry rhj0 [n]
 		|> map (map u8.i64)
 		|> sized (2*n)
 	let (ks1,pL1) = partition_and_deepen (i16.highest) (i64.highest) 16 ks1_ pL1_ 5000 2 2
-	let (ks2,pL2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ pL2_ 5000 2 2
-	let info2 = calc_partInfo 16 ks2 0 5000 2
+	let (ks2,pL2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ pL2_ 10000 2 2
+	let info2 = calc_partInfo 16 ks2 0 10000 2
 	let tab2 = calc_radixHashTab 16 ks2 info2 (i64.highest)
 	in (
 		ks1, pL1, ks2, pL2,

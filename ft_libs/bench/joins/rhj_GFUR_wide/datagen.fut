@@ -38,8 +38,8 @@ entry rhj0 [n]
 		|> merge_sort (\(_,ind1) (_,ind2) -> ind1 <= ind2)
 		|> map (.0)
 	let (ks1,is1) = partition_and_deepen (i16.highest) (i64.highest) 16 ks1_ is1_ 5000 2 2
-	let (ks2,is2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ is2_ 5000 2 2
-	let info2 = calc_partInfo 16 ks2 0 5000 2
+	let (ks2,is2) = partition_and_deepen (i16.highest) (i64.highest) 16 ks2_ is2_ 10000 2 2
+	let info2 = calc_partInfo 16 ks2 0 10000 2
 	let tab2 = calc_radixHashTab 16 ks2 info2 (i64.highest)
 	
 	in (
