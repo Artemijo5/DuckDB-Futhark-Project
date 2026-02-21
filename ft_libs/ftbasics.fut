@@ -273,3 +273,15 @@ def radix_sort_multistep [n] 't
     in (offs + zengjia, map2 (+) idxs zuowei)
   let scatter_idxs = ox.1
   in partitioned_scatter num_bits block_size (copy xs) scatter_idxs xs
+
+def bucket_sort [n]
+  (bit_step: i32)
+  (num_buckets : i64)
+  (xs : [n]i64)
+=
+  let bucket_bits = num_buckets |> f64.i64 |> f64.log2 |> f64.ceil |> i32.f64
+  let num_iter = (bucket_bits + bit_step - 1) / bit_step
+  in loop xs for iter < num_iter do
+    let i = iter*bit_step
+    let j = i32.min (bucket_bits-1) (i + bit_step - 1)
+    in radix_sort_multistep (i64.highest) i j (i64.num_bits) (i64.get_bit) xs
