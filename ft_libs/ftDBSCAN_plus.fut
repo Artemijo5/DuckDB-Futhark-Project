@@ -814,23 +814,31 @@ module dbscan_plus (F : float) = {
 							cur_part.max_coord[0] cur_part.max_coord[1]
 							pt eps
 					)
-			let (tf_pts, tf_cid, tf_is) = tight_frontier |> map (\(pt,_,cid,is) -> (pt,cid,is)) |> unzip3
+			let (tf_pts, tf_isC, tf_cid, tf_is) = tight_frontier |> unzip4
 			let (lf_pts, lf_isC, lf_cid, lf_is) = loose_frontier |> unzip4
 			-- find core points from tight margins
 			let tf_isC =
+				-- isolate points that have already been identified as core
+				let (tf_notCoreYet, tf_notCoreIs) =
+					zip3 tf_pts tf_isC tf_is
+					|> filter(\(_,isC,_) -> !isC)
+					|> map (\(pt,_,i) -> (pt,i))
+					|> unzip
 				-- get neighcount from tight & loose frontiers
 				let tf_neighCount1 = get_num_neighbours_against
-					tf_pts tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+					tf_notCoreYet tf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 					|> map (\c -> c-1)
 				let tf_neighCount2 = get_num_neighbours_against
-					tf_pts lf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+					tf_notCoreYet lf_pts eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- get neighcount from partition's tight margin
 				let tf_neighCount3 = get_num_neighbours_against
-					tf_pts margin_dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
+					tf_notCoreYet margin_dat eps clBase.dist_t clBase.angle_t clBase.radius clBase.m_size
 				-- sum
-				in (map3 (\c1 c2 c3 -> c1+c2+c3)
+				let new_isC = (map3 (\c1 c2 c3 -> c1+c2+c3)
 						tf_neighCount1 tf_neighCount2 tf_neighCount3)
 					|> map (>= minPts)
+				-- combine with previous tf core points
+				in scatter (copy tf_isC) tf_notCoreIs new_isC
 			-- find core points from partition
 			let part_isC : [n]bool =
 				let dat = cur_part.dat
