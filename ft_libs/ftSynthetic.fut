@@ -119,37 +119,34 @@ module mk_synthetic_real (F : real) = {
 
 }
 
-def zipf_skewed [n] [n_hot] 't
-	(xs : [n]t)
-	(hot_keys : [n_hot]t)
-	(num_keys : i64)
-	(r_prob : [n]f64)
-	(s : f64)
-	(q : f64)
-: [n]t =
-	let h_n = iota (i64.max num_keys n_hot)
-		|> map (\n -> 1/((q+(f64.i64 (n+1)))**s))
+-- Based on 'Quickly generating billion-record synthetic databases'.
+-- Jim Gray, Prakash Sundaresan, Susanne Englert, Ken Baclawski, Peter J. Weinberger
+-- ACM SIGMOD Record, Volume 23, Issue 2, Pages 243-252
+entry zipf_skewed [n]
+	(us : [n]f64) -- uniform random floats in 0-1
+	(nv : i64)
+	(s_ : f64)
+: [n]i64 =
+	-- for s==1, add small offset to avoid eta==0
+	let s = if s_==1 then (1.0000001) else s_
+	let fn = f64.i64 nv
+	let zeta (k : i64) (theta : f64) : f64
+	= k
+		|> iota
+		|> map (\i -> i+1)
+		|> map (f64.i64)
+		|> map (\i -> (1.0 / i)**theta)
 		|> f64.sum
-	let prob_k = (iota n_hot)
-		|> map (\i -> 1.0/((((f64.i64 i)+q)**s)*h_n))
-		|> scan (+) 0.0
-	in map2 (\x p ->
-		-- binary search
-		-- note: not really coalesced
-		let (newV,_,_) =
-			loop (y,j,s)=(x,0,(n_hot+1)/2)
-			while s>0 do
-				if p<prob_k[j] && (j==0 || p>=prob_k[j-1]) then
-					(hot_keys[j],j, 0)
-				else if p>= prob_k[j] && j==n_hot-1 then
-					(y, n_hot, 0)
-				else if p<prob_k[j] then
-					(y, i64.max 0 (j-s), (s+1)/2)
-				else -- p>= prob_k[j]
-					(y, i64.min (n_hot-1) (j+s), (s+1)/2)
-		in newV
-	) xs r_prob
-
+	let alpha = 1 / (1 - s)
+	let zetan = zeta nv s
+	let zetas = zeta (i64.f64 s) 2.0
+	let eta = (1.0 - (2.0/fn)**(1.0-s)) / (1.0 - zetas/zetan)
+	in us |> map (\u ->
+		let uz = u*zetan in
+		if uz<1 then 0 else
+		if uz< 1 + 0.5**s then 1 else
+		(fn * (eta*u - eta + 1)**alpha) |> i64.f64
+	)
 
 module mk_synthetic_half   = mk_synthetic_real f16
 module mk_synthetic_float  = mk_synthetic_real f32
@@ -166,10 +163,3 @@ entry funnels_double = mk_synthetic_double.funnels ([])
 entry hyperbolic_half   = mk_synthetic_half.hyperbolic
 entry hyperbolic_float  = mk_synthetic_float.hyperbolic
 entry hyperbolic_double = mk_synthetic_double.hyperbolic
-
-entry zipf_skewed_short (xs : []i16) hk nk rp s q = zipf_skewed xs hk nk rp s q
-entry zipf_skewed_int (xs : []i32) hk nk rp s q = zipf_skewed xs hk nk rp s q
-entry zipf_skewed_long (xs : []i64) hk nk rp s q = zipf_skewed xs hk nk rp s q
-entry zipf_skewed_half (xs : []f16) hk nk rp s q = zipf_skewed xs hk nk rp s q
-entry zipf_skewed_float (xs : []f32) hk nk rp s q = zipf_skewed xs hk nk rp s q
-entry zipf_skewed_double (xs : []f64) hk nk rp s q = zipf_skewed xs hk nk rp s q
