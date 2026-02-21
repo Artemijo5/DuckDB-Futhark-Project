@@ -140,6 +140,85 @@ def sm_red [n] 't
   then foldl f ne xs
   else reduce f ne xs
 
+-- Binary Search
+
+-- for each value in vs, find the first match in xs
+-- return (-1) if no such match exists
+-- note : vs are on the left side of all comparisons
+def bsearch_first [nvs] [n] 't
+  (eq : t -> t -> bool)
+  (gt : t -> t -> bool)
+  (init_is : [nvs]i64)
+  (xs : [n]t)
+  (vs : [nvs]t)
+: [nvs]i64 =
+  let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+  let (foundAt,_) = loop (is,last_step) = (init_is,n)
+  for _ in iota num_iter do
+    let this_step = (last_step + 1)/2
+    let cmps_ = is
+      |> map (\i ->
+        let prev_elem = xs[i64.max 0 (i-1)]
+        let cur_elem = xs[i64.max 0 i]
+        in (i, prev_elem, cur_elem)
+      )
+    let cmps = map2 (\kv (i, pv, cv) ->
+      if i<0 then (-1) else
+      if (kv `eq` cv) && (i==0 || (kv `gt` pv))
+        then i
+      else if (kv `eq` cv)
+        then i64.max 0 (i-this_step)
+      else if (kv `gt` cv) then
+        if (i == n-1)
+        then -1
+        else i64.min (n-1) (i+this_step)
+      else -- kv `lt` cv
+        if (i == 0 || (kv `gt` pv))
+        then -1
+        else i64.max 0 (i-this_step)
+    ) vs cmps_
+    in (cmps, this_step)
+  in foundAt
+
+-- for each value in vs, find the last match in xs
+-- return (-1) if no such match exists
+-- note : vs are on the left side of all comparisons
+def bsearch_last [nvs] [n] 't
+  (eq : t -> t -> bool)
+  (lt : t -> t -> bool)
+  (init_is : [nvs]i64)
+  (xs : [n]t)
+  (vs : [nvs]t)
+: [nvs]i64 =
+  let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+  let (foundAt,_) = loop (is,last_step) = (init_is,n)
+  for _ in iota num_iter do
+    let this_step = (last_step + 1)/2
+    let cmps_ = is
+      |> map (\i ->
+        let cur_elem = xs[i64.max 0 i]
+        let next_elem = xs[i64.min (i+1) (n-1)]
+        in (i, cur_elem, next_elem)
+      )
+    let cmps = map2 (\kv (i, cv, nv) ->
+      if i<0 then (-1) else
+      if (kv `eq` cv) && (i==(n-1) || (kv `lt` nv))
+        then i
+      else if (kv `eq` cv)
+        then i64.min (n-1) (i+this_step)
+      else if (kv `lt` cv) then
+        if (i == 0)
+        then -1
+        else i64.max 0 (i-this_step)
+      else -- kv `gt` cv
+        if (i == (n-1) || (kv `lt` nv))
+        then -1
+        else i64.min (n-1) (i+this_step)
+    ) vs cmps_
+    in (cmps, this_step)
+  in foundAt
+
+
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
