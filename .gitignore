@@ -5,7 +5,7 @@
 *.obj
 *.log.txt
 *.parquet
-*.pkg
+#*.pkg
 *.db
 /tempdir/*
 /tps_tempdir/*
