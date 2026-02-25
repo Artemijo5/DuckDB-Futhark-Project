@@ -1,5 +1,7 @@
--- | Re-occuring routines for basic data-handling
+-- Re-occuring routines for basic data-handling
 -- Row indices are assumed to be i64
+
+-- TODO List-Ranking
 
 -- Gather Operations
 
