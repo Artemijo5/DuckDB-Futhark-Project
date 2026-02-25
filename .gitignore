@@ -15,5 +15,8 @@
 /ft_libs/lib/*
 /ft_libs/*.c
 
+/ft_libs_old/lib/*
+/ft_libs_old/*.c
+
 duckdb.h
 duckdb.hpp
