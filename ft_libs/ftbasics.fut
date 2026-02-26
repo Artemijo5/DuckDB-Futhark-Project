@@ -1,8 +1,6 @@
 -- Re-occuring routines for basic data-handling
 -- Row indices are assumed to be i64
 
--- TODO List-Ranking
-
 -- Gather Operations
 
 	-- | Gather operation (based on futhark example).
@@ -212,14 +210,32 @@
 
 	-- | Radix-based bucket-sort for i64 data.
 	-- Meant for a 'small' number of compactly numbered buckets.
-	def bucket_sort [n]
+	def bucket_sort [n] 't
 		(bit_step: i32)
 		(num_buckets : i64)
-		(xs : [n]i64)
+		(ks : [n]i64)
+		(xs : [n]t)
 	=
 		let bucket_bits = num_buckets |> f64.i64 |> f64.log2 |> f64.ceil |> i32.f64
 		let num_iter = (bucket_bits + bit_step - 1) / bit_step
-		in loop xs for iter < num_iter do
+		in loop (ks, xs) for iter < num_iter do
 			let i = iter*bit_step
 			let j = i32.min (bucket_bits-1) (i + bit_step - 1)
-			in radix_sort_multistep i j (i64.get_bit) xs
+			in radix_sort_multistep i j (\bi (k,_) -> i64.get_bit bi k) (zip ks xs)
+				|> unzip
+
+-- Grouping & Dictionary Encoding
+
+	-- | Function to identify the group boundaries in an array of grouped keys.
+	-- Returns a boolean array, with the first index of each group being true.
+	def group_boundaries [n] 't (neq : t -> t -> bool) (xs : [n]t)
+	: [n]bool = iota n
+		|> map (\i -> if i==0 then true else (xs[i-1] `neq` xs[i]))
+
+	-- | Dictionary encoding: assign compact i64 ids to grouped keys.
+	def dict_encoding [n] 't (neq : t -> t -> bool) (xs : [n]t)
+	: [n]i64 = xs
+		|> group_boundaries neq
+		|> map (i64.bool)
+		|> scan (+) 0
+		|> map (\i -> i-1)

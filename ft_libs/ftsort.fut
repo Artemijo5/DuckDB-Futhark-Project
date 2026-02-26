@@ -21,18 +21,21 @@ import "ftbasics"
 	def ft_radix_sort [n] 't
 		(bit_step : i32)
 	    (num_bits : i32)
+	    (clz : t -> i32)
 	    (get_bit : i32 -> t -> i32)
 	    (xs : [n]t)
 	: [n]t =
-	    loop xs
-	    for bit in (0..bit_step..<num_bits)
-	    do radix_sort_multistep bit (i32.min (num_bits-1) (bit+bit_step-1)) get_bit xs
+		let msb = xs |> map (clz) |> i32.minimum |> (i32.-) num_bits
+	    in loop xs
+		    for bit in (0..bit_step..<msb)
+		    do radix_sort_multistep bit (i32.min (msb-1) (bit+bit_step-1)) get_bit xs
 
 	-- | Radix-sort for signed integers.
 	-- Based on futhark sorts library radix_sort_int
 	def ft_radix_sort_int [n] 't
 		(bit_step : i32)
 		(num_bits : i32)
+	    (clz : t -> i32)
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 	: [n]t =
@@ -40,13 +43,14 @@ import "ftbasics"
 		-- Flip the most significant bit.
 		let b = get_bit i x
 		in if i == num_bits-1 then b ^ 1 else b
-	in ft_radix_sort bit_step num_bits get_bit' xs
+	in ft_radix_sort bit_step num_bits clz get_bit' xs
 
 	-- | Radix-sort for floating-point data.
 	-- Based on futhark sorts library radix_sort_int
 	def ft_radix_sort_float [n] 't
 		(bit_step : i32)
 		(num_bits : i32)
+	    (clz : t -> i32)
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 	: [n]t =
@@ -61,7 +65,7 @@ import "ftbasics"
 		let b = get_bit i x
 		in if get_bit (num_bits-1) x == 1 || i == num_bits-1
 		then b ^ 1 else b
-	in ft_radix_sort bit_step num_bits get_bit' xs
+	in ft_radix_sort bit_step num_bits clz get_bit' xs
 
 -- Wrapper types for GFTR & GFUR
 
@@ -113,13 +117,14 @@ import "ftbasics"
 	def radixSort_int_GFTR [n] [b] 't
 		(bit_step : i32)
 		(num_bits : i32)
+	    (clz : t -> i32)
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 		(pL : [n][b]u8)
 	: sortStruct [n] [b] t =
 		let xys = zip xs pL
 		let (sorted_xs, sorted_pL) = xys
-			|> ft_radix_sort_int bit_step num_bits (\bi (x,_) -> get_bit bi x)
+			|> ft_radix_sort_int bit_step num_bits (\(x,_) -> clz x) (\bi (x,_) -> get_bit bi x)
 			|> unzip
 		in {ks = sorted_xs, pL = sorted_pL}
 
@@ -127,13 +132,14 @@ import "ftbasics"
 	def radixSort_float_GFTR [n] [b] 't
 		(bit_step : i32)
 		(num_bits : i32)
+	    (clz : t -> i32)
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 		(pL : [n][b]u8)
 	: sortStruct [n] [b] t =
 		let xys = zip xs pL
 		let (sorted_xs, sorted_pL) = xys
-			|> ft_radix_sort_float bit_step num_bits (\bi (x,_) -> get_bit bi x)
+			|> ft_radix_sort_float bit_step num_bits (\(x,_) -> clz x) (\bi (x,_) -> get_bit bi x)
 			|> unzip
 		in {ks = sorted_xs, pL = sorted_pL}
 
@@ -154,12 +160,13 @@ import "ftbasics"
 	def radixSort_int_GFUR [n] 't
 		(bit_step : i32)
 		(num_bits : i32)
+	    (clz : t -> i32)
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 	: sortInfo [n] t =
 		let xis = zip xs (indices xs)
 		let (sorted_xs, sorted_is) = xis
-			|> ft_radix_sort_int bit_step num_bits (\bi (x,_) -> get_bit bi x)
+			|> ft_radix_sort_int bit_step num_bits (\(x,_) -> clz x) (\bi (x,_) -> get_bit bi x)
 			|> unzip
 		in {ks = sorted_xs, is = sorted_is}
 
@@ -167,11 +174,12 @@ import "ftbasics"
 	def radixSort_float_GFUR [n] 't
 		(bit_step : i32)
 		(num_bits : i32)
+	    (clz : t -> i32)
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 	: sortInfo [n] t =
 		let xis = zip xs (indices xs)
 		let (sorted_xs, sorted_is) = xis
-			|> ft_radix_sort_float bit_step num_bits (\bi (x,_) -> get_bit bi x)
+			|> ft_radix_sort_float bit_step num_bits (\(x,_) -> clz x) (\bi (x,_) -> get_bit bi x)
 			|> unzip
 		in {ks = sorted_xs, is = sorted_is}
