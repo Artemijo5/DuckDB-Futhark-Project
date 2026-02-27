@@ -7,6 +7,9 @@ supervised by prof. Vasileios Samoladas
 
 Technical University of Crete, Department of Electrical and Computer Engineering
 
+
+(NOTE: currently in process of refactoring)
+
 -----------------------------------------
 Preparation:
 - add the files from duckdb's [Linux C installation page](https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64) to `clibs/`

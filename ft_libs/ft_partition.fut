@@ -88,55 +88,55 @@ import "ftbasics"
 
 -- byteSeq & radix comparisons.
 
--- | Equality between 2 byteseq by radix.
-def byteSeq_eq [b] (fb : i32) (lb : i32) (bitmask : byteSeq [b]) (x2: byteSeq [b])
-: bool =
-  let r1 = getRadix bitmask x1
-  let r2 = getRadix bitmask x2
-  in foldl (&&) (true) (map2 (==) r1[fb:lb+1] r2[fb:lb+1])
+	-- | Equality between 2 byteseq by 1st-level radix.
+	def byteSeq_eq [b] (fb : i32) (lb : i32) (bitmask : byteSeq [b]) (x2: byteSeq [b])
+	: bool =
+	  let r1 = getRadix bitmask x1
+	  let r2 = getRadix bitmask x2
+	  in foldl (&&) (true) (map2 (==) r1[fb:lb+1] r2[fb:lb+1])
 
--- | Non-equality between 2 byteseq by radix.
-def byteSeq_neq [b] (fb : i32) (lb : i32) (bitmask : byteSeq [b]) (x2: byteSeq [b])
-: bool =
-  let r1 = getRadix bitmask x1
-  let r2 = getRadix bitmask x2
-  in foldl (||) (false) (map2 (!=) r1[lb:fb+1] r2[lb:fb+1])
+	-- | Non-equality between 2 byteseq by 1st-level radix.
+	def byteSeq_neq [b] (fb : i32) (lb : i32) (bitmask : byteSeq [b]) (x2: byteSeq [b])
+	: bool =
+	  let r1 = getRadix bitmask x1
+	  let r2 = getRadix bitmask x2
+	  in foldl (||) (false) (map2 (!=) r1[lb:fb+1] r2[lb:fb+1])
 
--- | < between 2 byteseq by radix.
-def byteSeq_lt [b]
-	(fb : i32)
-	(lb : i32)
-	(bitmask : byteSeq [b])
-	(x1: byteSeq [b])
-	(x2: byteSeq [b])
-: bool =
-	let r1 = getRadix bitmask x1
-	let r2 = getRadix bitmask x2
-	let (lt, _) =
-		loop (def_lt, byte) = (false, lb)
-		while (!def_lt && byte<=fb) do
-			let dlt = r1[byte] < r2[byte]
-			in (dlt, byte+1)
-	in lt
+	-- | < between 2 byteseq by 1st-level radix.
+	def byteSeq_lt [b]
+		(fb : i32)
+		(lb : i32)
+		(bitmask : byteSeq [b])
+		(x1: byteSeq [b])
+		(x2: byteSeq [b])
+	: bool =
+		let r1 = getRadix bitmask x1
+		let r2 = getRadix bitmask x2
+		let (lt, _) =
+			loop (def_lt, byte) = (false, lb)
+			while (!def_lt && byte<=fb) do
+				let dlt = r1[byte] < r2[byte]
+				in (dlt, byte+1)
+		in lt
 
--- | > between 2 byteseq by radix.
-def byteSeq_gt [b]
-	(fb : i32)
-	(lb : i32)
-	(bitmask : byteSeq [b])
-	(x1: byteSeq [b])
-	(x2: byteSeq [b])
-: bool =
-	let r1 = getRadix bitmask x1
-	let r2 = getRadix bitmask x2
-	let (gt, _) =
-		loop (def_gt, byte) = (false, lb)
-		while (!def_gt && byte<=fb) do
-			let dlt = r1[byte] < r2[byte]
-			in (dlt, byte+1)
-	in gt
+	-- | > between 2 byteseq by 1st-level radix.
+	def byteSeq_gt [b]
+		(fb : i32)
+		(lb : i32)
+		(bitmask : byteSeq [b])
+		(x1: byteSeq [b])
+		(x2: byteSeq [b])
+	: bool =
+		let r1 = getRadix bitmask x1
+		let r2 = getRadix bitmask x2
+		let (gt, _) =
+			loop (def_gt, byte) = (false, lb)
+			while (!def_gt && byte<=fb) do
+				let dlt = r1[byte] < r2[byte]
+				in (dlt, byte+1)
+		in gt
 
--- TODO for PHJ will also need multi-level radix comparators (but primitive-based ig)
+	-- TODO for PHJ will also need multi-level radix comparators (but primitive-based)
 
 -- Radix-Partitioning
 
