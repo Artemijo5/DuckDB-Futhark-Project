@@ -1,4 +1,4 @@
--- Module for storing payload columns.
+-- Routines for storing & handling payload columns.
 -- Data is stored in row-major order, as a contiguous array of bytes (u8).
 
 import "ftbasics"

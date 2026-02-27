@@ -2,10 +2,7 @@ import "../ftbasics"
 import "../lib/github.com/diku-dk/sorts/merge_sort"
 import "../lib/github.com/diku-dk/segmented/segmented"
 
-type~ partitionInfo = {maxDepth: i32, bounds: []idx_t.t, depths: []i32}
 
--- TODO consider using Option type here (?)
-type radix_hashTable [rb] = {first_info_idx: [2**rb]idx_t.t, last_info_idx: [2**rb]idx_t.t} -- if idx == -1, partition is not present
 
 def dummy_byteSeq (b: idx_t.t)
 : byteSeq [b] =
