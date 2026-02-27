@@ -57,7 +57,7 @@ def smj_leftOuter_expand [nR] 't (matches : joinTup [nR] t) : joinPairs t =
 	}
 	in smj_expand matches'
 
--- | Full Merge-Join routine (for Inner Join).
+-- | SMJ full Merge-Join routine (for Inner Join).
 def do_InnerSMJ [nR] [nS] 't
 	(eq : t -> t -> bool)
 	(geq: t -> t -> bool)
