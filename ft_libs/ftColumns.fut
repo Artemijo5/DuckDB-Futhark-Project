@@ -79,7 +79,7 @@ module type keyCol = {
 	val update_keyCol [n] [n_upd] : i64 -> [n]t -> [n_upd]t -> [n]t
 	val crop_keyCol [n] : i64 -> i64 -> [n]t -> []t
 }
--- | Module for managing a numeric column.
+-- | Parametric module for managing a numeric column.
 -- Used for the key column & columns handled individually.
 module keyCol_numeric (N : numeric) : keyCol with t = N.t = {
 	type t = N.t
