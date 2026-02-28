@@ -10,6 +10,8 @@
 -- NOTE: bytes in a byteseq are indexed in decreasing order.
 -- ie in byteSeq [b], byte 0 is the last, byte b-1 is the first
 
+-- NOTE: only supports cases where at most 64 bits are used for partitioning
+
 import "ftbasics"
 import "lib/github.com/diku-dk/segmented/segmented"
 
@@ -87,6 +89,17 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			for j in (0..<radix_bytes) do
 			let r = (i64.u8 rdx[b-j-1]) << (j*(i64.i32 u8.num_bits))
 			in y | r
+
+	-- Convert an i64 value into a byteSeq
+	def idx_to_radix (b : i64) (idx : i64)
+	: byteSeq [b] =
+		let u8_bitmask = i64.u8 u8.highest
+		in iota b
+			|> map (\i ->
+				(i64.>>>) idx ((b - i - 1)*(i64.i32 u8.num_bits))
+			)
+			|> map (& u8_bitmask)
+			|> map (u8.i64)
 
 -- byteSeq & radix comparisons.
 
@@ -200,10 +213,10 @@ import "lib/github.com/diku-dk/segmented/segmented"
 
 	-- | Multi-level radix-partitioning with payload data.
 	def partition_and_deepen 't [n] [b]
+		(bit_step: i32)
 		(radix_size: i32)
 		(size_thresh: i64)
 		(max_depth_: i32)
-		(bit_step: i32)
 		(xs: [n](byteSeq [b]))
 		(pLs: [n]t)
 	: ([n](byteSeq [b]), [n]t) =
@@ -270,6 +283,110 @@ import "lib/github.com/diku-dk/segmented/segmented"
 					|> zip (indices curBounds)
 					|> map (\(i,s) -> (gather_idx[curBounds[i]], s))
 					|> filter (\(_,s) -> s>size_thresh)
+				-- scatter & move on to the next iteration
+				let xin_pXs = scatter (copy pXs) gather_idx new_xs
+				let xin_pPs = scatter (copy pPs) gather_idx new_pLs
+				in (xin_pXs, xin_pPs, xin_taidade, dp+1)
+		in (loop_over.0, loop_over.1)
+
+	-- | Multi-level radix-partitioning with payload data, using a pre-made partitioning scheme.
+	-- This can be used eg on the left-side relation of PHJ, to ensure memory coalescion.
+	-- 
+	-- Implemented similar to partition_and_deepen, only taidade is got from use_info rather than calculated.
+	def partition_preconfigured 't [n] [b]
+		(bit_step: i32)
+		(radix_size: i32)
+		(use_prev  : [](byteSeq [b]))
+		(use_info  : partitionInfo)
+		(xs: [n](byteSeq [b]))
+		(pLs: [n]t)
+	: ([n](byteSeq [b]), [n]t) =
+		let max_J = (i32.i64 b)*u8.num_bits - 1
+		let max_depth = use_info.maxDepth
+		-- recursively subdivide partitions that are too large
+		-- starting with the entire dataset as one too large partition
+		let loop_over : ([n](byteSeq [b]), [n]t, [](i64, i64),  i32)
+	    	= loop (pXs, pPs, taidade, dp) = (xs, pLs, [(0,n)], 0)
+	    	while (length taidade)>0 && dp<max_depth do
+	    		let nt = length taidade
+		        let new_i = radix_size*dp
+		        let new_j = i32.min max_J (new_i + radix_size - 1)
+		        -- get indices & lens of all taidade partitions
+		        let pinds = taidade |> map (.0)
+		        let plens = taidade |> map (.1)
+		        -- create gather/scatter indices via segmented iota
+				-- as well as replicated taidade partition ids
+				let pids = plens |> replicated_iota -- compact
+				let nr = length pids
+				let gather_idx = pids
+					|> group_boundaries (!=)
+					|> segmented_iota
+					|> sized nr
+					|> map2 (+) (pids |> map (\i -> pinds[i]) |> sized nr)
+				-- gather partitions & apply repartitioning
+				-- Cases:
+				-- 1. nt == 1
+				--   -> only process xs & pL
+				-- 2. nt > 1
+				--   -> requires additional partition key info to sort by previous part id
+				let (new_xs, new_pLs) =
+					if nt == 1
+					then
+						let xps = indices gather_idx
+							|> map (\i -> (pXs[gather_idx[i]], pPs[gather_idx[i]]))
+							|> unzip
+						in radix_part new_i new_j bit_step xps.0 xps.1
+					else
+						let xips = indices gather_idx
+							|> map (\i -> (pXs[gather_idx[i]], (pids[i], pPs[gather_idx[i]])))
+							|> unzip
+						let new_xips = radix_part
+							new_i new_j bit_step xips.0 xips.1
+							|> (\ret -> zip ret.0 ret.1)
+						-- sort by previous part id
+						in new_xips
+							|> map (\(x,(pid,pL)) -> (x,pid,pL))
+							|> unzip3
+							|> (\(xs, pids, pLs) -> bucket_sort bit_step nt pids (zip xs pLs))
+							|> (\(_, xps) -> xps)
+							|> unzip
+				-- identify if there are any new taidade partitions
+				-- USING provided partitionInfo & partitioned relation
+				let curBounds = (getPartitionBounds dp 0 new_j new_xs).bounds
+				let n_xinBufen = length curBounds
+				let xin_taidade = if dp==max_depth-1 then []
+				else
+					let use_bitmask = mk_radix_bitmask 0 new_j b
+					let whichPrev_mult = use_info.bounds
+						|> zip use_info.depths
+						|> filter (\(d,_) -> d>dp)
+						|> map (\(_,b) -> use_prev[b])
+						|> map (radix_to_idx (new_j-1) use_bitmask)
+					-- we only need the first of each one
+					let whichPrev = whichPrev_mult
+						|> group_boundaries (!=)
+						|> zip whichPrev_mult
+						|> filter (.1)
+						|> map (.0)
+					-- binary search on current partitions
+					-- to see which ones fit
+					-- use bsearch_first since finding a match is not guaranteed
+					let curSizes = curBounds
+						|> indices
+						|> map (\i -> 
+							if i==n_xinBufen-1
+							then (curBounds[i],nr)
+							else (curBounds[i],curBounds[i+1])
+						)
+						|> map (\(inf,sup) -> sup-inf)
+					in curBounds
+						|> map (\cb -> new_xs[cb])
+						|> map (radix_to_idx (new_j-1) use_bitmask)
+						|> sized n_xinBufen
+						|> bsearch_first (==) (>) (replicate n_xinBufen 0) whichPrev
+						|> zip (iota n_xinBufen)
+						|> filter (\(_,foundAt) -> foundAt >= 0)
+						|> map (\(i,_) -> (gather_idx[curBounds[i]], curSizes[i]))
 				-- scatter & move on to the next iteration
 				let xin_pXs = scatter (copy pXs) gather_idx new_xs
 				let xin_pPs = scatter (copy pPs) gather_idx new_pLs
@@ -373,4 +490,3 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			first_info_idx = scatter (replicate (2**rs) (-1)) scatter_isF (indices x_info.bounds),
 			last_info_idx  = scatter (replicate (2**rs) (-1)) scatter_isL (indices x_info.bounds)
 		}
-
