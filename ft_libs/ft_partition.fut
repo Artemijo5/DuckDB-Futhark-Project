@@ -370,7 +370,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			|> zip (brs)
 			|> map (\(br,isl) -> if isl then br else (-1))
 		in {
-			first_info_idx = scatter (replicate (2**rs) (-1)) scatter_isF x_info.bounds,
-			last_info_idx  = scatter (replicate (2**rs) (-1)) scatter_isL x_info.bounds
+			first_info_idx = scatter (replicate (2**rs) (-1)) scatter_isF (indices x_info.bounds),
+			last_info_idx  = scatter (replicate (2**rs) (-1)) scatter_isL (indices x_info.bounds)
 		}
 
