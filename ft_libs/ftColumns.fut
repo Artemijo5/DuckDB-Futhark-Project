@@ -61,15 +61,45 @@ def write_column [rc] [cc] [bc] [n]
 : columns [rc] [cc] [bc] =
 	let col_at = cols.colPrefix[at_col]
 	let col_bs = cols.colBytes[at_col]
-	let new_dat = cols.dat
-		|> zip (iota rc)
-		|> map (\(i,d) -> 
-			if (i>=at_row && i<at_row+n)
-			then (copy d) with [col_at:col_at+col_bs] = dat[i] |> sized col_bs
-			else d
-		)
+	let new_dat = (copy cols.dat)
+		with [at_row:at_row+n , col_at:col_at+col_bs]
+		= (dat :> [n][col_bs]u8)
 	in {
 		dat = new_dat,
 		colBytes = cols.colBytes,
 		colPrefix = cols.colPrefix
 	}
+
+-- | Module type for managing a typed column (either numeric or tuple-based).
+-- Used for the key column & columns handled individually.
+module type keyCol = {
+	type t
+
+	val mk_keyCol : (n_rows : i64) -> [n_rows]t
+	val update_keyCol [n] [n_upd] : i64 -> [n]t -> [n_upd]t -> [n]t
+	val crop_keyCol [n] : i64 -> i64 -> [n]t -> []t
+}
+-- | Module for managing a numeric column.
+-- Used for the key column & columns handled individually.
+module keyCol_numeric (N : numeric) : keyCol with t = N.t = {
+	type t = N.t
+	local def ne = N.i32 0
+
+	def mk_keyCol n_rows
+	= replicate n_rows ne
+
+	def update_keyCol [n] [n_upd]
+		(at_row : i64)
+		(new_dat: [n_upd]t)
+		(keyCol : [n]t)
+	= (copy keyCol) with [at_row:at_row+n_upd] = new_dat
+
+	def crop_keyCol [n]
+		(offs : i64)
+		(limt : i64)
+		(keyCol : [n]t)
+	=
+		let inf = i64.min n offs
+		let sup = i64.min n (offs+limt)
+		in keyCol[inf:sup]
+}

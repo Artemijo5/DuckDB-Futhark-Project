@@ -231,7 +231,7 @@ def partition_and_deepen 't [n] [b]
 			-- gather partitions & apply repartitioning
 			-- Cases:
 			-- 1. nt == 1, only process xs & pL
-			-- 2. nt > 1, requires additional partition key info
+			-- 2. nt > 1, requires additional partition key info to sort by previous part id
 			let (new_xs, new_pLs) =
 				if nt == 1
 				then
