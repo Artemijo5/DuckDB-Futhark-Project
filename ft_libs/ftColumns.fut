@@ -70,13 +70,24 @@ def write_column [rc] [cc] [bc] [n]
 		colPrefix = cols.colPrefix
 	}
 
+-- | Function to wrap a sequence of bytes.
+def formatLike [rc] [cc] [bc] [n]
+	(likeCol : columns [rc] [cc] [bc])
+	(dat : [n][bc]u8)
+: columns [n] [cc] [bc] =
+	{
+		dat = dat,
+		colBytes = likeCol.colBytes,
+		colPrefix = likeCol.colPrefix
+	}
+
 -- | Module type for managing a typed column (either numeric or tuple-based).
 -- Used for the key column & columns handled individually.
 module type keyCol = {
 	type t
 
 	val mk_keyCol : (n_rows : i64) -> [n_rows]t
-	val update_keyCol [n] [n_upd] : i64 -> [n]t -> [n_upd]t -> [n]t
+	val update_keyCol [n] [n_upd] : i64 -> [n_upd]t -> [n]t -> [n]t
 	val crop_keyCol [n] : i64 -> i64 -> [n]t -> []t
 }
 -- | Parametric module for managing a numeric column.
