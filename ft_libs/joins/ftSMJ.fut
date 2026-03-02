@@ -8,23 +8,6 @@ import "../ftbasics"
 -- ACM Manag. Data, Vol. 3, No. 1 (SIGMOD), Article 39
 -- & References
 
--- | Type used to store the information of a join (between x&y).
--- vs : the values of x
--- ix : the corresponding index of the value in x
--- iy : the first match in y
--- cm : number of matches found in y
--- NOTE - each tuple corresponds to an individual x column, containing info about all its matches (or no matches) in y.
--- Pure pairs are expressed with type joinPairs.
-type joinTup [n] 't = {vs : [n]t, ix: [n]i64, iy: [n]i64, cm: [n]i64}
-
--- | The pairs obtained from joining x&y.
--- vs : the values of each pair
--- ix : the respective index in x
--- iy : the respective index in y
--- NOTE - unlike type joinTup, each tuple here corresponds to an individual match.
-type~ joinPairs 't = {vs: []t, ix: []i64, iy: []i64}
-
-
 -- | SMJ match-finding phase.
 -- Essentially bulk range binary searches between 2 sorted key columns.
 def smj_matchFinding [nR] [nS] 't
