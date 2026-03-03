@@ -11,7 +11,7 @@ import "../ft_partition"
 
 -- Method:
 -- After applying partitioning, we transform the radices to unsigned integer primitives.
--- (this requires that the radices are no more than 64 bits)
+-- (this requires that the keys are no more than 64 bits)
 -- This is done because
 -- a. binary search operations & comparisons on primitives are faster than on nested arrays.
 -- b. allows to shrink the data size to the minimum required.
@@ -47,7 +47,7 @@ module prim_PHJ (U : integral) = {
 	-- | Convert byteSeq into unsigned integer of type t
 	local def from_byteSeq [b] (x : byteSeq [b]) : t =
 		loop y : t = zero
-		for j<num_bytes do
+		for j<(i64.min b num_bytes) do
 			let r = (from_u8 x[b-j-1]) `lshift` ((i32.i64 j) * u8.num_bits)
 			in y `bitwise_or` r
 
@@ -99,7 +99,7 @@ module prim_PHJ (U : integral) = {
 	-- | Complex binary search for finding matching partitions.
 	-- Finds the matching partition in xs for each v, if it exists.
 	-- f_init, l_init, maxRange obtained from hash table.
-	def radix_bsearch [nv]
+	local def radix_bsearch [nv]
 		(radix_bits : i32)
 		(bounds : []i64)
 		(depths : []i32)
@@ -139,7 +139,7 @@ module prim_PHJ (U : integral) = {
 		in foundAt
 
 	-- | Locate the matching partition of xs for each radix in vs
-	def hash_bsearch [nv]
+	local def hash_bsearch [nv]
 		(radix_bits : i32)
 		(xInfo : partitionInfo)
 		(xTbl  : radix_hashTable [i64.i32 radix_bits])
@@ -153,7 +153,7 @@ module prim_PHJ (U : integral) = {
 			|> unzip
 		-- Get the max partition range among radices present in values
 		-- Use the fact that vs are grouped by 1st-level radix to take distinct
-		let maxRange = f_init
+		let maxRange = if xInfo.maxDepth==1 then 1 else f_init
 			|> group_boundaries (!=)
 			|> zip3 f_init l_init
 			|> filter (.2)
@@ -162,10 +162,102 @@ module prim_PHJ (U : integral) = {
 		in radix_bsearch
 			radix_bits xInfo.bounds xInfo.depths maxRange f_init l_init xs vs
 
-	-- TODO
-	-- test binary searches
-	-- following sequential searches within each partition (together with bsearch: match-finding phase)
-	-- expansion phase (also does seq search)
-	-- etc
+	-- | Sequential search to find the matches of v in a partition of x.
+	-- Returns the index of the first match (-1 if none) and number of matches.
+	local def count_matches [n] [np] (partId : i64) (bounds: [np]i64) (xs : [n]t) (v : t)
+	: (i64, i64) =
+		if partId < 0 then (-1,0) else
+		let inf = bounds[partId]
+		let sup = if partId==(np-1) then n else bounds[partId+1]
+		in loop (j,y) = (-1,0) for i in (inf..<sup) do
+			let j' = if j<0 && (v `eq` xs[i]) then i else j
+			let y' = if (v `eq` xs[i]) then y+1 else y
+			in (j',y')
 
+	-- | Sequential search to find the k-th match of v in x starting from a given position.
+	-- Assuming the k-th match exists.
+	-- Returns the index of the k-th match.
+	local def find_kth_match (startFrom : i64) (k : i64) (xs : []t) (v : t)
+	: i64 =
+		let (foundAt_plusOne,_) =
+			loop (i,found)=(startFrom,0) while found<k do
+				if (v `eq` xs[i])
+				then (i+1,found+1)
+				else (i+1,found)
+		in foundAt_plusOne - 1
+
+	-- | PHJ match-finding phase.
+	--
+	-- First locates the matching partition in R for all values of S via the Hash Table.
+	-- If there are deep partitions, a binary search over partitionInfo is also performed.
+	-- Then it performs a sequential scan to get the number of matches.
+	-- Returns the mapped-to-unsigned relations to pass to the expansion phase.
+	def phj_matchFinding [nR] [nS] [b]
+		(radix_bits : i32)
+		(tR : [nR](byteSeq [b]))
+		(tS : [nS](byteSeq [b]))
+		(tR_info : partitionInfo)
+		(tR_hashTbl : radix_hashTable [i64.i32 radix_bits])
+	: ([nR]t, joinTup [nS] t) =
+		-- Map tR, tS to t
+		let uR = tR |> map (from_byteSeq)
+		let uS = tS |> map (from_byteSeq)
+		-- Find matching partitions
+		let (iy,cm) = uS
+			|> hash_bsearch radix_bits tR_info tR_hashTbl uR
+		-- Find indices & number of matches
+			|> zip uS
+			|> map (\(v,pid) -> count_matches pid tR_info.bounds uR v)
+			|> unzip
+		-- Return
+		in (uR, {vs = uS, ix = iota nS, iy = iy, cm = cm})
+
+	-- | PHJ expansion phase (for Inner Join).
+	-- Expansion repeats sequential scans, starting from index of first match.
+	def phj_expand [nR] [nS] [b]
+		(tS : [nS](byteSeq [b]))
+		(uR : [nR]t)
+		(matches : joinTup [nS] t)
+	: joinPairs (byteSeq [b]) =
+		let (exp_ix, exp_iy) = zip4 matches.vs matches.ix matches.iy matches.cm
+			|> expand (.3) (\(v,ix,iy,_) ind -> (ix, find_kth_match iy (ind+1) uR v))
+			|> unzip
+		let exp_vs = exp_ix |> map (\i -> tS[i])
+		in {vs = exp_vs, ix = exp_ix, iy = exp_iy}
+
+	-- | PHJ full join routine (for Inner Join).
+	def do_InnerPHJ [nR] [nS] [b]
+		(radix_bits : i32)
+		(tR : [nR](byteSeq [b]))
+		(tS : [nS](byteSeq [b]))
+		(tR_info : partitionInfo)
+		(tR_hashTbl : radix_hashTable [i64.i32 radix_bits])
+	: joinPairs (byteSeq [b]) =
+		let (uR, jTup) = phj_matchFinding radix_bits tR tS tR_info tR_hashTbl
+		in jTup |> phj_expand tS uR
 }
+
+module u8_phj  = prim_PHJ u8
+module u16_phj = prim_PHJ u16
+module u32_phj = prim_PHJ u32
+module u64_phj = prim_PHJ u64
+
+type~ joinPairs_bsq [b] = joinPairs (byteSeq [b])
+
+-- | PHJ full join routine (for Inner Join).
+-- Uses primitives of the minimum needed size.
+def innerPHJ [nR] [nS] [b]
+	(radix_bits : i32)
+	(tR : [nR](byteSeq [b]))
+	(tS : [nS](byteSeq [b]))
+	(tR_info : partitionInfo)
+	(tR_hashTbl : radix_hashTable [i64.i32 radix_bits])
+: joinPairs_bsq [b] =
+	if b==1 then
+		u8_phj.do_InnerPHJ radix_bits tR tS tR_info tR_hashTbl
+	else if b==2 then
+		u16_phj.do_InnerPHJ radix_bits tR tS tR_info tR_hashTbl
+	else if b<=4 then
+		u32_phj.do_InnerPHJ radix_bits tR tS tR_info tR_hashTbl
+	else
+		u64_phj.do_InnerPHJ radix_bits tR tS tR_info tR_hashTbl
