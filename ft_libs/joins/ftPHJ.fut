@@ -73,7 +73,6 @@ module prim_PHJ (U : integral) = {
 				`lshift` (radix_bits*(depth-j-1))
 			in y `bitwise_or` r
 
-
 	-- | Radix comparisons (a single primitive comparison between re-arranged bits)
 	local def radix_cmp
 		(cmp : t -> t -> bool)

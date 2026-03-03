@@ -24,10 +24,12 @@ def mk_columns [cc]
 
 -- | Function to crop a contiguous section of a columns instance.
 -- Section specified by offs (OFFSET) and limt (LIMIT), similar to an SQL query.
+-- NOTE: consumes the original columns.
+-- TODO will need to see how this works in the C API (...)
 def crop_columns [rc] [cc] [bc]
 	(offs : i64)
 	(limt : i64)
-	(cols : columns [rc] [cc] [bc])
+	(cols : *columns [rc] [cc] [bc])
 : columns [i64.max 0 (i64.min limt (rc-offs))] [cc] [bc] =
 	let new_rc = i64.max 0 (i64.min limt (rc-offs))
 	let inf = i64.min rc offs
@@ -53,21 +55,25 @@ def read_column [rc] [cc] [bc]
 -- | Function to write the values of a particular column.
 -- Specifically writes n_rows rows, starting at at_row row.
 -- If byte size of passed row is incorrect, throws runtime error.
+-- NOTE: consumes the original columns.
+-- TODO will need to see how this works in the C API (...)
 def write_column [rc] [cc] [bc] [n]
 	(at_row : i64)
 	(at_col : i64)
 	(dat : [n][]u8)
-	(cols : columns [rc] [cc] [bc])
+	(cols : *columns [rc] [cc] [bc])
 : columns [rc] [cc] [bc] =
 	let col_at = cols.colPrefix[at_col]
 	let col_bs = cols.colBytes[at_col]
-	let new_dat = (copy cols.dat)
+	let new_colBytes = copy cols.colBytes
+	let new_colPrefix = copy cols.colPrefix
+	let new_dat = cols.dat
 		with [at_row:at_row+n , col_at:col_at+col_bs]
 		= (dat :> [n][col_bs]u8)
 	in {
 		dat = new_dat,
-		colBytes = cols.colBytes,
-		colPrefix = cols.colPrefix
+		colBytes = new_colBytes,
+		colPrefix = new_colPrefix
 	}
 
 -- | Function to wrap a sequence of bytes.
