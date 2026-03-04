@@ -32,19 +32,19 @@
 	-- Based on Futhark by Example.
 	-- NOTE: if lt and highest are given gt and lowest values, this becomes argmax.
 	def argmin [n] 't
-		(lt: t -> t -> bool)
-		(eq: t -> t -> bool)
-		(highest: t)
-		(ks: [n]t)
-	: i64 = 
+		(lt : t -> t -> bool)
+		(eq : t -> t -> bool)
+		(highest : t)
+		(ks : [n]t)
+	: i64 =
 		let ne = (n, highest)
-		let iks = ks
-		|> zip (indices ks)
-		let min_ik = reduce_comm(\(ix, vx) (iy, vy) ->
-		    if (vx `lt` vy) || ((vx `eq` vy) && (ix < iy))
-		      then (ix, vx)
-		      else (iy, vy)
-		  ) ne iks
+		let min_ik = ks
+			|> zip (indices ks)
+			|> reduce_comm(\(ix, vx) (iy, vy) ->
+			    if (vx `lt` vy) || ((vx `eq` vy) && (ix < iy))
+			      then (ix, vx)
+			      else (iy, vy)
+			  ) ne
 		in min_ik.0
 
 	-- | Sequential map function, for some cases of nested parallelism.

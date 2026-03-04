@@ -111,7 +111,7 @@ module prim_PHJ (U : integral) = {
 	: [nv]i64 =
 		let maxIter = 1 + (maxRange |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
 		let max3 (i1 : i64) (i2 : i64) (i3 : i64) = i64.max i1 (i64.max i2 i3)
-		in if maxIter==1 then f_init else
+		in if maxIter<=1 then f_init else
 		let (foundAt, _) =
 			loop (is, last_steps) = (f_init, map2 (\fi li -> li - fi + 1) f_init l_init)
 			for _ in iota maxIter do
@@ -175,10 +175,11 @@ module prim_PHJ (U : integral) = {
 			in (j',y')
 
 	-- | Sequential search to find the k-th match of v in x starting from a given position.
-	-- Assuming the k-th match exists.
+	-- Assuming the k-th match exists (unless startFrom < 0)
 	-- Returns the index of the k-th match.
 	local def find_kth_match (startFrom : i64) (k : i64) (xs : []t) (v : t)
 	: i64 =
+		if startFrom<0 then startFrom else
 		let (foundAt_plusOne,_) =
 			loop (i,found)=(startFrom,0) while found<k do
 				if (v `eq` xs[i])
@@ -215,15 +216,16 @@ module prim_PHJ (U : integral) = {
 	-- | PHJ expansion phase (for Inner Join).
 	-- Expansion repeats sequential scans, starting from index of first match.
 	def phj_expand [nR] [nS] [b]
-		(tS : [nS](byteSeq [b]))
+		(tR : [nR](byteSeq [b]))
 		(uR : [nR]t)
 		(matches : joinTup [nS] t)
 	: joinPairs (byteSeq [b]) =
 		let (exp_ix, exp_iy) = zip4 matches.vs matches.ix matches.iy matches.cm
 			|> expand (.3) (\(v,ix,iy,_) ind -> (ix, find_kth_match iy (ind+1) uR v))
 			|> unzip
-		let exp_vs = exp_ix |> map (\i -> tS[i])
-		in {vs = exp_vs, ix = exp_ix, iy = exp_iy}
+		-- output pretends R was left-side
+		let exp_vs = exp_iy |> map (\i -> tR[i])
+		in {vs = exp_vs, ix = exp_iy, iy = exp_ix}
 
 	-- | PHJ full join routine (for Inner Join).
 	def do_InnerPHJ [nR] [nS] [b]
@@ -234,7 +236,7 @@ module prim_PHJ (U : integral) = {
 		(tR_hashTbl : radix_hashTable [i64.i32 radix_bits])
 	: joinPairs (byteSeq [b]) =
 		let (uR, jTup) = phj_matchFinding radix_bits tR tS tR_info tR_hashTbl
-		in jTup |> phj_expand tS uR
+		in jTup |> phj_expand tR uR
 }
 
 module u8_phj  = prim_PHJ u8
