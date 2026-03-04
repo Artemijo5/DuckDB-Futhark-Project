@@ -228,14 +228,14 @@
 
 	-- | Function to identify the group boundaries in an array of grouped keys.
 	-- Returns a boolean array, with the first index of each group being true.
+	-- NOTE : the previous element is on the left side of the neq comparator.
 	def group_boundaries [n] 't (neq : t -> t -> bool) (xs : [n]t)
 	: [n]bool = iota n
 		|> map (\i -> if i==0 then true else (xs[i-1] `neq` xs[i]))
 
-	-- | Dictionary encoding: assign compact i64 ids to grouped keys.
-	def dict_encoding [n] 't (neq : t -> t -> bool) (xs : [n]t)
-	: [n]i64 = xs
-		|> group_boundaries neq
+	-- | Dictionary encoding: assign compact i64 ids to grouped keys, using the group boundaries.
+	def dict_encoding [n] (gbs : [n]bool)
+	: [n]i64 = gbs
 		|> map (i64.bool)
 		|> scan (+) 0
 		|> map (\i -> i-1)
