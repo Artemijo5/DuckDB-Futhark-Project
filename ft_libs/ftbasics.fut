@@ -249,7 +249,7 @@
 	-- cm : number of matches found in y
 	-- NOTE - each tuple corresponds to an individual x column, containing info about all its matches (or no matches) in y.
 	-- Pure pairs are expressed with type joinPairs.
-	type joinTup [n] 't = {vs : [n]t, ix: [n]i64, iy: [n]i64, cm: [n]i64}
+	type~ joinTup [n] 't = {vs : [n]t, ix: [n]i64, iy: [n]i64, cm: [n]i64}
 
 	-- | The pairs obtained from joining x&y.
 	-- vs : the values of each pair

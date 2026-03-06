@@ -10,14 +10,16 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 	-- - idxs: the index of the first char of each string in contents, increasing order
 	type~ strInfo = {contents : []u8, idxs : []i64}
 
-	-- | Type to store a transformed column of strings + the original indices.
-	type~ sortInfo_str = {contents : []u8, idxs : []i64, is : []i64}
-
 	-- | Type to store a transformed column of strings + the original payloads.
-	type~ sortStruct_str [b] = {contents : []u8, idxs : []i64, pLs : [](byteSeq [b])}
+	type~ strInfo_sorted 't = {strs : strInfo , pLs : []t}
 
-	-- | Type to store the join output between 2 str columns
-	type~ joinPairs_str = {contents : []u8, idxs : []i64, ix : []i64, iy : []i64}
+	-- | Type to store a transformed column of strings + the original indices.
+	type~ sortInfo_str = strInfo_sorted i64
+	-- | Type to store a transformed column of strings + the original payloads (as byte array).
+	type~ sortStruct_str [b] = strInfo_sorted (byteSeq [b])
+
+	-- | Type to store the join output between 2 str columns.
+	type~ joinPairs_str = {strs : strInfo, ix : []i64, iy : []i64}
 
 -- strInfo initialization
 	
@@ -162,8 +164,9 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 		let gather_lens = is |> map (\i -> get_str_len i strs)
 		let new_idxs = gather_lens |> exscan (+) 0
 		let new_cons = is
+			|> map (\i -> strs.idxs[i])
 			|> zip gather_lens
-			|> expand (.0) (\(_,i) ind -> strs.contents[strs.idxs[i]+ind])
+			|> expand (.0) (\(_,i) ind -> strs.contents[i+ind])
 		in {contents = new_cons, idxs = new_idxs}
 
 	-- | Sort strings.
@@ -171,17 +174,19 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 		(char_cmp : u8 -> u8 -> i8)
 		(strs : strInfo)
 		(pLs : []t)
-	: (strInfo, []t) =
+	: strInfo_sorted t =
 		let (sorted_pLs, sorted_is) = strs.idxs
 			|> indices
 			|> zip pLs
 			|> merge_sort (\(_,i1) (_,i2) -> coStr_cmp char_cmp strs i1 i2 <= 0)
 			|> unzip
-		in (sorted_is |> str_gather strs, sorted_pLs)
+		let sorted_strs = sorted_is |> str_gather strs
+		in {strs = sorted_strs, pLs = sorted_pLs}
+
 
 -- Splitting
 
-	-- Split a string into multiple, using a list of delimiters.
+	-- | Split a string into multiple, using a list of delimiters.
 	def str_split [n] (delim : []u8) (str : [n]u8)
 	: strInfo =
 		if (length delim) == 0 then {contents=str,idxs=[0]} else
@@ -203,7 +208,7 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 			|> map (.0)
 		in {contents = str_con, idxs = str_idx'}
 
-	-- Split all strings in an strInfo, using a list of delimiters.
+	-- | Split all strings in an strInfo, using a list of delimiters.
 	def str_multiSplit (delim : []u8) (strs : strInfo)
 	: strInfo =
 		if (length delim) == 0 then strs else
