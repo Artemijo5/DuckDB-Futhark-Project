@@ -221,7 +221,9 @@
 		in loop (ks, xs) for iter < num_iter do
 			let i = iter*bit_step
 			let j = i32.min (bucket_bits-1) (i + bit_step - 1)
-			in radix_sort_multistep i j (\bi (k,_) -> i64.get_bit bi k) (zip ks xs)
+			in xs
+				|> zip ks
+				|> radix_sort_multistep i j (\bi (k,_) -> i64.get_bit bi k)
 				|> unzip
 
 -- Grouping & Dictionary Encoding
