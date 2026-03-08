@@ -6,7 +6,7 @@ import "../../../joins/ftSMJ"
 --
 -- ==
 -- entry: do_SMJ_i32
--- input @data/dat_i32.in
+-- compiled input @data/dat_i32.in
 
 entry do_SMJ_i32 [n1] [n2] [b1] [b2]
 	(xs1 : [n1]i32)
@@ -15,15 +15,17 @@ entry do_SMJ_i32 [n1] [n2] [b1] [b2]
 	(pL2 : [n2][b2]u8)
 =
 	-- Transformation Phase
-	let sxs1 = mergeSort_GFTR (<=) xs1 pL1
-	let sxs2 = mergeSort_GFTR (<=) xs2 pL2
+	let sxs1 = mergeSort_GFUR (<=) xs1
+	let sxs2 = mergeSort_GFUR (<=) xs2
 	let xs1' = sxs1.ks
-	let pL1' = sxs1.pL
+	let is1 = sxs1.is
 	let xs2' = sxs2.ks
-	let pL2' = sxs2.pL
+	let is2 = sxs2.is
 	-- Matching Phase
 	let js = do_InnerSMJ (==) (>=) (>) (<) xs1' xs2'
 	-- Materialization Phase
-	let g_pL1 = js.ix |> gather (replicate b1 0u8) pL1'
-	let g_pL2 = js.iy |> gather (replicate b2 0u8) pL2'
+	let gis1 = js.ix |> gather 0 is1
+	let gis2 = js.iy |> gather 0 is2
+	let g_pL1 = gis1 |> gather (replicate b1 0u8) pL1
+	let g_pL2 = gis2 |> gather (replicate b2 0u8) pL2
 	in (js.vs, g_pL1, g_pL2)

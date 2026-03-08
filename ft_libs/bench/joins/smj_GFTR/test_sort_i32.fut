@@ -6,7 +6,7 @@ import "../../../ftsort"
 --
 -- ==
 -- entry: do_mergeSort_i32 do_radixSort_i32
--- input @data/dat_i32.in
+-- compiled input @data/dat_i32.in
 -- auto output
 
 entry do_mergeSort_i32 [n1] [n2]

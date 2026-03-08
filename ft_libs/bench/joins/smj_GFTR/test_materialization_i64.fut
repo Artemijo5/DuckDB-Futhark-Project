@@ -3,11 +3,11 @@ import "../../../ftbasics"
 -- Materialization stage of SMJ (GFTR).
 --
 -- ==
--- entry: do_materialization_i32
--- input @data/dat_i32.in
+-- entry: do_materialization_i64
+-- compiled input @data/dat_i64.in
 
-entry do_materialization_i32 [b1] [b2]
-	(vs : []i32)
+entry do_materialization_i64 [b1] [b2]
+	(vs : []i64)
 	(ix : []i64)
 	(iy : []i64)
 	(pL1: [][b1]u8)
