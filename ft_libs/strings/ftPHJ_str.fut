@@ -12,9 +12,8 @@ import "../joins/ftPHJ"
 -- Characters are taken starting from the (from_subdiv/num_subdiv)*strlen character of the string.
 -- Their order is reversed so that they can be used like radices.
 -- If use_len, the len goes at the end.
---
--- NOTE: currently can't be used without compression for case-insensitive join.
 def hash_str
+	(case_insens : bool)
 	(use_len : bool)
 	(len_divide : i64)
 	(compression: i64)
@@ -37,7 +36,14 @@ def hash_str
 		|> map (\k ->
 			if k < 0
 			then u8.i64 (str_len / len_divide)
-			else get_kth_char k i strs
+			else let c = get_kth_char k i strs in
+				-- if case-insensitive, map to all-caps
+				if case_insens && compression==0 && c>=97 && c<=122
+				then c-32 else
+				-- if case-sensitive & compressed, interpolate miniscules
+				if !case_insens && compression>0 && c>=97 && c<=122
+				then if c%2==0 then c-1 else c+1
+				else c
 		)
 	in
 		if compression==0
@@ -58,6 +64,7 @@ def hash_str
 -- | Function to hash all strings of a strInfo.
 -- See hash_str for details.
 def hash_strs
+	(case_insens : bool)
 	(use_len : bool)
 	(len_divide : i64)
 	(compression: i64)
@@ -67,7 +74,7 @@ def hash_strs
 	(strs : strInfo)
 = strs.idxs
 	|> indices
-	|> map (hash_str use_len len_divide compression num_subdiv from_subdiv bytes strs)
+	|> map (hash_str case_insens use_len len_divide compression num_subdiv from_subdiv bytes strs)
 
 
 -- These hash values can be used for PHJ (or potentially SMJ).
@@ -96,4 +103,3 @@ def strJoin_filter [b]
 		|> unzip
 	let filt_strs = filt_ix |> str_gather strs1
 	in {strs = filt_strs, ix = filt_ix, iy = filt_iy}
-	
