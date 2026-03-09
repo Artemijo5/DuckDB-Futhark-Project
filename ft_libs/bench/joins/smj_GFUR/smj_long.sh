@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 futhark_backend=cuda
 runs_No=25

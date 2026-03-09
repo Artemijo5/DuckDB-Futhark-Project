@@ -50,8 +50,7 @@ def hash_str
 		else all_chars
 			|> unflatten
 			|> sized bytes
-			|> map (\cs ->
-				cs
+			|> map (\cs -> cs
 				|> map (\c -> c & bitmask)
 				|> zip (cs |> indices)
 				|> foldl (\(_,c1) (i2,c2) ->
