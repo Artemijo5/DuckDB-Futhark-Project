@@ -26,8 +26,7 @@ def hash_str
 	let bitmask = (mk_radix_bitmask 0 (8 / (2 ** (i32.i64 compression))) 1)[0]
 	let str_len = get_str_len i strs
 	let first_k = (str_len * from_subdiv) / num_subdiv
-	let all_chars = ((bytes * (2**compression) - 1)..(bytes * (2**compression) - 2)...0)
-		|> sized (bytes * (2 ** compression))
+	let all_chars = iota (bytes * (2 ** compression))
 		|> map (\k ->
 			if use_len then
 				if k==0 then (-1)
@@ -47,7 +46,7 @@ def hash_str
 		)
 	in
 		if compression==0
-		then all_chars |> sized bytes
+		then all_chars |> sized bytes |> reverse
 		else all_chars
 			|> unflatten
 			|> sized bytes
@@ -56,10 +55,12 @@ def hash_str
 				|> map (\c -> c & bitmask)
 				|> zip (cs |> indices)
 				|> foldl (\(_,c1) (i2,c2) ->
-					(i2, c1 | (c2 << (u8.i64 (i2 * (8/(2 ** compression)))))))
+					(i2, c1 | (c2 << (u8.i64 (i2 * (8/(2 ** compression))))))
+				)
 				(0i64,0u8)
 				|> (.1)
 			)
+			|> reverse
 
 -- | Function to hash all strings of a strInfo.
 -- See hash_str for details.
