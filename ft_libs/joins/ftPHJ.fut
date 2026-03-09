@@ -109,7 +109,7 @@ module prim_PHJ (U : integral) = {
 		(xs : []t)
 		(vs : [nv]t)
 	: [nv]i64 =
-		let maxIter = 1 + (maxRange |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+		let maxIter = i64.i32 (65 - (i64.clz maxRange)) -- ceil+1 of integer logarithm
 		let max3 (i1 : i64) (i2 : i64) (i3 : i64) = i64.max i1 (i64.max i2 i3)
 		in if maxIter<=1 then f_init else
 		let (foundAt, _) =

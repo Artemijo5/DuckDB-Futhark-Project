@@ -71,7 +71,7 @@
 		(xs : [n]t)
 		(vs : [nvs]t)
 	: [nvs]i64 =
-		let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+		let num_iter = i64.i32 (65 - (i64.clz n)) -- ceil+1 of integer logarithm
 		let (foundAt,_) = loop (is,last_step) = (init_is,n)
 		for _ in iota num_iter do
 			let this_step = (last_step + 1)/2
@@ -114,7 +114,7 @@
 		(xs : [n]t)
 		(vs : [nvs]t)
 	: [nvs]i64 =
-		let num_iter = 1 + (n |> f64.i64 |> f64.log2 |> f64.ceil |> i64.f64)
+		let num_iter = i64.i32 (65 - (i64.clz n)) -- ceil+1 of integer logarithm
 		let (foundAt,_) = loop (is,last_step) = (init_is,n)
 		for _ in iota num_iter do
 			let this_step = (last_step + 1)/2
