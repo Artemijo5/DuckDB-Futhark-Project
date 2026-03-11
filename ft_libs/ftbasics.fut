@@ -224,7 +224,7 @@
 		(ks : [n]i64)
 		(xs : [n]t)
 	=
-		let msb = num_buckets |> i64.clz |> (i32.-) i64.num_bits
+		let msb = num_buckets - 1 |> i64.clz |> (i32.-) i64.num_bits
 		let kxs = zip ks xs
 	    let kxs' = loop kxs
 		    for bit in (0..bit_step..<msb)
