@@ -22,7 +22,9 @@ module vec_cols (V : vector) = {
 	-- 1. create an empty cols with init_cols to hold the entire dataset.
 	-- 2. for each datachunk, use create_cols & add to cols from 1.
 	-- 3. once entire dataset is read, use crop_cols if needed.
-	-- TODO examine alternative using vzip
+	-- This means each chunk will be copied at read.
+	-- But using set_col instead copies entire cols each time.
+	-- Alternative: making it with vzip...
 
 		def init_cols 't (dummy: t) (n : i64) =
 			replicate n (V.replicate dummy)
@@ -66,6 +68,18 @@ module vec_cols (V : vector) = {
 			(vecs : [n](V.vector t))
 		: [n]t =
 			vecs |> map (V.reduce f ne)
+
+		def check_all [n] 't
+			(f : t -> bool)
+			(vecs : [n](V.vector t))
+		: [n]bool =
+			vecs |> mapAll f |> reduceAll (&&) true
+
+		def check_any [n] 't
+			(f : t -> bool)
+			(vecs : [n](V.vector t))
+		: [n]bool =
+			vecs |> mapAll f |> reduceAll (||) false
 }
 
 module vcs1  = vec_cols vector_1
