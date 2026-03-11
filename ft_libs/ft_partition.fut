@@ -263,11 +263,11 @@ import "lib/github.com/diku-dk/segmented/segmented"
 							new_i new_j bit_step xips.0 xips.1
 							|> (\ret -> zip ret.0 ret.1)
 						-- sort by previous part id
-						in new_xips
+						let (new_xs1, new_pids1, new_pLs1) = new_xips
 							|> map (\(x,(pid,pL)) -> (x,pid,pL))
 							|> unzip3
-							|> (\(xs, pids, pLs) -> bucket_sort bit_step nt pids (zip xs pLs))
-							|> (\(_, xps) -> xps)
+						let (_, renew_xps) = bucket_sort bit_step nt new_pids1 (zip new_xs1 new_pLs1)
+						in renew_xps
 							|> unzip
 				-- identify if there are any new taidade partitions
 				let curBounds = (getPartitionBounds dp 0 new_j new_xs).bounds
@@ -344,11 +344,11 @@ import "lib/github.com/diku-dk/segmented/segmented"
 							new_i new_j bit_step xips.0 xips.1
 							|> (\ret -> zip ret.0 ret.1)
 						-- sort by previous part id
-						in new_xips
+						let (new_xs1, new_pids1, new_pLs1) = new_xips
 							|> map (\(x,(pid,pL)) -> (x,pid,pL))
 							|> unzip3
-							|> (\(xs, pids, pLs) -> bucket_sort bit_step nt pids (zip xs pLs))
-							|> (\(_, xps) -> xps)
+						let (_, renew_xps) = bucket_sort bit_step nt new_pids1 (zip new_xs1 new_pLs1)
+						in renew_xps
 							|> unzip
 				-- identify if there are any new taidade partitions
 				-- USING provided partitionInfo & partitioned relation

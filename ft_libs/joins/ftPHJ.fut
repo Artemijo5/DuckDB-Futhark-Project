@@ -109,7 +109,12 @@ module prim_PHJ (U : integral) = {
 		(xs : []t)
 		(vs : [nv]t)
 	: [nv]i64 =
-		let maxIter = i64.i32 (65 - (i64.clz maxRange)) -- ceil+1 of integer logarithm
+		-- ceil of logarithm
+		-- the +1 is accounted for at the final equality check
+		let maxIter = maxRange
+			|> i64.clz
+			|> (i32.-) (if maxRange&(maxRange-1) == 0 then 63 else 64)
+			|> i64.i32
 		let max3 (i1 : i64) (i2 : i64) (i3 : i64) = i64.max i1 (i64.max i2 i3)
 		in if maxIter<=1 then f_init else
 		let (foundAt, _) =
@@ -118,11 +123,10 @@ module prim_PHJ (U : integral) = {
 				let this_steps = last_steps |> map (\ls -> (ls+1)/2)
 				let searchAt = is
 					|> map2 (\fi i ->
-						let prev_elem = xs[bounds[max3 0 fi (i-1)]]
 						let this_elem = xs[bounds[max3 0 fi i]]
-						in (i, prev_elem, this_elem)
+						in (i, this_elem)
 					) f_init
-					|> map5 (\kv fi li step (i,pv,cv) ->
+					|> map5 (\kv fi li step (i,cv) ->
 						if i<0 then (-1) else
 						if radix_eq radix_bits depths[i] kv cv
 							then i
@@ -131,12 +135,17 @@ module prim_PHJ (U : integral) = {
 							then (-1)
 							else i64.min li (i+step)
 						else
-							if i==fi || radix_gt radix_bits depths[i-1] kv pv
+							if i==fi
 							then (-1)
 							else i64.max fi (i-step)
 					) vs f_init l_init this_steps
 				in (searchAt, this_steps)
 		in foundAt
+			|> map2 (\v i ->
+				if i<0 || radix_eq radix_bits depths[i] v xs[bounds[i]]
+				then i
+				else (-1)
+			) vs
 
 	-- | Locate the matching partition of xs for each radix in vs
 	local def hash_bsearch [nv]

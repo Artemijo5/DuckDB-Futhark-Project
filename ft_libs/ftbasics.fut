@@ -71,7 +71,11 @@
 		(xs : [n]t)
 		(vs : [nvs]t)
 	: [nvs]i64 =
-		let num_iter = i64.i32 (65 - (i64.clz n)) -- ceil+1 of integer logarithm
+		-- ceil + 1 of logarithm
+		let num_iter = n
+			|> i64.clz
+			|> (i32.-) (if (n&(n-1)==0) then 64 else 65) -- check if n is power of 2
+			|> i64.i32
 		let (foundAt,_) = loop (is,last_step) = (init_is,n)
 		for _ in iota num_iter do
 			let this_step = (last_step + 1)/2
@@ -114,7 +118,11 @@
 		(xs : [n]t)
 		(vs : [nvs]t)
 	: [nvs]i64 =
-		let num_iter = i64.i32 (65 - (i64.clz n)) -- ceil+1 of integer logarithm
+		-- ceil + 1 of logarithm
+		let num_iter = n
+			|> i64.clz
+			|> (i32.-) (if (n&(n-1)==0) then 64 else 65) -- check if n is power of 2
+			|> i64.i32
 		let (foundAt,_) = loop (is,last_step) = (init_is,n)
 		for _ in iota num_iter do
 			let this_step = (last_step + 1)/2
@@ -216,15 +224,16 @@
 		(ks : [n]i64)
 		(xs : [n]t)
 	=
-		let bucket_bits = num_buckets |> f64.i64 |> f64.log2 |> f64.ceil |> i32.f64
-		let num_iter = (bucket_bits + bit_step - 1) / bit_step
-		in loop (ks, xs) for iter < num_iter do
-			let i = iter*bit_step
-			let j = i32.min (bucket_bits-1) (i + bit_step - 1)
-			in xs
-				|> zip ks
-				|> radix_sort_multistep i j (\bi (k,_) -> i64.get_bit bi k)
-				|> unzip
+		let msb = num_buckets |> i64.clz |> (i32.-) i64.num_bits
+		let kxs = zip ks xs
+	    let kxs' = loop kxs
+		    for bit in (0..bit_step..<msb)
+		    do radix_sort_multistep
+		    	bit
+		    	(i32.min (msb-1) (bit+bit_step-1))
+		    	(\bi (k,_) -> i64.get_bit bi k)
+		    	kxs
+		in kxs' |> unzip
 
 -- Grouping & Dictionary Encoding
 
