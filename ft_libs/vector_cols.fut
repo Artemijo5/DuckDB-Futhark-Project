@@ -17,23 +17,55 @@ module vector_12 = cat_vector vector_6 vector_6
 module vec_cols (V : vector) = {
 	type vector 'a = a
 
-	def init_cols 't (dummy: t) (n : i64) =
-		replicate n (V.replicate dummy)
+	-- Input / Output
+	-- Intended usage with duckdb:
+	-- 1. create an empty cols with init_cols to hold the entire dataset.
+	-- 2. for each datachunk, use create_cols & add to cols from 1.
+	-- 3. once entire dataset is read, use crop_cols if needed.
+	-- TODO examine alternative using vzip
 
-	def set_col [n] 't (atCol : i64) (dat : [n]t) (vecs : *[n](V.vector t)) =
-		(iota n)
-		|> map (\i -> V.set atCol dat[i] vecs[i])
+		def init_cols 't (dummy: t) (n : i64) =
+			replicate n (V.replicate dummy)
 
-	def get_col [n] 't (col : i64) (vecs : [n](V.vector t)) =
-		vecs |> map (V.get col)
+		def create_cols [n] 't (dat : [V.length][n]t) =
+			replicate n (V.iota)
+			|> zip (iota n)
+			|> map (\(i,v) -> V.map (\j -> dat[j][i]) v)
 
-	def create_cols [n] 't (dat : [V.length][n]t) =
-		replicate n (V.iota)
-		|> zip (iota n)
-		|> map (\(i,v) -> V.map (\j -> dat[j][i]) v)
+		def set_col [n] 't (atCol : i64) (dat : [n]t) (vecs : *[n](V.vector t)) =
+			(iota n)
+			|> map (\i -> V.set atCol dat[i] vecs[i])
 
-	-- TODO
-	-- figure out map, reduction, hist, and other operations I'll need to do
+		def write_cols [n] 't (at_row : i64) (dat : [n](V.vector t)) (vecs : *[n](V.vector t))
+			= vecs with [at_row:at_row+n] = dat
+
+		def get_col [n] 't (col : i64) (vecs : [n](V.vector t)) =
+			vecs |> map (V.get col)
+
+		def read_col [n] 't (offs : i64) (limt : i64) (col : i64) (vecs : [n](V.vector t)) =
+			let inf = i64.min n offs
+			let sup = i64.min n (offs+limt)
+			in vecs[inf:sup] |> map (V.get col)
+
+		def crop_cols [n] 't (offs : i64) (limt : i64) (vecs : *[n](V.vector t)) =
+			let inf = i64.min n offs
+			let sup = i64.min n (offs+limt)
+			in vecs[inf:sup]
+
+	-- Operations
+
+		def mapAll [n] 't 'ot
+			(f : t -> ot)
+			(vecs : [n](V.vector t))
+		: [n](V.vector ot) =
+			vecs |> map (V.map f)
+
+		def reduceAll [n] 't
+			(f : t -> t -> t)
+			(ne : t)
+			(vecs : [n](V.vector t))
+		: [n]t =
+			vecs |> map (V.reduce f ne)
 }
 
 module vcs1  = vec_cols vector_1
