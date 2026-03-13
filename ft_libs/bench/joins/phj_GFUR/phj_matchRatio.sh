@@ -34,18 +34,16 @@ futhark bench --backend=$futhark_backend --runs=1 datagen_matchRatio.fut
 rm -f data/*.in
 mv "data/datagen_matchRatio:do_datagen-data_dat.in.out" data/dat.in
 
-# Partition the 1st
-futhark bench $verbose --backend=$futhark_backend --runs=$runs_No test_partitionFirst.fut
+# Transformation Phase
+futhark bench --backend=$futhark_backend --runs=$runs_No test_transformation.fut
 rm -f data/*.in
-mv "data/test_partitionFirst:do_partition1-data_dat.in.out" data/dat.in
-# Construct partitionInfo
-futhark bench $verbose --backend=$futhark_backend --runs=$runs_No test_partInfo.fut
+mv "data/test_transformation:do_transformation-data_dat.in.out" data/dat.in
+# Join Phase - Matchfinding & Expansion
+futhark bench --backend=$futhark_backend --runs=$runs_No test_matchfinding.fut
 rm -f data/*.in
-mv "data/test_partInfo:do_partInfo-data_dat.in.out" data/dat.in
-# Construct Hash Table
-futhark bench $verbose --backend=$futhark_backend --runs=$runs_No test_hashTbl.fut
-rm -f data/*.in
-mv "data/test_hashTbl:do_hashTbl-data_dat.in.out" data/dat.in
-# Partition the 2nd
-futhark bench $verbose --backend=$futhark_backend --runs=$runs_No test_partitionSecond.fut
+mv "data/test_matchfinding:do_matchfinding-data_dat.in.out" data/dat.in
+# Materialization
+futhark bench --backend=$futhark_backend --runs=$runs_No test_materialization.fut
 rm -f data/*
+
+

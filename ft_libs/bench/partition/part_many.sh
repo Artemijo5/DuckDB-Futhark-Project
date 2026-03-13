@@ -4,7 +4,7 @@ futhark_backend=cuda
 runs_No=25
 
 n1=$1
-n2=$((2*n1))
+n2=$n1
 b=$2
 pL_b=$3
 
