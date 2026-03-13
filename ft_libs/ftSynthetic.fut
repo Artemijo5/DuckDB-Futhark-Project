@@ -9,7 +9,7 @@
 -- 1. this can be used for skewness > 1
 --   (seems to fail at some point when skewness > 2.5)
 --   Inteded to be used for up to 2 for experiments
--- 2. non-continuous for skewness=1
+-- 2. non-continuous for skewness == 1
 --   -> use value 1.0000001 instead
 entry zipf_skewed [n]
 	(s_ : f64)
@@ -80,17 +80,18 @@ module mk_synthetic_real (F : real) = {
 	-- Need to supply (d+1) uniformly random vectors for d dimensions.
 	-- Can use anticorr flags to make individual dimensions linearly anti-correlated to the first.
 	def linear_correlated [dim] [n]
-		(f    : t)
-		(mag  : t)
-		(anticorr : [dim]bool) -- is correlated with first dim
-		(rss  : [dim+2][n]t) -- random values from 0 to 1
-	: [dim+1][n]t =
-		let xss = iota (dim+1) |> map (\d ->
-			let rs = rss[d+1]
+		(f   : t)
+		(mag : t)
+		(anticorr : [dim-1]bool) -- is correlated with first dim
+		(rs0 : [n]t)      -- random values from 0 to 1
+		(rss : [dim][n]t) -- random values from 0 to 1
+	: [dim][n]t =
+		let xss = iota dim |> map (\d ->
+			let rs = rss[d]
 			let s = if (d>0 && anticorr[d-1]) then (neg one) else (one)
 			in rs
 				|> map (\r -> f |> times f |> minus one |> sqrt |> times r)
-				|> map2 (\r0 r -> s |> times f |> times r0 |> plus r) rss[0]
+				|> map2 (\r0 r -> s |> times f |> times r0 |> plus r) rs0
 		)
 		let min_xss = xss |> map (minimum)
 		let xss_ = map2 (\xs mx -> map (\x -> x `minus` mx) xs) xss min_xss
