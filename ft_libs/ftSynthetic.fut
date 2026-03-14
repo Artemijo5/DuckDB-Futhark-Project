@@ -39,8 +39,10 @@ entry zipf_skewed [n]
 
 -- | Parametric module for generating different types of synthetic data.
 -- Specifically:
--- 1. Linearly correlated multi-dimensional data.
+-- 1. Linearly (anti-)correlated multi-dimensional data.
 -- 2. Anti-correlated (hyperbolic) multi-dimensional data.
+--
+-- Data is processed in the form of multidimensional arrays ([dim][n]t).
 module mk_synthetic_real (F : real) = {
 	type t = F.t
 
