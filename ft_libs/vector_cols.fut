@@ -19,29 +19,38 @@ module vec_cols (V : vector) = {
 
 	-- Input / Output
 	-- Intended usage with duckdb:
-	-- 1. create an empty cols with init_cols to hold the entire dataset.
-	-- 2. for each datachunk, use create_cols & add to cols from 1.
-	-- 3. once entire dataset is read, use crop_cols if needed.
-	-- This means each chunk will be copied at read.
-	-- But using set_col instead copies entire cols each time.
-	-- Alternative: making it with vzip...
+	-- 1. Create each column individually using typedCol.
+	-- 2. Create an "empty" vec_cols using init_cols.
+	-- 3. Use set_col for each column.
+	--
+	-- Alternatively
+	-- 1. Make an "empty" vec_cols using init_cols.
+	-- 2. For each datachunk, write its columns in a contiguous array.
+	-- 3. Use create_cols on that array.
+	-- 4. Use write_cols to write the new datachunk in the vec_cols from 1.
+	-- 5. Use crop_cols to crop to the final size.
+	-- The alternative approach will transpose every scanned datachunk.
+	--
+	-- The alternative approach is probably better if any_vector is used,
+	-- as set_col would have to copy all the vector fields in that case,
+	-- and the data would get transposed anyway.
 
 		def init_cols 't (dummy: t) (n : i64) =
 			replicate n (V.replicate dummy)
 
-		def create_cols [n] 't (dat : [V.length][n]t) =
-			replicate n (V.iota)
-			|> zip (iota n)
-			|> map (\(i,v) -> V.map (\j -> dat[j][i]) v)
+		def create_cols 't (dat : [][]t) =
+			dat
+			|> transpose
+			|> map (sized V.length)
+			|> map (V.from_array)
 
 		def set_col [n] 't (atCol : i64) (dat : [n]t) (vecs : *[n](V.vector t)) =
-			(iota n)
-			|> map (\i -> V.set atCol dat[i] vecs[i])
+			map2 (\x vec -> V.set atCol x vec) dat vecs
 
-		def write_cols [n] 't (at_row : i64) (dat : [n](V.vector t)) (vecs : *[n](V.vector t))
+		def write_cols [n] 't (at_row : i64) (dat : [n](V.vector t)) (vecs : *[](V.vector t))
 			= vecs with [at_row:at_row+n] = dat
 
-		def get_col [n] 't (col : i64) (vecs : [n](V.vector t)) =
+		def get_col 't (col : i64) (vecs : [](V.vector t)) =
 			vecs |> map (V.get col)
 
 		def read_col [n] 't (offs : i64) (limt : i64) (col : i64) (vecs : [n](V.vector t)) =
@@ -64,22 +73,35 @@ module vec_cols (V : vector) = {
 
 		def reduceAll [n] 't
 			(f : t -> t -> t)
-			(ne : t)
+			(ne: t)
 			(vecs : [n](V.vector t))
 		: [n]t =
 			vecs |> map (V.reduce f ne)
+
+		def foldlAll [n] 't
+			(f : t -> t -> t)
+			(ne: t)
+			(vecs : [n](V.vector t))
+		: [n]t =
+			loop accs = replicate n ne
+			for d < V.length do
+				map2 (\acc vec ->
+					f acc (V.get d vec)
+				)
+				accs
+				vecs
 
 		def check_all [n] 't
 			(f : t -> bool)
 			(vecs : [n](V.vector t))
 		: [n]bool =
-			vecs |> mapAll f |> reduceAll (&&) true
+			vecs |> mapAll f |> foldlAll (&&) true
 
 		def check_any [n] 't
 			(f : t -> bool)
 			(vecs : [n](V.vector t))
 		: [n]bool =
-			vecs |> mapAll f |> reduceAll (||) false
+			vecs |> mapAll f |> foldlAll (||) false
 }
 
 module vcs1  = vec_cols vector_1
