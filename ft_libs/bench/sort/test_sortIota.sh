@@ -1,7 +1,7 @@
 #!/bin/bash
 
-futhark_backend=c
-runs_No=10
+futhark_backend=cuda
+runs_No=25
 
 verbose=
 #verbose="-v -v -v"
