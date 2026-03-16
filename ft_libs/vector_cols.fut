@@ -29,7 +29,6 @@ module vec_cols (V : vector) = {
 	-- 3. Use create_cols on that array.
 	-- 4. Use write_cols to write the new datachunk in the vec_cols from 1.
 	-- 5. Use crop_cols to crop to the final size.
-	-- The alternative approach will transpose every scanned datachunk.
 	--
 	-- The alternative approach is probably better if any_vector is used,
 	-- as set_col would have to copy all the vector fields in that case,
