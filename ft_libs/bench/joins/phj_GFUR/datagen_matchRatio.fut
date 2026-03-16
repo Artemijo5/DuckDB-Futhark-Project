@@ -17,8 +17,7 @@ entry do_datagen [n1] [n2]
 	(probs : [n2]f16)
 	(ratio : [1]f16)
 =
-	let xs1 = (0..2..<(2*n1))
-		|> sized n1
+	let xs1 = iota n1
 		|> bucket_sort 2 (i64.highest) shuffle1
 		|> (.1)
 		|> sized n1
@@ -28,12 +27,11 @@ entry do_datagen [n1] [n2]
 				u8.i64 ((i64.>>>) v (i * (i64.i32 u8.num_bits)))
 			)
 		) :> [n1][numBytes[0]]u8
-	let xs2 = (0..2..<(2*n2))
-		|> sized n2
+	let xs2 = iota n2
 		|> map (\i -> i%(2*n1))
 		|> bucket_sort 2 (i64.highest) shuffle2
 		|> (.1)
-		|> map2 (\prob x -> if prob>ratio[0] then x+1 else x) probs
+		|> map2 (\prob x -> if prob>ratio[0] then x+n1 else x) probs
 		|> sized n2
 		|> zip (replicate n2 (numBytes[0] |> iota |> reverse))
 		|> map (\(is, v) -> is
