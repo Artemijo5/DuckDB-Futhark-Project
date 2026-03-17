@@ -1,5 +1,4 @@
 import "ftbasics"
-import "ftsort"
 
 -- Essentially using 6 objects
 -- bInfo : holds constants
@@ -114,11 +113,11 @@ module type mk_keyTps = {
 	val next_waiting [n] [chunks_No] [srcs_No]
 	: tps_bufferProc [chunks_No] [srcs_No] -> [srcs_No][n]t -> i64
 
-	val init_ks_buffer [chunks_No] [srcs_No]
-	: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> []t
+	val init_ks_buffer
+	: tps_bufferInfo -> []t
 
-	val init_ks_waiting [chunks_No] [srcs_No]
-	: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> [srcs_No][]t
+	val init_ks_waiting
+	: tps_bufferInfo -> [][]t
 
 	val writeToWaiting_ks [n] [chunkSize] [srcs_No]
 	: i64 -> [n]t -> *[srcs_No][chunkSize]t -> [srcs_No][chunkSize]t
@@ -127,7 +126,7 @@ module type mk_keyTps = {
 	: i64 -> i64 -> [srcs_No][chunkSize]t -> *[chunks_No*chunkSize]t -> [chunks_No*chunkSize]t
 
 	val fetchSorted_ks [n] [chunks_No] [srcs_No]
-		: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> [n]t -> []t
+	: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> [n]t -> []t
 }
 
 module mk_keyTps_numeric (N : numeric) : mk_keyTps with t = N.t = {
@@ -148,17 +147,15 @@ module mk_keyTps_numeric (N : numeric) : mk_keyTps with t = N.t = {
 			(\(ex1,v1) (ex2,v2) -> (ex1==ex2) && (v1 `eq` v2))
 			(false,highest)
 
-	def init_ks_buffer [chunks_No] [srcs_No]
+	def init_ks_buffer
 		(bInfo : tps_bufferInfo)
-		(bProc : tps_bufferProc [chunks_No] [srcs_No])
 	: []t =
-		replicate (chunks_No*bInfo.chunkSize) highest
+		replicate (bInfo.chunks_No*bInfo.chunkSize) highest
 
-	def init_ks_waiting [chunks_No] [srcs_No]
+	def init_ks_waiting
 		(bInfo : tps_bufferInfo)
-		(bProc : tps_bufferProc [chunks_No] [srcs_No])
-	: [srcs_No][]t =
-		replicate srcs_No (replicate bInfo.chunkSize highest)
+	: [][]t =
+		replicate bInfo.srcs_No (replicate bInfo.chunkSize highest)
 	
 	def writeToWaiting_ks [n] [chunkSize] [srcs_No]
 		(at_src : i64)
@@ -186,6 +183,18 @@ module mk_keyTps_numeric (N : numeric) : mk_keyTps with t = N.t = {
 		let freeChunksAtTheEnd = total_free_pos/bInfo.chunkSize
 		let chunks_toFetch = i64.min (chunks_No - active_srcs) (chunks_No - freeChunksAtTheEnd - 1)
 		in ks_buffer[0:chunks_toFetch*bInfo.chunkSize]
+
+	-- Call this after fetching to get rid of fetched data in the bufer !!!!
+	def afterFetching_ks [n] [chunks_No] [srcs_No]
+		(bInfo : tps_bufferInfo)
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
+		(ks_buffer : *[n]t)
+	: [n]t =
+		let active_srcs = bProc.isSrcExhausted |> countFor (not)
+		let total_free_pos = bProc.free_positions |> i64.sum
+		let freeChunksAtTheEnd = total_free_pos/bInfo.chunkSize
+		let chunks_toFetch = i64.min (chunks_No - active_srcs) (chunks_No - freeChunksAtTheEnd - 1)
+		in ks_buffer with [0:chunks_toFetch*bInfo.chunkSize] = replicate (chunks_toFetch*bInfo.chunkSize) highest
 }
 
 -- Processing payload buffers
