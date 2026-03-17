@@ -1,174 +1,233 @@
 import "ftbasics"
 import "ftsort"
 
--- TODO routines for 2-pass sorting
+-- Essentially using 6 objects
+-- bInfo : holds constants
+-- bProc : holds states of each chunk for each buffer
+-- key & payload sorting buffers
+-- key & payload waiting buffers
+-- excepting bInfo, all other 5 objects are updated separately
+-- as such need to coordinate their updating functions
 
-type tps_bufferStats 't 'pL_t = {
-	chunkSize : i64, -- elements per chunk
-	chunks_No : i64, -- #chunks in the buffer (total)	
-	srcs_No   : i64, -- #intermediate (sorted) relations are used
-	fetchCnks : i64, -- #chunks fetched each iteration
-	highest  : t,
-	lowest   : t,
-	dummy_pL : pL_t
+-- always call the buffer update functions first, then the bProc function
+-- this is to ensure the buffers see the unupdated bProc
+-- except markSrcExhausted (no updates to buffers)
+-- also nextUnusedChunk is called before writing to sorting buffers
+-- & next_waiting is called before writing to waiting buffers (or marking exhausted)
+
+-- Sorting funcs are just called separately on key * pL sorting buffers
+
+-- Can possibly extend this to radix-partitioning
+-- but how would re-partitionin be done?
+
+-- Info-holding records & initialization
+
+	type tps_bufferInfo = {
+		chunkSize : i64, -- elements per chunk
+		chunks_No : i64, -- #chunks in the buffer (total)	
+		srcs_No   : i64, -- #intermediate (sorted) relations are used
+	}
+
+	type tps_bufferProc [chunks_No] [srcs_No] = {
+		isChunkTaken    : [chunks_No]bool, -- for each chunk in the buffer, mark if it's been written
+		free_positions  : [chunks_No]i64,   -- for each chunk in the buffer, mark number of unused positions
+		isSrcExhausted  : [srcs_No]bool,   -- for each source, mark when it's exhausted
+		freePos_waiting : [srcs_No]i64 -- free positions in waiting buffers
+	}
+
+	def init_bufferInfo chunkSize chunks_No srcs_No : tps_bufferInfo =
+		{chunkSize=chunkSize,chunks_No=chunks_No,srcs_No=srcs_No}
+
+	def init_bufferProc (bufferInfo : tps_bufferInfo)
+	: tps_bufferProc [bufferInfo.chunks_No] [bufferInfo.srcs_No]
+	= {
+		isChunkTaken    = replicate bufferInfo.chunks_No false,
+		free_positions  = replicate bufferInfo.chunks_No bufferInfo.chunkSize,
+		isSrcExhausted  = replicate bufferInfo.srcs_No false,
+		freePos_waiting = replicate bufferInfo.srcs_No bufferInfo.chunkSize
+	}
+
+-- Processing Info
+
+	-- Next to get out of waiting buffer (done in module type mk_keyTps)
+
+	def writeToWaiting_proc [chunks_No] [srcs_No]
+		(at_src : i64)
+		(chunk_size : i64)
+		(bInfo : tps_bufferInfo)
+		(bProc : *tps_bufferProc [chunks_No] [srcs_No])
+	: tps_bufferProc [chunks_No] [srcs_No] =
+		let freePos_waiting' = (copy bProc.freePos_waiting)
+			with [at_src] = bInfo.chunkSize - chunk_size
+		in bProc with freePos_waiting = freePos_waiting'
+
+	def markSrcExhausted [chunks_No] [srcs_No]
+		(at_src : i64)
+		(bProc : *tps_bufferProc [chunks_No] [srcs_No])
+	: tps_bufferProc [chunks_No] [srcs_No] =
+		let isSrcExhausted' = (copy bProc.isSrcExhausted)
+			with [at_src] = true
+		in bProc with isSrcExhausted = isSrcExhausted'
+
+	def next_unusedChunk [chunks_No] [srcs_No]
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
+	: i64 =
+		let at_cnk = bProc.isChunkTaken
+			|> argmin (\c1 c2 -> !c1 || c2) (==) (true)
+		in if (at_cnk>=chunks_No || bProc.isChunkTaken[at_cnk]) then (-1) else at_cnk
+
+	def writeToBuffer_proc [chunks_No] [srcs_No]
+		(from_src : i64)
+		(at_cnk : i64)
+		(bProc : *tps_bufferProc [chunks_No] [srcs_No])
+	: tps_bufferProc [chunks_No] [srcs_No] =
+		let isChunkTaken' = (copy bProc.isChunkTaken)
+			with [at_cnk] = true
+		let free_positions' = (copy bProc.free_positions)
+			with [at_cnk] = bProc.freePos_waiting[from_src]
+		in (bProc with isChunkTaken = isChunkTaken')
+			with free_positions = free_positions'
+
+	def fetchSorted_proc [chunks_No] [srcs_No]
+		(bInfo : tps_bufferInfo)
+		(bProc : *tps_bufferProc [chunks_No] [srcs_No])
+	: tps_bufferProc [chunks_No] [srcs_No] =
+		let active_srcs = bProc.isSrcExhausted |> countFor (not)
+		let total_free_pos = bProc.free_positions |> i64.sum
+		let freeChunksAtTheEnd = total_free_pos/bInfo.chunkSize
+		let chunks_toFetch = i64.min (chunks_No - active_srcs) (chunks_No - freeChunksAtTheEnd - 1)
+		-- TODO am I calculating it right?
+		let isChunkTaken' = ((copy bProc.isChunkTaken)
+			with [0:chunks_toFetch] = (replicate chunks_toFetch false))
+			with [chunks_No-freeChunksAtTheEnd : chunks_No] = (replicate freeChunksAtTheEnd false)
+		in bProc with isChunkTaken = isChunkTaken'
+
+-- Processing key buffers
+
+module type mk_keyTps = {
+	type t
+
+	val highest : t
+	val lt : t -> t -> bool
+	val eq : t -> t -> bool
+
+	val next_waiting [n] [chunks_No] [srcs_No]
+	: tps_bufferProc [chunks_No] [srcs_No] -> [srcs_No][n]t -> i64
+
+	val init_ks_buffer [chunks_No] [srcs_No]
+	: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> []t
+
+	val init_ks_waiting [chunks_No] [srcs_No]
+	: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> [srcs_No][]t
+
+	val writeToWaiting_ks [n] [chunkSize] [srcs_No]
+	: i64 -> [n]t -> *[srcs_No][chunkSize]t -> [srcs_No][chunkSize]t
+
+	val writeToBuffer_ks [chunkSize] [chunks_No] [srcs_No]
+	: i64 -> i64 -> [srcs_No][chunkSize]t -> *[chunks_No*chunkSize]t -> [chunks_No*chunkSize]t
+
+	val fetchSorted_ks [n] [chunks_No] [srcs_No]
+		: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> [n]t -> []t
 }
 
-type tps_bufferInfo [chunks_No] [srcs_No] = {
-	isSrcExhausted  : [srcs_No]bool,   -- for each source, mark when it's exhausted
-	isChunkTaken    : [chunks_No]bool, -- for each chunk in the buffer, mark if it's been written
-	free_positions  : [chunks_No]i64,   -- for each chunk in the buffer, mark number of unused positions
-	freePos_waiting : [srcs_No]i64 -- free positions in waiting buffers
-}
+module mk_keyTps_numeric (N : numeric) : mk_keyTps with t = N.t = {
+	type t = N.t
 
-type tps_buffer [chunkSize] [chunks_No] 't 'pL_t = {
-	ks : [chunkSize*chunks_No]t,
-	pL : [chunkSize*chunks_No]pL_t
-}
+	def highest = N.highest
+	def lt = (N.<)
+	def eq = (N.==)
 
-type tps_waiting_buffer [srcs_No] [chunkSize] 't 'pL_t = {
-	ks : [srcs_No][chunkSize]t,
-	pL : [srcs_No][chunkSize]pL_t
-}
-
-type tps_proc [chunkSize] [chunks_No] [srcs_No] 't 'pL_t = {
-	tps_stats: tps_bufferStats t pL_t,
-	tps_info : tps_bufferInfo [chunks_No] [srcs_No],
-	buffs : tps_buffer [chunkSize] [chunks_No] t pL_t,
-	waiting_buffs : tps_waiting_buffer [srcs_No] [chunkSize] t pL_t,
-	chunk_cursor : i64
-}
-
-def init_TwoPassSort 't 'pL_t
-	(highest : t) (lowest : t) (dummy_pL : pL_t)
-	(chunkSize : i64)
-	(chunks_No : i64)
-	(srcs_No   : i64)
-	(fetchCnks : i64)
-: tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t =
-	let init_bStats = {
-		chunkSize = chunkSize,
-		chunks_No = chunks_No,
-		srcs_No   = srcs_No,
-		fetchCnks = fetchCnks,
-		highest  = highest,
-		lowest   = lowest,
-		dummy_pL = dummy_pL
-	}
-	let init_bInfo = {
-		isSrcExhausted  = replicate srcs_No false,
-		isChunkTaken    = replicate chunks_No false,
-		free_positions  = replicate chunks_No chunkSize,
-		freePos_waiting = replicate srcs_No chunkSize
-	}
-	let init_bs = {
-		ks = replicate (chunkSize*chunks_No) highest,
-		pL = replicate (chunkSize*chunks_No) dummy_pL
-	}
-	let init_wbs = {
-		ks = replicate srcs_No (replicate chunkSize highest),
-		pL = replicate srcs_No (replicate chunkSize dummy_pL)
-	}
-	in {
-		tps_stats = init_bStats,
-		tps_info  = init_bInfo,
-		buffs = init_bs,
-		waiting_buffs = init_wbs,
-		chunk_cursor = 0
-	}
-
-def write_src [n] [chunkSize] [chunks_No] [srcs_No] 't 'pL_t
-	(at_src : i64)
-	(src_ks : [n]t)
-	(src_pL : [n]pL_t)
-	(sort_proc : *tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t)
-: tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t =
-	let pad_ks = replicate (chunkSize-n) sort_proc.tps_stats.highest
-	let pad_pL = replicate (chunkSize-n) sort_proc.tps_stats.dummy_pL
-	let new_waitingBuffs = {
-		ks = (copy sort_proc.waiting_buffs.ks) with [at_src] =
-			(copy src_ks ++ pad_ks) |> sized chunkSize,
-		pL = (copy sort_proc.waiting_buffs.pL) with [at_src] =
-			(copy src_pL ++ pad_pL) |> sized chunkSize
-	}
-	let new_freePosWaiting = (copy sort_proc.tps_info.freePos_waiting)
-		with [at_src] = chunkSize-n
-	in (sort_proc with waiting_buffs = new_waitingBuffs)
-		with tps_info.freePos_waiting = new_freePosWaiting
-
-def mark_src_exhausted [chunkSize] [chunks_No] [srcs_No] 't 'pL_t
-	(at_src : i64)
-	(sort_proc : *tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t)
-: tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t =
-	let new_isSrcExhausted = (copy sort_proc.tps_info.isSrcExhausted)
-		with [at_src] = true
-	in sort_proc with tps_info.isSrcExhausted = new_isSrcExhausted
-
-def whichSrcNext [chunkSize] [chunks_No] [srcs_No] 't 'pL_t
-	(lt : t -> t -> bool)
-	(eq : t -> t -> bool)
-	(sort_proc : tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t)
-: i64 =
-	sort_proc.waiting_buffs.ks
+	def next_waiting [n] [chunks_No] [srcs_No]
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
+		(ks_waiting : [srcs_No][n]t)
+	: i64 = ks_waiting
 		|> map (head)
-		|> zip sort_proc.tps_info.isSrcExhausted
+		|> zip (bProc.isSrcExhausted)
 		|> argmin
-			(\(isEx1,h1) (isEx2,h2) ->
-				isEx2 || (!isEx1 && (h1 `lt` h2))
-			)
-			(\(isEx1,h1) (isEx2,h2) -> (isEx1 == isEx2) && (h1 `eq` h2))
-			(false, sort_proc.tps_stats.highest)
+			(\(ex1,v1) (ex2,v2) -> ex2 || (!ex1 && (v1 `lt` v2)))
+			(\(ex1,v1) (ex2,v2) -> (ex1==ex2) && (v1 `eq` v2))
+			(false,highest)
 
-def resetCursor [chunkSize] [chunks_No] [srcs_No] 't 'pL_t
-	(sort_proc : *tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t)
-: tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t =
-	sort_proc with chunk_cursor = 0
+	def init_ks_buffer [chunks_No] [srcs_No]
+		(bInfo : tps_bufferInfo)
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
+	: []t =
+		replicate (chunks_No*bInfo.chunkSize) highest
 
-def do_fromWaitingToBuff [chunkSize] [chunks_No] [srcs_No] 't 'pL_t
-	(from_src : i64)
-	(ks : *[chunkSize*chunks_No]t)
-	(pL : *[chunkSize*chunks_No]pL_t)
-	(sort_Info  : *tps_bufferInfo [chunks_No] [srcs_No])
-	(sort_stats : *tps_bufferStats t pL_t)
-	(waiting_buffs: *tps_waiting_buffer [srcs_No] [chunkSize] t pL_t)
-	(chunk_cursor : i64)
-: tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t =
-	let new_buffs = {
-		ks = ks with [chunk_cursor*chunkSize:(chunk_cursor+1)*chunkSize]
-			= waiting_buffs.ks[from_src],
-		pL = pL with [chunk_cursor*chunkSize:(chunk_cursor+1)*chunkSize]
-			= waiting_buffs.pL[from_src]
-	}
-	let new_FreePos = (copy sort_Info.free_positions)
-		with [chunk_cursor] = sort_Info.freePos_waiting[from_src]
-	let new_sortInfo = sort_Info with free_positions = new_FreePos
-	in {
-		tps_stats = sort_stats,
-		tps_info  = new_sortInfo,
-		buffs = new_buffs,
-		waiting_buffs = waiting_buffs,
-		chunk_cursor = (chunk_cursor+1)
-	}
+	def init_ks_waiting [chunks_No] [srcs_No]
+		(bInfo : tps_bufferInfo)
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
+	: [srcs_No][]t =
+		replicate srcs_No (replicate bInfo.chunkSize highest)
+	
+	def writeToWaiting_ks [n] [chunkSize] [srcs_No]
+		(at_src : i64)
+		(ks_dat: [n]t)
+		(ks_waiting : *[srcs_No][chunkSize]t)
+	: [srcs_No][chunkSize]t =
+		(ks_waiting with [at_src,0:n] = ks_dat)
+			with [at_src,n:chunkSize] = (replicate (chunkSize-n) highest)
 
--- TODO do I really have to copy everything?
--- alternative is probably to call do_fromWaitingToBuff as entry if possible?
-def fromWaitingToBuff [chunkSize] [chunks_No] [srcs_No] 't 'pL_t
-	(from_src : i64)
-	(sort_proc : *tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t)
-: tps_proc [chunkSize] [chunks_No] [srcs_No] t pL_t =
-	do_fromWaitingToBuff
-		from_src
-		(copy sort_proc.buffs.ks)
-		(copy sort_proc.buffs.pL)
-		(copy sort_proc.tps_info)
-		(copy sort_proc.tps_stats)
-		(copy sort_proc.waiting_buffs)
-		(sort_proc.chunk_cursor)
+	def writeToBuffer_ks [chunkSize] [chunks_No] [srcs_No]
+		(from_src : i64)
+		(at_cnk : i64)
+		(ks_waiting: [srcs_No][chunkSize]t)
+		(ks_buffer : *[chunks_No*chunkSize]t)
+	: [chunks_No*chunkSize]t =
+		ks_buffer with [at_cnk*chunkSize:(at_cnk+1)*chunkSize] = ks_waiting[from_src]
 
--- TODO
--- 0. mark used chunks above
--- 1. sorting funcs (they also note free positions at the end to mark unused chunks)
--- 1+. partitioning funcs (?)
--- 2. fetching funcs
--- + comments
--- + entry points
+	def fetchSorted_ks [n] [chunks_No] [srcs_No]
+		(bInfo : tps_bufferInfo)
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
+		(ks_buffer : [n]t)
+	: []t =
+		let active_srcs = bProc.isSrcExhausted |> countFor (not)
+		let total_free_pos = bProc.free_positions |> i64.sum
+		let freeChunksAtTheEnd = total_free_pos/bInfo.chunkSize
+		let chunks_toFetch = i64.min (chunks_No - active_srcs) (chunks_No - freeChunksAtTheEnd - 1)
+		in ks_buffer[0:chunks_toFetch*bInfo.chunkSize]
+}
+
+-- Processing payload buffers
+
+	def init_pL_buffer 't (dummy : t)
+		(bInfo : tps_bufferInfo)
+	: [bInfo.chunks_No*bInfo.chunkSize]t =
+		replicate (bInfo.chunks_No * bInfo.chunkSize) dummy
+
+	def init_pL_waiting 't (dummy : t)
+		(bInfo : tps_bufferInfo)
+	: [bInfo.srcs_No][bInfo.chunkSize]t =
+		replicate bInfo.srcs_No (replicate bInfo.chunkSize dummy)
+
+	def writeToWaiting_pL [n] 't
+		(at_src : i64)
+		(bInfo : tps_bufferInfo)
+		(pL_dat: [n]t)
+		(pL_waiting : *[bInfo.srcs_No][bInfo.chunkSize]t)
+	: [bInfo.srcs_No][bInfo.chunkSize]t =
+		pL_waiting with [at_src,0:n] = pL_dat
+
+	def writeToBuffer_pL 't
+		(from_src : i64)
+		(at_cnk : i64)
+		(bInfo : tps_bufferInfo)
+		(pL_waiting: [bInfo.srcs_No][bInfo.chunkSize]t)
+		(pL_buffer : *[bInfo.chunks_No*bInfo.chunkSize]t)
+	: [bInfo.chunks_No*bInfo.chunkSize]t =
+		pL_buffer with [at_cnk*bInfo.chunkSize:(at_cnk+1)*bInfo.chunkSize]
+			= pL_waiting[from_src]
+
+	def fetchSorted_pL [chunks_No] [srcs_No] 't
+		(bInfo : tps_bufferInfo)
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
+		(pL_buffer : [bInfo.chunks_No*bInfo.chunkSize]t)
+	: []t =
+		let active_srcs = bProc.isSrcExhausted |> countFor (not)
+		let total_free_pos = bProc.free_positions |> i64.sum
+		let freeChunksAtTheEnd = total_free_pos/bInfo.chunkSize
+		let chunks_toFetch = i64.min (chunks_No - active_srcs) (chunks_No - freeChunksAtTheEnd - 1)
+		in pL_buffer[0:chunks_toFetch*bInfo.chunkSize]
+		
+
 
