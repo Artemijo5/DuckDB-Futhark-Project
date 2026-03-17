@@ -13,6 +13,27 @@ import "ftbasics"
 -- except markSrcExhausted (no updates to buffers)
 -- also nextUnusedChunk is called before writing to sorting buffers
 -- & next_waiting is called before writing to waiting buffers (or marking exhausted)
+-- ALSO: call afterFetching_ks before fetchSorted_proc
+
+-- Sequence:
+--
+--    init_bufferInfo, init_bufferProc, init_ks_buffer, init_ks_waiting, + for pL
+--
+--    For all srcs, assign their first chunk to their waiting buffers (writeToWaiting)
+--    (first call _ks, _pL funcs, then _proc func)
+--
+--    Do until all srcs are exhausted:
+--       Do until all chunks in ks_buffer are used:
+--          call next_waiting to see which is the next src
+--          call next_unusedChunk to see where to write it
+--          call writeToBuffer_ks (& _pL) to transfer
+--          call writeToBuffer_proc to mark the written chunk as used
+--          Update that src buffer (first _ks, _pL, then _proc)
+--             If it is exhausted, mark it as exhausted instead (only _proc)
+--       Sort ks_buffer (together with pL_buffer)
+--       call fetchSorted_ks (& _pL) to output
+--       call afterFetching_ks to erase fetched data from the buffer
+--       call fetchSorted_proc to mark the fetched chunks as unused
 
 -- Sorting funcs are just called separately on key * pL sorting buffers
 
