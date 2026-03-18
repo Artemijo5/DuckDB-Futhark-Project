@@ -251,6 +251,49 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		let filterPts = closests ++ smallests
 		in pts |> filterAgainst filterPts
 
+	def intermediateFilters 'pL_t
+		(use_many_pts : bool)
+		(max_subdiv : i64)
+		(min_subdiv : i64)
+		(num_schemes : i64)
+		(size_thresh: i64)
+		(pts : skyData pL_t)
+	: skyData pL_t =
+		if num_schemes<=0 then pts else
+		let subdiv_step = (max_subdiv - min_subdiv) / num_schemes
+		let (pts',_) =
+			loop (xs, cur_subdiv) = (pts, max_subdiv)
+			while (length xs)>size_thresh && cur_subdiv>min_subdiv do
+				let (xs',_) = loop (ys,j) = (xs,0)
+				while (length ys>size_thresh) && j<dim do
+					let cur_scheme = mk_angularSubdivScheme_singular j cur_subdiv
+					let ys' = ys |> localFilter use_many_pts cur_scheme
+					in (ys', j+1)
+				in (xs', cur_subdiv - subdiv_step)
+		in pts'
 
+	def skyline_merge 'pL_t (pts1 : skyData pL_t) (pts2 : skyData pL_t)
+	: skyData pL_t =
+		let pts1' = pts1 |> filterAgainst pts2
+		let pts2' = pts2 |> filterAgainst pts1'
+		in pts1' ++ pts2'
+
+	-- Skyline pipeline within the Futhark context.
+	-- This serves to illustrate how the pipeline may be implemented elsewhere,
+	-- as well as provide a simple entry point if the dataset fits in memory.
+	--
+	-- The logic is to separate the dataset in sequentially accessed windows,
+	-- and merge the windows through "accumulation layers".
+	-- These acc layers help reduce the number of unnecessary pairwise comparisons,
+	-- as non-skyline points have a chance to be eliminated before "reaching"
+	-- the final layer where all current skyline points have been saved,
+	-- whereas the number of necessary pairwise comparisons does not increase.
+	--
+	-- Set number of 3 acc layers.
+	-- If this pipeline is instead implemented in C, then can in addition:
+	-- 1. have an arbitrary number of acc layers
+	-- 2. have actual windowing
+
+	-- TODO
 
 }
