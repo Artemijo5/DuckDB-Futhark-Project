@@ -91,6 +91,15 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		subdiv_total   = subdiv_per_dim |> i64.sum,
 		subdiv_prefix  = subdiv_per_dim |> exscan (+) 0
 	}
+	-- Same #subdivisions across dimensions
+	def mk_angularSubdivScheme_uniform (subdiv : i64)
+	: mrAngleInfo = subdiv
+		|> replicate (dim-1)
+		|> mk_angularSubdivScheme
+	-- Only one dimension is subdivided
+	def mk_angularSubdivScheme_singular (atDim : i64) (subdiv : i64)
+	: mrAngleInfo = ((replicate (dim-1) 164) with [atDim] = subdiv)
+		|> mk_angularSubdivScheme
 
 	-- Functions to initialise data (from vector_cols)
 
