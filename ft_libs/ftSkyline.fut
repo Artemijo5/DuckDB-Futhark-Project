@@ -1,7 +1,6 @@
 import "ftbasics"
 import "lib/github.com/athas/vector/vector"
 import "vector_cols"
-import "lib/github.com/diku-dk/sorts/merge_sort"
 
 -- Implementation of MR-Angle Skyline
 
@@ -51,6 +50,8 @@ module mk_Skyline_real (V : vector) (F : real) = {
 	local def piSeconds = over (F.pi) (F.i32 2)
 	local def highest = F.highest
 
+	local def minimum = F.minimum
+
 	local def stdfoldl = foldl
 	local def stdall = all
 	local def stdany = any
@@ -88,8 +89,8 @@ module mk_Skyline_real (V : vector) (F : real) = {
 	def mk_angularSubdivScheme (subdiv_per_dim : [dim - 1]i64)
 	: mrAngleInfo = {
 		subdiv_per_dim = subdiv_per_dim,
-		subdiv_total   = subdiv_per_dim |> i64.sum,
-		subdiv_prefix  = subdiv_per_dim |> exscan (+) 0
+		subdiv_total   = subdiv_per_dim |> reduce (*) 1,
+		subdiv_prefix  = subdiv_per_dim |> exscan (*) 1
 	}
 	-- Same #subdivisions across dimensions
 	def mk_angularSubdivScheme_uniform (subdiv : i64)
@@ -146,5 +147,110 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		: skyData (byteSeq [b]) -> [](byteSeq [b])
 		= map (.1)
 
-	-- TODO continue with skyline routines
+
+	-- Obtain spherical coordinates (without radius) to spherical
+	def cartesian_to_spherical (pt : vector t) : [dim-1]t =
+		V.iota |> V.map (\d ->
+				-- ignore dim==0 (we don't need the radius)
+				if d==0 then zero else
+				let this_x = V.get d pt
+				let this_y = V.iota
+					|> V.map (\i -> if i<=d then zero else V.get i pt)
+					|> V.map (\x -> x `times` x)
+					|> foldl (plus) zero
+					|> sqrt
+				in atan2 this_y this_x
+			)
+		|> V.to_array |> tail |> sized (dim-1)
+
+	-- get angular partition id's
+	def getSubdivId (angleSchema : mrAngleInfo) (pt : vector t) : i64 =
+		let angle_per_dim = angleSchema.subdiv_per_dim
+			|> seqmap zero (\s -> s |> from_i64 |> over piSeconds)
+		let pt_angles = pt |> cartesian_to_spherical
+		in seqmap2 zero (over) pt_angles angle_per_dim
+			|> seqmap 0 (to_i64)
+			|> seqmap2 0 (\perDim sub ->
+					if sub<0 then 0
+					else if sub>=perDim then perDim-1
+					else sub
+				)
+				angleSchema.subdiv_per_dim
+			|> seqmap2 0 (\pref sub -> sub*pref) angleSchema.subdiv_prefix
+			|> stdfoldl (+) 0
+
+	-- pre-filtering
+
+	def prefilter 'pL_t
+		(use_many_pts : bool)
+		(pts : skyData pL_t)
+	: skyData pL_t =
+		if (length pts) == 0 then pts else
+		-- Obtain the pt with the smallest radius
+		let closest_pt = pts
+			|> map (.0)
+			|> vcs.mapAll (\x -> x `times` x)
+			|> vcs.foldlAll (plus) (zero)
+			|> argmin (lt) (eq) (highest) -- its index
+			|> replicate 1 -- its index as 1-elem array
+			|> gather (pts[0]) pts -- the point as 1-elem array
+		-- if use_many_pts: obtain pt's with smallest value per dim
+		let smallest_per_dim : skyData pL_t = if !use_many_pts
+			then [] :> [0](vector t, pL_t)
+			else iota dim
+				|> map (\d -> pts |> map (.0) |> vcs.get_col d)
+				|> seqmap
+					(-1)
+					(argmin (lt) (eq) (highest))
+				|> gather (pts[0]) pts
+		let filterPts = closest_pt ++ smallest_per_dim
+		in pts |> filterAgainst filterPts
+
+	def localFilter 'pL_t
+		(use_many_pts : bool)
+		(angleSchema : mrAngleInfo)
+		(pts : skyData pL_t)
+	: skyData pL_t =
+		if (length pts) == 0 then pts else
+		-- Obtain angular subdivision id's
+		let subdiv_ids = pts |> map (.0)
+			|> map (getSubdivId angleSchema)
+		-- Get closest points per angular subdivision
+		let closests = hist
+			(\i1 i2 ->
+				if i1<0 then i2 else if i2<0 then i1 else
+				let r1 = pts[i1].0
+					|> V.map (\x -> x `times` x)
+					|> foldl (plus) zero
+				let r2 = pts[i2].0
+					|> V.map (\x -> x `times` x)
+					|> foldl (plus) zero
+				in if (r1 `lt` r2) || ((r1 `eq` r2) && i1<i2) then i1 else i2
+			)
+			(-1)
+			angleSchema.subdiv_total
+			subdiv_ids
+			(indices pts)
+		|> gather (pts[0]) pts
+		let smallests : skyData pL_t = if !use_many_pts
+			then [] :> [0](vector t, pL_t)
+			else V.iota |> V.map (\d ->
+				hist
+					(\i1 i2 ->
+						if i1<0 then i2 else if i2<0 then i1 else
+						let v1 = V.get d pts[i1].0
+						let v2 = V.get d pts[i2].0
+						in if (v1 `lt` v2) || ((v1 `eq` v2) && i1<i2) then i1 else i2
+					)
+					(-1)
+					angleSchema.subdiv_total
+					subdiv_ids
+					(indices pts)
+				|> gather (pts[0]) pts
+			) |> V.to_array |> flatten
+		let filterPts = closests ++ smallests
+		in pts |> filterAgainst filterPts
+
+
+
 }

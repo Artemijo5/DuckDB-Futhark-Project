@@ -47,7 +47,7 @@
 			  ) ne
 		in min_ik.0
 
-	-- | Sequential map function, for some cases of nested parallelism.
+	-- | Sequential map function, for some cases of small static parallelism.
 	def seqmap [n] 't 'ot
 		(dummy_out : ot)
 		(f : t -> ot)
@@ -56,6 +56,17 @@
 		if n==0 then ([] :> [n]ot) else
 		loop buff = (replicate n dummy_out) for j in (0..<n) do
 			buff with [j] = f xs[j]
+
+	-- | Sequential map2 function, for some cases of small static parallelism.
+	def seqmap2 [n] 't1 't2 'ot
+		(dummy_out : ot)
+		(f : t1 -> t2 -> ot)
+		(xs1: [n]t1)
+		(xs2: [n]t2)
+	: [n]ot =
+		if n==0 then ([] :> [n]ot) else
+		loop buff = (replicate n dummy_out) for j in (0..<n) do
+			buff with [j] = f xs1[j] xs2[j]
 
 -- Bulk Binary Search
 
