@@ -5,8 +5,8 @@ runs_No=25
 sort_entry="do_radixSort_i32"
 
 n1=$1
-n2=$((2*n1))
-b=$2
+n2=$2
+b=$3
 
 combine=false
 verbose=

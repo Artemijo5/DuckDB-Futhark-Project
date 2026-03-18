@@ -4,11 +4,11 @@ futhark_backend=cuda
 runs_No=25
 
 n1=$1
-n2=$((2*n1))
-b=$2
-pL_b=$3
+n2=$2
+b=$3
+pL_b=$4
 
-radix_bits=$4
+radix_bits=$5
 
 combine=false
 verbose=
