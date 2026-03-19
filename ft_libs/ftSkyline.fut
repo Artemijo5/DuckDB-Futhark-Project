@@ -257,7 +257,10 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		(pts : skyData pL_t)
 	: skyData pL_t =
 		if num_schemes<=0 then pts else
-		let subdiv_step = (max_subdiv - min_subdiv) / num_schemes
+		let subdiv_step = 
+			if num_schemes==1
+			then (max_subdiv+1)
+			else (max_subdiv - min_subdiv) / (num_schemes-1)
 		let (pts',_) =
 			loop (xs, cur_subdiv) = (pts, max_subdiv)
 			while (length xs)>size_thresh && cur_subdiv>min_subdiv do
