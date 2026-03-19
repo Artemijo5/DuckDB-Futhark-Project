@@ -86,11 +86,11 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		pts |> filterAgainst pts
 
 	-- Make a scheme for angular subdivisions
-	def mk_angularSubdivScheme (subdiv_per_dim : [dim - 1]i64)
+	def mk_angularSubdivScheme (subdiv_per_dim : []i64)
 	: mrAngleInfo = {
-		subdiv_per_dim = subdiv_per_dim,
-		subdiv_total   = subdiv_per_dim |> reduce (*) 1,
-		subdiv_prefix  = subdiv_per_dim |> exscan (*) 1
+		subdiv_per_dim = subdiv_per_dim |> sized (dim-1),
+		subdiv_total   = subdiv_per_dim |> sized (dim-1) |> reduce (*) 1,
+		subdiv_prefix  = subdiv_per_dim |> sized (dim-1) |> exscan (*) 1
 	}
 	-- Same #subdivisions across dimensions
 	def mk_angularSubdivScheme_uniform (subdiv : i64)
@@ -148,11 +148,9 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		= map (.1)
 
 
-	-- Obtain spherical coordinates (without radius) to spherical
+	-- Obtain spherical coordinates (without radius) from cartesian
 	def cartesian_to_spherical (pt : vector t) : [dim-1]t =
-		V.iota |> V.map (\d ->
-				-- ignore dim==0 (we don't need the radius)
-				if d==0 then zero else
+		iota (dim-1) |> seqmap zero (\d ->
 				let this_x = V.get d pt
 				let this_y = V.iota
 					|> V.map (\i -> if i<=d then zero else V.get i pt)
@@ -161,7 +159,6 @@ module mk_Skyline_real (V : vector) (F : real) = {
 					|> sqrt
 				in atan2 this_y this_x
 			)
-		|> V.to_array |> tail |> sized (dim-1)
 
 	-- get angular partition id's
 	def getSubdivId (angleSchema : mrAngleInfo) (pt : vector t) : i64 =
@@ -234,7 +231,7 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		|> gather (pts[0]) pts
 		let smallests : skyData pL_t = if !use_many_pts
 			then [] :> [0](vector t, pL_t)
-			else V.iota |> V.map (\d ->
+			else (iota dim) |> map (\d ->
 				hist
 					(\i1 i2 ->
 						if i1<0 then i2 else if i2<0 then i1 else
@@ -247,7 +244,7 @@ module mk_Skyline_real (V : vector) (F : real) = {
 					subdiv_ids
 					(indices pts)
 				|> gather (pts[0]) pts
-			) |> V.to_array |> flatten
+			) |> flatten
 		let filterPts = closests ++ smallests
 		in pts |> filterAgainst filterPts
 
@@ -265,7 +262,7 @@ module mk_Skyline_real (V : vector) (F : real) = {
 			loop (xs, cur_subdiv) = (pts, max_subdiv)
 			while (length xs)>size_thresh && cur_subdiv>min_subdiv do
 				let (xs',_) = loop (ys,j) = (xs,0)
-				while (length ys>size_thresh) && j<dim do
+				while (length ys>size_thresh) && j<(dim-1) do
 					let cur_scheme = mk_angularSubdivScheme_singular j cur_subdiv
 					let ys' = ys |> localFilter use_many_pts cur_scheme
 					in (ys', j+1)
@@ -293,7 +290,64 @@ module mk_Skyline_real (V : vector) (F : real) = {
 	-- If this pipeline is instead implemented in C, then can in addition:
 	-- 1. have an arbitrary number of acc layers
 	-- 2. have actual windowing
-
-	-- TODO
-
+	def skyline_internal 'pL_t
+		(use_many_pts_prefi : bool)
+		(use_many_pts_local : bool)
+		(use_many_pts_inter : bool)
+		(maxSubdiv_inter : i64)
+		(minSubdiv_inter : i64)
+		(numScheme_inter : i64)
+		(interSizeThresh : i64)
+		(localSubdiv : []i64)
+		(window_size : i64)
+		(dat : skyData pL_t)
+	: skyData pL_t =
+		let localScheme = mk_angularSubdivScheme localSubdiv
+		let n = length dat
+		let num_iter = (n + window_size - 1) / window_size
+		let (skyDat,_,_) : (skyData pL_t, skyData pL_t, skyData pL_t) =
+			loop (acc0,acc1,acc2) = ([],[],[]) for j < num_iter do
+				let inf = j*window_size
+				let sup = i64.min n ((j+1)*window_size)
+				let this_dat = dat[inf:sup]
+					|> prefilter use_many_pts_prefi
+					|> localFilter use_many_pts_local localScheme
+					|> intermediateFilters
+						use_many_pts_inter
+						maxSubdiv_inter
+						minSubdiv_inter
+						numScheme_inter
+						interSizeThresh
+					|> filterSelf
+				let acc2' = skyline_merge acc2 this_dat
+				let transf21 = (length acc2')>=(length acc1)
+				let acc1' = if transf21
+					then skyline_merge acc1 acc2'
+					else acc1
+				let transf10 = (length acc1')>=(length acc0)
+				let acc0' = if transf10
+					then skyline_merge acc0 acc1'
+					else acc0
+				in (
+					acc0',
+					if transf10 then [] else acc1',
+					if transf21 then [] else acc2'
+				)
+		in skyDat
 }
+
+module skyline2_f64  = mk_Skyline_real vector_2 f64
+module skyline3_f64  = mk_Skyline_real vector_3 f64
+module skyline4_f64  = mk_Skyline_real vector_4 f64
+module skyline5_f64  = mk_Skyline_real vector_5 f64
+module skyline6_f64  = mk_Skyline_real vector_6 f64
+module skyline7_f64  = mk_Skyline_real vector_7 f64
+module skyline8_f64  = mk_Skyline_real vector_8 f64
+module skyline9_f64  = mk_Skyline_real vector_9 f64
+module skyline10_f64 = mk_Skyline_real vector_10 f64
+module skyline11_f64 = mk_Skyline_real vector_11 f64
+module skyline12_f64 = mk_Skyline_real vector_12 f64
+
+type skyData2_f64 = skyline2_f64.skyData i64
+type skyData3_f64 = skyline3_f64.skyData i64
+
