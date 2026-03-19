@@ -292,7 +292,8 @@ module mk_Skyline_real (V : vector) (F : real) = {
 	-- Set number of 3 acc layers.
 	-- If this pipeline is instead implemented in C, then can in addition:
 	-- 1. have an arbitrary number of acc layers
-	-- 2. have actual windowing
+	-- 2. have actual windowing, based on an external streaming source
+	-- However, this can still be used as the entry point.
 	def skyline_internal 'pL_t
 		(use_many_pts_prefi : bool)
 		(use_many_pts_local : bool)
@@ -323,11 +324,11 @@ module mk_Skyline_real (V : vector) (F : real) = {
 						interSizeThresh
 					|> filterSelf
 				let acc2' = skyline_merge acc2 this_dat
-				let transf21 = (length acc2')>=(length acc1)
+				let transf21 = (length acc2')>=(length acc1) || j==(num_iter-1)
 				let acc1' = if transf21
 					then skyline_merge acc1 acc2'
 					else acc1
-				let transf10 = (length acc1')>=(length acc0)
+				let transf10 = (length acc1')>=(length acc0) || j==(num_iter-1)
 				let acc0' = if transf10
 					then skyline_merge acc0 acc1'
 					else acc0
@@ -337,6 +338,41 @@ module mk_Skyline_real (V : vector) (F : real) = {
 					if transf21 then [] else acc2'
 				)
 		in skyDat
+
+	def from_skylineBuffers 'pL_t (buffs : skylineBuffers pL_t)
+	: skyData pL_t =
+		let n = buffs.len
+		in buffs.pL |> sized n |> zip
+			((buffs.dat :> [n][dim]t) |> create_cols |> sized n)
+	def from_skylineBuffers_withIs
+		: skylineBuffers i64 -> skyData i64
+		= from_skylineBuffers
+	def from_skylineBuffers_withPL [b]
+		: skylineBuffers (byteSeq [b]) -> skyData (byteSeq [b])
+		= from_skylineBuffers
+
+	def to_skylineBuffers 'pL_t (dat : skyData pL_t)
+	: skylineBuffers pL_t = {
+		len = length dat,
+		dat = dat |> map ((.0) >-> V.to_array) |> transpose |> sized dim,
+		pL  = dat |> map (.1)
+	}
+	def to_skylineBuffers_withIs
+		: skyData i64 -> skylineBuffers i64
+		= to_skylineBuffers
+	def to_skylineBuffers_withPL [b]
+		: skyData (byteSeq [b]) -> skylineBuffers (byteSeq [b])
+		= to_skylineBuffers
+
+	def combine_skylineBuffers 'pL_t
+		(buffs1 : skylineBuffers pL_t)
+		(buffs2 : skylineBuffers pL_t)
+	: skylineBuffers pL_t = {
+		len = buffs1.len +  buffs2.len,
+		dat = buffs1.dat ++ buffs2.dat,
+		pL  = buffs1.pL  ++ buffs2.pL
+	}
+
 }
 
 module skyline2_f64  = mk_Skyline_real vector_2 f64
@@ -351,15 +387,54 @@ module skyline10_f64 = mk_Skyline_real vector_10 f64
 module skyline11_f64 = mk_Skyline_real vector_11 f64
 module skyline12_f64 = mk_Skyline_real vector_12 f64
 
-type~ skyData2_f64 = skyline2_f64.skyData i64
-type~ skyData3_f64 = skyline3_f64.skyData i64
+type~ skyData2_f64  = skyline2_f64.skyData i64
+type~ skyData3_f64  = skyline3_f64.skyData i64
+type~ skyData4_f64  = skyline4_f64.skyData i64
+type~ skyData5_f64  = skyline5_f64.skyData i64
+type~ skyData6_f64  = skyline6_f64.skyData i64
+type~ skyData7_f64  = skyline7_f64.skyData i64
+type~ skyData8_f64  = skyline8_f64.skyData i64
+type~ skyData9_f64  = skyline9_f64.skyData i64
+type~ skyData10_f64 = skyline10_f64.skyData i64
+type~ skyData11_f64 = skyline11_f64.skyData i64
+type~ skyData12_f64 = skyline12_f64.skyData i64
 
-entry skyline2_internal
+-- TODO entry points for vec-column handling
+
+entry skyline2_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData2_f64)
 :skyData2_f64 = skyline2_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
-entry skyline3_internal
+entry skyline3_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData3_f64)
 :skyData3_f64 = skyline3_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline4_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData4_f64)
+:skyData4_f64 = skyline4_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline5_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData5_f64)
+:skyData5_f64 = skyline5_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline6_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData6_f64)
+:skyData6_f64 = skyline6_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline7_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData7_f64)
+:skyData7_f64 = skyline7_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline8_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData8_f64)
+:skyData8_f64 = skyline8_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline9_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData9_f64)
+:skyData9_f64 = skyline9_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline10_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData10_f64)
+:skyData10_f64 = skyline10_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline11_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData11_f64)
+:skyData11_f64 = skyline11_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline12_internal_f64
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData12_f64)
+:skyData12_f64 = skyline12_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
 
 -- confirmed successful cuda compilation (...)
 -- TODO make entry points use skyBuffers_t so as to avoid vector entry points
+-- On the other hand can also use vec_col (...)
