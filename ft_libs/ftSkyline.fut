@@ -369,7 +369,7 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		(buffs2 : skylineBuffers pL_t)
 	: skylineBuffers pL_t = {
 		len = buffs1.len +  buffs2.len,
-		dat = buffs1.dat ++ buffs2.dat,
+		dat = (map2 (++) buffs1.dat buffs2.dat),
 		pL  = buffs1.pL  ++ buffs2.pL
 	}
 
@@ -416,22 +416,22 @@ entry skyline5_internal_f64
 entry skyline6_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData6_f64)
 :skyData6_f64 = skyline6_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
-entry skyline7_internal_f64
+def skyline7_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData7_f64)
 :skyData7_f64 = skyline7_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
-entry skyline8_internal_f64
+def skyline8_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData8_f64)
 :skyData8_f64 = skyline8_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
-entry skyline9_internal_f64
+def skyline9_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData9_f64)
 :skyData9_f64 = skyline9_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
-entry skyline10_internal_f64
+def skyline10_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData10_f64)
 :skyData10_f64 = skyline10_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
-entry skyline11_internal_f64
+def skyline11_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData11_f64)
 :skyData11_f64 = skyline11_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
-entry skyline12_internal_f64
+def skyline12_internal_f64
 	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData12_f64)
 :skyData12_f64 = skyline12_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
 
