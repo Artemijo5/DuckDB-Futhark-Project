@@ -231,7 +231,7 @@ module mk_Skyline_real (V : vector) (F : real) = {
 		|> gather (pts[0]) pts
 		let smallests : skyData pL_t = if !use_many_pts
 			then [] :> [0](vector t, pL_t)
-			else (iota dim) |> map (\d ->
+			else (iota dim) |> seqmap (replicate angleSchema.subdiv_total pts[0]) (\d ->
 				hist
 					(\i1 i2 ->
 						if i1<0 then i2 else if i2<0 then i1 else
@@ -348,6 +348,15 @@ module skyline10_f64 = mk_Skyline_real vector_10 f64
 module skyline11_f64 = mk_Skyline_real vector_11 f64
 module skyline12_f64 = mk_Skyline_real vector_12 f64
 
-type skyData2_f64 = skyline2_f64.skyData i64
-type skyData3_f64 = skyline3_f64.skyData i64
+type~ skyData2_f64 = skyline2_f64.skyData i64
+type~ skyData3_f64 = skyline3_f64.skyData i64
 
+entry skyline2_internal
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData2_f64)
+:skyData2_f64 = skyline2_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+entry skyline3_internal
+	ump_p ump_l ump_i maxS minS numS sThr locS wSize (dat : skyData3_f64)
+:skyData3_f64 = skyline3_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
+
+-- confirmed successful cuda compilation (...)
+-- TODO make entry points use skyBuffers_t so as to avoid vector entry points
