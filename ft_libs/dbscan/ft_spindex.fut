@@ -19,10 +19,9 @@ module type mk_spatial_index = {
 	-- 3. starting index of each partition in the sorted dataset
 	val index_dataset [dim] [n] : [dim]i64 -> [n](vector t) -> ([n](vector t), [](vector t, vector t), []i64)
 
-	-- | Obtain all partitions neihbouring with a selected partition.
-	-- ie all partitions within a distance epsilon of the partition's boundaries.
-	-- Returns the indices of all neighbouring partitions (not including itself).
-	val get_neighbouring_partitions [np] : [np](vector t, vector t) -> t -> i64 -> []i64
+	-- | Obtain all partitions adjacent to a selected partition.
+	-- Returns the indices of all adjacent partitions (not including itself).
+	val get_adj_partitions [np] : [np](vector t, vector t) -> i64 -> []i64
 
 	-- | Obtain all points of a selected partition.
 	val fetch_partition [np] [n] : [np]i64 -> [n](vector t) -> i64 -> [](vector t)
@@ -37,6 +36,8 @@ module mk_grid_index (V : vector) (N : numeric)
 	local def times = (N.*)
 	local def minus = (N.-)
 	local def plus  = (N.+)
+
+	local def leq = (N.<=)
 
 	local def to_i64 = (N.to_i64)
 	local def from_i64 = (N.i64)
@@ -101,8 +102,17 @@ module mk_grid_index (V : vector) (N : numeric)
 			|> map (get_partitionBoundaries mins ranges idx_vec dimPrefix)
 		in (xs', partBounds, firstByPid)
 
-
-	def get_neighbouring_partitions partitions eps i = []
+	def get_adj_partitions partitions i =
+		let (this_mins, this_maxs) = partitions[i]
+		let touch = indices partitions
+			|> map2 (\(cmins,cmaxs) j -> j!=i
+				&& (this_maxs |> V.map2 (leq) cmins |> V.reduce (&&) true)
+				&& (cmaxs |> V.map2 (leq) this_mins |> V.reduce (&&) true)
+			) partitions
+		in touch
+			|> zip (indices partitions)
+			|> filter (.1)
+			|> map (.0)
 
 	def fetch_partition partIs xs i =
 		let inf = partIs[i]
