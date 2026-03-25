@@ -46,17 +46,12 @@ module euclidean_d
 	def dist pt1 pt2 = sqrt (dist_squared pt1 pt2)
 
 	local def dist_squared_fromPartition (part : (vector t, vector t)) pt =
-		let min' = iota V.length |> seqmap zero (\i ->
+		iota V.length |> seqmap zero (\i ->
 			if ((V.get i pt) `leq` (V.get i part.1))
 			then max (V.get i pt) (V.get i part.0)
 			else (V.get i part.1)
 		) |> V.from_array
-		let max' = iota V.length |> seqmap zero (\i ->
-			if ((V.get i part.0) `leq` (V.get i pt))
-			then min (V.get i pt) (V.get i part.1)
-			else (V.get i part.0)
-		) |> V.from_array
-		in min (dist_squared pt min') (dist_squared pt max')
+		|> dist_squared pt
 
 	def dist_fromPartition (part : (vector t, vector t)) pt =
 		pt |> dist_squared_fromPartition part |> sqrt
