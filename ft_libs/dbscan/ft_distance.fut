@@ -49,16 +49,12 @@ module euclidean_d
 		let min' = iota V.length |> seqmap zero (\i ->
 			if ((V.get i pt) `leq` (V.get i part.1))
 			then max (V.get i pt) (V.get i part.0)
-			else if ((V.get i part.1) `leq` (V.get i pt))
-			then (V.get i part.1)
-			else V.get i part.0
+			else (V.get i part.1)
 		) |> V.from_array
 		let max' = iota V.length |> seqmap zero (\i ->
 			if ((V.get i part.0) `leq` (V.get i pt))
 			then min (V.get i pt) (V.get i part.1)
-			else if ((V.get i part.1) `leq` (V.get i pt))
-			then (V.get i part.0)
-			else (V.get i part.1)
+			else (V.get i part.0)
 		) |> V.from_array
 		in min (dist_squared pt min') (dist_squared pt max')
 
