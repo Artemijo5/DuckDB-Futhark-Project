@@ -47,9 +47,8 @@ module euclidean_d
 
 	local def dist_squared_fromPartition (part : (vector t, vector t)) pt =
 		iota V.length |> seqmap zero (\i ->
-			if ((V.get i pt) `leq` (V.get i part.1))
-			then max (V.get i pt) (V.get i part.0)
-			else (V.get i part.1)
+			min (max (V.get i pt) (V.get i part.0))
+				(V.get i part.1)
 		) |> V.from_array
 		|> dist_squared pt
 
