@@ -11,7 +11,9 @@ module type distance = {
 	
 	val dist_fromPartition : (vector t, vector t) -> vector t -> t
 
-	val get_adj_partitions [np] : [np](vector t, vector t) -> t -> i64 -> []i64
+	-- Ignored partition with pid
+	val get_adj_partitions [np] [n]
+		: [np](vector t, vector t) -> t -> i64 -> [n](vector t) -> []i64
 }
 
 module euclidean_d
@@ -34,6 +36,8 @@ module euclidean_d
 	local def min = F.min
 	local def max = F.max
 
+	local def minimum = F.minimum
+
 	def dist_squared pt1 pt2 =
 		let pt1' = pt1 |> V.map (\x -> x`times`x)
 		let pt2' = pt2 |> V.map (\x -> x`times`x)
@@ -45,31 +49,27 @@ module euclidean_d
 		let min' = iota V.length |> seqmap zero (\i ->
 			if ((V.get i pt) `leq` (V.get i part.1))
 			then max (V.get i pt) (V.get i part.0)
-			else (V.get i part.0)
+			else if ((V.get i part.1) `leq` (V.get i pt))
+			then (V.get i part.1)
+			else V.get i part.0
 		) |> V.from_array
 		let max' = iota V.length |> seqmap zero (\i ->
 			if ((V.get i part.0) `leq` (V.get i pt))
 			then min (V.get i pt) (V.get i part.1)
+			else if ((V.get i part.1) `leq` (V.get i pt))
+			then (V.get i part.0)
 			else (V.get i part.1)
 		) |> V.from_array
-		in min (dist pt min') (dist pt max')
+		in min (dist_squared pt min') (dist_squared pt max')
+			|> sqrt
 
-	-- TODO this returns false positives at the corners
-	-- since it finds intersects with expanded rectangle
-	-- rather than actual euclidean distance
-	def get_adj_partitions partitions eps pid =
-		let (this_mins, this_maxs) = partitions[pid]
-			|> (\(tm,tM) -> (
-				tm |> V.map (\mi -> mi `minus` eps),
-				tM |> V.map (\ma -> ma `plus` eps)
-			))
-		let touch = indices partitions
-			|> map2 (\(cmins,cmaxs) i -> i!=pid
-				&& (this_maxs |> V.map2 (leq) cmins |> V.reduce (&&) true)
-				&& (cmaxs |> V.map2 (leq) this_mins |> V.reduce (&&) true)
-			) partitions
-		in touch
-			|> zip (indices partitions)
-			|> filter (.1)
-			|> map (.0)
+	-- TODO see how this goes with cuda compilation
+	-- might have to use seqmap before filter (...)
+	def get_adj_partitions partitions eps pid pts =
+		indices partitions |> filter (\i ->
+			i!=pid && leq
+				(eps `times` eps)
+				(pts |> map (dist_fromPartition partitions[i])
+					|> minimum)
+		)
 }
