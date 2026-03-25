@@ -45,7 +45,7 @@ module euclidean_d
 
 	def dist pt1 pt2 = sqrt (dist_squared pt1 pt2)
 
-	def dist_fromPartition (part : (vector t, vector t)) pt =
+	local def dist_squared_fromPartition (part : (vector t, vector t)) pt =
 		let min' = iota V.length |> seqmap zero (\i ->
 			if ((V.get i pt) `leq` (V.get i part.1))
 			then max (V.get i pt) (V.get i part.0)
@@ -61,7 +61,9 @@ module euclidean_d
 			else (V.get i part.1)
 		) |> V.from_array
 		in min (dist_squared pt min') (dist_squared pt max')
-			|> sqrt
+
+	def dist_fromPartition (part : (vector t, vector t)) pt =
+		pt |> dist_squared_fromPartition part |> sqrt
 
 	-- TODO see how this goes with cuda compilation
 	-- might have to use seqmap before filter (...)
@@ -69,7 +71,7 @@ module euclidean_d
 		indices partitions |> filter (\i ->
 			i!=pid && leq
 				(eps `times` eps)
-				(pts |> map (dist_fromPartition partitions[i])
+				(pts |> map (dist_squared_fromPartition partitions[i])
 					|> minimum)
 		)
 }
