@@ -436,5 +436,4 @@ def skyline12_internal_f64
 :skyData12_f64 = skyline12_f64.skyline_internal ump_p ump_l ump_i maxS minS numS sThr locS wSize dat
 
 -- confirmed successful cuda compilation (...)
--- TODO make entry points use skyBuffers_t so as to avoid vector entry points
--- On the other hand can also use vec_col (...)
+-- TODO make separate module to facilitate array-based entry points

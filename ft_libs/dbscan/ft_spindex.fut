@@ -1,14 +1,14 @@
 import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
 import "../lib/github.com/diku-dk/sorts/merge_sort"
-import "../vector_cols"
+import "../lib/github.com/diku-dk/segmented/segmented"
 
 -- Implementation of basic spatial index structures.
 -- 1. Uniform Grid Partitioning
 -- 2. Implicit kd-Tree
 
 -- | Abstract module type to implement spatial index structures.
-module type mk_spatial_index = {
+module type spatial_index = {
 	type t
 	type vector 'a
 
@@ -20,15 +20,18 @@ module type mk_spatial_index = {
 	val index_dataset [dim] [n] : [dim]i64 -> [n](vector t) -> ([n](vector t), [](vector t, vector t), []i64)
 
 	-- | Obtain all partitions adjacent to a selected partition.
+	-- t parameter serves as max eps-distance for adjacency (can be zero for true adjacency).
+	-- i64 parameter is the index of the selected partition in partitions.
 	-- Returns the indices of all adjacent partitions (not including itself).
-	val get_adj_partitions [np] : [np](vector t, vector t) -> i64 -> []i64
+	val get_adj_partitions [np] : [np](vector t, vector t) -> t -> i64 -> []i64
 
 	-- | Obtain all points of a selected partition.
 	val fetch_partition [np] [n] : [np]i64 -> [n](vector t) -> i64 -> [](vector t)
 }
 
-module mk_grid_index (V : vector) (N : numeric)
-: mk_spatial_index with t = N.t with vector 'a = V.vector a = {
+-- Regular grid subdivisions.
+module grid_index (V : vector) (N : numeric)
+: spatial_index with t = N.t with vector 'a = V.vector a = {
 	type t = N.t
 	type vector 'a = V.vector a
 
@@ -87,6 +90,7 @@ module mk_grid_index (V : vector) (N : numeric)
 		let part_max = V.map2 (plus) part_min step_byDim
 		in (part_min, part_max)
 
+	-- idxSpec : [V.length]i64, represents #subdivisions per dimension
 	def index_dataset idxSpec xs =
 		let np = idxSpec |> reduce (*) 1
 		let n = length xs
@@ -102,10 +106,160 @@ module mk_grid_index (V : vector) (N : numeric)
 			|> map (get_partitionBoundaries mins ranges idx_vec dimPrefix)
 		in (xs', partBounds, firstByPid)
 
-	def get_adj_partitions partitions i =
-		let (this_mins, this_maxs) = partitions[i]
+	def get_adj_partitions partitions eps pid =
+		let (this_mins, this_maxs) = partitions[pid]
+			|> (\(tm,tM) -> (
+				tm |> V.map (\mi -> mi `minus` eps),
+				tM |> V.map (\ma -> ma `plus` eps)
+			))
 		let touch = indices partitions
-			|> map2 (\(cmins,cmaxs) j -> j!=i
+			|> map2 (\(cmins,cmaxs) i -> i!=pid
+				&& (this_maxs |> V.map2 (leq) cmins |> V.reduce (&&) true)
+				&& (cmaxs |> V.map2 (leq) this_mins |> V.reduce (&&) true)
+			) partitions
+		in touch
+			|> zip (indices partitions)
+			|> filter (.1)
+			|> map (.0)
+
+	def fetch_partition partIs xs i =
+		let inf = partIs[i]
+		let sup = if i==(length partIs)-1 then (length xs) else partIs[i+1]
+		in xs[inf:sup]
+}
+
+-- Implicit kd-tree.
+module kd_index (V : vector) (N : numeric)
+: spatial_index with t = N.t with vector 'a = V.vector a = {
+	type t = N.t
+	type vector 'a = V.vector a
+
+	local def minus = (N.-)
+	local def plus  = (N.+)
+
+	local def leq = (N.<=)
+	local def lt  = (N.<)
+
+	local def from_i64 = (N.i64)
+
+	local def zero = from_i64 0i64
+	local def lowest = N.lowest
+	local def highest = N.highest
+
+	local def min = N.min
+	local def max = N.max
+	local def minimum = N.minimum
+	local def maximum = N.maximum
+
+	local def get_mins_maxs (xs : [](vector t)) : (vector t, vector t) =
+		let perDim = iota (V.length) |> map (\i -> xs |> map (V.get i))
+		let mins = perDim |> seqmap zero (minimum) |> V.from_array
+		let maxs = perDim |> seqmap zero (maximum) |> V.from_array
+		in (mins, maxs)
+
+	-- idxSpec : [1]i64, represents levels of kd tree
+	def index_dataset [n] idxSpec (xs : [n](vector t)) =
+		-- kd_depth = min idxSpec (ceil log2 n)
+		let kd_depth = n
+			|> i64.clz
+			|> (i32.-) (if n&(n-1)==0 then 64 else 65)
+			|> i64.i32
+			|> i64.min (head idxSpec)
+		-- sort by median of the next dimension each level
+		let (min_pt, max_pt) = xs |> get_mins_maxs
+		let (fxs, _, fmins, fmaxs, fsizes) =
+			loop (pts, pids, part_mins, part_maxs, part_sizes)
+			: ([n](vector t), [n]i64, [](vector t), [](vector t), []i64)
+			= (xs, replicate n 0, [min_pt], [max_pt], [n])
+			for j < kd_depth do
+				let curDim = j % V.length
+				let (old_pids, pts') = pts |> zip pids
+					|> merge_sort (\(pid1,x1) (pid2,x2) ->
+						pid1<pid2 ||
+						(pid1==pid2 && ((V.get curDim x1) `leq` (V.get curDim x2)))
+					) |> unzip
+				let part_is = part_sizes |> exscan (+) 0
+				let median_vals = part_is
+					|> map2 (\pSize pInd ->
+						pInd + pSize/2
+					) part_sizes
+					|> map (\i -> V.get curDim (pts'[i64.min i (n-1)]))
+				let new_pids = pts'
+					|> zip old_pids
+					|> map (\(pid,x) -> if ((V.get curDim x) `lt` median_vals[pid]) then 2*pid else 2*pid+1)
+				let new_minVals = hist (min) highest (2**(j+1)) new_pids (pts' |> map (V.get curDim))
+				let new_part_mins = indices part_mins |> expand (\_ -> 2)
+					(\i ind -> V.set curDim new_minVals[2*i + ind] part_mins[i])
+				let new_maxVals = hist (max) lowest  (2**(j+1)) new_pids (pts' |> map (V.get curDim))
+				let new_part_maxs = indices part_maxs |> expand (\_ -> 2)
+					(\i ind -> V.set curDim new_maxVals[2*i + ind] part_maxs[i])
+				let new_part_sizes = hist (+) 0 (2**(j+1))
+					new_pids
+					(replicate n 1)
+			in (pts', new_pids, new_part_mins, new_part_maxs, new_part_sizes)
+		let np = length fmins
+		let fparts = zip (fmins |> sized np) (fmaxs |> sized np)
+		in (fxs, fparts, fsizes |> exscan (+) 0)
+
+	def get_adj_partitions partitions eps pid =
+		let (this_mins, this_maxs) = partitions[pid]
+			|> (\(tm,tM) -> (
+				tm |> V.map (\mi -> mi `minus` eps),
+				tM |> V.map (\ma -> ma `plus` eps)
+			))
+		let touch = indices partitions
+			|> map2 (\(cmins,cmaxs) i -> i!=pid
+				&& (this_maxs |> V.map2 (leq) cmins |> V.reduce (&&) true)
+				&& (cmaxs |> V.map2 (leq) this_mins |> V.reduce (&&) true)
+			) partitions
+		in touch
+			|> zip (indices partitions)
+			|> filter (.1)
+			|> map (.0)
+
+	def fetch_partition partIs xs i =
+		let inf = partIs[i]
+		let sup = if i==(length partIs)-1 then (length xs) else partIs[i+1]
+		in xs[inf:sup]
+}
+
+-- Don't subdivide space.
+module non_index (V : vector) (N : numeric)
+: spatial_index with t = N.t with vector 'a = V.vector a = {
+	type t = N.t
+	type vector 'a = V.vector a
+
+	local def minus = (N.-)
+	local def plus  = (N.+)
+
+	local def leq = (N.<=)
+	local def lt  = (N.<)
+
+	local def from_i64 = (N.i64)
+
+	local def zero = from_i64 0i64
+
+	local def minimum = N.minimum
+	local def maximum = N.maximum
+
+	local def get_mins_maxs (xs : [](vector t)) : (vector t, vector t) =
+		let perDim = iota (V.length) |> map (\i -> xs |> map (V.get i))
+		let mins = perDim |> seqmap zero (minimum) |> V.from_array
+		let maxs = perDim |> seqmap zero (maximum) |> V.from_array
+		in (mins, maxs)
+
+	-- idxSpec : [1]i64, represents levels of kd tree
+	def index_dataset _ xs =
+		(xs, [get_mins_maxs xs], [0i64])
+
+	def get_adj_partitions partitions eps pid =
+		let (this_mins, this_maxs) = partitions[pid]
+			|> (\(tm,tM) -> (
+				tm |> V.map (\mi -> mi `minus` eps),
+				tM |> V.map (\ma -> ma `plus` eps)
+			))
+		let touch = indices partitions
+			|> map2 (\(cmins,cmaxs) i -> i!=pid
 				&& (this_maxs |> V.map2 (leq) cmins |> V.reduce (&&) true)
 				&& (cmaxs |> V.map2 (leq) this_mins |> V.reduce (&&) true)
 			) partitions
