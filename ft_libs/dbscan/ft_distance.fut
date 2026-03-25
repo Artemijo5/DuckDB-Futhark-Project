@@ -11,9 +11,11 @@ module type distance = {
 	
 	val dist_fromPartition : (vector t, vector t) -> vector t -> t
 
-	-- Ignored partition with pid
+	-- Ignore partition with pid
 	val get_adj_partitions [np] [n]
 		: [np](vector t, vector t) -> t -> i64 -> [n](vector t) -> []i64
+
+	val is_marginal : (vector t, vector t) -> t -> vector t -> bool
 }
 
 module euclidean_d
@@ -35,6 +37,7 @@ module euclidean_d
 
 	local def min = F.min
 	local def max = F.max
+	local def highest = F.highest
 
 	local def minimum = F.minimum
 
@@ -64,4 +67,10 @@ module euclidean_d
 				(pts |> map (dist_squared_fromPartition partitions[i])
 					|> minimum)
 		)
+
+	def is_marginal (part : (vector t, vector t)) eps pt =
+		V.map2 (minus) pt part.0
+		|> V.map2 (min) (V.map2 (minus) part.1 pt)
+		|> V.reduce (min) highest
+		|> leq eps
 }
