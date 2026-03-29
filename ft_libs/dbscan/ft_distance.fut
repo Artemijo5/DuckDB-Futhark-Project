@@ -42,9 +42,9 @@ module euclidean_d
 	local def minimum = F.minimum
 
 	def dist_squared pt1 pt2 =
-		let pt1' = pt1 |> V.map (\x -> x`times`x)
-		let pt2' = pt2 |> V.map (\x -> x`times`x)
-		in pt1' |> V.map2 (minus) pt2' |> V.reduce (plus) zero
+		pt1 |> V.map2 (minus) pt2
+		|> V.map (\x -> x `times` x)
+		|> V.reduce (plus) zero
 
 	def dist pt1 pt2 = sqrt (dist_squared pt1 pt2)
 
@@ -58,19 +58,18 @@ module euclidean_d
 	def dist_fromPartition (part : (vector t, vector t)) pt =
 		pt |> dist_squared_fromPartition part |> sqrt
 
-	-- TODO see how this goes with cuda compilation
-	-- might have to use seqmap before filter (...)
+	-- Confirmed cuda compilation works
 	def get_adj_partitions partitions eps pid pts =
 		indices partitions |> filter (\i ->
 			i!=pid && leq
-				(eps `times` eps)
 				(pts |> map (dist_squared_fromPartition partitions[i])
 					|> minimum)
+				(eps `times` eps)
 		)
 
 	def is_marginal (part : (vector t, vector t)) eps pt =
 		V.map2 (minus) pt part.0
 		|> V.map2 (min) (V.map2 (minus) part.1 pt)
 		|> V.reduce (min) highest
-		|> leq eps
+		|> (\d -> d `leq` eps)
 }

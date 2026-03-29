@@ -6,6 +6,8 @@ import "../lib/github.com/diku-dk/segmented/segmented"
 -- Implementation of basic spatial index structures.
 -- 1. Uniform Grid Partitioning
 -- 2. Implicit kd-Tree
+-- The indices subdivide space into regular rectangles with sides parallel to the axes.
+-- Equivalently, partitions are defined by min & max values for all their dimensions.
 
 -- | Abstract module type to implement spatial index structures.
 module type spatial_index = {
@@ -128,7 +130,8 @@ module grid_index (V : vector) (N : numeric)
 		in xs[inf:sup]
 }
 
--- Implicit kd-tree.
+-- min/max kd-tree -based index.
+-- (essentially holds only the last level of the kd-tree as an array)
 module kd_index (V : vector) (N : numeric)
 : spatial_index with t = N.t with vector 'a = V.vector a = {
 	type t = N.t
@@ -187,19 +190,27 @@ module kd_index (V : vector) (N : numeric)
 				let new_pids = pts'
 					|> zip old_pids
 					|> map (\(pid,x) -> if ((V.get curDim x) `lt` median_vals[pid]) then 2*pid else 2*pid+1)
-				let new_minVals = hist (min) highest (2**(j+1)) new_pids (pts' |> map (V.get curDim))
+				let new_minVals = hist (min) highest (2*(length part_sizes)) new_pids (pts' |> map (V.get curDim))
 				let new_part_mins = indices part_mins |> expand (\_ -> 2)
 					(\i ind -> V.set curDim new_minVals[2*i + ind] part_mins[i])
-				let new_maxVals = hist (max) lowest  (2**(j+1)) new_pids (pts' |> map (V.get curDim))
+				let new_maxVals = hist (max) lowest  (2*(length part_sizes)) new_pids (pts' |> map (V.get curDim))
 				let new_part_maxs = indices part_maxs |> expand (\_ -> 2)
 					(\i ind -> V.set curDim new_maxVals[2*i + ind] part_maxs[i])
-				let new_part_sizes = hist (+) 0 (2**(j+1))
+				let new_part_sizes = hist (+) 0 (2*(length part_sizes))
 					new_pids
 					(replicate n 1)
 			in (pts', new_pids, new_part_mins, new_part_maxs, new_part_sizes)
+		-- filter out empty partitions
 		let np = length fmins
-		let fparts = zip (fmins |> sized np) (fmaxs |> sized np)
-		in (fxs, fparts, fsizes |> exscan (+) 0)
+		let (fmins', fmaxs', fsizes') = zip3
+			(fmins |> sized np)
+			(fmaxs |> sized np)
+			(fsizes |> sized np)
+			|> filter (\(_,_,sz) -> sz>0)
+			|> unzip3
+		let np' = length fmins'
+		let fparts = zip (fmins' |> sized np') (fmaxs' |> sized np')
+		in (fxs, fparts, fsizes' |> exscan (+) 0)
 
 	def get_adj_partitions partitions eps pid =
 		let (this_mins, this_maxs) = partitions[pid]
