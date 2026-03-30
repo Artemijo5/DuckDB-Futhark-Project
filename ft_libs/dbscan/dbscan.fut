@@ -242,25 +242,25 @@ module ft_dbscan
 			let (neigh, n_is) = mk_neighbourhood_graph_iterative
 				extPar eps core_pts
 			let ndn = length neigh
-			let segment_flags = scatter (replicate n false) n_is (replicate n true)
+			let segment_flags = scatter (replicate ndn false) n_is (replicate n true)
 			-- Use adjacency list to identify connected subgraphs
 			-- pivot used is the smallest-index member of each subgraph
-			let chs : [n]i64 =
-				-- Iterate over neigh
-				-- assign each neigh to its smallest neighbour
-				-- until convergence
-				let (_,itered_neighlist) : ([ndn]i64, [ndn]i64) =
+			--
+			-- Iterate over neigh
+			-- assign each neigh to its smallest neighbour
+			-- until convergence
+			let (_,itered_neighlist) : ([ndn]i64, [ndn]i64) =
 				loop (old_list,new_list) = (replicate ndn (-1), neigh :> [ndn]i64)
-				while any (id) (map2 (\alt neu -> alt != neu) old_list new_list) do
+				while any (id) (map2 (!=) old_list new_list) do
 					let current_min_neighbours = segmented_reduce
 						(\n1 n2 -> if n1<n2 then n1 else n2) (i64.highest)
 						segment_flags new_list
 					let newer_list = new_list
 						|> map (\i -> current_min_neighbours[i])
 					in (new_list, newer_list)
-				in segmented_reduce (\n1 n2 -> if n1<n2 then n1 else n2) (i64.highest)
-					segment_flags (itered_neighlist :> [ndn]i64)
-					|> sized n
+			let chs = segmented_reduce (\n1 n2 -> if n1<n2 then n1 else n2) (i64.highest)
+				segment_flags (itered_neighlist :> [ndn]i64)
+				|> sized n
 			in chs
 
 
@@ -286,8 +286,8 @@ module ft_dbscan
 				|> exscan (+) 0
 			let local_cids_unoffset = chs
 				|> map (\hi -> ch_ids_[hi])
-			let num_cids = (i64.maximum local_cids) + 1
-			let local_cids : [n]i64 = local_cids_unoffset
+			let num_cids = (i64.maximum local_cids_unoffset) + 1
+			let local_cids : [nc]i64 = local_cids_unoffset
 				|> map (\i -> i + chain_offs)
 			-- 3. Collide with pre-cids
 			let cols_withMult = pre_cids |> zip local_cids_unoffset
@@ -302,7 +302,7 @@ module ft_dbscan
 				|> filter (.1)
 				|> map (.0)
 			let rectified_cids = local_cids
-				|> bsearch_last (>=) (<) (replicate nc 0) cols_distinct
+				|> bsearch_last (>=) (<) (replicate nc 0) (cols_distinct |> map (.0))
 				|> zip local_cids
 				|> map (\(loc,ri) -> if ri<0 || cols_distinct[ri].0 != loc
 					then loc else cols_distinct[ri].1
@@ -310,18 +310,23 @@ module ft_dbscan
 			let cids_part = rectified_cids[0:np] |> sized np
 			let cids_buff = rectified_cids[np:nc] |> sized nf
 			-- 4. save collisions between pre-cids
-			let cols_prev = cols_distinct
-				|> filter (\(loc,_) -> loc<chain_offs)
+			let cols_prev_withMult = cols_withMult
+				|> map (\(loc,pre) -> (rectified_cids[loc],pre))
+				|> filter (\(loc,pre) -> loc<chain_offs && loc!=pre)
+				|> map (\(loc,pre) -> (pre,loc))
+				|> unzip
+				|> (\(loc,pre) -> bucket_sort 2 chain_offs loc pre)
+				|> (\(loc,pre) -> zip loc pre)
+			let cols_prev = cols_prev_withMult
+				|> group_boundaries (\(loc1,_) (loc2,_) -> loc1!=loc2)
+				|> zip cols_prev_withMult
+				|> filter (.1)
+				|> map (.0)
+			-- Return
 			in (cids_part, cids_buff, cols_prev)
 
-
-
-
-
-
-
-
 		-- assign chain ids
+
 
 		-- rectify collisions
 
