@@ -22,8 +22,14 @@ module ft_dbscan
 
 	-- Auxilliary Types & Values
 
+		def leq = (F.<=)
+		def lt  = (F.<)
+
 		def lowest = F.lowest
 		def highest = F.highest
+
+		def zero = F.i32 0
+		def minus_one = F.i32 (-1)
 
 		type~ dbc_partition = {
 			minmax : (vector t, vector t),
@@ -142,7 +148,6 @@ module ft_dbscan
 			(state : dbc_state [part_no])
 			(buffer : dbc_buffer)
 		: (dbc_state [part_no], dbc_partition, dbc_buffer, dbc_buffer) =
-			-- TODO handle case of last partition (next_pid==part_no)
 			let next_pid = next_partition state
 			in if (next_pid<0 || next_pid>=part_no)
 				then postfinal_read_next_partition (length pts) state buffer
@@ -273,6 +278,10 @@ module ft_dbscan
 			(buff_cids : [nf]i64)
 		-- returns cids + chain collisions
 		: ([np]i64, [nf]i64, [](i64,i64)) =
+			-- If eps<0, just assign all 0 cid
+			if (eps `lt` zero)
+				then (replicate np 0, replicate nf 0, [])
+				else
 			-- 0. put into same list
 			let nc = np+nf
 			let pts = part_cpts ++ buff_cpts |> sized nc
@@ -327,13 +336,110 @@ module ft_dbscan
 
 		-- assign chain ids
 
+		def assign_chain_ids [n] [nc]
+			(eps : t)
+			(pts : [n](vector t))
+			(pre_cids : [n]i64)
+			(core_pts : [nc](vector t))
+			(core_cids : [nc]i64)
+		: [n]i64 = pts
+			|> map (D.find_closest_within eps core_pts)
+			|> map2 (\alt i -> if i>=nc || i<0 then alt else core_cids[i])
+				pre_cids
 
-		-- rectify collisions
+	-- process a partition
+
+		def process_partition_dbscan [part_no]
+			(part : dbc_partition)
+			(state: dbc_state [part_no])
+			(buffs: dbc_buffer)
+			(chain_cols : [](i64,i64))
+			(eps : t)
+			(minPts : i64)
+		-- returns updated part, state, buffs, and chain_cols
+		: (dbc_partition, dbc_state [part_no], dbc_buffer, [](i64,i64)) =
+			let eps2 = times2 eps
+			let n = length part.pts
+			-- 1. Get the frontier from buffered pts
+			-- Separate into tight & loose frontier
+			let (tf_info, lf_info) = zip4 buffs.pts buffs.isCore buffs.chain_id (indices buffs.pts)
+				|> filter (\(pt,_,_,_) -> (D.dist_from_partition part.minmax pt) `leq` eps2)
+				|> partition (\(pt,_,_,_) -> (D.dist_from_partition part.minmax pt) `leq` eps)
+			-- 1+. Also separate marginal points
+			let (margin_info, internal_info) = zip4
+				(part.pts |> sized n)
+				(part.isMargin |> sized n)
+				(part.isTightMargin |> sized n)
+				(iota n)
+			|> partition (.1)
+			|> (\(mgs,ins) -> (
+				mgs |> map (\(pt,_,isTM,i) -> (pt,isTM,i)),
+				ins |> map (\(pt,_,_,i) -> (pt,i))
+			))
+			let (tm_info, lm_info) = margin_info
+				|> partition (.1)
+				|> (\(tms,lms) -> (
+					tms |> map (\(pt,_,i)->(pt,i)),
+					lms |> map (\(pt,_,i)->(pt,i))
+				))
+			-- separate pts
+			let internal_pts = internal_info |> map (.0)
+			let lm_pts = lm_info |> map (.0)
+			let tm_pts = tm_info |> map (.0)
+			let tf_pts = tf_info |> map (.0)
+			let lf_pts = lf_info |> map (.0)
+			-- 2. Get core points from different areas
+			-- i. From Internal Points
+			let internal_nc1 = internal_pts |> map (num_neighbours_in eps internal_pts)
+			let internal_nc2 = internal_pts |> map (num_neighbours_in eps lm_pts)
+			let internal_nc = map2 (+) internal_nc1 internal_nc2
+			let internal_isCore = internal_nc |> map (\nc -> nc>=minPts)
+			let internal_core_pts = zip internal_pts internal_isCore
+				|> filter (.1) |> map (.0)
+			-- ii. From Loose Margin
+			let lm_nc1 = lm_pts |> map (num_neighbours_in eps internal_pts)
+			let lm_nc2 = lm_pts |> map (num_neighbours_in eps lm_pts)
+			let lm_nc3 = lm_pts |> map (num_neighbours_in eps tm_pts)
+			let lm_nc = map3 (\nc1 nc2 nc3 -> nc1+nc2+nc3) lm_nc1 lm_nc2 lm_nc3
+			let lm_isCore = lm_nc |> map (\nc -> nc>=minPts)
+			let lm_core_pts = zip lm_pts lm_isCore
+				|> filter (.1) |> map (.0)
+			-- iii. From Tight Margin
+			let tm_nc1 = tm_pts |> map (num_neighbours_in eps lm_pts)
+			let tm_nc2 = tm_pts |> map (num_neighbours_in eps tm_pts)
+			let tm_nc3 = tm_pts |> map (num_neighbours_in eps tf_pts)
+			let tm_nc = map3 (\nc1 nc2 nc3 -> nc1+nc2+nc3) tm_nc1 tm_nc2 tm_nc3
+			let tm_isCore = tm_nc |> map (\nc -> nc>=minPts)
+			let tm_core_pts = zip tm_pts tm_isCore
+				|> filter (.1) |> map (.0)
+			-- iv. From Tight Frontier
+			let tf_nc1 = tf_pts |> map (num_neighbours_in eps tm_pts)
+			let tf_nc2 = tf_pts |> map (num_neighbours_in eps tf_pts)
+			let tf_nc3 = tf_pts |> map (num_neighbours_in eps lf_pts)
+			let tf_nc = map3 (\nc1 nc2 nc3 -> nc1+nc2+nc3) tf_nc1 tf_nc2 tf_nc3
+			let tf_isCore = tf_nc |> map (\nc -> nc>=minPts)
+			let (tf_core_pts, tf_core_precids) = zip3 tf_pts tf_isCore (tf_info |> map (.2))
+				|> filter (.1) |> map (\(pt,_,precid) -> (pt,precid)) |> unzip
+			-- v. From Loose Frontier
+			let lf_isCore = lf_info |> map (.1)
+			let (lf_core_pts, lf_core_precids) = zip3 lf_pts lf_isCore (lf_info |> map (.2))
+				|> filter (.1) |> map (\(pt,_,precid) -> (pt,precid)) |> unzip
+			-- 3. Find chain id's for those pts
+			
+
+			-- 4. Assign chain id's to partition's own points
+
+			-- 4+. Update chain id's for frontier points
+
+			-- 5. Update & return
+		-- TODO
+			in (part, state, buffs, chain_cols)
 
 
-	-- dbscan processing
-
+	-- rectify collisions
 
 		
 
 }
+-- TODO remember to always keep pts within 2eps of any relevant partition
+-- for literal corner case (...)

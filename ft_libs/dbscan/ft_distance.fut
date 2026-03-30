@@ -12,9 +12,9 @@ module type distance = {
 
 	-- find closest to a certain point, also within a distance eps
 	-- if distance is set to negative, ignored
-	val find_closest_within [n] : t -> vector t -> [n](vector t) -> i64
+	val find_closest_within [n] : t -> [n](vector t) -> vector t -> i64
 	
-	val dist_fromPartition : (vector t, vector t) -> vector t -> t
+	val dist_from_partition : (vector t, vector t) -> vector t -> t
 
 	-- Ignore partition with pid
 	val get_adj_partitions [np] [n]
@@ -62,28 +62,28 @@ module euclidean_d
 	def check_neighbourhood eps pt1 pt2 =
 		(dist_squared pt1 pt2) `leq` (eps `times` eps)
 
-	def find_closest_within eps pt pts = pts
+	def find_closest_within eps pts pt = pts
 		|> map (\pt' ->
 			let d = dist_squared pt pt'
 			in if (eps `lt` zero) || (d `leq` (eps `times` eps))
 				then d else highest
 		) |> argmin (lt) (eq) highest
 
-	local def dist_squared_fromPartition (part : (vector t, vector t)) pt =
+	local def dist_squared_from_partition (part : (vector t, vector t)) pt =
 		iota V.length |> seqmap zero (\i ->
 			min (max (V.get i pt) (V.get i part.0))
 				(V.get i part.1)
 		) |> V.from_array
 		|> dist_squared pt
 
-	def dist_fromPartition (part : (vector t, vector t)) pt =
-		pt |> dist_squared_fromPartition part |> sqrt
+	def dist_from_partition (part : (vector t, vector t)) pt =
+		pt |> dist_squared_from_partition part |> sqrt
 
 	-- Confirmed cuda compilation works
 	def get_adj_partitions partitions eps pid pts =
 		indices partitions |> filter (\i ->
 			i!=pid && leq
-				(pts |> map (dist_squared_fromPartition partitions[i])
+				(pts |> map (dist_squared_from_partition partitions[i])
 					|> minimum)
 				(eps `times` eps)
 		)
@@ -91,7 +91,7 @@ module euclidean_d
 	def get_num_adj_partitions partitions eps pid pt =
 		indices partitions |> countFor (\i ->
 			i!=pid && leq
-				(dist_squared_fromPartition partitions[i] pt)
+				(dist_squared_from_partition partitions[i] pt)
 				(eps `times` eps)
 		)
 
