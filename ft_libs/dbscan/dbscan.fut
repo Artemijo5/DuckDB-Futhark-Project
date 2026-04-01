@@ -145,6 +145,7 @@ module ft_dbscan
 			in (next_state, next_part, next_buffer, flushed)
 
 		def read_next_partition [part_no]
+			(starting_offs : i64)
 			(parts_minmax : [part_no](vector t, vector t))
 			(parts_is : [part_no]i64)
 			(pts : [](vector t))
@@ -162,7 +163,7 @@ module ft_dbscan
 			let next_part : dbc_partition = {
 				minmax = parts_minmax[next_pid],
 				pts = next_pts,
-				is = indices pts |> map (\i -> i + parts_is[next_pid]),
+				is = indices pts |> map (\i -> i + parts_is[next_pid] + starting_offs),
 				isCore = replicate n false, -- this gets assigned later
 				isMargin = isM,
 				isTightMargin = isTM,
@@ -510,8 +511,8 @@ module ft_dbscan
 		-- Append all of the points in the partition to the buffer.
 		-- Non-frontier points will be flushed when the next partition is read.
 		def flush_part_pts
-			(part : dbc_partition)
 			(buff : dbc_buffer)
+			(part : dbc_partition)
 		: dbc_buffer = {
 			pts = buff.pts ++ part.pts,
 			is  = buff.is  ++ part.is,
@@ -527,8 +528,7 @@ module ft_dbscan
 		: [chain_offs]i64 =
 			-- Use histogram to perform BFS on collisions graph
 			-- so as to identify connected subgraphs
-			let cols_graph = chain_cols |> map (.1)
-			let cols_his = chain_cols |> map (.0)
+			let (cols_his, cols_graph) = chain_cols |> unzip
 			let cols_graph_iter = let (_,converged) =
 				loop (old_list,new_list) = (cols_graph |> map (\_ -> (-1)), cols_graph)
 				while any (id) (map2 (!=) old_list new_list) do
@@ -544,12 +544,49 @@ module ft_dbscan
 				cols_his cols_graph_iter
 			in cc_pivots
 
-		def rectify_chain_ids [n] (rect_list : []i64) (cur_ids : [n]i64)
+		def rectify_cids [n] (rect_list : []i64) (cur_ids : [n]i64)
 		: [n]i64 = cur_ids |> map (\i -> rect_list[i])
 
 
-	-- TODO pipeline, dbscan* & category separation (...)
-			
-		
+	-- dbscan pipeline
+
+		-- TODO interpreter doesn't like loop sized (...) why?
+		-- 1 way to solve would be to keep both buffered & flushed chain_id, isCore in n-sized array (...)
+		-- would require care to ensure only already read pts are going there
+		-- ... might require to rewrite previous funcs to follow this logic as well...
+		def internal_dbscan [part_no] [n]
+			(starting_offs : i64)
+			(extPar : i64)
+			(eps : t)
+			(minPts : i64)
+			(partitions : [part_no](vector t, vector t))
+			(part_is : [part_no]i64)
+			(pts : [n](vector t))
+		: dbc_buffer =
+			let state0 = init_dbc_state part_no
+			let buffers0 = init_dbc_buffer
+			let flushed0 = init_dbc_buffer
+			let (_,_,final_flushed) = loop (state,buff,flushed) = (state0,buffers0,flushed0)
+			for j < (part_no+1) do
+				let (this_state, this_part, this_buff, this_flushed)
+					= read_next_partition starting_offs partitions part_is pts eps state buff
+				let (upd_part, upd_state, upd_buff_, upd_ccs) = process_partition_dbscan
+					extPar this_part this_state this_buff [] eps minPts
+				let upd_buff = upd_part |> flush_part_pts upd_buff_
+				-- rectify chain collisions
+				let rect_tbl = mk_rectification_list (upd_state.cid_offs) upd_ccs
+				let next_buff = upd_buff
+					with chain_id = (copy upd_buff.chain_id) |> rectify_cids rect_tbl
+				let next_flushed = this_flushed
+					with chain_id = (copy this_flushed.chain_id) |> rectify_cids rect_tbl
+				let next_state = upd_state
+					with cid_offs = 1 + (i64.max
+						(i64.maximum next_buff.chain_id)
+						(i64.maximum next_flushed.chain_id)
+					)
+				in (next_state, next_buff, next_flushed)
+			in final_flushed
+
+
 
 }
