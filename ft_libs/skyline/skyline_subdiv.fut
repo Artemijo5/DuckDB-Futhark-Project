@@ -7,6 +7,8 @@ import "skyline_base"
 --
 -- For high-dimensional data, should probably avoid using a lot of subdivisions.
 -- As this will cause the sequential loop used to increase exponentially.
+--
+-- Based on traditional MR-Grid.
 module skyline_grid
 	(V : vector)
 	(N : numeric)
@@ -60,6 +62,9 @@ module skyline_grid
 		let subdiv_prefix = subdiv_per_dim |> V.to_array
 			|> exscan (*) 1 |> V.from_array
 		let part_no = subdiv_per_dim |> V.reduce (*) 1
+		in if part_no == 1
+			then pts2 |> skyline.filter_against pts1
+			else
 		let n1 = length pts1
 		let n2 = length pts2
 		let gstep = minmax |> get_grid_step subdiv_per_dim
@@ -87,6 +92,9 @@ module skyline_grid
 		let subdiv_prefix = subdiv_per_dim |> V.to_array
 			|> exscan (*) 1 |> V.from_array
 		let part_no = subdiv_per_dim |> V.reduce (*) 1
+		in if part_no == 1
+			then pts |> skyline.filter_self
+			else
 		let n = length pts
 		let gstep = minmax |> get_grid_step subdiv_per_dim
 		let grid = pts |> mk_grid subdiv_per_dim gstep minmax
@@ -96,12 +104,16 @@ module skyline_grid
 			let cur_pts1 = pts |> sized n
 				|> zip (grid |> sized n)
 				|> filter (\(gid,_) -> V.map2 (<=) gid cur_gid |> V.reduce (&&) true)
+				-- keep the same subdivision out
+				|> filter (\(gid,_) -> V.map2 (!=) gid cur_gid |> V.reduce (||) false)
 				|> map (.1)
 			let cur_pts2 = pts |> sized n
 				|> zip (grid |> sized n)
 				|> filter (\(gid,_) -> V.map2 (==) gid cur_gid |> V.reduce (&&) true)
 				|> map (.1)
-			in ret ++ (cur_pts2 |> skyline.filter_against cur_pts1)
+			let cur_pts2' = cur_pts2 |> skyline.filter_self
+				|> skyline.filter_against cur_pts1
+			in ret ++ cur_pts2'
 
 	-- | Merge 2 skyData by filtering against each other, using grid subdivisions.
 	def merge
@@ -117,6 +129,8 @@ module skyline_grid
 
 -- | Module for numeric skyline utilising angular subdivisions.
 -- This allows for cheap pre-filtering by pivot points.
+--
+-- Based on traditional MR-Angle.
 module skyline_angle
 	(V : vector)
 	(F : real)
@@ -151,6 +165,7 @@ module skyline_angle
 			|> V.reduce (plus) zero
 
 	-- | Obtain spherical coordinates (without radius) from cartesian.
+	-- This only returns the angular phi coordinates, radius is ignored.
 	def cartesian_to_spherical (pivot : tup) (pt : tup) : [V.length-1]t =
 		iota (V.length-1) |> seqmap zero (\d ->
 				let this_x = minus (V.get d pt) (V.get d pivot) |> abs
@@ -181,6 +196,7 @@ module skyline_angle
 		let pt' = pt |> cartesian_to_spherical pivot
 		let perDim = map2 (over) pt' (subdiv |> map (from_i64))
 		in perDim |> map (to_i64)
+			|> map2 (i64.min) (map (\s -> s-1) subdiv) -- truncate to subdiv
 			|> map2 (*) angle_prefix
 			|> reduce (+) 0
 
