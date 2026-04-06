@@ -22,6 +22,11 @@ module skyline_pipeline
 	module grid  = skyline_grid V F S
 	module angle = skyline_angle V F S
 
+	-- | Function that internally implements the combined skyline logic.
+	-- This logic can also be followed for external pipelining.
+	-- External pipelining would also allow for:
+	-- 1. arbitrary levels of accumulators
+	-- 2. arbitrary windowing
 	def do_skyline
 		(skip_local : bool)
 		(skip_multi : bool)
@@ -76,9 +81,115 @@ module skyline_pipeline
 		in skyDat
 }
 
-module vector_2 = cat_vector vector_1 vector_1
+type~ skyBuffer [d] 't = {
+	len : i64,
+	dat : [d][]t,
+	is  : []i64
+}
 
-module skyline2_f64 = skyline_pipeline vector_2 f64 (mk_skyline_minwise vector_2 f64)
+type~ skyBuffer_f32 [d] = skyBuffer [d] f32
+type~ skyBuffer_f64 [d] = skyBuffer [d] f64
 
-entry do_skyline2_f64 = skyline2_f64.do_skyline
+-- | Module providing array-based entry points for skyline_pipeline.
+module skyline_entry
+	(V : vector)
+	(F : real)
+	(S : skyline_base with t = F.t with tup = V.vector F.t)
+= {
+	type vector 'a = V.vector a
+	type t = F.t
+	type tup = vector t
+
+	module skyline = skyline_pipeline V F S
+
+	local def buffer_to_vectors [d] (buff : skyBuffer [d] t)
+	: skyData tup =
+		let as_vecs = buff.dat |> transpose
+			|> map (sized V.length) |> map (V.from_array)
+		in zip
+			(as_vecs |> sized buff.len)
+			(buff.is |> sized buff.len)
+
+	local def buffer_from_vectors (pts : skyData tup)
+	: skyBuffer [V.length] t =
+		let len = length pts
+		let (vecs,is) = pts |> unzip
+		let dat = vecs |> map (V.to_array) |> transpose
+		in {len=len,dat=dat,is=is}
+
+	def do_skyline [d]
+		(skip_local : bool)
+		(skip_multi : bool)
+		(use_many_local : bool)
+		(use_many_multi : bool)
+		(angle_subdiv : [d-1]i64)
+		(multi_subdiv_min : i64)
+		(multi_subdiv_max : i64)
+		(multi_subdiv_step : i64)
+		(multi_size_thresh : i64)
+		(grid_subdiv : [d]i64)
+		(window_size : i64)
+		(pts : skyBuffer [d] t)
+	: skyBuffer [d] t = pts
+		|> buffer_to_vectors
+		|> skyline.do_skyline skip_local skip_multi use_many_local use_many_multi
+			(angle_subdiv |> sized (V.length-1))
+			multi_subdiv_min multi_subdiv_max multi_subdiv_step multi_size_thresh
+			(grid_subdiv |> sized V.length) window_size
+		|> buffer_from_vectors :> skyBuffer [d] t
+}
+
+import "../vector_cols"
+
+-- Entry points
+
+module array_cols_f32 = array_cols_numeric f32
+entry init_cols_f32 = array_cols_f32.init_cols
+entry crop_cols_f32 = array_cols_f32.crop_cols
+entry write_col_f32 = array_cols_f32.write_col
+entry read_col_f32 = array_cols_f32.read_col
+
+module array_cols_f64 = array_cols_numeric f64
+entry init_cols_f64 = array_cols_f64.init_cols
+entry crop_cols_f64 = array_cols_f64.crop_cols
+entry write_col_f64 = array_cols_f64.write_col
+entry read_col_f64 = array_cols_f64.read_col
+
+module skyline2_f64_min = skyline_entry vector_2 f64 (mk_skyline_minwise vector_2 f64)
+module skyline3_f64_min = skyline_entry vector_3 f64 (mk_skyline_minwise vector_3 f64)
+module skyline4_f64_min = skyline_entry vector_4 f64 (mk_skyline_minwise vector_4 f64)
+module skyline5_f64_min = skyline_entry vector_5 f64 (mk_skyline_minwise vector_5 f64)
+module skyline6_f64_min = skyline_entry vector_6 f64 (mk_skyline_minwise vector_6 f64)
+module skyline7_f64_min = skyline_entry vector_7 f64 (mk_skyline_minwise vector_7 f64)
+module skyline8_f64_min = skyline_entry vector_8 f64 (mk_skyline_minwise vector_8 f64)
+module skyline9_f64_min = skyline_entry vector_9 f64 (mk_skyline_minwise vector_9 f64)
+module skyline10_f64_min = skyline_entry vector_10 f64 (mk_skyline_minwise vector_10 f64)
+module skyline11_f64_min = skyline_entry vector_11 f64 (mk_skyline_minwise vector_11 f64)
+module skyline12_f64_min = skyline_entry vector_12 f64 (mk_skyline_minwise vector_12 f64)
+
+module skyline2_f64_max = skyline_entry vector_2 f64 (mk_skyline_maxwise vector_2 f64)
+module skyline3_f64_max = skyline_entry vector_3 f64 (mk_skyline_maxwise vector_3 f64)
+module skyline4_f64_max = skyline_entry vector_4 f64 (mk_skyline_maxwise vector_4 f64)
+module skyline5_f64_max = skyline_entry vector_5 f64 (mk_skyline_maxwise vector_5 f64)
+module skyline6_f64_max = skyline_entry vector_6 f64 (mk_skyline_maxwise vector_6 f64)
+module skyline7_f64_max = skyline_entry vector_7 f64 (mk_skyline_maxwise vector_7 f64)
+module skyline8_f64_max = skyline_entry vector_8 f64 (mk_skyline_maxwise vector_8 f64)
+module skyline9_f64_max = skyline_entry vector_9 f64 (mk_skyline_maxwise vector_9 f64)
+module skyline10_f64_max = skyline_entry vector_10 f64 (mk_skyline_maxwise vector_10 f64)
+module skyline11_f64_max = skyline_entry vector_11 f64 (mk_skyline_maxwise vector_11 f64)
+module skyline12_f64_max = skyline_entry vector_12 f64 (mk_skyline_maxwise vector_12 f64)
+
+entry do_skyline2_f64_min : bool -> bool -> bool -> bool -> [2-1]i64
+	-> i64 -> i64 -> i64 -> i64 -> [2]i64 -> i64 -> skyBuffer_f64 [2]
+	-> skyBuffer_f64 [2] = skyline2_f64_min.do_skyline
+entry do_skyline3_f64_min : bool -> bool -> bool -> bool -> [3-1]i64
+	-> i64 -> i64 -> i64 -> i64 -> [3]i64 -> i64 -> skyBuffer_f64 [3]
+	-> skyBuffer_f64 [3] = skyline3_f64_min.do_skyline
+
+entry do_skyline2_f64_max : bool -> bool -> bool -> bool -> [2-1]i64
+	-> i64 -> i64 -> i64 -> i64 -> [2]i64 -> i64 -> skyBuffer_f64 [2]
+	-> skyBuffer_f64 [2] = skyline2_f64_max.do_skyline
+entry do_skyline3_f64_max : bool -> bool -> bool -> bool -> [3-1]i64
+	-> i64 -> i64 -> i64 -> i64 -> [3]i64 -> i64 -> skyBuffer_f64 [3]
+	-> skyBuffer_f64 [3] = skyline3_f64_max.do_skyline
 

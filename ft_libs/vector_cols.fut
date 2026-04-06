@@ -115,3 +115,45 @@ module vcs9  = vec_cols vector_9
 module vcs10 = vec_cols vector_10
 module vcs11 = vec_cols vector_11
 module vcs12 = vec_cols vector_12
+
+-- | Module type for making array-based columns.
+module type array_cols = {
+	type t
+
+	val init_cols : i64 -> i64 -> [][]t
+
+	val write_col [d] [n] [w] : i64 -> i64 -> *[d][n]t -> [w]t -> [d][n]t
+
+	val read_col [d] [n] : i64 -> i64 -> i64 -> [d][n]t -> []t
+
+	val set_col [d] [n] : i64 -> *[d][n]t -> [n]t -> [d][n]t
+
+	val get_col [d] [n] : i64 -> [d][n]t -> [n]t
+
+	val crop_cols [d] [n] : i64 -> i64 -> *[d][n]t -> [d][]t
+}
+
+module array_cols_numeric (N : numeric) : array_cols with t = N.t = {
+	type t = N.t
+
+	local def zero = N.i32 0
+
+	def init_cols n d = replicate d (replicate n zero)
+
+	def write_col [d] [n] (dim:i64) offs (cols : *[d][n]t) col =
+		cols with [dim,offs:offs+(length col)] = col
+
+	def read_col (dim:i64) offs limt cols =
+		let inf = i64.min (length cols) offs
+		let sup = i64.min (inf+limt) (length cols)
+		in cols[dim,inf:sup]
+
+	def set_col [d] [n] (dim:i64) (cols : *[d][n]t) col = cols with [dim] = col
+
+	def get_col (dim:i64) cols = cols[dim]
+
+	def crop_cols [d] [n] offs limt (cols : *[d][n]t) =
+		let inf = i64.min (length cols) offs
+		let sup = i64.min (inf+limt) (length cols)
+		in cols[:,inf:sup]
+}
