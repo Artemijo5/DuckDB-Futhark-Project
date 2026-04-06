@@ -255,7 +255,8 @@ module skyline_angle
 		let angle_ids = pts |> mk_angle subdiv angle_prefix minmax.0
 		let closests = pts |> get_closests minmax angle_ids
 		let pts' = pts |> skyline.filter_against (closests |> map (\i -> pts[i]))
-		let bests = if use_many_pts then pts' |> get_bests minmax angle_ids
+		let angle_ids' = pts' |> mk_angle subdiv angle_prefix minmax.0
+		let bests = if use_many_pts then pts' |> get_bests minmax angle_ids'
 			else []
 		in pts' |> skyline.filter_against (bests |> map (\i -> pts'[i]))
 
