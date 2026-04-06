@@ -51,34 +51,41 @@ module skyline_pipeline
 				multi_size_thresh
 		let n = length pts_loc'
 		let num_iter = (n + window_size - 1) / window_size
-		let (skyDat,_,_,_) = loop (acc0,acc1,acc2,acc3)
-		: (skyData tup, skyData tup, skyData tup, skyData tup) = ([],[],[],[])
-		for j<num_iter do
+		-- TODO test without accumulators...
+		in loop skyDat : skyData tup = [] for j<num_iter do
 			let inf = j*window_size
 			let sup = i64.min (inf + window_size) n
-			let dat = pts_loc'[inf:sup]
+			let cur_dat = pts_loc'[inf:sup]
 				|> grid.filter_self g_subdiv minmax
-			-- merge with 1st accumulator
-			let acc3' = grid.merge g_subdiv minmax acc3 dat
-			-- merge with 2nd accumulator if the 1st has exceeded it
-			let transf32 = (length acc3')>=(length acc2) || (j==num_iter-1)
-			let acc2' = if !transf32 then acc2
-				else grid.merge g_subdiv minmax acc2 acc3'
-			-- merge with 3rd accumulator if the 2nd has exceeded it
-			let transf21 = (length acc2')>=(length acc1) || (j==num_iter-1)
-			let acc1' = if !transf21 then acc1
-				else grid.merge g_subdiv minmax acc1 acc2'
-			-- merge with final accumulator if the 3rd has exceeded it
-			let transf10 = (length acc1')>=(length acc0) || (j==num_iter-1)
-			let acc0' = if !transf10 then acc0
-				else grid.merge g_subdiv minmax acc0 acc1'
-			in (
-				acc0',
-				if !transf10 then acc1' else [],
-				if !transf21 then acc2' else [],
-				if !transf32 then acc3' else []
-			)
-		in skyDat
+			in grid.merge g_subdiv minmax skyDat cur_dat
+--		let (skyDat,_,_,_) = loop (acc0,acc1,acc2,acc3)
+--		: (skyData tup, skyData tup, skyData tup, skyData tup) = ([],[],[],[])
+--		for j<num_iter do
+--			let inf = j*window_size
+--			let sup = i64.min (inf + window_size) n
+--			let dat = pts_loc'[inf:sup]
+--				|> grid.filter_self g_subdiv minmax
+--			-- merge with 1st accumulator
+--			let acc3' = grid.merge g_subdiv minmax acc3 dat
+--			-- merge with 2nd accumulator if the 1st has exceeded it
+--			let transf32 = (length acc3')>=(length acc2) || (j==num_iter-1)
+--			let acc2' = if !transf32 then acc2
+--				else grid.merge g_subdiv minmax acc2 acc3'
+--			-- merge with 3rd accumulator if the 2nd has exceeded it
+--			let transf21 = (length acc2')>=(length acc1) || (j==num_iter-1)
+--			let acc1' = if !transf21 then acc1
+--				else grid.merge g_subdiv minmax acc1 acc2'
+--			-- merge with final accumulator if the 3rd has exceeded it
+--			let transf10 = (length acc1')>=(length acc0) || (j==num_iter-1)
+--			let acc0' = if !transf10 then acc0
+--				else grid.merge g_subdiv minmax acc0 acc1'
+--			in (
+--				acc0',
+--				if !transf10 then acc1' else [],
+--				if !transf21 then acc2' else [],
+--				if !transf32 then acc3' else []
+--			)
+--		in skyDat
 }
 
 type~ skyBuffer [d] 't = {
