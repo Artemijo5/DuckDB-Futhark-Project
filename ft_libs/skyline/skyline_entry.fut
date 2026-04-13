@@ -8,7 +8,7 @@ import "skyline_subdiv"
 -- 1. angular subdivisions to cheaply filter points.
 -- 2. count-based windowing for divide-and-conquer.
 -- 3. grid-based subdivisions to avoid unnecessary comparisons.
--- 4. accumulation to eliminate points before they'd be compared with the entire dataset.
+-- Externally, can use accumulation to avoid even more unecessary comparisons.
 module skyline_pipeline
 	(V : vector)
 	(F : real)
@@ -25,7 +25,6 @@ module skyline_pipeline
 	-- | Function that internally implements the combined skyline logic.
 	-- This logic can also be followed for external pipelining.
 	-- External pipelining would also allow for:
-	-- 1. arbitrary levels of accumulators
 	-- 2. arbitrary windowing
 	def do_skyline
 		(skip_local : bool)
@@ -51,41 +50,41 @@ module skyline_pipeline
 				multi_size_thresh
 		let n = length pts_loc'
 		let num_iter = (n + window_size - 1) / window_size
-		-- TODO test without accumulators...
 		in loop skyDat : skyData tup = [] for j<num_iter do
 			let inf = j*window_size
 			let sup = i64.min (inf + window_size) n
 			let cur_dat = pts_loc'[inf:sup]
 				|> grid.filter_self g_subdiv minmax
 			in grid.merge g_subdiv minmax skyDat cur_dat
---		let (skyDat,_,_,_) = loop (acc0,acc1,acc2,acc3)
---		: (skyData tup, skyData tup, skyData tup, skyData tup) = ([],[],[],[])
---		for j<num_iter do
---			let inf = j*window_size
---			let sup = i64.min (inf + window_size) n
---			let dat = pts_loc'[inf:sup]
---				|> grid.filter_self g_subdiv minmax
---			-- merge with 1st accumulator
---			let acc3' = grid.merge g_subdiv minmax acc3 dat
---			-- merge with 2nd accumulator if the 1st has exceeded it
---			let transf32 = (length acc3')>=(length acc2) || (j==num_iter-1)
---			let acc2' = if !transf32 then acc2
---				else grid.merge g_subdiv minmax acc2 acc3'
---			-- merge with 3rd accumulator if the 2nd has exceeded it
---			let transf21 = (length acc2')>=(length acc1) || (j==num_iter-1)
---			let acc1' = if !transf21 then acc1
---				else grid.merge g_subdiv minmax acc1 acc2'
---			-- merge with final accumulator if the 3rd has exceeded it
---			let transf10 = (length acc1')>=(length acc0) || (j==num_iter-1)
---			let acc0' = if !transf10 then acc0
---				else grid.merge g_subdiv minmax acc0 acc1'
---			in (
---				acc0',
---				if !transf10 then acc1' else [],
---				if !transf21 then acc2' else [],
---				if !transf32 then acc3' else []
---			)
---		in skyDat
+-- Following leads to memory allocation errors...
+	--		let (skyDat,_,_,_) = loop (acc0,acc1,acc2,acc3)
+	--		: (skyData tup, skyData tup, skyData tup, skyData tup) = ([],[],[],[])
+	--		for j<num_iter do
+	--			let inf = j*window_size
+	--			let sup = i64.min (inf + window_size) n
+	--			let dat = pts_loc'[inf:sup]
+	--				|> grid.filter_self g_subdiv minmax
+	--			-- merge with 1st accumulator
+	--			let acc3' = grid.merge g_subdiv minmax acc3 dat
+	--			-- merge with 2nd accumulator if the 1st has exceeded it
+	--			let transf32 = (length acc3')>=(length acc2) || (j==num_iter-1)
+	--			let acc2' = if !transf32 then acc2
+	--				else grid.merge g_subdiv minmax acc2 acc3'
+	--			-- merge with 3rd accumulator if the 2nd has exceeded it
+	--			let transf21 = (length acc2')>=(length acc1) || (j==num_iter-1)
+	--			let acc1' = if !transf21 then acc1
+	--				else grid.merge g_subdiv minmax acc1 acc2'
+	--			-- merge with final accumulator if the 3rd has exceeded it
+	--			let transf10 = (length acc1')>=(length acc0) || (j==num_iter-1)
+	--			let acc0' = if !transf10 then acc0
+	--				else grid.merge g_subdiv minmax acc0 acc1'
+	--			in (
+	--				acc0',
+	--				if !transf10 then acc1' else [],
+	--				if !transf21 then acc2' else [],
+	--				if !transf32 then acc3' else []
+	--			)
+	--		in skyDat
 }
 
 type~ skyBuffer [d] 't = {
@@ -185,6 +184,15 @@ module skyline9_f64_max = skyline_entry vector_9 f64 (mk_skyline_maxwise vector_
 module skyline10_f64_max = skyline_entry vector_10 f64 (mk_skyline_maxwise vector_10 f64)
 module skyline11_f64_max = skyline_entry vector_11 f64 (mk_skyline_maxwise vector_11 f64)
 module skyline12_f64_max = skyline_entry vector_12 f64 (mk_skyline_maxwise vector_12 f64)
+
+-- | Entry point to merge 2 skyBuffers.
+-- This does no eliminations: will have to apply filtering function afterwards.
+entry merge_skyBuffers_f64 [d] (skB1 : skyBuffer_f64 [d]) (skB2 : skyBuffer_f64 [d])
+: skyBuffer_f64 [d] = {
+	len = skB1.len +  skB2.len,
+	dat = skB1.dat ++ skB2.dat,
+	is  = skB1.is  ++ skB2.is
+}
 
 entry do_skyline2_f64_min : bool -> bool -> bool -> bool -> [2-1]i64
 	-> i64 -> i64 -> i64 -> i64 -> [2]i64 -> i64 -> skyBuffer_f64 [2]

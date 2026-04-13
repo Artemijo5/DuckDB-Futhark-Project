@@ -210,14 +210,23 @@
 	: [n]t =
 		let ij_bits = j-i+1
 		let up_to = (1 << ij_bits) |> i64.i32
+		-- isolate the radix for each x
 		let rs = xs
 			|> map (get_radix i j get_bit)
+			-- needs to be i64 for histogram
+			-- TODO maybe keeping u8 and doing reduce would be somewhat faster?
 			|> map (i64.u8)
 		let counts = hist (+) 0 up_to rs (replicate n 1)
 		let offs = exscan (+) 0 counts
 		let idxs = loop js = (iota n) for num < up_to do
+			-- flag elements with this radix
+			-- guanzhong = 'audience'
 			let guanzhong = rs
 				|> map (\r -> r==num)
+			-- get the relative positions of elements with this radix
+			-- with a prefix sum
+			-- this + the radix's offset gives the index for the final scattering
+			-- zuowei = 'seats'
 			let zuowei = guanzhong
 				|> map (i64.bool)
 				|> exscan (+) 0
@@ -279,3 +288,85 @@
 	-- iy : the respective index in y
 	-- NOTE - unlike type joinTup, each tuple here corresponds to an individual match.
 	type~ joinPairs 't = {vs: []t, ix: []i64, iy: []i64}
+
+-- Alternative Binary Search
+
+	-- | Alternative Implementation for bsearch_first.
+	-- Loop inside map rather than map inside loop.
+	-- This allows threads to terminate individually,
+	-- but may not be synchronised as well.
+	def bsearch_first_alt [nvs] [n] 't
+		(eq : t -> t -> bool)
+		(gt : t -> t -> bool)
+		(init_is : [nvs]i64)
+		(xs : [n]t)
+		(vs : [nvs]t)
+	: [nvs]i64 = vs |> map2 (\i v ->
+		let (i_at,_) = loop (search_at, last_step) = (i,n)
+		while (search_at>=0 && search_at<n &&
+			!( (v `eq` xs[search_at]) && ( search_at==0 || (v `gt` xs[search_at-1]) ) )
+		) do
+			-- check for kv==cv && cv>pv is done in loop conditions
+			-- so inside loop assume that isn't the case
+			let this_step = (last_step+1)/2 in
+			if (v `gt` xs[search_at]) then
+				if search_at==(n-1)
+				then (-1,0)
+				else (i64.min (n-1) (search_at + this_step), this_step)
+			else
+				if (search_at==0 || (v `gt` xs[search_at-1]))
+				then (-1,0)
+				else (i64.max 0 (search_at - this_step), this_step)
+		in i_at
+	) init_is
+
+	-- | Alternative Implementation for bsearch_last.
+	-- Loop inside map rather than map inside loop.
+	-- This allows threads to terminate individually,
+	-- but may not be synchronised as well.
+	def bsearch_last_alt [nvs] [n] 't
+		(geq: t -> t -> bool)
+		(lt : t -> t -> bool)
+		(init_is : [nvs]i64)
+		(xs : [n]t)
+		(vs : [nvs]t)
+	: [nvs]i64 = vs |> map2 (\i v ->
+		let (i_at,_) = loop (search_at, last_step) = (i,n)
+		while (search_at>=0 && search_at<n &&
+			!( (v `geq` xs[search_at]) && ( search_at==(n-1) || (v `lt` xs[search_at+1]) ) )
+		) do
+			-- check for kv>=cv && kv<nv is done in loop conditions
+			-- so inside loop assume that isn't the case
+			let this_step = (last_step+1)/2 in
+			if (v `lt` xs[search_at]) then
+				(i64.max 0 (search_at-this_step), this_step)
+			else
+				(i64.min (n-1) (search_at+this_step), this_step)
+		in i_at
+	) init_is
+
+	-- | Alternative Implementation for bsearch_bulk.
+	-- Loop inside map rather than map inside loop.
+	-- This allows threads to terminate individually,
+	-- but may not be synchronised as well.
+	def bsearch_range_alt [nvs] [n] 't
+		(eq : t -> t -> bool)
+		(geq: t -> t -> bool)
+		(gt : t -> t -> bool)
+		(lt : t -> t -> bool)
+		(init_is : [nvs]i64)
+		(xs : [n]t)
+		(vs : [nvs]t)
+	: [nvs](i64,i64) =
+		-- Find the first match
+		let diyige = bsearch_first_alt
+			(eq) (gt) init_is xs vs
+		-- Find the last match
+		let zuihoude = bsearch_last_alt
+			(geq) (lt) diyige xs vs
+		-- Calculate the counts
+		let duome = map2
+			(\fm lm -> if fm<0 then 0 else lm-fm+1)
+			diyige
+			zuihoude
+		in zip diyige duome
