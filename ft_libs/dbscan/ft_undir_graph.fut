@@ -27,10 +27,9 @@ def get_connected_subgraph_ids_unencoded
 		let mins_from_maxs = maxs |> map (\i -> new_mins[i])
 		let pivots_from_maxs = reduce_by_index (copy new_mins)
 			(i64.min) i64.highest mins mins_from_maxs
-		let pivots_from_mins = reduce_by_index (copy new_mins)
+		let pivots_from_mins = reduce_by_index pivots_from_maxs
 			(i64.min) i64.highest maxs mins_from_mins
-		let pivots = map2 (i64.min) pivots_from_mins pivots_from_maxs
-		in (new_mins, pivots)
+		in (new_mins, pivots_from_mins)
 	in g_ids
 
 import "../ftbasics"
