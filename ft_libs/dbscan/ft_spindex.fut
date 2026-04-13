@@ -3,10 +3,10 @@ import "../lib/github.com/athas/vector/vector"
 import "../lib/github.com/diku-dk/sorts/merge_sort"
 import "../lib/github.com/diku-dk/segmented/segmented"
 
--- Implementation of basic spatial index structures.
+-- Implementation of basic (min/max) spatial index structures.
 -- 1. Uniform Grid Partitioning
--- 2. Implicit kd-Tree
--- The indices subdivide space into regular rectangles with sides parallel to the axes.
+-- 2. Array Index based on kd-Tree
+-- The indices subdivide space into min/max rectangles.
 -- Equivalently, partitions are defined by min & max values for all their dimensions.
 
 -- | Abstract module type to implement spatial index structures.
