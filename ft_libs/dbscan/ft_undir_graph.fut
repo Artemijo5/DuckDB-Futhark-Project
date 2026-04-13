@@ -18,13 +18,17 @@ def get_connected_subgraph_ids_unencoded
 	-- In each iteration, node k asks itself & its neihbours
 	-- for the minimum-indexed node they currently 'see',
 	-- until convergence.
-	-- Worst case O(N), if the entire graph is a line with connections in monotonous order.
+	-- Worst case O(k) span, O(k^2) work,
+	-- if the entire graph is a line with the nodes 0 & (k-1) at opposite ends.
+	-- In general, span = O(length of the largest shortest min-to-max path in any connected subgraph).
 	loop (old_mins, new_mins) = (replicate k (-1), iota k)
 	while (any (id) (map2 (!=) old_mins new_mins)) do
 		let mins_from_mins = mins |> map (\i -> new_mins[i])
 		let mins_from_maxs = maxs |> map (\i -> new_mins[i])
-		let pivots_from_maxs = hist (i64.min) (i64.highest) k mins mins_from_maxs
-		let pivots_from_mins = hist (i64.min) (i64.highest) k maxs mins_from_mins
+		let pivots_from_maxs = reduce_by_index (copy new_mins)
+			(i64.min) i64.highest mins mins_from_maxs
+		let pivots_from_mins = reduce_by_index (copy new_mins)
+			(i64.min) i64.highest maxs mins_from_mins
 		let pivots = map2 (i64.min) pivots_from_mins pivots_from_maxs
 		in (new_mins, pivots)
 	in g_ids

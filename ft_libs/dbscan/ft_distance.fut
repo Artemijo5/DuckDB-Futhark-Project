@@ -169,7 +169,7 @@ module euclidean_d
 	-- pts2 are all pts 'after' (with indices greater than) that window
 	-- OR pts1 == pts2
 	-- return pts1 index left, pts2 index right
-	-- left index <= right index (self-neighbourood is also returned)
+	-- left index < right index
 	local def do_get_neigh_pairs [n1] [n2]
 		(eps : t)
 		(pts1  : [n1](vector t))
@@ -184,7 +184,7 @@ module euclidean_d
 					then (offs1+i1,offs2+i2)
 					else (-1,-1)
 			)
-		) |> flatten |> filter (\(i1,i2) -> i1>=0 && i1<=i2)
+		) |> flatten |> filter (\(i1,i2) -> i1>=0 && i1<i2)
 
 	def get_neighbour_pairs extPar eps pts =
 		let num_iter = ((length pts) + extPar - 1) / extPar
