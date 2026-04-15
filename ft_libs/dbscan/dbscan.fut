@@ -230,16 +230,16 @@ module ft_dbscan
 			(old_cids : [n]i64)
 			(new_cids : [n]i64)
 		: ([](i64,i64), []i64) =
-			let old_offs = old_cids  |> i64.maximum
-			let new_offs = new_cids  |> i64.maximum
+			let old_offs = 1 + (old_cids |> i64.maximum |> i64.max (-1))
+			let new_offs = 1 + (new_cids |> i64.maximum |> i64.max (-1))
 			let (old_cids', new_cids') = zip old_cids new_cids
-				|> filter (\(alt,_) -> alt >= 0) |> unzip
+				|> filter (\(alt,neu) -> alt >= 0 && neu >= 0) |> unzip
 			let connections = get_connected_subgraph_ids_unencoded
 				new_offs
 				(zip old_cids' new_cids')
-			let rectified_new_cids = new_cids |> map (\i -> connections[i])
-			let old_ccs = iota (old_offs + 1)
-				|> zip connections[0 : old_offs + 1]
+			let rectified_new_cids = new_cids |> map (\i -> if i<0 then i else connections[i])
+			let old_ccs = iota (old_offs)
+				|> zip connections[0 : old_offs]
 				|> filter (\(precid,rect_with) -> precid != rect_with)
 			in (old_ccs, rectified_new_cids)
 
@@ -444,7 +444,7 @@ module ft_dbscan
 				rectify_to
 
 		def rectify_cids [n] (rect_list : []i64) (cur_ids : [n]i64)
-		: [n]i64 = cur_ids |> map (\i -> rect_list[i])
+		: [n]i64 = cur_ids |> map (\i -> if i<0 then i else rect_list[i])
 
 		def buffer_part_pts [part_no] [pts_no]
 			(part  : dbc_partition)
