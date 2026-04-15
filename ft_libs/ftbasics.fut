@@ -373,3 +373,22 @@
 			diyige
 			zuihoude
 		in zip diyige duome
+
+-- This *might* be worthwhile checking?
+-- but can only be used for narrow i64 sorts...
+
+import "lib/github.com/diku-dk/segmented/segmented"
+
+	-- | Sort an array of i64 integers using the hist operator.
+	def hist_sort [n]
+		(xs : [n]i64)
+	: [n]i64 =
+		let min_val = i64.minimum xs
+		let xs' = xs |> map (\x -> x - min_val)
+		let k = 1 + (i64.maximum xs')
+		in hist (+) 0 k xs' (replicate n 1)
+			|> zip (iota k)
+			|> expand (.1) (\(v,_) _ -> v)
+			|> sized n
+			|> map (\v -> v + min_val)
+		

@@ -6,10 +6,11 @@ import "../lib/github.com/diku-dk/segmented/segmented"
 -- Implementation of basic (min/max) spatial index structures.
 -- 1. Uniform Grid Partitioning
 -- 2. Array Index based on kd-Tree
--- The indices subdivide space into min/max rectangles.
--- Equivalently, partitions are defined by min & max values for all their dimensions.
+-- The indices subdivide space into non-overlapping min/max rectangles.
+-- Partitions are defined by min & max values for each dimension.
 
 -- | Abstract module type to implement spatial index structures.
+-- Partitions are represented by min/max points.
 module type spatial_index = {
 	type t
 	type vector 'a
@@ -27,8 +28,8 @@ module type spatial_index = {
 	-- Returns the indices of all adjacent partitions (not including itself).
 	val get_adj_partitions [np] : [np](vector t, vector t) -> t -> i64 -> []i64
 
-	-- | Obtain all points of a selected partition.
-	val fetch_partition [np] [n] : [np]i64 -> [n](vector t) -> i64 -> [](vector t)
+	-- | Obtain the indices of all points of a selected partition.
+	val fetch_partition [np] [n] : [np]i64 -> [n](vector t) -> i64 -> []i64
 }
 
 -- Regular grid subdivisions.
@@ -127,7 +128,7 @@ module grid_index (V : vector) (N : numeric)
 	def fetch_partition partIs xs i =
 		let inf = partIs[i]
 		let sup = if i==(length partIs)-1 then (length xs) else partIs[i+1]
-		in xs[inf:sup]
+		in (inf..<sup)
 }
 
 -- min/max kd-tree -based index.
@@ -231,7 +232,7 @@ module kd_index (V : vector) (N : numeric)
 	def fetch_partition partIs xs i =
 		let inf = partIs[i]
 		let sup = if i==(length partIs)-1 then (length xs) else partIs[i+1]
-		in xs[inf:sup]
+		in (inf..<sup)
 }
 
 -- Don't subdivide space.
@@ -279,8 +280,6 @@ module non_index (V : vector) (N : numeric)
 			|> filter (.1)
 			|> map (.0)
 
-	def fetch_partition partIs xs i =
-		let inf = partIs[i]
-		let sup = if i==(length partIs)-1 then (length xs) else partIs[i+1]
-		in xs[inf:sup]
+	def fetch_partition _ xs _ =
+		indices xs
 }

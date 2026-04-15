@@ -3,6 +3,7 @@ import "../lib/github.com/athas/vector/vector"
 import "../lib/github.com/diku-dk/segmented/segmented"
 import "ft_spindex"
 import "ft_distance"
+import "ft_undir_graph"
 
 type~ flushed_t [dim] 't = {
 	n : i64,
@@ -32,6 +33,7 @@ module ft_dbscan
 		def zero = F.i32 0
 		def minus_one = F.i32 (-1)
 
+		-- | Holds information about the partition currently being processed.
 		type~ dbc_partition = {
 			minmax : (vector t, vector t),
 			pts : [](vector t),
@@ -42,6 +44,7 @@ module ft_dbscan
 			chain_id : []i64
 		}
 
+		-- | Holds information about the algorithm's progress across partitions.
 		type~ dbc_state [part_no] = {
 			cur_part_id : i64,
 			num_visited : i64,
@@ -52,11 +55,12 @@ module ft_dbscan
 			cid_offs : i64
 		}
 
-		type~ dbc_buffer = {
-			pts : [](vector t),
-			is : []i64,
-			isCore : []bool,
-			chain_id : []i64
+		-- | Holds the information for each point.
+		type~ dbc_buffer [n] = {
+			is_pt_buffered : [n]bool,
+			is_pt_flushed  : [n]bool,
+			is_core  : [n]bool,
+			chain_id : [n]i64
 		}
 
 		-- chain collisions are kept as [](i64, i64)
@@ -69,8 +73,6 @@ module ft_dbscan
 
 		def times2 : t -> t = (F.*) (F.i32 2)
 
-		def init_dbc_buffer : dbc_buffer = {pts=[],is=[],isCore=[],chain_id=[]}
-
 		def init_dbc_state (part_no : i64) : dbc_state [part_no] = {
 			cur_part_id = -1,
 			num_visited = 0,
@@ -79,6 +81,13 @@ module ft_dbscan
 			offs = 0,
 			next_offs = 0,
 			cid_offs = 0
+		}
+
+		def init_dbc_buffer (pts_no : i64) : dbc_buffer [pts_no] = {
+			is_pt_buffered = replicate pts_no false,
+			is_pt_flushed  = replicate pts_no false,
+			is_core  = replicate pts_no false,
+			chain_id = replicate pts_no (-1)
 		}
 
 	-- Read next partition
@@ -91,6 +100,8 @@ module ft_dbscan
 				|> argmin (\iv1 iv2 -> iv2 && !iv1) (==) (true)
 
 		-- get margins & tight margins
+		-- assuming non-overlapping partitions, margins are within eps, 2eps, of partition ends
+		-- otherwise, we would have to see if they are near another partition
 		def mark_margins [n]
 			(part_minmax : (vector t, vector t))
 			(eps : t)
@@ -112,22 +123,32 @@ module ft_dbscan
 			(cur_pts : [](vector t))
 			(state : dbc_state [part_no])
 		: []i64 =
-			let cur_i_neighs = cur_pts
-				|> D.get_adj_partitions parts_minmax eps cur_i
-				|> filter (\i -> i!=cur_i && (state.relevant_parts |> all (!= i)))
+			-- Find partitions in the epsilon neighbourhood of the current partition
+			let cur_i_neighs = cur_i
+				|> D.get_adj_partitions parts_minmax eps
+			-- Isolate relevant neighbours
+			-- by filtering those that actually have a point of the current partition within eps
+			-- (can pass only tight margins here since we assume no overlapping partitions)
+			let relevant_neighs = cur_i_neighs
+				|> map (\i -> parts_minmax[i])
+				|> (\n_parts -> cur_pts
+					|> D.get_adj_partitions_withPts n_parts eps (-1)
+				)
+				|> map (\i -> cur_i_neighs[i])
+				-- if partition already relevant, ignore it to avoid multiplicity
+				|> filter (\i -> state.relevant_parts |> all (!= i))
 			let old_rels = state.relevant_parts
 				|> filter (\i -> i!=cur_i)
-			in old_rels ++ cur_i_neighs
+			in old_rels ++ relevant_neighs
 
-		def postfinal_read_next_partition [part_no]
-			(total_num_pts : i64)
+		def postfinal_read_next_partition [part_no] [n]
 			(state : dbc_state [part_no])
-			(buffer: dbc_buffer)
-		: (dbc_state [part_no], dbc_partition, dbc_buffer, dbc_buffer) =
+			(buff  : dbc_buffer [n])
+		: (dbc_state [part_no], dbc_partition, dbc_buffer [n]) =
 			let next_state = state
 				with cur_part_id = (-1)
 				with relevant_parts = []
-				with offs = total_num_pts
+				with offs = n
 				with next_offs = (-1)
 			let next_part = {
 				minmax = (V.replicate highest, V.replicate lowest),
@@ -138,40 +159,40 @@ module ft_dbscan
 				isTightMargin = [],
 				chain_id = []
 			}
-			let next_buffer : dbc_buffer = {
-				pts = [], is = [], isCore = [], chain_id = []
-			}
-			let flushed = buffer
-			in (next_state, next_part, next_buffer, flushed)
+			let next_buff = buff
+				with is_pt_buffered = replicate n false
+				with is_pt_flushed  = replicate n true
+			in (next_state, next_part, next_buff)
 
-		def read_next_partition [part_no]
-			(starting_offs : i64)
+		def read_next_partition [part_no] [pts_no]
 			(parts_minmax : [part_no](vector t, vector t))
 			(parts_is : [part_no]i64)
-			(pts : [](vector t))
+			(pts : [pts_no](vector t))
 			(eps : t)
-			(state : dbc_state [part_no])
-			(buffer : dbc_buffer)
-		: (dbc_state [part_no], dbc_partition, dbc_buffer, dbc_buffer) =
+			(state  : dbc_state [part_no])
+			(buffer : *dbc_buffer [pts_no])
+		: (dbc_state [part_no], dbc_partition, dbc_buffer [pts_no]) =
 			let next_pid = next_partition state
 			in if (next_pid<0 || next_pid>=part_no)
-				then postfinal_read_next_partition (length pts) state buffer
+				then postfinal_read_next_partition state buffer
 				else
-			let next_pts = I.fetch_partition parts_is pts next_pid
+			let next_is = I.fetch_partition parts_is pts next_pid
+			let next_pts = next_is |> map (\i -> pts[i])
 			let n = length next_pts
 			let (isM, isTM) = next_pts |> mark_margins parts_minmax[next_pid] eps
 			let next_part : dbc_partition = {
 				minmax = parts_minmax[next_pid],
 				pts = next_pts,
-				is = indices pts |> map (\i -> i + parts_is[next_pid] + starting_offs),
+				is = next_is,
 				isCore = replicate n false, -- this gets assigned later
 				isMargin = isM,
 				isTightMargin = isTM,
 				chain_id = replicate n (-1)
 			}
 			-- only use marginal points to find next relevant parts
-			let margin_pts = next_pts |> zip isTM
+			let margin_pis = indices next_pts |> zip isTM
 				|> filter (.0) |> map (.1)
+			let margin_pts = margin_pis |> map (\i -> next_pts[i])
 			let new_relevants = state
 				|> next_relevant_partitions parts_minmax eps next_pid margin_pts
 			let next_state : dbc_state [part_no] = {
@@ -183,29 +204,7 @@ module ft_dbscan
 				next_offs = state.next_offs + n,
 				cid_offs = state.cid_offs
 			}
-			-- update buffer
-			-- only keep points that are close to some relevant partition
-			let eps2 = times2 eps
-			let (buff_pts, flush_pts) =
-				zip4 buffer.pts buffer.is buffer.isCore buffer.chain_id
-				|> partition (\(pt,_,_,_) -> 
-					let rel_parts = new_relevants |> map (\i -> parts_minmax[i])
-					let count_close = pt |> D.get_num_adj_partitions rel_parts eps2 (-1)
-					in count_close>0
-				)
-			let next_buffer : dbc_buffer = {
-				pts = buff_pts |> map (.0),
-				is = buff_pts |> map (.1),
-				isCore = buff_pts |> map (.2),
-				chain_id = buff_pts |> map (.3)
-			}
-			let flushed_pts : dbc_buffer = {
-				pts = flush_pts |> map (.0),
-				is = flush_pts |> map (.1),
-				isCore = flush_pts |> map (.2),
-				chain_id = buff_pts |> map (.3)
-			}
-			in (next_state, next_part, next_buffer, flushed_pts)
+			in (next_state, next_part, buffer)
 
 	-- dbscan steps
 
@@ -214,68 +213,35 @@ module ft_dbscan
 		def num_neighbours_in (eps : t) (pts : [](vector t)) (pt : vector t) : i64 =
 			pts |> countFor (D.check_neighbourhood eps pt)
 
-		-- Implicit neighbourhood graph via contiguous array
-		-- neighbours of the same pts1 point in pts2 are grouped together
-		-- a second list hold the first index matching to each pts1 entry
-		-- NOTE: this allocates quadratic space, even if the final graph is small
-		-- to prevent this from crashing, need to ensure #points is capped 
-		def mk_neighbourhood_graph [n1] (eps : t) (pts1 : [n1](vector t)) (pts2 : [](vector t))
-		: ([]i64, [n1]i64) =
-			let neighs = pts1 |> map (\pt -> pts2
-				|> map (D.check_neighbourhood eps pt)
-				|> zip (indices pts2)
-			) |> flatten |> filter (.1) |> map (.0)
-			let is = pts1 |> map (num_neighbours_in eps pts2)
-				|> exscan (+) 0
-			in (neighs, is)
-
-		def mk_neighbourhood_graph_iterative [n]
-			(extPar : i64)
-			(eps : t)
-			(core_pts : [n](vector t))
-		: ([]i64, [n]i64) =
-			let num_iter = (n + extPar - 1) / extPar
-			let (neigh, neigh_is) : ([]i64, []i64)
-			= loop (ns, nis) = ([],[]) for j < num_iter do
-				let inf = j*extPar
-				let sup = i64.min n (inf+extPar)
-				let this_pts = core_pts[inf:sup]
-				let (this_ns, this_nis) = mk_neighbourhood_graph
-					eps this_pts core_pts
-				in (ns ++ this_ns, nis ++ (this_nis |> map (\i -> i+(length ns))))
-			in (neigh, neigh_is :> [n]i64)
-
 		-- find chains
 
-		def find_chains_compact [n]
+		def find_chains [n]
 			(extPar : i64)
 			(eps : t)
 			(core_pts : [n](vector t))
-		: [n]i64 =
-			let (neigh, n_is) = mk_neighbourhood_graph_iterative
-				extPar eps core_pts
-			let ndn = length neigh
-			let segment_flags = scatter (replicate ndn false) n_is (replicate n true)
-			-- Use adjacency list to identify connected subgraphs
-			-- pivot used is the smallest-index member of each subgraph
-			--
-			-- Iterate over neigh
-			-- assign each neigh to its smallest neighbour
-			-- until convergence
-			let (_,itered_neighlist) : ([ndn]i64, [ndn]i64) =
-				loop (old_list,new_list) = (replicate ndn (-1), neigh :> [ndn]i64)
-				while any (id) (map2 (!=) old_list new_list) do
-					let current_min_neighbours = segmented_reduce
-						(\n1 n2 -> i64.min n1 n2) (i64.highest)
-						segment_flags new_list
-					let newer_list = new_list
-						|> map (\i -> current_min_neighbours[i])
-					in (new_list, newer_list)
-			let chs = segmented_reduce (\n1 n2 -> i64.min n1 n2) (i64.highest)
-				segment_flags (itered_neighlist :> [ndn]i64)
-				|> sized n
-			in chs
+		: [n]i64 = core_pts
+			|> D.get_neighbour_pairs extPar eps
+			|> get_connected_subgraph_ids n
 
+		-- Returns
+		-- 1. collisions between precids themselves (these are rectified later)
+		-- 2. rectified new cids, based on the precids they collided with
+		def mark_chain_collisions [n]
+			(old_cids : [n]i64)
+			(new_cids : [n]i64)
+		: ([](i64,i64), []i64) =
+			let old_offs = old_cids  |> i64.maximum
+			let new_offs = new_cids  |> i64.maximum
+			let (old_cids', new_cids') = zip old_cids new_cids
+				|> filter (\(alt,_) -> alt >= 0) |> unzip
+			let connections = get_connected_subgraph_ids_unencoded
+				new_offs
+				(zip old_cids' new_cids')
+			let rectified_new_cids = new_cids |> map (\i -> connections[i])
+			let old_ccs = iota (old_offs + 1)
+				|> zip connections[0 : old_offs + 1]
+				|> filter (\(precid,rect_with) -> precid != rect_with)
+			in (old_ccs, rectified_new_cids)
 
 		def connect_chains [np] [nf]
 			(extPar : i64)
@@ -294,52 +260,15 @@ module ft_dbscan
 			let nc = np+nf
 			let pts = part_cpts ++ buff_cpts |> sized nc
 			let pre_cids = (replicate np (-1)) ++ buff_cids |> sized nc
-			-- 1. find cluster heads, ignoring pre_cids for now
-			let chs : [nc]i64 = find_chains_compact extPar eps pts
-			-- 2. Dictionary Encoding
-			let ch_ids_ = chs |> zip (indices chs)
-				|> map (\(ch,i) -> ch==i)
-				|> map (i64.bool)
-				|> exscan (+) 0
-			let local_cids_unoffset = chs
-				|> map (\hi -> ch_ids_[hi])
-			let num_cids = (i64.maximum local_cids_unoffset) + 1
-			let local_cids : [nc]i64 = local_cids_unoffset
-				|> map (\i -> i + chain_offs)
-			-- 3. Collide with pre-cids
-			let cols_withMult = pre_cids |> zip local_cids_unoffset
-				|> filter (\(_,pre_cid) -> pre_cid>=0)
-				|> unzip
-				|> (\(loc,pre) -> bucket_sort 2 num_cids pre loc)
-				|> (\(pre,loc) -> bucket_sort 2 num_cids loc pre)
-				|> (\(loc,pre) -> zip loc pre)
-				|> map (\(loc,pre) -> (loc + chain_offs, pre))
-			let cols_distinct = cols_withMult
-				|> group_boundaries (\(loc1,_) (loc2,_) -> loc1!=loc2)
-				|> zip cols_withMult
-				|> filter (.1)
-				|> map (.0)
-			let rectified_cids = local_cids
-				|> bsearch_last (>=) (<) (replicate nc 0) (cols_distinct |> map (.0))
-				|> zip local_cids
-				|> map (\(loc,ri) -> if ri<0 || cols_distinct[ri].0 != loc
-					then loc else cols_distinct[ri].1
-				)
-			let cids_part = rectified_cids[0:np] |> sized np
-			let cids_buff = rectified_cids[np:nc] |> sized nf
-			-- 4. save collisions between pre-cids
-			let cols_prev_mult = cols_withMult
-				|> map (\(loc,pre) -> (rectified_cids[loc],pre))
-				|> filter (\(loc,pre) -> loc<chain_offs && loc!=pre)
-			let cols_prev = cols_prev_mult
-				|> group_boundaries (\(l1,p1) (l2,p2) -> l1!=l2 || p1!=p2)
-				|> zip cols_prev_mult |> filter (.1) |> map (.0)
-				-- TODO this might be necessary to ensure both collided chains see each other
-				|> expand (\_ -> 2)
-					(\(loc,pre) ind -> if ind==0 then (loc,pre) else (pre,loc))
-			--	|> map (\(loc,pre) -> (pre,loc)) -- rectified goes 2nd
-			-- Return
-			in (cids_part, cids_buff, cols_prev)
+			-- 1. find cluster ids, ignoring pre_cids for now
+			-- these are returned dictionary-encoded
+			let cids : [nc]i64 = find_chains extPar eps pts
+				|> map (\cid -> cid + chain_offs)
+			-- 2. Rectify cids based on collisions with pre-cids
+			-- and record collisions among pre-cids
+			let (old_ccs, rectified_cids) = mark_chain_collisions pre_cids cids
+			-- 3. Separate cids by pt category and return
+			in (rectified_cids[0:np], rectified_cids[np:nc] |> sized nf, old_ccs)
 
 		-- assign chain ids
 
@@ -356,46 +285,42 @@ module ft_dbscan
 
 	-- process a partition
 
-		def process_partition_dbscan [part_no]
+		def process_partition_dbscan [part_no] [pts_no]
 			(extPar : i64)
-			(part : dbc_partition)
-			(state: dbc_state [part_no])
-			(buffs: dbc_buffer)
-			(chain_cols : [](i64,i64))
+			(part  : dbc_partition)
+			(state : dbc_state  [part_no])
+			(buff  : dbc_buffer [pts_no])
+			(all_pts : [pts_no](vector t))
 			(eps : t)
 			(minPts : i64)
-		-- returns updated part, state, buffs, and chain_cols
-		: (dbc_partition, dbc_state [part_no], dbc_buffer, [](i64,i64)) =
+		-- returns updated part, state, buff, chain collisions
+		: (dbc_partition, dbc_state [part_no], dbc_buffer [pts_no], [](i64,i64)) =
 				let eps2 = times2 eps
 				let n = length part.pts
 			-- 1. Get the frontier from buffered pts
 			-- Separate into tight & loose frontier
-				let (tf_info, lf_info) = zip4 buffs.pts buffs.isCore buffs.chain_id (indices buffs.pts)
-					|> filter (\(pt,_,_,_) -> (D.dist_from_partition part.minmax pt) `leq` eps2)
-					|> partition (\(pt,_,_,_) -> (D.dist_from_partition part.minmax pt) `leq` eps)
-				-- 1+. Also separate marginal points
-				let (margin_info, internal_info) = zip4
-					(part.pts |> sized n)
-					(part.isMargin |> sized n)
-					(part.isTightMargin |> sized n)
-					(iota n)
-				|> partition (.1)
-				|> (\(mgs,ins) -> (
-					mgs |> map (\(pt,_,isTM,i) -> (pt,isTM,i)),
-					ins |> map (\(pt,_,_,i) -> (pt,i))
-				))
-				let (tm_info, lm_info) = margin_info
-					|> partition (.1)
-					|> (\(tms,lms) -> (
-						tms |> map (\(pt,_,i)->(pt,i)),
-						lms |> map (\(pt,_,i)->(pt,i))
+				let (tf_is, lf_is) = indices all_pts
+					|> zip buff.is_pt_buffered
+					|> filter (.0)
+					|> filter (\(isBuffd,i) -> isBuffd && (
+						(D.dist_from_partition part.minmax all_pts[i])
+						`leq` eps2
 					))
-			-- separate pts
-				let internal_pts = internal_info |> map (.0)
-				let lm_pts = lm_info |> map (.0)
-				let tm_pts = tm_info |> map (.0)
-				let tf_pts = tf_info |> map (.0)
-				let lf_pts = lf_info |> map (.0)
+					|> map (.1)
+					|> partition (\i -> (D.dist_from_partition part.minmax all_pts[i]) `leq` eps)
+				-- 1+. Also separate internal & marginal points
+				-- furhter into tight & loose margins
+				let (internal_pis, tm_pis, lm_pis) = zip3 (indices part.pts) (part.isMargin) (part.isTightMargin)
+					|> partition2 (.1) (.2)
+					|> (\(in_stuffs, tm_stuffs, lm_stuffs) ->
+						(map (.0) in_stuffs, map (.0) tm_stuffs, map (.0) lm_stuffs)
+					)
+			-- gather pts
+				let internal_pts = internal_pis |> map (\i -> part.pts[i])
+				let lm_pts = lm_pis |> map (\i -> part.pts[i])
+				let tm_pts = tm_pis |> map (\i -> part.pts[i])
+				let tf_pts = tf_is  |> map (\i -> all_pts[i])
+				let lf_pts = lf_is  |> map (\i -> all_pts[i])
 			-- 2. Get core points from different areas
 			-- i. From Internal Points
 				let internal_nc1 = internal_pts |> map (num_neighbours_in eps internal_pts)
@@ -403,7 +328,7 @@ module ft_dbscan
 				let internal_nc = map2 (+) internal_nc1 internal_nc2
 				let internal_isCore = internal_nc |> map (\nc -> nc>=minPts)
 				let internal_core_pts = zip internal_pts internal_isCore
-				|> filter (.1) |> map (.0)
+					|> filter (.1) |> map (.0)
 			-- ii. From Loose Margin
 				let lm_nc1 = lm_pts |> map (num_neighbours_in eps internal_pts)
 				let lm_nc2 = lm_pts |> map (num_neighbours_in eps lm_pts)
@@ -411,7 +336,7 @@ module ft_dbscan
 				let lm_nc = map3 (\nc1 nc2 nc3 -> nc1+nc2+nc3) lm_nc1 lm_nc2 lm_nc3
 				let lm_isCore = lm_nc |> map (\nc -> nc>=minPts)
 				let lm_core_pts = zip lm_pts lm_isCore
-				|> filter (.1) |> map (.0)
+					|> filter (.1) |> map (.0)
 			-- iii. From Tight Margin
 				let tm_nc1 = tm_pts |> map (num_neighbours_in eps lm_pts)
 				let tm_nc2 = tm_pts |> map (num_neighbours_in eps tm_pts)
@@ -426,7 +351,7 @@ module ft_dbscan
 				let tf_nc3 = tf_pts |> map (num_neighbours_in eps lf_pts)
 				let tf_nc = map3 (\nc1 nc2 nc3 -> nc1+nc2+nc3) tf_nc1 tf_nc2 tf_nc3
 				let tf_isCore = tf_nc |> map (\nc -> nc>=minPts)
-				let (tf_core_pts, tf_core_precids) = zip3 tf_pts tf_isCore (tf_info |> map (.2))
+				let (tf_core_pts, tf_core_precids) = zip3 tf_pts tf_isCore (tf_is |> map (\i -> buff.chain_id[i]))
 					|> filter (.1) |> map (\(pt,_,precid) -> (pt,precid)) |> unzip
 			-- v. From Loose Frontier (only needed if numPts >= 4)
 			-- If numPts<=3, any core point in lf will have given its id to a tf, or be irrelevant
@@ -434,10 +359,10 @@ module ft_dbscan
 			-- but becomes core with this new partition, it might be needed to
 			-- bridge/collide their chains.
 				let lf_isCore =
-					let pre_isCore = lf_info |> map (.1)
+					let pre_isCore = lf_is |> map (\i -> buff.is_core[i])
 					in if minPts>=4 then pre_isCore
 						else pre_isCore |> map (\_ -> false)
-				let (lf_core_pts, lf_core_precids) = zip3 lf_pts lf_isCore (lf_info |> map (.2))
+				let (lf_core_pts, lf_core_precids) = zip3 lf_pts lf_isCore (lf_is |> map (\i -> buff.chain_id[i]))
 					|> filter (.1) |> map (\(pt,_,precid) -> (pt,precid)) |> unzip
 			-- connect partition core pts
 			-- first internal, then loose margin, then tight margin
@@ -481,72 +406,76 @@ module ft_dbscan
 			-- v. For loose frontier
 				let lf_cids = assign_chain_ids eps lf_pts (lf_pts |> map (\_ -> (-1)))
 					frontier_core_pts frontier_core_cids
-			-- 5. Update & return
+			-- 5. Update Partition
 				let new_part_cids =
-					let withInternals = scatter (replicate n (-1)) (internal_info |> map (.1)) internal_cids
-					let withLMs = scatter withInternals (lm_info |> map (.1)) lm_cids
-					let withTMs = scatter withLMs (tm_info |> map (.1)) tm_cids
+					let withInternals = scatter (replicate n (-1)) internal_pis internal_cids
+					let withLMs = scatter withInternals lm_pis lm_cids
+					let withTMs = scatter withLMs tm_pis tm_cids
 					in withTMs
 				let new_part_isCore =
-					let withInternals = scatter (replicate n false) (internal_info |> map (.1)) internal_isCore
-					let withLMs = scatter withInternals (lm_info |> map (.1)) lm_isCore
-					let withTMs = scatter withLMs (tm_info |> map (.1)) tm_isCore
+					let withInternals = scatter (replicate n false) internal_pis internal_isCore
+					let withLMs = scatter withInternals lm_pis lm_isCore
+					let withTMs = scatter withLMs tm_pis tm_isCore
 					in withTMs
-				let new_buff_isCore = scatter (copy buffs.isCore) (tf_info |> map (.3)) tf_isCore
+				let new_buff_isCore = scatter (copy buff.is_core) tf_is tf_isCore
 				let new_buff_cids =
-					let withTFs = scatter (copy buffs.chain_id) (tf_info |> map (.3)) tf_cids
-					let withLFs = scatter withTFs (lf_info |> map (.3)) lf_cids
+					let withTFs = scatter (copy buff.chain_id) tf_is tf_cids
+					let withLFs = scatter withTFs lf_is lf_cids
 					in withLFs
 				let new_part = (copy part)
 					with isCore = new_part_isCore
 					with chain_id = new_part_cids
-				let new_buff = (copy buffs)
-					with isCore = new_buff_isCore
+				let new_buff = (copy buff)
+					with is_core = new_buff_isCore
 					with chain_id = new_buff_cids
 				let new_state = (copy state)
 					with cid_offs = i64.max state.cid_offs
 						((i64.maximum (partition_core_cids ++ frontier_core_cids))+1)
-			in (new_part, new_state, new_buff, chain_cols ++ new_ccs)
-
-		-- Append all of the points in the partition to the buffer.
-		-- Non-frontier points will be flushed when the next partition is read.
-		def flush_part_pts
-			(buff : dbc_buffer)
-			(part : dbc_partition)
-		: dbc_buffer = {
-			pts = buff.pts ++ part.pts,
-			is  = buff.is  ++ part.is,
-			isCore = buff.isCore ++ part.isCore,
-			chain_id = buff.chain_id ++ part.chain_id
-		}
+			in (new_part, new_state, new_buff, new_ccs)
 
 	-- rectify collisions
 	-- these are meant to be done at the end
 
-		-- returns, for each current chain id, the pivot to replace it with
-		def mk_rectification_list (chain_offs : i64) (chain_cols : [](i64,i64))
+		def mk_rectification_list (chain_offs : i64) (ccs : [](i64,i64))
 		: [chain_offs]i64 =
-			-- Use histogram to perform BFS on collisions graph
-			-- so as to identify connected subgraphs
-			let (cols_his, cols_graph) = chain_cols |> unzip
-			let cols_graph_iter = let (_,converged) =
-				loop (old_list,new_list) = (cols_graph |> map (\_ -> (-1)), cols_graph)
-				while any (id) (map2 (!=) old_list new_list) do
-					let current_min_collisions = reduce_by_index (iota chain_offs)
-						(\c1 c2 -> i64.min c1 c2) i64.highest
-						cols_his new_list
-					let newer_list = new_list
-						|> map (\i -> current_min_collisions[i])
-					in (new_list, newer_list)
-				in converged
-			let cc_pivots = reduce_by_index (iota chain_offs)
-				(\c1 c2 -> i64.min c1 c2) i64.highest
-				cols_his cols_graph_iter
-			in cc_pivots
+			let (rectify_to, rectify_by) = ccs |> unzip
+			in reduce_by_index (iota chain_offs) (i64.min) i64.highest
+				rectify_by
+				rectify_to
 
 		def rectify_cids [n] (rect_list : []i64) (cur_ids : [n]i64)
 		: [n]i64 = cur_ids |> map (\i -> rect_list[i])
 
+		def buffer_part_pts [part_no] [pts_no]
+			(part  : dbc_partition)
+			(state : dbc_state [part_no])
+			(buff  : dbc_buffer [pts_no])
+			(chain_collisions : [](i64,i64))
+		: dbc_buffer [pts_no] =
+			-- only flush internal pts of partition
+			-- otherwise buffer them
+			let n = length part.is
+			let rect_list = mk_rectification_list state.cid_offs chain_collisions
+			let new_part_cids = part.chain_id |> rectify_cids rect_list
+			let new_buff_cids = (copy buff.chain_id) |> rectify_cids rect_list
+			let new_is_core = scatter (copy buff.is_core)
+				(part.is |> sized n) (part.isCore |> sized n)
+			let new_buff_cids' = scatter (copy new_buff_cids)
+				(part.is |> sized n) (new_part_cids |> sized n)
+			let (is_to_buffer, is_to_flush) = indices part.is
+				|> map (\i -> (part.is[i], part.isMargin[i]))
+				|> partition (.1)
+				|> (\(toBuff, toFlush) -> (toBuff |> map (.0), toFlush |> map (.0)))
+			let new_is_buffered = scatter
+				(copy buff.is_pt_buffered) is_to_buffer (is_to_buffer |> map (\_ -> true))
+			let new_is_flushed = scatter
+				(copy buff.is_pt_flushed) is_to_flush (is_to_flush |> map (\_ -> true))
+			in {
+				is_pt_buffered = new_is_buffered,
+				is_pt_flushed  = new_is_flushed,
+				chain_id = new_buff_cids',
+				is_core = new_is_core
+			}
 
 	-- dbscan pipeline
 
@@ -555,38 +484,23 @@ module ft_dbscan
 		-- would require care to ensure only already read pts are going there
 		-- ... might require to rewrite previous funcs to follow this logic as well...
 		def internal_dbscan [part_no] [n]
-			(starting_offs : i64)
 			(extPar : i64)
 			(eps : t)
 			(minPts : i64)
 			(partitions : [part_no](vector t, vector t))
 			(part_is : [part_no]i64)
 			(pts : [n](vector t))
-		: dbc_buffer =
+		: dbc_buffer [n] =
 			let state0 = init_dbc_state part_no
-			let buffers0 = init_dbc_buffer
-			let flushed0 = init_dbc_buffer
-			let (_,_,final_flushed) = loop (state,buff,flushed) = (state0,buffers0,flushed0)
-			for j < (part_no+1) do
-				let (this_state, this_part, this_buff, this_flushed)
-					= read_next_partition starting_offs partitions part_is pts eps state buff
-				let (upd_part, upd_state, upd_buff_, upd_ccs) = process_partition_dbscan
-					extPar this_part this_state this_buff [] eps minPts
-				let upd_buff = upd_part |> flush_part_pts upd_buff_
-				-- rectify chain collisions
-				let rect_tbl = mk_rectification_list (upd_state.cid_offs) upd_ccs
-				let next_buff = upd_buff
-					with chain_id = (copy upd_buff.chain_id) |> rectify_cids rect_tbl
-				let next_flushed = this_flushed
-					with chain_id = (copy this_flushed.chain_id) |> rectify_cids rect_tbl
-				let next_state = upd_state
-					with cid_offs = 1 + (i64.max
-						(i64.maximum next_buff.chain_id)
-						(i64.maximum next_flushed.chain_id)
-					)
-				in (next_state, next_buff, next_flushed)
-			in final_flushed
-
-
+			let buffer0 = init_dbc_buffer n
+			let (_,final_buff) = loop (state, buffer) = (state0, buffer0)
+			for j<(part_no+1) do
+				let (this_state, this_part, this_buff) = read_next_partition
+						partitions part_is pts eps state (copy buffer)
+				let (upd_part, upd_state, upd_buff_, ccs) = process_partition_dbscan
+					extPar this_part this_state this_buff pts eps minPts
+				let upd_buff = buffer_part_pts upd_part upd_state upd_buff_ ccs
+				in (upd_state, upd_buff)
+			in final_buff
 
 }
