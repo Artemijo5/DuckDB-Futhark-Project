@@ -35,21 +35,60 @@
 #define default_DBFILE "testdb.db"
 
 int main(int argc, char *argv[]) {
-	// TODO use getopt to set these values
-
+	// Parse command line arguments
+    // Initializations
 		int64_t R_size = default_R_size;
 		int64_t S_size = default_S_size;
 
 		int64_t R_vals = default_R_vals;
 		int64_t S_vals = default_S_vals;
 
-		const char *k_type  = default_k_type;
-		const char *pL_type = default_pL_type;
+		char k_type[50]  = default_k_type;
+		char pL_type[50] = default_pL_type;
 
 		int64_t num_pL = default_num_pL;
 
-		const char *LOGFILE = default_LOGFILE;
-		const char *DBFILE  = default_DBFILE;
+		char LOGFILE[1000] = default_LOGFILE;
+		char DBFILE[1000]  = default_DBFILE;
+
+		static struct option long_options[] = {
+			{"R_size", required_argument, 0, 'R'},
+			{"S_size", required_argument, 0, 'S'},
+			{"R_vals", required_argument, 0, 'r'},
+			{"S_vals", required_argument, 0, 's'},
+			{"k_type", required_argument, 0, 'k'},
+			{"pL_type", required_argument, 0, 'p'},
+			{"pL_num", required_argument, 0, 'P'},
+			{"logfile", required_argument, 0, 'L'},
+			{"db_file", required_argument, 0, 'f'},
+			{0, 0, 0, 0}
+		};
+
+    	char ch;
+	    while(
+	    	(ch = getopt_long_only(argc,argv,"R:S:r:s:k:p:P:L:f:",long_options,NULL)) != -1
+	    ) {
+	      switch(ch) {
+	        case 'R':
+	        	R_size = atol(optarg); break;
+	        case 'S':
+	        	S_size = atol(optarg); break;
+	        case 'r':
+	        	R_vals = atol(optarg); break;
+	        case 's':
+	        	S_vals = atol(optarg); break;
+	        case 'k':
+	        	memcpy(k_type, optarg, strlen(optarg)+1); break; 
+	        case 'p':
+	        	memcpy(pL_type, optarg, strlen(optarg)+1); break; 
+	        case 'P':
+	        	num_pL = atol(optarg); break;
+	        case 'L':
+	        	memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
+	        case 'f':
+	        	memcpy(DBFILE, optarg, strlen(optarg)+1); break;
+	      }
+	    }
 
 	// init logger
 

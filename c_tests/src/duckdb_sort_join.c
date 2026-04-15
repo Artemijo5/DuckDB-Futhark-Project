@@ -20,10 +20,29 @@
 #define default_DBFILE "testdb.db"
 
 int main(int argc, char *argv[]) {
-	// TODO use getopt to set these values
+	// Parse command line arguments
+    // Initializations
 
-		const char *LOGFILE = default_LOGFILE;
-		const char *DBFILE  = default_DBFILE;
+		char LOGFILE[1000] = default_LOGFILE;
+		char DBFILE[1000]  = default_DBFILE;
+
+		static struct option long_options[] = {
+			{"logfile", required_argument, 0, 'L'},
+			{"db_file", required_argument, 0, 'f'},
+			{0, 0, 0, 0}
+		};
+
+    	char ch;
+	    while(
+	    	(ch = getopt_long_only(argc,argv,"R:S:r:s:k:p:P:L:f:",long_options,NULL)) != -1
+	    ) {
+	      switch(ch) {
+	        case 'L':
+	        	memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
+	        case 'f':
+	        	memcpy(DBFILE, optarg, strlen(optarg)+1); break;
+	      }
+	    }
 
 	// init logger
 
