@@ -253,8 +253,6 @@ module u16_phj = prim_PHJ u16
 module u32_phj = prim_PHJ u32
 module u64_phj = prim_PHJ u64
 
-type~ joinPairs_bsq [b] = joinPairs (byteSeq [b])
-
 -- | PHJ full join routine (for Inner Join).
 -- Uses primitives of the minimum needed size.
 def innerPHJ [nR] [nS] [b]

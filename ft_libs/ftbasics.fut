@@ -289,6 +289,9 @@
 	-- NOTE - unlike type joinTup, each tuple here corresponds to an individual match.
 	type~ joinPairs 't = {vs: []t, ix: []i64, iy: []i64}
 
+	-- | joinPairs for byteSeq [b]
+	type~ joinPairs_bsq [b] = joinPairs (byteSeq [b])
+
 -- Alternative Binary Search
 
 	-- | Alternative Implementation for bsearch_first.
