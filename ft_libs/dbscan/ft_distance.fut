@@ -98,7 +98,7 @@ module euclidean_d
 			let d = dist_squared pt pt'
 			in if (eps `lt` zero) || (d `leq` (eps `times` eps))
 				then d else highest
-		) |> argmin (lt) (eq) highest
+		) |> argmin (lt) (eq) (eps `plus` eps)
 
 	local def dist_squared_from_partition (part : (vector t, vector t)) pt =
 		iota V.length |> seqmap zero (\i ->

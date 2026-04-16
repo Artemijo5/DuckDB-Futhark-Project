@@ -20,6 +20,7 @@ module type spatial_index = {
 	-- 1. the dataset sorted by index-based partitions.
 	-- 2. partition boundaries
 	-- 3. starting index of each partition in the sorted dataset
+	-- TODO could also return transformed row indices
 	val index_dataset [dim] [n] : [dim]i64 -> [n](vector t) -> ([n](vector t), [](vector t, vector t), []i64)
 
 	-- | Obtain all partitions adjacent to a selected partition.

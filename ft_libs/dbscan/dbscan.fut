@@ -135,6 +135,8 @@ module ft_dbscan
 					|> D.get_adj_partitions_withPts n_parts eps (-1)
 				)
 				|> map (\i -> cur_i_neighs[i])
+				-- if partition is already visited, ignore it
+				|> filter (\i -> !state.is_part_visited[i])
 				-- if partition already relevant, ignore it to avoid multiplicity
 				|> filter (\i -> state.relevant_parts |> all (!= i))
 			let old_rels = state.relevant_parts
@@ -263,7 +265,7 @@ module ft_dbscan
 			-- 1. find cluster ids, ignoring pre_cids for now
 			-- these are returned dictionary-encoded
 			let cids : [nc]i64 = find_chains extPar eps pts
-				|> map (\cid -> cid + chain_offs)
+				|> map (\cid -> if cid<0 then cid else cid + chain_offs)
 			-- 2. Rectify cids based on collisions with pre-cids
 			-- and record collisions among pre-cids
 			let (old_ccs, rectified_cids) = mark_chain_collisions pre_cids cids
@@ -301,7 +303,6 @@ module ft_dbscan
 			-- Separate into tight & loose frontier
 				let (tf_is, lf_is) = indices all_pts
 					|> zip buff.is_pt_buffered
-					|> filter (.0)
 					|> filter (\(isBuffd,i) -> isBuffd && (
 						(D.dist_from_partition part.minmax all_pts[i])
 						`leq` eps2
@@ -310,10 +311,16 @@ module ft_dbscan
 					|> partition (\i -> (D.dist_from_partition part.minmax all_pts[i]) `leq` eps)
 				-- 1+. Also separate internal & marginal points
 				-- furhter into tight & loose margins
-				let (internal_pis, tm_pis, lm_pis) = zip3 (indices part.pts) (part.isMargin) (part.isTightMargin)
+				--
+				-- NOTE partition2 is a function that requires care apparently
+				-- for partition f g xs
+				-- .0 will be xs that satisfy f
+				-- .1 will be xs that do not satisfy f, and satisfy g
+				-- .2 will be xs that satisfy neither
+				let (tm_pis, lm_pis, internal_pis) = zip3 (indices part.pts) (part.isTightMargin) (part.isMargin)
 					|> partition2 (.1) (.2)
-					|> (\(in_stuffs, tm_stuffs, lm_stuffs) ->
-						(map (.0) in_stuffs, map (.0) tm_stuffs, map (.0) lm_stuffs)
+					|> (\(tm_stuffs, lm_stuffs, in_stuffs) ->
+						(map (.0) tm_stuffs, map (.0) lm_stuffs, map (.0) in_stuffs)
 					)
 			-- gather pts
 				let internal_pts = internal_pis |> map (\i -> part.pts[i])
@@ -400,11 +407,11 @@ module ft_dbscan
 					(lm_core_pts  ++ tm_core_pts  ++ tf_core_pts  |> sized (n_lmc+n_tmc+n_tfc))
 					(lm_core_cids ++ tm_core_cids ++ tf_core_cids |> sized (n_lmc+n_tmc+n_tfc))
 			-- iv. For tight frontier
-				let tf_cids = assign_chain_ids eps tf_pts (tf_pts |> map (\_ -> (-1)))
+				let tf_cids = assign_chain_ids eps tf_pts (tf_is |> map (\i -> buff.chain_id[i]))
 					(tm_core_pts  ++ tf_core_pts  ++ lf_core_pts  |> sized (n_tmc+n_tfc+n_lfc))
 					(tm_core_cids ++ tf_core_cids ++ lf_core_cids |> sized (n_tmc+n_tfc+n_lfc))
 			-- v. For loose frontier
-				let lf_cids = assign_chain_ids eps lf_pts (lf_pts |> map (\_ -> (-1)))
+				let lf_cids = assign_chain_ids eps lf_pts (lf_is |> map (\i -> buff.chain_id[i]))
 					frontier_core_pts frontier_core_cids
 			-- 5. Update Partition
 				let new_part_cids =
