@@ -51,7 +51,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 	def radix_first_last_bytes (i : i32) (j_ : i32) (b : i64)
 	: (i64, i64) =
 		let bi = i32.i64 b
-		let j = i32.min j_ (bi*u8.num_bits - 1)
+		let j = i32.max 0 (i32.min j_ (bi*u8.num_bits - 1))
 		let firstByte = i64.i32 (bi - (i/u8.num_bits) - 1)
 		let lastByte = i64.i32 (bi - (j/u8.num_bits) - 1)
 		in (firstByte, lastByte)
@@ -192,24 +192,15 @@ import "lib/github.com/diku-dk/segmented/segmented"
 
 	-- | Obtain the first index of each partition.
 	def getPartitionBounds [n] [b]
-		(curDepth: i32)
 		(i: i32)
 		(j: i32)
 		(pXs: [n](byteSeq [b]))
-	: partitionInfo =
+	: [n]bool =
 		let bitmask = mk_radix_bitmask i j b
 		let (fb,lb) = radix_first_last_bytes i j b
-		let boundIndices = pXs
+		in pXs
 			|> map (getRadix bitmask)
 			|> group_boundaries (byteSeq_neq fb lb bitmask)
-			|> zip (iota n)
-			|> filter (.1)
-			|> map (.0)
-		in {
-			maxDepth = curDepth,
-			bounds = boundIndices,
-			depths = replicate (length boundIndices) curDepth
-		}
 
 	-- | Multi-level radix-partitioning with payload data.
 	def partition_and_deepen 't [n] [b]
@@ -222,71 +213,44 @@ import "lib/github.com/diku-dk/segmented/segmented"
 	: ([n](byteSeq [b]), [n]t) =
 		let max_J = (i32.i64 b)*u8.num_bits - 1
 		let max_depth = i32.min max_depth_ (((i32.i64 b)*u8.num_bits + radix_size - 1)/radix_size)
-		-- recursively subdivide partitions that are too large
-		-- starting with the entire dataset as one too large partition
 		let loop_over : ([n](byteSeq [b]), [n]t, [](i64, i64),  i32)
-	    	= loop (pXs, pPs, taidade, dp) = (xs, pLs, [(0,n)], 0)
-	    	while (length taidade)>0 && dp<max_depth do
-	    		let nt = length taidade
-		        let new_i = radix_size*dp
-		        let new_j = i32.min max_J (new_i + radix_size - 1)
-		        -- get indices & lens of all taidade partitions
-		        let pinds = taidade |> map (.0)
-		        let plens = taidade |> map (.1)
-		        -- create gather/scatter indices via segmented iota
-				-- as well as replicated taidade partition ids
-				let pids = plens |> replicated_iota -- compact
-				let nr = length pids
-				let gather_idx = pids
-					|> group_boundaries (!=)
-					|> segmented_iota
-					|> sized nr
-					|> map2 (+) (pids |> map (\i -> pinds[i]) |> sized nr)
-				-- gather partitions & apply repartitioning
-				-- Cases:
-				-- 1. nt == 1
-				--   -> only process xs & pL
-				-- 2. nt > 1
-				--   -> requires additional partition key info to sort by previous part id
-				let (new_xs, new_pLs) =
-					if nt == 1
-					then
-						let xps = indices gather_idx
-							|> map (\i -> (pXs[gather_idx[i]], pPs[gather_idx[i]]))
-							|> unzip
-						in radix_part new_i new_j bit_step xps.0 xps.1
-					else
-						let xips = indices gather_idx
-							|> map (\i -> (pXs[gather_idx[i]], (pids[i], pPs[gather_idx[i]])))
-							|> unzip
-						let new_xips = radix_part
-							new_i new_j bit_step xips.0 xips.1
-							|> (\ret -> zip ret.0 ret.1)
-						-- sort by previous part id
-						let (new_xs1, new_pids1, new_pLs1) = new_xips
-							|> map (\(x,(pid,pL)) -> (x,pid,pL))
-							|> unzip3
-						let (_, renew_xps) = bucket_sort bit_step nt new_pids1 (zip new_xs1 new_pLs1)
-						in renew_xps
-							|> unzip
-				-- identify if there are any new taidade partitions
-				let curBounds = (getPartitionBounds dp 0 new_j new_xs).bounds
-				let n_xinBufen = length curBounds
-				let xin_taidade = if dp==max_depth-1 then []
-				else indices curBounds
-					|> map (\i -> 
-						if i==n_xinBufen-1
-						then (curBounds[i],nr)
-						else (curBounds[i],curBounds[i+1])
-					)
-					|> map (\(inf,sup) -> sup-inf)
-					|> zip (indices curBounds)
-					|> map (\(i,s) -> (gather_idx[curBounds[i]], s))
-					|> filter (\(_,s) -> s>size_thresh)
-				-- scatter & move on to the next iteration
-				let xin_pXs = scatter (copy pXs) gather_idx new_xs
-				let xin_pPs = scatter (copy pPs) gather_idx new_pLs
-				in (xin_pXs, xin_pPs, xin_taidade, dp+1)
+	    = loop (pXs, pPs, taidade, dp) = (xs, pLs, [(0,n)], 0)
+	    while (length taidade)>0 && dp<max_depth do
+	    	-- 'taidade' = 'too big' -> indicate partitions exceeding size thresh
+	    	let nt = length taidade
+		    let new_i = radix_size*dp
+		    let new_j = i32.min max_J (new_i + radix_size - 1)
+		    let (gather_groups, gather_is) = if dp==0
+		    	then (replicate n 0, iota n)
+		    	else taidade
+			    	|> expand (.1) (\(inf, _) ind -> (inf, inf+ind))
+			    	|> unzip
+		    let gather_groups' = gather_groups |> group_boundaries (!=)
+		    	|> dict_encoding
+		    let (gather_xs, gather_pLs, gather_groups_) = if nt==1
+		    	-- only sort gather_groups' if E more than one group
+		    	then let (g_xs, g_ps) = gather_is |> map (\i -> (pXs[i], pPs[i]))
+			    	|> unzip
+			    	|> (\(gxs, gps) -> radix_part new_i new_j bit_step gxs gps)
+			    	in (g_xs, g_ps, gather_groups')
+			    else gather_is |> zip gather_groups' |> map (\(g,i) -> (pXs[i], pPs[i], g))
+			    	|> unzip3
+			    	|> (\(gxs, gps, ggs) -> radix_part new_i new_j bit_step gxs (zip gps ggs))
+			    	|> (\(gxs, gpgs) -> (gxs, gpgs |> map (.0), gpgs |> map (.1)))
+		    let (gather_xs', gather_pLs') = zip gather_xs gather_pLs
+		    	|> bucket_sort bit_step nt gather_groups_
+		    	|> (\(_, xps) -> unzip xps)
+		    let old_part_bounds  = copy (getPartitionBounds 0 new_i pXs)
+		    let this_part_bounds = getPartitionBounds 0 new_j gather_xs'
+		    let new_part_bounds  = scatter old_part_bounds gather_is this_part_bounds
+		    let new_pXs = scatter (copy pXs) gather_is gather_xs'
+		    let new_pPs = scatter (copy pPs) gather_is gather_pLs'
+		    let new_part_sizes = segmented_reduce (+) 0 new_part_bounds (replicate n 1i64)
+		    let new_bound_is = indices new_part_bounds |> filter (\i -> new_part_bounds[i])
+		    let np = length new_part_sizes
+		    let new_taidade = zip (new_bound_is |> sized np) (new_part_sizes |> sized np)
+		    	|> filter (\(_,size) -> size > size_thresh)
+		    in (new_pXs, new_pPs, new_taidade, dp+1)
 		in (loop_over.0, loop_over.1)
 
 	-- | Multi-level radix-partitioning with payload data, using a pre-made partitioning scheme.
@@ -303,94 +267,52 @@ import "lib/github.com/diku-dk/segmented/segmented"
 	: ([n](byteSeq [b]), [n]t) =
 		let max_J = (i32.i64 b)*u8.num_bits - 1
 		let max_depth = use_info.maxDepth
-		-- recursively subdivide partitions that are too large
-		-- starting with the entire dataset as one too large partition
 		let loop_over : ([n](byteSeq [b]), [n]t, [](i64, i64),  i32)
-	    	= loop (pXs, pPs, taidade, dp) = (xs, pLs, [(0,n)], 0)
-	    	while (length taidade)>0 && dp<max_depth do
-	    		let nt = length taidade
-		        let new_i = radix_size*dp
-		        let new_j = i32.min max_J (new_i + radix_size - 1)
-		        -- get indices & lens of all taidade partitions
-		        let pinds = taidade |> map (.0)
-		        let plens = taidade |> map (.1)
-		        -- create gather/scatter indices via segmented iota
-				-- as well as replicated taidade partition ids
-				let pids = plens |> replicated_iota -- compact
-				let nr = length pids
-				let gather_idx = pids
-					|> group_boundaries (!=)
-					|> segmented_iota
-					|> sized nr
-					|> map2 (+) (pids |> map (\i -> pinds[i]) |> sized nr)
-				-- gather partitions & apply repartitioning
-				-- Cases:
-				-- 1. nt == 1
-				--   -> only process xs & pL
-				-- 2. nt > 1
-				--   -> requires additional partition key info to sort by previous part id
-				let (new_xs, new_pLs) =
-					if nt == 1
-					then
-						let xps = indices gather_idx
-							|> map (\i -> (pXs[gather_idx[i]], pPs[gather_idx[i]]))
-							|> unzip
-						in radix_part new_i new_j bit_step xps.0 xps.1
-					else
-						let xips = indices gather_idx
-							|> map (\i -> (pXs[gather_idx[i]], (pids[i], pPs[gather_idx[i]])))
-							|> unzip
-						let new_xips = radix_part
-							new_i new_j bit_step xips.0 xips.1
-							|> (\ret -> zip ret.0 ret.1)
-						-- sort by previous part id
-						let (new_xs1, new_pids1, new_pLs1) = new_xips
-							|> map (\(x,(pid,pL)) -> (x,pid,pL))
-							|> unzip3
-						let (_, renew_xps) = bucket_sort bit_step nt new_pids1 (zip new_xs1 new_pLs1)
-						in renew_xps
-							|> unzip
-				-- identify if there are any new taidade partitions
-				-- USING provided partitionInfo & partitioned relation
-				let curBounds = (getPartitionBounds dp 0 new_j new_xs).bounds
-				let n_xinBufen = length curBounds
-				let xin_taidade = if dp==max_depth-1 then []
-				else
-					let use_bitmask = mk_radix_bitmask 0 new_j b
-					let whichPrev_mult = use_info.bounds
-						|> zip use_info.depths
-						|> filter (\(d,_) -> d>dp)
-						|> map (\(_,b) -> use_prev[b])
-						|> map (radix_to_idx (new_j-1) use_bitmask)
-					-- we only need the first of each one
-					let whichPrev = whichPrev_mult
-						|> group_boundaries (!=)
-						|> zip whichPrev_mult
-						|> filter (.1)
-						|> map (.0)
-					-- binary search on current partitions
-					-- to see which ones fit
-					-- use bsearch_first since finding a match is not guaranteed
-					let curSizes = curBounds
-						|> indices
-						|> map (\i -> 
-							if i==n_xinBufen-1
-							then (curBounds[i],nr)
-							else (curBounds[i],curBounds[i+1])
-						)
-						|> map (\(inf,sup) -> sup-inf)
-					in curBounds
-						|> map (\cb -> new_xs[cb])
-						|> map (radix_to_idx (new_j-1) use_bitmask)
-						|> sized n_xinBufen
-						|> bsearch_first (==) (>) (replicate n_xinBufen 0) whichPrev
-						|> zip (iota n_xinBufen)
-						|> filter (\(_,foundAt) -> foundAt >= 0)
-						|> map (\(i,_) -> (gather_idx[curBounds[i]], curSizes[i]))
-				-- scatter & move on to the next iteration
-				let xin_pXs = scatter (copy pXs) gather_idx new_xs
-				let xin_pPs = scatter (copy pPs) gather_idx new_pLs
-				in (xin_pXs, xin_pPs, xin_taidade, dp+1)
+	    = loop (pXs, pPs, taidade, dp) = (xs, pLs, [(0,n)], 0)
+	    while (length taidade)>0 && dp<max_depth do
+	    	-- 'taidade' = 'too big' -> indicate partitions to be subdivided, based on use_info
+	    	let nt = length taidade
+		    let new_i = radix_size*dp
+		    let new_j = i32.min max_J (new_i + radix_size - 1)
+		    let (gather_groups, gather_is) = if dp==0
+		    	then (replicate n 0, iota n)
+		    	else taidade
+			    	|> expand (.1) (\(inf, _) ind -> (inf, inf+ind))
+			    	|> unzip
+		    let gather_groups' = gather_groups |> group_boundaries (!=)
+		    	|> dict_encoding
+		    let (gather_xs, gather_pLs, gather_groups_) = if nt==1
+		    	-- only sort gather_groups' if E more than one group
+		    	then let (g_xs, g_ps) = gather_is |> map (\i -> (pXs[i], pPs[i]))
+			    	|> unzip
+			    	|> (\(gxs, gps) -> radix_part new_i new_j bit_step gxs gps)
+			    	in (g_xs, g_ps, gather_groups')
+			    else gather_is |> zip gather_groups' |> map (\(g,i) -> (pXs[i], pPs[i], g))
+			    	|> unzip3
+			    	|> (\(gxs, gps, ggs) -> radix_part new_i new_j bit_step gxs (zip gps ggs))
+			    	|> (\(gxs, gpgs) -> (gxs, gpgs |> map (.0), gpgs |> map (.1)))
+		    let (gather_xs', gather_pLs') = zip gather_xs gather_pLs
+		    	|> bucket_sort bit_step nt gather_groups_
+		    	|> (\(_, xps) -> unzip xps)
+		    let old_part_bounds  = copy (getPartitionBounds 0 new_i pXs)
+		    let this_part_bounds = getPartitionBounds 0 new_j gather_xs'
+		    let new_part_bounds  = scatter old_part_bounds gather_is this_part_bounds
+		    let new_pXs = scatter (copy pXs) gather_is gather_xs'
+		    let new_pPs = scatter (copy pPs) gather_is gather_pLs'
+		    let new_part_sizes = segmented_reduce (+) 0 new_part_bounds (replicate n 1i64)
+		    let new_bound_is = indices new_part_bounds |> filter (\i -> new_part_bounds[i])
+		    let np = length new_bound_is
+		    -- new taidade are obtained by comparison with prev's partitions
+		    let relevant_part_is = indices use_info.depths
+				|> filter (\i -> use_info.depths[i] > dp)
+			let cur_bitmask = mk_radix_bitmask 0 new_j b
+			let (fb,lb) = radix_first_last_bytes 0 new_j b
+			let new_taidade = zip (new_bound_is |> sized np) (new_part_sizes |> sized np) 
+				|> filter (\(i,_) -> any
+					(byteSeq_eq fb lb cur_bitmask pXs[i])
+					(relevant_part_is |> map (\i2 -> use_prev[use_info.bounds[i2]]))
+				)
+		    in (new_pXs, new_pPs, new_taidade, dp+1)
 		in (loop_over.0, loop_over.1)
 
 -- Struct Construction
@@ -407,63 +329,74 @@ import "lib/github.com/diku-dk/segmented/segmented"
 		let max_depth = i32.min
 			max_depth_
 			((bi*u8.num_bits + radix_size - 1)/radix_size)
-		let (part_info, _) : (partitionInfo, []bool)
-		= loop (rec_info, taidade) = ({maxDepth=0, bounds=[0], depths=[0]}, [true])
-		while rec_info.maxDepth<max_depth && any (id) taidade do
-			let new_i = radix_size*(rec_info.maxDepth)
-			let new_j = i32.min (u8.num_bits*bi - 1) (new_i + radix_size - 1)
-			-- get partition bounds of next level
-			let deeper_info = getPartitionBounds (rec_info.maxDepth+1) 0 new_j pXs
-			let n_cur = length deeper_info.bounds
-			-- next level bounds will only be kept for former taidade partitions
-			let (flag_is, flags_keep) =
-				-- TODO assumes at most 64-bit radix
-				let ris_bitmask = mk_radix_bitmask 0 (new_i-1) b
-				let radix_is = deeper_info.bounds
-					|> map (\i -> pXs[i])
-					|> map (\x -> if new_i==0 then 0 else radix_to_idx new_i ris_bitmask x)
-				let old_radix_is = rec_info.bounds
-					|> map (\i -> pXs[i])
-					|> map (\x -> if new_i==0 then 0 else radix_to_idx new_i ris_bitmask x)
-				-- binary search to find corresponding partition in previous rec_info
-				-- use bsearch_last, since exactly 1 match is guaranteed to exist
-				let bsearch_is = radix_is
-					|> sized n_cur
-					|> bsearch_last (>=) (<) (replicate n_cur 0) old_radix_is
-				-- first sub-partition of each former partition
-				let isFirst = radix_is
-					|> group_boundaries (!=)
-					|> sized n_cur
-				let flags = bsearch_is
-					|> map (\i -> taidade[i])
-					|> zip isFirst
-					|> map (\(isf, tdd) -> tdd || isf)
-				in (bsearch_is, flags)
-			-- filter to keep only  needed new partitions
-			-- NOTE : do not increase depth for partitions that were not taidade previously
-			let (new_bounds, new_depths) = zip3
-			(deeper_info.bounds |> sized n_cur)
-			(flag_is |> sized n_cur)
-			(flags_keep |> sized n_cur)
-				|> filter (.2)
-				|> map (\(b,fi,_) ->
-					(b, if taidade[fi] then deeper_info.maxDepth else rec_info.depths[fi])
-				)
-				|> unzip
-			let new_info = {maxDepth=rec_info.maxDepth+1, bounds=new_bounds, depths=new_depths}
-			-- get new taidade for next iteration
-			let n_xin = length new_bounds
-			let new_taidade = iota n_xin
-				|> map (\i -> if i==n_xin-1 then (new_bounds[i],n) else (new_bounds[i], new_bounds[i+1]))
-				|> map (\(inf,sup) -> sup-inf > size_thresh)
-			in (new_info, new_taidade)
-		let info_len = length part_info.bounds
-		let part_info_with_offset = {
-			maxDepth = part_info.maxDepth,
-			bounds = part_info.bounds |> map (\b -> b + offset) :> [info_len]i64,
-			depths = part_info.depths :> [info_len]i32
+		let (part_bounds, part_depths, _, part_depth) =
+		loop (cur_bounds, cur_depths, part_sizes, cur_depth)
+		= (pXs |> group_boundaries (\_ _ -> false), replicate n 0i32, [n], 0)
+		while (cur_depth < max_depth && (i64.maximum part_sizes) > size_thresh) do
+			let parts_to_subdivide = indices part_sizes
+				|> filter (\i -> part_sizes[i]>size_thresh)
+			let bound_is = part_sizes |> exscan (+) 0
+			let gather_is = parts_to_subdivide |> map (\i ->
+				(bound_is[i], if i==(length bound_is - 1) then n else bound_is[i+1])
+			) |> expand (\(inf,sup) -> sup-inf) (\(inf,_) ind -> inf + ind)
+			let gather_xs = gather_is |> map (\i -> pXs[i])
+			let this_bounds = gather_xs
+				|> getPartitionBounds 0 ((cur_depth+1)*radix_size - 1)
+			let new_bounds = scatter (copy cur_bounds) gather_is this_bounds
+			let new_depths = scatter cur_depths gather_is (gather_is |> map (\_ -> (cur_depth+1)))
+			let new_sizes = segmented_reduce (+) 0 new_bounds (replicate n 1i64)
+			in (new_bounds, new_depths, new_sizes, cur_depth+1)
+		let (final_bounds, final_depths) = indices part_bounds
+			|> filter (\i -> part_bounds[i])
+			|> map (\i -> (i, part_depths[i]))
+			|> unzip
+		in {
+			maxDepth = part_depth,
+			bounds = final_bounds |> map (\i -> i+offset),
+			depths = final_depths
 		}
-		in part_info_with_offset
+
+	-- | Construct partitionInfo for a partitioned set, using a pre-made partitioning scheme.
+	def calc_partInfo_preconfigured [n] [b]
+		(radix_size: i32)
+		(offset: i64)
+		(use_prev : [](byteSeq [b]))
+		(use_info : partitionInfo)
+		(pXs: [n](byteSeq [b]))
+	: partitionInfo =
+		let max_J = (i32.i64 b)*u8.num_bits - 1
+		let max_depth = use_info.maxDepth
+		let (part_bounds, part_depths, part_depth) =
+		loop (cur_bounds, cur_depths, cur_depth)
+		= (pXs |> group_boundaries (\_ _ -> false), replicate n 0i32, 0)
+		while (cur_depth < max_depth) do
+			let relevant_part_is = indices use_info.depths
+				|> filter (\i -> use_info.depths[i] > cur_depth)
+			let cur_bitmask = mk_radix_bitmask 0 (cur_depth*radix_size-1) b
+			let (fb,lb) = radix_first_last_bytes 0 (i32.min max_J ((cur_depth)*radix_size-1)) b
+			let bound_is = indices cur_bounds |> filter (\i -> cur_bounds[i])
+			let parts_to_subdivide = indices bound_is |> filter (\i -> any
+				(byteSeq_eq fb lb cur_bitmask pXs[bound_is[i]])
+				(relevant_part_is |> map (\i2 -> use_prev[use_info.bounds[i2]]))
+			)
+			let gather_is = parts_to_subdivide |> map (\i ->
+				(bound_is[i], if i==(length bound_is - 1) then n else bound_is[i+1])
+			) |> expand (\(inf,sup) -> sup-inf) (\(inf,_) ind -> inf + ind)
+			let gather_xs = gather_is |> map (\i -> pXs[i])
+			let this_bounds = gather_xs
+				|> getPartitionBounds 0 ((cur_depth+1)*radix_size - 1)
+			let new_bounds = scatter (copy cur_bounds) gather_is this_bounds
+			let new_depths = scatter cur_depths gather_is (gather_is |> map (\_ -> (cur_depth+1)))
+			in (new_bounds, new_depths, cur_depth+1)
+		let (final_bounds, final_depths) = indices part_bounds
+			|> filter (\i -> part_bounds[i])
+			|> map (\i -> (i, part_depths[i]))
+			|> unzip
+		in {
+			maxDepth = part_depth,
+			bounds = final_bounds |> map (\i -> i+offset),
+			depths = final_depths
+		}
 
 	-- | Construct radix_hashTable for a partitioned set.
 	def calc_radixHashTab [n] [b]

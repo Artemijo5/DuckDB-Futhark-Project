@@ -261,7 +261,7 @@
 	-- Returns a boolean array, with the first index of each group being true.
 	-- NOTE : the previous element is on the left side of the neq comparator.
 	def group_boundaries [n] 't (neq : t -> t -> bool) (xs : [n]t)
-	: [n]bool = copy (xs |> map2 (neq) (xs |> rotate (-1)))
+	: [n]bool = if n==0 then ([] :> [n]bool) else copy (xs |> map2 (neq) (xs |> rotate (-1)))
 		with [0] = true
 
 	-- | Dictionary encoding: assign compact i64 ids to grouped keys, using the group boundaries.
