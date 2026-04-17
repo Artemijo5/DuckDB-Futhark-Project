@@ -16,28 +16,6 @@ import "../ft_partition"
 -- This can be done in parallel with the expand operator.
 -- Concatenate results.
 
--- Radix comparator
--- comparison function must be eq, geq, leq, gt, or lt
-def radix_cmp [b]
-	(cmp : u8 -> u8 -> bool)
-	(radix_bits : i32)
-	(p1 : (i32, byteSeq [b]))
-	(p2 : (i32, byteSeq [b]))
-: bool =
-	let (depth1, x1) = p1
-	let (depth2, x2) = p2
-	let depth = i32.min depth1 depth2
-	in loop res=false for j < depth do
-		let bitmask = mk_radix_bitmask (j*radix_bits) ((j+1)*radix_bits-1) b
-		let r1 = x1 |> getRadix bitmask
-		let r2 = x2 |> getRadix bitmask
-		let (this_cmp,_,_)
-		= loop (this_res,decided,k) = (false,false,0)
-		while !decided && k<b do
-			if k<(b-1) && r1[k]==r2[k] then (this_res,false,k+1)
-			else (cmp r1[k] r2[k], true, k+1)
-		in res || this_cmp
-
 -- | PHJ full join routine (for Inner Join).
 def innerPHJ [nR] [nS] [b]
 	(radix_bits : i32)

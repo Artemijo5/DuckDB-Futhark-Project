@@ -127,41 +127,31 @@ import "lib/github.com/diku-dk/segmented/segmented"
 	  let r2 = getRadix bitmask x2
 	  in foldl (||) (false) (map2 (!=) r1[lb:fb+1] r2[lb:fb+1])
 
-	-- | < between 2 byteseq by 1st-level radix.
-	def byteSeq_lt [b]
-		(fb : i64)
-		(lb : i64)
-		(bitmask : byteSeq [b])
-		(x1: byteSeq [b])
-		(x2: byteSeq [b])
+	-- Radix comparator
+	-- comparison function must be eq, geq, leq, gt, or lt
+	def radix_cmp [b]
+		(cmp : u8 -> u8 -> bool)
+		(radix_bits : i32)
+		(p1 : (i32, byteSeq [b]))
+		(p2 : (i32, byteSeq [b]))
 	: bool =
-		let r1 = getRadix bitmask x1
-		let r2 = getRadix bitmask x2
-		let (lt, _) =
-			loop (def_lt, byte) = (false, lb)
-			while (!def_lt && byte<=fb) do
-				let dlt = r1[byte] < r2[byte]
-				in (dlt, byte+1)
-		in lt
-
-	-- | > between 2 byteseq by 1st-level radix.
-	def byteSeq_gt [b]
-		(fb : i64)
-		(lb : i64)
-		(bitmask : byteSeq [b])
-		(x1: byteSeq [b])
-		(x2: byteSeq [b])
-	: bool =
-		let r1 = getRadix bitmask x1
-		let r2 = getRadix bitmask x2
-		let (gt, _) =
-			loop (def_gt, byte) = (false, lb)
-			while (!def_gt && byte<=fb) do
-				let dlt = r1[byte] < r2[byte]
-				in (dlt, byte+1)
-		in gt
-
-	-- TODO for PHJ will also need multi-level radix comparators (but primitive-based)
+		let (depth1, x1) = p1
+		let (depth2, x2) = p2
+		let depth = i32.min depth1 depth2
+		let (final_res,_,_) =
+		loop (res,terminated,j)=(false,false,0)
+		while !terminated && j<depth do
+			let bitmask = mk_radix_bitmask (j*radix_bits) ((j+1)*radix_bits-1) b
+			let r1 = x1 |> getRadix bitmask
+			let r2 = x2 |> getRadix bitmask
+			let terminated' = map2 (!=) r1 r2 |> any (id)
+			let (this_cmp,_,_)
+			= loop (this_res,decided,k) = (false,false,0)
+			while !decided && k<b do
+				if k<(b-1) && r1[k]==r2[k] then (this_res,false,k+1)
+				else (cmp r1[k] r2[k], true, k+1)
+			in (res || this_cmp, terminated', j+1)
+		in final_res
 
 -- Radix-Partitioning
 
@@ -303,15 +293,29 @@ import "lib/github.com/diku-dk/segmented/segmented"
 		    let new_bound_is = indices new_part_bounds |> filter (\i -> new_part_bounds[i])
 		    let np = length new_bound_is
 		    -- new taidade are obtained by comparison with prev's partitions
+		    -- using binary search
 		    let relevant_part_is = indices use_info.depths
-				|> filter (\i -> use_info.depths[i] > dp)
+				|> filter (\i -> use_info.depths[i] > (dp+1))
 			let cur_bitmask = mk_radix_bitmask 0 new_j b
 			let (fb,lb) = radix_first_last_bytes 0 new_j b
-			let new_taidade = zip (new_bound_is |> sized np) (new_part_sizes |> sized np) 
-				|> filter (\(i,_) -> any
-					(byteSeq_eq fb lb cur_bitmask pXs[i])
-					(relevant_part_is |> map (\i2 -> use_prev[use_info.bounds[i2]]))
-				)
+			let new_taidade = new_bound_is |> sized np
+				|> map (\i -> new_pXs[i])
+				|> bsearch_first
+					(byteSeq_eq fb lb cur_bitmask)
+					(\r1 r2 -> if dp==0 then false else  radix_cmp (>) radix_size (dp+1,r1) (dp+1,r2))
+					(replicate np 0)
+					(relevant_part_is |> map (\i -> use_prev[use_info.bounds[i]]))
+				|> zip (indices new_bound_is |> sized np)
+				|> filter (\(_,match_i) -> match_i >=0 )
+				|> map (\(i,_) -> (new_bound_is[i], new_part_sizes[i]))
+			-- -- alternative with nested parallelism (might explode if too many partitions)
+			--let new_taidade = zip (new_bound_is |> sized np) (new_part_sizes |> sized np) 
+			--	|> filter (\(i,_) -> any
+			--		(byteSeq_eq fb lb cur_bitmask pXs[i])
+			--		(relevant_part_is |> map (\i2 -> use_prev[use_info.bounds[i2]]))
+			--	)
+			let _ = trace new_taidade
+			let _ = trace new_part_bounds
 		    in (new_pXs, new_pPs, new_taidade, dp+1)
 		in (loop_over.0, loop_over.1)
 
@@ -375,10 +379,22 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			let cur_bitmask = mk_radix_bitmask 0 (cur_depth*radix_size-1) b
 			let (fb,lb) = radix_first_last_bytes 0 (i32.min max_J ((cur_depth)*radix_size-1)) b
 			let bound_is = indices cur_bounds |> filter (\i -> cur_bounds[i])
-			let parts_to_subdivide = indices bound_is |> filter (\i -> any
-				(byteSeq_eq fb lb cur_bitmask pXs[bound_is[i]])
-				(relevant_part_is |> map (\i2 -> use_prev[use_info.bounds[i2]]))
-			)
+			-- -- parts_to_subdivide : partitions in pXs having a match in prev with depth>cur_depth
+			-- -- find via binary search
+			let parts_to_subdivide = bound_is |> map (\i -> pXs[i])
+				|> bsearch_first
+					(byteSeq_eq fb lb cur_bitmask)
+					(\r1 r2 -> if cur_depth==0 then false else radix_cmp (>) radix_size (cur_depth,r1) (cur_depth,r2))
+					(bound_is |> map (\_ -> 0))
+					(relevant_part_is |> map (\i -> use_prev[use_info.bounds[i]]))
+				|> zip (indices bound_is)
+				|> filter (\(_,match_i) -> match_i >= 0)
+				|> map (.0)
+			-- -- alternative with nested parallelism (might explode if too many partitions)
+			--let parts_to_subdivide = indices bound_is |> filter (\i -> any
+			--	(byteSeq_eq fb lb cur_bitmask pXs[bound_is[i]])
+			--	(relevant_part_is |> map (\i2 -> use_prev[use_info.bounds[i2]]))
+			--)
 			let gather_is = parts_to_subdivide |> map (\i ->
 				(bound_is[i], if i==(length bound_is - 1) then n else bound_is[i+1])
 			) |> expand (\(inf,sup) -> sup-inf) (\(inf,_) ind -> inf + ind)
@@ -423,3 +439,8 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			first_info_idx = scatter (replicate (2**rs) (-1)) scatter_isF (indices x_info.bounds),
 			last_info_idx  = scatter (replicate (2**rs) (-1)) scatter_isL (indices x_info.bounds)
 		}
+
+-- TODO
+-- let xs1_:[][]u8= [[4,1],[0,3],[1,4],[1,4],[1,4],[5,4],[2,3],[4,3],[1,2],[2,2],[4,2],[3,2],[0,1]]
+-- let xs2_:[][]u8= [[4,1],[5,1],[0,1],[0,1],[5,4],[5,4],[1,4],[2,4],[2,2],[2,2],[2,2],[2,2],[5,3],[7,3],[1,3],[3,3]]
+-- partition_preconfigured doesn't work for 8 bits, max_depth=2, size_thresh=2
