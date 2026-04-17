@@ -87,4 +87,3 @@ def innerPHJ [nR] [nS] [b]
 		in found_pairs ++ this_pairs
 	let (vs,ix,iy) = acc_pairs |> unzip3
 	in {vs = vs, ix = ix, iy = iy}
-

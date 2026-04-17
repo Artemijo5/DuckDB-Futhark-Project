@@ -144,7 +144,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			let bitmask = mk_radix_bitmask (j*radix_bits) ((j+1)*radix_bits-1) b
 			let r1 = x1 |> getRadix bitmask
 			let r2 = x2 |> getRadix bitmask
-			let terminated' = map2 (!=) r1 r2 |> any (id)
+			let terminated' = map2 (!=) r1 r2 |> foldl (||) false
 			let (this_cmp,_,_)
 			= loop (this_res,decided,k) = (false,false,0)
 			while !decided && k<b do
@@ -186,6 +186,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 		(j: i32)
 		(pXs: [n](byteSeq [b]))
 	: [n]bool =
+		if j<0 then pXs |> group_boundaries (\_ _ -> false) else
 		let bitmask = mk_radix_bitmask i j b
 		let (fb,lb) = radix_first_last_bytes i j b
 		in pXs
@@ -230,7 +231,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 		    let (gather_xs', gather_pLs') = zip gather_xs gather_pLs
 		    	|> bucket_sort bit_step nt gather_groups_
 		    	|> (\(_, xps) -> unzip xps)
-		    let old_part_bounds  = copy (getPartitionBounds 0 new_i pXs)
+		    let old_part_bounds  = copy (getPartitionBounds 0 (new_i-1) pXs)
 		    let this_part_bounds = getPartitionBounds 0 new_j gather_xs'
 		    let new_part_bounds  = scatter old_part_bounds gather_is this_part_bounds
 		    let new_pXs = scatter (copy pXs) gather_is gather_xs'
@@ -284,7 +285,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 		    let (gather_xs', gather_pLs') = zip gather_xs gather_pLs
 		    	|> bucket_sort bit_step nt gather_groups_
 		    	|> (\(_, xps) -> unzip xps)
-		    let old_part_bounds  = copy (getPartitionBounds 0 new_i pXs)
+		    let old_part_bounds  = copy (getPartitionBounds 0 (new_i-1) pXs)
 		    let this_part_bounds = getPartitionBounds 0 new_j gather_xs'
 		    let new_part_bounds  = scatter old_part_bounds gather_is this_part_bounds
 		    let new_pXs = scatter (copy pXs) gather_is gather_xs'
@@ -302,7 +303,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 				|> map (\i -> new_pXs[i])
 				|> bsearch_first
 					(byteSeq_eq fb lb cur_bitmask)
-					(\r1 r2 -> if dp==0 then false else  radix_cmp (>) radix_size (dp+1,r1) (dp+1,r2))
+					(\r1 r2 -> radix_cmp (>) radix_size (dp+1,r1) (dp+1,r2))
 					(replicate np 0)
 					(relevant_part_is |> map (\i -> use_prev[use_info.bounds[i]]))
 				|> zip (indices new_bound_is |> sized np)
@@ -314,8 +315,6 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			--		(byteSeq_eq fb lb cur_bitmask pXs[i])
 			--		(relevant_part_is |> map (\i2 -> use_prev[use_info.bounds[i2]]))
 			--	)
-			let _ = trace new_taidade
-			let _ = trace new_part_bounds
 		    in (new_pXs, new_pPs, new_taidade, dp+1)
 		in (loop_over.0, loop_over.1)
 
@@ -384,7 +383,7 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			let parts_to_subdivide = bound_is |> map (\i -> pXs[i])
 				|> bsearch_first
 					(byteSeq_eq fb lb cur_bitmask)
-					(\r1 r2 -> if cur_depth==0 then false else radix_cmp (>) radix_size (cur_depth,r1) (cur_depth,r2))
+					(\r1 r2 -> radix_cmp (>) radix_size (cur_depth,r1) (cur_depth,r2))
 					(bound_is |> map (\_ -> 0))
 					(relevant_part_is |> map (\i -> use_prev[use_info.bounds[i]]))
 				|> zip (indices bound_is)
@@ -440,7 +439,6 @@ import "lib/github.com/diku-dk/segmented/segmented"
 			last_info_idx  = scatter (replicate (2**rs) (-1)) scatter_isL (indices x_info.bounds)
 		}
 
--- TODO
--- let xs1_:[][]u8= [[4,1],[0,3],[1,4],[1,4],[1,4],[5,4],[2,3],[4,3],[1,2],[2,2],[4,2],[3,2],[0,1]]
--- let xs2_:[][]u8= [[4,1],[5,1],[0,1],[0,1],[5,4],[5,4],[1,4],[2,4],[2,2],[2,2],[2,2],[2,2],[5,3],[7,3],[1,3],[3,3]]
--- partition_preconfigured doesn't work for 8 bits, max_depth=2, size_thresh=2
+-- some test vals
+-- let xs1:[][]u8=[[4,1],[0,3],[1,4],[1,4],[1,4],[5,4],[2,3],[4,3],[1,2],[2,2],[4,2],[3,2],[0,1]]
+-- let xs2:[][]u8=[[4,1],[5,1],[0,1],[0,1],[5,4],[5,4],[1,4],[2,4],[2,2],[2,2],[2,2],[2,2],[5,3],[7,3],[1,3],[3,3]]
