@@ -73,8 +73,10 @@ def search_diagonal [na] [nb] 't
         let prv_lt  = (cur_pt.0 == minA && cur_pt.1 == maxB)
             || (as[prv_pt.0] `lt` bs[prv_pt.1])
         in
-            if (cur_geq && prv_lt) then (cur_pt, numIter+1)
-            else if prv_lt then (move_across_diag diag cur_pt step, j+1)
+            if (cur_geq && prv_lt)
+                then (if cur_pt.1!=0 then (cur_pt.0,cur_pt.1+1) else cur_pt, numIter+1)
+            else if prv_lt
+                then (move_across_diag diag cur_pt step, j+1)
             else (move_across_diag diag cur_pt (i64.neg step), j+1)
     in foundAt
 
