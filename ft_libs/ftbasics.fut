@@ -293,6 +293,7 @@
 	type~ joinPairs_bsq [b] = joinPairs (byteSeq [b])
 
 -- Alternative Binary Search
+-- TODO change to bounded binary search
 
 	-- | Alternative Implementation for bsearch_first.
 	-- Loop inside map rather than map inside loop.
