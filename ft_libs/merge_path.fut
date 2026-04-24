@@ -152,6 +152,10 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
         )
 
 -- | Perform bsearch_range implementation using Merge-Path co-partitioning.
+--
+-- For as, bs sorted,
+-- for each value in as,
+-- find the index of the first match and the count of matches in bs.
 def bsearch_range_merge_path [na] [nb] 't
     (eq : t -> t -> bool)
     (geq: t -> t -> bool)
@@ -177,10 +181,3 @@ def bsearch_range_merge_path [na] [nb] 't
         |> unzip
     in as |> bsearch_range_bounded
         (eq) (geq) (gt) (lt) min_is max_is bs
-
--- probably
--- do a small binary search among partitions to find first & last match in B's per A's
--- and use those to set init_is in final binary search?
--- to set init_is, either use scatter & scan, or binary search, or expand
--- binary search might be faster, assuming merge_path is small
--- finally, for all elements in R, perform bsearch_range in the respective range (...)

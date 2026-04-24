@@ -1,5 +1,6 @@
 import "../lib/github.com/diku-dk/segmented/segmented"
 import "../ftbasics"
+import "../merge_path"
 
 -- Merge-Join routines for Sort-Merge Join.
 -- See:
@@ -13,13 +14,17 @@ import "../ftbasics"
 def smj_matchFinding [nR] [nS] 't
 	(eq : t -> t -> bool)
 	(geq: t -> t -> bool)
+	(leq: t -> t -> bool)
 	(gt : t -> t -> bool)
 	(lt : t -> t -> bool)
+	(merge_path_diagonals : i64)
 	(tR : [nR]t)
 	(tS : [nS]t)
 : joinTup [nR] t =
-	let (iS, count_m) = tR
-		|> bsearch_range eq geq gt lt (replicate nR 0) tS
+	let (iS, count_m) = bsearch_range_merge_path
+			eq geq leq gt lt
+			merge_path_diagonals
+			tR tS
 		|> unzip
 	in {vs = tR, ix = iota nR, iy = iS, cm = count_m}
 
@@ -44,10 +49,14 @@ def smj_leftOuter_expand [nR] 't (matches : joinTup [nR] t) : joinPairs t =
 def do_InnerSMJ [nR] [nS] 't
 	(eq : t -> t -> bool)
 	(geq: t -> t -> bool)
+	(leq: t -> t -> bool)
 	(gt : t -> t -> bool)
 	(lt : t -> t -> bool)
+	(merge_path_diagonals : i64)
 	(tR : [nR]t)
 	(tS : [nS]t)
-: joinPairs t =
-	smj_matchFinding eq geq gt lt tR tS
-	|> smj_expand
+: joinPairs t = smj_matchFinding
+	eq geq leq gt lt
+	merge_path_diagonals
+	tR tS
+|> smj_expand

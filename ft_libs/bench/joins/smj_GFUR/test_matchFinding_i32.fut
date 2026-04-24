@@ -16,5 +16,5 @@ entry do_matchfinding_i32 [n1] [n2]
 	(pL1 : [n1][]u8)
 	(pL2 : [n2][]u8)
 =
-	let jTup = smj_matchFinding (==) (>=) (>) (<) xs1 xs2
+	let jTup = smj_matchFinding (==) (>=) (<=) (>) (<) ((n2 + 8191) / 8192) xs1 xs2
 	in (jTup.vs, jTup.ix, jTup.iy, jTup.cm, is1, is2, pL1, pL2)
