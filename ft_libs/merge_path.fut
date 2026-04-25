@@ -112,14 +112,6 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
     (merge_path : [ts](i64,i64))
 : [ts](i64,i64) =
     let (a_bounds, b_bounds) = unzip merge_path
-    -- Filter 0-sized bs partitions
-    let b_bounds' = indices b_bounds
-        |> filter (\i ->
-            (i==(ts-1) || b_bounds[i]!=b_bounds[i+1])
-            && b_bounds[i]<nb
-        )
-        |> map (\i -> b_bounds[i])
-    let ts' = length b_bounds'
     -- For each partition, get minimum & maximum values
     let a_ranges = indices a_bounds |> map (\i ->
         let inf = a_bounds[i]
@@ -127,11 +119,11 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
             else a_bounds[i+1]-1
         in (inf,sup)
     )
-    let b_ranges = indices b_bounds' |> map (\i ->
-        let inf = b_bounds'[i]
-        let sup = if i==(ts'-1) then (nb-1)
-            else b_bounds'[i+1]-1
-        in (inf,sup)
+    let b_ranges = indices b_bounds |> map (\i ->
+        let inf = i64.min (nb-1) b_bounds[i]
+        let sup = if i==(ts-1) then (nb-1)
+            else b_bounds[i+1]-1
+        in (inf,i64.max inf sup)
     )
     -- Perform binary search
     let match_ranges = a_ranges |> bsearch_range
@@ -148,7 +140,7 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
     -- map to index ranges
     in match_ranges |> map (\(first_m, count) -> (first_m, first_m+count))
         |> map (\(first_m,last_m) -> if first_m<0 then (-1,-1) else
-            (b_bounds'[first_m], if last_m==ts' then nb else b_bounds'[last_m])
+            (b_bounds[first_m], if last_m==ts then nb else b_bounds[last_m])
         )
 
 -- | Perform bsearch_range implementation using Merge-Path co-partitioning.
