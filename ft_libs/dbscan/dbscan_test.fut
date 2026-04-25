@@ -39,13 +39,13 @@ def pts1 : [][2]f64 = [
 
 def test1 (kd : i64) (eps : f64) (minPts : i64) =
 	let vs = (copy pts1) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (xs,parts,p_idx) = kd2.index_dataset [kd] vs
+	let (xs,parts,p_idx,is) = kd2.index_dataset [kd] vs
 	let np = length parts
 	let parts = parts |> sized np
 	let p_idx = p_idx |> sized np
 	let buff = dbscan2.internal_dbscan
 		5 eps minPts parts p_idx xs
-	in (xs, p_idx, buff.is_core, buff.chain_id)
+	in (xs, p_idx, buff.is_core, buff.chain_id,is)
 
 -- eps=2, numPts=3
 def pts2 : [][2]f64 = [
@@ -59,11 +59,11 @@ def pts2 : [][2]f64 = [
 
 def test2 (kd : i64) (eps : f64) (minPts : i64) =
 	let vs = (copy pts2) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (xs,parts,p_idx) = kd2.index_dataset [kd] vs
+	let (xs,parts,p_idx,is) = kd2.index_dataset [kd] vs
 	let np = length parts
 	let n  = length xs
 	let parts = parts |> sized np
 	let p_idx = p_idx |> sized np
 	let buff = dbscan2.internal_dbscan
 		5 eps minPts parts p_idx xs
-	in (xs, p_idx, buff.is_core, buff.chain_id)
+	in (xs, p_idx, buff.is_core, buff.chain_id,is)

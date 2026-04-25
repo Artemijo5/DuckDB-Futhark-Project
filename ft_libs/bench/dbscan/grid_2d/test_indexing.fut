@@ -19,7 +19,7 @@ entry do_kd_index [n]
 : ([2][n]f64, [2][]f64, [2][]f64, []i64, [1]f64, [1]i64, [1]i64) =
 	let vcs = pts |> transpose
 		|> map (sized vector_2.length >-> vector_2.from_array)
-	let (vcs',minmax,is) = kd2.index_dataset depth vcs
+	let (vcs',minmax,is,_) = kd2.index_dataset depth vcs
 	let pts' = vcs' |> map (vector_2.to_array >-> sized 2)
 		|> transpose
 	let (min_vcs, max_vcs) = unzip minmax

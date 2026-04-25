@@ -20,8 +20,9 @@ module type spatial_index = {
 	-- 1. the dataset sorted by index-based partitions.
 	-- 2. partition boundaries
 	-- 3. starting index of each partition in the sorted dataset
-	-- TODO could also return transformed row indices
-	val index_dataset [dim] [n] : [dim]i64 -> [n](vector t) -> ([n](vector t), [](vector t, vector t), []i64)
+	-- 4. transformed row indices
+	val index_dataset [dim] [n] : [dim]i64 -> [n](vector t)
+		-> ([n](vector t), [](vector t, vector t), []i64, [n]i64)
 
 	-- | Obtain all partitions adjacent to a selected partition.
 	-- t parameter serves as max eps-distance for adjacency (can be zero for true adjacency).
@@ -103,12 +104,14 @@ module grid_index (V : vector) (N : numeric)
 			|> sized V.length |> V.from_array
 		let (mins, ranges) = xs |> get_mins_ranges
 		let pids = xs |> map (get_partition_id mins ranges idx_vec dimPrefix)
-		let (pids', xs') = xs |> bucket_sort 2 np pids
+		let (pids', xs', is') = xs |> indices |> zip xs
+			|> bucket_sort 2 np pids
+			|> (\(ps, xis) -> let (xis1,xis2) = unzip xis in (ps,xis1,xis2))
 		let firstByPid = hist (i64.+) 0i64 np (pids' |> sized n) (replicate n 1i64)
 			|> exscan (+) 0
 		let partBounds = iota np
 			|> map (get_partitionBoundaries mins ranges idx_vec dimPrefix)
-		in (xs', partBounds, firstByPid)
+		in (xs', partBounds, firstByPid, is')
 
 	def get_adj_partitions partitions eps pid =
 		let (this_mins, this_maxs) = partitions[pid]
@@ -172,17 +175,19 @@ module kd_index (V : vector) (N : numeric)
 			|> i64.min (head idxSpec)
 		-- sort by median of the next dimension each level
 		let (min_pt, max_pt) = xs |> get_mins_maxs
-		let (fxs, _, fmins, fmaxs, fsizes) =
-			loop (pts, pids, part_mins, part_maxs, part_sizes)
-			: ([n](vector t), [n]i64, [](vector t), [](vector t), []i64)
-			= (xs, replicate n 0, [min_pt], [max_pt], [n])
+		let (fxs, fis, _, fmins, fmaxs, fsizes) =
+			loop (pts, is, pids, part_mins, part_maxs, part_sizes)
+			: ([n](vector t), [n]i64, [n]i64, [](vector t), [](vector t), []i64)
+			= (xs, iota n, replicate n 0, [min_pt], [max_pt], [n])
 			for j < kd_depth do
 				let curDim = j % V.length
-				let (old_pids, pts') = pts |> zip pids
-					|> merge_sort (\(pid1,x1) (pid2,x2) ->
-						pid1<pid2 ||
-						(pid1==pid2 && ((V.get curDim x1) `leq` (V.get curDim x2)))
-					) |> unzip
+				let (old_pids, pts', is') = zip3 pids pts is
+					|> merge_sort_by_key
+						(\(pid,x,_) -> (pid, V.get curDim x))
+						(\(pid1,x1) (pid2,x2) -> pid1<pid2 ||
+							(pid1==pid2 && (x1 `leq` x2))
+						)
+					|> unzip3
 				let part_is = part_sizes |> exscan (+) 0
 				let median_vals = part_is
 					|> map2 (\pSize pInd ->
@@ -201,7 +206,7 @@ module kd_index (V : vector) (N : numeric)
 				let new_part_sizes = hist (+) 0 (2*(length part_sizes))
 					new_pids
 					(replicate n 1)
-			in (pts', new_pids, new_part_mins, new_part_maxs, new_part_sizes)
+			in (pts', is', new_pids, new_part_mins, new_part_maxs, new_part_sizes)
 		-- filter out empty partitions
 		let np = length fmins
 		let (fmins', fmaxs', fsizes') = zip3
@@ -212,7 +217,7 @@ module kd_index (V : vector) (N : numeric)
 			|> unzip3
 		let np' = length fmins'
 		let fparts = zip (fmins' |> sized np') (fmaxs' |> sized np')
-		in (fxs, fparts, fsizes' |> exscan (+) 0)
+		in (fxs, fparts, fsizes' |> exscan (+) 0, fis)
 
 	def get_adj_partitions partitions eps pid =
 		let (this_mins, this_maxs) = partitions[pid]
@@ -263,7 +268,7 @@ module non_index (V : vector) (N : numeric)
 
 	-- idxSpec : [1]i64, represents levels of kd tree
 	def index_dataset _ xs =
-		(xs, [get_mins_maxs xs], [0i64])
+		(xs, [get_mins_maxs xs], [0i64], indices xs)
 
 	def get_adj_partitions partitions eps pid =
 		let (this_mins, this_maxs) = partitions[pid]
