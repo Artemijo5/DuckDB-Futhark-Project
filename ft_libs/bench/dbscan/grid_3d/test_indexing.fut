@@ -12,7 +12,7 @@ module kd3      = grid_index vector_3 f64
 
 entry do_kd_index [n]
 	(pts    : [3][n]f64)
-	(depth  : [1]i64)
+	(depth  : [3]i64)
 	(eps    : [1]f64)
 	(minPts : [1]i64)
 	(extPar : [1]i64)

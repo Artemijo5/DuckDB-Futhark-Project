@@ -1,7 +1,7 @@
 #!/bin/bash
 
-backend='c'
-num_runs=10
+backend='cuda'
+num_runs=25
 
 # Number of points
 n=$1
