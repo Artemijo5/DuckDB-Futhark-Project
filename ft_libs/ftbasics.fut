@@ -78,42 +78,28 @@
 	def bsearch_first [nvs] [n] 't
 		(eq : t -> t -> bool)
 		(gt : t -> t -> bool)
-		(init_is : [nvs]i64)
+		(min_is : [nvs]i64)
+		(max_is : [nvs]i64) -- exclusive
 		(xs : [n]t)
 		(vs : [nvs]t)
-	: [nvs]i64 =
-		-- ceil + 1 of logarithm
-		let num_iter = n
-			|> i64.clz
-			|> (i32.-) (if (n&(n-1)==0) then 64 else 65) -- check if n is power of 2
-			|> i64.i32
-		let (foundAt,_) = loop (is,last_step) = (init_is,n)
-		for _ in iota num_iter do
-			let this_step = (last_step + 1)/2
-			let searchAt = is
-				|> map (\i ->
-					let prev_elem = xs[i64.max 0 (i-1)]
-					let cur_elem = xs[i64.max 0 i]
-					in (i, prev_elem, cur_elem)
-				)
-				|> zip vs
-				|> map (\(kv, (i, pv, cv)) ->
-					if i<0 then (-1) else
-					if (kv `eq` cv) && (i==0 || (kv `gt` pv))
-						then i
-					else if (kv `eq` cv)
-						then i64.max 0 (i-this_step)
-					else if (kv `gt` cv) then
-						if (i == n-1)
-						then -1
-						else i64.min (n-1) (i+this_step)
-					else -- kv `lt` cv
-						if (i == 0 || (kv `gt` pv))
-						then -1
-						else i64.max 0 (i-this_step)
-				)
-			in (searchAt, this_step)
-		in foundAt
+	: [nvs]i64 = vs |> map3 (\i_min i_max v ->
+		let (found_at,_) = loop (i,last_step) = (i_min, i_max-i_min)
+		while i>=0 && i>=i_min && i<i_max &&
+			! ( (v `eq` xs[i]) && (i==i_min || (v `gt` xs[i-1])) )
+		do
+			-- check for v==xs[i] && v>xs[i-1] is done in loop conditions
+			-- so inside loop assume that isn't the case
+			let this_step = (last_step+1)/2 in
+			if (v `gt` xs[i]) then
+				if i==(i_max-1)
+				then (-1,0)
+				else (i64.min (i_max-1) (i+this_step), this_step)
+			else
+				if (i==i_min || (v `gt` xs[i-1]))
+				then (-1,0)
+				else (i64.max i_min (i - this_step), this_step)
+		in found_at
+	) min_is max_is
 
 	-- | Bulk binary search to locate the last matching element.
 	--
@@ -125,39 +111,24 @@
 	def bsearch_last [nvs] [n] 't
 		(geq: t -> t -> bool)
 		(lt : t -> t -> bool)
-		(init_is : [nvs]i64)
+		(min_is : [nvs]i64)
+		(max_is : [nvs]i64) -- exclusive
 		(xs : [n]t)
 		(vs : [nvs]t)
-	: [nvs]i64 =
-		-- ceil + 1 of logarithm
-		let num_iter = n
-			|> i64.clz
-			|> (i32.-) (if (n&(n-1)==0) then 64 else 65) -- check if n is power of 2
-			|> i64.i32
-		let (foundAt,_) = loop (is,last_step) = (init_is,n)
-		for _ in iota num_iter do
-			let this_step = (last_step + 1)/2
-			let searchAt = is
-				|> map (\i ->
-					let cur_elem = xs[i64.max 0 i]
-					let next_elem = xs[i64.min (i+1) (n-1)]
-					in (i, cur_elem, next_elem)
-				)
-				|> zip vs
-				|> map (\(kv, (i, cv, nv)) ->
-					if i<0 then (-1) else
-					if (kv `geq` cv) && (i==(n-1) || (kv `lt` nv)) then
-						i
-					else if (kv `geq` cv) then
-						i64.min (n-1) (i+this_step)
-					-- from hereon kv `lt` cv
-					else if i==0 then
-						-1
-					else
-						i64.max 0 (i-this_step)
-				)
-			in (searchAt, this_step)
-		in foundAt
+	: [nvs]i64 = vs |> map3 (\i_min i_max v ->
+		let (found_at,_) = loop (i, last_step) = (i_min, i_max-i_min)
+		while i>=0 && i>=i_min && i<i_max &&
+			!( (v `geq` xs[i]) && ( i==(i_max-1) || (v `lt` xs[i+1]) ) )
+		do
+			-- check for kv>=cv && kv<nv is done in loop conditions
+			-- so inside loop assume that isn't the case
+			let this_step = (last_step+1)/2 in
+			if (v `lt` xs[i]) then
+				(i64.max i_min (i-this_step), this_step)
+			else
+				(i64.min (i_max-1) (i+this_step), this_step)
+		in found_at
+	) min_is max_is
 
 	-- | Bulk binary search to locate the index range of matching values.
 	--
@@ -170,16 +141,17 @@
 		(geq: t -> t -> bool)
 		(gt : t -> t -> bool)
 		(lt : t -> t -> bool)
-		(init_is : [nvs]i64)
+		(min_is : [nvs]i64)
+		(max_is : [nvs]i64) -- exclusive
 		(xs : [n]t)
 		(vs : [nvs]t)
 	: [nvs](i64,i64) =
 		-- Find the first match
 		let diyige = bsearch_first
-			(eq) (gt) init_is xs vs
+			(eq) (gt) min_is max_is xs vs
 		-- Find the last match
 		let zuihoude = bsearch_last
-			(geq) (lt) diyige xs vs
+			(geq) (lt) diyige max_is xs vs
 		-- Calculate the counts
 		let duome = map2
 			(\fm lm -> if fm<0 then 0 else lm-fm+1)
@@ -291,88 +263,6 @@
 
 	-- | joinPairs for byteSeq [b]
 	type~ joinPairs_bsq [b] = joinPairs (byteSeq [b])
-
--- Binary Search with bounds per individual thread
-
-	-- | Alternative bsearch_first, using bounded search regions for each individual thread.
-	-- Useful if we've already identified meaningful regions for each entry.
-	def bsearch_first_bounded [nvs] [n] 't
-		(eq : t -> t -> bool)
-		(gt : t -> t -> bool)
-		(min_is : [nvs]i64)
-		(max_is : [nvs]i64) -- exclusive
-		(xs : [n]t)
-		(vs : [nvs]t)
-	: [nvs]i64 = vs |> map3 (\i_min i_max v ->
-		let (found_at,_) = loop (i,last_step) = (i_min, i_max-i_min)
-		while i>=0 && i>=i_min && i<i_max &&
-			! ( (v `eq` xs[i]) && (i==i_min || (v `gt` xs[i-1])) )
-		do
-			-- check for v==xs[i] && v>xs[i-1] is done in loop conditions
-			-- so inside loop assume that isn't the case
-			let this_step = (last_step+1)/2 in
-			if (v `gt` xs[i]) then
-				if i==(i_max-1)
-				then (-1,0)
-				else (i64.min (i_max-1) (i+this_step), this_step)
-			else
-				if (i==i_min || (v `gt` xs[i-1]))
-				then (-1,0)
-				else (i64.max i_min (i - this_step), this_step)
-		in found_at
-	) min_is max_is
-
-	-- | Alternative bsearch_last, using bounded search regions for each individual thread.
-	-- Useful if we've already identified meaningful regions for each entry.
-	def bsearch_last_bounded [nvs] [n] 't
-		(geq: t -> t -> bool)
-		(lt : t -> t -> bool)
-		(min_is : [nvs]i64)
-		(max_is : [nvs]i64) -- exclusive
-		(xs : [n]t)
-		(vs : [nvs]t)
-	: [nvs]i64 = vs |> map3 (\i_min i_max v ->
-		let (found_at,_) = loop (i, last_step) = (i_min, i_max-i_min)
-		while i>=0 && i>=i_min && i<i_max &&
-			!( (v `geq` xs[i]) && ( i==(i_max-1) || (v `lt` xs[i+1]) ) )
-		do
-			-- check for kv>=cv && kv<nv is done in loop conditions
-			-- so inside loop assume that isn't the case
-			let this_step = (last_step+1)/2 in
-			if (v `lt` xs[i]) then
-				(i64.max i_min (i-this_step), this_step)
-			else
-				(i64.min (i_max-1) (i+this_step), this_step)
-		in found_at
-	) min_is max_is
-
-	-- | Alternative bsearch_range, using bounded search regions for each individual thread.
-	-- Useful if we've already identified meaningful regions for each entry.
-	def bsearch_range_bounded [nvs] [n] 't
-		(eq : t -> t -> bool)
-		(geq: t -> t -> bool)
-		(gt : t -> t -> bool)
-		(lt : t -> t -> bool)
-		(min_is : [nvs]i64)
-		(max_is : [nvs]i64) -- exclusive
-		(xs : [n]t)
-		(vs : [nvs]t)
-	: [nvs](i64,i64) =
-		-- Find the first match
-		let diyige = bsearch_first_bounded
-			(eq) (gt) min_is max_is xs vs
-		-- Find the last match
-		let zuihoude = bsearch_last_bounded
-			(geq) (lt) diyige max_is xs vs
-		-- Calculate the counts
-		let duome = map2
-			(\fm lm -> if fm<0 then 0 else lm-fm+1)
-			diyige
-			zuihoude
-		in zip diyige duome
-
--- This *might* be worthwhile checking?
--- but can only be used for narrow i64 sorts...
 
 import "lib/github.com/diku-dk/segmented/segmented"
 

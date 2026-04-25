@@ -12,7 +12,6 @@ module dbscan2  = ft_dbscan vector_2 f64 kd2 dist2
 -- ==
 -- entry: do_dbscan
 -- compiled input @data/dat.in
--- auto output
 
 entry do_dbscan [n] [part_no]
 	(pts  : [2][n]f64)

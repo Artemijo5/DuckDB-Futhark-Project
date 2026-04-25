@@ -43,6 +43,7 @@ def innerPHJ [nR] [nS] [b]
 		(radix_cmp (>)  radix_bits)
 		(radix_cmp (<)  radix_bits)
 		(replicate np_r 0)
+		(replicate np_r np_s)
 		s_parts
 	-- get the maximum size of participating r partitions
 	let r_max_part_size = r_partition_sizes |> sized np_r

@@ -136,6 +136,7 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
         (\(ia,iA) (ib,_) -> ia<na &&
             (as[iA] `lt`  bs[ib])) -- while looking for last match - compare with next partition
         (replicate ts 0)
+        (replicate ts (length b_ranges))
         b_ranges
     -- map to index ranges
     in match_ranges |> map (\(first_m, count) -> (first_m, first_m+count))
@@ -168,8 +169,8 @@ def bsearch_range_merge_path [na] [nb] 't
     -- ie the last partition where part_index <= element_index
     let a_bounds = merge_path |> map (.0)
     let (min_is,max_is) = indices as |> bsearch_last
-        (>=) (<) (replicate na 0) a_bounds
+        (>=) (<) (replicate na 0) (replicate na (length a_bounds)) a_bounds
         |> map (\i -> part_match[i])
         |> unzip
-    in as |> bsearch_range_bounded
+    in as |> bsearch_range
         (eq) (geq) (gt) (lt) min_is max_is bs
