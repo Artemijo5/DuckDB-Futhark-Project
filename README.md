@@ -24,20 +24,15 @@ To use:
 4. run the desired benchmark from a terminal in the project directory
 Also check the futhark benchmarks in ft_libs/bench (WIP)
 -----------------------------------------
-Current futhark libraries:
-- `ftRelational` : sort, joins, group-by aggregation
-- `ftSkyline` : Skyline Computation
-- `ftDBSCAN` : DBSCAN (entire dataset is processed at once, quadratic space)
-- `ftDBSCAN_plus` : DBSCAN (directory-level index, WIP)
+Current implementations:
+- SMJ and PHJ
+- String Equi-Joins
+- DBSCAN (based on G-DBSCAN with index acceleration)
+- Skyline (WIP)
 -----------------------------------------
 The purpose of this project is to implement some GPU-based relational algorithms using the futhark programming language, identifying techniques for functional GPU database programming and evaluating performance.
 
-Algorithms currently implemented:
-- Relational Joins (SMJ, Radix Hash Join - based on https://arxiv.org/abs/2312.00720 and references) (note: Hash Joins are temporarily not being compiled)
-- Group-by Aggregation
-- Skyline Queries
-- DBSCAN
-
+Currently, see benchmarks in ft_libs/bench
 -----------------------------------------
 Main tools used:
 - [DuckDB](https://duckdb.org/) is an in-process OLAP database. In this project, it is invoked through its [C API](https://duckdb.org/docs/stable/clients/c/overview).
