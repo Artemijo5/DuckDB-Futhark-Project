@@ -1,5 +1,6 @@
 import "lib/github.com/diku-dk/sorts/merge_sort"
 import "ftbasics"
+import "lib/github.com/diku-dk/sorts/radix_sort" -- TODO test blocked_radix_sort (...)
 
 -- Sorting functions for the different algorithms.
 -- Namely, sorting with or without payloads, to compare
@@ -39,11 +40,13 @@ import "ftbasics"
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 	: [n]t =
-	let get_bit' i x =
-		-- Flip the most significant bit.
-		let b = get_bit i x
-		in if i == num_bits-1 then b ^ 1 else b
-	in ft_radix_sort bit_step num_bits clz get_bit' xs
+	--let get_bit' i x =
+	--	-- Flip the most significant bit.
+	--	let b = get_bit i x
+	--	in if i == num_bits-1 then b ^ 1 else b
+	--in ft_radix_sort bit_step num_bits clz get_bit' xs
+	let msb = xs |> map (clz) |> i32.minimum |> (i32.-) num_bits
+	in blocked_radix_sort_int 256 msb get_bit xs
 
 	-- | Radix-sort for floating-point data.
 	-- Based on futhark sorts library radix_sort_int
@@ -54,18 +57,20 @@ import "ftbasics"
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 	: [n]t =
-	let get_bit' i x =
-		-- We flip the bit returned if:
-		--
-		-- 0) the most significant bit is set (this makes more negative
-		--    numbers sort before less negative numbers), or
-		--
-		-- 1) we are asked for the most significant bit (this makes
-		--    negative numbers sort before positive numbers).
-		let b = get_bit i x
-		in if get_bit (num_bits-1) x == 1 || i == num_bits-1
-		then b ^ 1 else b
-	in ft_radix_sort bit_step num_bits clz get_bit' xs
+	--let get_bit' i x =
+	--	-- We flip the bit returned if:
+	--	--
+	--	-- 0) the most significant bit is set (this makes more negative
+	--	--    numbers sort before less negative numbers), or
+	--	--
+	--	-- 1) we are asked for the most significant bit (this makes
+	--	--    negative numbers sort before positive numbers).
+	--	let b = get_bit i x
+	--	in if get_bit (num_bits-1) x == 1 || i == num_bits-1
+	--	then b ^ 1 else b
+	--in ft_radix_sort bit_step num_bits clz get_bit' xs
+	let msb = xs |> map (clz) |> i32.minimum |> (i32.-) num_bits
+	in blocked_radix_sort_float 256 msb get_bit xs
 
 -- Wrapper types for GFTR & GFUR
 
