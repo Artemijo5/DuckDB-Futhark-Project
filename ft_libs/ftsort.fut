@@ -1,6 +1,6 @@
 import "lib/github.com/diku-dk/sorts/merge_sort"
 import "ftbasics"
-import "lib/github.com/diku-dk/sorts/radix_sort" -- TODO test blocked_radix_sort (...)
+import "lib/github.com/diku-dk/sorts/radix_sort"
 
 -- Sorting functions for the different algorithms.
 -- Namely, sorting with or without payloads, to compare
@@ -10,67 +10,33 @@ import "lib/github.com/diku-dk/sorts/radix_sort" -- TODO test blocked_radix_sort
 -- Bowen Wu, Dimitrios Koutsoukos, Gustavo Alonso
 -- ACM Manag. Data, Vol. 3, No. 1 (SIGMOD), Article 39
 
--- Radix-sort is made to fit custom data.
--- Merge-sort using futhark library.
-
--- TODO can call clz in entry points to get MSB for radix-sort
--- TODO see if can use blocked_radix_sort from futhark library
-
 -- Basic radix-sort funcs
-
-	-- | Basic radix-sort
-	def ft_radix_sort [n] 't
-		(bit_step : i32)
-	    (num_bits : i32)
-	    (clz : t -> i32)
-	    (get_bit : i32 -> t -> i32)
-	    (xs : [n]t)
-	: [n]t =
-		let msb = xs |> map (clz) |> i32.minimum |> (i32.-) num_bits
-	    in loop xs
-		    for bit in (0..bit_step..<msb)
-		    do radix_sort_multistep bit (i32.min (msb-1) (bit+bit_step-1)) get_bit xs
 
 	-- | Radix-sort for signed integers.
 	-- Based on futhark sorts library radix_sort_int
 	def ft_radix_sort_int [n] 't
-		(bit_step : i32)
+		(_ : i32)
 		(num_bits : i32)
 	    (clz : t -> i32)
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 	: [n]t =
-	--let get_bit' i x =
-	--	-- Flip the most significant bit.
-	--	let b = get_bit i x
-	--	in if i == num_bits-1 then b ^ 1 else b
-	--in ft_radix_sort bit_step num_bits clz get_bit' xs
-	let msb = xs |> map (clz) |> i32.minimum |> (i32.-) num_bits
-	in blocked_radix_sort_int 256 msb get_bit xs
+		let msb = xs |> map (clz) |> i32.minimum |> (i32.-) num_bits
+		in if msb==num_bits then radix_sort_int msb get_bit xs
+		else radix_sort msb get_bit xs
 
 	-- | Radix-sort for floating-point data.
 	-- Based on futhark sorts library radix_sort_int
 	def ft_radix_sort_float [n] 't
-		(bit_step : i32)
+		(_ : i32)
 		(num_bits : i32)
 	    (clz : t -> i32)
 		(get_bit : i32 -> t -> i32)
 		(xs : [n]t)
 	: [n]t =
-	--let get_bit' i x =
-	--	-- We flip the bit returned if:
-	--	--
-	--	-- 0) the most significant bit is set (this makes more negative
-	--	--    numbers sort before less negative numbers), or
-	--	--
-	--	-- 1) we are asked for the most significant bit (this makes
-	--	--    negative numbers sort before positive numbers).
-	--	let b = get_bit i x
-	--	in if get_bit (num_bits-1) x == 1 || i == num_bits-1
-	--	then b ^ 1 else b
-	--in ft_radix_sort bit_step num_bits clz get_bit' xs
-	let msb = xs |> map (clz) |> i32.minimum |> (i32.-) num_bits
-	in blocked_radix_sort_float 256 msb get_bit xs
+		let msb = xs |> map (clz) |> i32.minimum |> (i32.-) num_bits
+		in if msb==num_bits then radix_sort_float msb get_bit xs
+		else radix_sort msb get_bit xs
 
 -- Wrapper types for GFTR & GFUR
 

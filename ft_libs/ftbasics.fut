@@ -164,68 +164,20 @@
 	-- | Represents a contiguous sequence of bytes.
 	type byteSeq [bytes] = [bytes]u8
 
-	-- | Obtain bits i-j (inclusive) from y.
-	-- Can't obtain more than 1 byte's worth of bits.
-	def get_radix 't (i : i32) (j : i32) (get_bit : i32 -> t -> i32) (x : t)
-	: u8 =
-		loop y=0
-		for bit in (0...(j-i))
-		do u8.set_bit bit y (get_bit (i+bit) x)
-
-	-- | Perform a radix-sort step, using multiple bits at a time.
-	-- Based on Futhark by Example.
-	def radix_sort_multistep [n] 't
-		(i : i32)
-		(j : i32)
-		(get_bit : i32 -> t -> i32)
-		(xs : [n]t)
-	: [n]t =
-		let ij_bits = j-i+1
-		let up_to = (1 << ij_bits) |> i64.i32
-		-- isolate the radix for each x
-		let rs = xs
-			|> map (get_radix i j get_bit)
-			-- needs to be i64 for histogram
-			-- TODO maybe keeping u8 and doing reduce would be somewhat faster?
-			|> map (i64.u8)
-		let counts = hist (+) 0 up_to rs (replicate n 1)
-		let offs = exscan (+) 0 counts
-		let idxs = loop js = (iota n) for num < up_to do
-			-- flag elements with this radix
-			-- guanzhong = 'audience'
-			let guanzhong = rs
-				|> map (\r -> r==num)
-			-- get the relative positions of elements with this radix
-			-- with a prefix sum
-			-- this + the radix's offset gives the index for the final scattering
-			-- zuowei = 'seats'
-			let zuowei = guanzhong
-				|> map (i64.bool)
-				|> exscan (+) 0
-				|> map (\i -> i+offs[num])
-			in js
-				|> zip guanzhong
-				|> map (\(g, i) -> if g then zuowei[i] else i)
-		in scatter (copy xs) idxs xs
+	import "lib/github.com/diku-dk/sorts/radix_sort"
 
 	-- | Radix-based bucket-sort for i64 data.
 	-- Meant for a 'small' number of compactly numbered buckets.
 	def bucket_sort [n] 't
-		(bit_step: i32)
+		(_: i32)
 		(num_buckets : i64)
 		(ks : [n]i64)
 		(xs : [n]t)
 	=
 		let msb = num_buckets - 1 |> i64.clz |> (i32.-) i64.num_bits
-		let kxs = zip ks xs
-	    let kxs' = loop kxs
-		    for bit in (0..bit_step..<msb)
-		    do radix_sort_multistep
-		    	bit
-		    	(i32.min (msb-1) (bit+bit_step-1))
-		    	(\bi (k,_) -> i64.get_bit bi k)
-		    	kxs
-		in kxs' |> unzip
+		in zip ks xs
+	    	|> radix_sort msb (\i (k,_) -> i64.get_bit i k)
+			|> unzip
 
 -- Grouping & Dictionary Encoding
 
@@ -233,8 +185,9 @@
 	-- Returns a boolean array, with the first index of each group being true.
 	-- NOTE : the previous element is on the left side of the neq comparator.
 	def group_boundaries [n] 't (neq : t -> t -> bool) (xs : [n]t)
-	: [n]bool = if n==0 then ([] :> [n]bool) else copy (xs |> map2 (neq) (xs |> rotate (-1)))
-		with [0] = true
+	: [n]bool = if n==0 then ([] :> [n]bool)
+		else copy (xs |> map2 (neq) (xs |> rotate (-1)))
+			with [0] = true
 
 	-- | Dictionary encoding: assign compact i64 ids to grouped keys, using the group boundaries.
 	def dict_encoding [n] (gbs : [n]bool)

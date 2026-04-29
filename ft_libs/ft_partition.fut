@@ -14,6 +14,7 @@
 
 import "ftbasics"
 import "lib/github.com/diku-dk/segmented/segmented"
+import "lib/github.com/diku-dk/sorts/radix_sort"
 
 -- Structs
 
@@ -34,9 +35,6 @@ import "lib/github.com/diku-dk/segmented/segmented"
 	}
 
 -- Basic Operations
-
-	-- | Create a b-sized byteSeq of all-0 bytes.
-	def dummy_byteSeq b = replicate b 0u8
 
 	-- | Get a specific bit of a byteseq.
 	def byteSeq_getBit [b] (i: i32) (x: byteSeq [b])
@@ -155,30 +153,17 @@ import "lib/github.com/diku-dk/segmented/segmented"
 
 -- Radix-Partitioning
 
-	-- | Sorting step for radix-partition with payload data.
-	def radix_part_step [n][b] 't
-		(i: i32)
-		(j: i32)
-		(xs: [n][b]u8)
-		(pL: [n]t)
-	: ([n][b]u8, [n]t) =
-		let xps = zip xs pL
-		let xps' = radix_sort_multistep
-			i j (\bit xp -> byteSeq_getBit bit xp.0) xps
-		in unzip xps'
-
 	-- | Single-level radix-partition with payload data.
 	def radix_part [n][b] 't
 		(i: i32)
 		(j: i32)
-		(bit_step: i32)
+		(_: i32)
 		(xs: [n][b]u8)
 		(pL: [n]t)
-	: ([n][b]u8, [n]t) =
-		let j_ = i32.min j ((i32.i64 b)*u8.num_bits - 1) in
-		loop (xs, pL)
-		for bit in (i..(i+bit_step)...(j_))
-		do radix_part_step bit (i32.min j_ (bit+bit_step-1)) xs pL
+	: ([n][b]u8, [n]t) = zip xs pL
+		|> radix_sort (j-i+1)
+			(\bi (x,_) -> byteSeq_getBit (bi+i) x)
+		|> unzip
 
 	-- | Obtain the first index of each partition.
 	def getPartitionBounds [n] [b]
