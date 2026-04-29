@@ -90,7 +90,7 @@ def strJoin_filter [b]
 	(strs2 : strInfo)
 	(is1 : []i64)
 	(is2 : []i64)
-	(pairs : joinPairs (byteSeq [b]))
+	(pairs : joinPairs_bsq [b])
 : joinPairs_str =
 	let n = length pairs.ix
 	let (filt_ix, filt_iy) = zip (pairs.ix :> [n]i64) (pairs.iy :> [n]i64)
