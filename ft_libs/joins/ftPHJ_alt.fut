@@ -52,7 +52,7 @@ def innerPHJ [nR] [nS] [b]
 	-- stream elements of each partition of R
 	-- comparing in parallel with corresponding elements in S
 	-- and concatenate to previous results
-	let acc_pairs : [](byteSeq [b], i64, i64)
+	let acc_pairs : [](i64, i64)
 	= loop found_pairs = [] for j < r_max_part_size do
 		let this_pairs = matching_parts
 			|> map2 (\i_s mpart ->
@@ -63,7 +63,6 @@ def innerPHJ [nR] [nS] [b]
 					else (i_s,-1)
 			) (indices tS)
 			|> filter (\(_,i_r) -> i_r>=0)
-			|> map (\(iy,ix) -> (tS[iy],ix,iy))
 		in found_pairs ++ this_pairs
-	let (vs,ix,iy) = acc_pairs |> unzip3
-	in {vs = vs, ix = ix, iy = iy}
+	let (iy,ix) = acc_pairs |> unzip
+	in {vs = ix |> map (\i -> tR[i]), ix = ix, iy = iy}
