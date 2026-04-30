@@ -175,6 +175,8 @@ module kd_index (V : vector) (N : numeric)
 			|> i64.min (head idxSpec)
 		-- sort by median of the next dimension each level
 		let (min_pt, max_pt) = xs |> get_mins_maxs
+		-- TODO can get rid of empty partitions within the loop
+		-- although that is unlikely to happen (only when an entire partition >= median)
 		let (fxs, fis, _, fmins, fmaxs, fsizes) =
 			loop (pts, is, pids, part_mins, part_maxs, part_sizes)
 			: ([n](vector t), [n]i64, [n]i64, [](vector t), [](vector t), []i64)
