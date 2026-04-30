@@ -5,14 +5,6 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
-type~ flushed_t [dim] 't = {
-	n : i64,
-	pts : [dim][]t,
-	is : []i64,
-	isCore : []bool,
-	chain_id : []i64
-}
-
 module ft_dbscan
 	(V : vector)
 	(F : real)
@@ -65,9 +57,6 @@ module ft_dbscan
 
 		-- chain collisions are kept as [](i64, i64)
 		-- first is the id to be rectified, second is to be rectified to
-
-		type~ flushed_vectors = flushed_t [1] (vector t)
-		type~ flushed_data = flushed_t [V.length] t
 
 	-- Initialization
 
