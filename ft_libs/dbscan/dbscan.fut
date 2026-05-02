@@ -5,6 +5,8 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
+-- DBSCAN implementation based on G-DBSCAN with additional indexing
+
 module ft_dbscan
 	(V : vector)
 	(F : real)
