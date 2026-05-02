@@ -278,7 +278,7 @@ int main(int argc, char *argv[]) {
 	  	// Create logical types for appender datachunks.
 	  	duckdb_logical_type ltypes[2] = {
 	  		duckdb_create_logical_type(DUCKDB_TYPE_BOOLEAN),
-	  		duckdb_create_logical_type(DUCKDB_TYPE_BIGINT),
+	  		duckdb_create_logical_type(DUCKDB_TYPE_BIGINT)
 	  	};
 
 	  	int64_t num_chunks = (num_rows + CHUNK_SIZE - 1) / CHUNK_SIZE;
@@ -296,8 +296,8 @@ int main(int argc, char *argv[]) {
 
 	  		// could be done faster if I used ft_keyCol read here
 	  		// but would need to still have futhark context
-	  		memcpy(dat1, is_core + num_chunks*CHUNK_SIZE, this_rows*sizeof(bool));
-	  		memcpy(dat2, cluster_id + num_chunks*CHUNK_SIZE, this_rows*sizeof(int64_t));
+	  		memcpy(dat1, is_core + j*CHUNK_SIZE, this_rows*sizeof(bool));
+	  		memcpy(dat2, cluster_id + j*CHUNK_SIZE, this_rows*sizeof(int64_t));
 
 	  		duckdb_append_data_chunk(appender, cnk);
 	  		if((num_chunks+1)%100 == 0) duckdb_appender_flush(appender);
