@@ -52,7 +52,7 @@ entry do_grid_dbscan_2d_f64 [n]
 		pts'
 	let is_core = scatter (replicate n false) is buff.is_core
 	let cluster = scatter (replicate n (-1) ) is buff.chain_id
-	in {is_core = is_core, cluster_id = cluster} 
+	in {is_core = is_core, cluster_id = cluster}
 
 entry do_kd_dbscan_2d_f64 [n]
 	(extPar : i64)
@@ -71,7 +71,7 @@ entry do_kd_dbscan_2d_f64 [n]
 		pts'
 	let is_core = scatter (replicate n false) is buff.is_core
 	let cluster = scatter (replicate n (-1) ) is buff.chain_id
-	in {is_core = is_core, cluster_id = cluster} 
+	in {is_core = is_core, cluster_id = cluster}
 
 entry do_grid_dbscan_3d_f64 [n]
 	(extPar : i64)
@@ -93,7 +93,7 @@ entry do_grid_dbscan_3d_f64 [n]
 		pts'
 	let is_core = scatter (replicate n false) is buff.is_core
 	let cluster = scatter (replicate n (-1) ) is buff.chain_id
-	in {is_core = is_core, cluster_id = cluster} 
+	in {is_core = is_core, cluster_id = cluster}
 
 entry do_kd_dbscan_3d_f64 [n]
 	(extPar : i64)
