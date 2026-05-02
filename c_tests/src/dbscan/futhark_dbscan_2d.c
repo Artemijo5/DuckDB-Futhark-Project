@@ -300,7 +300,7 @@ int main(int argc, char *argv[]) {
 	  		memcpy(dat2, cluster_id + j*CHUNK_SIZE, this_rows*sizeof(int64_t));
 
 	  		duckdb_append_data_chunk(appender, cnk);
-	  		if((num_chunks+1)%100 == 0) duckdb_appender_flush(appender);
+	  		if((j+1)%100 == 0) duckdb_appender_flush(appender);
 	  		duckdb_destroy_data_chunk(&cnk);
 	  	}
 	  	duckdb_appender_flush(appender);
