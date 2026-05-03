@@ -21,7 +21,7 @@ import "ft_undir_graph"
 -- similar to the relevant partitions queue in dbscan.fut,
 -- but that would be superfluous for futhark's logic.
 
-module ft_dbscan
+module ft_dclust
 	(V : vector)
 	(F : real)
 	(D : distance with vector 'a = V.vector a with t = F.t)
@@ -68,6 +68,7 @@ module ft_dbscan
 
 	-- | Get pairs of adjacent partitions
 	-- Specifically returns pairs (i,j) with i<=j.
+	-- TODO can do more efficiently by using grid properties.
 	def get_adj_partitions [np]
 		(extPar : i64)
 		(eps : t)
@@ -94,7 +95,7 @@ module ft_dbscan
 	-- 3. pairs of neighbouring partitions
 	-- 4. #pairs per partition
 	-- 5. index of each partition's segment in 3
-	-- 6. #comparisons to be made per partition
+	-- 6. #comparisons to be made per partition (for each of its points)
 	def partition_information [np] [n]
 		(extPar : i64)
 		(eps : t)
@@ -110,10 +111,14 @@ module ft_dbscan
 		let pairs_per_part = hist (+) 0 np
 			(part_neigh_pairs |> map (.0)) (part_neigh_pairs |> map (\_ -> 1))
 		let pairs_index_per_part = pairs_per_part |> exscan (+) 0
-		let cmps_per_part = iota np |> expand_outer_reduce
+		-- TODO found expand_reduce & expand_outer_reduce fail when only 1 element
+		-- probably report as bug
+		let cmps_per_part : [np]i64 = if np == 1 then [n] |> sized np else
+			iota np |> expand_reduce
 			(\i -> pairs_per_part[i])
 			(\i ind -> pts_per_part[part_neigh_pairs[pairs_index_per_part[i] + ind].1])
 			(+) 0
+			|> sized np
 		in (pids, pts_per_part, part_neigh_pairs, pairs_per_part, pairs_index_per_part, cmps_per_part)
 
 	-- | Get neighbour counts per point.
@@ -149,17 +154,18 @@ module ft_dbscan
 							in if pts_so_far + count_against > ind
 								then (part_is[part_against] + (ind - pts_so_far),-1,-1)
 								else (-1,part_i_against+1,pts_so_far+count_against)
+						in if i2<i1 then (-1,-1) else
 						let is_neigh = D.check_neighbourhood eps pt pts[i2]
 						in if is_neigh then (i1,i2) else (-1,-1)
 					)
-				|> expand (\(i1,_) -> if i1<0 then 0 else 2)
+				|> expand (\(i1,i2) -> if i1<0 then 0 else if i1==i2 then 1 else 2)
 					(\(i1,i2) ind -> if ind==0 then i1 else i2)
 			-- add neighbour counts found now to those found previously
 			in reduce_by_index neigh_count (+) 0 cur_neigh (cur_neigh |> map (\_ -> 1))
 		in final_neigh_count
 
 	-- | Determine whether a point is core based on neighbourhood points count.
-	def is_core
+	def get_is_core
 		(neigh_count : []i64)
 		(minPts : i64)
 	= neigh_count |> map (\c -> c >= minPts)
@@ -179,23 +185,23 @@ module ft_dbscan
 	-- 2. index of first core point per partition
 	-- 3. #comparisons to be made per partition (going by core points)
 	def part_get_core_info [n] [np]
-		(core_pts : [n](vector t))
 		(core_pid : [n]i64)
 		(part_pairs : [](i64,i64))
 		(part_pairs_count : [np]i64)
 		(part_pairs_is : [np]i64)
 	=
-		let count_per_part = hist (+) 0 np core_pid (replicate n 1)
+		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
 		let first_per_part = count_per_part |> exscan (+) 0
-		let cmps_per_part = iota np |> expand_outer_reduce
-			(\i -> part_pair_count[i])
-			(\i ind -> count_per_part[part_pairs[part_pair_is[i] + ind].1])
+		let cmps_per_part : [np]i64 = if np == 1 then [n] |> sized np else
+			iota np |> expand_reduce
+			(\i -> part_pairs_count[i])
+			(\i ind -> count_per_part[part_pairs[part_pairs_is[i] + ind].1])
 			(+) 0
+			|> sized np
 		in (count_per_part, first_per_part, cmps_per_part)
 
-	-- Find clusters among core points.
-	-- TODO continue with this
-	def find_clusters [n]
+	-- | Find clusters among core points.
+	def find_clusters [n] [np]
 		(seed_count : i64)
 		(eps : t)
 		(pts  : [n](vector t))
@@ -207,7 +213,7 @@ module ft_dbscan
 		(part_core_cmps_count  : [np]i64)
 	=
 		let num_iter = (n + seed_count - 1) / seed_count
-		let init_cid = replicate n i64.highest
+		let init_cid = iota n
 		let final_cid = loop cid = init_cid
 		for j < num_iter do
 			let inf = j*seed_count
@@ -215,7 +221,7 @@ module ft_dbscan
 			-- has every min-max pair of neighbours found
 			let cur_neigh = (inf..<sup) |> map (\i -> (i,pts[i],pids[i]))
 				|> expand
-					(\(_,_,pid) -> part_cmps_count[pid])
+					(\(_,_,pid) -> part_core_cmps_count[pid])
 					(\(i1,pt,pid) ind ->
 						-- Find the ind'th point to be compared with this partition
 						-- Doing a sequential search across neighbouring partition
@@ -223,17 +229,141 @@ module ft_dbscan
 						loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid], 0)
 						while i_against < 0 do
 							let part_against = part_pairs[part_i_against].1
-							let count_against = part_sz[part_against]
+							let count_against = part_core_sz[part_against]
 							in if pts_so_far + count_against > ind
-								then (part_is[part_against] + (ind - pts_so_far),-1,-1)
+								then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
 								else (-1,part_i_against+1,pts_so_far+count_against)
+						in if i2<=i1 then (-1,-1) else -- no need to record self-neighbourhood
 						let is_neigh = D.check_neighbourhood eps pt pts[i2]
 						in if is_neigh then (i1,i2) else (-1,-1)
 					)
-				|> expand (\(i1,_) -> if i1<0 then 0 else 2)
-					(\(i1,i2) ind -> if ind==0 then i1 else i2)
+				|> filter (\(i1,_) -> i1>=0)
+			let cur_node_no = if ((length cur_neigh) == 0) then 0 else
+				1 + (cur_neigh |> map (.1) |> i64.maximum)
+			let cur_connections = get_connected_subgraph_ids_unencoded cur_node_no cur_neigh
+				|> map (\i -> cid[i])
+			let cur_collisions = if cur_node_no==0 then [] else
+				map3 (\cur_cid pre_cid (i : i64) ->
+					if cur_cid != pre_cid && pre_cid != i
+					then (i64.min cur_cid pre_cid,i64.max cur_cid pre_cid)
+					else (-1,-1)
+				) cur_connections[inf:cur_node_no] cid[inf:cur_node_no] (inf..<cur_node_no)
+				|> filter (\(c1,_) -> c1 >= 0)
+			let rect_list = get_connected_subgraph_ids_unencoded cur_node_no cur_collisions
+			in scatter (copy cid) (iota cur_node_no) cur_connections
+				|> map2 (i64.min) cid
+				|> map (\i -> if i<cur_node_no then rect_list[i] else i)
+		-- apply dictionary encoding
+		let group_encoding = map2 (==) final_cid (iota n)
+			|> dict_encoding
+		in final_cid |> map (\i -> group_encoding[i])
 
+	-- | Assign id's to border pts & noises
+	def assign_cluster_ids [n] [nc] [np]
+		(seed_count : i64)
+		(eps : t)
+		(pts  : [n](vector t))
+		(pids : [n]i64)
+		(core_pts  : [nc](vector t))
+		(core_cids : [nc]i64)
+		(part_pairs : [](i64,i64))
+		(part_core_is : [np]i64)
+		(part_core_sz : [np]i64)
+		(part_pairs_index : [np]i64)
+		(part_core_cmps_count  : [np]i64)
+	=
+		let num_iter = (n + seed_count - 1) / seed_count
+		let init_cid = replicate n (-1)
+		-- For each point, find its core pts within eps & assign their min cluster id
+		-- if no core point within eps, assign (-1) as its cluster id (noise)
+		let final_cid = loop cid = init_cid
+		for j < num_iter do
+			let inf = j*seed_count
+			let sup = i64.min n (inf+seed_count)
+			-- finds minimum cid neighbouring each point
+			let cur_cid = (inf..<sup) |> map (\i -> (pts[i],pids[i]))
+				|> expand_outer_reduce
+					(\(_,pid) -> part_core_cmps_count[pid])
+					(\(pt,pid) ind ->
+						-- Find the ind'th point to be compared with this partition
+						-- Doing a sequential search across neighbouring partition
+						let (i2,_,_) : (i64,i64,i64) =
+						loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid], 0)
+						while i_against < 0 do
+							let part_against = part_pairs[part_i_against].1
+							let count_against = part_core_sz[part_against]
+							in if pts_so_far + count_against > ind
+								then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
+								else (-1,part_i_against+1,pts_so_far+count_against)
+						let is_neigh = D.check_neighbourhood eps pt core_pts[i2]
+						in if is_neigh then core_cids[i2] else (-1)
+					)
+					(\cid1 cid2 -> if cid2<0 || (cid1>=0 && cid1<cid2) then cid1 else cid2) (-1)
+			in scatter cid (inf..<sup) cur_cid
+		in final_cid
 
-
+	-- | Index dataset & perform DBSCAN algorithm.
+	def do_dclust [n]
+		(extPar : i64)
+		(seed_count : i64)
+		(subdiv : [V.length]i64)
+		(eps : t)
+		(minPts : i64)
+		(pts : [n](vector t))
+	: ([n]bool, [n]i64) =
+		let (pts', part_minmax, part_is, is) = partition_dataset eps subdiv pts
+		let np = length part_minmax
+		let (pids, part_sz, part_pairs, part_pairs_count, part_pairs_is, part_cmps)
+			= partition_information extPar eps
+				(part_minmax |> sized np)
+				(part_is |> sized np)
+				pts'
+		let neigh_count = get_neighbour_counts
+			seed_count
+			eps
+			pts'
+			pids
+			part_pairs
+			(part_is |> sized np)
+			part_sz
+			part_pairs_is
+			part_cmps
+		let is_core = get_is_core
+			neigh_count
+			minPts
+		let (core_pts, core_pids) = isolate_core_pts
+			pts'
+			pids
+			is_core
+		let (part_core_sz, part_core_is, part_core_cmps) = part_get_core_info
+			core_pids
+			part_pairs
+			part_pairs_count
+			part_pairs_is
+		let core_cids = find_clusters
+			seed_count
+			eps
+			core_pts
+			core_pids
+			part_pairs
+			part_core_is
+			part_core_sz
+			part_pairs_is
+			part_core_cmps
+		let cluster_id = assign_cluster_ids
+			seed_count
+			eps
+			pts'
+			pids
+			core_pts
+			core_cids
+			part_pairs
+			part_core_is
+			part_core_sz
+			part_pairs_is
+			part_core_cmps
+		let is_core'    = scatter (replicate n false) is is_core
+		let cluster_id' = scatter (replicate n (-1))  is cluster_id
+		in (is_core', cluster_id')
 
 }
