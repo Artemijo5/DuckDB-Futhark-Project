@@ -63,32 +63,57 @@ module ft_dclust
 		let ranges = V.map2 (minus) maxs mins
 		let sdv_alt = V.map (\r -> r `over` (slightly_bigger eps)) ranges
 		let sdv' = V.map2 (min) (sdv |> V.from_array |> V.map (from_i64)) sdv_alt
-			|> V.map (to_i64) |> V.to_array
-		in I.index_dataset sdv' pts
+			|> V.map (to_i64)
+			|> V.map2 (i64.max) (V.replicate 1i64)
+			|> V.to_array
+		in (sdv', I.index_dataset sdv' pts)
 
 	-- | Get pairs of adjacent partitions
 	-- Specifically returns pairs (i,j) with i<=j.
 	-- TODO can do more efficiently by using grid properties.
 	def get_adj_partitions [np]
-		(extPar : i64)
-		(eps : t)
-		(parts : [np](vector t, vector t))
+		(_ : i64) -- extPar - vestigial parameter (...)
+		(_ : t) -- eps - vestigial parameter (...)
+		(subdiv : [V.length]i64)
+		(_ : [np](vector t, vector t))
 	: [](i64, i64) =
-		let num_iter = (np + extPar - 1) / extPar
-		in loop pairs : [](i64,i64) = []
-		for j < num_iter do
-			let inf = j*extPar
-			let sup = i64.min np (inf+extPar)
-			let this_pairs = (inf..<sup) |> map (\i1 ->
-				(inf..<np) |> map (\i2 ->
-					if i1>i2 then (-1,-1) else
-					let d = D.get_rectangle_dist parts[i1] parts[i2]
-					in if (d `leq` eps) then (i1,i2) else (-1,-1)
-				)
-			) |> flatten |> filter (\(i,_) -> i>=0)
-			in pairs ++ this_pairs
-
-
+		let subdiv_v = subdiv |> V.from_array
+		let prefix_v = subdiv |> exscan (*) 1 |> V.from_array
+		let adj_cube_increments = iota (3**V.length)
+			|> map (\i -> V.iota
+				|> V.map (\d -> (-1) + (i/(3**d))%3)
+			)
+		let part_pairs = iota np
+			-- convert pid into a vector of subdivision steps
+			|> map (\cur_pid ->
+				let as_vector = prefix_v
+					|> V.map (\pref -> cur_pid / pref)
+					|> V.map2 (\sdv pid_suffix -> pid_suffix%sdv) subdiv_v
+				in (cur_pid,as_vector)
+			)
+			-- add adj_cube_increments
+			|> map (\(cur_pid, as_vector) -> adj_cube_increments
+				|> map (V.map2 (+) as_vector)
+				|> zip (replicate (3**V.length) cur_pid)
+			) |> flatten
+			-- filter invalid
+			|> filter (\(_,vec) -> 
+				let all_positive = vec |> V.map (\v -> v>=0)
+					|> V.reduce (&&) true
+				let none_exceeding = vec |> V.map2 (\sdv v -> v<sdv) subdiv_v
+					|> V.reduce (&&) true
+				in all_positive && none_exceeding
+			)
+			-- convert vector back to numerical pid
+			|> map (\(cur_pid,vec) ->
+				let neigh_pid = vec |> V.map2 (*) prefix_v
+					|> V.reduce (+) 0
+				in (cur_pid, neigh_pid)
+			)
+			-- filter out pid1 > pid2
+			|> filter (\(pid1,pid2) -> pid1<=pid2)
+		in part_pairs
+		
 	-- | Get partition information
 	-- 1. pid per point
 	-- 2. #points per partition
@@ -99,6 +124,7 @@ module ft_dclust
 	def partition_information [np] [n]
 		(extPar : i64)
 		(eps : t)
+		(subdiv : [V.length]i64)
 		(part_minmax : [np](vector t, vector t))
 		(part_is     : [np]i64)
 		(_ : [n](vector t)) -- indexed dataset pts
@@ -107,7 +133,7 @@ module ft_dclust
 			|> scan (i64.max) (-1)
 		let pts_per_part = iota np
 			|> map (\i -> if i==np-1 then n-part_is[i] else part_is[i+1]-part_is[i])
-		let part_neigh_pairs = get_adj_partitions extPar eps part_minmax
+		let part_neigh_pairs = get_adj_partitions extPar eps subdiv part_minmax
 		let pairs_per_part = hist (+) 0 np
 			(part_neigh_pairs |> map (.0)) (part_neigh_pairs |> map (\_ -> 1))
 		let pairs_index_per_part = pairs_per_part |> exscan (+) 0
@@ -311,10 +337,11 @@ module ft_dclust
 		(minPts : i64)
 		(pts : [n](vector t))
 	: ([n]bool, [n]i64) =
-		let (pts', part_minmax, part_is, is) = partition_dataset eps subdiv pts
+		let (subdiv', (pts', part_minmax, part_is, is))
+			= partition_dataset eps subdiv pts
 		let np = length part_minmax
 		let (pids, part_sz, part_pairs, part_pairs_count, part_pairs_is, part_cmps)
-			= partition_information extPar eps
+			= partition_information extPar eps subdiv'
 				(part_minmax |> sized np)
 				(part_is |> sized np)
 				pts'
