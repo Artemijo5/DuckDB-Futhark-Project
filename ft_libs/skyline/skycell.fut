@@ -246,9 +246,13 @@ module skycell_grid
 				|> filter ((V.reduce (i64.max) (-1)) >-> (\d -> d<=cur_dist))
 				|> map (vector_to_cid prefix_v)
 			-- get their dominations
-			let (_,cur_domd,cur_is_totally_domd) = cur_cells
+			let (cur_domd,cur_is_totally_domd) = cur_cells
 				|> map (get_adjacent_dominated_cells subdiv1_v prefix1_v subdiv_v prefix_v)
-				|> flatten |> unzip3
+				-- if a cell is totally dominated
+				-- then the ones it partially dominates will also be totally dominated
+				|> map (map (\(cid1,cid2,is_tot) ->
+					if is_totally_domd[cid1] then (cid2,true) else (cid2,is_tot)
+				)) |> flatten |> unzip
 			-- use reduce_by_index to 'scatter'
 			let is_domd' = reduce_by_index
 				(copy is_domd) (||) false cur_domd (cur_domd |> map (\_ -> true))
