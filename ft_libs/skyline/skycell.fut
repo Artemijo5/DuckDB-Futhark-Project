@@ -485,4 +485,12 @@ module skycell
 			dom_pairs dom_sz dom_is
 			cids preproc_dat
 
+	-- | Merge 2 windows.
+	def merge
+		(max_level : i64)
+		(threshold_count : i64)
+		(dat1 : skyData tup)
+		(dat2 : skyData tup)
+	: skyData tup = (dat1 ++ dat2)
+		|> filter_self max_level threshold_count
 }
