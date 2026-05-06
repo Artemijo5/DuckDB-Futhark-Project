@@ -469,5 +469,20 @@ module skycell
 			|> filter (\i -> !is_pt_eliminated[i])
 			|> map (\i -> dat'[i])
 
+	-- | Complete pipeline.
+	def filter_self
+		(max_level : i64)
+		(threshold_count : i64)
+		(dat : skyData tup)
+	: skyData tup =
+		let (preproc_dat,cids,cid_sz,_,level)
+			= skycell_preproc max_level threshold_count dat
+		let (subdiv_v,prefix_v) = cells_proc.get_subdiv_vectors level
+		let (dom_pairs,dom_sz,dom_is) = cells_proc.get_dominant_cells
+			subdiv_v prefix_v cid_sz cids
+		in pointwise_filter
+			cid_sz
+			dom_pairs dom_sz dom_is
+			cids preproc_dat
 
 }
