@@ -86,6 +86,7 @@ module ft_dclust
 				|> V.map (\d -> (-1) + (i/(3**d))%3)
 			)
 		let part_pairs = iota np
+			|> filter (\i -> part_sz[i] > 0)
 			-- convert pid into a vector of subdivision steps
 			|> map (\cur_pid ->
 				let as_vector = prefix_v
