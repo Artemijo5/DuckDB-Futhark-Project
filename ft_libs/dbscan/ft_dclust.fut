@@ -293,6 +293,7 @@ module ft_dclust
 		(eps : t)
 		(pts  : [n](vector t))
 		(pids : [n]i64)
+		(is_core : [n]bool)
 		(core_pts  : [nc](vector t))
 		(core_cids : [nc]i64)
 		(part_pairs : [](i64,i64))
@@ -302,18 +303,25 @@ module ft_dclust
 		(part_core_cmps_count  : [np]i64)
 	=
 		let num_iter = (n + seed_count - 1) / seed_count
-		let init_cid = replicate n (-1)
-		-- For each point, find its core pts within eps & assign their min cluster id
+		-- For core points, gather their cid directly
+		let init_cid = is_core |> map (i64.bool)
+			|> exscan (+) 0
+			|> zip is_core
+			|> map (\(is_c,i) -> if is_c then core_cids[i] else (-1))
+		-- For each non-core point, find its core pts within eps & assign their min cluster id
 		-- if no core point within eps, assign (-1) as its cluster id (noise)
-		let final_cid = loop cid = init_cid
+		let final_cid = loop cid = copy init_cid
 		for j < num_iter do
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
 			-- finds minimum cid neighbouring each point
-			let cur_cid = (inf..<sup) |> map (\i -> (pts[i],pids[i]))
+			let cur_cid = (inf..<sup)
 				|> expand_outer_reduce
-					(\(_,pid) -> part_core_cmps_count[pid])
-					(\(pt,pid) ind ->
+					(\i -> if is_core[i] then 1 else part_core_cmps_count[pids[i]])
+					(\i ind ->
+						if is_core[i] then init_cid[i] else
+						let pt = pts[i]
+						let pid = pids[i]
 						-- Find the ind'th point to be compared with this partition
 						-- Doing a sequential search across neighbouring partition
 						let (i2,_,_) : (i64,i64,i64) =
@@ -393,6 +401,7 @@ module ft_dclust
 			eps
 			pts'
 			pids
+			is_core
 			core_pts
 			core_cids
 			part_pairs_bd
