@@ -75,7 +75,7 @@ module ft_dclust
 		(_ : i64) -- extPar - vestigial parameter (...)
 		(_ : t) -- eps - vestigial parameter (...)
 		(subdiv : [V.length]i64)
-		(_ : [np](vector t, vector t))
+		(part_sz : [np]i64)
 	: [](i64, i64) =
 		let subdiv_v = subdiv |> V.from_array
 		let prefix_v = subdiv |> exscan (*) 1 |> V.from_array
@@ -111,7 +111,8 @@ module ft_dclust
 				in (cur_pid, neigh_pid)
 			)
 			-- filter out pid1 > pid2
-			|> filter (\(pid1,pid2) -> pid1<=pid2)
+			-- as well as with count<0
+			|> filter (\(pid1,pid2) -> pid1<=pid2 && part_sz[pid1]>0 && part_sz[pid2]>0)
 		in part_pairs
 		
 	-- | Get partition information
@@ -125,7 +126,6 @@ module ft_dclust
 		(extPar : i64)
 		(eps : t)
 		(subdiv : [V.length]i64)
-		(part_minmax : [np](vector t, vector t))
 		(part_is     : [np]i64)
 		(_ : [n](vector t)) -- indexed dataset pts
 	=
@@ -133,18 +133,17 @@ module ft_dclust
 			|> scan (i64.max) (-1)
 		let pts_per_part = iota np
 			|> map (\i -> if i==np-1 then n-part_is[i] else part_is[i+1]-part_is[i])
-		let part_neigh_pairs = get_adj_partitions extPar eps subdiv part_minmax
+		let part_neigh_pairs = get_adj_partitions extPar eps subdiv pts_per_part
 		let pairs_per_part = hist (+) 0 np
 			(part_neigh_pairs |> map (.0)) (part_neigh_pairs |> map (\_ -> 1))
 		let pairs_index_per_part = pairs_per_part |> exscan (+) 0
 		-- TODO found expand_reduce & expand_outer_reduce fail when only 1 element
 		-- probably report as bug
 		let cmps_per_part : [np]i64 = if np == 1 then [n] |> sized np else
-			iota np |> expand_reduce
+			iota np |> expand_outer_reduce
 			(\i -> pairs_per_part[i])
 			(\i ind -> pts_per_part[part_neigh_pairs[pairs_index_per_part[i] + ind].1])
 			(+) 0
-			|> sized np
 		in (pids, pts_per_part, part_neigh_pairs, pairs_per_part, pairs_index_per_part, cmps_per_part)
 
 	-- | Get neighbour counts per point.
@@ -219,7 +218,7 @@ module ft_dclust
 		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
 		let first_per_part = count_per_part |> exscan (+) 0
 		let cmps_per_part : [np]i64 = if np == 1 then [n] |> sized np else
-			iota np |> expand_reduce
+			iota np |> expand_outer_reduce
 			(\i -> part_pairs_count[i])
 			(\i ind -> count_per_part[part_pairs[part_pairs_is[i] + ind].1])
 			(+) 0
@@ -227,6 +226,8 @@ module ft_dclust
 		in (count_per_part, first_per_part, cmps_per_part)
 
 	-- | Find clusters among core points.
+	-- TODO
+	-- here partitions need to check smaller ones as well (...)
 	def find_clusters [n] [np]
 		(seed_count : i64)
 		(eps : t)
@@ -337,21 +338,21 @@ module ft_dclust
 		(minPts : i64)
 		(pts : [n](vector t))
 	: ([n]bool, [n]i64) =
-		let (subdiv', (pts', part_minmax, part_is, is))
+		let (subdiv', (pts',_,part_is,is))
 			= partition_dataset eps subdiv pts
-		let np = length part_minmax
+		let np = length part_is
 		let (pids, part_sz, part_pairs, part_pairs_count, part_pairs_is, part_cmps)
 			= partition_information extPar eps subdiv'
-				(part_minmax |> sized np)
-				(part_is |> sized np)
+				part_is
 				pts'
+		let _ = trace (subdiv',scatter (iota n) is pids, part_pairs, part_cmps |> zip (indices part_cmps) |> filter (\(_,c)->c>0))
 		let neigh_count = get_neighbour_counts
 			seed_count
 			eps
 			pts'
 			pids
 			part_pairs
-			(part_is |> sized np)
+			part_is
 			part_sz
 			part_pairs_is
 			part_cmps

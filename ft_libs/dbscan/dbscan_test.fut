@@ -82,3 +82,33 @@ def test2_dclust (subdiv : i64) (eps : f64) (minPts : i64) =
 	let vs = (copy pts2) |> map (sized vector_2.length >-> vector_2.from_array)
 	let (is_core, cluster_id) = dclust2.do_dclust 5 5 (replicate vector_2.length subdiv) eps minPts vs
 	in (is_core, cluster_id)
+
+def pts3 : [][2]f64 = [
+	[4.482,8.931],
+	[1.020,2.004],
+	[1.582,2.900],
+	[1.057,2.404],
+	[7.728,5.220],
+	[4.382,9.081],
+	[1.461,1.890],
+	[1.272,2.622],
+	[4.128,8.856],
+	[7.900,5.010]
+]
+
+def test3 (kd : i64) (eps : f64) (minPts : i64) =
+	let vs = (copy pts3) |> map (sized vector_2.length >-> vector_2.from_array)
+	let (xs,parts,p_idx,is) = kd2.index_dataset [kd] vs
+	let np = length parts
+	let parts = parts |> sized np
+	let p_idx = p_idx |> sized np
+	let buff = dbscan2.internal_dbscan
+		5 eps minPts parts p_idx xs
+	let is_core = scatter (replicate (length xs) false) is buff.is_core
+	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
+	in  (vs, is_core, chain_id)
+
+def test3_dclust (subdiv : i64) (eps : f64) (minPts : i64) =
+	let vs = (copy pts3) |> map (sized vector_2.length >-> vector_2.from_array)
+	let (is_core, cluster_id) = dclust2.do_dclust 5 5 (replicate vector_2.length subdiv) eps minPts vs
+	in (is_core, cluster_id)
