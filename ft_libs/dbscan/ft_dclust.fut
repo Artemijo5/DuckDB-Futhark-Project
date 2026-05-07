@@ -70,8 +70,10 @@ module ft_dclust
 
 	-- | Get pairs of adjacent partitions
 	-- Specifically returns pairs (i,j) with i<=j.
+	-- Unless bidir is set to true.
 	-- TODO can do more efficiently by using grid properties.
 	def get_adj_partitions [np]
+		(bidir : bool)
 		(_ : i64) -- extPar - vestigial parameter (...)
 		(_ : t) -- eps - vestigial parameter (...)
 		(subdiv : [V.length]i64)
@@ -112,7 +114,7 @@ module ft_dclust
 			)
 			-- filter out pid1 > pid2
 			-- as well as with count<0
-			|> filter (\(pid1,pid2) -> pid1<=pid2 && part_sz[pid1]>0 && part_sz[pid2]>0)
+			|> filter (\(pid1,pid2) -> (pid1<=pid2 || bidir) && part_sz[pid1]>0 && part_sz[pid2]>0)
 		in part_pairs
 		
 	-- | Get partition information
@@ -123,6 +125,7 @@ module ft_dclust
 	-- 5. index of each partition's segment in 3
 	-- 6. #comparisons to be made per partition (for each of its points)
 	def partition_information [np] [n]
+		(bidir : bool)
 		(extPar : i64)
 		(eps : t)
 		(subdiv : [V.length]i64)
@@ -133,7 +136,7 @@ module ft_dclust
 			|> scan (i64.max) (-1)
 		let pts_per_part = iota np
 			|> map (\i -> if i==np-1 then n-part_is[i] else part_is[i+1]-part_is[i])
-		let part_neigh_pairs = get_adj_partitions extPar eps subdiv pts_per_part
+		let part_neigh_pairs = get_adj_partitions bidir extPar eps subdiv pts_per_part
 		let pairs_per_part = hist (+) 0 np
 			(part_neigh_pairs |> map (.0)) (part_neigh_pairs |> map (\_ -> 1))
 		let pairs_index_per_part = pairs_per_part |> exscan (+) 0
@@ -226,8 +229,6 @@ module ft_dclust
 		in (count_per_part, first_per_part, cmps_per_part)
 
 	-- | Find clusters among core points.
-	-- TODO
-	-- here partitions need to check smaller ones as well (...)
 	def find_clusters [n] [np]
 		(seed_count : i64)
 		(eps : t)
@@ -286,6 +287,7 @@ module ft_dclust
 		in final_cid |> map (\i -> group_encoding[i])
 
 	-- | Assign id's to border pts & noises
+	-- NOTE we need to check core pts of smaller id partitions as well
 	def assign_cluster_ids [n] [nc] [np]
 		(seed_count : i64)
 		(eps : t)
@@ -340,12 +342,10 @@ module ft_dclust
 	: ([n]bool, [n]i64) =
 		let (subdiv', (pts',_,part_is,is))
 			= partition_dataset eps subdiv pts
-		let np = length part_is
 		let (pids, part_sz, part_pairs, part_pairs_count, part_pairs_is, part_cmps)
-			= partition_information extPar eps subdiv'
+			= partition_information false extPar eps subdiv'
 				part_is
 				pts'
-		let _ = trace (subdiv',scatter (iota n) is pids, part_pairs, part_cmps |> zip (indices part_cmps) |> filter (\(_,c)->c>0))
 		let neigh_count = get_neighbour_counts
 			seed_count
 			eps
@@ -378,6 +378,16 @@ module ft_dclust
 			part_core_sz
 			part_pairs_is
 			part_core_cmps
+		-- Get bidirectional partition pairs & core info
+		let (_, _, part_pairs_bd, part_pairs_count_bd, part_pairs_is_bd,_)
+			= partition_information true extPar eps subdiv'
+				part_is
+				pts'
+		let (part_core_sz_bd, part_core_is_bd, part_core_cmps_bd) = part_get_core_info
+			core_pids
+			part_pairs_bd
+			part_pairs_count_bd
+			part_pairs_is_bd
 		let cluster_id = assign_cluster_ids
 			seed_count
 			eps
@@ -385,11 +395,11 @@ module ft_dclust
 			pids
 			core_pts
 			core_cids
-			part_pairs
-			part_core_is
-			part_core_sz
-			part_pairs_is
-			part_core_cmps
+			part_pairs_bd
+			part_core_is_bd
+			part_core_sz_bd
+			part_pairs_is_bd
+			part_core_cmps_bd
 		let is_core'    = scatter (replicate n false) is is_core
 		let cluster_id' = scatter (replicate n (-1))  is cluster_id
 		in (is_core', cluster_id')
