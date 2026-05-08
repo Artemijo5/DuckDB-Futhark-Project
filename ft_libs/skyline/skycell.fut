@@ -4,6 +4,23 @@ import "../lib/github.com/diku-dk/segmented/segmented"
 import "skyline_base"
 import "skyline_subdiv"
 
+-- | expand_outer_reduce wrapper for n==1
+-- Because flag generation seemingly fails in that case...
+let expand_outer_red [n] 'a 'b
+	(sz  : a -> i64)
+	(get : a -> i64 -> b)
+	(op  : b -> b -> b)
+	(ne  : b)
+	(arr : [n]a)
+: [n]b =
+	if n==0 then (replicate n ne)
+	else if n==1 then iota (i64.max 1 (sz arr[0]))
+		|> map (\i -> if (sz arr[0]) == 0 then ne else get arr[0] i)
+		|> reduce op ne
+		|> replicate n
+	else arr |> expand_outer_reduce
+		sz get op ne
+
 -- | Cell-based grid for SkyCell algorithm.
 --
 -- Cell-partitioning is applied recursively in levels.
@@ -400,7 +417,7 @@ module skycell
 		(cid_dom_sz : []i64)
 		(cid_dom_is : []i64)
 	= indices count_per_cid
-		|> expand_outer_reduce
+		|> expand_outer_red
 			(\cid -> if count_per_cid[cid]==0 then 0 else cid_dom_sz[cid])
 			(\cid ind -> count_per_cid[(cid_dom_pairs[cid_dom_is[cid]+ind]).1])
 			(+) 0

@@ -5,6 +5,12 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
+-- TODO
+-- for some reason with real datasets
+-- returns wrong number of clusters
+-- and also differs per subdivision
+-- find why
+
 -- | expand_outer_reduce wrapper for n==1
 -- Because flag generation seemingly fails in that case...
 let expand_outer_red [n] 'a 'b
