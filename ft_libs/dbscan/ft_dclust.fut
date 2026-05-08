@@ -5,6 +5,23 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
+-- | expand_outer_reduce wrapper for n==1
+-- Because flag generation seemingly fails in that case...
+let expand_outer_red [n] 'a 'b
+	(sz  : a -> i64)
+	(get : a -> i64 -> b)
+	(op  : b -> b -> b)
+	(ne  : b)
+	(arr : [n]a)
+: [n]b =
+	if n==0 then (replicate n ne)
+	else if n==1 then iota (i64.max 1 (sz arr[0]))
+		|> map (\i -> if (sz arr[0]) == 0 then ne else get arr[0] i)
+		|> reduce op ne
+		|> replicate n
+	else arr |> expand_outer_reduce
+		sz get op ne
+
 -- DBSCAN implementation based on cuda-DClust+
 
 -- Original implementation uses a seed-list to expand clusters,
@@ -20,7 +37,6 @@ import "ft_undir_graph"
 -- Could do traditional expansion using a relevant point queue
 -- similar to the relevant partitions queue in dbscan.fut,
 -- but that would be superfluous for futhark's logic.
-
 module ft_dclust
 	(V : vector)
 	(F : real)
@@ -143,8 +159,7 @@ module ft_dclust
 		let pairs_index_per_part = pairs_per_part |> exscan (+) 0
 		-- TODO found expand_reduce & expand_outer_reduce fail when only 1 element
 		-- probably report as bug
-		let cmps_per_part : [np]i64 = if np == 1 then [n] |> sized np else
-			iota np |> expand_outer_reduce
+		let cmps_per_part : [np]i64 = iota np |> expand_outer_red
 			(\i -> pairs_per_part[i])
 			(\i ind -> pts_per_part[part_neigh_pairs[pairs_index_per_part[i] + ind].1])
 			(+) 0
@@ -191,6 +206,7 @@ module ft_dclust
 					(\(i1,i2) ind -> if ind==0 then i1 else i2)
 			-- add neighbour counts found now to those found previously
 			in reduce_by_index neigh_count (+) 0 cur_neigh (cur_neigh |> map (\_ -> 1))
+			--	|> trace
 		in final_neigh_count
 
 	-- | Determine whether a point is core based on neighbourhood points count.
@@ -222,7 +238,7 @@ module ft_dclust
 		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
 		let first_per_part = count_per_part |> exscan (+) 0
 		let cmps_per_part : [np]i64 = if np == 1 then [n] |> sized np else
-			iota np |> expand_outer_reduce
+			iota np |> expand_outer_red
 			(\i -> part_pairs_count[i])
 			(\i ind -> count_per_part[part_pairs[part_pairs_is[i] + ind].1])
 			(+) 0
@@ -317,7 +333,7 @@ module ft_dclust
 			let sup = i64.min n (inf+seed_count)
 			-- finds minimum cid neighbouring each point
 			let cur_cid = (inf..<sup)
-				|> expand_outer_reduce
+				|> expand_outer_red
 					(\i -> if is_core[i] then 1 else part_core_cmps_count[pids[i]])
 					(\i ind ->
 						if is_core[i] then init_cid[i] else
