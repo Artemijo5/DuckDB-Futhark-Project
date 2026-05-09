@@ -6,9 +6,10 @@ import "ft_distance"
 import "ft_undir_graph"
 
 -- TODO
--- confirmed that implementation in ft_dclust1 works for the c backend but not the cuda one
--- idea to simplify:
--- use symmetrical partition pairs... (doubles the distance calculations)
+-- for some reason with real datasets
+-- returns wrong number of clusters
+-- and also differs per subdivision
+-- find why
 
 -- | expand_outer_reduce wrapper for n==1
 -- Because flag generation seemingly fails in that case...
@@ -162,6 +163,8 @@ module ft_dclust
 		let pairs_per_part = hist (+) 0 np
 			(part_neigh_pairs |> map (.0)) (part_neigh_pairs |> map (\_ -> 1))
 		let pairs_index_per_part = pairs_per_part |> exscan (+) 0
+		-- TODO found expand_reduce & expand_outer_reduce fail when only 1 element
+		-- probably report as bug
 		let cmps_per_part : [np]i64 = iota np |> expand_outer_red
 			(\i -> pairs_per_part[i])
 			(\i ind -> pts_per_part[part_neigh_pairs[pairs_index_per_part[i] + ind].1])
@@ -180,7 +183,7 @@ module ft_dclust
 		(part_pairs_index : [np]i64)
 		(part_cmps_count  : [np]i64)
 	: [n]i64 =
-		let init_neigh_count : [n]i64 = replicate n 0
+		let init_neigh_count : [n]i64 = replicate n 1
 		let num_iter = (n + seed_count - 1) / seed_count
 		let final_neigh_count = loop neigh_count = init_neigh_count
 		for j<num_iter do
@@ -188,7 +191,7 @@ module ft_dclust
 			let sup = i64.min n (inf+seed_count)
 			-- has 1 instance of a point's index for every neighbour that point has found
 			let cur_neigh = (inf..<sup) |> map (\i -> (i,pts[i],pids[i]))
-				|> expand_outer_red
+				|> expand
 					(\(_,_,pid) -> part_cmps_count[pid])
 					(\(i1,pt,pid) ind ->
 						-- Find the ind'th point to be compared with this partition
@@ -201,13 +204,14 @@ module ft_dclust
 							in if pts_so_far + count_against > ind
 								then (part_is[part_against] + (ind - pts_so_far),-1,-1)
 								else (-1,part_i_against+1,pts_so_far+count_against)
-						in if i2==i1 then 1 else
+						in if i2<=i1 then (-1,-1) else
 						let is_neigh = D.check_neighbourhood eps pt pts[i2]
-						in if is_neigh then 1 else 0
+						in if is_neigh then (i1,i2) else (-1,-1)
 					)
-					(+) 0
+				|> expand (\(i1,_) -> if i1<0 then 0 else 2)
+					(\(i1,i2) ind -> if ind==0 then i1 else i2)
 			-- add neighbour counts found now to those found previously
-			in scatter neigh_count (inf..<sup) cur_neigh
+			in reduce_by_index neigh_count (+) 0 cur_neigh (cur_neigh |> map (\_ -> 1))
 			--	|> trace
 		in final_neigh_count
 
@@ -265,11 +269,9 @@ module ft_dclust
 		for j < num_iter do
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
-			-- finds the min neighbour of each node
-			-- this could be done only on partitions that have <= ids actually
-			-- but ig I'm not trying to tempt fate
+			-- has every min-max pair of neighbours found
 			let cur_neigh = (inf..<sup) |> map (\i -> (i,pts[i],pids[i]))
-				|> expand_outer_red
+				|> expand
 					(\(_,_,pid) -> part_core_cmps_count[pid])
 					(\(i1,pt,pid) ind ->
 						-- Find the ind'th point to be compared with this partition
@@ -282,14 +284,13 @@ module ft_dclust
 							in if pts_so_far + count_against > ind
 								then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
 								else (-1,part_i_against+1,pts_so_far+count_against)
-						in if i2==i1 then i1 else
+						in if i2<=i1 then (-1,-1) else -- no need to record self-neighbourhood
 						let is_neigh = D.check_neighbourhood eps pt pts[i2]
-						in if is_neigh then i2 else (n+1)
+						in if is_neigh then (i1,i2) else (-1,-1)
 					)
-					(i64.min) (n+1)
-				|> (\smallest_neighs -> zip smallest_neighs (inf..<sup))
-				|> filter (\(f,s) -> f<s)
-			let cur_node_no = sup
+				|> filter (\(i1,_) -> i1>=0)
+			let cur_node_no = if ((length cur_neigh) == 0) then 0 else
+				1 + (cur_neigh |> map (.1) |> i64.maximum)
 			let cur_connections = get_connected_subgraph_ids_unencoded cur_node_no cur_neigh
 				|> map (\i -> cid[i])
 			let cur_collisions = if cur_node_no==0 then [] else
@@ -299,17 +300,7 @@ module ft_dclust
 					else (-1,-1)
 				) cur_connections[inf:cur_node_no] cid[inf:cur_node_no] (inf..<cur_node_no)
 				|> filter (\(c1,_) -> c1 >= 0)
-			-- make unique (sorting twice here might make this even more than twice as slow...)
-			let cur_collisions_unique = cur_collisions
-				|> bucket_sort 2 cur_node_no (cur_collisions |> map (.1))
-				|> (.1)
-				|> bucket_sort 2 cur_node_no (cur_collisions |> map (.0))
-				|> (.1)
-				|> group_boundaries (\(f1,s1) (f2,s2) -> f1!=f2 && s1!=s2)
-				|> zip cur_collisions
-				|> filter (.1)
-				|> map (.0)
-			let rect_list = get_connected_subgraph_ids_unencoded cur_node_no cur_collisions_unique
+			let rect_list = get_connected_subgraph_ids_unencoded cur_node_no cur_collisions
 			in scatter (copy cid) (iota cur_node_no) cur_connections
 				|> map2 (i64.min) cid
 				|> map (\i -> if i<cur_node_no then rect_list[i] else i)
@@ -383,7 +374,7 @@ module ft_dclust
 		let (subdiv', (pts',_,part_is,is))
 			= partition_dataset eps subdiv pts
 		let (pids, part_sz, part_pairs, part_pairs_count, part_pairs_is, part_cmps)
-			= partition_information true extPar eps subdiv'
+			= partition_information false extPar eps subdiv'
 				part_is
 				pts'
 		let neigh_count = get_neighbour_counts
@@ -418,6 +409,16 @@ module ft_dclust
 			part_core_sz
 			part_pairs_is
 			part_core_cmps
+		-- Get bidirectional partition pairs & core info
+		let (_, _, part_pairs_bd, part_pairs_count_bd, part_pairs_is_bd,_)
+			= partition_information true extPar eps subdiv'
+				part_is
+				pts'
+		let (part_core_sz_bd, part_core_is_bd, part_core_cmps_bd) = part_get_core_info
+			core_pids
+			part_pairs_bd
+			part_pairs_count_bd
+			part_pairs_is_bd
 		let cluster_id = assign_cluster_ids
 			seed_count
 			eps
@@ -426,11 +427,11 @@ module ft_dclust
 			is_core
 			core_pts
 			core_cids
-			part_pairs
-			part_core_is
-			part_core_sz
-			part_pairs_is
-			part_core_cmps
+			part_pairs_bd
+			part_core_is_bd
+			part_core_sz_bd
+			part_pairs_is_bd
+			part_core_cmps_bd
 		let is_core'    = scatter (replicate n false) is is_core
 		let cluster_id' = scatter (replicate n (-1))  is cluster_id
 		in (is_core', cluster_id')
