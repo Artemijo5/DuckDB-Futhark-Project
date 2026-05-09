@@ -19,7 +19,7 @@ let my_expand 'a 'b
 : []b =
 	let szs = arr |> map (sz)
 	let is = szs |> exscan (+) 0
-		|> map2 (\sz i -> if sz==0 then (-1) else i) szs
+		|> map2 (\size i -> if size==0 then (-1) else i) szs
 	let total_sz = reduce (+) 0 szs
 	let exp_arr = scatter (replicate total_sz (-1)) is (indices arr)
 		|> scan (i64.max) (-1)
@@ -236,7 +236,8 @@ module ft_dclust
 				|> my_expand (\(i1,_) -> if i1<0 then 0 else 2)
 					(\(i1,i2) ind -> if ind==0 then i1 else i2)
 			-- add neighbour counts found now to those found previously
-			in reduce_by_index neigh_count (+) 0 cur_neigh (cur_neigh |> map (\_ -> 1))
+			in hist (+) 0 n cur_neigh (cur_neigh |> map (\_ -> 1))
+				|> map2 (+) neigh_count
 			--	|> trace
 		in final_neigh_count
 
