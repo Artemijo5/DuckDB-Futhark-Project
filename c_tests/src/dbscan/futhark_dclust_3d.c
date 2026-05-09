@@ -23,8 +23,8 @@
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define EXTPAR 2048
-#define default_SEED_COUNT 128
-#define default_SUBDIV 64
+#define default_SEED_COUNT 1024
+#define default_SUBDIV 22
 
 #define DIM 3
 #define default_EPS 0.5
@@ -226,12 +226,18 @@ int main(int argc, char *argv[]) {
 
 		struct futhark_opaque_dbscan_result *dbscan_res;
 
+		futhark_context_sync(ctx);
+		mylog(logfile, "Synced futhark context.");
+
 		mylog(logfile, "Performing D-Clust...");
 
 		futhark_entry_do_dclust_3d_f64(ctx, &dbscan_res,
 			EXTPAR, SEED_COUNT, SUBDIV, EPS, MIN_PTS,
 			col1, col2, col3
 		);
+
+		futhark_context_sync(ctx);
+		mylog(logfile, "Synced futhark context.");
 
 		
 		futhark_free_f64_1d(ctx, col1);

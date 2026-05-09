@@ -183,7 +183,7 @@ module ft_dclust
 		(part_pairs_index : [np]i64)
 		(part_cmps_count  : [np]i64)
 	: [n]i64 =
-		let init_neigh_count : [n]i64 = replicate n 0
+		let init_neigh_count : [n]i64 = replicate n 1
 		let num_iter = (n + seed_count - 1) / seed_count
 		let final_neigh_count = loop neigh_count = init_neigh_count
 		for j<num_iter do
@@ -204,11 +204,11 @@ module ft_dclust
 							in if pts_so_far + count_against > ind
 								then (part_is[part_against] + (ind - pts_so_far),-1,-1)
 								else (-1,part_i_against+1,pts_so_far+count_against)
-						in if i2<i1 then (-1,-1) else
+						in if i2<=i1 then (-1,-1) else
 						let is_neigh = D.check_neighbourhood eps pt pts[i2]
 						in if is_neigh then (i1,i2) else (-1,-1)
 					)
-				|> expand (\(i1,i2) -> if i1<0 then 0 else if i1==i2 then 1 else 2)
+				|> expand (\(i1,_) -> if i1<0 then 0 else 2)
 					(\(i1,i2) ind -> if ind==0 then i1 else i2)
 			-- add neighbour counts found now to those found previously
 			in reduce_by_index neigh_count (+) 0 cur_neigh (cur_neigh |> map (\_ -> 1))

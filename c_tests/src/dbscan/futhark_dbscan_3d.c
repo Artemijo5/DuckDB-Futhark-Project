@@ -223,6 +223,9 @@ int main(int argc, char *argv[]) {
 
 		int64_t partitions_no = (num_rows + PARTITION_SIZE - 1) / PARTITION_SIZE;
 
+		futhark_context_sync(ctx);
+		mylog(logfile, "Synced futhark context.");
+
 		if(!USE_GRID) {
 			mylog(logfile, "Performing DBSCAN with kd-index...");
 
@@ -240,6 +243,9 @@ int main(int argc, char *argv[]) {
 				col1, col2, col3
 			);
 		}
+
+		futhark_context_sync(ctx);
+		mylog(logfile, "Synced futhark context.");
 		
 		futhark_free_f64_1d(ctx, col1);
 		futhark_free_f64_1d(ctx, col2);

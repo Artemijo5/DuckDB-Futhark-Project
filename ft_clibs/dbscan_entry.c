@@ -7674,7 +7674,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_176746;
         
         if (!protect_assert_disj_176745) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_176735, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/dbscan.fut:173:68-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_176735, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/dbscan.fut:175:68-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -7722,7 +7722,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_176755;
         
         if (!protect_assert_disj_176745) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_176735, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:133:27-36\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_176735, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:133:27-36\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -7751,7 +7751,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_176769;
         
         if (!protect_assert_disj_176768) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_176763, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:134:73-84\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_176763, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:134:73-84\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -7782,7 +7782,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool range_valid_c_176778;
         
         if (!protect_assert_disj_176777) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) inf_176756, "..<", (long long) sup_176773, " is invalid.", "-> #0  ft_libs/dbscan/ft_spindex.fut:135:21-30\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) inf_176756, "..<", (long long) sup_176773, " is invalid.", "-> #0  ft_libs/dbscan/ft_spindex.fut:135:21-30\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -7855,7 +7855,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_176800;
         
         if (!protect_assert_disj_176799) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zbzg_lhs_176502, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:117:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:188:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zbzg_lhs_176502, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:119:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:190:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -7871,7 +7871,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_176809;
         
         if (!protect_assert_disj_176808) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_176803, "] out of bounds for array of shape [", (long long) loop_dz2081U_176698, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_176803, "] out of bounds for array of shape [", (long long) loop_dz2081U_176698, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -7984,7 +7984,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_185352;
                 
                 if (!bounds_check_185351) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_189280, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:171:62-68\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:171:51-69\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_189280, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:173:62-68\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:173:51-69\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -8104,7 +8104,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_176884;
                 
                 if (!bounds_check_176883) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_176880, "] out of bounds for array of shape [", (long long) distance_176775, "].", "-> #0  ft_libs/dbscan/dbscan.fut:186:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:186:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_176880, "] out of bounds for array of shape [", (long long) distance_176775, "].", "-> #0  ft_libs/dbscan/dbscan.fut:188:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -8143,7 +8143,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                     bool index_certs_185279;
                     
                     if (!bounds_check_176744) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_176735, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/ft_distance.fut:139:33-48\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #5  ft_libs/dbscan/dbscan.fut:117:36-56\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_176735, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/ft_distance.fut:139:33-48\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #5  ft_libs/dbscan/dbscan.fut:119:36-56\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
@@ -8230,7 +8230,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_176951;
             
             if (!ok_or_empty_176950) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_176934, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:117:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:188:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_176934, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:119:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:190:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -8292,7 +8292,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_176964;
                 
                 if (!bounds_check_176963) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_176960, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/dbscan.fut:122:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:122:36-63\n   #3  ft_libs/dbscan/dbscan.fut:188:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_176960, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/dbscan.fut:124:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:124:36-63\n   #3  ft_libs/dbscan/dbscan.fut:190:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -8420,7 +8420,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177004;
             
             if (!protect_assert_disj_177003) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_176944, "] out of bounds for array of shape [", (long long) m_176934, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:124:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:124:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_176944, "] out of bounds for array of shape [", (long long) m_176934, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:126:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:126:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -8456,7 +8456,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177024;
             
             if (!ok_or_empty_177023) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177007, "] out of bounds for array of shape [", (long long) m_176934, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:124:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:124:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177007, "] out of bounds for array of shape [", (long long) m_176934, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:126:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:126:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -8517,7 +8517,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_185198;
                 
                 if (!bounds_check_185197) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185194, "] out of bounds for array of shape [", (long long) m_176934, "].", "-> #0  ft_libs/dbscan/dbscan.fut:126:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:126:36-63\n   #3  ft_libs/dbscan/dbscan.fut:188:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185194, "] out of bounds for array of shape [", (long long) m_176934, "].", "-> #0  ft_libs/dbscan/dbscan.fut:128:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:128:36-63\n   #3  ft_libs/dbscan/dbscan.fut:190:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -8529,7 +8529,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_185204;
                 
                 if (!bounds_check_185203) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_185199, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/dbscan.fut:128:51-75\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:188:36-60\n   #5  /prelude/functional.fut:9:44-45\n   #6  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_185199, "] out of bounds for array of shape [", (long long) defunc_0_f_res_186626, "].", "-> #0  ft_libs/dbscan/dbscan.fut:130:51-75\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:190:36-60\n   #5  /prelude/functional.fut:9:44-45\n   #6  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -8556,7 +8556,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177054;
             
             if (!protect_assert_disj_177053) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177017, "] out of bounds for array of shape [", (long long) m_177007, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177017, "] out of bounds for array of shape [", (long long) m_177007, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -8592,7 +8592,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177074;
             
             if (!ok_or_empty_177073) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177057, "] out of bounds for array of shape [", (long long) m_177007, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177057, "] out of bounds for array of shape [", (long long) m_177007, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -8672,7 +8672,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177101;
             
             if (!protect_assert_disj_177100) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177067, "] out of bounds for array of shape [", (long long) m_177057, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177067, "] out of bounds for array of shape [", (long long) m_177057, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -8708,7 +8708,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177121;
             
             if (!ok_or_empty_177120) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177104, "] out of bounds for array of shape [", (long long) m_177057, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177104, "] out of bounds for array of shape [", (long long) m_177057, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -8780,7 +8780,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177160;
             
             if (!ok_or_empty_177159) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177143, "] out of bounds for array of shape [", (long long) loop_dz2081U_176698, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177143, "] out of bounds for array of shape [", (long long) loop_dz2081U_176698, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -8893,7 +8893,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool empty_or_match_cert_177184;
         
         if (!dim_match_177183) {
-            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:158:17-198:59\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:160:17-200:59\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -9072,7 +9072,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_184698;
             
             if (!bounds_check_184697) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) x_184694, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:300:96-106\n   #1  /prelude/soacs.fut:172:19-20\n   #2  /prelude/functional.fut:9:44-45\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) x_184694, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:302:96-106\n   #1  /prelude/soacs.fut:172:19-20\n   #2  /prelude/functional.fut:9:44-45\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -9543,7 +9543,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177416;
             
             if (!bounds_check_177415) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177412, "] out of bounds for array of shape [", (long long) read_next_partition_res_176779, "].", "-> #0  ft_libs/dbscan/dbscan.fut:315:79-90\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:315:68-91\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177412, "] out of bounds for array of shape [", (long long) read_next_partition_res_176779, "].", "-> #0  ft_libs/dbscan/dbscan.fut:317:79-90\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:317:68-91\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -9576,7 +9576,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177425;
             
             if (!bounds_check_177424) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177421, "] out of bounds for array of shape [", (long long) read_next_partition_res_176779, "].", "-> #0  ft_libs/dbscan/dbscan.fut:316:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:316:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177421, "] out of bounds for array of shape [", (long long) read_next_partition_res_176779, "].", "-> #0  ft_libs/dbscan/dbscan.fut:318:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:318:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -9608,7 +9608,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177434;
             
             if (!bounds_check_177433) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177430, "] out of bounds for array of shape [", (long long) read_next_partition_res_176779, "].", "-> #0  ft_libs/dbscan/dbscan.fut:317:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:317:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177430, "] out of bounds for array of shape [", (long long) read_next_partition_res_176779, "].", "-> #0  ft_libs/dbscan/dbscan.fut:319:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:319:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -9649,7 +9649,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_184780;
             
             if (!bounds_check_184779) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_184775, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:318:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:318:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_184775, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:320:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:320:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -9693,7 +9693,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_184816;
             
             if (!bounds_check_184815) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_184810, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:319:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:319:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_184810, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:321:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:321:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -10606,7 +10606,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_177878;
         
         if (!protect_assert_disj_177877) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) conc_tmp_177847, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_177856, "].", "-> #0  ft_libs/dbscan/dbscan.fut:262:29-49\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) conc_tmp_177847, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_177856, "].", "-> #0  ft_libs/dbscan/dbscan.fut:264:29-49\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -10619,7 +10619,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_177884;
         
         if (!protect_assert_disj_177883) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) conc_tmp_177847, ":", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_177856, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_177856, "].", "-> #0  ft_libs/dbscan/dbscan.fut:262:51-72\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) conc_tmp_177847, ":", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_177856, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_177856, "].", "-> #0  ft_libs/dbscan/dbscan.fut:264:51-72\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11051,7 +11051,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool range_valid_c_177973;
             
             if (!valid_177972) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) old_offs_177912, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:232:39-53\n   #2  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) old_offs_177912, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:234:39-53\n   #2  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -11064,7 +11064,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_177979;
             
             if (!ok_or_empty_177978) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) old_offs_177912, "] out of bounds for array of shape [", (long long) new_offs_177919, "].", "-> #0  ft_libs/dbscan/dbscan.fut:233:40-65\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) old_offs_177912, "] out of bounds for array of shape [", (long long) new_offs_177919, "].", "-> #0  ft_libs/dbscan/dbscan.fut:235:40-65\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -11169,7 +11169,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                     bool index_certs_177969;
                     
                     if (!bounds_check_177968) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177963, "] out of bounds for array of shape [", (long long) new_offs_177919, "].", "-> #0  ft_libs/dbscan/dbscan.fut:231:92-106\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:231:62-107\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177963, "] out of bounds for array of shape [", (long long) new_offs_177919, "].", "-> #0  ft_libs/dbscan/dbscan.fut:233:92-106\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:233:62-107\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
@@ -11233,7 +11233,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool empty_or_match_cert_178029;
         
         if (!dim_match_178028) {
-            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:237:17-262:94\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:239:17-264:94\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11270,7 +11270,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool range_valid_c_178143;
         
         if (!valid_178142) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) max_res_178140, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:438:45-60\n   #2  ft_libs/dbscan/dbscan.fut:454:41-94\n   #3  ft_libs/dbscan/dbscan.fut:496:38-498:96\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) max_res_178140, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:440:45-60\n   #2  ft_libs/dbscan/dbscan.fut:456:41-94\n   #3  ft_libs/dbscan/dbscan.fut:498:38-500:96\n   #4  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11282,7 +11282,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_178034;
         
         if (!ok_or_empty_178033) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_177500, "] out of bounds for array of shape [", (long long) conc_tmp_177847, "].", "-> #0  ft_libs/dbscan/dbscan.fut:381:58-86\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_177500, "] out of bounds for array of shape [", (long long) conc_tmp_177847, "].", "-> #0  ft_libs/dbscan/dbscan.fut:383:58-86\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11297,7 +11297,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_178043;
         
         if (!ok_or_empty_178042) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177500, ":", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_177846, "] out of bounds for array of shape [", (long long) conc_tmp_177847, "].", "-> #0  ft_libs/dbscan/dbscan.fut:382:52-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177500, ":", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_177846, "] out of bounds for array of shape [", (long long) conc_tmp_177847, "].", "-> #0  ft_libs/dbscan/dbscan.fut:384:52-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11314,7 +11314,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_178054;
         
         if (!ok_or_empty_178053) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_177846, ":", (long long) conc_tmp_177847, "] out of bounds for array of shape [", (long long) conc_tmp_177847, "].", "-> #0  ft_libs/dbscan/dbscan.fut:383:52-102\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_177846, ":", (long long) conc_tmp_177847, "] out of bounds for array of shape [", (long long) conc_tmp_177847, "].", "-> #0  ft_libs/dbscan/dbscan.fut:385:52-102\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11325,7 +11325,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_178059;
         
         if (!ok_or_empty_178058) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_177751, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_177845, "].", "-> #0  ft_libs/dbscan/dbscan.fut:384:52-79\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_177751, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_177845, "].", "-> #0  ft_libs/dbscan/dbscan.fut:386:52-79\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11340,7 +11340,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_178068;
         
         if (!ok_or_empty_178067) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177751, ":", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_177845, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_177845, "].", "-> #0  ft_libs/dbscan/dbscan.fut:385:52-89\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177751, ":", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_177845, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_177845, "].", "-> #0  ft_libs/dbscan/dbscan.fut:387:52-89\n   #1  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11451,7 +11451,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
         bool index_certs_178218;
         
         if (!ok_or_empty_178217) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) partition_sizze_178194, "] out of bounds for array of shape [", (long long) read_next_partition_res_176779, "].", "-> #0  /prelude/soacs.fut:174:7-19\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:496:38-498:96\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) partition_sizze_178194, "] out of bounds for array of shape [", (long long) read_next_partition_res_176779, "].", "-> #0  /prelude/soacs.fut:174:7-19\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:498:38-500:96\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -11615,7 +11615,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_184879;
                 
                 if (!bounds_check_184878) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186531, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_177846, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186531, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_177846, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -11773,7 +11773,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_184930;
                 
                 if (!bounds_check_184929) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186533, "] out of bounds for array of shape [", (long long) conc_tmp_177847, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186533, "] out of bounds for array of shape [", (long long) conc_tmp_177847, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -11920,7 +11920,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_184978;
                 
                 if (!bounds_check_184977) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186540, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_lmcz20Un_tmcZRz20Un_tfcz7dUzg_177851, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186540, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_lmcz20Un_tmcZRz20Un_tfcz7dUzg_177851, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -11974,7 +11974,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_185002;
             
             if (!bounds_check_185001) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188827, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:399:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:399:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188827, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:401:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:401:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -12109,7 +12109,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_185044;
                 
                 if (!bounds_check_185043) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186547, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_tmcz20Un_tfcZRz20Un_lfcz7dUzg_177853, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186547, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_tmcz20Un_tfcZRz20Un_lfcz7dUzg_177853, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -12160,7 +12160,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
             bool index_certs_183655;
             
             if (!bounds_check_183654) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188839, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:403:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:403:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188839, "] out of bounds for array of shape [", (long long) n_108627, "].", "-> #0  ft_libs/dbscan/dbscan.fut:405:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:405:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -12272,7 +12272,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_183697;
                 
                 if (!bounds_check_183696) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186549, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_177845, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_186549, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_177845, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -12312,7 +12312,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_181961;
                 
                 if (!bounds_check_181960) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181955, "] out of bounds for array of shape [", (long long) max_res_178140, "].", "-> #0  ft_libs/dbscan/dbscan.fut:443:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:443:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181955, "] out of bounds for array of shape [", (long long) max_res_178140, "].", "-> #0  ft_libs/dbscan/dbscan.fut:445:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:445:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -12339,7 +12339,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_2d_f64(struct futhark_context *
                 bool index_certs_185068;
                 
                 if (!bounds_check_185067) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188853, "] out of bounds for array of shape [", (long long) max_res_178140, "].", "-> #0  ft_libs/dbscan/dbscan.fut:443:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:443:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188853, "] out of bounds for array of shape [", (long long) max_res_178140, "].", "-> #0  ft_libs/dbscan/dbscan.fut:445:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:445:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:38:1-55:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -14288,7 +14288,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_179299;
         
         if (!protect_assert_disj_179298) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_179288, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/dbscan.fut:173:68-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_179288, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/dbscan.fut:175:68-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -14356,7 +14356,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_179312;
         
         if (!protect_assert_disj_179298) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_179288, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:133:27-36\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_179288, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:133:27-36\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -14385,7 +14385,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_179326;
         
         if (!protect_assert_disj_179325) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_179320, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:134:73-84\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_179320, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:134:73-84\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -14416,7 +14416,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool range_valid_c_179335;
         
         if (!protect_assert_disj_179334) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) inf_179313, "..<", (long long) sup_179330, " is invalid.", "-> #0  ft_libs/dbscan/ft_spindex.fut:135:21-30\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) inf_179313, "..<", (long long) sup_179330, " is invalid.", "-> #0  ft_libs/dbscan/ft_spindex.fut:135:21-30\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -14509,7 +14509,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_179361;
         
         if (!protect_assert_disj_179360) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zbzg_lhs_179027, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:117:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:188:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) zbzg_lhs_179027, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:119:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:190:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -14525,7 +14525,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_179370;
         
         if (!protect_assert_disj_179369) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_179364, "] out of bounds for array of shape [", (long long) loop_dz2081U_179249, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_179364, "] out of bounds for array of shape [", (long long) loop_dz2081U_179249, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -14660,7 +14660,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_185348;
                 
                 if (!bounds_check_185347) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_189363, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:171:62-68\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:171:51-69\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_189363, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:173:62-68\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:173:51-69\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -14787,7 +14787,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_179456;
                 
                 if (!bounds_check_179455) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_179452, "] out of bounds for array of shape [", (long long) distance_179332, "].", "-> #0  ft_libs/dbscan/dbscan.fut:186:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:186:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_179452, "] out of bounds for array of shape [", (long long) distance_179332, "].", "-> #0  ft_libs/dbscan/dbscan.fut:188:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -14828,7 +14828,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                     bool index_certs_185259;
                     
                     if (!bounds_check_179297) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_179288, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/ft_distance.fut:139:33-48\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #5  ft_libs/dbscan/dbscan.fut:117:36-56\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_179288, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/ft_distance.fut:139:33-48\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #5  ft_libs/dbscan/dbscan.fut:119:36-56\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
@@ -14932,7 +14932,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_179536;
             
             if (!ok_or_empty_179535) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179519, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:117:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:188:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179519, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:119:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:190:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -15004,7 +15004,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_179551;
                 
                 if (!bounds_check_179550) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_179547, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/dbscan.fut:122:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:122:36-63\n   #3  ft_libs/dbscan/dbscan.fut:188:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_179547, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/dbscan.fut:124:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:124:36-63\n   #3  ft_libs/dbscan/dbscan.fut:190:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -15166,7 +15166,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_179596;
             
             if (!protect_assert_disj_179595) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_179529, "] out of bounds for array of shape [", (long long) m_179519, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:124:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:124:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_179529, "] out of bounds for array of shape [", (long long) m_179519, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:126:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:126:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -15202,7 +15202,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_179616;
             
             if (!ok_or_empty_179615) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179599, "] out of bounds for array of shape [", (long long) m_179519, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:124:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:124:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179599, "] out of bounds for array of shape [", (long long) m_179519, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:126:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:126:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -15263,7 +15263,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_185172;
                 
                 if (!bounds_check_185171) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185168, "] out of bounds for array of shape [", (long long) m_179519, "].", "-> #0  ft_libs/dbscan/dbscan.fut:126:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:126:36-63\n   #3  ft_libs/dbscan/dbscan.fut:188:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185168, "] out of bounds for array of shape [", (long long) m_179519, "].", "-> #0  ft_libs/dbscan/dbscan.fut:128:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:128:36-63\n   #3  ft_libs/dbscan/dbscan.fut:190:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -15275,7 +15275,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_185178;
                 
                 if (!bounds_check_185177) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_185173, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/dbscan.fut:128:51-75\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:188:36-60\n   #5  /prelude/functional.fut:9:44-45\n   #6  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_185173, "] out of bounds for array of shape [", (long long) defunc_0_f_res_187599, "].", "-> #0  ft_libs/dbscan/dbscan.fut:130:51-75\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:190:36-60\n   #5  /prelude/functional.fut:9:44-45\n   #6  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -15302,7 +15302,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_179646;
             
             if (!protect_assert_disj_179645) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_179609, "] out of bounds for array of shape [", (long long) m_179599, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_179609, "] out of bounds for array of shape [", (long long) m_179599, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -15338,7 +15338,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_179666;
             
             if (!ok_or_empty_179665) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179649, "] out of bounds for array of shape [", (long long) m_179599, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179649, "] out of bounds for array of shape [", (long long) m_179599, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -15418,7 +15418,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_179693;
             
             if (!protect_assert_disj_179692) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_179659, "] out of bounds for array of shape [", (long long) m_179649, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_179659, "] out of bounds for array of shape [", (long long) m_179649, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -15454,7 +15454,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_179713;
             
             if (!ok_or_empty_179712) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179696, "] out of bounds for array of shape [", (long long) m_179649, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179696, "] out of bounds for array of shape [", (long long) m_179649, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -15526,7 +15526,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_179752;
             
             if (!ok_or_empty_179751) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179735, "] out of bounds for array of shape [", (long long) loop_dz2081U_179249, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_179735, "] out of bounds for array of shape [", (long long) loop_dz2081U_179249, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -15641,7 +15641,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool empty_or_match_cert_179777;
         
         if (!dim_match_179776) {
-            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:158:17-198:59\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:160:17-200:59\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -15848,7 +15848,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_184658;
             
             if (!bounds_check_184657) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) x_184654, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:300:96-106\n   #1  /prelude/soacs.fut:172:19-20\n   #2  /prelude/functional.fut:9:44-45\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) x_184654, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:302:96-106\n   #1  /prelude/soacs.fut:172:19-20\n   #2  /prelude/functional.fut:9:44-45\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -16352,7 +16352,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_180012;
             
             if (!bounds_check_180011) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180008, "] out of bounds for array of shape [", (long long) read_next_partition_res_179336, "].", "-> #0  ft_libs/dbscan/dbscan.fut:315:79-90\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:315:68-91\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180008, "] out of bounds for array of shape [", (long long) read_next_partition_res_179336, "].", "-> #0  ft_libs/dbscan/dbscan.fut:317:79-90\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:317:68-91\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -16392,7 +16392,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_180023;
             
             if (!bounds_check_180022) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180019, "] out of bounds for array of shape [", (long long) read_next_partition_res_179336, "].", "-> #0  ft_libs/dbscan/dbscan.fut:316:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:316:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180019, "] out of bounds for array of shape [", (long long) read_next_partition_res_179336, "].", "-> #0  ft_libs/dbscan/dbscan.fut:318:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:318:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -16431,7 +16431,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_180034;
             
             if (!bounds_check_180033) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180030, "] out of bounds for array of shape [", (long long) read_next_partition_res_179336, "].", "-> #0  ft_libs/dbscan/dbscan.fut:317:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:317:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180030, "] out of bounds for array of shape [", (long long) read_next_partition_res_179336, "].", "-> #0  ft_libs/dbscan/dbscan.fut:319:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:319:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -16481,7 +16481,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_184749;
             
             if (!bounds_check_184748) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_184744, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:318:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:318:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_184744, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:320:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:320:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -16532,7 +16532,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_184791;
             
             if (!bounds_check_184790) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_184785, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:319:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:319:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_184785, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:321:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:321:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -17534,7 +17534,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_180527;
         
         if (!protect_assert_disj_180526) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) conc_tmp_180494, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_180505, "].", "-> #0  ft_libs/dbscan/dbscan.fut:262:29-49\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) conc_tmp_180494, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_180505, "].", "-> #0  ft_libs/dbscan/dbscan.fut:264:29-49\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -17547,7 +17547,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_180533;
         
         if (!protect_assert_disj_180532) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) conc_tmp_180494, ":", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_180505, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_180505, "].", "-> #0  ft_libs/dbscan/dbscan.fut:262:51-72\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) conc_tmp_180494, ":", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_180505, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_180505, "].", "-> #0  ft_libs/dbscan/dbscan.fut:264:51-72\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -18971,7 +18971,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool range_valid_c_180623;
             
             if (!valid_180622) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) old_offs_180562, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:232:39-53\n   #2  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) old_offs_180562, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:234:39-53\n   #2  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -18984,7 +18984,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_180629;
             
             if (!ok_or_empty_180628) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) old_offs_180562, "] out of bounds for array of shape [", (long long) new_offs_180569, "].", "-> #0  ft_libs/dbscan/dbscan.fut:233:40-65\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) old_offs_180562, "] out of bounds for array of shape [", (long long) new_offs_180569, "].", "-> #0  ft_libs/dbscan/dbscan.fut:235:40-65\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -19089,7 +19089,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                     bool index_certs_180619;
                     
                     if (!bounds_check_180618) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180613, "] out of bounds for array of shape [", (long long) new_offs_180569, "].", "-> #0  ft_libs/dbscan/dbscan.fut:231:92-106\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:231:62-107\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180613, "] out of bounds for array of shape [", (long long) new_offs_180569, "].", "-> #0  ft_libs/dbscan/dbscan.fut:233:92-106\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:233:62-107\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
@@ -19153,7 +19153,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool empty_or_match_cert_180679;
         
         if (!dim_match_180678) {
-            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:237:17-262:94\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:239:17-264:94\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -19190,7 +19190,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool range_valid_c_180796;
         
         if (!valid_180795) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) max_res_180793, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:438:45-60\n   #2  ft_libs/dbscan/dbscan.fut:454:41-94\n   #3  ft_libs/dbscan/dbscan.fut:496:38-498:96\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) max_res_180793, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:440:45-60\n   #2  ft_libs/dbscan/dbscan.fut:456:41-94\n   #3  ft_libs/dbscan/dbscan.fut:498:38-500:96\n   #4  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -19202,7 +19202,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_180684;
         
         if (!ok_or_empty_180683) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_180109, "] out of bounds for array of shape [", (long long) conc_tmp_180494, "].", "-> #0  ft_libs/dbscan/dbscan.fut:381:58-86\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_180109, "] out of bounds for array of shape [", (long long) conc_tmp_180494, "].", "-> #0  ft_libs/dbscan/dbscan.fut:383:58-86\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -19217,7 +19217,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_180693;
         
         if (!ok_or_empty_180692) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180109, ":", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_180493, "] out of bounds for array of shape [", (long long) conc_tmp_180494, "].", "-> #0  ft_libs/dbscan/dbscan.fut:382:52-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180109, ":", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_180493, "] out of bounds for array of shape [", (long long) conc_tmp_180494, "].", "-> #0  ft_libs/dbscan/dbscan.fut:384:52-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -19234,7 +19234,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_180704;
         
         if (!ok_or_empty_180703) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_180493, ":", (long long) conc_tmp_180494, "] out of bounds for array of shape [", (long long) conc_tmp_180494, "].", "-> #0  ft_libs/dbscan/dbscan.fut:383:52-102\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_180493, ":", (long long) conc_tmp_180494, "] out of bounds for array of shape [", (long long) conc_tmp_180494, "].", "-> #0  ft_libs/dbscan/dbscan.fut:385:52-102\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -19245,7 +19245,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_180709;
         
         if (!ok_or_empty_180708) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_180390, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_180492, "].", "-> #0  ft_libs/dbscan/dbscan.fut:384:52-79\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_180390, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_180492, "].", "-> #0  ft_libs/dbscan/dbscan.fut:386:52-79\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -19260,7 +19260,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_180718;
         
         if (!ok_or_empty_180717) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180390, ":", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_180492, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_180492, "].", "-> #0  ft_libs/dbscan/dbscan.fut:385:52-89\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180390, ":", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_180492, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_180492, "].", "-> #0  ft_libs/dbscan/dbscan.fut:387:52-89\n   #1  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -19371,7 +19371,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
         bool index_certs_180871;
         
         if (!ok_or_empty_180870) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) partition_sizze_180847, "] out of bounds for array of shape [", (long long) read_next_partition_res_179336, "].", "-> #0  /prelude/soacs.fut:174:7-19\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:496:38-498:96\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) partition_sizze_180847, "] out of bounds for array of shape [", (long long) read_next_partition_res_179336, "].", "-> #0  /prelude/soacs.fut:174:7-19\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:498:38-500:96\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -19551,7 +19551,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_184855;
                 
                 if (!bounds_check_184854) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187494, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_180493, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187494, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_180493, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -19736,7 +19736,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_184904;
                 
                 if (!bounds_check_184903) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187496, "] out of bounds for array of shape [", (long long) conc_tmp_180494, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187496, "] out of bounds for array of shape [", (long long) conc_tmp_180494, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -19910,7 +19910,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_184950;
                 
                 if (!bounds_check_184949) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187503, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_lmcz20Un_tmcZRz20Un_tfcz7dUzg_180499, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187503, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_lmcz20Un_tmcZRz20Un_tfcz7dUzg_180499, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -19964,7 +19964,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_184975;
             
             if (!bounds_check_184974) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188944, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:399:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:399:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188944, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:401:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:401:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -20126,7 +20126,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_185014;
                 
                 if (!bounds_check_185013) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187510, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_tmcz20Un_tfcZRz20Un_lfcz7dUzg_180501, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187510, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_tmcz20Un_tfcZRz20Un_lfcz7dUzg_180501, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -20177,7 +20177,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
             bool index_certs_183665;
             
             if (!bounds_check_183664) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188957, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:403:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:403:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188957, "] out of bounds for array of shape [", (long long) n_146725, "].", "-> #0  ft_libs/dbscan/dbscan.fut:405:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:405:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -20305,7 +20305,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_183704;
                 
                 if (!bounds_check_183703) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187512, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_180492, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187512, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_180492, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -20345,7 +20345,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_181862;
                 
                 if (!bounds_check_181861) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181856, "] out of bounds for array of shape [", (long long) max_res_180793, "].", "-> #0  ft_libs/dbscan/dbscan.fut:443:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:443:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181856, "] out of bounds for array of shape [", (long long) max_res_180793, "].", "-> #0  ft_libs/dbscan/dbscan.fut:445:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:445:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -20372,7 +20372,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_grid_dbscan_3d_f64(struct futhark_context *
                 bool index_certs_185038;
                 
                 if (!bounds_check_185037) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188972, "] out of bounds for array of shape [", (long long) max_res_180793, "].", "-> #0  ft_libs/dbscan/dbscan.fut:443:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:443:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188972, "] out of bounds for array of shape [", (long long) max_res_180793, "].", "-> #0  ft_libs/dbscan/dbscan.fut:445:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:445:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:76:1-96:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -24221,7 +24221,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_177424;
         
         if (!protect_assert_disj_177423) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_177413, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/dbscan.fut:173:68-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_177413, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/dbscan.fut:175:68-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -24269,7 +24269,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_177433;
         
         if (!protect_assert_disj_177423) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_177413, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:241:27-36\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_177413, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:241:27-36\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -24298,7 +24298,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_177447;
         
         if (!protect_assert_disj_177446) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_177441, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:242:73-84\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_177441, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:242:73-84\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -24329,7 +24329,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool range_valid_c_177456;
         
         if (!protect_assert_disj_177455) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) inf_177434, "..<", (long long) sup_177451, " is invalid.", "-> #0  ft_libs/dbscan/ft_spindex.fut:243:21-30\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) inf_177434, "..<", (long long) sup_177451, " is invalid.", "-> #0  ft_libs/dbscan/ft_spindex.fut:243:21-30\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -24402,7 +24402,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_177478;
         
         if (!protect_assert_disj_177477) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177293, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:117:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:188:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177293, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:119:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:190:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -24418,7 +24418,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_177487;
         
         if (!protect_assert_disj_177486) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_177481, "] out of bounds for array of shape [", (long long) loop_dz2081U_177372, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_177481, "] out of bounds for array of shape [", (long long) loop_dz2081U_177372, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -24531,7 +24531,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_185702;
                 
                 if (!bounds_check_185701) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_189280, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:171:62-68\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:171:51-69\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_189280, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:173:62-68\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:173:51-69\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -24651,7 +24651,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_177562;
                 
                 if (!bounds_check_177561) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177558, "] out of bounds for array of shape [", (long long) distance_177453, "].", "-> #0  ft_libs/dbscan/dbscan.fut:186:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:186:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177558, "] out of bounds for array of shape [", (long long) distance_177453, "].", "-> #0  ft_libs/dbscan/dbscan.fut:188:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -24690,7 +24690,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                     bool index_certs_185629;
                     
                     if (!bounds_check_177422) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_177413, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/ft_distance.fut:139:33-48\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #5  ft_libs/dbscan/dbscan.fut:117:36-56\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_177413, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/ft_distance.fut:139:33-48\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #5  ft_libs/dbscan/dbscan.fut:119:36-56\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
@@ -24777,7 +24777,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_177629;
             
             if (!ok_or_empty_177628) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177612, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:117:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:188:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177612, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:119:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:190:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -24839,7 +24839,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_177642;
                 
                 if (!bounds_check_177641) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177638, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/dbscan.fut:122:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:122:36-63\n   #3  ft_libs/dbscan/dbscan.fut:188:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_177638, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/dbscan.fut:124:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:124:36-63\n   #3  ft_libs/dbscan/dbscan.fut:190:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -24967,7 +24967,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_177682;
             
             if (!protect_assert_disj_177681) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177622, "] out of bounds for array of shape [", (long long) m_177612, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:124:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:124:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177622, "] out of bounds for array of shape [", (long long) m_177612, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:126:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:126:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -25003,7 +25003,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_177702;
             
             if (!ok_or_empty_177701) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177685, "] out of bounds for array of shape [", (long long) m_177612, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:124:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:124:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177685, "] out of bounds for array of shape [", (long long) m_177612, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:126:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:126:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -25064,7 +25064,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_185548;
                 
                 if (!bounds_check_185547) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185544, "] out of bounds for array of shape [", (long long) m_177612, "].", "-> #0  ft_libs/dbscan/dbscan.fut:126:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:126:36-63\n   #3  ft_libs/dbscan/dbscan.fut:188:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185544, "] out of bounds for array of shape [", (long long) m_177612, "].", "-> #0  ft_libs/dbscan/dbscan.fut:128:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:128:36-63\n   #3  ft_libs/dbscan/dbscan.fut:190:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -25076,7 +25076,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_185554;
                 
                 if (!bounds_check_185553) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_185549, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/dbscan.fut:128:51-75\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:188:36-60\n   #5  /prelude/functional.fut:9:44-45\n   #6  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_185549, "] out of bounds for array of shape [", (long long) m_177283, "].", "-> #0  ft_libs/dbscan/dbscan.fut:130:51-75\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:190:36-60\n   #5  /prelude/functional.fut:9:44-45\n   #6  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -25103,7 +25103,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_177732;
             
             if (!protect_assert_disj_177731) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177695, "] out of bounds for array of shape [", (long long) m_177685, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177695, "] out of bounds for array of shape [", (long long) m_177685, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -25139,7 +25139,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_177752;
             
             if (!ok_or_empty_177751) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177735, "] out of bounds for array of shape [", (long long) m_177685, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177735, "] out of bounds for array of shape [", (long long) m_177685, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -25219,7 +25219,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_177779;
             
             if (!protect_assert_disj_177778) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177745, "] out of bounds for array of shape [", (long long) m_177735, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_177745, "] out of bounds for array of shape [", (long long) m_177735, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -25255,7 +25255,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_177799;
             
             if (!ok_or_empty_177798) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177782, "] out of bounds for array of shape [", (long long) m_177735, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177782, "] out of bounds for array of shape [", (long long) m_177735, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -25327,7 +25327,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_177838;
             
             if (!ok_or_empty_177837) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177821, "] out of bounds for array of shape [", (long long) loop_dz2081U_177372, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_177821, "] out of bounds for array of shape [", (long long) loop_dz2081U_177372, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -25440,7 +25440,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool empty_or_match_cert_177862;
         
         if (!dim_match_177861) {
-            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:158:17-198:59\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:160:17-200:59\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -25619,7 +25619,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_185048;
             
             if (!bounds_check_185047) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) x_185044, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:300:96-106\n   #1  /prelude/soacs.fut:172:19-20\n   #2  /prelude/functional.fut:9:44-45\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) x_185044, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:302:96-106\n   #1  /prelude/soacs.fut:172:19-20\n   #2  /prelude/functional.fut:9:44-45\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -26090,7 +26090,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_178094;
             
             if (!bounds_check_178093) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_178090, "] out of bounds for array of shape [", (long long) read_next_partition_res_177457, "].", "-> #0  ft_libs/dbscan/dbscan.fut:315:79-90\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:315:68-91\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_178090, "] out of bounds for array of shape [", (long long) read_next_partition_res_177457, "].", "-> #0  ft_libs/dbscan/dbscan.fut:317:79-90\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:317:68-91\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -26123,7 +26123,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_178103;
             
             if (!bounds_check_178102) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_178099, "] out of bounds for array of shape [", (long long) read_next_partition_res_177457, "].", "-> #0  ft_libs/dbscan/dbscan.fut:316:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:316:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_178099, "] out of bounds for array of shape [", (long long) read_next_partition_res_177457, "].", "-> #0  ft_libs/dbscan/dbscan.fut:318:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:318:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -26155,7 +26155,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_178112;
             
             if (!bounds_check_178111) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_178108, "] out of bounds for array of shape [", (long long) read_next_partition_res_177457, "].", "-> #0  ft_libs/dbscan/dbscan.fut:317:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:317:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_178108, "] out of bounds for array of shape [", (long long) read_next_partition_res_177457, "].", "-> #0  ft_libs/dbscan/dbscan.fut:319:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:319:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -26196,7 +26196,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_185130;
             
             if (!bounds_check_185129) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185125, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:318:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:318:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185125, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:320:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:320:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -26240,7 +26240,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_185166;
             
             if (!bounds_check_185165) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185160, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:319:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:319:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185160, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:321:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:321:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -27153,7 +27153,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_178556;
         
         if (!protect_assert_disj_178555) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) conc_tmp_178525, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_178534, "].", "-> #0  ft_libs/dbscan/dbscan.fut:262:29-49\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) conc_tmp_178525, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_178534, "].", "-> #0  ft_libs/dbscan/dbscan.fut:264:29-49\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27166,7 +27166,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_178562;
         
         if (!protect_assert_disj_178561) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) conc_tmp_178525, ":", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_178534, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_178534, "].", "-> #0  ft_libs/dbscan/dbscan.fut:262:51-72\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) conc_tmp_178525, ":", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_178534, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_178534, "].", "-> #0  ft_libs/dbscan/dbscan.fut:264:51-72\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27598,7 +27598,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool range_valid_c_178651;
             
             if (!valid_178650) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) old_offs_178590, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:232:39-53\n   #2  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) old_offs_178590, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:234:39-53\n   #2  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -27611,7 +27611,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_178657;
             
             if (!ok_or_empty_178656) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) old_offs_178590, "] out of bounds for array of shape [", (long long) new_offs_178597, "].", "-> #0  ft_libs/dbscan/dbscan.fut:233:40-65\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) old_offs_178590, "] out of bounds for array of shape [", (long long) new_offs_178597, "].", "-> #0  ft_libs/dbscan/dbscan.fut:235:40-65\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -27716,7 +27716,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                     bool index_certs_178647;
                     
                     if (!bounds_check_178646) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_178641, "] out of bounds for array of shape [", (long long) new_offs_178597, "].", "-> #0  ft_libs/dbscan/dbscan.fut:231:92-106\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:231:62-107\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_178641, "] out of bounds for array of shape [", (long long) new_offs_178597, "].", "-> #0  ft_libs/dbscan/dbscan.fut:233:92-106\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:233:62-107\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
@@ -27780,7 +27780,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool empty_or_match_cert_178707;
         
         if (!dim_match_178706) {
-            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:237:17-262:94\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:239:17-264:94\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27817,7 +27817,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool range_valid_c_178821;
         
         if (!valid_178820) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) max_res_178818, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:438:45-60\n   #2  ft_libs/dbscan/dbscan.fut:454:41-94\n   #3  ft_libs/dbscan/dbscan.fut:496:38-498:96\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) max_res_178818, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:440:45-60\n   #2  ft_libs/dbscan/dbscan.fut:456:41-94\n   #3  ft_libs/dbscan/dbscan.fut:498:38-500:96\n   #4  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27829,7 +27829,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_178712;
         
         if (!ok_or_empty_178711) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_178178, "] out of bounds for array of shape [", (long long) conc_tmp_178525, "].", "-> #0  ft_libs/dbscan/dbscan.fut:381:58-86\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_178178, "] out of bounds for array of shape [", (long long) conc_tmp_178525, "].", "-> #0  ft_libs/dbscan/dbscan.fut:383:58-86\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27844,7 +27844,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_178721;
         
         if (!ok_or_empty_178720) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_178178, ":", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_178524, "] out of bounds for array of shape [", (long long) conc_tmp_178525, "].", "-> #0  ft_libs/dbscan/dbscan.fut:382:52-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_178178, ":", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_178524, "] out of bounds for array of shape [", (long long) conc_tmp_178525, "].", "-> #0  ft_libs/dbscan/dbscan.fut:384:52-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27861,7 +27861,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_178732;
         
         if (!ok_or_empty_178731) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_178524, ":", (long long) conc_tmp_178525, "] out of bounds for array of shape [", (long long) conc_tmp_178525, "].", "-> #0  ft_libs/dbscan/dbscan.fut:383:52-102\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_178524, ":", (long long) conc_tmp_178525, "] out of bounds for array of shape [", (long long) conc_tmp_178525, "].", "-> #0  ft_libs/dbscan/dbscan.fut:385:52-102\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27872,7 +27872,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_178737;
         
         if (!ok_or_empty_178736) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_178429, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_178523, "].", "-> #0  ft_libs/dbscan/dbscan.fut:384:52-79\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_178429, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_178523, "].", "-> #0  ft_libs/dbscan/dbscan.fut:386:52-79\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27887,7 +27887,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_178746;
         
         if (!ok_or_empty_178745) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_178429, ":", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_178523, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_178523, "].", "-> #0  ft_libs/dbscan/dbscan.fut:385:52-89\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_178429, ":", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_178523, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_178523, "].", "-> #0  ft_libs/dbscan/dbscan.fut:387:52-89\n   #1  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -27998,7 +27998,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
         bool index_certs_178896;
         
         if (!ok_or_empty_178895) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) partition_sizze_178872, "] out of bounds for array of shape [", (long long) read_next_partition_res_177457, "].", "-> #0  /prelude/soacs.fut:174:7-19\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:496:38-498:96\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) partition_sizze_178872, "] out of bounds for array of shape [", (long long) read_next_partition_res_177457, "].", "-> #0  /prelude/soacs.fut:174:7-19\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:498:38-500:96\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -28162,7 +28162,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_185229;
                 
                 if (!bounds_check_185228) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187099, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_178524, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187099, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_178524, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -28320,7 +28320,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_185280;
                 
                 if (!bounds_check_185279) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187101, "] out of bounds for array of shape [", (long long) conc_tmp_178525, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187101, "] out of bounds for array of shape [", (long long) conc_tmp_178525, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -28467,7 +28467,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_185328;
                 
                 if (!bounds_check_185327) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187108, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_lmcz20Un_tmcZRz20Un_tfcz7dUzg_178529, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187108, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_lmcz20Un_tmcZRz20Un_tfcz7dUzg_178529, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -28521,7 +28521,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_185352;
             
             if (!bounds_check_185351) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188901, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:399:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:399:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188901, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:401:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:401:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -28656,7 +28656,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_185394;
                 
                 if (!bounds_check_185393) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187115, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_tmcz20Un_tfcZRz20Un_lfcz7dUzg_178531, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187115, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_tmcz20Un_tfcZRz20Un_lfcz7dUzg_178531, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -28707,7 +28707,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
             bool index_certs_184005;
             
             if (!bounds_check_184004) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188913, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:403:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:403:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188913, "] out of bounds for array of shape [", (long long) n_124590, "].", "-> #0  ft_libs/dbscan/dbscan.fut:405:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:405:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -28819,7 +28819,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_184047;
                 
                 if (!bounds_check_184046) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187117, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_178523, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_187117, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_178523, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -28859,7 +28859,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_181961;
                 
                 if (!bounds_check_181960) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181955, "] out of bounds for array of shape [", (long long) max_res_178818, "].", "-> #0  ft_libs/dbscan/dbscan.fut:443:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:443:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181955, "] out of bounds for array of shape [", (long long) max_res_178818, "].", "-> #0  ft_libs/dbscan/dbscan.fut:445:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:445:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -28886,7 +28886,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_2d_f64(struct futhark_context *ct
                 bool index_certs_185418;
                 
                 if (!bounds_check_185417) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188927, "] out of bounds for array of shape [", (long long) max_res_178818, "].", "-> #0  ft_libs/dbscan/dbscan.fut:443:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:443:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_188927, "] out of bounds for array of shape [", (long long) max_res_178818, "].", "-> #0  ft_libs/dbscan/dbscan.fut:445:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:445:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:57:1-74:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -33150,7 +33150,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_180078;
         
         if (!protect_assert_disj_180077) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_180067, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/dbscan.fut:173:68-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_180067, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/dbscan.fut:175:68-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -33218,7 +33218,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_180091;
         
         if (!protect_assert_disj_180077) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_180067, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:241:27-36\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_180067, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:241:27-36\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -33247,7 +33247,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_180105;
         
         if (!protect_assert_disj_180104) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_180099, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:242:73-84\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_180099, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/ft_spindex.fut:242:73-84\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -33278,7 +33278,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool range_valid_c_180114;
         
         if (!protect_assert_disj_180113) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) inf_180092, "..<", (long long) sup_180109, " is invalid.", "-> #0  ft_libs/dbscan/ft_spindex.fut:243:21-30\n   #1  ft_libs/dbscan/dbscan.fut:170:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) inf_180092, "..<", (long long) sup_180109, " is invalid.", "-> #0  ft_libs/dbscan/ft_spindex.fut:243:21-30\n   #1  ft_libs/dbscan/dbscan.fut:172:39-78\n   #2  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -33371,7 +33371,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_180140;
         
         if (!protect_assert_disj_180139) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_179893, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:117:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:188:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_179893, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:119:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:190:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -33387,7 +33387,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_180149;
         
         if (!protect_assert_disj_180148) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_180143, "] out of bounds for array of shape [", (long long) loop_dz2081U_180028, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) tmp_180143, "] out of bounds for array of shape [", (long long) loop_dz2081U_180028, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -33522,7 +33522,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_185729;
                 
                 if (!bounds_check_185728) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_189363, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:171:62-68\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:171:51-69\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) index_primexp_189363, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:173:62-68\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:173:51-69\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -33649,7 +33649,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_180235;
                 
                 if (!bounds_check_180234) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180231, "] out of bounds for array of shape [", (long long) distance_180111, "].", "-> #0  ft_libs/dbscan/dbscan.fut:186:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:186:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180231, "] out of bounds for array of shape [", (long long) distance_180111, "].", "-> #0  ft_libs/dbscan/dbscan.fut:188:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -33690,7 +33690,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                     bool index_certs_185640;
                     
                     if (!bounds_check_180076) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_180067, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/ft_distance.fut:139:33-48\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #5  ft_libs/dbscan/dbscan.fut:117:36-56\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) next_partition_res_180067, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/ft_distance.fut:139:33-48\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #5  ft_libs/dbscan/dbscan.fut:119:36-56\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
@@ -33794,7 +33794,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180315;
             
             if (!ok_or_empty_180314) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180298, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:117:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:188:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180298, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:137:39-143:18\n   #3  ft_libs/dbscan/dbscan.fut:119:36-56\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:190:36-60\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -33866,7 +33866,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_180330;
                 
                 if (!bounds_check_180329) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180326, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/dbscan.fut:122:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:122:36-63\n   #3  ft_libs/dbscan/dbscan.fut:188:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180326, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/dbscan.fut:124:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:124:36-63\n   #3  ft_libs/dbscan/dbscan.fut:190:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -34028,7 +34028,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180375;
             
             if (!protect_assert_disj_180374) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180308, "] out of bounds for array of shape [", (long long) m_180298, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:124:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:124:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180308, "] out of bounds for array of shape [", (long long) m_180298, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:126:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:126:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -34064,7 +34064,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180395;
             
             if (!ok_or_empty_180394) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180378, "] out of bounds for array of shape [", (long long) m_180298, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:124:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:124:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:188:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180378, "] out of bounds for array of shape [", (long long) m_180298, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/ft_distance.fut:147:39-152:18\n   #3  ft_libs/dbscan/dbscan.fut:126:44-72\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan.fut:126:44-89\n   #6  /prelude/functional.fut:9:44-45\n   #7  ft_libs/dbscan/dbscan.fut:190:36-60\n   #8  /prelude/functional.fut:9:44-45\n   #9  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -34125,7 +34125,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_185553;
                 
                 if (!bounds_check_185552) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185549, "] out of bounds for array of shape [", (long long) m_180298, "].", "-> #0  ft_libs/dbscan/dbscan.fut:126:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:126:36-63\n   #3  ft_libs/dbscan/dbscan.fut:188:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185549, "] out of bounds for array of shape [", (long long) m_180298, "].", "-> #0  ft_libs/dbscan/dbscan.fut:128:47-62\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:128:36-63\n   #3  ft_libs/dbscan/dbscan.fut:190:36-60\n   #4  /prelude/functional.fut:9:44-45\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -34137,7 +34137,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_185559;
                 
                 if (!bounds_check_185558) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_185554, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/dbscan.fut:128:51-75\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:188:36-60\n   #5  /prelude/functional.fut:9:44-45\n   #6  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) lifted_lambda_res_185554, "] out of bounds for array of shape [", (long long) m_179883, "].", "-> #0  ft_libs/dbscan/dbscan.fut:130:51-75\n   #1  /prelude/soacs.fut:255:31-32\n   #2  /prelude/soacs.fut:255:48-50\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:190:36-60\n   #5  /prelude/functional.fut:9:44-45\n   #6  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -34164,7 +34164,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180425;
             
             if (!protect_assert_disj_180424) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180388, "] out of bounds for array of shape [", (long long) m_180378, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180388, "] out of bounds for array of shape [", (long long) m_180378, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -34200,7 +34200,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180445;
             
             if (!ok_or_empty_180444) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180428, "] out of bounds for array of shape [", (long long) m_180378, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180428, "] out of bounds for array of shape [", (long long) m_180378, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -34280,7 +34280,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180472;
             
             if (!protect_assert_disj_180471) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180438, "] out of bounds for array of shape [", (long long) m_180428, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180438, "] out of bounds for array of shape [", (long long) m_180428, "].", "-> #0  /prelude/soacs.fut:257:33-47\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -34316,7 +34316,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180492;
             
             if (!ok_or_empty_180491) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180475, "] out of bounds for array of shape [", (long long) m_180428, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180475, "] out of bounds for array of shape [", (long long) m_180428, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -34388,7 +34388,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180531;
             
             if (!ok_or_empty_180530) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180514, "] out of bounds for array of shape [", (long long) loop_dz2081U_180028, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:188:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [:", (long long) m_180514, "] out of bounds for array of shape [", (long long) loop_dz2081U_180028, "].", "-> #0  /prelude/soacs.fut:258:29-35\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:190:36-60\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -34503,7 +34503,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool empty_or_match_cert_180556;
         
         if (!dim_match_180555) {
-            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:158:17-198:59\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:160:17-200:59\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -34710,7 +34710,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_185039;
             
             if (!bounds_check_185038) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) x_185035, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:300:96-106\n   #1  /prelude/soacs.fut:172:19-20\n   #2  /prelude/functional.fut:9:44-45\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) x_185035, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:302:96-106\n   #1  /prelude/soacs.fut:172:19-20\n   #2  /prelude/functional.fut:9:44-45\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -35214,7 +35214,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180791;
             
             if (!bounds_check_180790) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180787, "] out of bounds for array of shape [", (long long) read_next_partition_res_180115, "].", "-> #0  ft_libs/dbscan/dbscan.fut:315:79-90\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:315:68-91\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180787, "] out of bounds for array of shape [", (long long) read_next_partition_res_180115, "].", "-> #0  ft_libs/dbscan/dbscan.fut:317:79-90\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:317:68-91\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -35254,7 +35254,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180802;
             
             if (!bounds_check_180801) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180798, "] out of bounds for array of shape [", (long long) read_next_partition_res_180115, "].", "-> #0  ft_libs/dbscan/dbscan.fut:316:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:316:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180798, "] out of bounds for array of shape [", (long long) read_next_partition_res_180115, "].", "-> #0  ft_libs/dbscan/dbscan.fut:318:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:318:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -35293,7 +35293,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_180813;
             
             if (!bounds_check_180812) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180809, "] out of bounds for array of shape [", (long long) read_next_partition_res_180115, "].", "-> #0  ft_libs/dbscan/dbscan.fut:317:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:317:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_180809, "] out of bounds for array of shape [", (long long) read_next_partition_res_180115, "].", "-> #0  ft_libs/dbscan/dbscan.fut:319:67-78\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:319:56-79\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -35343,7 +35343,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_185130;
             
             if (!bounds_check_185129) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185125, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:318:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:318:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185125, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:320:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:320:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -35394,7 +35394,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_185172;
             
             if (!bounds_check_185171) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185166, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:319:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:319:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_185166, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:321:67-77\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:321:56-78\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -36396,7 +36396,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_181306;
         
         if (!protect_assert_disj_181305) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) conc_tmp_181273, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_181284, "].", "-> #0  ft_libs/dbscan/dbscan.fut:262:29-49\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) conc_tmp_181273, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_181284, "].", "-> #0  ft_libs/dbscan/dbscan.fut:264:29-49\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -36409,7 +36409,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_181312;
         
         if (!protect_assert_disj_181311) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) conc_tmp_181273, ":", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_181284, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_181284, "].", "-> #0  ft_libs/dbscan/dbscan.fut:262:51-72\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) conc_tmp_181273, ":", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_181284, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Unpz20Unfz7dUzg_181284, "].", "-> #0  ft_libs/dbscan/dbscan.fut:264:51-72\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -37833,7 +37833,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool range_valid_c_181402;
             
             if (!valid_181401) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) old_offs_181341, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:232:39-53\n   #2  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) old_offs_181341, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:234:39-53\n   #2  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -37846,7 +37846,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_181408;
             
             if (!ok_or_empty_181407) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) old_offs_181341, "] out of bounds for array of shape [", (long long) new_offs_181348, "].", "-> #0  ft_libs/dbscan/dbscan.fut:233:40-65\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) old_offs_181341, "] out of bounds for array of shape [", (long long) new_offs_181348, "].", "-> #0  ft_libs/dbscan/dbscan.fut:235:40-65\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -37951,7 +37951,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                     bool index_certs_181398;
                     
                     if (!bounds_check_181397) {
-                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181392, "] out of bounds for array of shape [", (long long) new_offs_181348, "].", "-> #0  ft_libs/dbscan/dbscan.fut:231:92-106\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:231:62-107\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                        set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181392, "] out of bounds for array of shape [", (long long) new_offs_181348, "].", "-> #0  ft_libs/dbscan/dbscan.fut:233:92-106\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:233:62-107\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                         err = FUTHARK_PROGRAM_ERROR;
                         goto cleanup;
                     }
@@ -38015,7 +38015,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool empty_or_match_cert_181458;
         
         if (!dim_match_181457) {
-            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:237:17-262:94\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s\n\nBacktrace:\n%s", "Function return value does not match shape of declared return type.", "-> #0  ft_libs/dbscan/dbscan.fut:239:17-264:94\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -38052,7 +38052,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool range_valid_c_181575;
         
         if (!valid_181574) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) max_res_181572, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:438:45-60\n   #2  ft_libs/dbscan/dbscan.fut:454:41-94\n   #3  ft_libs/dbscan/dbscan.fut:496:38-498:96\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Range ", (long long) (int64_t) 0, "..", (long long) (int64_t) 1, "..<", (long long) max_res_181572, " is invalid.", "-> #0  /prelude/array.fut:94:3-11\n   #1  ft_libs/dbscan/dbscan.fut:440:45-60\n   #2  ft_libs/dbscan/dbscan.fut:456:41-94\n   #3  ft_libs/dbscan/dbscan.fut:498:38-500:96\n   #4  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -38064,7 +38064,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_181463;
         
         if (!ok_or_empty_181462) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_180888, "] out of bounds for array of shape [", (long long) conc_tmp_181273, "].", "-> #0  ft_libs/dbscan/dbscan.fut:381:58-86\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_180888, "] out of bounds for array of shape [", (long long) conc_tmp_181273, "].", "-> #0  ft_libs/dbscan/dbscan.fut:383:58-86\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -38079,7 +38079,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_181472;
         
         if (!ok_or_empty_181471) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180888, ":", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_181272, "] out of bounds for array of shape [", (long long) conc_tmp_181273, "].", "-> #0  ft_libs/dbscan/dbscan.fut:382:52-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_180888, ":", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_181272, "] out of bounds for array of shape [", (long long) conc_tmp_181273, "].", "-> #0  ft_libs/dbscan/dbscan.fut:384:52-90\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -38096,7 +38096,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_181483;
         
         if (!ok_or_empty_181482) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_181272, ":", (long long) conc_tmp_181273, "] out of bounds for array of shape [", (long long) conc_tmp_181273, "].", "-> #0  ft_libs/dbscan/dbscan.fut:383:52-102\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_181272, ":", (long long) conc_tmp_181273, "] out of bounds for array of shape [", (long long) conc_tmp_181273, "].", "-> #0  ft_libs/dbscan/dbscan.fut:385:52-102\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -38107,7 +38107,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_181488;
         
         if (!ok_or_empty_181487) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_181169, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_181271, "].", "-> #0  ft_libs/dbscan/dbscan.fut:384:52-79\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) m_181169, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_181271, "].", "-> #0  ft_libs/dbscan/dbscan.fut:386:52-79\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -38122,7 +38122,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_181497;
         
         if (!ok_or_empty_181496) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_181169, ":", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_181271, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_181271, "].", "-> #0  ft_libs/dbscan/dbscan.fut:385:52-89\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) m_181169, ":", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_181271, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_181271, "].", "-> #0  ft_libs/dbscan/dbscan.fut:387:52-89\n   #1  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -38233,7 +38233,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
         bool index_certs_181650;
         
         if (!ok_or_empty_181649) {
-            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) partition_sizze_181626, "] out of bounds for array of shape [", (long long) read_next_partition_res_180115, "].", "-> #0  /prelude/soacs.fut:174:7-19\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:496:38-498:96\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+            set_error(ctx, msgprintf("Error: %s%lld%s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) (int64_t) 0, ":", (long long) partition_sizze_181626, "] out of bounds for array of shape [", (long long) read_next_partition_res_180115, "].", "-> #0  /prelude/soacs.fut:174:7-19\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:498:38-500:96\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
             err = FUTHARK_PROGRAM_ERROR;
             goto cleanup;
         }
@@ -38413,7 +38413,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_185236;
                 
                 if (!bounds_check_185235) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188104, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_181272, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188104, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Un_ipcz20Un_lmcz7dUzg_181272, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -38598,7 +38598,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_185285;
                 
                 if (!bounds_check_185284) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188106, "] out of bounds for array of shape [", (long long) conc_tmp_181273, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188106, "] out of bounds for array of shape [", (long long) conc_tmp_181273, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -38772,7 +38772,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_185331;
                 
                 if (!bounds_check_185330) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188113, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_lmcz20Un_tmcZRz20Un_tfcz7dUzg_181278, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188113, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_lmcz20Un_tmcZRz20Un_tfcz7dUzg_181278, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -38826,7 +38826,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_185356;
             
             if (!bounds_check_185355) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_189026, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:399:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:399:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_189026, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:401:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:401:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -38988,7 +38988,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_185395;
                 
                 if (!bounds_check_185394) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188120, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_tmcz20Un_tfcZRz20Un_lfcz7dUzg_181280, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188120, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20UZLZLzpZRz20Un_tmcz20Un_tfcZRz20Un_lfcz7dUzg_181280, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -39039,7 +39039,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
             bool index_certs_184046;
             
             if (!bounds_check_184045) {
-                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_189039, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:403:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:403:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_189039, "] out of bounds for array of shape [", (long long) n_163727, "].", "-> #0  ft_libs/dbscan/dbscan.fut:405:96-112\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:405:85-113\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                 err = FUTHARK_PROGRAM_ERROR;
                 goto cleanup;
             }
@@ -39167,7 +39167,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_184085;
                 
                 if (!bounds_check_184084) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188122, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_181271, "].", "-> #0  ft_libs/dbscan/dbscan.fut:274:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:274:28-275:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) defunc_0_f_res_188122, "] out of bounds for array of shape [", (long long) dzlz7bUZLzpZRz20Udz2083Uz2082Uz2084Uz20Udz2083Uz2087Uz2084Uz7dUzg_181271, "].", "-> #0  ft_libs/dbscan/dbscan.fut:276:74-86\n   #1  /prelude/soacs.fut:67:23-24\n   #2  /prelude/soacs.fut:67:27-37\n   #3  /prelude/functional.fut:9:44-45\n   #4  ft_libs/dbscan/dbscan.fut:276:28-277:41\n   #5  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -39207,7 +39207,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_181862;
                 
                 if (!bounds_check_181861) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181856, "] out of bounds for array of shape [", (long long) max_res_181572, "].", "-> #0  ft_libs/dbscan/dbscan.fut:443:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:443:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) eta_p_181856, "] out of bounds for array of shape [", (long long) max_res_181572, "].", "-> #0  ft_libs/dbscan/dbscan.fut:445:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:445:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }
@@ -39234,7 +39234,7 @@ FUTHARK_FUN_ATTR int futrts_entry_do_kd_dbscan_3d_f64(struct futhark_context *ct
                 bool index_certs_185419;
                 
                 if (!bounds_check_185418) {
-                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_189054, "] out of bounds for array of shape [", (long long) max_res_181572, "].", "-> #0  ft_libs/dbscan/dbscan.fut:443:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:443:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
+                    set_error(ctx, msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s", "Index [", (long long) write_iv_189054, "] out of bounds for array of shape [", (long long) max_res_181572, "].", "-> #0  ft_libs/dbscan/dbscan.fut:445:69-81\n   #1  /prelude/functional.fut:9:44-45\n   #2  ft_libs/dbscan/dbscan.fut:445:39-82\n   #3  ft_libs/dbscan/dbscan_entry.fut:98:1-118:53\n"));
                     err = FUTHARK_PROGRAM_ERROR;
                     goto cleanup;
                 }

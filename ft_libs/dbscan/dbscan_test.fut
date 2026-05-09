@@ -117,6 +117,7 @@ def test3_dclust (subdiv : i64) (eps : f64) (minPts : i64) =
 def pts4 : [][2]f64 = [
 	[6,0],
 	[0,15],
+	[14.4,2],[13.6,2],[14,1.6],[14,2],[14.3,2.6],[13.7,2.6],[14,2.87],[14,2.4],
 	[10.1,9.8],[15,8],
 	[4.8,4.9],[4.9,4.8],
 	[5.1,5.1],[5.55,5.1],[5.1,5.55],[5.8,5.2],[9.6,9.9],
@@ -138,7 +139,9 @@ def test4 =
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (is_core, chain_id)
 
-def test4_dclust (seed_count) =
+-- default subdiv = 3
+def test4_dclust (seed_count : i64) (subdiv : i64) =
 	let vs = (copy pts4) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (is_core, cluster_id) = dclust2.do_dclust seed_count seed_count (replicate vector_2.length 3) 0.5 5 vs
+		|> map (vector_2.map (\v -> v * 0.016))
+	let (is_core, cluster_id) = dclust2.do_dclust seed_count seed_count (replicate vector_2.length subdiv) 0.008 5 vs
 	in (is_core, cluster_id)
