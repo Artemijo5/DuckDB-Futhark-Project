@@ -6,10 +6,26 @@ import "ft_distance"
 import "ft_undir_graph"
 
 -- TODO
--- for some reason with real datasets
--- returns wrong number of clusters
--- and also differs per subdivision
--- find why
+-- with real datasets
+-- fails...
+-- TODO try maybe rewriting expand to see if and how it breaks things...
+
+-- | Alternative expand implementation.
+-- Suspecting that the case where sz==0 breaks previous expand in cuda backend...
+let my_expand 'a 'b
+	(sz  : a -> i64)
+	(get : a -> i64 -> b)
+	(arr : []a)
+: []b =
+	let szs = arr |> map (sz)
+	let is = szs |> exscan (+) 0
+		|> map2 (\sz i -> if sz==0 then (-1) else i) szs
+	let total_sz = reduce (+) 0 szs
+	let exp_arr = scatter (replicate total_sz (-1)) is (indices arr)
+		|> scan (i64.max) (-1)
+	let exp_ind = iota total_sz
+		|> map2 (\ix i -> i-is[ix]) exp_arr
+	in map2 (\ix ind -> get arr[ix] ind) exp_arr exp_ind
 
 -- | expand_outer_reduce
 -- Because flag generation seemingly fails in that case...
@@ -21,7 +37,7 @@ let expand_outer_red [n] 'a 'b
 	(ne  : b)
 	(arr : [n]a)
 : [n]b =
-	let (exp_x,exp_y) = indices arr |> expand
+	let (exp_x,exp_y) = indices arr |> my_expand
 		(\ix -> i64.max 1 (sz arr[ix]))
 		(\ix ind -> 
 			let y = if (sz arr[ix]) == 0 then ne else get arr[ix] ind
@@ -200,7 +216,7 @@ module ft_dclust
 			let sup = i64.min n (inf+seed_count)
 			-- has 1 instance of a point's index for every neighbour that point has found
 			let cur_neigh = (inf..<sup) |> map (\i -> (i,pts[i],pids[i]))
-				|> expand
+				|> my_expand
 					(\(_,_,pid) -> part_cmps_count[pid])
 					(\(i1,pt,pid) ind ->
 						-- Find the ind'th point to be compared with this partition
@@ -217,7 +233,7 @@ module ft_dclust
 						let is_neigh = D.check_neighbourhood eps pt pts[i2]
 						in if is_neigh then (i1,i2) else (-1,-1)
 					)
-				|> expand (\(i1,_) -> if i1<0 then 0 else 2)
+				|> my_expand (\(i1,_) -> if i1<0 then 0 else 2)
 					(\(i1,i2) ind -> if ind==0 then i1 else i2)
 			-- add neighbour counts found now to those found previously
 			in reduce_by_index neigh_count (+) 0 cur_neigh (cur_neigh |> map (\_ -> 1))
@@ -280,7 +296,7 @@ module ft_dclust
 			let sup = i64.min n (inf+seed_count)
 			-- has every min-max pair of neighbours found
 			let cur_neigh = (inf..<sup) |> map (\i -> (i,pts[i],pids[i]))
-				|> expand
+				|> my_expand
 					(\(_,_,pid) -> part_core_cmps_count[pid])
 					(\(i1,pt,pid) ind ->
 						-- Find the ind'th point to be compared with this partition
