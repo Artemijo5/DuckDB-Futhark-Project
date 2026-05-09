@@ -1,6 +1,6 @@
 import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
-import "../lib/github.com/diku-dk/segmented/segmented"
+--import "../lib/github.com/diku-dk/segmented/segmented"
 import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
@@ -192,7 +192,11 @@ module ft_dclust
 		-- probably report as bug
 		let cmps_per_part : [np]i64 = iota np |> expand_outer_red
 			(\i -> pairs_per_part[i])
-			(\i ind -> pts_per_part[part_neigh_pairs[pairs_index_per_part[i] + ind].1])
+			(\i ind ->
+				let ind_in_neighbours = pairs_index_per_part[i] + ind
+				let ind_from_neighbours = (part_neigh_pairs[ind_in_neighbours]).1
+				in pts_per_part[ind_from_neighbours]
+			)
 			(+) 0
 		in (pids, pts_per_part, part_neigh_pairs, pairs_per_part, pairs_index_per_part, cmps_per_part)
 
@@ -215,24 +219,29 @@ module ft_dclust
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
 			-- has 1 instance of a point's index for every neighbour that point has found
-			let cur_neigh = (inf..<sup) |> map (\i -> (i,pts[i],pids[i]))
+			let cur_neigh = (inf..<sup)
 				|> my_expand
-					(\(_,_,pid) -> part_cmps_count[pid])
-					(\(i1,pt,pid) ind ->
-						-- Find the ind'th point to be compared with this partition
-						-- Doing a sequential search across neighbouring partition
-						let (i2,_,_) : (i64,i64,i64) =
-						loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid], 0)
-						while i_against < 0 do
-							let part_against = part_pairs[part_i_against].1
-							let count_against = part_sz[part_against]
-							in if pts_so_far + count_against > ind
-								then (part_is[part_against] + (ind - pts_so_far),-1,-1)
-								else (-1,part_i_against+1,pts_so_far+count_against)
-						in if i2<=i1 then (-1,-1) else
-						let is_neigh = D.check_neighbourhood eps pt pts[i2]
-						in if is_neigh then (i1,i2) else (-1,-1)
-					)
+					(\i -> part_cmps_count[pids[i]])
+					(\i ind -> (i,ind))
+				|> map (\(i1,ind) ->
+					let pid1 = pids[i1]
+					-- Find the ind'th point to be compared with this partition
+					-- Doing a sequential search across neighbouring partition
+					let (i2,_,_) : (i64,i64,i64) =
+					loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
+					for j < (1 + 3**V.length)/2 do
+						if i_against>=0 then (i_against,-1,-1) else
+						let part_against = part_pairs[part_i_against].1
+						let count_against = part_sz[part_against]
+						in if pts_so_far + count_against > ind
+							then (part_is[part_against] + (ind - pts_so_far),-1,-1)
+							else (-1,part_i_against+1,pts_so_far+count_against)
+					in if i2<=i1 then (i1,i2) else (i1,i2)
+				)
+				|> map (\(i1,i2) ->
+					let is_neigh = D.check_neighbourhood eps pts[i1] pts[i2]
+					in if is_neigh && i1<i2 then (i1,i2) else (-1,-1)
+				)
 				|> my_expand (\(i1,_) -> if i1<0 then 0 else 2)
 					(\(i1,i2) ind -> if ind==0 then i1 else i2)
 			-- add neighbour counts found now to those found previously
@@ -272,7 +281,11 @@ module ft_dclust
 		let cmps_per_part : [np]i64 = if np == 1 then [n] |> sized np else
 			iota np |> expand_outer_red
 			(\i -> part_pairs_count[i])
-			(\i ind -> count_per_part[part_pairs[part_pairs_is[i] + ind].1])
+			(\i ind ->
+				let ind_in_neighbours = part_pairs_is[i] + ind
+				let ind_from_neighbours = (part_pairs[ind_in_neighbours]).1
+				in count_per_part[ind_from_neighbours]
+			)
 			(+) 0
 			|> sized np
 		in (count_per_part, first_per_part, cmps_per_part)
@@ -296,24 +309,29 @@ module ft_dclust
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
 			-- has every min-max pair of neighbours found
-			let cur_neigh = (inf..<sup) |> map (\i -> (i,pts[i],pids[i]))
+			let cur_neigh = (inf..<sup)
 				|> my_expand
-					(\(_,_,pid) -> part_core_cmps_count[pid])
-					(\(i1,pt,pid) ind ->
-						-- Find the ind'th point to be compared with this partition
-						-- Doing a sequential search across neighbouring partition
-						let (i2,_,_) : (i64,i64,i64) =
-						loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid], 0)
-						while i_against < 0 do
-							let part_against = part_pairs[part_i_against].1
-							let count_against = part_core_sz[part_against]
-							in if pts_so_far + count_against > ind
-								then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
-								else (-1,part_i_against+1,pts_so_far+count_against)
-						in if i2<=i1 then (-1,-1) else -- no need to record self-neighbourhood
-						let is_neigh = D.check_neighbourhood eps pt pts[i2]
-						in if is_neigh then (i1,i2) else (-1,-1)
-					)
+					(\i -> part_core_cmps_count[pids[i]])
+					(\i ind -> (i,ind))
+				|> map (\(i1,ind) ->
+					let pid1 = pids[i1]
+					-- Find the ind'th point to be compared with this partition
+					-- Doing a sequential search across neighbouring partition
+					let (i2,_,_) : (i64,i64,i64) =
+					loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
+					for j < (1 + 3**(V.length))/2 do
+						if i_against>=0 then (i_against,-1,-1) else
+						let part_against = part_pairs[part_i_against].1
+						let count_against = part_core_sz[part_against]
+						in if pts_so_far + count_against > ind
+							then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
+							else (-1,part_i_against+1,pts_so_far+count_against)
+					in if i2<=i1 then (i1,i1) else (i1,i2)
+				)
+				|> map (\(i1,i2) ->
+					let is_neigh = D.check_neighbourhood eps pts[i1] pts[i2]
+					in if is_neigh && i1<i2 then (i1,i2) else (-1,-1)
+				)
 				|> filter (\(i1,_) -> i1>=0)
 			let cur_node_no = if ((length cur_neigh) == 0) then 0 else
 				1 + (cur_neigh |> map (.1) |> i64.maximum)
@@ -364,28 +382,37 @@ module ft_dclust
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
 			-- finds minimum cid neighbouring each point
-			let cur_cid = (inf..<sup)
-				|> expand_outer_red
-					(\i -> if is_core[i] then 1 else part_core_cmps_count[pids[i]])
-					(\i ind ->
-						if is_core[i] then init_cid[i] else
-						let pt = pts[i]
-						let pid = pids[i]
-						-- Find the ind'th point to be compared with this partition
-						-- Doing a sequential search across neighbouring partition
-						let (i2,_,_) : (i64,i64,i64) =
-						loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid], 0)
-						while i_against < 0 do
-							let part_against = part_pairs[part_i_against].1
-							let count_against = part_core_sz[part_against]
-							in if pts_so_far + count_against > ind
-								then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
-								else (-1,part_i_against+1,pts_so_far+count_against)
-						let is_neigh = D.check_neighbourhood eps pt core_pts[i2]
-						in if is_neigh then core_cids[i2] else (-1)
-					)
-					(\cid1 cid2 -> if cid2<0 || (cid1>=0 && cid1<cid2) then cid1 else cid2) (-1)
-			in scatter cid (inf..<sup) cur_cid
+			let cur_is = (inf..<sup) |> filter (\i -> !is_core[i])
+			let (cur_xs,cur_ys) = cur_is
+				|> my_expand
+					(\i -> part_core_cmps_count[pids[i]])
+					(\i ind -> (i,ind))
+				|> map (\(i1,ind) ->
+					let pid1 = pids[i1]
+					-- Find the ind'th point to be compared with this partition
+					-- Doing a sequential search across neighbouring partition
+					let (i2,_,_) : (i64,i64,i64) =
+					loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
+					for j < (3**(V.length)) do
+						if i_against>=0 then (i_against,-1,-1) else
+						let part_against = part_pairs[part_i_against].1
+						let count_against = part_core_sz[part_against]
+						in if pts_so_far + count_against > ind
+							then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
+							else (-1,part_i_against+1,pts_so_far+count_against)
+					in (i1,i2)
+				)
+				|> map (\(i1,i2) ->
+					let is_neigh = D.check_neighbourhood eps pts[i1] core_pts[i2]
+					in if is_neigh then (i1,core_cids[i2]) else (-1,-1)
+				)
+				|> filter (\(i1,_) -> i1>=0)
+				|> map (\(i1,i2) -> (i1-inf,i2)) -- subtract inf for histogram
+				|> unzip
+			let cur_cid = hist (\c1 c2 -> if c1>=0 && (c2<0 || c2>c1) then c1 else c2) (-1)
+				(sup-inf) cur_xs cur_ys
+			let cur_cid' = cur_is |> map (\i -> i-inf) |> map (\i -> cur_cid[i])
+			in scatter (copy cid) cur_is cur_cid'
 		in final_cid
 
 	-- | Index dataset & perform DBSCAN algorithm.
