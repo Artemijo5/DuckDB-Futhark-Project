@@ -210,7 +210,8 @@ module ft_dclust
 		(part_is : [np]i64)
 		(part_sz : [np]i64)
 		(part_pairs_index : [np]i64)
-		(part_cmps_count  : [np]i64)
+	--	(part_cmps_count  : [np]i64)
+		(part_pairs_count : [np]i64)
 	: [n]i64 =
 		let init_neigh_count : [n]i64 = replicate n 1
 		let num_iter = (n + seed_count - 1) / seed_count
@@ -220,24 +221,39 @@ module ft_dclust
 			let sup = i64.min n (inf+seed_count)
 			-- has 1 instance of a point's index for every neighbour that point has found
 			let cur_neigh = (inf..<sup)
+				|> map (\i1 -> (i1,pids[i1]))
+				-- expand to partitions it is compared with
 				|> my_expand
-					(\i -> part_cmps_count[pids[i]])
-					(\i ind -> (i,ind))
-				|> map (\(i1,ind) ->
-					let pid1 = pids[i1]
-					-- Find the ind'th point to be compared with this partition
-					-- Doing a sequential search across neighbouring partition
-					let (i2,_,_) : (i64,i64,i64) =
-					loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
-					for j < (1 + 3**V.length)/2 do
-						if i_against>=0 then (i_against,-1,-1) else
-						let part_against = part_pairs[part_i_against].1
-						let count_against = part_sz[part_against]
-						in if pts_so_far + count_against > ind
-							then (part_is[part_against] + (ind - pts_so_far),-1,-1)
-							else (-1,part_i_against+1,pts_so_far+count_against)
-					in (i1,i2)
-				)
+					(\(_,pid1) -> part_pairs_count[pid1])
+					(\(i1,pid1) ind ->
+						let index_in_pairs = part_pairs_index[pid1] + ind
+						let pid2 = (part_pairs[index_in_pairs]).1
+						in (i1,pid2)
+					)
+				|> my_expand
+					(\(_,pid2) -> part_sz[pid2])
+					(\(i1,pid2) ind ->
+						let i2 = part_is[pid2] + ind
+						in (i1,i2)
+					)
+			--	|> my_expand
+			--		(\i -> part_cmps_count[pids[i]])
+			--		(\i ind -> (i,ind))
+			--	|> map (\(i1,ind) ->
+			--		let pid1 = pids[i1]
+			--		-- Find the ind'th point to be compared with this partition
+			--		-- Doing a sequential search across neighbouring partition
+			--		let (i2,_,_) : (i64,i64,i64) =
+			--		loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
+			--		for j < (1 + 3**V.length)/2 do
+			--			if i_against>=0 then (i_against,-1,-1) else
+			--			let part_against = part_pairs[part_i_against].1
+			--			let count_against = part_sz[part_against]
+			--			in if pts_so_far + count_against > ind
+			--				then (part_is[part_against] + (ind - pts_so_far),-1,-1)
+			--				else (-1,part_i_against+1,pts_so_far+count_against)
+			--		in (i1,i2)
+			--	)
 				|> filter (\(i1,i2) -> i1<i2)
 				|> map (\(i1,i2) ->
 					let pt1 = pts[i1]
@@ -306,7 +322,8 @@ module ft_dclust
 		(part_core_is : [np]i64)
 		(part_core_sz : [np]i64)
 		(part_pairs_index : [np]i64)
-		(part_core_cmps_count  : [np]i64)
+	--	(part_core_cmps_count  : [np]i64)
+		(part_pairs_count : [np]i64)
 	=
 		let num_iter = (n + seed_count - 1) / seed_count
 		let init_cid = iota n
@@ -316,24 +333,38 @@ module ft_dclust
 			let sup = i64.min n (inf+seed_count)
 			-- has every min-max pair of neighbours found
 			let cur_neigh = (inf..<sup)
+				|> map (\i1 -> (i1, pids[i1]))
 				|> my_expand
-					(\i -> part_core_cmps_count[pids[i]])
-					(\i ind -> (i,ind))
-				|> map (\(i1,ind) ->
-					let pid1 = pids[i1]
-					-- Find the ind'th point to be compared with this partition
-					-- Doing a sequential search across neighbouring partition
-					let (i2,_,_) : (i64,i64,i64) =
-					loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
-					for j < (1 + 3**(V.length))/2 do
-						if i_against>=0 then (i_against,-1,-1) else
-						let part_against = part_pairs[part_i_against].1
-						let count_against = part_core_sz[part_against]
-						in if pts_so_far + count_against > ind
-							then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
-							else (-1,part_i_against+1,pts_so_far+count_against)
-					in (i1,i2)
-				)
+					(\(_,pid1) -> part_pairs_count[pid1])
+					(\(i1,pid1) ind ->
+						let index_in_pairs = part_pairs_index[pid1] + ind
+						let pid2 = (part_pairs[index_in_pairs]).1
+						in (i1,pid2)
+					)
+				|> my_expand
+					(\(_,pid2) -> part_core_sz[pid2])
+					(\(i1,pid2) ind ->
+						let i2 = part_core_is[pid2] + ind
+						in (i1,i2)
+					)
+			--	|> my_expand
+			--		(\i -> part_core_cmps_count[pids[i]])
+			--		(\i ind -> (i,ind))
+			--	|> map (\(i1,ind) ->
+			--		let pid1 = pids[i1]
+			--		-- Find the ind'th point to be compared with this partition
+			--		-- Doing a sequential search across neighbouring partition
+			--		let (i2,_,_) : (i64,i64,i64) =
+			--		loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
+			--		for j < (1 + 3**(V.length))/2 do
+			--			if i_against>=0 then (i_against,-1,-1) else
+			--			let part_against = part_pairs[part_i_against].1
+			--			let count_against = part_core_sz[part_against]
+			--			in if pts_so_far + count_against > ind
+			--				then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
+			--				else (-1,part_i_against+1,pts_so_far+count_against)
+			--		in (i1,i2)
+			--	)
 				|> filter (\(i1,i2) -> i1<i2)
 				|> map (\(i1,i2) ->
 					let pt1 = pts[i1]
@@ -380,7 +411,8 @@ module ft_dclust
 		(part_core_is : [np]i64)
 		(part_core_sz : [np]i64)
 		(part_pairs_index : [np]i64)
-		(part_core_cmps_count  : [np]i64)
+	--	(part_core_cmps_count  : [np]i64)
+		(part_pairs_count : [np]i64)
 	=
 		let num_iter = (n + seed_count - 1) / seed_count
 		-- For core points, gather their cid directly
@@ -397,24 +429,38 @@ module ft_dclust
 			-- finds minimum cid neighbouring each point
 			let cur_is = (inf..<sup) |> filter (\i -> !is_core[i])
 			let (cur_xs,cur_ys) = cur_is
+				|> map (\i1 -> (i1, pids[i1]))
 				|> my_expand
-					(\i -> part_core_cmps_count[pids[i]])
-					(\i ind -> (i,ind))
-				|> map (\(i1,ind) ->
-					let pid1 = pids[i1]
-					-- Find the ind'th point to be compared with this partition
-					-- Doing a sequential search across neighbouring partition
-					let (i2,_,_) : (i64,i64,i64) =
-					loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
-					for j < (3**(V.length)) do
-						if i_against>=0 then (i_against,-1,-1) else
-						let part_against = part_pairs[part_i_against].1
-						let count_against = part_core_sz[part_against]
-						in if pts_so_far + count_against > ind
-							then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
-							else (-1,part_i_against+1,pts_so_far+count_against)
-					in (i1,i2)
-				)
+					(\(_,pid1) -> part_pairs_count[pid1])
+					(\(i1,pid1) ind ->
+						let index_in_pairs = part_pairs_index[pid1] + ind
+						let pid2 = (part_pairs[index_in_pairs]).1
+						in (i1,pid2)
+					)
+				|> my_expand
+					(\(_,pid2) -> part_core_sz[pid2])
+					(\(i1,pid2) ind ->
+						let i2 = part_core_is[pid2] + ind
+						in (i1,i2)
+					)
+			--	|> my_expand
+			--		(\i -> part_core_cmps_count[pids[i]])
+			--		(\i ind -> (i,ind))
+			--	|> map (\(i1,ind) ->
+			--		let pid1 = pids[i1]
+			--		-- Find the ind'th point to be compared with this partition
+			--		-- Doing a sequential search across neighbouring partition
+			--		let (i2,_,_) : (i64,i64,i64) =
+			--		loop (i_against, part_i_against, pts_so_far) = (-1,part_pairs_index[pid1], 0)
+			--		for j < (3**(V.length)) do
+			--			if i_against>=0 then (i_against,-1,-1) else
+			--			let part_against = part_pairs[part_i_against].1
+			--			let count_against = part_core_sz[part_against]
+			--			in if pts_so_far + count_against > ind
+			--				then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
+			--				else (-1,part_i_against+1,pts_so_far+count_against)
+			--		in (i1,i2)
+			--	)
 				|> map (\(i1,i2) ->
 					let pt1 = pts[i1]
 					let pt2 = core_pts[i2]
@@ -461,7 +507,7 @@ module ft_dclust
 			part_is
 			part_sz
 			part_pairs_is
-			part_cmps
+			part_pairs_count
 		let is_core = get_is_core
 			neigh_count
 			minPts
@@ -483,7 +529,7 @@ module ft_dclust
 			part_core_is
 			part_core_sz
 			part_pairs_is
-			part_core_cmps
+			part_pairs_count
 		-- Get bidirectional partition pairs & core info
 		let (_, _, part_pairs_bd, part_pairs_count_bd, part_pairs_is_bd,_)
 			= partition_information true extPar eps subdiv'
@@ -506,7 +552,7 @@ module ft_dclust
 			part_core_is_bd
 			part_core_sz_bd
 			part_pairs_is_bd
-			part_core_cmps_bd
+			part_pairs_count_bd
 		let is_core'    = scatter (replicate n false) is is_core
 		let cluster_id' = scatter (replicate n (-1))  is cluster_id
 		in (is_core', cluster_id')
