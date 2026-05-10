@@ -264,8 +264,11 @@ module ft_dclust
 					let is_neigh = D.check_neighbourhood eps pt1 pt2
 					in (i1,i2,is_neigh)
 				)
-				|> my_expand (\(_,_,is_neigh) -> if is_neigh then 2 else 0)
-					(\(i1,i2,_) ind -> if ind==0 then i1 else i2)
+			--	|> my_expand (\(_,_,is_neigh) -> if is_neigh then 2 else 0)
+			--		(\(i1,i2,_) ind -> if ind==0 then i1 else i2)
+				|> filter (.2)
+				|> map (\(i1,i2,_) -> [i1,i2])
+				|> flatten
 			-- add neighbour counts found now to those found previously
 			in hist (+) 0 n cur_neigh (cur_neigh |> map (\_ -> 1))
 				|> map2 (+) neigh_count
