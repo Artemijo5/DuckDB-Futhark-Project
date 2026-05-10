@@ -220,7 +220,8 @@ module ft_dclust
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
 			-- has 1 instance of a point's index for every neighbour that point has found
-			let cur_neigh = (inf..<sup)
+			-- separated into 2 equi-sized arrays
+			let (cur_mins,cur_maxs,_) = (inf..<sup)
 				|> map (\i1 -> (i1,pids[i1]))
 				-- expand to partitions it is compared with
 				|> my_expand
@@ -264,14 +265,25 @@ module ft_dclust
 					let is_neigh = D.check_neighbourhood eps pt1 pt2
 					in (i1,i2,is_neigh)
 				)
-			--	|> my_expand (\(_,_,is_neigh) -> if is_neigh then 2 else 0)
-			--		(\(i1,i2,_) ind -> if ind==0 then i1 else i2)
 				|> filter (.2)
-				|> map (\(i1,i2,_) -> [i1,i2])
-				|> flatten
+				|> unzip3
 			-- add neighbour counts found now to those found previously
-			in hist (+) 0 n cur_neigh (cur_neigh |> map (\_ -> 1))
-				|> map2 (+) neigh_count
+			-- TODO done with convoluted histograms as I suspect the cuda backend might have issues here?
+			in if (length cur_mins)==0 then neigh_count else
+			let minval = i64.minimum cur_mins
+			let maxval = i64.maximum cur_maxs
+			let hist_k = maxval - minval + 1
+			let counts_from_mins = hist (+) 0
+				hist_k
+				(cur_mins |> map (\i -> i-minval))
+				(cur_mins |> map (\_ -> 1))
+			let counts_from_maxs = hist (+) 0
+				hist_k
+				(cur_maxs |> map (\i -> i-minval))
+				(cur_maxs |> map (\_ -> 1))
+			let counts_local = map2 (+) counts_from_mins counts_from_maxs
+				|> map2 (+) (neigh_count[minval:maxval+1] |> sized hist_k)
+			in (copy neigh_count) with [minval:minval+hist_k] = counts_local
 			--	|> trace
 		in final_neigh_count
 
