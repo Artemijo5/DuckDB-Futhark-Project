@@ -236,14 +236,20 @@ module ft_dclust
 						in if pts_so_far + count_against > ind
 							then (part_is[part_against] + (ind - pts_so_far),-1,-1)
 							else (-1,part_i_against+1,pts_so_far+count_against)
-					in if i2<=i1 then (i1,i2) else (i1,i2)
+					in (i1,i2)
 				)
+				|> filter (\(i1,i2) -> i1<i2)
 				|> map (\(i1,i2) ->
-					let is_neigh = D.check_neighbourhood eps pts[i1] pts[i2]
-					in if is_neigh && i1<i2 then (i1,i2) else (-1,-1)
+					let pt1 = pts[i1]
+					let pt2 = pts[i2]
+					in (i1,i2,pt1,pt2)
 				)
-				|> my_expand (\(i1,_) -> if i1<0 then 0 else 2)
-					(\(i1,i2) ind -> if ind==0 then i1 else i2)
+				|> map (\(i1,i2,pt1,pt2) ->
+					let is_neigh = D.check_neighbourhood eps pt1 pt2
+					in (i1,i2,is_neigh)
+				)
+				|> my_expand (\(_,_,is_neigh) -> if is_neigh then 2 else 0)
+					(\(i1,i2,_) ind -> if ind==0 then i1 else i2)
 			-- add neighbour counts found now to those found previously
 			in hist (+) 0 n cur_neigh (cur_neigh |> map (\_ -> 1))
 				|> map2 (+) neigh_count
@@ -326,13 +332,20 @@ module ft_dclust
 						in if pts_so_far + count_against > ind
 							then (part_core_is[part_against] + (ind - pts_so_far),-1,-1)
 							else (-1,part_i_against+1,pts_so_far+count_against)
-					in if i2<=i1 then (i1,i1) else (i1,i2)
+					in (i1,i2)
 				)
+				|> filter (\(i1,i2) -> i1<i2)
 				|> map (\(i1,i2) ->
-					let is_neigh = D.check_neighbourhood eps pts[i1] pts[i2]
-					in if is_neigh && i1<i2 then (i1,i2) else (-1,-1)
+					let pt1 = pts[i1]
+					let pt2 = pts[i2]
+					in (i1,i2,pt1,pt2)
 				)
-				|> filter (\(i1,_) -> i1>=0)
+				|> map (\(i1,i2,pt1,pt2) ->
+					let is_neigh = D.check_neighbourhood eps pt1 pt2
+					in (i1,i2,is_neigh)
+				)
+				|> filter (.2)
+				|> map (\(i1,i2,_) -> (i1,i2))
 			let cur_node_no = if ((length cur_neigh) == 0) then 0 else
 				1 + (cur_neigh |> map (.1) |> i64.maximum)
 			let cur_connections = get_connected_subgraph_ids_unencoded cur_node_no cur_neigh
@@ -403,15 +416,24 @@ module ft_dclust
 					in (i1,i2)
 				)
 				|> map (\(i1,i2) ->
-					let is_neigh = D.check_neighbourhood eps pts[i1] core_pts[i2]
-					in if is_neigh then (i1,core_cids[i2]) else (-1,-1)
+					let pt1 = pts[i1]
+					let pt2 = core_pts[i2]
+					in (i1,i2,pt1,pt2)
 				)
-				|> filter (\(i1,_) -> i1>=0)
-				|> map (\(i1,i2) -> (i1-inf,i2)) -- subtract inf for histogram
+				|> map (\(i1,i2,pt1,pt2) ->
+					let is_neigh = D.check_neighbourhood eps pt1 pt2
+					in (i1,i2,is_neigh)
+				)
+				|> filter (.2)
+				|> map (\(i1,i2,_) -> 
+					let i1_for_histogram = i1 - inf
+					let cid2 = core_cids[i2]
+					in (i1_for_histogram,cid2)
+				)
 				|> unzip
 			let cur_cid = hist (\c1 c2 -> if c1>=0 && (c2<0 || c2>c1) then c1 else c2) (-1)
 				(sup-inf) cur_xs cur_ys
-			let cur_cid' = cur_is |> map (\i -> i-inf) |> map (\i -> cur_cid[i])
+			let cur_cid' = cur_is |> map (\i -> i-inf) |> map (\i -> cur_cid[i]) -- only update border points
 			in scatter (copy cid) cur_is cur_cid'
 		in final_cid
 
