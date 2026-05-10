@@ -232,6 +232,11 @@ int main(int argc, char *argv[]) {
 
 		mylog(logfile, "D-Clust completed.");
 
+		// See if any errors occured.
+		char *ft_error_msg = futhark_context_get_error(ctx);
+		mylog(logfile, ft_error_msg);
+		free(ft_error_msg);
+
 	// Unwrap data from futhark core
 
 		struct futhark_i64_1d *ft_cluster_id;
