@@ -205,8 +205,9 @@ module ft_dclust
 	-- | Get information on partition core pts.
 	-- 1. #core points per partition
 	-- 2. index of first core point per partition
-	def part_get_core_info [n] [np]
+	def part_get_core_info [n]
 		(core_pid : [n]i64)
+		(np : i64)
 	=
 		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
 		let first_per_part = count_per_part |> exscan (+) 0
@@ -379,6 +380,7 @@ module ft_dclust
 			is_core
 		let (_, part_core_is) = part_get_core_info
 			core_pids
+			(length part_is)
 		let core_cids = find_clusters
 			seed_count
 			eps
@@ -394,6 +396,7 @@ module ft_dclust
 				pts'
 		let (_, part_core_is_bd) = part_get_core_info
 			core_pids
+			(length part_is)
 		let cluster_id = assign_cluster_ids
 			seed_count
 			eps
