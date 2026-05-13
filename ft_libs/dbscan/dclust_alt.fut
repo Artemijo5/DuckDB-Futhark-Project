@@ -210,7 +210,8 @@ module ft_dclust
 		(np : i64)
 	=
 		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
-		let first_per_part = count_per_part |> exscan (+) 0
+		let first_per_part = count_per_part
+			|> exscan (+) 0
 		in (count_per_part, first_per_part)
 
 	-- | Find clusters among core points.
