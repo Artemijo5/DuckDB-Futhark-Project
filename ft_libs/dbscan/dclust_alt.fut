@@ -363,6 +363,7 @@ module ft_dclust
 			= partition_information false extPar eps subdiv'
 				part_is
 				pts'
+		let np = length part_is
 		let neigh_count = get_neighbour_counts
 			seed_count
 			eps
@@ -380,7 +381,7 @@ module ft_dclust
 			is_core
 		let (_, part_core_is) = part_get_core_info
 			core_pids
-			(length part_is)
+			np
 		let core_cids = find_clusters
 			seed_count
 			eps
@@ -388,7 +389,7 @@ module ft_dclust
 			core_pids
 			part_pairs
 			part_core_is
-			part_pairs_is
+			(part_pairs_is |> sized np)
 		-- Get bidirectional partition pairs & core info
 		let (_, _, part_pairs_bd, _, part_pairs_is_bd)
 			= partition_information true extPar eps subdiv'
@@ -396,7 +397,7 @@ module ft_dclust
 				pts'
 		let (_, part_core_is_bd) = part_get_core_info
 			core_pids
-			(length part_is)
+			np
 		let cluster_id = assign_cluster_ids
 			seed_count
 			eps
@@ -407,7 +408,7 @@ module ft_dclust
 			core_cids
 			part_pairs_bd
 			part_core_is_bd
-			part_pairs_is_bd
+			(part_pairs_is_bd |> sized np)
 		let is_core'    = scatter (replicate n false) is is_core
 		let cluster_id' = scatter (replicate n (-1))  is cluster_id
 		in (is_core', cluster_id')
