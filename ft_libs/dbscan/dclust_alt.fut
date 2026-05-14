@@ -331,10 +331,12 @@ module ft_dclust
 					|> filter (\i -> i==0 || rels[i] != rels[i-1])
 					|> map (\i -> rels[i])
 				)
-			let relevant_inf = part_core_is[head relevant_parts]
-			let relevant_sup = if (last relevant_parts) == (np-1)
+			let inf_pid_rel = head relevant_parts
+			let sup_pid_rel = last relevant_parts
+			let relevant_inf = part_core_is[inf_pid_rel]
+			let relevant_sup = if sup_pid_rel == (np-1)
 				then nc
-				else part_core_is[(last relevant_parts) + 1]
+				else part_core_is[sup_pid_rel + 1]
 			let n_rel = relevant_sup - relevant_inf
 			-- has every min-max pair of neighbours found
 			let (cur_xs,cur_ys) = (inf..<sup)
