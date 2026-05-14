@@ -218,7 +218,7 @@ module ft_dclust
 	def part_get_core_info [n] [np]
 		(core_pid : [n]i64)
 		(_ : [np]i64) -- part_is
-	: [np]i64 =
+	: ([np]i64, [np]i64) =
 		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
 		let first_per_part = count_per_part |> exscan (+) 0
 		in (count_per_part, first_per_part)
