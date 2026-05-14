@@ -326,13 +326,13 @@ module ft_dclust
 				else part_pairs_is[sup_pid+1]
 			let relevant_parts = part_pairs[inf_pairs:sup_pairs]
 				|> map (.1)
-				|> (\rels -> bucket_sort 2 np rels rels |> (.1))
-				|> (\rels -> indices rels
-					|> filter (\i -> i==0 || rels[i] != rels[i-1])
-					|> map (\i -> rels[i])
-				)
-			let inf_pid_rel = head relevant_parts
-			let sup_pid_rel = last relevant_parts
+			let relevant_parts' = hist (||) false np
+				relevant_parts (relevant_parts |> map (\_ -> true))
+				|> zip (iota np)
+				|> filter (.1)
+				|> map (.0)
+			let inf_pid_rel = head relevant_parts'
+			let sup_pid_rel = last relevant_parts'
 			let relevant_inf = part_core_is[inf_pid_rel]
 			let relevant_sup = if sup_pid_rel == (np-1)
 				then nc
