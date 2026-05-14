@@ -400,8 +400,8 @@ module ft_dclust
 			part_pairs
 			part_core_is
 			part_core_sz
-			(part_pairs_is |> sized np)
-			(part_pairs_count |> sized np)
+			part_pairs_is
+			part_pairs_count
 		-- Get bidirectional partition pairs & core info
 		let (_, _, part_pairs_bd, part_pairs_count_bd, part_pairs_is_bd)
 			= partition_information true extPar eps subdiv'
@@ -418,8 +418,8 @@ module ft_dclust
 			part_pairs_bd
 			part_core_is
 			part_core_sz
-			(part_pairs_is_bd |> sized np)
-			(part_pairs_count_bd |> sized np)
+			part_pairs_is_bd
+			part_pairs_count_bd
 		let is_core'    = scatter (replicate n false) is is_core
 		let cluster_id' = scatter (replicate n (-1))  is cluster_id
 		in (is_core', cluster_id')
