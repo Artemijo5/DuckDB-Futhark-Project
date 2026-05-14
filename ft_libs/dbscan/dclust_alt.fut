@@ -326,17 +326,12 @@ module ft_dclust
 				else part_pairs_is[sup_pid+1]
 			let relevant_parts = part_pairs[inf_pairs:sup_pairs]
 				|> map (.1)
-			let relevant_parts' = hist (||) false np
-				relevant_parts (relevant_parts |> map (\_ -> true))
-				|> zip (iota np)
-				|> filter (.1)
-				|> map (.0)
-			let inf_pid_rel = head relevant_parts'
-			let sup_pid_rel = last relevant_parts'
-			let relevant_inf = part_core_is[inf_pid_rel]
-			let relevant_sup = if sup_pid_rel == (np-1)
-				then nc
-				else part_core_is[sup_pid_rel + 1]
+			let relevant_inf = relevant_parts
+				|> map (\i -> part_core_is[i])
+				|> i64.minimum
+			let relevant_sup = relevant_parts
+				|> map (\i -> if i==np-1 then nc else part_core_is[i+1])
+				|> i64.maximum
 			let n_rel = relevant_sup - relevant_inf
 			-- has every min-max pair of neighbours found
 			let (cur_xs,cur_ys) = (inf..<sup)
