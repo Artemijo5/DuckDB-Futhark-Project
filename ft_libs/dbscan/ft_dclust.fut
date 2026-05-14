@@ -215,10 +215,10 @@ module ft_dclust
 	-- | Get information on partition core pts.
 	-- 1. #core points per partition
 	-- 2. index of first core point per partition
-	def part_get_core_info [n]
+	def part_get_core_info [n] [np]
 		(core_pid : [n]i64)
-		(np : i64)
-	=
+		(_ : [np]i64) -- part_is
+	: [np]i64 =
 		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
 		let first_per_part = count_per_part |> exscan (+) 0
 		in (count_per_part, first_per_part)
@@ -368,7 +368,6 @@ module ft_dclust
 	: ([n]bool, [n]i64) =
 		let (subdiv', (pts',_,part_is,is))
 			= partition_dataset eps subdiv pts
-		let np = length part_is
 		let (pids, part_sz, part_pairs, part_pairs_count, part_pairs_is)
 			= partition_information false extPar eps subdiv'
 				part_is
@@ -392,7 +391,7 @@ module ft_dclust
 			is_core
 		let (part_core_sz, part_core_is) = part_get_core_info
 			core_pids
-			np
+			part_is
 		let core_cids = find_clusters
 			seed_count
 			eps
@@ -408,9 +407,6 @@ module ft_dclust
 			= partition_information true extPar eps subdiv'
 				part_is
 				pts'
-		let (part_core_sz_bd, part_core_is_bd) = part_get_core_info
-			core_pids
-			np
 		let cluster_id = assign_cluster_ids
 			seed_count
 			eps
@@ -420,8 +416,8 @@ module ft_dclust
 			core_pts
 			core_cids
 			part_pairs_bd
-			part_core_is_bd
-			part_core_sz_bd
+			part_core_is
+			part_core_sz
 			(part_pairs_is_bd |> sized np)
 			(part_pairs_count_bd |> sized np)
 		let is_core'    = scatter (replicate n false) is is_core
