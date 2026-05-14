@@ -1,136 +1,35 @@
 CC=gcc
 CFLAGS=-I . -std=c99
 
-DEPS=clibs/mylogger.c clibs/libduckdb.so clibs/db_util.c
-REL_DEPS=ft_clibs/libftRelational.so
-SKYLINE_DEPS=ft_clibs/libftSkyline.so
-DBSCAN_DEPS=ft_clibs/libftDBSCAN.so
-DBSCANPLUS_DEPS=ft_clibs/libftDBSCAN_plus.so
-SYNTH_DEPS=ft_clibs/libftSynthetic.so
+LD_LIBRARY_PATH=$(pwd):$(pwd)/clibs:$(pwd)/ft_clibs:$(pwd)/c_tests:$(pwd)/c_tests/src:$(pwd)/c_tests/src/dbscan:$LD_LIBRARY_PATH
+
+DEPS=clibs/mylogger.c clibs/libduckdb.so
 
 LIBFLAGS=-fPIC -shared
 CUDAFLAGS=-lcuda -lcudart -lnvrtc
 
-SORT_DEPS=$(DEPS) $(REL_DEPS) $(wildcard algo_utils/sort/*.c)
-JOIN_DEPS=$(SORT_DEPS) algo_utils/join/join_util.c
-SMJ_DEPS=$(JOIN_DEPS) $(wildcard algo_utils/join/smj/*.c)
-RHJ_DEPS=$(JOIN_DEPS) $(wildcard algo_utils/join/rhj/*.c)
-AGGR_DEPS=$(SMJ_DEPS)
+DBSCAN:
+	mkdir -p ft_clibs
+	futhark cuda ft_libs/dbscan/dbscan_entry.fut -o ft_clibs/dbscan_entry --library
+	$(CC) ft_clibs/dbscan_entry.c -o ft_clibs/libdbscan.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
+	$(CC) c_tests/src/dbscan/futhark_dbscan_2d.c -o c_tests/dbscan_2d.o $(CFLAGS) $(DEPS) ft_clibs/libdbscan.so -lm
+	$(CC) c_tests/src/dbscan/futhark_dbscan_3d.c -o c_tests/dbscan_3d.o $(CFLAGS) $(DEPS) ft_clibs/libdbscan.so -lm
 
-CUDA-LIBS:
-	make CUDA-ftRelational && \
-	make CUDA-ftSkyline && \
-	make CUDA-ftDBSCAN && \
-	make CUDA-ftDBSCAN_plus && \
-	make CUDA-ftSynthetic
+C-DBSCAN:
+	mkdir -p ft_clibs
+	futhark c ft_libs/dbscan/dbscan_entry.fut -o ft_clibs/dbscan_entry --library
+	$(CC) c_tests/src/dbscan/futhark_dbscan_2d.c -o c_tests/dbscan_2d.o $(CFLAGS) $(DEPS) ft_clibs/dbscan_entry.c -lm
+	$(CC) c_tests/src/dbscan/futhark_dbscan_3d.c -o c_tests/dbscan_3d.o $(CFLAGS) $(DEPS) ft_clibs/dbscan_entry.c -lm
 
-C-LIBS:
-	make C-ftRelational && \
-	make C-ftSkyline && \
-	make C-ftDBSCAN && \
-	make C-ftDBSCAN_plus && \
-	make C-ftSynthetic
+DClust:
+	mkdir -p ft_clibs
+	futhark cuda ft_libs/dbscan/dclust_entry.fut -o ft_clibs/dclust_entry --library
+	$(CC) ft_clibs/dclust_entry.c -o ft_clibs/libdclust.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
+	$(CC) c_tests/src/dbscan/futhark_dclust_2d.c -o c_tests/dclust_2d.o $(CFLAGS) $(DEPS) ft_clibs/libdclust.so -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_3d.c -o c_tests/dclust_3d.o $(CFLAGS) $(DEPS) ft_clibs/libdclust.so -lm
 
-C-ftRelational: ft_libs/ftRelational.fut
-	futhark c ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
-	$(CC) ft_clibs/ftRelational.c -o $(REL_DEPS) $(LIBFLAGS) $(CFLAGS)
-
-CUDA1-ftRelational: ft_libs/ftRelational.fut
-	futhark cuda ft_libs/ftRelational.fut --library -o ft_clibs/ftRelational
-
-CUDA2-ftRelational: ft_clibs/ftRelational.c
-	$(CC) ft_clibs/ftRelational.c -o $(REL_DEPS) \
-		$(LIBFLAGS) $(CFLAGS) $(CUDAFLAGS)
-
-CUDA-ftRelational: ft_libs/ftRelational.fut
-	make CUDA1-ftRelational
-	make CUDA2-ftRelational
-
-two_pass_sort: benchmarks/src/two_pass_sort.c $(SORT_DEPS)
-	$(CC) benchmarks/src/two_pass_sort.c -o benchmarks/two_pass_sort.o \
-		$(SORT_DEPS) $(CFLAGS)
-
-sort_merge_join: benchmarks/src/sort_merge_join.c $(SMJ_DEPS)
-	$(CC) benchmarks/src/sort_merge_join.c -o benchmarks/sort_merge_join.o \
-		$(SMJ_DEPS) $(CFLAGS)
-
-radix_hash_join: benchmarks/src/radix_hash_join.c $(RHJ_DEPS)
-	$(CC) benchmarks/src/radix_hash_join.c -o benchmarks/radix_hash_join.o \
-		$(RHJ_DEPS) $(CFLAGS)
-
-group_by_aggregation: benchmarks/src/group_by_aggregation.c $(AGGR_DEPS)
-	$(CC) benchmarks/src/group_by_aggregation.c -o benchmarks/group_by_aggregation.o \
-		$(AGGR_DEPS) $(CFLAGS)
-
-C-ftSkyline: ft_libs/ftSkyline.fut
-	futhark c ft_libs/ftSkyline.fut --library -o ft_clibs/ftSkyline
-	$(CC) ft_clibs/ftSkyline.c -o $(SKYLINE_DEPS) $(LIBFLAGS) $(CFLAGS)
-
-CUDA1-ftSkyline: ft_libs/ftSkyline.fut
-	futhark cuda ft_libs/ftSkyline.fut --library -o ft_clibs/ftSkyline
-
-CUDA2-ftSkyline: ft_clibs/ftSkyline.c
-	$(CC) ft_clibs/ftSkyline.c -o $(SKYLINE_DEPS) \
-		$(LIBFLAGS) $(CFLAGS) $(CUDAFLAGS)
-
-CUDA-ftSkyline: ft_libs/ftSkyline.fut
-	make CUDA1-ftSkyline
-	make CUDA2-ftSkyline
-
-Skyline: benchmarks/src/skyline.c $(DEPS) $(SKYLINE_DEPS)
-	$(CC) benchmarks/src/skyline.c -lm -o benchmarks/skyline.o \
-		$(DEPS) $(SKYLINE_DEPS) $(CFLAGS)
-
-C-ftDBSCAN: ft_libs/ftDBSCAN.fut
-	futhark c ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
-	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS)
-
-CUDA1-ftDBSCAN: ft_libs/ftDBSCAN.fut
-	futhark cuda ft_libs/ftDBSCAN.fut --library -o ft_clibs/ftDBSCAN
-
-CUDA2-ftDBSCAN: ft_clibs/ftDBSCAN.c
-	$(CC) ft_clibs/ftDBSCAN.c -o $(DBSCAN_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
-
-CUDA-ftDBSCAN: ft_libs/ftDBSCAN.fut
-	make CUDA1-ftDBSCAN
-	make CUDA2-ftDBSCAN
-
-DBSCAN: benchmarks/src/dbscan.c $(DEPS) $(DBSCAN_DEPS)
-	$(CC) benchmarks/src/dbscan.c -lm -o benchmarks/dbscan.o \
-		$(DEPS) $(DBSCAN_DEPS) $(CFLAGS)
-
-C-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
-	futhark c ft_libs/ftDBSCAN_plus.fut --library -o ft_clibs/ftDBSCAN_plus
-	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS)
-
-CUDA1-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
-	futhark cuda ft_libs/ftDBSCAN_plus.fut --library -o ft_clibs/ftDBSCAN_plus
-
-CUDA2-ftDBSCAN_plus: ft_clibs/ftDBSCAN_plus.c
-	$(CC) ft_clibs/ftDBSCAN_plus.c -o $(DBSCANPLUS_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
-
-CUDA-ftDBSCAN_plus: ft_libs/ftDBSCAN_plus.fut
-	make CUDA1-ftDBSCAN_plus
-	make CUDA2-ftDBSCAN_plus
-
-C-ftSynthetic: ft_libs/ftSynthetic.fut
-	futhark c ft_libs/ftSynthetic.fut --library -o ft_clibs/ftSynthetic
-	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS)
-
-CUDA1-ftSynthetic: ft_libs/ftSynthetic.fut
-	futhark cuda ft_libs/ftSynthetic.fut --library -o ft_clibs/ftSynthetic
-
-CUDA2-ftSynthetic: ft_clibs/ftSynthetic.c
-	$(CC) ft_clibs/ftSynthetic.c -o $(SYNTH_DEPS) $(LIBFLAGS) $(CUDAFLAGS)
-
-CUDA-ftSynthetic: ft_libs/ftSynthetic.fut
-	make CUDA1-ftSynthetic
-	make CUDA2-ftSynthetic
-
-Synthetic-Correlated: benchmarks/src/mk_correlated.c ft_clibs/libftSynthetic.so $(DEPS)
-	$(CC) benchmarks/src/mk_correlated.c -o benchmarks/mk_correlated.o \
-		ft_clibs/libftSynthetic.so $(DEPS) $(CFLAGS)
-
-Synthetic-Crescent: benchmarks/src/mk_crescent.c ft_clibs/libftSynthetic.so $(DEPS)
-	$(CC) benchmarks/src/mk_crescent.c -o benchmarks/mk_crescent.o \
-		ft_clibs/libftSynthetic.so $(DEPS) $(CFLAGS)
+C-DClust:
+	mkdir -p ft_clibs
+	futhark c ft_libs/dbscan/dclust_entry.fut -o ft_clibs/dclust_entry --library
+	$(CC) c_tests/src/dbscan/futhark_dclust_2d.c -o c_tests/dclust_2d.o $(CFLAGS) $(DEPS) ft_clibs/dclust_entry.c -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_3d.c -o c_tests/dclust_3d.o $(CFLAGS) $(DEPS) ft_clibs/dclust_entry.c -lm
