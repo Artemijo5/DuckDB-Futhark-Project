@@ -144,13 +144,12 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
             (b_bounds[first_m], if last_m==ts then nb else b_bounds[last_m])
         )
 
-
--- | Perform bsearch_range implementation using Merge-Path co-partitioning.
+-- | Perform bsearch_first implementation using Merge-Path co-partitioning.
 --
 -- For as, bs sorted,
 -- for each value in as,
--- find the index of the first match and the count of matches in bs.
-def bsearch_range_merge_path_alt [na] [nb] 't
+-- find the index of the first match in bs.
+def bsearch_first_merge_path [na] [nb] 't
     (eq : t -> t -> bool)
     (geq: t -> t -> bool)
     (leq: t -> t -> bool)
@@ -159,7 +158,7 @@ def bsearch_range_merge_path_alt [na] [nb] 't
     (merge_path_threads : i64)
     (as : [na]t)
     (bs : [nb]t)
-: [na](i64,i64) =
+: [na]i64 =
     -- Calculate the Merge-Path.
     let merge_path = find_merge_path
         (geq) (lt) as bs merge_path_threads
@@ -169,18 +168,54 @@ def bsearch_range_merge_path_alt [na] [nb] 't
     -- Find the partition id of each element in as
     -- ie the last partition where part_index <= element_index
     let a_bounds = merge_path |> map (.0)
-    let (min_is,max_is) = indices as |> bsearch_last
-        (>=) (<) (replicate na 0) (replicate na (length a_bounds)) a_bounds
+    let (min_is, max_is) = iota na
+        |> bsearch_last (>=) (<)
+            (replicate na 0)
+            (replicate na (length a_bounds))
+            a_bounds
         |> map (\i -> part_match[i])
         |> unzip
-    in as |> bsearch_range
-        (eq) (geq) (gt) (lt) min_is max_is bs
+    in as |> bsearch_first
+        (eq) (gt) min_is max_is bs
 
+-- | Perform bsearch_last implementation using Merge-Path co-partitioning.
+--
+-- For as, bs sorted,
+-- for each value in as,
+-- find the index of the last match in bs.
+def bsearch_last_merge_path [na] [nb] 't
+    (geq: t -> t -> bool)
+    (leq: t -> t -> bool)
+    (gt : t -> t -> bool)
+    (lt : t -> t -> bool)
+    (merge_path_threads : i64)
+    (as : [na]t)
+    (bs : [nb]t)
+: [na]i64 =
+    -- Calculate the Merge-Path.
+    let merge_path = find_merge_path
+        (geq) (lt) as bs merge_path_threads
+    -- Get search regions in bs per partition in as
+    let part_match = merge_path_find_matching_partitions
+        (geq) (leq) (gt) (lt) as bs merge_path
+    -- Find the partition id of each element in as
+    -- ie the last partition where part_index <= element_index
+    let a_bounds = merge_path |> map (.0)
+    let (min_is, max_is) = iota na
+        |> bsearch_last (>=) (<)
+            (replicate na 0)
+            (replicate na (length a_bounds))
+            a_bounds
+        |> map (\i -> part_match[i])
+        |> unzip
+    in as |> bsearch_last
+        (geq) (lt) min_is max_is bs
 
--- TODO make version with bsearch_last rather than bsearch_range, for As-Of Join
-
--- TODO test with this
--- use scatter + scan rather than bsearch for expanding partitions (...)
+-- | Perform bsearch_range implementation using Merge-Path co-partitioning.
+--
+-- For as, bs sorted,
+-- for each value in as,
+-- find the index of the first match and the count of matches in bs.
 def bsearch_range_merge_path [na] [nb] 't
     (eq : t -> t -> bool)
     (geq: t -> t -> bool)
@@ -200,8 +235,11 @@ def bsearch_range_merge_path [na] [nb] 't
     -- Find the partition id of each element in as
     -- ie the last partition where part_index <= element_index
     let a_bounds = merge_path |> map (.0)
-    let (min_is, max_is) = scatter (replicate na 0) a_bounds (indices a_bounds)
-        |> scan (i64.max) (-1)
+    let (min_is, max_is) = iota na
+        |> bsearch_last (>=) (<)
+            (replicate na 0)
+            (replicate na (length a_bounds))
+            a_bounds
         |> map (\i -> part_match[i])
         |> unzip
     in as |> bsearch_range

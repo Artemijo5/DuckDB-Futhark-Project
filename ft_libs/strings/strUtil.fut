@@ -1,5 +1,5 @@
 import "../ftbasics"
-import "../lib/github.com/diku-dk/segmented/segmented"
+import "../b_segmented"
 import "../lib/github.com/diku-dk/sorts/merge_sort"
 
 -- Structs
@@ -166,7 +166,7 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 		let new_cons = is
 			|> map (\i -> strs.idxs[i])
 			|> zip gather_lens
-			|> expand (.0) (\(_,i) ind -> strs.contents[i+ind])
+			|> b_expand (.0) (\(_,i) ind -> strs.contents[i+ind])
 		in {contents = new_cons, idxs = new_idxs}
 
 	-- | Sort strings.
@@ -189,6 +189,7 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 	-- | Split a string into multiple, using a list of delimiters.
 	def str_split [n] (delim : []u8) (str : [n]u8)
 	: strInfo =
+		if n==0 then {contents = [], idxs = []} else
 		if (length delim) == 0 then {contents=str,idxs=[0]} else
 		let isDelim = str
 			|> map (\c -> delim |> any (\dc -> c==dc))
@@ -198,7 +199,7 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 			|> map (.1)
 		let str_idx = isDelim
 			|> map (not >-> i64.bool)
-			|> segmented_reduce (+) 0 ((copy isDelim) with [0] = true) -- str lengths
+			|> b_segmented_reduce (+) (-) 0 ((copy isDelim) with [0] = true) -- str lengths
 			|> exscan (+) 0
 		-- get rid of multiples
 		let str_idx' = str_idx
@@ -220,7 +221,7 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 		-- insert first delimiter between all str's
 		let str = strs.idxs
 			|> zip lens_plusOne
-			|> expand (.0) (\(_,i) ind ->
+			|> b_expand (.0) (\(_,i) ind ->
 				if ind==0
 				then delim[0]
 				else strs.contents[i+ind-1]

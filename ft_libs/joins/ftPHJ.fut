@@ -1,4 +1,4 @@
-import "../lib/github.com/diku-dk/segmented/segmented"
+import "../b_segmented"
 import "../ftbasics"
 import "../ft_partition"
 
@@ -230,7 +230,7 @@ module prim_PHJ (U : integral) = {
 		(matches : joinTup [nS] t)
 	: joinPairs (byteSeq [b]) =
 		let (exp_ix, exp_iy) = zip4 matches.vs matches.ix matches.iy matches.cm
-			|> expand (.3) (\(v,ix,iy,_) ind -> (ix, find_kth_match iy (ind+1) uR v))
+			|> b_expand (.3) (\(v,ix,iy,_) ind -> (ix, find_kth_match iy (ind+1) uR v))
 			|> unzip
 		-- output pretends R was left-side
 		let exp_vs = exp_iy |> map (\i -> tR[i])

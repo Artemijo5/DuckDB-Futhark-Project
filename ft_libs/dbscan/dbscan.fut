@@ -1,6 +1,5 @@
 import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
-import "../lib/github.com/diku-dk/segmented/segmented"
 import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
@@ -227,7 +226,7 @@ module ft_dbscan
 			let new_offs = 1 + (new_cids |> i64.maximum |> i64.max (-1))
 			let (old_cids', new_cids') = zip old_cids new_cids
 				|> filter (\(alt,neu) -> alt >= 0 && neu >= 0) |> unzip
-			let connections = get_connected_subgraph_ids_unencoded
+			let connections = get_connected_subgraph_ids
 				new_offs
 				(zip old_cids' new_cids')
 			let rectified_new_cids = new_cids |> map (\i -> if i<0 then i else connections[i])
@@ -499,6 +498,11 @@ module ft_dbscan
 					extPar this_part this_state this_buff pts eps minPts
 				let upd_buff = buffer_part_pts upd_part upd_state upd_buff_ ccs
 				in (upd_state, upd_buff)
-			in final_buff
+			in {
+				is_pt_buffered = final_buff.is_pt_buffered,
+				is_pt_flushed  = final_buff.is_pt_flushed,
+				is_core = final_buff.is_core,
+				chain_id = final_buff.chain_id |> encode_subgraph_ids
+			}
 
 }

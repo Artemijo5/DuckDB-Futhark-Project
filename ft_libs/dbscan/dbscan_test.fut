@@ -1,12 +1,10 @@
 import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
-import "../lib/github.com/diku-dk/segmented/segmented"
 import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 import "dbscan"
-import "ft_dclust"
---import "dclust_alt"
+
 
 module vector_2 = cat_vector vector_1 vector_1
 
@@ -14,7 +12,7 @@ module kd2 = kd_index vector_2 f64
 module dist2 = euclidean_d vector_2 f64
 
 module dbscan2 = ft_dbscan vector_2 f64 kd2 dist2
-module dclust2 = ft_dclust vector_2 f64 dist2
+--module dclust2 = ft_dclust vector_2 f64 dist2
 
 -- 40 pts in 4 quadrants
 -- partition using kd index
@@ -52,11 +50,6 @@ def test1 (kd : i64) (eps : f64) (minPts : i64) =
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (vs, is_core, chain_id)
 
-def test1_dclust (subdiv : i64) (eps : f64) (minPts : i64) =
-	let vs = (copy pts1) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (is_core, cluster_id) = dclust2.do_dclust 5 5 (replicate vector_2.length subdiv) eps minPts vs
-	in (is_core, cluster_id)
-
 -- eps=2, numPts=3
 def pts2 : [][2]f64 = [
 --[-100,-100],
@@ -78,11 +71,6 @@ def test2 (kd : i64) (eps : f64) (minPts : i64) =
 	let is_core = scatter (replicate (length xs) false) is buff.is_core
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (vs, is_core, chain_id)
-
-def test2_dclust (subdiv : i64) (eps : f64) (minPts : i64) =
-	let vs = (copy pts2) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (is_core, cluster_id) = dclust2.do_dclust 5 5 (replicate vector_2.length subdiv) eps minPts vs
-	in (is_core, cluster_id)
 
 def pts3 : [][2]f64 = [
 	[4.482,8.931],
@@ -109,11 +97,6 @@ def test3 (kd : i64) (eps : f64) (minPts : i64) =
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (vs, is_core, chain_id)
 
-def test3_dclust (subdiv : i64) (eps : f64) (minPts : i64) =
-	let vs = (copy pts3) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (is_core, cluster_id) = dclust2.do_dclust 2 2 (replicate vector_2.length subdiv) eps minPts vs
-	in (is_core, cluster_id)
-
 
 def pts4 : [][2]f64 = [
 	[6,0],
@@ -139,10 +122,3 @@ def test4 =
 	let is_core = scatter (replicate (length xs) false) is buff.is_core
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (is_core, chain_id)
-
--- default subdiv = 3
-def test4_dclust (seed_count : i64) (subdiv : i64) =
-	let vs = (copy pts4) |> map (sized vector_2.length >-> vector_2.from_array)
-		|> map (vector_2.map (\v -> v * 0.016))
-	let (is_core, cluster_id) = dclust2.do_dclust seed_count seed_count (replicate vector_2.length subdiv) 0.008 5 vs
-	in (is_core, cluster_id)

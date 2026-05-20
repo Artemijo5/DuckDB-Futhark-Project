@@ -1,4 +1,3 @@
-import "../lib/github.com/diku-dk/segmented/segmented"
 import "../ftbasics"
 import "../ft_partition"
 

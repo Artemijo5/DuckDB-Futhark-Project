@@ -1,4 +1,4 @@
-import "../lib/github.com/diku-dk/segmented/segmented"
+import "../b_segmented"
 import "../ftbasics"
 import "../merge_path"
 
@@ -31,7 +31,7 @@ def smj_matchFinding [nR] [nS] 't
 -- | SMJ expansion phase (for Inner Join).
 def smj_expand [nR] 't (matches : joinTup [nR] t) : joinPairs t =
 	let (exp_vs, exp_ix, exp_iy) = zip4 matches.vs matches.ix matches.iy matches.cm
-		|> expand (.3) (\(v,ix,iy,_) ind -> (v,ix,iy+ind))
+		|> b_expand (.3) (\(v,ix,iy,_) ind -> (v,ix,iy+ind))
 		|> unzip3
 	in {vs = exp_vs, ix = exp_ix, iy = exp_iy}
 
