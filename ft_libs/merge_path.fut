@@ -90,6 +90,7 @@ def find_merge_path [na] [nb] 't
     (bs : [nb]t)
     (ts : i64)
 : [ts](i64,i64) =
+    if na==0 || nb==0 then replicate ts (-1,-1) else
     let diags = iota ts
         |> map (\i -> i*(na+nb-1)/ts)
         |> map (get_diagonal na nb)
@@ -111,6 +112,7 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
     (bs : [nb]t)
     (merge_path : [ts](i64,i64))
 : [ts](i64,i64) =
+    if na==0 || nb==0 then replicate ts (-1,-1) else
     let (a_bounds, b_bounds) = unzip merge_path
     -- For each partition, get minimum & maximum values
     let a_ranges = indices a_bounds |> map (\i ->
@@ -138,8 +140,14 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
         (replicate ts 0)
         (replicate ts (length b_ranges))
         b_ranges
+    -- set invalid ranges to last valid range - so as to facilitate bsearch_last
+    let match_is_valid = match_ranges |> indices |> filter (\i -> (match_ranges[i].0) >= 0)
+    let match_ranges' = match_ranges |> map (\(f,_) -> f>=0)
+        |> dict_encoding
+        |> map (\i -> if i<0 then i else match_is_valid[i])
+        |> map (\i -> if i<0 then (-1,0) else match_ranges[i])
     -- map to index ranges
-    in match_ranges |> map (\(first_m, count) -> (first_m, first_m+count))
+    in match_ranges' |> map (\(first_m, count) -> (first_m, first_m+count))
         |> map (\(first_m,last_m) -> if first_m<0 then (-1,-1) else
             (b_bounds[first_m], if last_m==ts then nb else b_bounds[last_m])
         )

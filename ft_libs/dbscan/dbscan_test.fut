@@ -4,7 +4,7 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 import "dbscan"
-
+import "ft_dclust"
 
 module vector_2 = cat_vector vector_1 vector_1
 
@@ -12,7 +12,7 @@ module kd2 = kd_index vector_2 f64
 module dist2 = euclidean_d vector_2 f64
 
 module dbscan2 = ft_dbscan vector_2 f64 kd2 dist2
---module dclust2 = ft_dclust vector_2 f64 dist2
+module dclust2 = ft_dclust vector_2 f64 dist2
 
 -- 40 pts in 4 quadrants
 -- partition using kd index
@@ -50,7 +50,12 @@ def test1 (kd : i64) (eps : f64) (minPts : i64) =
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (vs, is_core, chain_id)
 
--- eps=2, numPts=3
+def test1_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
+	let vs = (copy pts1) |> map (sized vector_2.length >-> vector_2.from_array)
+	let sdv = replicate vector_2.length subdiv
+	in dclust2.do_dclust 10000 seed_count sdv eps minPts vs
+
+-- eps=2, minPts=3
 def pts2 : [][2]f64 = [
 --[-100,-100],
 [2,4],[3,4.2],[4,4.2],[2.5,5],
@@ -71,6 +76,11 @@ def test2 (kd : i64) (eps : f64) (minPts : i64) =
 	let is_core = scatter (replicate (length xs) false) is buff.is_core
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (vs, is_core, chain_id)
+
+def test2_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
+	let vs = (copy pts2) |> map (sized vector_2.length >-> vector_2.from_array)
+	let sdv = replicate vector_2.length subdiv
+	in dclust2.do_dclust 10000 seed_count sdv eps minPts vs
 
 def pts3 : [][2]f64 = [
 	[4.482,8.931],
@@ -97,6 +107,11 @@ def test3 (kd : i64) (eps : f64) (minPts : i64) =
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (vs, is_core, chain_id)
 
+def test3_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
+	let vs = (copy pts3) |> map (sized vector_2.length >-> vector_2.from_array)
+	let sdv = replicate vector_2.length subdiv
+	in dclust2.do_dclust 10000 seed_count sdv eps minPts vs
+
 
 def pts4 : [][2]f64 = [
 	[6,0],
@@ -122,3 +137,8 @@ def test4 =
 	let is_core = scatter (replicate (length xs) false) is buff.is_core
 	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
 	in  (is_core, chain_id)
+
+def test4_dclust =
+	let vs = (copy pts4) |> map (sized vector_2.length >-> vector_2.from_array)
+	let sdv = replicate vector_2.length 3
+	in dclust2.do_dclust 10000 4 sdv 0.5 5 vs

@@ -1,6 +1,7 @@
 import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
-import "../lib/github.com/diku-dk/segmented/segmented"
+import "../merge_path"
+import "../b_segmented"
 import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
@@ -131,8 +132,10 @@ module ft_dclust
 		(part_is     : [np]i64)
 		(_ : [n](vector t)) -- indexed dataset pts
 	=
-		let pids = scatter (replicate n (-1)) part_is (iota np)
-			|> scan (i64.max) (-1)
+		let pids = bsearch_last_merge_path (>=) (<=) (>) (<)
+			((np + 2047) / 2048)
+			(iota n)
+			(part_is)
 		let pts_per_part = iota np
 			|> map (\i -> if i==np-1 then n-part_is[i] else part_is[i+1]-part_is[i])
 		let part_neigh_pairs = get_adj_partitions bidir extPar eps subdiv pts_per_part
@@ -161,34 +164,25 @@ module ft_dclust
 			let sup = i64.min n (inf+seed_count)
 			-- has 1 instance of a point's index for every neighbour that point has found
 			-- separated into 2 equi-sized arrays
-			let (cur_mins,cur_maxs,_) = (inf..<sup)
+			let (cur_mins,cur_maxs) = (inf..<sup)
 				|> map (\i1 -> (i1,pids[i1]))
 				-- expand to partitions it is compared with
-				|> expand
+				|> b_expand
 					(\(_,pid1) -> part_pairs_count[pid1])
 					(\(i1,pid1) ind ->
 						let index_in_pairs = part_pairs_index[pid1] + ind
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
-				|> expand
+				|> b_expand
 					(\(_,pid2) -> part_sz[pid2])
 					(\(i1,pid2) ind ->
 						let i2 = part_is[pid2] + ind
 						in (i1,i2)
 					)
 				|> filter (\(i1,i2) -> i1<i2)
-				|> map (\(i1,i2) ->
-					let pt1 = pts[i1]
-					let pt2 = pts[i2]
-					in (i1,i2,pt1,pt2)
-				)
-				|> map (\(i1,i2,pt1,pt2) ->
-					let is_neigh = D.check_neighbourhood eps pt1 pt2
-					in (i1,i2,is_neigh)
-				)
-				|> filter (.2)
-				|> unzip3
+				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
+				|> unzip
 			-- add neighbour counts found now to those found previously
 			in if (length cur_mins)==0 then neigh_count else
 			reduce_by_index neigh_count (+) 0 cur_mins (cur_mins |> map (\_ -> 1i64))
@@ -244,34 +238,24 @@ module ft_dclust
 			-- has every min-max pair of neighbours found
 			let cur_neigh = (inf..<sup)
 				|> map (\i1 -> (i1, pids[i1]))
-				|> expand
+				|> b_expand
 					(\(_,pid1) -> part_pairs_count[pid1])
 					(\(i1,pid1) ind ->
 						let index_in_pairs = part_pairs_index[pid1] + ind
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
-				|> expand
+				|> b_expand
 					(\(_,pid2) -> part_core_sz[pid2])
 					(\(i1,pid2) ind ->
 						let i2 = part_core_is[pid2] + ind
 						in (i1,i2)
 					)
 				|> filter (\(i1,i2) -> i1<i2)
-				|> map (\(i1,i2) ->
-					let pt1 = pts[i1]
-					let pt2 = pts[i2]
-					in (i1,i2,pt1,pt2)
-				)
-				|> map (\(i1,i2,pt1,pt2) ->
-					let is_neigh = D.check_neighbourhood eps pt1 pt2
-					in (i1,i2,is_neigh)
-				)
-				|> filter (.2)
-				|> map (\(i1,i2,_) -> (i1,i2))
+				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
 			let cur_node_no = if ((length cur_neigh) == 0) then 0 else
 				1 + (cur_neigh |> map (.1) |> i64.maximum)
-			let cur_connections = get_connected_subgraph_ids_unencoded cur_node_no cur_neigh
+			let cur_connections = get_connected_subgraph_ids cur_node_no cur_neigh
 				|> map (\i -> cid[i])
 			let cur_collisions = if cur_node_no==0 then [] else
 				map3 (\cur_cid pre_cid (i : i64) ->
@@ -280,7 +264,7 @@ module ft_dclust
 					else (-1,-1)
 				) cur_connections[inf:cur_node_no] cid[inf:cur_node_no] (inf..<cur_node_no)
 				|> filter (\(c1,_) -> c1 >= 0)
-			let rect_list = get_connected_subgraph_ids_unencoded cur_node_no cur_collisions
+			let rect_list = get_connected_subgraph_ids cur_node_no cur_collisions
 			in scatter (copy cid) (iota cur_node_no) cur_connections
 				|> map2 (i64.min) cid
 				|> map (\i -> if i<cur_node_no then rect_list[i] else i)
@@ -306,55 +290,45 @@ module ft_dclust
 		(part_pairs_index : [np]i64)
 		(part_pairs_count : [np]i64)
 	=
-		let num_iter = (n + seed_count - 1) / seed_count
-		-- For core points, gather their cid directly
-		let init_cid = is_core |> map (i64.bool)
-			|> exscan (+) 0
-			|> zip is_core
-			|> map (\(is_c,i) -> if is_c then core_cids[i] else (-1))
+		-- #non-core points
+		let nnc = n - nc
+		-- Process only non-core points in windows
+		let (core_is, non_core_is) = iota n
+			|> partition (\i -> is_core[i])
+			|> (\(c_is, nc_is) -> (c_is |> sized nc, nc_is |> sized nnc))
+		let num_iter = (nnc + seed_count - 1) / seed_count
+		-- For core points, set their cid directly
+		let init_cid = scatter (replicate n (-1)) core_is core_cids
 		-- For each non-core point, find its core pts within eps & assign their min cluster id
 		-- if no core point within eps, assign (-1) as its cluster id (noise)
 		let final_cid = loop cid = copy init_cid
 		for j < num_iter do
 			let inf = j*seed_count
-			let sup = i64.min n (inf+seed_count)
+			let sup = i64.min nnc (inf+seed_count)
+			let cur_is = (inf..<sup) |> map (\i -> non_core_is[i])
 			-- finds minimum cid neighbouring each point
-			let cur_is = (inf..<sup) |> filter (\i -> !is_core[i])
 			let (cur_xs,cur_ys) = cur_is
 				|> map (\i1 -> (i1, pids[i1]))
-				|> expand
+				|> b_expand
 					(\(_,pid1) -> part_pairs_count[pid1])
 					(\(i1,pid1) ind ->
 						let index_in_pairs = part_pairs_index[pid1] + ind
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
-				|> expand
+				|> b_expand
 					(\(_,pid2) -> part_core_sz[pid2])
 					(\(i1,pid2) ind ->
 						let i2 = part_core_is[pid2] + ind
 						in (i1,i2)
 					)
-				|> map (\(i1,i2) ->
-					let pt1 = pts[i1]
-					let pt2 = core_pts[i2]
-					in (i1,i2,pt1,pt2)
-				)
-				|> map (\(i1,i2,pt1,pt2) ->
-					let is_neigh = D.check_neighbourhood eps pt1 pt2
-					in (i1,i2,is_neigh)
-				)
-				|> filter (.2)
-				|> map (\(i1,i2,_) -> 
-					let i1_for_histogram = i1 - inf
+				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] core_pts[i2])
+				|> map (\(i1,i2) -> 
 					let cid2 = core_cids[i2]
-					in (i1_for_histogram,cid2)
+					in (i1,cid2)
 				)
 				|> unzip
-			let cur_cid = hist (\c1 c2 -> if c1>=0 && (c2<0 || c2>c1) then c1 else c2) (-1)
-				(sup-inf) cur_xs cur_ys
-			let cur_cid' = cur_is |> map (\i -> i-inf) |> map (\i -> cur_cid[i]) -- only update border points
-			in scatter (copy cid) cur_is cur_cid'
+			in reduce_by_index cid (i64.max) (-1) cur_xs cur_ys
 		in final_cid
 
 	-- | Index dataset & perform DBSCAN algorithm.

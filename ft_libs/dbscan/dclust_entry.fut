@@ -4,7 +4,6 @@ import "../ftColumns"
 import "ft_distance"
 
 import "ft_dclust"
---import "dclust_alt"
 
 module euclidean2_f64 = euclidean_d vector_2 f64
 module euclidean3_f64 = euclidean_d vector_3 f64
@@ -25,7 +24,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 -- d-clust entry points
 
 entry do_dclust_2d_f64 [n]
-	(extPar : i64)
 	(seed_No : i64)
 	(subdiv : i64)
 	(eps : f64)
@@ -36,13 +34,12 @@ entry do_dclust_2d_f64 [n]
 	let pts = map2 (\x1 x2 ->
 		vector_2.replicate x1 |> vector_2.set 1 x2
 	) dat1 dat2
-	let (is_core,cluster) = dclust2_f64.do_dclust extPar seed_No
+	let (is_core,cluster) = dclust2_f64.do_dclust 1 seed_No
 		(replicate vector_2.length subdiv)
 		eps minPts pts
 	in {is_core = is_core, cluster_id = cluster}
 
 entry do_dclust_3d_f64 [n]
-	(extPar : i64)
 	(seed_No : i64)
 	(subdiv : i64)
 	(eps : f64)
@@ -54,7 +51,7 @@ entry do_dclust_3d_f64 [n]
 	let pts = map3 (\x1 x2 x3 ->
 		vector_3.replicate x1 |> vector_3.set 1 x2 |> vector_3.set 2 x3
 	) dat1 dat2 dat3
-	let (is_core,cluster) = dclust3_f64.do_dclust extPar seed_No
+	let (is_core,cluster) = dclust3_f64.do_dclust 1 seed_No
 		(replicate vector_3.length subdiv)
 		eps minPts pts
 	in {is_core = is_core, cluster_id = cluster}

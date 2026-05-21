@@ -116,6 +116,7 @@
 		(xs : [n]t)
 		(vs : [nvs]t)
 	: [nvs]i64 = vs |> map3 (\i_min i_max v ->
+		if i_min<0 || (v `lt` xs[i_min]) then (-1) else
 		let (found_at,_) = loop (i, last_step) = (i_min, i_max-i_min)
 		while i>=0 && i>=i_min && i<i_max &&
 			!( (v `geq` xs[i]) && ( i==(i_max-1) || (v `lt` xs[i+1]) ) )

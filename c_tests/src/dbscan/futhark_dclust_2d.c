@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
 		mylog(logfile, "Performing D-Clust...");
 
 		futhark_entry_do_dclust_2d_f64(ctx, &dbscan_res,
-			EXTPAR, SEED_COUNT, SUBDIV, EPS, MIN_PTS,
+			SEED_COUNT, SUBDIV, EPS, MIN_PTS,
 			col1, col2
 		);
 
