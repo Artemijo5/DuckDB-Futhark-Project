@@ -132,9 +132,9 @@ module ft_dclust
 		(part_is     : [np]i64)
 		(_ : [n](vector t)) -- indexed dataset pts
 	=
-		let pids = bsearch_last_merge_path (>=) (<=) (>) (<)
-			((np + 2047) / 2048)
-			(iota n)
+		let pids = iota n |> bsearch_last (>=) (<)
+			(replicate n 0)
+			(replicate n np)
 			(part_is)
 		let pts_per_part = iota np
 			|> map (\i -> if i==np-1 then n-part_is[i] else part_is[i+1]-part_is[i])
