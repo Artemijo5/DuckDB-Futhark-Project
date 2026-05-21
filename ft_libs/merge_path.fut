@@ -140,14 +140,8 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
         (replicate ts 0)
         (replicate ts (length b_ranges))
         b_ranges
-    -- set invalid ranges to last valid range - so as to facilitate bsearch_last
-    let match_is_valid = match_ranges |> indices |> filter (\i -> (match_ranges[i].0) >= 0)
-    let match_ranges' = match_ranges |> map (\(f,_) -> f>=0)
-        |> dict_encoding
-        |> map (\i -> if i<0 then i else match_is_valid[i])
-        |> map (\i -> if i<0 then (-1,0) else match_ranges[i])
     -- map to index ranges
-    in match_ranges' |> map (\(first_m, count) -> (first_m, first_m+count))
+    in match_ranges |> map (\(first_m, count) -> (first_m, first_m+count))
         |> map (\(first_m,last_m) -> if first_m<0 then (-1,-1) else
             (b_bounds[first_m], if last_m==ts then nb else b_bounds[last_m])
         )
@@ -185,39 +179,6 @@ def bsearch_first_merge_path [na] [nb] 't
         |> unzip
     in as |> bsearch_first
         (eq) (gt) min_is max_is bs
-
--- | Perform bsearch_last implementation using Merge-Path co-partitioning.
---
--- For as, bs sorted,
--- for each value in as,
--- find the index of the last match in bs.
-def bsearch_last_merge_path [na] [nb] 't
-    (geq: t -> t -> bool)
-    (leq: t -> t -> bool)
-    (gt : t -> t -> bool)
-    (lt : t -> t -> bool)
-    (merge_path_threads : i64)
-    (as : [na]t)
-    (bs : [nb]t)
-: [na]i64 =
-    -- Calculate the Merge-Path.
-    let merge_path = find_merge_path
-        (geq) (lt) as bs merge_path_threads
-    -- Get search regions in bs per partition in as
-    let part_match = merge_path_find_matching_partitions
-        (geq) (leq) (gt) (lt) as bs merge_path
-    -- Find the partition id of each element in as
-    -- ie the last partition where part_index <= element_index
-    let a_bounds = merge_path |> map (.0)
-    let (min_is, max_is) = iota na
-        |> bsearch_last (>=) (<)
-            (replicate na 0)
-            (replicate na (length a_bounds))
-            a_bounds
-        |> map (\i -> part_match[i])
-        |> unzip
-    in as |> bsearch_last
-        (geq) (lt) min_is max_is bs
 
 -- | Perform bsearch_range implementation using Merge-Path co-partitioning.
 --
