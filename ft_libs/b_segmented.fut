@@ -10,7 +10,7 @@ def b_replicated_iota [n]
 	let prefix_szs = exscan (+) 0 szs
 	let total_sz = i64.sum szs
 	in bsearch_last_merge_path
-		(>=) (<=) (>) (<)
+		(>=) (<)
 		((n+2047)/2048)
 		(iota total_sz)
 		(prefix_szs)
@@ -21,7 +21,7 @@ def b_repl_segm_iota [n]
 	let prefix_szs = exscan (+) 0 szs
 	let total_sz = i64.sum szs
 	let repl_iota = bsearch_last_merge_path
-		(>=) (<=) (>) (<)
+		(>=) (<)
 		((n+2047)/2048)
 		(iota total_sz)
 		(prefix_szs)

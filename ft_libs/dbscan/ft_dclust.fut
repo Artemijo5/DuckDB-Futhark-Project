@@ -133,7 +133,7 @@ module ft_dclust
 		(_ : [n](vector t)) -- indexed dataset pts
 	=
 		let pids = bsearch_last_merge_path
-			(>=) (<=) (>) (<)
+			(>=) (<)
 			((np+2047)/2048)
 			(iota n)
 			part_is
