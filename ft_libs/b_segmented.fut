@@ -9,20 +9,22 @@ def b_replicated_iota [n]
 : []i64 =
 	let prefix_szs = exscan (+) 0 szs
 	let total_sz = i64.sum szs
-	in iota total_sz |> bsearch_last (>=) (<)
-		(replicate total_sz 0)
-		(replicate total_sz n)
-		prefix_szs
+	in bsearch_last_merge_path
+		(>=) (<=) (>) (<)
+		((n+2047)/2048)
+		(iota total_sz)
+		(prefix_szs)
 
 def b_repl_segm_iota [n]
 	(szs : [n]i64)
 : ([]i64, []i64) =
 	let prefix_szs = exscan (+) 0 szs
 	let total_sz = i64.sum szs
-	let repl_iota = iota total_sz |> bsearch_last (>=) (<)
-		(replicate total_sz 0)
-		(replicate total_sz n)
-		prefix_szs
+	let repl_iota = bsearch_last_merge_path
+		(>=) (<=) (>) (<)
+		((n+2047)/2048)
+		(iota total_sz)
+		(prefix_szs)
 	let segm_iota = map2 (\repl_i ind -> ind - prefix_szs[repl_i])
 		repl_iota
 		(iota total_sz)

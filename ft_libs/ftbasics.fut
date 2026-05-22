@@ -116,7 +116,7 @@
 		(xs : [n]t)
 		(vs : [nvs]t)
 	: [nvs]i64 = vs |> map3 (\i_min i_max v ->
-		if i_min<0 || (v `lt` xs[i_min]) then (-1) else
+		if i_min<0 || (i_min<n && (v `lt` xs[i_min])) then (-1) else
 		let (found_at,_) = loop (i, last_step) = (i_min, i_max-i_min)
 		while i>=0 && i>=i_min && i<i_max &&
 			!( (v `geq` xs[i]) && ( i==(i_max-1) || (v `lt` xs[i+1]) ) )
@@ -130,6 +130,7 @@
 				(i64.min (i_max-1) (i+this_step), this_step)
 		in found_at
 	) min_is max_is
+		|> map (i64.min (n-1))
 
 	-- | Bulk binary search to locate the index range of matching values.
 	--

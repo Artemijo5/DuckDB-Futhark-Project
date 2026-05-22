@@ -1,7 +1,6 @@
 import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
 import "../lib/github.com/diku-dk/sorts/merge_sort"
-import "../b_segmented"
 
 -- Implementation of basic (min/max) spatial index structures.
 -- 1. Uniform Grid Partitioning
@@ -200,11 +199,15 @@ module kd_index (V : vector) (N : numeric)
 					|> zip old_pids
 					|> map (\(pid,x) -> if ((V.get curDim x) `lt` median_vals[pid]) then 2*pid else 2*pid+1)
 				let new_minVals = hist (min) highest (2*(length part_sizes)) new_pids (pts' |> map (V.get curDim))
-				let new_part_mins = indices part_mins |> b_expand (\_ -> 2)
-					(\i ind -> V.set curDim new_minVals[2*i + ind] part_mins[i])
+				let new_part_mins = indices part_mins
+					|> map (\i -> iota 2 |> map (\j -> 2*i+j))
+					|> flatten
+					|> map (\i -> V.set curDim new_minVals[i] part_mins[i/2])
 				let new_maxVals = hist (max) lowest  (2*(length part_sizes)) new_pids (pts' |> map (V.get curDim))
-				let new_part_maxs = indices part_maxs |> b_expand (\_ -> 2)
-					(\i ind -> V.set curDim new_maxVals[2*i + ind] part_maxs[i])
+				let new_part_maxs = indices part_maxs
+					|> map (\i -> iota 2 |> map (\j -> 2*i+j))
+					|> flatten
+					|> map (\i -> V.set curDim new_maxVals[i] part_maxs[i/2])
 				let new_part_sizes = hist (+) 0 (2*(length part_sizes))
 					new_pids
 					(replicate n 1)

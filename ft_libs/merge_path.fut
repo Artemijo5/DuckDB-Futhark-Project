@@ -130,13 +130,13 @@ def merge_path_find_matching_partitions [na] [nb] [ts] 't
     -- Perform binary search
     let match_ranges = a_ranges |> bsearch_range
         (\(ia,iA) (ib,iB) -> iA>=ia && ia<na &&
-            ((as[iA] `geq` bs[ib]) && (as[ia] `leq` bs[iB]))) -- this is true for the first match
+            ((as[iA] `geq` bs[ib]) && (as[ia] `leq` bs[iB]))) -- first match
         (\(ia,iA) (ib,_) -> ia==na ||
-            (as[iA] `geq` bs[ib])) -- this is true for the last match
+            (as[iA] `geq` bs[ib])) -- last match
         (\(ia,_) (_,iB) -> ia==na ||
-            (as[ia] `gt` bs[iB])) -- while looking for first match - compare with previous partition
+            (as[ia] `gt` bs[iB])) -- before first match
         (\(ia,iA) (ib,_) -> ia<na &&
-            (as[iA] `lt`  bs[ib])) -- while looking for last match - compare with next partition
+            (as[iA] `lt`  bs[ib])) -- after last match
         (replicate ts 0)
         (replicate ts (length b_ranges))
         b_ranges
@@ -213,3 +213,109 @@ def bsearch_range_merge_path [na] [nb] 't
         |> unzip
     in as |> bsearch_range
         (eq) (geq) (gt) (lt) min_is max_is bs
+
+
+-- | Implementation of merge_path_find_matching_partitions
+-- tailored for bsearch_last.
+--
+-- Rather than finding exactly matching partition,
+-- find the one that would be before the first match,
+-- and the one after the last match.
+def merge_path_find_matching_partitions_for_last [na] [nb] [ts] 't
+    (geq: t -> t -> bool)
+    (leq: t -> t -> bool)
+    (gt : t -> t -> bool)
+    (lt : t -> t -> bool)
+    (as : [na]t)
+    (bs : [nb]t)
+    (merge_path : [ts](i64,i64))
+: [ts](i64,i64) =
+    if na==0 || nb==0 then replicate ts (-1,-1) else
+    let (a_bounds, b_bounds) = unzip merge_path
+    -- For each partition, get minimum & maximum values
+    let a_ranges = indices a_bounds |> map (\i ->
+        let inf = a_bounds[i]
+        let sup = if i==(ts-1) then (na-1)
+            else a_bounds[i+1]-1
+        in (inf,sup)
+    )
+    let b_ranges = indices b_bounds |> map (\i ->
+        let inf = i64.min (nb-1) b_bounds[i]
+        let sup = if i==(ts-1) then (nb-1)
+            else b_bounds[i+1]-1
+        in (inf,i64.max inf sup)
+    )
+    -- Perform binary search
+    let match_range_first = a_ranges |> bsearch_first
+        (\(ia,iA) (ib,iB) -> iA>=ia && ia<na &&
+            (
+                (as[i64.min (na-1) (iA+1)] `geq` bs[i64.max 0 (ib-1)])
+                &&
+                (as[i64.max 0 (ia-1)] `leq` bs[i64.min (nb-1) (iB+1)])
+            )
+        )
+        (\(ia,_) (_,iB) -> ia==na ||
+            (as[ia] `gt` bs[iB]))
+        (replicate ts 0)
+        (replicate ts (length b_ranges))
+        b_ranges
+    let match_range_last = a_ranges |> bsearch_last
+        (\(ia,iA) (ib,_) -> ia==na ||
+            (as[iA] `geq` bs[ib]))
+        (\(ia,iA) (ib,_) -> ia<na &&
+            (as[iA] `lt`  bs[ib]))
+        (map2 (\(ia,iA) f_m ->
+                if ia<0 || iA<0 then (-1)
+                else i64.max f_m 0
+            ) a_ranges match_range_first
+        )
+        (replicate ts (length b_ranges))
+        b_ranges
+    let match_ranges = zip match_range_first match_range_last
+        |> map (\(f_m,l_m) ->
+            let f_m' = if f_m < 0
+                then l_m
+                else f_m
+            let m_count = if f_m < 0
+                then 1
+                else l_m - f_m + 1
+            in (f_m', m_count)
+        )
+    -- map to index ranges
+    in match_ranges |> map (\(first_m, count) -> (first_m, first_m+count))
+        |> map (\(first_m,last_m) -> if first_m<0 then (-1,-1) else
+            (b_bounds[first_m], if last_m==ts then nb else b_bounds[last_m])
+        )
+
+-- | Perform bsearch_last implementation using Merge-Path co-partitioning.
+--
+-- For as, bs sorted,
+-- for each value in as,
+-- find the index of the last match in bs.
+def bsearch_last_merge_path [na] [nb] 't
+    (geq: t -> t -> bool)
+    (leq: t -> t -> bool)
+    (gt : t -> t -> bool)
+    (lt : t -> t -> bool)
+    (merge_path_threads : i64)
+    (as : [na]t)
+    (bs : [nb]t)
+: [na]i64 =
+    -- Calculate the Merge-Path.
+    let merge_path = find_merge_path
+        (geq) (lt) as bs merge_path_threads
+    -- Get search regions in bs per partition in as
+    let part_match = merge_path_find_matching_partitions_for_last
+        (geq) (leq) (gt) (lt) as bs merge_path
+    -- Find the partition id of each element in as
+    -- ie the last partition where part_index <= element_index
+    let a_bounds = merge_path |> map (.0)
+    let (min_is, max_is) = iota na
+        |> bsearch_last (>=) (<)
+            (replicate na 0)
+            (replicate na (length a_bounds))
+            a_bounds
+        |> map (\i -> part_match[i])
+        |> unzip
+    in as |> bsearch_last
+        (geq) (lt) min_is max_is bs
