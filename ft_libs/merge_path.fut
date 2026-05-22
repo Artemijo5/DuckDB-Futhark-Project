@@ -259,13 +259,7 @@ def merge_path_find_matching_partitions_for_last [na] [nb] [ts] 't
         b_ranges
     let match_ranges = zip match_range_first match_range_last
         |> map (\(f_m,l_m) ->
-            let f_m' = if f_m < 0
-                then l_m
-                else f_m
-            let m_count = if f_m < 0
-                then 1
-                else l_m - f_m + 1
-            in (f_m', m_count)
+            if f_m<0 then (-1,0) else (f_m,l_m-f_m+1)
         )
     -- map to index ranges
     in match_ranges |> map (\(first_m, count) -> (first_m, first_m+count))
