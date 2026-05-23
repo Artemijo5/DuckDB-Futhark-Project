@@ -12,7 +12,7 @@ def b_replicated_iota [n]
 	let total_sz = i64.sum szs
 	in bsearch_last_merge_path
 		(>=) (<)
-		((n+2047)/2048)
+		((n+total_sz+4095)/4096)
 		(iota total_sz)
 		(prefix_szs)
 
@@ -38,7 +38,7 @@ def b_repl_segm_iota [n]
 	let total_sz = i64.sum szs
 	let repl_iota = bsearch_last_merge_path
 		(>=) (<)
-		((n+2047)/2048)
+		((n+total_sz+4095)/4096)
 		(iota total_sz)
 		(prefix_szs)
 	let segm_iota = map2 (\repl_i ind -> ind - prefix_szs[repl_i])
