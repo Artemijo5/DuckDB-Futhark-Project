@@ -124,6 +124,8 @@ module ft_dclust
 	-- 3. pairs of neighbouring partitions
 	-- 4. #pairs per partition
 	-- 5. index of each partition's segment in 3
+	-- 6. #cmps per part (ie for partition k, how many comparisons each of k's points will make)
+	-- 7. exclusive prefix sum of comparisons in partition pairs
 	def partition_information [np] [n]
 		(bidir : bool)
 		(extPar : i64)
@@ -143,7 +145,29 @@ module ft_dclust
 		let pairs_per_part = hist (+) 0 np
 			(part_neigh_pairs |> map (.0)) (part_neigh_pairs |> map (\_ -> 1i64))
 		let pairs_index_per_part = pairs_per_part |> exscan (+) 0
-		in (pids, pts_per_part, part_neigh_pairs, pairs_per_part, pairs_index_per_part)
+		-- calculate #6 and #7
+		let pairs_ks = part_neigh_pairs |> map (.0)
+		let pairs_flags = pairs_ks |> group_boundaries (!=)
+		let parts_present = pairs_ks
+			|> zip pairs_flags
+			|> filter (.0)
+			|> map (.1)
+		let n_pr = length parts_present
+		let pairs_cmps_count = part_neigh_pairs
+			|> map (\(_,pid2) -> pts_per_part[pid2])
+		let cmps_per_part = b_segmented_reduce (+) (-) 0 pairs_flags pairs_cmps_count
+			|> sized n_pr
+		let cmps_per_part' = scatter (replicate np 0) (parts_present |> sized n_pr) cmps_per_part
+		let cmps_prefix = b_segmented_exscan (+) (-) 0 pairs_flags pairs_cmps_count
+		in (
+			pids,
+			pts_per_part,
+			part_neigh_pairs,
+			pairs_per_part,
+			pairs_index_per_part,
+			cmps_per_part',
+			cmps_prefix
+		)
 
 	-- | Get neighbour counts per point.
 	def get_neighbour_counts [n] [np]
@@ -153,9 +177,10 @@ module ft_dclust
 		(pids : [n]i64)
 		(part_pairs : [](i64,i64))
 		(part_is : [np]i64)
-		(part_sz : [np]i64)
 		(part_pairs_index : [np]i64)
 		(part_pairs_count : [np]i64)
+		(part_cmps : [np]i64)
+		(part_cmps_prefix : []i64)
 	: [n]i64 =
 		let init_neigh_count : [n]i64 = replicate n 1i64
 		let num_iter = (n + seed_count - 1) / seed_count
@@ -163,30 +188,42 @@ module ft_dclust
 		for j<num_iter do
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
-			-- has 1 instance of a point's index for every neighbour that point has found
-			-- separated into 2 equi-sized arrays
-			let (cur_mins,cur_maxs) = (inf..<sup)
+			-- expand each point in window
+			-- by how many comparisons it'll make
+			-- based on its pid
+			-- and save the pid and ind to find i2 for each comparison
+			let expanded_i1 = (inf..<sup)
 				|> map (\i1 -> (i1,pids[i1]))
-				-- expand to partitions it is compared with
 				|> b_expand
-					(\(_,pid1) -> part_pairs_count[pid1])
-					(\(i1,pid1) ind ->
-						let index_in_pairs = part_pairs_index[pid1] + ind
-						let pid2 = (part_pairs[index_in_pairs]).1
-						in (i1,pid2)
-					)
-				|> b_expand
-					(\(_,pid2) -> part_sz[pid2])
-					(\(i1,pid2) ind ->
-						let i2 = part_is[pid2] + ind
-						in (i1,i2)
-					)
+					(\(_,pid1) -> part_cmps[pid1])
+					(\(i1,pid1) ind -> (i1,pid1,ind))
+			-- segmented binary search
+			-- to find i2
+			let expanded_i2 = expanded_i1
+				|> map (.2)
+				|> bsearch_last (>=) (<)
+					(expanded_i1 |> map
+						(\(_,pid1,_) -> part_pairs_index[pid1]))
+					(expanded_i1 |> map
+						(\(_,pid1,_) -> part_pairs_index[pid1] + part_pairs_count[pid1]))
+					part_cmps_prefix
+				|> zip (expanded_i1 |> map (.2))
+				|> map (\(ind, i_in_pairs) ->
+					let pid2 = (part_pairs[i_in_pairs]).1
+					let i_in_pid2 = ind - part_cmps_prefix[i_in_pairs]
+					in part_is[pid2] + i_in_pid2
+				)
+			let (cur_mins,cur_maxs) = map2 (\(i1,_,_) i2 -> (i1, i2))
+					expanded_i1 expanded_i2
+				-- filter out where i1>=i2
+				-- each pair is only checked once
+				-- self-comparison is obsolete
 				|> filter (\(i1,i2) -> i1<i2)
+				-- distance calculation
 				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
 				|> unzip
 			-- add neighbour counts found now to those found previously
-			in if (length cur_mins)==0 then neigh_count else
-			reduce_by_index neigh_count (+) 0 cur_mins (cur_mins |> map (\_ -> 1i64))
+			in reduce_by_index neigh_count (+) 0 cur_mins (cur_mins |> map (\_ -> 1i64))
 				|> map2 (+) (hist (+) 0 n cur_maxs (cur_maxs |> map (\_ -> 1i64)))
 			--	|> trace
 		in final_neigh_count
@@ -210,13 +247,28 @@ module ft_dclust
 	-- | Get information on partition core pts.
 	-- 1. #core points per partition
 	-- 2. index of first core point per partition
+	-- 3. #cmps (with core points) per partition
+	-- 4. cmps prefix per partition
 	def part_get_core_info [n] [np]
 		(core_pid : [n]i64)
 		(_ : [np]i64) -- part_is
-	: ([np]i64, [np]i64) =
+		(part_pairs : [](i64,i64))
+	: ([np]i64, [np]i64, [np]i64, []i64) =
 		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
 		let first_per_part = count_per_part |> exscan (+) 0
-		in (count_per_part, first_per_part)
+		let pairs_ks = part_pairs |> map (.0)
+		let pairs_flags = pairs_ks |> group_boundaries (!=)
+		let parts_present = pairs_ks
+			|> zip pairs_flags
+			|> filter (.0)
+			|> map (.1)
+		let n_pr = length parts_present
+		let pairs_counts = part_pairs |> map (\(_,pid2) -> count_per_part[pid2])
+		let cmps_per_part = b_segmented_reduce (+) (-) 0 pairs_flags pairs_counts
+			|> sized n_pr
+		let cmps_per_part' = scatter (replicate np 0) (parts_present |> sized n_pr) cmps_per_part
+		let cmps_prefix = b_segmented_exscan (+) (-) 0 pairs_flags pairs_counts
+		in (count_per_part, first_per_part, cmps_per_part', cmps_prefix)
 
 	-- | Find clusters among core points.
 	def find_clusters [n] [np]
@@ -226,9 +278,10 @@ module ft_dclust
 		(pids : [n]i64)
 		(part_pairs : [](i64,i64))
 		(part_core_is : [np]i64)
-		(part_core_sz : [np]i64)
 		(part_pairs_index : [np]i64)
 		(part_pairs_count : [np]i64)
+		(part_core_cmps : [np]i64)
+		(part_core_cmps_prefix : []i64)
 	=
 		let num_iter = (n + seed_count - 1) / seed_count
 		let init_cid = iota n
@@ -237,21 +290,27 @@ module ft_dclust
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
 			-- has every min-max pair of neighbours found
-			let cur_neigh = (inf..<sup)
+			let expanded_i1 = (inf..<sup)
 				|> map (\i1 -> (i1, pids[i1]))
 				|> b_expand
-					(\(_,pid1) -> part_pairs_count[pid1])
-					(\(i1,pid1) ind ->
-						let index_in_pairs = part_pairs_index[pid1] + ind
-						let pid2 = (part_pairs[index_in_pairs]).1
-						in (i1,pid2)
-					)
-				|> b_expand
-					(\(_,pid2) -> part_core_sz[pid2])
-					(\(i1,pid2) ind ->
-						let i2 = part_core_is[pid2] + ind
-						in (i1,i2)
-					)
+					(\(_,pid1) -> part_core_cmps[pid1])
+					(\(i1,pid1) ind -> (i1,pid1,ind))
+			let expanded_i2 = expanded_i1
+				|> map (.2)
+				|> bsearch_last (>=) (<)
+					(expanded_i1 |> map
+						(\(_,pid1,_) -> part_pairs_index[pid1]))
+					(expanded_i1 |> map
+						(\(_,pid1,_) -> part_pairs_index[pid1] + part_pairs_count[pid1]))
+					part_core_cmps_prefix
+				|> zip (expanded_i1 |> map (.2))
+				|> map (\(ind, i_in_pairs) ->
+					let pid2 = (part_pairs[i_in_pairs]).1
+					let i_in_pid2 = ind - part_core_cmps_prefix[i_in_pairs]
+					in part_core_is[pid2] + i_in_pid2
+				)
+			let cur_neigh = map2 (\(i1,_,_) i2 -> (i1, i2))
+					expanded_i1 expanded_i2
 				|> filter (\(i1,i2) -> i1<i2)
 				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
 			let cur_node_no = if ((length cur_neigh) == 0) then 0 else
@@ -287,9 +346,10 @@ module ft_dclust
 		(core_cids : [nc]i64)
 		(part_pairs : [](i64,i64))
 		(part_core_is : [np]i64)
-		(part_core_sz : [np]i64)
 		(part_pairs_index : [np]i64)
 		(part_pairs_count : [np]i64)
+		(part_core_cmps : [np]i64)
+		(part_core_cmps_prefix : []i64)
 	=
 		-- #non-core points
 		let nnc = n - nc
@@ -308,21 +368,28 @@ module ft_dclust
 			let sup = i64.min nnc (inf+seed_count)
 			let cur_is = (inf..<sup) |> map (\i -> non_core_is[i])
 			-- finds minimum cid neighbouring each point
-			let (cur_xs,cur_ys) = cur_is
+			let expanded_i1 = cur_is
 				|> map (\i1 -> (i1, pids[i1]))
 				|> b_expand
-					(\(_,pid1) -> part_pairs_count[pid1])
-					(\(i1,pid1) ind ->
-						let index_in_pairs = part_pairs_index[pid1] + ind
-						let pid2 = (part_pairs[index_in_pairs]).1
-						in (i1,pid2)
+					(\(_,pid1) -> part_core_cmps[pid1])
+					(\(i1,pid1) ind -> (i1,pid1,ind)
 					)
-				|> b_expand
-					(\(_,pid2) -> part_core_sz[pid2])
-					(\(i1,pid2) ind ->
-						let i2 = part_core_is[pid2] + ind
-						in (i1,i2)
-					)
+			let expanded_i2 = expanded_i1
+				|> map (.2)
+				|> bsearch_last (>=) (<)
+					(expanded_i1 |> map
+						(\(_,pid1,_) -> part_pairs_index[pid1]))
+					(expanded_i1 |> map
+						(\(_,pid1,_) -> part_pairs_index[pid1] + part_pairs_count[pid1]))
+					part_core_cmps_prefix
+				|> zip (expanded_i1 |> map (.2))
+				|> map (\(ind, i_in_pairs) ->
+					let pid2 = (part_pairs[i_in_pairs]).1
+					let i_in_pid2 = ind - part_core_cmps_prefix[i_in_pairs]
+					in part_core_is[pid2] + i_in_pid2
+				)
+			let (cur_xs,cur_ys) = map2 (\(i1,_,_) i2 -> (i1,i2))
+					expanded_i1 expanded_i2
 				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] core_pts[i2])
 				|> map (\(i1,i2) -> 
 					let cid2 = core_cids[i2]
@@ -343,7 +410,7 @@ module ft_dclust
 	: ([n]bool, [n]i64) =
 		let (subdiv', (pts',_,part_is,is))
 			= partition_dataset eps subdiv pts
-		let (pids, part_sz, part_pairs, part_pairs_count, part_pairs_is)
+		let (pids, _, part_pairs, part_pairs_count, part_pairs_is, part_cmps, part_cmp_prefix)
 			= partition_information false extPar eps subdiv'
 				part_is
 				pts'
@@ -354,9 +421,10 @@ module ft_dclust
 			pids
 			part_pairs
 			part_is
-			part_sz
 			part_pairs_is
 			part_pairs_count
+			part_cmps
+			part_cmp_prefix
 		let is_core = get_is_core
 			neigh_count
 			minPts
@@ -364,9 +432,10 @@ module ft_dclust
 			pts'
 			pids
 			is_core
-		let (part_core_sz, part_core_is) = part_get_core_info
+		let (_, part_core_is, part_core_cmps, part_core_cmps_prefix) = part_get_core_info
 			core_pids
 			part_is
+			part_pairs
 		let core_cids = find_clusters
 			seed_count
 			eps
@@ -374,14 +443,19 @@ module ft_dclust
 			core_pids
 			part_pairs
 			part_core_is
-			part_core_sz
 			part_pairs_is
 			part_pairs_count
+			part_core_cmps
+			part_core_cmps_prefix
 		-- Get bidirectional partition pairs & core info
-		let (_, _, part_pairs_bd, part_pairs_count_bd, part_pairs_is_bd)
+		let (_, _, part_pairs_bd, part_pairs_count_bd, part_pairs_is_bd, _, _)
 			= partition_information true extPar eps subdiv'
 				part_is
 				pts'
+		let (_, _, part_core_cmps_bd, part_core_cmps_prefix_bd) = part_get_core_info
+			core_pids
+			part_is
+			part_pairs_bd
 		let cluster_id = assign_cluster_ids
 			seed_count
 			eps
@@ -392,9 +466,10 @@ module ft_dclust
 			core_cids
 			part_pairs_bd
 			part_core_is
-			part_core_sz
 			part_pairs_is_bd
 			part_pairs_count_bd
+			part_core_cmps_bd
+			part_core_cmps_prefix_bd
 		let is_core'    = scatter (replicate n false) is is_core
 		let cluster_id' = scatter (replicate n (-1))  is cluster_id
 		in (is_core', cluster_id')

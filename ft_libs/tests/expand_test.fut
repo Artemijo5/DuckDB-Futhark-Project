@@ -15,10 +15,10 @@
 
 -- Test 3 different methods for this problem:
 -- 1. using the scan hof with the (i64.min) operator.
--- 2. using the expand function from the segmented extension.
--- 3. using a binary search.
+-- 2. using the expand function from segmented.
+-- 3. using a custom expand function.
 -- ==
--- entry: mk_segments_scan mk_segments_expand mk_segments_bsearch
+-- entry: mk_segments_scan mk_segments_expand mk_segments_my_expand
 -- input {16i64 [0i64, 4i64, 5i64, 9i64, 12i64, 15i64]}
 -- output {[0i64,0i64,0i64,0i64,1i64,2i64,2i64,2i64,2i64,3i64,3i64,3i64,4i64,4i64,4i64,5i64]}
 -- input {16i64 [0i64, 0i64, 4i64, 5i64, 9i64, 9i64, 9i64, 12i64, 15i64, 15i64]}
@@ -56,42 +56,36 @@ entry mk_segments_expand [k]
 			(\i _ -> i)
 		|> sized n
 
--- | Binary search:
--- for each value v in vs,
--- find the largest index i,
--- such that v >= xs[i].
-def bsearch_last [nvs] [n] 't
-	(geq: t -> t -> bool)
-	(lt : t -> t -> bool)
-	(min_is : [nvs]i64)
-	(max_is : [nvs]i64) -- exclusive
-	(xs : [n]t)
-	(vs : [nvs]t)
-: [nvs]i64 = vs |> map3 (\i_min i_max v ->
-	if i_min<0 || (v `lt` xs[i_min]) then (-1) else
-	let (found_at,_) = loop (i, last_step) = (i_min, i_max-i_min)
-	while i>=0 && i>=i_min && i<i_max &&
-		!( (v `geq` xs[i]) && ( i==(i_max-1) || (v `lt` xs[i+1]) ) )
-	do
-		-- check for kv>=cv && kv<nv is done in loop conditions
-		-- so inside loop assume that isn't the case
-		let this_step = (last_step+1)/2 in
-		if (v `lt` xs[i]) then
-			(i64.max i_min (i-this_step), this_step)
-		else
-			(i64.min (i_max-1) (i+this_step), this_step)
-	in found_at
-) min_is max_is
+-- | Alternative implementation of expand.
+def my_expand [n] 't1 't2
+	(sz  : t1 -> i64)
+	(get : t1 -> i64 -> t2)
+	(xs  : [n]t1)
+: []t2 =
+	let szs = xs |> map (sz >-> (i64.max 0))
+	let prefix_szs = szs |> scan (+) 0
+		|> map2 (\sz_at pref -> pref-sz_at) szs
+	let total_sz = reduce (+) 0 szs
+	let repl_iota = hist (i64.max) (-1) total_sz prefix_szs (iota n)
+		|> scan (i64.max) (-1)
+	let segm_iota = iota total_sz
+		|> map2 (\r_i i -> i - prefix_szs[r_i]) repl_iota
+	in map2 (\r_i s_i -> get xs[r_i] s_i) repl_iota segm_iota
 
-entry mk_segments_bsearch [k]
+entry mk_segments_my_expand [k]
 	(n : i64)
 	(k_is : [k]i64)
 : [n]i64 =
-	-- For each index i in iota n,
-	-- find the largest index i,
-	-- such that i >= k_is[j].
-	iota n |> bsearch_last
-		(>=) (<)
-		(replicate n 0)
-		(replicate n k)
-		k_is
+	-- Obtain the size of each segment
+	let k_sz = iota k
+		|> map (\i ->
+			if i==k-1
+			then n - k_is[i]
+			else k_is[i+1] - k_is[i]
+		)
+	-- Expand
+	in iota k
+		|> my_expand
+			(\i -> k_sz[i])
+			(\i _ -> i)
+		|> sized n
