@@ -3,8 +3,9 @@ import "../ftColumns"
 
 import "ft_distance"
 
-import "ft_dclust"
+--import "ft_dclust"
 --import "ft_dclust_alt"
+import "ft_dclust_single"
 
 module euclidean2_f64 = euclidean_d vector_2 f64
 module euclidean3_f64 = euclidean_d vector_3 f64
