@@ -39,7 +39,7 @@ def get_connected_subgraph_ids [n]
 		let pivots_from_mins = reduce_by_index pivots_from_maxs
 			(i64.min) i64.highest
 			mins_from_maxs mins_from_mins
-		-- 'Shortcut' inner loop to eliminate monotonous paths
+		-- 'Shortcut' inner loop to eliminate monotone paths
 		-- will result in less histogram calls overall...
 		let (_,pivots_final)
 		 = loop (old_inner, new_inner) = (iota k, pivots_from_mins)

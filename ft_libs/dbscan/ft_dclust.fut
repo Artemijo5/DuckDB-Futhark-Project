@@ -1,7 +1,7 @@
 import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
 import "../merge_path"
-import "../b_segmented"
+import "../lib/github.com/diku-dk/segmented/segmented"
 import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
@@ -168,14 +168,14 @@ module ft_dclust
 			let (cur_mins,cur_maxs) = (inf..<sup)
 				|> map (\i1 -> (i1,pids[i1]))
 				-- expand to partitions it is compared with
-				|> b_expand
+				|> expand
 					(\(_,pid1) -> part_pairs_count[pid1])
 					(\(i1,pid1) ind ->
 						let index_in_pairs = part_pairs_index[pid1] + ind
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
-				|> b_expand
+				|> expand
 					(\(_,pid2) -> part_sz[pid2])
 					(\(i1,pid2) ind ->
 						let i2 = part_is[pid2] + ind
@@ -239,14 +239,14 @@ module ft_dclust
 			-- has every min-max pair of neighbours found
 			let cur_neigh = (inf..<sup)
 				|> map (\i1 -> (i1, pids[i1]))
-				|> b_expand
+				|> expand
 					(\(_,pid1) -> part_pairs_count[pid1])
 					(\(i1,pid1) ind ->
 						let index_in_pairs = part_pairs_index[pid1] + ind
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
-				|> b_expand
+				|> expand
 					(\(_,pid2) -> part_core_sz[pid2])
 					(\(i1,pid2) ind ->
 						let i2 = part_core_is[pid2] + ind
@@ -310,14 +310,14 @@ module ft_dclust
 			-- finds minimum cid neighbouring each point
 			let (cur_xs,cur_ys) = cur_is
 				|> map (\i1 -> (i1, pids[i1]))
-				|> b_expand
+				|> expand
 					(\(_,pid1) -> part_pairs_count[pid1])
 					(\(i1,pid1) ind ->
 						let index_in_pairs = part_pairs_index[pid1] + ind
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
-				|> b_expand
+				|> expand
 					(\(_,pid2) -> part_core_sz[pid2])
 					(\(i1,pid2) ind ->
 						let i2 = part_core_is[pid2] + ind

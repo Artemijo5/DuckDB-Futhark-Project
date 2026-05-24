@@ -1,7 +1,7 @@
 import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
 import "../merge_path"
-import "../b_segmented"
+import "../lib/github.com/diku-dk/segmented/segmented"
 import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
@@ -155,10 +155,11 @@ module ft_dclust
 		let n_pr = length parts_present
 		let pairs_cmps_count = part_neigh_pairs
 			|> map (\(_,pid2) -> pts_per_part[pid2])
-		let cmps_per_part = b_segmented_reduce (+) (-) 0 pairs_flags pairs_cmps_count
+		let cmps_per_part = segmented_reduce (+) 0 pairs_flags pairs_cmps_count
 			|> sized n_pr
 		let cmps_per_part' = scatter (replicate np 0) (parts_present |> sized n_pr) cmps_per_part
-		let cmps_prefix = b_segmented_exscan (+) (-) 0 pairs_flags pairs_cmps_count
+		let cmps_prefix = segmented_scan (+) 0 pairs_flags pairs_cmps_count
+			|> map2 (\v pref -> pref - v) pairs_cmps_count
 		in (
 			pids,
 			pts_per_part,
@@ -194,7 +195,7 @@ module ft_dclust
 			-- and save the pid and ind to find i2 for each comparison
 			let expanded_i1 = (inf..<sup)
 				|> map (\i1 -> (i1,pids[i1]))
-				|> b_expand
+				|> expand
 					(\(_,pid1) -> part_cmps[pid1])
 					(\(i1,pid1) ind -> (i1,pid1,ind))
 			-- segmented binary search
@@ -264,10 +265,11 @@ module ft_dclust
 			|> map (.1)
 		let n_pr = length parts_present
 		let pairs_counts = part_pairs |> map (\(_,pid2) -> count_per_part[pid2])
-		let cmps_per_part = b_segmented_reduce (+) (-) 0 pairs_flags pairs_counts
+		let cmps_per_part = segmented_reduce (+) 0 pairs_flags pairs_counts
 			|> sized n_pr
 		let cmps_per_part' = scatter (replicate np 0) (parts_present |> sized n_pr) cmps_per_part
-		let cmps_prefix = b_segmented_exscan (+) (-) 0 pairs_flags pairs_counts
+		let cmps_prefix = segmented_scan (+) 0 pairs_flags pairs_counts
+			|> map2 (\v pref -> pref - v) pairs_counts
 		in (count_per_part, first_per_part, cmps_per_part', cmps_prefix)
 
 	-- | Find clusters among core points.
@@ -292,7 +294,7 @@ module ft_dclust
 			-- has every min-max pair of neighbours found
 			let expanded_i1 = (inf..<sup)
 				|> map (\i1 -> (i1, pids[i1]))
-				|> b_expand
+				|> expand
 					(\(_,pid1) -> part_core_cmps[pid1])
 					(\(i1,pid1) ind -> (i1,pid1,ind))
 			let expanded_i2 = expanded_i1
@@ -370,7 +372,7 @@ module ft_dclust
 			-- finds minimum cid neighbouring each point
 			let expanded_i1 = cur_is
 				|> map (\i1 -> (i1, pids[i1]))
-				|> b_expand
+				|> expand
 					(\(_,pid1) -> part_core_cmps[pid1])
 					(\(i1,pid1) ind -> (i1,pid1,ind)
 					)

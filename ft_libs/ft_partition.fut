@@ -13,7 +13,7 @@
 -- NOTE: only supports cases where at most 64 bits are used for partitioning
 
 import "ftbasics"
-import "b_segmented"
+import "lib/github.com/diku-dk/segmented/segmented"
 import "lib/github.com/diku-dk/sorts/radix_sort"
 
 -- Structs
@@ -199,7 +199,7 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 		    let (gather_groups, gather_is) = if dp==0
 		    	then (replicate n 0, iota n)
 		    	else taidade
-			    	|> b_expand (.1) (\(inf, _) ind -> (inf, inf+ind))
+			    	|> expand (.1) (\(inf, _) ind -> (inf, inf+ind))
 			    	|> unzip
 		    let gather_groups' = gather_groups |> group_boundaries (!=)
 		    	|> dict_encoding
@@ -221,7 +221,7 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 		    let new_part_bounds  = scatter old_part_bounds gather_is this_part_bounds
 		    let new_pXs = scatter (copy pXs) gather_is gather_xs'
 		    let new_pPs = scatter (copy pPs) gather_is gather_pLs'
-		    let new_part_sizes = b_segmented_reduce (+) (-) 0 new_part_bounds (replicate n 1i64)
+		    let new_part_sizes = segmented_reduce (+) 0 new_part_bounds (replicate n 1i64)
 		    let new_bound_is = indices new_part_bounds |> filter (\i -> new_part_bounds[i])
 		    let np = length new_part_sizes
 		    let new_taidade = zip (new_bound_is |> sized np) (new_part_sizes |> sized np)
@@ -253,7 +253,7 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 		    let (gather_groups, gather_is) = if dp==0
 		    	then (replicate n 0, iota n)
 		    	else taidade
-			    	|> b_expand (.1) (\(inf, _) ind -> (inf, inf+ind))
+			    	|> expand (.1) (\(inf, _) ind -> (inf, inf+ind))
 			    	|> unzip
 		    let gather_groups' = gather_groups |> group_boundaries (!=)
 		    	|> dict_encoding
@@ -275,7 +275,7 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 		    let new_part_bounds  = scatter old_part_bounds gather_is this_part_bounds
 		    let new_pXs = scatter (copy pXs) gather_is gather_xs'
 		    let new_pPs = scatter (copy pPs) gather_is gather_pLs'
-		    let new_part_sizes = b_segmented_reduce (+) (-) 0 new_part_bounds (replicate n 1i64)
+		    let new_part_sizes = segmented_reduce (+) 0 new_part_bounds (replicate n 1i64)
 		    let new_bound_is = indices new_part_bounds |> filter (\i -> new_part_bounds[i])
 		    let np = length new_bound_is
 		    -- new taidade are obtained by comparison with prev's partitions
@@ -327,13 +327,13 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 			let bound_is = part_sizes |> exscan (+) 0
 			let gather_is = parts_to_subdivide |> map (\i ->
 				(bound_is[i], if i==(length bound_is - 1) then n else bound_is[i+1])
-			) |> b_expand (\(inf,sup) -> sup-inf) (\(inf,_) ind -> inf + ind)
+			) |> expand (\(inf,sup) -> sup-inf) (\(inf,_) ind -> inf + ind)
 			let gather_xs = gather_is |> map (\i -> pXs[i])
 			let this_bounds = gather_xs
 				|> getPartitionBounds 0 ((cur_depth+1)*radix_size - 1)
 			let new_bounds = scatter (copy cur_bounds) gather_is this_bounds
 			let new_depths = scatter cur_depths gather_is (gather_is |> map (\_ -> (cur_depth+1)))
-			let new_sizes = b_segmented_reduce (+) (-) 0 new_bounds (replicate n 1i64)
+			let new_sizes = segmented_reduce (+) 0 new_bounds (replicate n 1i64)
 			in (new_bounds, new_depths, new_sizes, cur_depth+1)
 		let (final_bounds, final_depths) = indices part_bounds
 			|> filter (\i -> part_bounds[i])
@@ -383,7 +383,7 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 			--)
 			let gather_is = parts_to_subdivide |> map (\i ->
 				(bound_is[i], if i==(length bound_is - 1) then n else bound_is[i+1])
-			) |> b_expand (\(inf,sup) -> sup-inf) (\(inf,_) ind -> inf + ind)
+			) |> expand (\(inf,sup) -> sup-inf) (\(inf,_) ind -> inf + ind)
 			let gather_xs = gather_is |> map (\i -> pXs[i])
 			let this_bounds = gather_xs
 				|> getPartitionBounds 0 ((cur_depth+1)*radix_size - 1)

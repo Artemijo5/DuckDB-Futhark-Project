@@ -1,4 +1,5 @@
 require {
-  github.com/diku-dk/sorts 0.7.1 #b42cfcb2d927d4192a1083f7d9efcdbfd1e5aa4d
+  github.com/diku-dk/sorts 0.7.2 #4dbe5a2e489fa11b397e2eaf167059376f0d628a
   github.com/athas/vector 0.7.1 #c8f9f029530cb29db9b2957b80e65dbe893c01df
+  github.com/diku-dk/segmented 0.5.3 #c96450f95a1e43e0906366a1dab45cb18220a643
 }
