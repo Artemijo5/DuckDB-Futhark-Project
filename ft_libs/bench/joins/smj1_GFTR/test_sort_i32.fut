@@ -5,7 +5,7 @@ import "../../../ftsort"
 -- Sort the 2 key columns, also transforming their payloads.
 --
 -- ==
--- entry: do_radixSort_i32
+-- entry: do_mergeSort_i32 do_radixSort_i32
 -- compiled input @data/dat_i32.in
 -- auto output
 

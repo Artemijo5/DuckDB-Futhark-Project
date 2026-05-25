@@ -2,8 +2,8 @@
 
 futhark_backend=cuda
 runs_No=25
-#sort_entry="do_mergeSort_i32"
-sort_entry="do_radixSort_i32"
+sort_entry="do_mergeSort_i32"
+#sort_entry="do_radixSort_i32"
 
 n1=$1
 n2=$((2*n1))
