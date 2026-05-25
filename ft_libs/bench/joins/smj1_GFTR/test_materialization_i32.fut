@@ -1,0 +1,18 @@
+import "../../../ftbasics"
+
+-- Materialization stage of SMJ (GFTR).
+--
+-- ==
+-- entry: do_materialization_i32
+-- compiled input @data/dat_i32.in
+
+entry do_materialization_i32 [b1] [b2]
+	(vs : []i32)
+	(ix : []i64)
+	(iy : []i64)
+	(pL1: [][b1]u8)
+	(pL2: [][b2]u8)
+=
+	let g_pL1 = ix |> gather (replicate b1 0u8) pL1
+	let g_pL2 = iy |> gather (replicate b2 0u8) pL2
+	in (vs, g_pL1, g_pL2)

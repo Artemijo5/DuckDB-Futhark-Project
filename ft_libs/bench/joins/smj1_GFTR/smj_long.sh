@@ -5,6 +5,7 @@ runs_No=25
 #sort_entry="do_mergeSort_i64"
 sort_entry="do_radixSort_i64"
 
+
 n1=$1
 n2=$n1
 b=$2
@@ -30,7 +31,7 @@ mv "data/datagen_long:do_datagen_i64-data_dat_i64.in.out" data/dat_i64.in
 # SMJ
 if $combine ; then
 	# Do all SMJ stages in one script.
-	futhark bench $verbose --backend=$futhark_backend --runs=$runs_No test_SMJ_GFUR_i64.fut --entry-point="do_SMJ_i64"
+	futhark bench $verbose --backend=$futhark_backend --runs=$runs_No test_SMJ_GFTR_i64.fut --entry-point="do_SMJ_i64"
 	rm -f data/*
 else
 	# Sorting Stage

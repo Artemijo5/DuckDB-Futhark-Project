@@ -30,7 +30,7 @@ mv "data/datagen_wide:do_datagen_i32-data_dat_i32.in.out" data/dat_i32.in
 # SMJ
 if $combine ; then
 	# Do all SMJ stages in one script.
-	futhark bench $verbose --backend=$futhark_backend --runs=$runs_No test_SMJ_GFUR_i32.fut --entry-point="do_SMJ_i32"
+	futhark bench $verbose --backend=$futhark_backend --runs=$runs_No test_SMJ_GFTR_i32.fut --entry-point="do_SMJ_i32"
 	rm -f data/*
 else
 	# Sorting Stage
