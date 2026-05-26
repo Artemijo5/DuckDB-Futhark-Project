@@ -149,6 +149,7 @@ module ft_dclust
 	def get_neighbour_counts [n] [np]
 		(seed_count : i64)
 		(eps : t)
+		(minPts : i64)
 		(pts  : [n](vector t))
 		(pids : [n]i64)
 		(part_pairs : [](i64,i64))
@@ -182,11 +183,15 @@ module ft_dclust
 						in (i1,i2)
 					)
 				|> filter (\(i1,i2) -> i1<i2)
+				-- if both i1 and i2 are already found to be core pts, this is unneeded
+				-- NOTE this does not calculate true neighbourhood counts
+				-- but is enough to find core points
+				|> filter (\(i1,i2) -> neigh_count[i1]<minPts || neigh_count[i2]<minPts)
 				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
 				|> unzip
 			-- add neighbour counts found now to those found previously
 			in if (length cur_mins)==0 then neigh_count else
-			reduce_by_index neigh_count (+) 0 cur_mins (cur_mins |> map (\_ -> 1i64))
+			reduce_by_index (copy neigh_count) (+) 0 cur_mins (cur_mins |> map (\_ -> 1i64))
 				|> map2 (+) (hist (+) 0 n cur_maxs (cur_maxs |> map (\_ -> 1i64)))
 			--	|> trace
 		in final_neigh_count
@@ -253,6 +258,8 @@ module ft_dclust
 						in (i1,i2)
 					)
 				|> filter (\(i1,i2) -> i1<i2)
+				-- don't need pairs that already have the same cid
+				|> filter (\(i1,i2) -> cid[i1]!=cid[i2])
 				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
 			let cur_node_no = if ((length cur_neigh) == 0) then 0 else
 				1 + (cur_neigh |> map (.1) |> i64.maximum)
@@ -350,6 +357,7 @@ module ft_dclust
 		let neigh_count = get_neighbour_counts
 			seed_count
 			eps
+			minPts
 			pts'
 			pids
 			part_pairs
