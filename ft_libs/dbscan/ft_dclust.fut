@@ -6,6 +6,17 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
+-- Wrapper for expand_outer_reduce
+-- handling the case of 1 point.
+def expand_outer_red [n] 't
+	sz get op ne (xs : [n]t)
+= if n>1
+	then xs |> expand_outer_reduce sz get op ne
+	else xs |> expand (sz >-> (i64.max 1))
+		(\x ind -> if (sz x)==0 then ne else get x ind)
+		|> reduce op ne
+		|> replicate n
+
 -- DBSCAN implementation based on cuda-DClust+
 
 -- Original implementation uses a seed-list to expand clusters,
@@ -164,6 +175,19 @@ module ft_dclust
 		for j<num_iter do
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
+			-- Optimization for highly skewed datasets:
+			-- find cells where all points are already core, and skip pairs with those
+			-- NOTE this does not calculate true neighbourhood counts
+				-- but is enough to find core points
+			let exclude_cell = iota np
+				|> expand_outer_red
+					(\pid -> part_sz[pid])
+					(\pid ind -> neigh_count[part_is[pid] + ind])
+					(i64.min) (i64.highest)
+				|> map (\num -> num >= minPts)
+			-- find points that are already core
+			let already_core = neigh_count
+				|> map (\num -> num >= minPts)
 			-- has 1 instance of a point's index for every neighbour that point has found
 			-- separated into 2 equi-sized arrays
 			let (cur_mins,cur_maxs) = (inf..<sup)
@@ -176,6 +200,9 @@ module ft_dclust
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
+				-- if already core, skip partitions where all are core
+				|> filter (\(i1,pid2) -> !(exclude_cell[pid2] && already_core[i1]))
+				-- expand each adjacent cell to its points
 				|> expand
 					(\(_,pid2) -> part_sz[pid2])
 					(\(i1,pid2) ind ->
@@ -186,7 +213,7 @@ module ft_dclust
 				-- if both i1 and i2 are already found to be core pts, this is unneeded
 				-- NOTE this does not calculate true neighbourhood counts
 				-- but is enough to find core points
-				|> filter (\(i1,i2) -> neigh_count[i1]<minPts || neigh_count[i2]<minPts)
+				|> filter (\(i1,i2) -> !(already_core[i1] && already_core[i2]))
 				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
 				|> unzip
 			-- add neighbour counts found now to those found previously
@@ -241,9 +268,24 @@ module ft_dclust
 		for j < num_iter do
 			let inf = j*seed_count
 			let sup = i64.min n (inf+seed_count)
+			-- Optimization for highly skewed datasets:
+			-- find cells where all core points are already in the same cluster
+			-- and if a point is already in that cluster, it does not need to be compared there
+			let min_cid_per_cell = iota np
+				|> expand_outer_red
+					(\pid -> part_core_sz[pid])
+					(\pid ind -> cid[part_core_is[pid] + ind])
+					(i64.min) i64.highest
+			let max_cid_per_cell = iota np
+				|> expand_outer_red
+					(\pid -> part_core_sz[pid])
+					(\pid ind -> cid[part_core_is[pid] + ind])
+					(i64.max) i64.lowest
+			let exclude_cell = map2 (==) min_cid_per_cell max_cid_per_cell
 			-- has every min-max pair of neighbours found
 			let cur_neigh = (inf..<sup)
 				|> map (\i1 -> (i1, pids[i1]))
+				-- expand to ajacent cells
 				|> expand
 					(\(_,pid1) -> part_pairs_count[pid1])
 					(\(i1,pid1) ind ->
@@ -251,6 +293,9 @@ module ft_dclust
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
+				-- filter out cells that are entirely in the same cluster as i1
+				|> filter (\(i1,pid2) -> !(exclude_cell[pid2] && cid[i1]==min_cid_per_cell[pid2]))
+				-- expand pid2 to its core points
 				|> expand
 					(\(_,pid2) -> part_core_sz[pid2])
 					(\(i1,pid2) ind ->
