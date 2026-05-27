@@ -77,7 +77,9 @@ module ft_dclust
 			|> V.map (to_i64)
 			|> V.map2 (i64.max) (V.replicate 1i64)
 			|> V.to_array
-		in (sdv', I.index_dataset sdv' pts)
+		let (pts',part_bounds,part_is,is) = I.index_dataset sdv' pts
+		let np = length part_is
+		in (sdv', (pts', part_bounds |> sized np, part_is |> sized np, is))
 
 	-- | Get pairs of adjacent partitions
 	-- Specifically returns pairs (i,j) with i<=j.
@@ -164,6 +166,7 @@ module ft_dclust
 		(pts  : [n](vector t))
 		(pids : [n]i64)
 		(part_pairs : [](i64,i64))
+		(part_bounds : [np](vector t, vector t))
 		(part_is : [np]i64)
 		(part_sz : [np]i64)
 		(part_pairs_index : [np]i64)
@@ -202,6 +205,8 @@ module ft_dclust
 					)
 				-- if already core, skip partitions where all are core
 				|> filter (\(i1,pid2) -> !(exclude_cell[pid2] && already_core[i1]))
+				-- if point is too far from partition, skip
+				|> filter (\(i1,pid2) -> (D.dist_from_partition part_bounds[pid2] pts[i1]) `leq` eps )
 				-- expand each adjacent cell to its points
 				|> expand
 					(\(_,pid2) -> part_sz[pid2])
@@ -257,6 +262,7 @@ module ft_dclust
 		(pts  : [n](vector t))
 		(pids : [n]i64)
 		(part_pairs : [](i64,i64))
+		(part_bounds : [np](vector t, vector t))
 		(part_core_is : [np]i64)
 		(part_core_sz : [np]i64)
 		(part_pairs_index : [np]i64)
@@ -295,6 +301,8 @@ module ft_dclust
 					)
 				-- filter out cells that are entirely in the same cluster as i1
 				|> filter (\(i1,pid2) -> !(exclude_cell[pid2] && cid[i1]==min_cid_per_cell[pid2]))
+				-- if point is too far from partition, skip
+				|> filter (\(i1,pid2) -> (D.dist_from_partition part_bounds[pid2] pts[i1]) `leq` eps )
 				-- expand pid2 to its core points
 				|> expand
 					(\(_,pid2) -> part_core_sz[pid2])
@@ -338,6 +346,7 @@ module ft_dclust
 		(core_pts  : [nc](vector t))
 		(core_cids : [nc]i64)
 		(part_pairs : [](i64,i64))
+		(part_bounds : [np](vector t, vector t))
 		(part_core_is : [np]i64)
 		(part_core_sz : [np]i64)
 		(part_pairs_index : [np]i64)
@@ -369,6 +378,8 @@ module ft_dclust
 						let pid2 = (part_pairs[index_in_pairs]).1
 						in (i1,pid2)
 					)
+				-- if point is too far from partition, skip
+				|> filter (\(i1,pid2) -> (D.dist_from_partition part_bounds[pid2] pts[i1]) `leq` eps )
 				|> expand
 					(\(_,pid2) -> part_core_sz[pid2])
 					(\(i1,pid2) ind ->
@@ -393,7 +404,7 @@ module ft_dclust
 		(minPts : i64)
 		(pts : [n](vector t))
 	: ([n]bool, [n]i64) =
-		let (subdiv', (pts',_,part_is,is))
+		let (subdiv', (pts',part_bounds,part_is,is))
 			= partition_dataset eps subdiv pts
 		let (pids, part_sz, part_pairs, part_pairs_count, part_pairs_is)
 			= partition_information false extPar eps subdiv'
@@ -406,6 +417,7 @@ module ft_dclust
 			pts'
 			pids
 			part_pairs
+			part_bounds
 			part_is
 			part_sz
 			part_pairs_is
@@ -426,6 +438,7 @@ module ft_dclust
 			core_pts
 			core_pids
 			part_pairs
+			part_bounds
 			part_core_is
 			part_core_sz
 			part_pairs_is
@@ -444,6 +457,7 @@ module ft_dclust
 			core_pts
 			core_cids
 			part_pairs_bd
+			part_bounds
 			part_core_is
 			part_core_sz
 			part_pairs_is_bd
