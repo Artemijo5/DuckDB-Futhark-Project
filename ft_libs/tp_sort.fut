@@ -75,19 +75,19 @@ import "ftbasics"
 		(at_src : i64)
 		(chunk_size : i64)
 		(bInfo : tps_bufferInfo)
-		(bProc : *tps_bufferProc [chunks_No] [srcs_No])
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
 	: tps_bufferProc [chunks_No] [srcs_No] =
 		let freePos_waiting' = (copy bProc.freePos_waiting)
 			with [at_src] = bInfo.chunkSize - chunk_size
-		in bProc with freePos_waiting = freePos_waiting'
+		in (copy bProc) with freePos_waiting = freePos_waiting'
 
 	def markSrcExhausted [chunks_No] [srcs_No]
 		(at_src : i64)
-		(bProc : *tps_bufferProc [chunks_No] [srcs_No])
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
 	: tps_bufferProc [chunks_No] [srcs_No] =
 		let isSrcExhausted' = (copy bProc.isSrcExhausted)
 			with [at_src] = true
-		in bProc with isSrcExhausted = isSrcExhausted'
+		in (copy bProc) with isSrcExhausted = isSrcExhausted'
 
 	def next_unusedChunk [chunks_No] [srcs_No]
 		(bProc : tps_bufferProc [chunks_No] [srcs_No])
@@ -99,18 +99,18 @@ import "ftbasics"
 	def writeToBuffer_proc [chunks_No] [srcs_No]
 		(from_src : i64)
 		(at_cnk : i64)
-		(bProc : *tps_bufferProc [chunks_No] [srcs_No])
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
 	: tps_bufferProc [chunks_No] [srcs_No] =
 		let isChunkTaken' = (copy bProc.isChunkTaken)
 			with [at_cnk] = true
 		let free_positions' = (copy bProc.free_positions)
 			with [at_cnk] = bProc.freePos_waiting[from_src]
-		in (bProc with isChunkTaken = isChunkTaken')
+		in ((copy bProc) with isChunkTaken = isChunkTaken')
 			with free_positions = free_positions'
 
 	def fetchSorted_proc [chunks_No] [srcs_No]
 		(bInfo : tps_bufferInfo)
-		(bProc : *tps_bufferProc [chunks_No] [srcs_No])
+		(bProc : tps_bufferProc [chunks_No] [srcs_No])
 	: tps_bufferProc [chunks_No] [srcs_No] =
 		let active_srcs = bProc.isSrcExhausted |> countFor (not)
 		let total_free_pos = bProc.free_positions |> i64.sum
@@ -120,7 +120,7 @@ import "ftbasics"
 		let isChunkTaken' = ((copy bProc.isChunkTaken)
 			with [0:chunks_toFetch] = (replicate chunks_toFetch false))
 			with [chunks_No-freeChunksAtTheEnd : chunks_No] = (replicate freeChunksAtTheEnd false)
-		in bProc with isChunkTaken = isChunkTaken'
+		in (copy bProc) with isChunkTaken = isChunkTaken'
 
 -- Processing key buffers
 
@@ -189,12 +189,12 @@ module mk_keyTps_numeric (N : numeric) : mk_keyTps with t = N.t = {
 		(ks_waiting with [at_src,0:n] = ks_dat)
 			with [at_src,n:chunkSize] = (replicate (chunkSize-n) highest)
 
-	def writeToBuffer_ks [chunkSize] [chunks_No] [srcs_No]
+	def writeToBuffer_ks [chunkSize] [buff_size] [srcs_No]
 		(from_src : i64)
 		(at_cnk : i64)
 		(ks_waiting: [srcs_No][chunkSize]t)
-		(ks_buffer : *[chunks_No*chunkSize]t)
-	: [chunks_No*chunkSize]t =
+		(ks_buffer : *[buff_size]t)
+	: [buff_size]t =
 		ks_buffer with [at_cnk*chunkSize:(at_cnk+1)*chunkSize] = ks_waiting[from_src]
 
 	def fetchSorted_ks [n] [chunks_No] [srcs_No]

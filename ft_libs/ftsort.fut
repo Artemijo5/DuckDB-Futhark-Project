@@ -46,30 +46,6 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 	-- | Type used to preserve original index information when sorting (GFUR).
 	type sortInfo [n] 't = {ks: [n]t, is: [n]i64}
 
-	-- TODO take these to ftRelational I suppose
-
-	-- | Sorting information type (short)(GFTR).
-	type sortStruct_i16 [n] [b] = sortStruct [n] [b] i16
-	-- | Sorting information type (integer)(GFTR).
-	type sortStruct_i32 [n] [b] = sortStruct [n] [b] i32
-	-- | Sorting information type (long)(GFTR).
-	type sortStruct_i64 [n] [b] = sortStruct [n] [b] i64
-	-- | Sorting information type (float)(GFTR).
-	type sortStruct_f32 [n] [b] = sortStruct [n] [b] f32
-	-- | Sorting information type (double)(GFTR).
-	type sortStruct_f64 [n] [b] = sortStruct [n] [b] f64
-
-	-- | Sorting information type (short)(GFUR).
-	type sortInfo_i16 [n] = sortInfo [n] i16
-	-- | Sorting information type (integer)(GFUR).
-	type sortInfo_i32 [n] = sortInfo [n] i32
-	-- | Sorting information type (long)(GFUR).
-	type sortInfo_i64 [n] = sortInfo [n] i64
-	-- | Sorting information type (float)(GFUR).
-	type sortInfo_f32 [n] = sortInfo [n] f32
-	-- | Sorting information type (double)(GFUR).
-	type sortInfo_f64 [n] = sortInfo [n] f64
-
 -- Functions for GFTR sorting
 
 	-- | Merge sort (GFTR).

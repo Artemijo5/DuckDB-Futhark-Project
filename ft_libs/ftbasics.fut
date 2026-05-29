@@ -9,8 +9,8 @@
 		is |> map (\i -> if (i>=0 && i<n) then xs[i] else dummy_elem)
 
 	-- | Gather operation with destination array (based on futhark example).
-	-- Does NOT consume destination array.
-	def gather_overArray 't [ni] [n] (dest: [ni]t) (xs: [n]t) (is: [ni]i64) =
+	-- Consumes destination array.
+	def gather_overArray 't [ni] [n] (dest: *[ni]t) (xs: [n]t) (is: [ni]i64) =
 		dest
 		|> zip is
 		|> map (\(i,v) -> if (i>=0 && i<n) then xs[i] else v)

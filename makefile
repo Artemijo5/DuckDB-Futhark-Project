@@ -33,3 +33,9 @@ C-DClust:
 	futhark c ft_libs/dbscan/dclust_entry.fut -o ft_clibs/dclust_entry --library
 	$(CC) c_tests/src/dbscan/futhark_dclust_2d.c -o c_tests/dclust_2d.o $(CFLAGS) $(DEPS) ft_clibs/dclust_entry.c -lm
 	$(CC) c_tests/src/dbscan/futhark_dclust_3d.c -o c_tests/dclust_3d.o $(CFLAGS) $(DEPS) ft_clibs/dclust_entry.c -lm
+
+DuckDB-Synthetic:
+	mkdir -p ft_clibs
+	futhark cuda ft_libs/ftSynthetic.fut -i ft_clibs/ftSynthetic --library
+	$(CC) ft_clibs/ftSynthetic.c -o ft_clibs/libsynthetic.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
+	$(CC) c_tests/src/mk_tbls_zipf.c -i c_tests/mk_tbls_zipf.o $(CFLAGS) $(DEPS) ft_clibs/libsynthetic.so -lm
