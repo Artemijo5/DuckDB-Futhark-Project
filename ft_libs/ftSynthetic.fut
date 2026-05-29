@@ -37,6 +37,9 @@ entry zipf_skewed [n]
 		(fn * (eta*u - eta + 1)**alpha) |> i64.f64
 	)
 
+entry zipf_skewed_i32 s nv us : []i32 = zipf_skewed s nv us
+	|> map (i32.i64)
+
 -- | Parametric module for generating different types of synthetic data.
 -- Specifically:
 -- 1. Linearly (anti-)correlated multi-dimensional data.
