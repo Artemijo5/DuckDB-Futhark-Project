@@ -36,6 +36,11 @@ C-DClust:
 
 DuckDB-Synthetic:
 	mkdir -p ft_clibs
-	futhark cuda ft_libs/ftSynthetic.fut -i ft_clibs/ftSynthetic --library
+	futhark cuda ft_libs/ftSynthetic.fut -o ft_clibs/ftSynthetic --library
 	$(CC) ft_clibs/ftSynthetic.c -o ft_clibs/libsynthetic.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
-	$(CC) c_tests/src/mk_tbls_zipf.c -i c_tests/mk_tbls_zipf.o $(CFLAGS) $(DEPS) ft_clibs/libsynthetic.so -lm
+	$(CC) c_tests/src/mk_tbls_zipf.c -o c_tests/mk_tbls_zipf.o $(CFLAGS) $(DEPS) ft_clibs/libsynthetic.so -lm
+
+C-DuckDB-Synthetic:
+	mkdir -p ft_clibs
+	futhark c ft_libs/ftSynthetic.fut -o ft_clibs/ftSynthetic --library
+	$(CC) c_tests/src/mk_tbls_zipf.c -o c_tests/mk_tbls_zipf.o $(CFLAGS) $(DEPS) ft_clibs/ftSynthetic.c -lm

@@ -1,8 +1,5 @@
 // Make tables R_tbl, S_tbl, for narrow & wide joins tests.
 
-// TODO make sure the time measurements correspong to actual query execution
-// and not just time to launch the query or some other meaningless thing
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,18 +7,17 @@
 
 #include "../../clibs/mylogger.h"
 
-// TODO use getopt to set parameters
 #include <unistd.h>
 #include <getopt.h>
 
 #define R_name "R_tbl"
 #define S_name "S_tbl"
 
-#define default_R_size 1000000
-#define default_S_size 2000000
+#define default_R_size 8192
+#define default_S_size 16384
 
-#define default_R_vals 1000000
-#define default_S_vals 1000000
+#define default_R_vals 8192
+#define default_S_vals 8192
 
 #define default_k_type "INTEGER"
 #define default_pL_type "INTEGER"

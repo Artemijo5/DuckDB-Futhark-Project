@@ -97,6 +97,8 @@ import "tp_sort"
 			tR tS
 
 -- 4. Two-Pass Sort
+-- See tp_sort.fut for how to use these
+-- (use the key ones for payloads as well...)
 
 	entry init_bufferInfo cnk_sz cnk_No src_No
 	: tps_bufferInfo = init_bufferInfo cnk_sz cnk_No src_No
