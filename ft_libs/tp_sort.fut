@@ -28,7 +28,7 @@ import "ftbasics"
 --          call next_unusedChunk to see where to write it
 --          call writeToBuffer_ks (& _pL) to transfer
 --          call writeToBuffer_proc to mark the written chunk as used
---          Update that src buffer (first _ks, _pL, then _proc)
+--          Update that src waiting buffer (first _ks, _pL, then _proc)
 --             If it is exhausted, mark it as exhausted instead (only _proc)
 --       Sort ks_buffer (together with pL_buffer)
 --       call fetchSorted_ks (& _pL) to output
@@ -148,6 +148,9 @@ module type mk_keyTps = {
 
 	val fetchSorted_ks [n] [chunks_No] [srcs_No]
 	: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> [n]t -> []t
+
+	val afterFetching_ks [n] [chunks_No] [srcs_No]
+	: tps_bufferInfo -> tps_bufferProc [chunks_No] [srcs_No] -> *[n]t -> [n]t
 }
 
 module mk_keyTps_numeric (N : numeric) : mk_keyTps with t = N.t = {
