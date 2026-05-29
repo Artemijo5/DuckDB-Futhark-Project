@@ -197,6 +197,9 @@ int main(int argc, char *argv[]) {
 				futhark_free_f64_1d(ctx, col1);
 				futhark_free_f64_1d(ctx, col2);
 
+				futhark_free_f64_1d(ctx, ft_dat1);
+				futhark_free_f64_1d(ctx, ft_dat2);
+
 				col1 = col1_tmp;
 				col2 = col2_tmp;
 

@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 
 	// init logger
 
-		FILE* logfile = loginit(LOGFILE, "Starting program to create tables for join.");
+		FILE* logfile = loginit(LOGFILE, "Starting program to create zipf-skewed foreign key table.");
 	    if(LOGFILE && !logfile) {
 	      perror("Failed to initialise logger.\n");
 	      return -1;

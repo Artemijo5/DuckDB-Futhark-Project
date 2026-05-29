@@ -44,3 +44,12 @@ C-DuckDB-Synthetic:
 	mkdir -p ft_clibs
 	futhark c ft_libs/ftSynthetic.fut -o ft_clibs/ftSynthetic --library
 	$(CC) c_tests/src/mk_tbls_zipf.c -o c_tests/mk_tbls_zipf.o $(CFLAGS) $(DEPS) ft_clibs/ftSynthetic.c -lm
+
+Joins:
+	mkdir -p ft_clibs
+	futhark cuda ft_libs/join_entry.fut -o ft_clibs/join_entry --library
+	$(CC) ft_clibs/join_entry.c -o ft_clibs/libjoin.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
+
+C-Joins:
+	mkdir -p ft_clibs
+	futhark c ft_libs/join_entry.fut -o ft_clibs/join_entry --library

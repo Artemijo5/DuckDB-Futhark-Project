@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 
 	// init logger
 
-		FILE* logfile = loginit(LOGFILE, "Starting program to create tables for join.");
+		FILE* logfile = loginit(LOGFILE, "Starting program to evaluate duckdb join.");
 	    if(LOGFILE && !logfile) {
 	      perror("Failed to initialise logger.\n");
 	      return -1;
