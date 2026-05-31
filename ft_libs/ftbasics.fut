@@ -197,6 +197,28 @@
 		|> scan (+) 0
 		|> map (\i -> i-1)
 
+	-- | Histogram operation that only has buckets for keys that do have values.
+	-- Useful if there are many keys but only a few actually have values.
+	def hist_lean [n] 't
+		(op : t -> t -> t)
+		(ne : t)
+		(k : i64)
+		(ks : [n]i64)
+		(vs : [n]t)
+	: [k]t =
+		-- ok to use scatter since collisions are with the same value (true)
+		let is_key_present = scatter (replicate k false) ks (replicate n true)
+		let present_keys = iota k
+			|> zip is_key_present
+			|> filter (.0)
+			|> map (.1)
+		let encoded_keys = is_key_present |> dict_encoding
+		let ks' = ks |> map (\i -> encoded_keys[i])
+		let k' = length present_keys
+		let hist_res = hist op ne k' ks' vs
+		in scatter (replicate k ne) (present_keys |> sized k') hist_res
+
+
 -- Types used for joins.
 
 	-- | Type used to store the information of a join (between x&y).
@@ -217,4 +239,3 @@
 
 	-- | joinPairs for byteSeq [b]
 	type~ joinPairs_bsq [b] = joinPairs (byteSeq [b])
-		

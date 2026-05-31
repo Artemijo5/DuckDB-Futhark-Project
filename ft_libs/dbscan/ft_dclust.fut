@@ -151,7 +151,7 @@ module ft_dclust
 		let pts_per_part = iota np
 			|> map (\i -> if i==np-1 then n-part_is[i] else part_is[i+1]-part_is[i])
 		let part_neigh_pairs = get_adj_partitions bidir extPar eps subdiv pts_per_part
-		let pairs_per_part = hist (+) 0 np
+		let pairs_per_part = hist_lean (+) 0 np
 			(part_neigh_pairs |> map (.0)) (part_neigh_pairs |> map (\_ -> 1i64))
 		let pairs_index_per_part = pairs_per_part |> exscan (+) 0
 		in (pids, pts_per_part, part_neigh_pairs, pairs_per_part, pairs_index_per_part)
@@ -246,7 +246,7 @@ module ft_dclust
 		(core_pid : [n]i64)
 		(_ : [np]i64) -- part_is
 	: ([np]i64, [np]i64) =
-		let count_per_part : []i64 = hist (+) 0 np core_pid (replicate n 1)
+		let count_per_part : []i64 = hist_lean (+) 0 np core_pid (replicate n 1)
 		let first_per_part = count_per_part |> exscan (+) 0
 		in (count_per_part, first_per_part)
 
