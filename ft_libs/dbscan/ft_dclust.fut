@@ -218,8 +218,9 @@ module ft_dclust
 				|> unzip
 			-- add neighbour counts found now to those found previously
 			in if (length cur_mins)==0 then neigh_count else
-			reduce_by_index (copy neigh_count) (+) 0 cur_mins (cur_mins |> map (\_ -> 1i64))
+			hist_lean (+) 0  n cur_mins (cur_mins |> map (\_ -> 1i64))
 				|> map2 (+) (hist (+) 0 n cur_maxs (cur_maxs |> map (\_ -> 1i64)))
+				|> map2 (+) neigh_count
 			--	|> trace
 		in final_neigh_count
 
@@ -381,7 +382,8 @@ module ft_dclust
 					in (i1,cid2)
 				)
 				|> unzip
-			in reduce_by_index cid (i64.max) (-1) cur_xs cur_ys
+			in hist_lean (i64.max) (-1) n cur_xs cur_ys
+				|> map2 (i64.max) cid
 		in final_cid
 
 	-- | Index dataset & perform DBSCAN algorithm.
