@@ -40,10 +40,10 @@ def innerPHJ [nR] [nS] [b]
 		(replicate np_s np_r)
 		r_parts
 	-- get the maximum size of participating r partitions
-	let r_max_part_size = r_partition_sizes |> sized np_r
-		|> zip (matching_partitions |> sized np_r)
-		|> filter (\(fm,_) -> fm>=0)
-		|> map (.1) |> i64.maximum
+	let r_max_part_size = matching_partitions
+		|> filter (\fm -> fm>=0)
+		|> map (\i -> r_partition_sizes[i])
+		|> i64.maximum
 	-- for each element in S, get its matching partition in R
 	let matching_parts = scatter (replicate nS (-1)) s_info.bounds (indices s_info.bounds)
 		|> scan (i64.max) (-1)
@@ -57,7 +57,7 @@ def innerPHJ [nR] [nS] [b]
 			|> map2 (\i_s mpart ->
 				if mpart < 0 || j>=r_partition_sizes[mpart] then (i_s,-1) else 
 				let i_r = r_info.bounds[mpart] + j
-				in if all (id) (map2 (==) tR[i_r] tS[i_s])
+				in if foldl (&&) true (map2 (==) tR[i_r] tS[i_s])
 					then (i_s,i_r)
 					else (i_s,-1)
 			) (indices tS)

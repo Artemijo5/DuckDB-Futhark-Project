@@ -1,6 +1,6 @@
 #!/bin/bash
 
-futhark_backend=cuda
+futhark_backend=c
 runs_No=25
 
 n1=$1
@@ -30,9 +30,9 @@ rm -f data/*.in
 mv "data/datagen_wide:do_datagen-data_dat.in.out" data/dat.in
 
 # Transformation Phase
-futhark bench --backend=$futhark_backend --runs=$runs_No test_transformation.fut
+futhark bench --backend=$futhark_backend --runs=$runs_No test_transformation_narrow.fut
 rm -f data/*.in
-mv "data/test_transformation:do_transformation-data_dat.in.out" data/dat.in
+mv "data/test_transformation_narrow:do_transformation-data_dat.in.out" data/dat.in
 # Join Phase - Matchfinding & Expansion
 futhark bench --backend=$futhark_backend --runs=$runs_No test_matchfinding.fut
 rm -f data/*
