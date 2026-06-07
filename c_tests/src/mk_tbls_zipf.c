@@ -111,6 +111,8 @@ int main(int argc, char *argv[]) {
 
 	  	mylog(logfile, "Connected to duckdb database.");
 
+	  	printf("\n\n\n%ld\n\n\n\n", CHUNK_SIZE);
+
 	// Initialize futhark context
 
 	  	struct futhark_context_config *cfg = futhark_context_config_new();

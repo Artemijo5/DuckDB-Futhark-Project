@@ -10,10 +10,9 @@ import "ft_dclust"
 
 module vector_2 = cat_vector vector_1 vector_1
 
-module kd2 = kd_index vector_2 f64
 module dist2 = euclidean_d vector_2 f64
 
-module dbscan2 = ft_dbscan vector_2 f64 kd2 dist2
+module dbscan2 = ft_dbscan vector_2 f64 dist2
 module dclust2 = ft_dclust vector_2 f64 dist2
 
 -- 40 pts in 4 quadrants
@@ -40,16 +39,9 @@ def pts1 : [][2]f64 = [
 
 ]
 
-def test1 (kd : i64) (eps : f64) (minPts : i64) =
+def test1 (extPar : i64) (eps : f64) (minPts : i64) =
 	let vs = (copy pts1) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (xs,parts,p_idx,is) = kd2.index_dataset [kd] vs
-	let np = length parts
-	let parts = parts |> sized np
-	let p_idx = p_idx |> sized np
-	let buff = dbscan2.internal_dbscan
-		5 eps minPts parts p_idx xs
-	let is_core = scatter (replicate (length xs) false) is buff.is_core
-	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
+	let (is_core, chain_id) = dbscan2.internal_dbscan extPar eps minPts vs
 	in  (vs, is_core, chain_id)
 
 def test1_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
@@ -67,16 +59,9 @@ def pts2 : [][2]f64 = [
 --[1000,1000]
 ]
 
-def test2 (kd : i64) (eps : f64) (minPts : i64) =
+def test2 (extPar : i64) (eps : f64) (minPts : i64) =
 	let vs = (copy pts2) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (xs,parts,p_idx,is) = kd2.index_dataset [kd] vs
-	let np = length parts
-	let parts = parts |> sized np
-	let p_idx = p_idx |> sized np
-	let buff = dbscan2.internal_dbscan
-		5 eps minPts parts p_idx xs
-	let is_core = scatter (replicate (length xs) false) is buff.is_core
-	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
+	let (is_core, chain_id) = dbscan2.internal_dbscan extPar eps minPts vs
 	in  (vs, is_core, chain_id)
 
 def test2_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
@@ -97,16 +82,9 @@ def pts3 : [][2]f64 = [
 	[7.900,5.010]
 ]
 
-def test3 (kd : i64) (eps : f64) (minPts : i64) =
+def test3 (extPar : i64) (eps : f64) (minPts : i64) =
 	let vs = (copy pts3) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (xs,parts,p_idx,is) = kd2.index_dataset [kd] vs
-	let np = length parts
-	let parts = parts |> sized np
-	let p_idx = p_idx |> sized np
-	let buff = dbscan2.internal_dbscan
-		5 eps minPts parts p_idx xs
-	let is_core = scatter (replicate (length xs) false) is buff.is_core
-	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
+	let (is_core, chain_id) = dbscan2.internal_dbscan extPar eps minPts vs
 	in  (vs, is_core, chain_id)
 
 def test3_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
@@ -130,15 +108,8 @@ def pts4 : [][2]f64 = [
 
 def test4 =
 	let vs = (copy pts4) |> map (sized vector_2.length >-> vector_2.from_array)
-	let (xs,parts,p_idx,is) = kd2.index_dataset [2] vs
-	let np = length parts
-	let parts = parts |> sized np
-	let p_idx = p_idx |> sized np
-	let buff = dbscan2.internal_dbscan
-		5 0.5 5 parts p_idx xs
-	let is_core = scatter (replicate (length xs) false) is buff.is_core
-	let chain_id = scatter (replicate (length xs) (-1)) is buff.chain_id
-	in  (is_core, chain_id)
+	let (is_core, chain_id) = dbscan2.internal_dbscan 5 0.5 5 vs
+	in  (vs, is_core, chain_id)
 
 def test4_dclust =
 	let vs = (copy pts4) |> map (sized vector_2.length >-> vector_2.from_array)

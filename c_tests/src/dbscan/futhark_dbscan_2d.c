@@ -23,7 +23,7 @@
 
 #define CHUNK_SIZE duckdb_vector_size()
 #define PARTITION_SIZE 8192
-#define EXTPAR 2048
+#define default_EXTPAR 2048
 
 #define DIM 2
 #define default_EPS 0.5
@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
 
 		double EPS  = default_EPS;
 		int64_t MIN_PTS = default_MIN_PTS;
+		int64_t EXTPAR = default_EXTPAR;
 
 		int64_t ITER = default_ITER;
 
@@ -55,6 +56,7 @@ int main(int argc, char *argv[]) {
 			{"output", required_argument, 0, 'o'},
 			{"dataset_size", required_argument, 0, 's'},
 			{"use_grid", no_argument, 0, 'g'},
+			{"extPar", required_argument, 0, 'x'},
 			{"eps", required_argument, 0, 'e'},
 			{"min_pts", required_argument, 0, 'm'},
 			{"iter", required_argument, 0, 'I'},
@@ -64,7 +66,7 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"i:o:s:ge:m:I:L:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"i:o:s:gx:e:m:I:L:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	        case 'i':
@@ -75,6 +77,8 @@ int main(int argc, char *argv[]) {
 	        	DATASET_SIZE = atol(optarg); break;
 	        case 'g':
 	        	USE_GRID = true; break;
+	        case 'x':
+	        	EXTPAR = atol(optarg); break;
 	        case 'e':
 	        	EPS = atof(optarg); break;
 	        case 'm':
@@ -192,6 +196,9 @@ int main(int argc, char *argv[]) {
 				futhark_free_f64_1d(ctx, col1);
 				futhark_free_f64_1d(ctx, col2);
 
+				futhark_free_f64_1d(ctx, ft_dat1);
+				futhark_free_f64_1d(ctx, ft_dat2);
+
 				col1 = col1_tmp;
 				col2 = col2_tmp;
 
@@ -230,7 +237,8 @@ int main(int argc, char *argv[]) {
 			if(!USE_GRID) {
 				mylog(logfile, "Performing DBSCAN with kd-index...");
 
-				int64_t depth = (int64_t)ceil(log2((double)partitions_no));
+				//int64_t depth = (int64_t)ceil(log2((double)partitions_no));
+				int64_t depth = 0;
 				futhark_entry_do_kd_dbscan_2d_f64(ctx, &dbscan_res,
 					EXTPAR, depth, EPS, MIN_PTS,
 					col1, col2
@@ -238,7 +246,8 @@ int main(int argc, char *argv[]) {
 			} else {
 				mylog(logfile, "Performing DBSCAN with grid-index...");
 
-				int64_t subdiv = (int64_t)ceil(sqrt((double)partitions_no));
+				//int64_t subdiv = (int64_t)ceil(sqrt((double)partitions_no));
+				int64_t subdiv = 1;
 				futhark_entry_do_grid_dbscan_2d_f64(ctx, &dbscan_res,
 					EXTPAR, subdiv, EPS, MIN_PTS,
 					col1, col2
