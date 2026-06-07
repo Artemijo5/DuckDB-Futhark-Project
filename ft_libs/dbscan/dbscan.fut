@@ -66,7 +66,6 @@ module ft_dbscan
 			|> encode_subgraph_ids
 
 		def assign_clusters [n] [nc]
-			(extPar : i64)
 			(eps : t)
 			(is_core : [n]bool)
 			(pts : [n](vector t))
@@ -76,18 +75,12 @@ module ft_dbscan
 			let (core_is,noncore_is) = iota n |> partition (\i -> is_core[i])
 			let init_cid = scatter (replicate n (-1)) (core_is |> sized nc) core_cid
 			let nnc = length noncore_is
-			let num_iter = (nnc+extPar-1)/extPar in
-			loop output_cid = init_cid
-			for j<num_iter do
-				let inf = j*extPar
-				let sup = i64.min nnc (inf+extPar)
-				let cur_cid = noncore_is[inf:sup]
-					|> map (\i ->
-						-- find closest core pt and use its cid
-						D.find_closest_within eps core_pts pts[i]
-							|> (\i -> if i>=0 && i<nc then core_cid[i] else (-1))
-					)
-				in scatter output_cid noncore_is[inf:sup] cur_cid
+			let noncore_cid = noncore_is
+				|> map (\i ->
+					D.find_closest_within eps core_pts pts[i]
+					|> (\j -> if j>=0 && j<nc then core_cid[j] else (-1))
+				)
+			in scatter init_cid noncore_is noncore_cid
 
 	-- dbscan pipeline
 
@@ -106,7 +99,7 @@ module ft_dbscan
 			let core_cid = core_pts
 				|> mk_neigh_graph extPar eps
 				|> mk_clusters core_pts
-			let cid = assign_clusters extPar eps is_core pts core_pts core_cid
+			let cid = assign_clusters eps is_core pts core_pts core_cid
 			in (is_core, cid)
 
 }
