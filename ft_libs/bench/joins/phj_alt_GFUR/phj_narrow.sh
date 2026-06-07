@@ -1,6 +1,6 @@
 #!/bin/bash
 
-futhark_backend=c
+futhark_backend=cuda
 runs_No=25
 
 n1=$1
