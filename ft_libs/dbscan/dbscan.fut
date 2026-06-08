@@ -25,29 +25,32 @@ module ft_dbscan
 		def minus_one = F.i32 (-1)
 
 		def find_core_pts [n]
-			(extPar_ : i64)
+			(extPar : i64)
 			(eps : t)
 			(minPts : i64)
 			(pts : [n](vector t))
 		: [n]bool =
-			let extPar = n
-			let init_num_neigh = replicate n 1i64
-			let num_iter = (n + extPar - 1) / extPar
-			let final_num_neigh = loop num_neigh = init_num_neigh
-			for j<num_iter do
-				let inf = j*extPar
-				let sup = i64.min n (inf+extPar)
-				let (this_left, this_right) = (inf..<sup)
-					|> map (\i -> zip (replicate n i) (iota n))
-					|> flatten
-					|> filter (\(i1,i2) -> i1<i2)
-					|> filter (\(i1,i2) -> num_neigh[i1]<minPts || num_neigh[i2]<minPts)
-					|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
-					|> unzip
-				in hist_lean (+) 0 n this_left (this_left |> map (\_ -> 1i64))
-					|> map2 (+) (hist_lean (+) 0 n this_right (this_right |> map (\_ -> 1i64)))
-					|> map2 (+) num_neigh
-			in final_num_neigh |> map (\numNeigh -> numNeigh >= minPts)
+			if false then
+				let init_num_neigh = replicate n 1i64
+				let num_iter = (n + extPar - 1) / extPar
+				let final_num_neigh = loop num_neigh = init_num_neigh
+				for j<num_iter do
+					let inf = j*extPar
+					let sup = i64.min n (inf+extPar)
+					let (this_left, this_right) = (inf..<sup)
+						|> map (\i -> zip (replicate n i) (iota n))
+						|> flatten
+						|> filter (\(i1,i2) -> i1<i2)
+						|> filter (\(i1,i2) -> num_neigh[i1]<minPts || num_neigh[i2]<minPts)
+						|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
+						|> unzip
+					in hist_lean (+) 0 n this_left (this_left |> map (\_ -> 1i64))
+						|> map2 (+) (hist_lean (+) 0 n this_right (this_right |> map (\_ -> 1i64)))
+						|> map2 (+) num_neigh
+				in final_num_neigh |> map (\numNeigh -> numNeigh >= minPts)
+			else
+				pts |> map (\pt -> pts |> countFor (D.check_neighbourhood eps pt))
+					|> map (\numNeigh -> numNeigh >= minPts)
 
 		def isolate_core_pts [n]
 			(isCore : [n]bool)
