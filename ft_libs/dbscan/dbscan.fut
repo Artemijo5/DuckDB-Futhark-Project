@@ -25,13 +25,28 @@ module ft_dbscan
 		def minus_one = F.i32 (-1)
 
 		def find_core_pts [n]
+			(extPar : i64)
 			(eps : t)
 			(minPts : i64)
 			(pts : [n](vector t))
-		: [n]bool =	pts |> map (\pt -> 
-				pts |> countFor (D.check_neighbourhood eps pt)
-			)
-			|> map (\numNeigh -> numNeigh >= minPts)
+		: [n]bool =
+			let init_num_neigh = replicate n 1i64
+			let num_iter = (n + extPar - 1) / extPar
+			let final_num_neigh = loop num_neigh = init_num_neigh
+			for j<num_iter do
+				let inf = j*extPar
+				let sup = i64.min n (inf+extPar)
+				let (this_left, this_right) = (inf..<sup)
+					|> map (\i -> zip (replicate n i) (iota n))
+					|> flatten
+					|> filter (\(i1,i2) -> i1<i2)
+					|> filter (\(i1,i2) -> num_neigh[i1]<minPts || num_neigh[i2]<minPts)
+					|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
+					|> unzip
+				in hist_lean (+) 0 n this_left (this_left |> map (\_ -> 1i64))
+					|> map2 (+) (hist_lean (+) 0 n this_right (this_right |> map (\_ -> 1i64)))
+					|> map2 (+) num_neigh
+			in final_num_neigh |> map (\numNeigh -> numNeigh >= minPts)
 
 		def isolate_core_pts [n]
 			(isCore : [n]bool)
@@ -40,13 +55,14 @@ module ft_dbscan
 			|> filter (.0)
 			|> map (.1)
 
-		def mk_neigh_graph [nc]
+		def mk_clusters [nc]
 			(extPar : i64)
 			(eps : t)
 			(core_pts : [nc](vector t))
-		: [](i64,i64) =
+		: []i64 =
+			let init_cid = iota nc
 			let num_iter = (nc+extPar-1)/extPar in
-			loop output_graph : [](i64,i64) = []
+			let final_cid = loop cid = init_cid
 			for j<num_iter do
 				let inf = j*extPar
 				let sup = i64.min nc (inf + extPar)
@@ -55,17 +71,20 @@ module ft_dbscan
 						|> zip (replicate nc i)
 					)
 					|> flatten
-					|> filter (\(i1,i2) -> i1!=i2)
+					|> filter (\(i1,i2) -> i1<i2)
+					|> filter (\(i1,i2) -> cid[i1] != cid[i2])
 					|> filter (\(i1,i2) -> D.check_neighbourhood eps core_pts[i1] core_pts[i2])
-				in output_graph ++ cur_edges
-
-		def mk_clusters [nc]
-			(_ : [nc](vector t)) -- core_pts
-			(neigh_graph : [](i64,i64))
-		: [nc]i64 = get_connected_subgraph_ids nc neigh_graph
-			|> encode_subgraph_ids
+					|> map (\(i1,i2) ->
+						let cid1 = cid[i1]
+						let cid2 = cid[i2]
+						in (i64.min cid1 cid2, i64.max cid1 cid2)
+					)
+				let cur_matrix = get_connected_subgraph_ids nc cur_edges
+				in cid |> map (\i -> cur_matrix[i])
+			in final_cid |> encode_subgraph_ids
 
 		def assign_clusters [n] [nc]
+			(extPar : i64)
 			(eps : t)
 			(is_core : [n]bool)
 			(pts : [n](vector t))
@@ -75,12 +94,17 @@ module ft_dbscan
 			let (core_is,noncore_is) = iota n |> partition (\i -> is_core[i])
 			let init_cid = scatter (replicate n (-1)) (core_is |> sized nc) core_cid
 			let nnc = length noncore_is
-			let noncore_cid = noncore_is
-				|> map (\i ->
-					D.find_closest_within eps core_pts pts[i]
-					|> (\j -> if j>=0 && j<nc then core_cid[j] else (-1))
-				)
-			in scatter init_cid noncore_is noncore_cid
+			let num_iter = (nnc + extPar - 1) / extPar
+			let final_noncore_cid = loop noncore_cid = replicate nnc (-1)
+			for j<num_iter do
+				let inf = j*extPar
+				let sup = i64.min nnc (inf + extPar)
+				let this_cid = noncore_is[inf:sup]
+					|> map (\i -> pts[i])
+					|> map (D.find_closest_within eps core_pts)
+					|> map (\i -> if i>=0 && i<nc then core_cid[i] else (-1))
+				in noncore_cid with [inf:sup] = this_cid
+			in scatter init_cid (noncore_is |> sized nnc) final_noncore_cid
 
 	-- dbscan pipeline
 
@@ -94,12 +118,13 @@ module ft_dbscan
 			(minPts : i64)
 			(pts : [n](vector t))
 		: ([n]bool, [n]i64) =
-			let is_core = find_core_pts eps minPts pts
-			let core_pts = isolate_core_pts is_core pts
+			let is_core = pts
+				|> find_core_pts extPar eps minPts
+			let core_pts = pts
+				|> isolate_core_pts is_core
 			let core_cid = core_pts
-				|> mk_neigh_graph extPar eps
-				|> mk_clusters core_pts
-			let cid = assign_clusters eps is_core pts core_pts core_cid
+				|> mk_clusters extPar eps
+			let cid = assign_clusters extPar eps is_core pts core_pts core_cid
 			in (is_core, cid)
 
 }
