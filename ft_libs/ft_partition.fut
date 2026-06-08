@@ -361,8 +361,8 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 		while (cur_depth < max_depth) do
 			let relevant_part_is = indices use_info.depths
 				|> filter (\i -> use_info.depths[i] > cur_depth)
-			let cur_bitmask = mk_radix_bitmask 0 (cur_depth*radix_size-1) b
-			let (fb,lb) = radix_first_last_bytes 0 (i32.min max_J ((cur_depth)*radix_size-1)) b
+			let cur_bitmask = mk_radix_bitmask 0 ((cur_depth+1)*radix_size-1) b
+			let (fb,lb) = radix_first_last_bytes 0 (i32.min max_J ((cur_depth+1)*radix_size-1)) b
 			let bound_is = indices cur_bounds |> filter (\i -> cur_bounds[i])
 			-- -- parts_to_subdivide : partitions in pXs having a match in prev with depth>cur_depth
 			-- -- find via binary search
