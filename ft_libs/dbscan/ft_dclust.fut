@@ -307,25 +307,17 @@ module ft_dclust
 				-- don't need pairs that already have the same cid
 				|> filter (\(i1,i2) -> cid[i1]!=cid[i2])
 				|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
+				|> map (\(i1,i2) ->
+						let cid1 = cid[i1]
+						let cid2 = cid[i2]
+						in (i64.min cid1 cid2, i64.max cid1 cid2)
+					)
 			let cur_node_no = if ((length cur_neigh) == 0) then 0 else
 				1 + (cur_neigh |> map (.1) |> i64.maximum)
-			let cur_connections = get_connected_subgraph_ids cur_node_no cur_neigh
-				|> map (\i -> cid[i])
-			let cur_collisions = if cur_node_no==0 then [] else
-				map3 (\cur_cid pre_cid (i : i64) ->
-					if cur_cid != pre_cid && pre_cid != i
-					then (i64.min cur_cid pre_cid,i64.max cur_cid pre_cid)
-					else (-1,-1)
-				) cur_connections[inf:cur_node_no] cid[inf:cur_node_no] (inf..<cur_node_no)
-				|> filter (\(c1,_) -> c1 >= 0)
-			let rect_list = get_connected_subgraph_ids cur_node_no cur_collisions
-			in scatter (copy cid) (iota cur_node_no) cur_connections
-				|> map2 (i64.min) cid
-				|> map (\i -> if i<cur_node_no then rect_list[i] else i)
+			let cur_matrix = get_connected_subgraph_ids cur_node_no cur_neigh
+			in cid |> map (\i -> if i>=cur_node_no then i else cur_matrix[i])
 		-- apply dictionary encoding
-		let group_encoding = map2 (==) final_cid (iota n)
-			|> dict_encoding
-		in final_cid |> map (\i -> group_encoding[i])
+		in final_cid |> encode_subgraph_ids
 
 	-- | Assign id's to border pts & noises
 	-- NOTE we need to check core pts of smaller id partitions as well
