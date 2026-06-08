@@ -25,11 +25,12 @@ module ft_dbscan
 		def minus_one = F.i32 (-1)
 
 		def find_core_pts [n]
-			(extPar : i64)
+			(extPar_ : i64)
 			(eps : t)
 			(minPts : i64)
 			(pts : [n](vector t))
 		: [n]bool =
+			let extPar = n
 			let init_num_neigh = replicate n 1i64
 			let num_iter = (n + extPar - 1) / extPar
 			let final_num_neigh = loop num_neigh = init_num_neigh
@@ -84,13 +85,14 @@ module ft_dbscan
 			in final_cid |> encode_subgraph_ids
 
 		def assign_clusters [n] [nc]
-			(extPar : i64)
+			(extPar_ : i64)
 			(eps : t)
 			(is_core : [n]bool)
 			(pts : [n](vector t))
 			(core_pts : [nc](vector t))
 			(core_cid : [nc]i64)
 		: [n]i64 =
+			let extPar = n
 			let (core_is,noncore_is) = iota n |> partition (\i -> is_core[i])
 			let init_cid = scatter (replicate n (-1)) (core_is |> sized nc) core_cid
 			let nnc = length noncore_is

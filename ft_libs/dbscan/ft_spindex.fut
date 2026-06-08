@@ -19,15 +19,10 @@ module type spatial_index = {
 	-- 1. the dataset sorted by index-based partitions.
 	-- 2. partition boundaries
 	-- 3. starting index of each partition in the sorted dataset
-	-- 4. transformed row indices
+	-- 4. numerical id of each partition (eg on grid index, encodes cell's position)
+	-- 5. transformed row indices
 	val index_dataset [dim] [n] : [dim]i64 -> [n](vector t)
-		-> ([n](vector t), [](vector t, vector t), []i64, [n]i64)
-
-	-- | Obtain all partitions adjacent to a selected partition.
-	-- t parameter serves as max eps-distance for adjacency (can be zero for true adjacency).
-	-- i64 parameter is the index of the selected partition in partitions.
-	-- Returns the indices of all adjacent partitions (not including itself).
-	val get_adj_partitions [np] : [np](vector t, vector t) -> t -> i64 -> []i64
+		-> ([n](vector t), [](vector t, vector t), []i64, []i64, [n]i64)
 
 	-- | Obtain the indices of all points of a selected partition.
 	val fetch_partition [np] [n] : [np]i64 -> [n](vector t) -> i64 -> []i64
@@ -106,27 +101,13 @@ module grid_index (V : vector) (N : numeric)
 		let (pids', xs', is') = xs |> indices |> zip xs
 			|> bucket_sort 2 np pids
 			|> (\(ps, xis) -> let (xis1,xis2) = unzip xis in (ps,xis1,xis2))
-		let firstByPid = hist (i64.+) 0i64 np (pids' |> sized n) (replicate n 1i64)
-			|> exscan (+) 0
-		let partBounds = iota np
+		let pids_is = pids' |> group_boundaries (!=)
+			|> zip (indices pids')
+			|> filter (.1) |> map (.0)
+		let pids_ids = pids_is |> map (\i -> pids'[i])
+		let partBounds = pids_ids
 			|> map (get_partitionBoundaries mins ranges idx_vec dimPrefix)
-		in (xs', partBounds, firstByPid, is')
-
-	def get_adj_partitions partitions eps pid =
-		let (this_mins, this_maxs) = partitions[pid]
-			|> (\(tm,tM) -> (
-				tm |> V.map (\mi -> mi `minus` eps),
-				tM |> V.map (\ma -> ma `plus` eps)
-			))
-		let touch = indices partitions
-			|> map2 (\(cmins,cmaxs) i -> i!=pid
-				&& (this_maxs |> V.map2 (leq) cmins |> V.reduce (&&) true)
-				&& (cmaxs |> V.map2 (leq) this_mins |> V.reduce (&&) true)
-			) partitions
-		in touch
-			|> zip (indices partitions)
-			|> filter (.1)
-			|> map (.0)
+		in (xs', partBounds, pids_is, pids_ids, is')
 
 	def fetch_partition partIs xs i =
 		let inf = partIs[i]
@@ -222,23 +203,7 @@ module kd_index (V : vector) (N : numeric)
 			|> unzip3
 		let np' = length fmins'
 		let fparts = zip (fmins' |> sized np') (fmaxs' |> sized np')
-		in (fxs, fparts, fsizes' |> exscan (+) 0, fis)
-
-	def get_adj_partitions partitions eps pid =
-		let (this_mins, this_maxs) = partitions[pid]
-			|> (\(tm,tM) -> (
-				tm |> V.map (\mi -> mi `minus` eps),
-				tM |> V.map (\ma -> ma `plus` eps)
-			))
-		let touch = indices partitions
-			|> map2 (\(cmins,cmaxs) i -> i!=pid
-				&& (this_maxs |> V.map2 (leq) cmins |> V.reduce (&&) true)
-				&& (cmaxs |> V.map2 (leq) this_mins |> V.reduce (&&) true)
-			) partitions
-		in touch
-			|> zip (indices partitions)
-			|> filter (.1)
-			|> map (.0)
+		in (fxs, fparts, fsizes' |> exscan (+) 0, indices fparts, fis)
 
 	def fetch_partition partIs xs i =
 		let inf = partIs[i]
@@ -271,25 +236,8 @@ module non_index (V : vector) (N : numeric)
 		let maxs = perDim |> seqmap zero (maximum) |> V.from_array
 		in (mins, maxs)
 
-	-- idxSpec : [1]i64, represents levels of kd tree
 	def index_dataset _ xs =
-		(xs, [get_mins_maxs xs], [0i64], indices xs)
-
-	def get_adj_partitions partitions eps pid =
-		let (this_mins, this_maxs) = partitions[pid]
-			|> (\(tm,tM) -> (
-				tm |> V.map (\mi -> mi `minus` eps),
-				tM |> V.map (\ma -> ma `plus` eps)
-			))
-		let touch = indices partitions
-			|> map2 (\(cmins,cmaxs) i -> i!=pid
-				&& (this_maxs |> V.map2 (leq) cmins |> V.reduce (&&) true)
-				&& (cmaxs |> V.map2 (leq) this_mins |> V.reduce (&&) true)
-			) partitions
-		in touch
-			|> zip (indices partitions)
-			|> filter (.1)
-			|> map (.0)
+		(xs, [get_mins_maxs xs], [0i64], [0i64], indices xs)
 
 	def fetch_partition _ xs _ =
 		indices xs
