@@ -92,7 +92,6 @@ module grid_index (V : vector) (N : numeric)
 	-- idxSpec : [V.length]i64, represents #subdivisions per dimension
 	def index_dataset idxSpec xs =
 		let np = idxSpec |> reduce (*) 1
-		let n = length xs
 		let idx_vec = V.from_array (idxSpec |> sized V.length)
 		let dimPrefix = idxSpec |> exscan (*) 1
 			|> sized V.length |> V.from_array
