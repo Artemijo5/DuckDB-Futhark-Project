@@ -1,10 +1,18 @@
 import "../ftbasics"
+import "../ftColumns"
+
 import "ft_spindex"
 import "ft_undir_graph"
 import "ft_dclust"
 import "ft_distance"
 
 import "../lib/github.com/athas/vector/vector"
+
+
+module col_f64 = col_numeric f64
+entry init_column_f64 = col_f64.mk_keyCol
+entry write_column_f64 = col_f64.update_keyCol
+entry crop_column_f64 = col_f64.crop_keyCol
 
 -- HOW TO USE
 --
@@ -422,7 +430,7 @@ entry assign_cluster_ids_3d_f64 [n]
 		(info_bd.part_pairs_is  |> sized info_bd.num_parts)
 		(info_bd.part_pairs_sz  |> sized info_bd.num_parts)
 
-type dbscan_result_2d_f64 [n] = {
+type dbscan_result [n] = {
 	is_core : [n]bool,
 	cluster_id : [n]i64
 }
@@ -431,7 +439,7 @@ entry deindex_results_2d [n]
 	(dat : indexed_data_2d_f64 [n])
 	(is_core : [n]bool)
 	(cluster_id : [n]i64)
-: dbscan_result_2d_f64 [n] =
+: dbscan_result [n] =
 	let is_core' = scatter (replicate n false) dat.og_is is_core
 	let cluster_id' = scatter (replicate n 0) dat.og_is cluster_id
 	in {is_core = is_core', cluster_id = cluster_id'}
@@ -440,7 +448,7 @@ entry deindex_results_3d [n]
 	(dat : indexed_data_3d_f64 [n])
 	(is_core : [n]bool)
 	(cluster_id : [n]i64)
-: dbscan_result_2d_f64 [n] =
+: dbscan_result [n] =
 	let is_core' = scatter (replicate n false) dat.og_is is_core
 	let cluster_id' = scatter (replicate n 0) dat.og_is cluster_id
 	in {is_core = is_core', cluster_id = cluster_id'}
