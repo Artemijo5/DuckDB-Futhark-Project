@@ -260,6 +260,28 @@ int main(int argc, char *argv[]) {
 			futhark_context_sync(ctx);
 			mylog(logfile, "Synced futhark context.");
 
+			// Record true subdiv and #cells.
+				struct futhark_i64_1d *ft_subdiv;
+				futhark_project_opaque_indexed_data_2d_f64_subdiv(ctx, &ft_subdiv, indexed_dat);
+
+				struct futhark_i64_1d *ft_cell_ids;
+				futhark_project_opaque_indexed_data_2d_f64_cell_ids(ctx, &ft_cell_ids, indexed_dat);
+
+				futhark_context_sync(ctx);
+
+				int64_t true_subdiv[3];
+				futhark_values_i64_1d(ctx, ft_subdiv, true_subdiv);
+				futhark_free_i64_1d(ctx, ft_subdiv);
+				int64_t *cells_shape_ptr = futhark_shape_i64_1d(ctx, ft_cell_ids);
+
+				printf("\n~~\n");
+				printf("True subdivisions per dim:\n");
+				printf("%ld\t%ld\t%ld\n", true_subdiv[0], true_subdiv[1], true_subdiv[2]);
+				printf("True number of cells:\n");
+				printf("%ld", *cells_shape_ptr);
+				futhark_free_i64_1d(ctx, ft_cell_ids);
+				printf("\n~~\n");
+
 			mylog(logfile, "2. Find and isolate core points.");
 
 			struct futhark_i64_1d *neigh_counts;

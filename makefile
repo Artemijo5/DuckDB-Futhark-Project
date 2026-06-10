@@ -33,7 +33,7 @@ DClust-segm:
 	futhark cuda ft_libs/dbscan/dclust_entry_segments.fut -o ft_clibs/dclust_entry_segm --library
 	$(CC) ft_clibs/dclust_entry_segm.c -o ft_clibs/libdclust_segm.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
 	$(CC) c_tests/src/dbscan/futhark_dclust_segm_2d.c -o c_tests/dclust_segm_2d.o $(CFLAGS) $(DEPS) ft_clibs/libdclust_segm.so -lm
-	$(CC) c_tests/src/dbscan/futhark_dclust_segm_3d.c -o c_tests/dclust_segm_3d.o $(CFLAGS) $(DEPS) ft_clibs/libdclust.so -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_3d.c -o c_tests/dclust_segm_3d.o $(CFLAGS) $(DEPS) ft_clibs/libdclust_segm.so -lm
 
 C-DClust:
 	mkdir -p ft_clibs
@@ -62,6 +62,7 @@ Joins:
 	mkdir -p ft_clibs
 	futhark cuda ft_libs/join_entry.fut -o ft_clibs/join_entry --library
 	$(CC) ft_clibs/join_entry.c -o ft_clibs/libjoin.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
+	$(CC) c_tests/src/duckdb_futhark_IO.c -o c_tests/duckdb_futhark_IO.o $(CFLAGS) $(DEPS) ft_clibs/libjoin.so
 
 C-Joins:
 	mkdir -p ft_clibs
