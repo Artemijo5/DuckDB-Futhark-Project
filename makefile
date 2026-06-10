@@ -66,3 +66,4 @@ Joins:
 C-Joins:
 	mkdir -p ft_clibs
 	futhark c ft_libs/join_entry.fut -o ft_clibs/join_entry --library
+	$(CC) c_tests/src/duckdb_futhark_IO.c -o c_tests/duckdb_futhark_IO.o $(CFLAGS) $(DEPS) ft_clibs/join_entry.c
