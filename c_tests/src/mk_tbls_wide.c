@@ -131,10 +131,10 @@ int main(int argc, char *argv[]) {
   	// -- -- -- Create pre-shuffled keys.
 
 	  	sprintf(query_prepare_R,
-	  		"CREATE OR REPLACE TEMP TABLE %s_prep AS \n(SELECT i %% %ld, (random()::BIGINT)*(10*%ld) FROM range(%ld) t(i));"
+	  		"CREATE OR REPLACE TEMP TABLE %s_prep AS \n(SELECT i %% %ld, (random()::BIGINT)*(2*%ld) FROM range(%ld) t(i));"
 	  		, R_name, R_vals, R_size, R_size);
 	  	sprintf(query_prepare_S,
-	  		"CREATE OR REPLACE TEMP TABLE %s_prep AS \n(SELECT i %% %ld, (random()::BIGINT)*(10*%ld) FROM range(%ld) t(i));"
+	  		"CREATE OR REPLACE TEMP TABLE %s_prep AS \n(SELECT i %% %ld, (random()::BIGINT)*(2*%ld) FROM range(%ld) t(i));"
 	  		, S_name, S_vals, S_size, S_size);
 
 	  	if(duckdb_query(con, query_prepare_R, NULL) == DuckDBError) {
