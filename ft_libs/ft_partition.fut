@@ -111,7 +111,7 @@ import "lib/github.com/diku-dk/sorts/radix_sort"
 	: bool =
 	  let r1 = getRadix bitmask x1
 	  let r2 = getRadix bitmask x2
-	  in foldl (&&) (true) (map2 (==) r1[fb:lb+1] r2[fb:lb+1])
+	  in foldl (&&) (true) (map2 (==) r1[lb:fb+1] r2[lb:fb+1])
 
 	-- | Non-equality between 2 byteseq by 1st-level radix.
 	def byteSeq_neq [b]
