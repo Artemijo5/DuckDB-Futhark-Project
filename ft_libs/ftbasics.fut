@@ -213,7 +213,7 @@
 			|> filter (.0)
 			|> map (.1)
 		let encoded_keys = is_key_present |> dict_encoding
-		let ks' = ks |> map (\i -> encoded_keys[i])
+		let ks' = ks |> map (\i -> if i<0 then i else encoded_keys[i])
 		let k' = length present_keys
 		let hist_res = hist op ne k' ks' vs
 		in scatter (replicate k ne) (present_keys |> sized k') hist_res
