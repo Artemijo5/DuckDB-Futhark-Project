@@ -6,6 +6,10 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
+-- TODO
+-- if terminating optimization in dbscan.fut seems to pay off
+-- then try using it here as well...
+
 -- Wrapper for expand_outer_reduce
 -- handling the case of 1 point.
 def expand_outer_red [n] 't

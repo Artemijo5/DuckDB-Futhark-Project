@@ -52,7 +52,7 @@ def get_connected_subgraph_ids [n]
 
 -- | Apply dictionary encoding to subgraph id's.
 def encode_subgraph_ids [n] (sg_ids : [n]i64) : [n]i64 =
-	let num_ids = 1 + (i64.maximum sg_ids)
+	let num_ids = if n==0 then 0 else 1 + (i64.maximum sg_ids)
 	let present_ids = scatter (replicate num_ids false) sg_ids (replicate n true)
 		|> dict_encoding
 	in sg_ids |> map (\i -> if i<0 then i else present_ids[i])

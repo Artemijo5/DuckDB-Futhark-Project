@@ -30,27 +30,30 @@ module ft_dbscan
 			(minPts : i64)
 			(pts : [n](vector t))
 		: [n]bool =
-			if false then
-				let init_num_neigh = replicate n 1i64
-				let num_iter = (n + extPar - 1) / extPar
-				let final_num_neigh = loop num_neigh = init_num_neigh
-				for j<num_iter do
-					let inf = j*extPar
-					let sup = i64.min n (inf+extPar)
-					let (this_left, this_right) = (inf..<sup)
-						|> map (\i -> zip (replicate n i) (iota n))
-						|> flatten
-						|> filter (\(i1,i2) -> i1<i2)
-						|> filter (\(i1,i2) -> num_neigh[i1]<minPts || num_neigh[i2]<minPts)
-						|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
-						|> unzip
-					in hist_lean (+) 0 n this_left (this_left |> map (\_ -> 1i64))
+			let init_num_neigh = replicate n 1i64
+			let num_iter = (n + extPar - 1) / extPar
+			let (final_num_neigh,_) = loop (num_neigh,j) = (init_num_neigh,0)
+			while j<num_iter  do
+				let inf = j*extPar
+				let sup = i64.min n (inf+extPar)
+				-- if all points after are already core - terminate
+				let term_now = (inf..<n)
+					|> map (\i -> num_neigh[i])
+					|> all (\nc -> nc >= minPts)
+				in if term_now then (num_neigh,num_iter) else
+				let (this_left, this_right) = (inf..<sup)
+					|> map (\i -> zip (replicate n i) (iota n))
+					|> flatten
+					|> filter (\(i1,i2) -> i1<i2)
+					|> filter (\(i1,i2) -> num_neigh[i1]<minPts || num_neigh[i2]<minPts)
+					|> filter (\(i1,i2) -> D.check_neighbourhood eps pts[i1] pts[i2])
+					|> unzip
+				let next_num_neigh =
+					hist_lean (+) 0 n this_left (this_left |> map (\_ -> 1i64))
 						|> map2 (+) (hist_lean (+) 0 n this_right (this_right |> map (\_ -> 1i64)))
 						|> map2 (+) num_neigh
-				in final_num_neigh |> map (\numNeigh -> numNeigh >= minPts)
-			else
-				pts |> map (\pt -> pts |> countFor (D.check_neighbourhood eps pt))
-					|> map (\numNeigh -> numNeigh >= minPts)
+				in (next_num_neigh, j+1)
+			in final_num_neigh |> map (\numNeigh -> numNeigh >= minPts)
 
 		def isolate_core_pts [n]
 			(isCore : [n]bool)
@@ -66,10 +69,15 @@ module ft_dbscan
 		: []i64 =
 			let init_cid = iota nc
 			let num_iter = (nc+extPar-1)/extPar in
-			let final_cid = loop cid = init_cid
-			for j<num_iter do
+			let (final_cid,_) = loop (cid,j) = (init_cid,0)
+			while j<num_iter do
 				let inf = j*extPar
 				let sup = i64.min nc (inf + extPar)
+				let term_now = (inf..<nc)
+					|> map (\i -> cid[i])
+					|> (\cid_after -> (i64.minimum cid_after, i64.maximum cid_after))
+					|> (\(cid1,cid2) -> cid1==cid2)
+				in if term_now then (cid,num_iter) else
 				let cur_edges = (inf..<sup)
 					|> map (\i -> iota nc
 						|> zip (replicate nc i)
@@ -84,7 +92,8 @@ module ft_dbscan
 						in (i64.min cid1 cid2, i64.max cid1 cid2)
 					)
 				let cur_matrix = get_connected_subgraph_ids nc cur_edges
-				in cid |> map (\i -> cur_matrix[i])
+				let next_cid =  cid |> map (\i -> cur_matrix[i])
+				in (next_cid, j+1)
 			in final_cid |> encode_subgraph_ids
 
 		def assign_clusters [n] [nc]
@@ -95,7 +104,8 @@ module ft_dbscan
 			(core_pts : [nc](vector t))
 			(core_cid : [nc]i64)
 		: [n]i64 =
-			let extPar = n
+			--let extPar = n
+			let extPar = extPar_
 			let (core_is,noncore_is) = iota n |> partition (\i -> is_core[i])
 			let init_cid = scatter (replicate n (-1)) (core_is |> sized nc) core_cid
 			let nnc = length noncore_is
