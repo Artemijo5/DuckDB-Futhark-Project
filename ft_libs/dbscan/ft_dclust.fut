@@ -197,7 +197,7 @@ module ft_dclust
 				-- but is enough to find core points
 			let exclude_cell = iota np
 				|> expand_outer_red
-					(\pid -> part_sz[pid])
+					(\pid -> if pid<pids[inf] then 0 else part_sz[pid])
 					(\pid ind -> neigh_count[part_is[pid] + ind])
 					(i64.min) (i64.highest)
 				|> map (\num -> num >= minPts)
@@ -290,15 +290,15 @@ module ft_dclust
 			-- and if a point is already in that cluster, it does not need to be compared there
 			let min_cid_per_cell = iota np
 				|> expand_outer_red
-					(\pid -> part_core_sz[pid])
+					(\pid -> if pid<pids[inf] then 0 else part_core_sz[pid])
 					(\pid ind -> cid[part_core_is[pid] + ind])
 					(i64.min) i64.highest
 			let max_cid_per_cell = iota np
 				|> expand_outer_red
-					(\pid -> part_core_sz[pid])
+					(\pid -> if pid<pids[inf] then 0 else part_core_sz[pid])
 					(\pid ind -> cid[part_core_is[pid] + ind])
 					(i64.max) i64.lowest
-			let exclude_cell = map2 (==) min_cid_per_cell max_cid_per_cell
+			let exclude_cell = map2 (>=) min_cid_per_cell max_cid_per_cell
 			-- has every min-max pair of neighbours found
 			let cur_neigh = (inf..<sup)
 				|> map (\i1 -> (i1, pids[i1]))
