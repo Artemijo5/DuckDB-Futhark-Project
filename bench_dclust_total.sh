@@ -57,7 +57,7 @@ num_cells=10000
 		bash bench_dclust.sh 2 NGSIM "${data_loc}/Next_Generation_Simulation_(NGSIM).txt" 400000 1.25 4 8192 $num_cells $num_runs
 		bash bench_dclust.sh 2 NGSIM "${data_loc}/Next_Generation_Simulation_(NGSIM).txt" 400000 1.25 16 8192 $num_cells $num_runs
 		bash bench_dclust.sh 2 NGSIM "${data_loc}/Next_Generation_Simulation_(NGSIM).txt" 400000 1.25 32 8192 $num_cells $num_runs
-		bash bench_dclust.sh 2 NGSIM "${data_loc}/Next_Generation_Simulation_(NGSIM).txt" 400000 1.25 64S 8192 $num_cells $num_runs
+		bash bench_dclust.sh 2 NGSIM "${data_loc}/Next_Generation_Simulation_(NGSIM).txt" 400000 1.25 64 8192 $num_cells $num_runs
 
 	# SPATIAL 2D
 

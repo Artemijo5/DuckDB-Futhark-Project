@@ -14,28 +14,6 @@ entry init_column_f64 = col_f64.mk_keyCol
 entry write_column_f64 = col_f64.update_keyCol
 entry crop_column_f64 = col_f64.crop_keyCol
 
--- HOW TO USE
---
--- Parameters :
---   seed_count : i64    - #slots used to limit nested parallelism
---   subdiv     : i64    - #cells per dimension
---   eps        : f64    - epsilon parameter for DBSCAN
---   minPts     : i64    - minPts parameter for DBSCAN
---   xs         : [n]f64 - x coordinates of 2d points
---   ys         : [n]f64 - y coordinates of 2d points
---
---  1. dat  <- index_dataset_2d_f64 eps subdiv xs ys
---  2. info <- get_part_info_2d_f64 false eps dat
---  3. neigh_counts <- get_neighbour_counts_2d_f64 seed_count eps minPts dat info
---  4. is_core      <- get_is_core minPts neigh_counts
---  5. cores     <- isolate_core_pts_2d_f64 is_core dat info
---  6. core_info <- get_part_core_info_2d_f64 cores dat
---  7. core_cids <- mk_clusters_2d_f64 seed_count eps info cores core_info
---  8. info_bd <- get_part_info_2d_f64 true eps dat
---  9. cluster_id <- assign_cluster_ids_2d_f64 seed_count eps dat is_core info_bd cores core_info core_cids
--- 10. res <- deindex_results_2d dat is_core cluster_id
-
-
 module vector_2 = cat_vector vector_1 vector_1
 module vector_3 = cat_vector vector_2 vector_1
 
@@ -184,15 +162,19 @@ local def vectors_to_cols_10d [n] (pts : [n](vector_10.vector f64))
 
 	entry index_dataset_4d_f64 [n]
 		(eps : f64)
-		(subdiv : i64)
+		(subdiv1 : i64)
+		(subdiv2 : i64)
+		(subdiv3 : i64)
+		(subdiv4 : i64)
 		(xs1 : [n]f64)
 		(xs2 : [n]f64)
 		(xs3 : [n]f64)
 		(xs4 : [n]f64)
 	: indexed_data_4d_f64 [n] =
 		let pts = cols_to_vectors_4d xs1 xs2 xs3 xs4
+		let subdiv = [subdiv1,subdiv2,subdiv3,subdiv4] |> sized vector_4.length
 		let (subdiv', pts',part_is,cell_ids,og_is)
-		= dclust4_f64.partition_dataset eps (replicate vector_4.length subdiv) pts
+		= dclust4_f64.partition_dataset eps subdiv pts
 		let (xs1',xs2',xs3',xs4') = vectors_to_cols_4d pts'
 		in {
 			xs1 = xs1',
@@ -383,39 +365,666 @@ local def vectors_to_cols_10d [n] (pts : [n](vector_10.vector f64))
 
 -- Entry Points for 5D
 
+	type~ indexed_data_5d_f64 [n] = {
+		xs1 : [n]f64,
+		xs2 : [n]f64,
+		xs3 : [n]f64,
+		xs4 : [n]f64,
+		xs5 : [n]f64,
+		subdiv : [vector_5.length]i64,
+		part_is : []i64,
+		cell_ids : []i64,
+		og_is : [n]i64
+	}
+
+	entry index_dataset_5d_f64 [n]
+		(eps : f64)
+		(subdiv1 : i64)
+		(subdiv2 : i64)
+		(subdiv3 : i64)
+		(subdiv4 : i64)
+		(subdiv5 : i64)
+		(xs1 : [n]f64)
+		(xs2 : [n]f64)
+		(xs3 : [n]f64)
+		(xs4 : [n]f64)
+		(xs5 : [n]f64)
+	: indexed_data_5d_f64 [n] =
+		let pts = cols_to_vectors_5d xs1 xs2 xs3 xs4 xs5
+		let subdiv = [subdiv1,subdiv2,subdiv3,subdiv4,subdiv5]
+			|> sized vector_5.length
+		let (subdiv', pts',part_is,cell_ids,og_is)
+		= dclust5_f64.partition_dataset eps subdiv pts
+		let (xs1',xs2',xs3',xs4',xs5') = vectors_to_cols_5d pts'
+		in {
+			xs1 = xs1',
+			xs2 = xs2',
+			xs3 = xs3',
+			xs4 = xs4',
+			xs5 = xs5',
+			subdiv = subdiv',
+			part_is = part_is,
+			cell_ids = cell_ids,
+			og_is = og_is
+		}
+
+	entry get_part_info_5d_f64 [n]
+		(bidir : bool)
+		(eps : f64)
+		(dat : indexed_data_5d_f64 [n])
+	: partition_info_f64 [n] =
+		let pts = cols_to_vectors_5d dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5
+		let (pids,part_sz,part_pairs,part_pairs_sz,part_pairs_is)
+		= dclust5_f64.partition_information bidir 1 eps dat.subdiv dat.part_is dat.cell_ids pts
+		in {
+			num_parts = length dat.part_is,
+			partition_pairs_0 = part_pairs |> map (.0),
+			partition_pairs_1 = part_pairs |> map (.1),
+			part_sz = part_sz,
+			part_pairs_is = part_pairs_is,
+			part_pairs_sz = part_pairs_sz,
+			pids = pids
+		}
+
+	entry get_neighbour_counts_5d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(minPts : i64)
+		(dat  : indexed_data_5d_f64 [n])
+		(info : partition_info_f64 [n])
+	: [n]i64 =
+		let pts = cols_to_vectors_5d dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5
+		let part_pairs = indices info.partition_pairs_0
+			|> map (\i ->
+				(info.partition_pairs_0[i], info.partition_pairs_1[i])
+			)
+		in dclust5_f64.get_neighbour_counts
+			seed_count
+			eps
+			minPts
+			pts
+			info.pids
+			part_pairs
+			(dat.part_is  |> sized info.num_parts)
+			(info.part_sz |> sized info.num_parts)
+			(info.part_pairs_is |> sized info.num_parts)
+			(info.part_pairs_sz |> sized info.num_parts)
+
+	type~ isolated_core_pts_5d_f64 = {
+		num_cores : i64,
+		core_xs1 : []f64,
+		core_xs2 : []f64,
+		core_xs3 : []f64,
+		core_xs4 : []f64,
+		core_xs5 : []f64,
+		core_pids : []i64,
+		core_is : []i64,
+		non_core_is : []i64
+	}
+
+	entry isolate_core_pts_5d_f64 [n]
+		(is_core : [n]bool)
+		(dat  : indexed_data_5d_f64 [n])
+		(info : partition_info_f64 [n])
+	: isolated_core_pts_5d_f64 =
+		let (cores,non_cores) = iota n
+			|> partition (\i -> is_core[i])
+		in {
+			num_cores = length cores,
+			core_xs1 = cores |> map (\i -> dat.xs1[i]),
+			core_xs2 = cores |> map (\i -> dat.xs2[i]),
+			core_xs3 = cores |> map (\i -> dat.xs3[i]),
+			core_xs4 = cores |> map (\i -> dat.xs4[i]),
+			core_xs5 = cores |> map (\i -> dat.xs5[i]),
+			core_pids = cores |> map (\i -> info.pids[i]),
+			core_is = cores,
+			non_core_is = non_cores
+		}
+
+	entry get_part_core_info_5d_f64 [n]
+		(cores : isolated_core_pts_5d_f64)
+		(dat   : indexed_data_5d_f64 [n])
+	: part_core_info =
+		let (part_core_sz, part_core_is) = dclust5_f64.part_get_core_info
+			cores.core_pids
+			dat.part_is
+		in {part_core_sz = part_core_sz, part_core_is = part_core_is}
+
+	entry mk_clusters_5d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(info  : partition_info_f64 [n])
+		(cores : isolated_core_pts_5d_f64)
+		(core_info : part_core_info)
+	: []i64 =
+		let core_pts = cols_to_vectors_5d
+			(cores.core_xs1 |> sized cores.num_cores)
+			(cores.core_xs2 |> sized cores.num_cores)
+			(cores.core_xs3 |> sized cores.num_cores)
+			(cores.core_xs4 |> sized cores.num_cores)
+			(cores.core_xs5 |> sized cores.num_cores)
+		let part_pairs = indices info.partition_pairs_0
+			|> map (\i ->
+				(info.partition_pairs_0[i], info.partition_pairs_1[i])
+			)
+		in dclust5_f64.find_clusters
+			seed_count
+			eps
+			core_pts
+			(cores.core_pids |> sized cores.num_cores)
+			part_pairs
+			(core_info.part_core_is |> sized info.num_parts)
+			(core_info.part_core_sz |> sized info.num_parts)
+			(info.part_pairs_is     |> sized info.num_parts)
+			(info.part_pairs_sz     |> sized info.num_parts)
+
+	entry assign_cluster_ids_5d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(dat : indexed_data_5d_f64 [n])
+		(is_core : [n]bool)
+		(info_bd   : partition_info_f64 [n])
+		(cores     : isolated_core_pts_5d_f64)
+		(core_info : part_core_info)
+		(core_cids : []i64)
+	: [n]i64 =
+		let pts = cols_to_vectors_5d
+			dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5
+		let core_pts = cols_to_vectors_5d
+			(cores.core_xs1 |> sized cores.num_cores)
+			(cores.core_xs2 |> sized cores.num_cores)
+			(cores.core_xs3 |> sized cores.num_cores)
+			(cores.core_xs4 |> sized cores.num_cores)
+			(cores.core_xs5 |> sized cores.num_cores)
+		let part_pairs_bd = indices info_bd.partition_pairs_0
+			|> map (\i ->
+				(info_bd.partition_pairs_0[i], info_bd.partition_pairs_1[i])
+			)
+		in dclust5_f64.assign_cluster_ids
+			seed_count
+			eps
+			pts
+			info_bd.pids
+			is_core
+			core_pts
+			(core_cids |> sized cores.num_cores)
+			part_pairs_bd
+			(core_info.part_core_is |> sized info_bd.num_parts)
+			(core_info.part_core_sz |> sized info_bd.num_parts)
+			(info_bd.part_pairs_is  |> sized info_bd.num_parts)
+			(info_bd.part_pairs_sz  |> sized info_bd.num_parts)
+
+	entry deindex_results_5d [n]
+		(dat : indexed_data_5d_f64 [n])
+		(is_core : [n]bool)
+		(cluster_id : [n]i64)
+	: dbscan_result [n] =
+		let is_core' = scatter (replicate n false) dat.og_is is_core
+		let cluster_id' = scatter (replicate n 0) dat.og_is cluster_id
+		in {is_core = is_core', cluster_id = cluster_id'}
 
 -- Entry Points for 7D
 
+	type~ indexed_data_7d_f64 [n] = {
+		xs1 : [n]f64,
+		xs2 : [n]f64,
+		xs3 : [n]f64,
+		xs4 : [n]f64,
+		xs5 : [n]f64,
+		xs6 : [n]f64,
+		xs7 : [n]f64,
+		subdiv : [vector_7.length]i64,
+		part_is : []i64,
+		cell_ids : []i64,
+		og_is : [n]i64
+	}
+
+	entry index_dataset_7d_f64 [n]
+		(eps : f64)
+		(subdiv1 : i64)
+		(subdiv2 : i64)
+		(subdiv3 : i64)
+		(subdiv4 : i64)
+		(subdiv5 : i64)
+		(subdiv6 : i64)
+		(subdiv7 : i64)
+		(xs1 : [n]f64)
+		(xs2 : [n]f64)
+		(xs3 : [n]f64)
+		(xs4 : [n]f64)
+		(xs5 : [n]f64)
+		(xs6 : [n]f64)
+		(xs7 : [n]f64)
+	: indexed_data_7d_f64 [n] =
+		let pts = cols_to_vectors_7d xs1 xs2 xs3 xs4 xs5 xs6 xs7
+		let subdiv = [subdiv1,subdiv2,subdiv3,subdiv4,subdiv5,subdiv6,subdiv7]
+			|> sized vector_7.length
+		let (subdiv', pts',part_is,cell_ids,og_is)
+		= dclust7_f64.partition_dataset eps subdiv pts
+		let (xs1',xs2',xs3',xs4',xs5',xs6',xs7') = vectors_to_cols_7d pts'
+		in {
+			xs1 = xs1',
+			xs2 = xs2',
+			xs3 = xs3',
+			xs4 = xs4',
+			xs5 = xs5',
+			xs6 = xs6',
+			xs7 = xs7',
+			subdiv = subdiv',
+			part_is = part_is,
+			cell_ids = cell_ids,
+			og_is = og_is
+		}
+
+	entry get_part_info_7d_f64 [n]
+		(bidir : bool)
+		(eps : f64)
+		(dat : indexed_data_7d_f64 [n])
+	: partition_info_f64 [n] =
+		let pts = cols_to_vectors_7d
+			dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5 dat.xs6 dat.xs7
+		let (pids,part_sz,part_pairs,part_pairs_sz,part_pairs_is)
+		= dclust7_f64.partition_information bidir 1 eps dat.subdiv dat.part_is dat.cell_ids pts
+		in {
+			num_parts = length dat.part_is,
+			partition_pairs_0 = part_pairs |> map (.0),
+			partition_pairs_1 = part_pairs |> map (.1),
+			part_sz = part_sz,
+			part_pairs_is = part_pairs_is,
+			part_pairs_sz = part_pairs_sz,
+			pids = pids
+		}
+
+	entry get_neighbour_counts_7d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(minPts : i64)
+		(dat  : indexed_data_7d_f64 [n])
+		(info : partition_info_f64 [n])
+	: [n]i64 =
+		let pts = cols_to_vectors_7d
+			dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5 dat.xs6 dat.xs7
+		let part_pairs = indices info.partition_pairs_0
+			|> map (\i ->
+				(info.partition_pairs_0[i], info.partition_pairs_1[i])
+			)
+		in dclust7_f64.get_neighbour_counts
+			seed_count
+			eps
+			minPts
+			pts
+			info.pids
+			part_pairs
+			(dat.part_is  |> sized info.num_parts)
+			(info.part_sz |> sized info.num_parts)
+			(info.part_pairs_is |> sized info.num_parts)
+			(info.part_pairs_sz |> sized info.num_parts)
+
+	type~ isolated_core_pts_7d_f64 = {
+		num_cores : i64,
+		core_xs1 : []f64,
+		core_xs2 : []f64,
+		core_xs3 : []f64,
+		core_xs4 : []f64,
+		core_xs5 : []f64,
+		core_xs6 : []f64,
+		core_xs7 : []f64,
+		core_pids : []i64,
+		core_is : []i64,
+		non_core_is : []i64
+	}
+
+	entry isolate_core_pts_7d_f64 [n]
+		(is_core : [n]bool)
+		(dat  : indexed_data_7d_f64 [n])
+		(info : partition_info_f64 [n])
+	: isolated_core_pts_7d_f64 =
+		let (cores,non_cores) = iota n
+			|> partition (\i -> is_core[i])
+		in {
+			num_cores = length cores,
+			core_xs1 = cores |> map (\i -> dat.xs1[i]),
+			core_xs2 = cores |> map (\i -> dat.xs2[i]),
+			core_xs3 = cores |> map (\i -> dat.xs3[i]),
+			core_xs4 = cores |> map (\i -> dat.xs4[i]),
+			core_xs5 = cores |> map (\i -> dat.xs5[i]),
+			core_xs6 = cores |> map (\i -> dat.xs6[i]),
+			core_xs7 = cores |> map (\i -> dat.xs7[i]),
+			core_pids = cores |> map (\i -> info.pids[i]),
+			core_is = cores,
+			non_core_is = non_cores
+		}
+
+	entry get_part_core_info_7d_f64 [n]
+		(cores : isolated_core_pts_7d_f64)
+		(dat   : indexed_data_7d_f64 [n])
+	: part_core_info =
+		let (part_core_sz, part_core_is) = dclust7_f64.part_get_core_info
+			cores.core_pids
+			dat.part_is
+		in {part_core_sz = part_core_sz, part_core_is = part_core_is}
+
+	entry mk_clusters_7d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(info  : partition_info_f64 [n])
+		(cores : isolated_core_pts_7d_f64)
+		(core_info : part_core_info)
+	: []i64 =
+		let core_pts = cols_to_vectors_7d
+			(cores.core_xs1 |> sized cores.num_cores)
+			(cores.core_xs2 |> sized cores.num_cores)
+			(cores.core_xs3 |> sized cores.num_cores)
+			(cores.core_xs4 |> sized cores.num_cores)
+			(cores.core_xs5 |> sized cores.num_cores)
+			(cores.core_xs6 |> sized cores.num_cores)
+			(cores.core_xs7 |> sized cores.num_cores)
+		let part_pairs = indices info.partition_pairs_0
+			|> map (\i ->
+				(info.partition_pairs_0[i], info.partition_pairs_1[i])
+			)
+		in dclust7_f64.find_clusters
+			seed_count
+			eps
+			core_pts
+			(cores.core_pids |> sized cores.num_cores)
+			part_pairs
+			(core_info.part_core_is |> sized info.num_parts)
+			(core_info.part_core_sz |> sized info.num_parts)
+			(info.part_pairs_is     |> sized info.num_parts)
+			(info.part_pairs_sz     |> sized info.num_parts)
+
+	entry assign_cluster_ids_7d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(dat : indexed_data_7d_f64 [n])
+		(is_core : [n]bool)
+		(info_bd   : partition_info_f64 [n])
+		(cores     : isolated_core_pts_7d_f64)
+		(core_info : part_core_info)
+		(core_cids : []i64)
+	: [n]i64 =
+		let pts = cols_to_vectors_7d
+			dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5 dat.xs6 dat.xs7
+		let core_pts = cols_to_vectors_7d
+			(cores.core_xs1 |> sized cores.num_cores)
+			(cores.core_xs2 |> sized cores.num_cores)
+			(cores.core_xs3 |> sized cores.num_cores)
+			(cores.core_xs4 |> sized cores.num_cores)
+			(cores.core_xs5 |> sized cores.num_cores)
+			(cores.core_xs6 |> sized cores.num_cores)
+			(cores.core_xs7 |> sized cores.num_cores)
+		let part_pairs_bd = indices info_bd.partition_pairs_0
+			|> map (\i ->
+				(info_bd.partition_pairs_0[i], info_bd.partition_pairs_1[i])
+			)
+		in dclust7_f64.assign_cluster_ids
+			seed_count
+			eps
+			pts
+			info_bd.pids
+			is_core
+			core_pts
+			(core_cids |> sized cores.num_cores)
+			part_pairs_bd
+			(core_info.part_core_is |> sized info_bd.num_parts)
+			(core_info.part_core_sz |> sized info_bd.num_parts)
+			(info_bd.part_pairs_is  |> sized info_bd.num_parts)
+			(info_bd.part_pairs_sz  |> sized info_bd.num_parts)
+
+	entry deindex_results_7d [n]
+		(dat : indexed_data_7d_f64 [n])
+		(is_core : [n]bool)
+		(cluster_id : [n]i64)
+	: dbscan_result [n] =
+		let is_core' = scatter (replicate n false) dat.og_is is_core
+		let cluster_id' = scatter (replicate n 0) dat.og_is cluster_id
+		in {is_core = is_core', cluster_id = cluster_id'}
 
 -- Entry Points for 10D
 
+	type~ indexed_data_10d_f64 [n] = {
+		xs1  : [n]f64,
+		xs2  : [n]f64,
+		xs3  : [n]f64,
+		xs4  : [n]f64,
+		xs5  : [n]f64,
+		xs6  : [n]f64,
+		xs7  : [n]f64,
+		xs8  : [n]f64,
+		xs9  : [n]f64,
+		xs10 : [n]f64,
+		subdiv : [vector_10.length]i64,
+		part_is : []i64,
+		cell_ids : []i64,
+		og_is : [n]i64
+	}
 
+	entry index_dataset_10d_f64 [n]
+		(eps : f64)
+		(subdiv1  : i64)
+		(subdiv2  : i64)
+		(subdiv3  : i64)
+		(subdiv4  : i64)
+		(subdiv5  : i64)
+		(subdiv6  : i64)
+		(subdiv7  : i64)
+		(subdiv8  : i64)
+		(subdiv9  : i64)
+		(subdiv10 : i64)
+		(xs1  : [n]f64)
+		(xs2  : [n]f64)
+		(xs3  : [n]f64)
+		(xs4  : [n]f64)
+		(xs5  : [n]f64)
+		(xs6  : [n]f64)
+		(xs7  : [n]f64)
+		(xs8  : [n]f64)
+		(xs9  : [n]f64)
+		(xs10 : [n]f64)
+	: indexed_data_10d_f64 [n] =
+		let pts = cols_to_vectors_10d xs1 xs2 xs3 xs4 xs5 xs6 xs7 xs8 xs9 xs10
+		let subdiv = [
+			subdiv1,subdiv2,subdiv3,subdiv4,subdiv5,
+			subdiv6,subdiv7,subdiv8,subdiv9,subdiv10
+		] |> sized vector_10.length
+		let (subdiv', pts',part_is,cell_ids,og_is)
+			= dclust10_f64.partition_dataset eps subdiv pts
+		let (xs1',xs2',xs3',xs4',xs5',xs6',xs7',xs8',xs9',xs10')
+			= vectors_to_cols_10d pts'
+		in {
+			xs1  = xs1',
+			xs2  = xs2',
+			xs3  = xs3',
+			xs4  = xs4',
+			xs5  = xs5',
+			xs6  = xs6',
+			xs7  = xs7',
+			xs8  = xs8',
+			xs9  = xs9',
+			xs10 = xs10',
+			subdiv = subdiv',
+			part_is = part_is,
+			cell_ids = cell_ids,
+			og_is = og_is
+		}
 
+	entry get_part_info_10d_f64 [n]
+		(bidir : bool)
+		(eps : f64)
+		(dat : indexed_data_10d_f64 [n])
+	: partition_info_f64 [n] =
+		let pts = cols_to_vectors_10d
+			dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5
+			dat.xs6 dat.xs7 dat.xs8 dat.xs9 dat.xs10
+		let (pids,part_sz,part_pairs,part_pairs_sz,part_pairs_is)
+		= dclust10_f64.partition_information bidir 1 eps dat.subdiv dat.part_is dat.cell_ids pts
+		in {
+			num_parts = length dat.part_is,
+			partition_pairs_0 = part_pairs |> map (.0),
+			partition_pairs_1 = part_pairs |> map (.1),
+			part_sz = part_sz,
+			part_pairs_is = part_pairs_is,
+			part_pairs_sz = part_pairs_sz,
+			pids = pids
+		}
 
+	entry get_neighbour_counts_10d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(minPts : i64)
+		(dat  : indexed_data_10d_f64 [n])
+		(info : partition_info_f64 [n])
+	: [n]i64 =
+		let pts = cols_to_vectors_10d
+			dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5
+			dat.xs6 dat.xs7 dat.xs8 dat.xs9 dat.xs10
+		let part_pairs = indices info.partition_pairs_0
+			|> map (\i ->
+				(info.partition_pairs_0[i], info.partition_pairs_1[i])
+			)
+		in dclust10_f64.get_neighbour_counts
+			seed_count
+			eps
+			minPts
+			pts
+			info.pids
+			part_pairs
+			(dat.part_is  |> sized info.num_parts)
+			(info.part_sz |> sized info.num_parts)
+			(info.part_pairs_is |> sized info.num_parts)
+			(info.part_pairs_sz |> sized info.num_parts)
 
+	type~ isolated_core_pts_10d_f64 = {
+		num_cores : i64,
+		core_xs1  : []f64,
+		core_xs2  : []f64,
+		core_xs3  : []f64,
+		core_xs4  : []f64,
+		core_xs5  : []f64,
+		core_xs6  : []f64,
+		core_xs7  : []f64,
+		core_xs8  : []f64,
+		core_xs9  : []f64,
+		core_xs10 : []f64,
+		core_pids : []i64,
+		core_is : []i64,
+		non_core_is : []i64
+	}
 
+	entry isolate_core_pts_10d_f64 [n]
+		(is_core : [n]bool)
+		(dat  : indexed_data_10d_f64 [n])
+		(info : partition_info_f64 [n])
+	: isolated_core_pts_10d_f64 =
+		let (cores,non_cores) = iota n
+			|> partition (\i -> is_core[i])
+		in {
+			num_cores = length cores,
+			core_xs1 = cores  |> map (\i -> dat.xs1[i]),
+			core_xs2 = cores  |> map (\i -> dat.xs2[i]),
+			core_xs3 = cores  |> map (\i -> dat.xs3[i]),
+			core_xs4 = cores  |> map (\i -> dat.xs4[i]),
+			core_xs5 = cores  |> map (\i -> dat.xs5[i]),
+			core_xs6 = cores  |> map (\i -> dat.xs6[i]),
+			core_xs7 = cores  |> map (\i -> dat.xs7[i]),
+			core_xs8 = cores  |> map (\i -> dat.xs8[i]),
+			core_xs9 = cores  |> map (\i -> dat.xs9[i]),
+			core_xs10 = cores |> map (\i -> dat.xs10[i]),
+			core_pids = cores |> map (\i -> info.pids[i]),
+			core_is = cores,
+			non_core_is = non_cores
+		}
 
+	entry get_part_core_info_10d_f64 [n]
+		(cores : isolated_core_pts_10d_f64)
+		(dat   : indexed_data_10d_f64 [n])
+	: part_core_info =
+		let (part_core_sz, part_core_is) = dclust10_f64.part_get_core_info
+			cores.core_pids
+			dat.part_is
+		in {part_core_sz = part_core_sz, part_core_is = part_core_is}
 
+	entry mk_clusters_10d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(info  : partition_info_f64 [n])
+		(cores : isolated_core_pts_10d_f64)
+		(core_info : part_core_info)
+	: []i64 =
+		let core_pts = cols_to_vectors_10d
+			(cores.core_xs1  |> sized cores.num_cores)
+			(cores.core_xs2  |> sized cores.num_cores)
+			(cores.core_xs3  |> sized cores.num_cores)
+			(cores.core_xs4  |> sized cores.num_cores)
+			(cores.core_xs5  |> sized cores.num_cores)
+			(cores.core_xs6  |> sized cores.num_cores)
+			(cores.core_xs7  |> sized cores.num_cores)
+			(cores.core_xs8  |> sized cores.num_cores)
+			(cores.core_xs9  |> sized cores.num_cores)
+			(cores.core_xs10 |> sized cores.num_cores)
+		let part_pairs = indices info.partition_pairs_0
+			|> map (\i ->
+				(info.partition_pairs_0[i], info.partition_pairs_1[i])
+			)
+		in dclust10_f64.find_clusters
+			seed_count
+			eps
+			core_pts
+			(cores.core_pids |> sized cores.num_cores)
+			part_pairs
+			(core_info.part_core_is |> sized info.num_parts)
+			(core_info.part_core_sz |> sized info.num_parts)
+			(info.part_pairs_is     |> sized info.num_parts)
+			(info.part_pairs_sz     |> sized info.num_parts)
 
+	entry assign_cluster_ids_10d_f64 [n]
+		(seed_count : i64)
+		(eps : f64)
+		(dat : indexed_data_10d_f64 [n])
+		(is_core : [n]bool)
+		(info_bd   : partition_info_f64 [n])
+		(cores     : isolated_core_pts_10d_f64)
+		(core_info : part_core_info)
+		(core_cids : []i64)
+	: [n]i64 =
+		let pts = cols_to_vectors_10d
+			dat.xs1 dat.xs2 dat.xs3 dat.xs4 dat.xs5
+			dat.xs6 dat.xs7 dat.xs8 dat.xs9 dat.xs10
+		let core_pts = cols_to_vectors_10d
+			(cores.core_xs1  |> sized cores.num_cores)
+			(cores.core_xs2  |> sized cores.num_cores)
+			(cores.core_xs3  |> sized cores.num_cores)
+			(cores.core_xs4  |> sized cores.num_cores)
+			(cores.core_xs5  |> sized cores.num_cores)
+			(cores.core_xs6  |> sized cores.num_cores)
+			(cores.core_xs7  |> sized cores.num_cores)
+			(cores.core_xs8  |> sized cores.num_cores)
+			(cores.core_xs9  |> sized cores.num_cores)
+			(cores.core_xs10 |> sized cores.num_cores)
+		let part_pairs_bd = indices info_bd.partition_pairs_0
+			|> map (\i ->
+				(info_bd.partition_pairs_0[i], info_bd.partition_pairs_1[i])
+			)
+		in dclust10_f64.assign_cluster_ids
+			seed_count
+			eps
+			pts
+			info_bd.pids
+			is_core
+			core_pts
+			(core_cids |> sized cores.num_cores)
+			part_pairs_bd
+			(core_info.part_core_is |> sized info_bd.num_parts)
+			(core_info.part_core_sz |> sized info_bd.num_parts)
+			(info_bd.part_pairs_is  |> sized info_bd.num_parts)
+			(info_bd.part_pairs_sz  |> sized info_bd.num_parts)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	entry deindex_results_10d [n]
+		(dat : indexed_data_10d_f64 [n])
+		(is_core : [n]bool)
+		(cluster_id : [n]i64)
+	: dbscan_result [n] =
+		let is_core' = scatter (replicate n false) dat.og_is is_core
+		let cluster_id' = scatter (replicate n 0) dat.og_is cluster_id
+		in {is_core = is_core', cluster_id = cluster_id'}
