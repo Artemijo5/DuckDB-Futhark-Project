@@ -51,82 +51,63 @@ local def expand_outer_red [n] 't
 	: [n]i64 = hamming_dists
 		char_cmp strs strs is1 is2
 
-	-- Levenschtein distance between 2 strings.
+	-- | Levenschtein distance between 2 strings.
 	-- Code based on Wikipedia.
-	--
-	-- TODO fix (...)
+	let lev_dist
+		(char_cmp : u8 -> u8 -> i8)
+		(strs1 : strInfo)
+		(strs2 : strInfo)
+		(i1 : i64)
+		(i2 : i64)
+	: i64 =
+		let len1 = get_str_len i1 strs1
+		let len2 = get_str_len i2 strs2
+		let v0 = iota (len2+1)
+		let v1 = replicate (len2+1) 0
+		let (final_v0,_) = loop (l_v0,l_v1) : ([len2+1]i64, [len2+1]i64) = (v0,v1)
+		for j<len1 do
+			let l_v1' = (copy l_v1) with [0] = j+1
+			let leftSide = get_kth_char j i1 strs1
+			let new_v1 = loop inner_v1 = l_v1'
+				for i<len2 do
+					let rightSide = get_kth_char i i2 strs2
+					let ineq = char_cmp leftSide rightSide
+						|> (i8.abs >-> bool.i8)
+					let del_cost = l_v0[i+1] + 1
+					let ins_cost = inner_v1[i] + 1
+					let sub_cost = (if ineq
+						then l_v0[i] + 1
+						else l_v0[i])
+					let newval = i64.min sub_cost
+						(i64.min ins_cost del_cost)
+					in (copy inner_v1) with [i+1]=newval
+			in (new_v1, l_v0)
+		in final_v0 |> last
+
+	-- | Parallel Levenschtein distances between multiple pairs of strings.
+	-- TODO this is irregular
+	-- regularize...
 	def lev_dists [n]
 		(char_cmp : u8 -> u8 -> i8)
 		(strs1 : strInfo)
 		(strs2 : strInfo)
 		(is1 : [n]i64)
 		(is2 : [n]i64)
-	: [n]i64 =
-		-- gathered strs
-		let g_strs1 = str_gather strs1 is1
-		let g_strs2 = str_gather strs2 is2
-		let simple_lens = length g_strs2.contents
-		let total_lens = simple_lens + n
-		-- string lengths
-		let lens1 = is1 |> map (\i1 -> get_str_len i1 strs1)
-		let lens2 = is2 |> map (\i2 -> get_str_len i2 strs2)
-		let offs = lens2
-			|> map (\i -> i+1)
-			|> exscan (+) 0
-		let flags = scatter (replicate total_lens false) offs (replicate n true)
-		-- working rows
-		let vs0 = lens2
-			|> expand (\i -> i+1)
-				(\_ ind -> ind)
-			|> sized total_lens
-		let vs1 = flags |> map (i64.bool)
-		-- loop
-		let (final_vs0,_) = loop (l_vs0, l_vs1) = (vs0,vs1)
-		for j<1+(i64.maximum lens1) do
-			-- deletion cost
-			let delCost = l_vs0
-				|> rotate 1
-				|> zip (flags |> rotate 1)
-				|> filter ((.0) >-> not)
-				|> map (\(_,dc) -> dc+1)
-				|> sized simple_lens
-			-- insertion cost
-			let insCost = l_vs1
-				|> zip (flags |> rotate 1)
-				|> filter ((.0) >-> not)
-				|> map (\(_,dc) -> dc+1)
-				|> sized simple_lens
-			-- substitution cost
-			let subCost = iota n
-				|> expand (\i -> lens2[i])
-					(\i ind -> 
-						let leftSide = get_kth_char j i g_strs1
-						let rightSide = get_kth_char ind i g_strs2
-						let ineq = char_cmp leftSide rightSide
-							|> bool.i8
-						in ineq
-					)
-				|> sized simple_lens
-				|> zip (
-					l_vs0
-						|> zip (flags |> rotate 1)
-						|> filter ((.0) >-> not)
-						|> map (.1)
-						|> sized simple_lens
-					)
-				|> map (\(v0, ineq) -> if ineq then v0+1 else v0)
-			let new_v1s = map3 (\dc ic sc -> i64.min dc (i64.min ic sc))
-					delCost insCost subCost
-			let new_v1s' = flags |> rotate 1 |> map ((not) >-> i64.bool)
-				|> exscan (+) 0
-				|> zip (flags |> rotate 1 |> map (not))
-				|> trace
-				|> map (\(f,i) -> if f then new_v1s[i] else 0)
-			in (new_v1s', l_vs0)
-		in final_vs0 |> zip (flags |> rotate 1)
-			|> filter (.0) |> map (.1) |> sized n
+	: [n]i64 = map2 (\i1 i2 ->
+		lev_dist char_cmp strs1 strs2 i1 i2
+	) is1 is2
 
-				
-
-
-		
+	-- | Parallel Levenschtein distances between multiple pairs of strings,
+	-- when all strings are in the same superstring.
+	-- TODO this is irregular
+	-- regularize...
+	def lev_codists [n]
+		(char_cmp : u8 -> u8 -> i8)
+		(strs : strInfo)
+		(is1 : [n]i64)
+		(is2 : [n]i64)
+	: [n]i64 = map2 (\i1 i2 ->
+		if i1==i2
+		then 0
+		else lev_dist char_cmp strs strs i1 i2
+	) is1 is2
