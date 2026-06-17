@@ -31,9 +31,19 @@ DClust:
 DClust-segm:
 	mkdir -p ft_clibs
 	futhark cuda ft_libs/dbscan/dclust_entry_segments.fut -o ft_clibs/dclust_entry_segm --library
+	futhark cuda ft_libs/dbscan/dclust_entry_segments_high_dim.fut -o ft_clibs/dclust_entry_segm_hd --library
 	$(CC) ft_clibs/dclust_entry_segm.c -o ft_clibs/libdclust_segm.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
+	$(CC) ft_clibs/dclust_entry_segm_hd.c -o ft_clibs/libdclust_segm_hd.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
 	$(CC) c_tests/src/dbscan/futhark_dclust_segm_2d.c -o c_tests/dclust_segm_2d.o $(CFLAGS) $(DEPS) ft_clibs/libdclust_segm.so -lm
 	$(CC) c_tests/src/dbscan/futhark_dclust_segm_3d.c -o c_tests/dclust_segm_3d.o $(CFLAGS) $(DEPS) ft_clibs/libdclust_segm.so -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_4d.c -o c_tests/dclust_segm_4d.o \
+		$(CFLAGS) $(DEPS) ft_clibs/libdclust_segm_hd.so -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_5d.c -o c_tests/dclust_segm_5d.o \
+		$(CFLAGS) $(DEPS) ft_clibs/libdclust_segm_hd.so -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_7d.c -o c_tests/dclust_segm_7d.o \
+		$(CFLAGS) $(DEPS) ft_clibs/libdclust_segm_hd.so -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_10d.c -o c_tests/dclust_segm_10d.o \
+		$(CFLAGS) $(DEPS) ft_clibs/libdclust_segm_hd.so -lm
 
 C-DClust:
 	mkdir -p ft_clibs
@@ -44,8 +54,17 @@ C-DClust:
 C-DClust-segm:
 	mkdir -p ft_clibs
 	futhark c ft_libs/dbscan/dclust_entry_segments.fut -o ft_clibs/dclust_entry_segm --library
+	futhark c ft_libs/dbscan/dclust_entry_segments_high_dim.fut -o ft_clibs/dclust_entry_segm_hd --library
 	$(CC) c_tests/src/dbscan/futhark_dclust_segm_2d.c -o c_tests/dclust_segm_2d.o $(CFLAGS) $(DEPS) ft_clibs/dclust_entry_segm.c -lm
 	$(CC) c_tests/src/dbscan/futhark_dclust_segm_3d.c -o c_tests/dclust_segm_3d.o $(CFLAGS) $(DEPS) ft_clibs/dclust_entry_segm.c -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_4d.c -o c_tests/dclust_segm_4d.o \
+		$(CFLAGS) $(DEPS) ft_clibs/dclust_entry_segm_hd.c -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_5d.c -o c_tests/dclust_segm_5d.o \
+		$(CFLAGS) $(DEPS) ft_clibs/dclust_entry_segm_hd.c -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_7d.c -o c_tests/dclust_segm_7d.o \
+		$(CFLAGS) $(DEPS) ft_clibs/dclust_entry_segm_hd.c -lm
+	$(CC) c_tests/src/dbscan/futhark_dclust_segm_10d.c -o c_tests/dclust_segm_10d.o \
+		$(CFLAGS) $(DEPS) ft_clibs/dclust_entry_segm_hd.c -lm
 
 DuckDB-Synthetic:
 	mkdir -p ft_clibs

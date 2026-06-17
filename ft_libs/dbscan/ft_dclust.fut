@@ -103,6 +103,15 @@ module ft_dclust
 			|> map (\i -> V.iota
 				|> V.map (\d -> (-1) + (i/(3**d))%3)
 			)
+			-- filter out adjacent cells in unpartitioned dimensions
+			|> filter(\adjcell -> adjcell
+				|> V.map2
+					(\dim step -> step!=0 && subdiv[dim]==1)
+					V.iota
+				|> V.reduce (||) false
+				|> not
+			)
+		let n_adj = length adj_cube_increments
 		-- Find pairs of adjacent cells
 		let cell_pairs1 = iota np
 			|> filter (\i -> part_sz[i] > 0)
@@ -117,8 +126,9 @@ module ft_dclust
 			)
 			-- add adj_cube_increments
 			|> map (\(i, as_vector) -> adj_cube_increments
+					|> sized n_adj
 					|> map (V.map2 (+) as_vector)
-					|> zip (replicate (3**V.length) i)
+					|> zip (replicate n_adj i)
 			) |> flatten
 			-- filter invalid
 			|> filter (\(_,vec) -> 

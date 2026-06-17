@@ -6,24 +6,23 @@
 #include "../../../clibs/duckdb.h"
 
 #include "../../../clibs/mylogger.h"
-#include "../../../ft_clibs/dclust_entry_segm.h"
+#include "../../../ft_clibs/dclust_entry_segm_hd.h"
 
 #include <unistd.h>
 #include <getopt.h>
 
-#define default_INPUT_FILENAME  "3d.txt"
-#define default_OUTPUT_FILENAME "futhark_dclust_3d.csv"
+#define default_INPUT_FILENAME  "4d.txt"
+#define default_OUTPUT_FILENAME "futhark_dclust_4d.csv"
 
 #define default_DATASET_SIZE 10
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define EXTPAR 2048
 #define default_SEED_COUNT 1024
-#define default_SUBDIV 22
+#define default_SUBDIV 1
 
-#define DIM 3
+#define DIM 4
 #define default_EPS 0.5
-#define default_MIN_PTS 4
+#define default_MIN_PTS 5
 
 #define default_ITER 1
 
@@ -38,7 +37,10 @@ int main(int argc, char *argv[]) {
 		int64_t DATASET_SIZE = default_DATASET_SIZE;
 
 		int64_t SEED_COUNT = default_SEED_COUNT;
-		int64_t SUBDIV = default_SUBDIV;
+		int64_t SUBDIV1 = default_SUBDIV;
+		int64_t SUBDIV2 = default_SUBDIV;
+		int64_t SUBDIV3 = default_SUBDIV;
+		int64_t SUBDIV4 = default_SUBDIV;
 
 		double EPS  = default_EPS;
 		int64_t MIN_PTS = default_MIN_PTS;
@@ -52,7 +54,10 @@ int main(int argc, char *argv[]) {
 			{"output", required_argument, 0, 'o'},
 			{"dataset_size", required_argument, 0, 's'},
 			{"seed_count", required_argument, 0, 'c'},
-			{"subdiv", required_argument, 0, 'd'},
+			{"subdiv1", required_argument, 0, '1'},
+			{"subdiv2", required_argument, 0, '2'},
+			{"subdiv3", required_argument, 0, '3'},
+			{"subdiv4", required_argument, 0, '4'},
 			{"eps", required_argument, 0, 'e'},
 			{"min_pts", required_argument, 0, 'm'},
 			{"iter", required_argument, 0, 'I'},
@@ -62,7 +67,7 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"i:o:s:c:d:e:m:I:L:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"i:o:s:c:1:2:3:4:e:m:I:L:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	        case 'i':
@@ -73,8 +78,14 @@ int main(int argc, char *argv[]) {
 	        	DATASET_SIZE = atol(optarg); break;
 	        case 'c':
 	        	SEED_COUNT = atol(optarg); break;
-	        case 'd':
-	        	SUBDIV = atol(optarg); break;
+	        case '1':
+	        	SUBDIV1 = atol(optarg); break;
+	        case '2':
+	        	SUBDIV2 = atol(optarg); break;
+	        case '3':
+	        	SUBDIV3 = atol(optarg); break;
+	        case '4':
+	        	SUBDIV4 = atol(optarg); break;
 	        case 'e':
 	        	EPS = atof(optarg); break;
 	        case 'm':
@@ -140,7 +151,7 @@ int main(int argc, char *argv[]) {
 			duckdb_result res;
 			char query_str[300 + strlen(INPUT_FILENAME)];
 			sprintf(query_str,
-				"SELECT (#1)::DOUBLE, (#2)::DOUBLE, (#3)::DOUBLE FROM read_csv('%s') LIMIT %ld;",
+				"SELECT (#1)::DOUBLE, (#2)::DOUBLE, (#3)::DOUBLE, (#4)::DOUBLE FROM read_csv('%s') LIMIT %ld;",
 				INPUT_FILENAME, DATASET_SIZE
 			);
 			if(duckdb_query(con, query_str, &res) == DuckDBError) {
@@ -155,10 +166,12 @@ int main(int argc, char *argv[]) {
 			struct futhark_f64_1d *col1;
 			struct futhark_f64_1d *col2;
 			struct futhark_f64_1d *col3;
+			struct futhark_f64_1d *col4;
 
 			futhark_entry_init_column_f64(ctx, &col1, DATASET_SIZE);
 			futhark_entry_init_column_f64(ctx, &col2, DATASET_SIZE);
 			futhark_entry_init_column_f64(ctx, &col3, DATASET_SIZE);
+			futhark_entry_init_column_f64(ctx, &col4, DATASET_SIZE);
 
 			mylog(logfile, "Initialized empty columns in the futhark core.");
 
@@ -178,31 +191,38 @@ int main(int argc, char *argv[]) {
 				duckdb_vector vec1 = duckdb_data_chunk_get_vector(cnk,0);
 				duckdb_vector vec2 = duckdb_data_chunk_get_vector(cnk,1);
 				duckdb_vector vec3 = duckdb_data_chunk_get_vector(cnk,2);
+				duckdb_vector vec4 = duckdb_data_chunk_get_vector(cnk,3);
 
 				double *dat1 = (double*)duckdb_vector_get_data(vec1);
 				double *dat2 = (double*)duckdb_vector_get_data(vec2);
 				double *dat3 = (double*)duckdb_vector_get_data(vec3);
+				double *dat4 = (double*)duckdb_vector_get_data(vec4);
 
 				struct futhark_f64_1d *ft_dat1 = futhark_new_f64_1d(ctx, dat1, this_rows);
 				struct futhark_f64_1d *ft_dat2 = futhark_new_f64_1d(ctx, dat2, this_rows);
-				struct futhark_f64_1d *ft_dat3 = futhark_new_f64_1d(ctx, dat3, this_rows);
+				struct futhark_f64_1d *ft_dat3 = futhark_new_f64_1d(ctx, dat4, this_rows);
+				struct futhark_f64_1d *ft_dat4 = futhark_new_f64_1d(ctx, dat3, this_rows);
 
 				// Due to consumption, need to rearrange pointers.
 				struct futhark_f64_1d *col1_tmp;
 				struct futhark_f64_1d *col2_tmp;
 				struct futhark_f64_1d *col3_tmp;
+				struct futhark_f64_1d *col4_tmp;
 
 				futhark_entry_write_column_f64(ctx, &col1_tmp, num_rows, ft_dat1, col1);
 				futhark_entry_write_column_f64(ctx, &col2_tmp, num_rows, ft_dat2, col2);
 				futhark_entry_write_column_f64(ctx, &col3_tmp, num_rows, ft_dat3, col3);
+				futhark_entry_write_column_f64(ctx, &col4_tmp, num_rows, ft_dat4, col4);
 
 				futhark_free_f64_1d(ctx, col1);
 				futhark_free_f64_1d(ctx, col2);
 				futhark_free_f64_1d(ctx, col3);
+				futhark_free_f64_1d(ctx, col4);
 
 				col1 = col1_tmp;
 				col2 = col2_tmp;
 				col3 = col3_tmp;
+				col4 = col4_tmp;
 
 				num_rows += this_rows;
 				duckdb_destroy_data_chunk(&cnk);
@@ -215,18 +235,22 @@ int main(int argc, char *argv[]) {
 				struct futhark_f64_1d *col1_tmp;
 				struct futhark_f64_1d *col2_tmp;
 				struct futhark_f64_1d *col3_tmp;
+				struct futhark_f64_1d *col4_tmp;
 
 				futhark_entry_crop_column_f64(ctx, &col1_tmp, 0, num_rows, col1);
 				futhark_entry_crop_column_f64(ctx, &col2_tmp, 0, num_rows, col2);
 				futhark_entry_crop_column_f64(ctx, &col3_tmp, 0, num_rows, col3);
+				futhark_entry_crop_column_f64(ctx, &col4_tmp, 0, num_rows, col4);
 
 				futhark_free_f64_1d(ctx, col1);
 				futhark_free_f64_1d(ctx, col2);
 				futhark_free_f64_1d(ctx, col3);
+				futhark_free_f64_1d(ctx, col4);
 
 				col1 = col1_tmp;
 				col2 = col2_tmp;
 				col3 = col3_tmp;
+				col4 = col4_tmp;
 
 				mylog(logfile, "Cropped columns to actual dataset size.");
 			}
@@ -240,38 +264,43 @@ int main(int argc, char *argv[]) {
 
 			mylog(logfile, "1. Index dataset and get partition info.");
 
-			struct futhark_opaque_indexed_data_3d_f64 *indexed_dat;
-			futhark_entry_index_dataset_3d_f64(ctx, &indexed_dat, EPS, SUBDIV, col1, col2, col3);
+			struct futhark_opaque_indexed_data_4d_f64 *indexed_dat;
+			futhark_entry_index_dataset_4d_f64(
+				ctx, &indexed_dat, EPS,
+				SUBDIV1, SUBDIV2, SUBDIV3, SUBDIV4,
+				col1, col2, col3, col4
+			);
 			futhark_free_f64_1d(ctx, col1);
 			futhark_free_f64_1d(ctx, col2);
 			futhark_free_f64_1d(ctx, col3);
+			futhark_free_f64_1d(ctx, col4);
 
 			struct futhark_opaque_partition_info_f64 *partInfo;
-			futhark_entry_get_part_info_3d_f64(ctx, &partInfo, false, EPS, indexed_dat);
+			futhark_entry_get_part_info_4d_f64(ctx, &partInfo, false, EPS, indexed_dat);
 
 			struct futhark_opaque_partition_info_f64 *partInfo_bd;
-			futhark_entry_get_part_info_3d_f64(ctx, &partInfo_bd, true, EPS, indexed_dat);
+			futhark_entry_get_part_info_4d_f64(ctx, &partInfo_bd, true, EPS, indexed_dat);
 
 			futhark_context_sync(ctx);
 			mylog(logfile, "Synced futhark context.");
 
 			// Record true subdiv and #cells.
 				struct futhark_i64_1d *ft_subdiv;
-				futhark_project_opaque_indexed_data_3d_f64_subdiv(ctx, &ft_subdiv, indexed_dat);
+				futhark_project_opaque_indexed_data_4d_f64_subdiv(ctx, &ft_subdiv, indexed_dat);
 
 				struct futhark_i64_1d *ft_cell_ids;
-				futhark_project_opaque_indexed_data_3d_f64_cell_ids(ctx, &ft_cell_ids, indexed_dat);
+				futhark_project_opaque_indexed_data_4d_f64_cell_ids(ctx, &ft_cell_ids, indexed_dat);
 
 				futhark_context_sync(ctx);
 
-				int64_t true_subdiv[3];
+				int64_t true_subdiv[DIM];
 				futhark_values_i64_1d(ctx, ft_subdiv, true_subdiv);
 				futhark_free_i64_1d(ctx, ft_subdiv);
 				const int64_t *cells_shape_ptr = futhark_shape_i64_1d(ctx, ft_cell_ids);
 
 				printf("\n~~\n");
 				printf("True subdivisions per dim:\n");
-				printf("%ld\t%ld\t%ld\n", true_subdiv[0], true_subdiv[1], true_subdiv[2]);
+				printf("%ld\t%ld\t%ld\t%ld\n", true_subdiv[0], true_subdiv[1], true_subdiv[2], true_subdiv[3]);
 				printf("True number of cells:\n");
 				printf("%ld", *cells_shape_ptr);
 				futhark_free_i64_1d(ctx, ft_cell_ids);
@@ -280,7 +309,7 @@ int main(int argc, char *argv[]) {
 			mylog(logfile, "2. Find and isolate core points.");
 
 			struct futhark_i64_1d *neigh_counts;
-			futhark_entry_get_neighbour_counts_3d_f64(
+			futhark_entry_get_neighbour_counts_4d_f64(
 				ctx, &neigh_counts, SEED_COUNT, EPS, MIN_PTS, indexed_dat, partInfo
 			);
 
@@ -288,11 +317,11 @@ int main(int argc, char *argv[]) {
 			futhark_entry_get_is_core(ctx, &ind_is_core, MIN_PTS, neigh_counts);
 			futhark_free_i64_1d(ctx, neigh_counts);
 
-			struct futhark_opaque_isolated_core_pts_3d_f64 *only_core_pts;
-			futhark_entry_isolate_core_pts_3d_f64(ctx, &only_core_pts, ind_is_core, indexed_dat, partInfo);
+			struct futhark_opaque_isolated_core_pts_4d_f64 *only_core_pts;
+			futhark_entry_isolate_core_pts_4d_f64(ctx, &only_core_pts, ind_is_core, indexed_dat, partInfo);
 
 			struct futhark_opaque_part_core_info *coreInfo;
-			futhark_entry_get_part_core_info_3d_f64(ctx, &coreInfo, only_core_pts, indexed_dat);
+			futhark_entry_get_part_core_info_4d_f64(ctx, &coreInfo, only_core_pts, indexed_dat);
 
 			futhark_context_sync(ctx);
 			mylog(logfile, "Synced futhark context.");
@@ -300,7 +329,7 @@ int main(int argc, char *argv[]) {
 			mylog(logfile, "3. Find clusters among core points.");
 
 			struct futhark_i64_1d *core_cid;
-			futhark_entry_mk_clusters_3d_f64(ctx, &core_cid, SEED_COUNT, EPS, partInfo, only_core_pts, coreInfo);
+			futhark_entry_mk_clusters_4d_f64(ctx, &core_cid, SEED_COUNT, EPS, partInfo, only_core_pts, coreInfo);
 
 			futhark_context_sync(ctx);
 			mylog(logfile, "Synced futhark context.");
@@ -308,7 +337,7 @@ int main(int argc, char *argv[]) {
 			mylog(logfile, "4. Assign cluster id's to border points.");
 
 			struct futhark_i64_1d *all_ids;
-			futhark_entry_assign_cluster_ids_3d_f64(
+			futhark_entry_assign_cluster_ids_4d_f64(
 				ctx, &all_ids,
 				SEED_COUNT, EPS,
 				indexed_dat, ind_is_core, partInfo_bd,
@@ -321,15 +350,15 @@ int main(int argc, char *argv[]) {
 			mylog(logfile, "5. De-index results.");
 
 			struct futhark_opaque_dbscan_result *dbscan_res;
-			futhark_entry_deindex_results_3d(ctx, &dbscan_res, indexed_dat, ind_is_core, all_ids);
+			futhark_entry_deindex_results_4d(ctx, &dbscan_res, indexed_dat, ind_is_core, all_ids);
 
 			futhark_context_sync(ctx);
 			mylog(logfile, "Synced futhark context.");
 
 			mylog(logfile, "Cleanup...");
 
-			futhark_free_opaque_indexed_data_3d_f64(ctx, indexed_dat);
-			futhark_free_opaque_isolated_core_pts_3d_f64(ctx, only_core_pts);
+			futhark_free_opaque_indexed_data_4d_f64(ctx, indexed_dat);
+			futhark_free_opaque_isolated_core_pts_4d_f64(ctx, only_core_pts);
 			futhark_free_opaque_part_core_info(ctx, coreInfo);
 			futhark_free_opaque_partition_info_f64(ctx, partInfo);
 			futhark_free_opaque_partition_info_f64(ctx, partInfo_bd);

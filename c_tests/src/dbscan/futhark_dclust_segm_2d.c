@@ -261,7 +261,7 @@ int main(int argc, char *argv[]) {
 				int64_t true_subdiv[2];
 				futhark_values_i64_1d(ctx, ft_subdiv, true_subdiv);
 				futhark_free_i64_1d(ctx, ft_subdiv);
-				int64_t *cells_shape_ptr = futhark_shape_i64_1d(ctx, ft_cell_ids);
+				const int64_t *cells_shape_ptr = futhark_shape_i64_1d(ctx, ft_cell_ids);
 
 				printf("\n~~\n");
 				printf("True subdivisions per dim:\n");
