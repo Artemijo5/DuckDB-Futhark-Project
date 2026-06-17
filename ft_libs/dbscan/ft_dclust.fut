@@ -12,7 +12,7 @@ import "ft_undir_graph"
 
 -- Wrapper for expand_outer_reduce
 -- handling the case of 1 point.
-def expand_outer_red [n] 't
+local def expand_outer_red [n] 't
 	sz get op ne (xs : [n]t)
 = if n>1
 	then xs |> expand_outer_reduce sz get op ne
