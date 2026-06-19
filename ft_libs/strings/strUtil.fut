@@ -96,6 +96,7 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 		(i : i64)
 		(strs : strInfo)
 	: u8 =
+		if i<0 then 0 else
 		let n = length strs.idxs
 		let tlen = length strs.contents
 		let inf = strs.idxs[i]
@@ -112,6 +113,7 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 		(i : i64)
 		(strs : strInfo)
 	: i64 =
+		if i<0 then (-1) else
 		let n = length strs.idxs
 		let tlen = length strs.contents
 		let inf = strs.idxs[i]
@@ -168,6 +170,14 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 			|> zip gather_lens
 			|> expand (.0) (\(_,i) ind -> strs.contents[i+ind])
 		in {contents = new_cons, idxs = new_idxs}
+
+	-- | Sort strings, returning their indices.
+	def str_index_sort 't
+		(char_cmp : u8 -> u8 -> i8)
+		(strs : strInfo)
+	: []i64 = strs.idxs
+		|> indices
+		|> merge_sort (\i1 i2 -> coStr_cmp char_cmp strs i1 i2 <= 0)
 
 	-- | Sort strings.
 	def str_sort 't

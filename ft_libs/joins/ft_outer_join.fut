@@ -15,7 +15,7 @@ def inner_to_left_outer [n] 't
 		|> zip res.ix
 		|> filter (.1)
 		|> map (.0)
-	let present_ix = hist (||) false n res_ix' (res_ix' |> map (\_ -> true))
+	let present_ix = scatter (replicate n false) res_ix' (res_ix' |> map (\_ -> true))
 	let (out_vs,out_ix,out_iy) = iota n
 		|> filter (\i -> !present_ix[i])
 		|> map (\i -> (tR[i],i,-1))

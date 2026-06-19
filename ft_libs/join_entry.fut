@@ -207,10 +207,122 @@ import "tp_sort"
 	= colTps_i64.fetchSorted_ks bInfo bProc ks_buffer
 
 
+
+import "strings/strUtil"
 -- 5. String Processing
 
+	entry str_split [n] (delim : []u8) (str : [n]u8)
+	: strInfo = str_split delim str
 
+	entry str_gather
+		(strs : strInfo)
+		(is : []i64)
+	: strInfo = str_gather strs is
+
+import "strings/ftPHJ_str"
 -- 6. String Sorting & Hashing
 
+	-- Have to use str_gather afterwards to get the actual sorted strs
+	entry str_sort_indices
+		(case_insens : bool)
+		(strs : strInfo)
+	: []i64 =
+		if case_insens
+		then str_index_sort caseInsens_cmp strs
+		else str_index_sort arith_cmp strs
 
+	entry str_hash
+		(case_insens : bool)
+		(use_len : bool)
+		(len_divide : i64)
+		(compression: i64)
+		(num_subdiv : i64)
+		(from_subdiv: i64)
+		(bytes: i64)
+		(strs : strInfo)
+	= hash_strs
+		case_insens use_len len_divide compression
+		num_subdiv from_subdiv bytes strs
+
+import "strings/ftSMJ_str"
+import "strings/ftHSMJ_str"
 -- 7. String Equi-Joins
+
+	entry innerSMJ_str
+		(case_insens : bool)
+		(merge_path_diagonals : i64)
+		(strs1 : strInfo)
+		(strs2 : strInfo)
+	: joinPairs_str =
+		if case_insens
+		then do_InnerSMJ_str
+			caseInsens_cmp merge_path_diagonals
+			strs1 strs2
+		else do_InnerSMJ_str
+			arith_cmp merge_path_diagonals
+			strs1 strs2
+
+	entry innerHSMJ_str [n1] [n2] [b]
+		(case_insens)
+		(merge_path_diagonals : i64)
+		(strs1 : strInfo)
+		(strs2 : strInfo)
+		(hs1 : [n1](byteSeq [b]))
+		(hs2 : [n2](byteSeq [b]))
+		(is1 : [n1]i64)
+		(is2 : [n2]i64)
+	: joinPairs_str =
+		let char_cmp = (\c1 c2 ->
+			if case_insens
+			then caseInsens_cmp c1 c2
+			else arith_cmp c1 c2
+		)
+		in do_InnerHSMJ_str
+			merge_path_diagonals
+			hs1 hs2
+		|> strJoin_filter char_cmp
+			strs1 strs2 is1 is2
+
+
+import "joins/ft_outer_join"
+-- 8. Outer Join Wrappers
+
+	def leftOuterJoin_i32 [n]
+		(tR : [n]i32)
+		(res : joinPairs i32)
+	: joinPairs i32 = inner_to_left_outer
+		tR res
+
+	def rightOuterJoin_i32 [n]
+		(tS : [n]i32)
+		(res : joinPairs i32)
+	: joinPairs i32 = inner_to_right_outer
+		tS res
+
+	def fullOuterJoin_i32 [nR] [nS]
+		(tR : [nR]i32)
+		(tS : [nS]i32)
+		(res : joinPairs i32)
+	: joinPairs i32 = inner_to_full_outer
+		tR tS res
+
+	def leftOuterJoin_i64 [n]
+		(tR : [n]i64)
+		(res : joinPairs i64)
+	: joinPairs i64 = inner_to_left_outer
+		tR res
+
+	def rightOuterJoin_i64 [n]
+		(tS : [n]i64)
+		(res : joinPairs i64)
+	: joinPairs i64 = inner_to_right_outer
+		tS res
+
+	def fullOuterJoin_i64 [nR] [nS]
+		(tR : [nR]i64)
+		(tS : [nS]i64)
+		(res : joinPairs i64)
+	: joinPairs i64 = inner_to_full_outer
+		tR tS res
+
+	-- TODO wrapper for strings
