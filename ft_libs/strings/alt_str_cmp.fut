@@ -34,9 +34,7 @@ def str_cmp_alt [n]
 		|> zip3 lens1 lens2
 		|> expand_outer_red
 			(\(l1,l2,_) ->
-				if l1<0 || l2<0
-				then 0
-				else i64.max l1 l2
+				i64.max 0 (i64.max l1 l2)
 			)
 			(\(l1,l2,i) k ->
 				let i1 = if l1<0 then (-1) else strs1.idxs[is1[i]]
@@ -61,8 +59,8 @@ def str_bsearch_first [nvs]
 	(xs : strInfo)
 	(vs : strInfo) -- must have at least nvs strings
 : []i64 =
-	let n = length xs.contents
-	let num_iter = n
+	let num_iter = map2 (-) max_is min_is
+		|> i64.maximum
 		|> f64.i64
 		|> f64.log
 		|> f64.ceil
@@ -71,40 +69,45 @@ def str_bsearch_first [nvs]
 	let (foundAt,_) = loop (is_at,steps) = (min_is,map2 (-) max_is min_is)
 	for j<num_iter do
 		let next_steps = steps |> map (\step -> (step+1)/2)
-		let isInSearch = is_at |> map (\i -> i>=0)
+		let isStillIn = map2 (\cur_i cur_step -> cur_i>=0 && cur_step>0)
+			is_at steps
 		let isAtStart = map2 (==) is_at min_is
-			|> map2 (\isIn atS -> !isIn || atS) isInSearch
-		let isAtEnd = map2 (==) is_at max_is
-		let cmps_with_cur = str_cmp_alt
-			char_cmp vs xs
-			(iota nvs |> map2 (\isIn i -> if isIn then i else (-1)) isInSearch)
+			|> map2 (||) (isStillIn |> map (not))
+		let isAtEnd = map2 (\cur_i max_i -> cur_i==max_i-1) is_at max_is
+		let gt_prev = str_cmp_alt char_cmp vs xs
+			(iota nvs |> map (\i -> if isStillIn[i] then i else (-1)))
+			(
+				map2 (\cur_i atStart ->
+					if atStart then (-1) else cur_i
+				) is_at isAtStart
+			)
+			|> map (>0)
+			|> trace
+		let gt_cur = str_cmp_alt char_cmp vs xs
+			(iota nvs |> map (\i -> if isStillIn[i] then i else (-1)) |> trace)
 			is_at
-		let cmps_with_prev = str_cmp_alt
-			char_cmp vs xs
-			(iota nvs |> map2 (\isIn i -> if isIn then i else (-1)) isInSearch)
-			(map2 (\i atS -> if atS then (-1) else i-1) is_at isAtStart)
-		let cur_eq = cmps_with_cur |> map (==0)
-		let cur_lt = cmps_with_cur |> map (<1)
-		let prv_gt = cmps_with_prev |> map (>0)
-		let next_is = map5
-			(\i step isEq isLt isGt ->
-				if isGt then
-					if isEq then i
-					else if isLt then (-1)
-					else i+step
-				else i-step
-			) is_at next_steps cur_eq cur_lt prv_gt
-			|> map4 (\cur_i atS atE next_i ->
-				if (next_i<cur_i && atS) || (next_i>cur_i && atE)
-				then (-1)
-				else next_i
-			) is_at isAtStart isAtEnd
-			|> map3 (\i min_i max_i ->
-				if i<0 then i else
-				i64.max min_i (i64.min i (max_i-1))
-			) min_is max_is
-		in (next_is, next_steps)
-	in foundAt
+			|> map (>0)
+			|> trace
+		let (next_is,next_steps') = map5 (\i gt_p gt_c step atEnd ->
+				if gt_c && atEnd then (-1,0) else
+				if gt_c then (i+step,step) else
+				if gt_p then (i,0) else
+				(i-step,step)
+			)
+			is_at gt_prev gt_cur next_steps isAtEnd
+			|> trace
+			|> unzip
+		let next_is' = map3 (\next_i min_i max_i ->
+			if next_i<min_i then (-1) else
+			i64.min next_i (max_i-1)
+		) next_is min_is max_is
+		in (next_is',next_steps') |> trace
+	let check_correctness = str_cmp_alt char_cmp xs vs
+		foundAt (iota nvs)
+		|> map (==0)
+	let foundAt' = map2 (\iAt isCorrect -> if isCorrect then iAt else (-1))
+		foundAt check_correctness
+	in foundAt'
 
 
 -- bsearch_last for strings using str_cmp_alt

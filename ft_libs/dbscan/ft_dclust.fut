@@ -6,10 +6,6 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
--- TODO
--- if terminating optimization in dbscan.fut seems to pay off
--- then try using it here as well...
-
 -- Wrapper for expand_outer_reduce
 -- handling the case of 1 point.
 local def expand_outer_red [n] 't
@@ -30,12 +26,6 @@ local def expand_outer_red [n] 't
 -- and instead of traditionally expanding clusters via a seed-list,
 -- I instead process points by their partition,
 -- using the segmented extension.
---
--- Ultimately, the same pairwise point comparisons are made,
--- just in different order.
--- Could do traditional expansion using a relevant point queue
--- similar to the relevant partitions queue in dbscan.fut,
--- but that would be superfluous for futhark's logic.
 module ft_dclust
 	(V : vector)
 	(F : real)
