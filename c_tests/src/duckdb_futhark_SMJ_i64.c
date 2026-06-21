@@ -2,7 +2,7 @@
 // Assume that keys and payload data are the same type, both tables have same number of payload columns.
 // Assume R can be entirely read in one input, S might require multiple.
 
-// k and pL are i32
+// k and pL are i64
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -161,11 +161,11 @@ int main(int argc, char *argv[]) {
 			mylog(logfile, iter_str);
 		}
 
-		int32_t *R_buffs[1+NUM_PL];
-		int32_t *S_buffs[1+NUM_PL];
+		int64_t *R_buffs[1+NUM_PL];
+		int64_t *S_buffs[1+NUM_PL];
 		for(int64_t col=0; col<=NUM_PL; col++) {
-			R_buffs[col] = malloc(R_size*sizeof(int32_t));
-			S_buffs[col] = malloc(S_buff*sizeof(int32_t));
+			R_buffs[col] = malloc(R_size*sizeof(int64_t));
+			S_buffs[col] = malloc(S_buff*sizeof(int64_t));
 		}
 		duckdb_result res_R, res_S;
 
@@ -201,8 +201,8 @@ int main(int argc, char *argv[]) {
 
 		  		for(int64_t col=0; col<=NUM_PL; col++) {
 		  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
-		  			int32_t *dat = duckdb_vector_get_data(vec);
-		  			memcpy(R_buffs[col] + cur_row_R, dat, this_rows*sizeof(int32_t));
+		  			int64_t *dat = duckdb_vector_get_data(vec);
+		  			memcpy(R_buffs[col] + cur_row_R, dat, this_rows*sizeof(int64_t));
 		  		}
 
 		  		cur_row_R += this_rows;
@@ -210,20 +210,20 @@ int main(int argc, char *argv[]) {
 		  	}
 		  	duckdb_destroy_result(&res_R);
 
-		  	struct futhark_i32_1d *ft_R_buffs[1+NUM_PL];
+		  	struct futhark_i64_1d *ft_R_buffs[1+NUM_PL];
 		  	for(int64_t col=0; col<=NUM_PL; col++) {
-		  		ft_R_buffs[col] = futhark_new_i32_1d(ctx, R_buffs[col], cur_row_R);
+		  		ft_R_buffs[col] = futhark_new_i64_1d(ctx, R_buffs[col], cur_row_R);
 		  	}
 		  	if(!async) futhark_context_sync(ctx);
 		  	mylog(logfile, "Wrapped R's data into futhark context.");
 
-		  	struct futhark_opaque_sortInfo_i32 *R_sortInfo;
-		  	struct futhark_i32_1d *R_sorted_ks;
+		  	struct futhark_opaque_sortInfo_i64 *R_sortInfo;
+		  	struct futhark_i64_1d *R_sorted_ks;
 		  	struct futhark_i64_1d *R_sorted_is;
-		  	futhark_entry_radix_sort_i32_GFUR(ctx, &R_sortInfo, ft_R_buffs[0]);
-		  	futhark_free_i32_1d(ctx, ft_R_buffs[0]);
-		  	futhark_project_opaque_sortInfo_i32_ks(ctx, &R_sorted_ks, R_sortInfo);
-		  	futhark_project_opaque_sortInfo_i32_is(ctx, &R_sorted_is, R_sortInfo);
+		  	futhark_entry_radix_sort_i64_GFUR(ctx, &R_sortInfo, ft_R_buffs[0]);
+		  	futhark_free_i64_1d(ctx, ft_R_buffs[0]);
+		  	futhark_project_opaque_sortInfo_i64_ks(ctx, &R_sorted_ks, R_sortInfo);
+		  	futhark_project_opaque_sortInfo_i64_is(ctx, &R_sorted_is, R_sortInfo);
 		  	if(!async) futhark_context_sync(ctx);
 		  	mylog(logfile, "Sorted R's keys and projected fields.");
 
@@ -245,8 +245,8 @@ int main(int argc, char *argv[]) {
 
 				  		for(int64_t col=0; col<=NUM_PL; col++) {
 				  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
-				  			int32_t *dat = duckdb_vector_get_data(vec);
-				  			memcpy(S_buffs[col] + cur_row_S, dat, this_rows*sizeof(int32_t));
+				  			int64_t *dat = duckdb_vector_get_data(vec);
+				  			memcpy(S_buffs[col] + cur_row_S, dat, this_rows*sizeof(int64_t));
 				  		}
 
 				  		cur_row_S += this_rows;
@@ -255,20 +255,20 @@ int main(int argc, char *argv[]) {
 					if(is_S_exhausted) duckdb_destroy_result(&res_S);
 					mylog(logfile, "Current scan cycle finished.");
 
-					struct futhark_i32_1d *ft_S_buffs[1+NUM_PL];
+					struct futhark_i64_1d *ft_S_buffs[1+NUM_PL];
 				  	for(int64_t col=0; col<=NUM_PL; col++) {
-				  		ft_S_buffs[col] = futhark_new_i32_1d(ctx, S_buffs[col], cur_row_S);
+				  		ft_S_buffs[col] = futhark_new_i64_1d(ctx, S_buffs[col], cur_row_S);
 				  	}
 				  	if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Wrapped S buffer's data into futhark context.");
 
-				  	struct futhark_opaque_sortInfo_i32 *S_sortInfo;
-				  	struct futhark_i32_1d *S_sorted_ks;
+				  	struct futhark_opaque_sortInfo_i64 *S_sortInfo;
+				  	struct futhark_i64_1d *S_sorted_ks;
 				  	struct futhark_i64_1d *S_sorted_is;
-				  	futhark_entry_radix_sort_i32_GFUR(ctx, &S_sortInfo, ft_S_buffs[0]);
-				  	futhark_free_i32_1d(ctx, ft_S_buffs[0]);
-				  	futhark_project_opaque_sortInfo_i32_ks(ctx, &S_sorted_ks, S_sortInfo);
-				  	futhark_project_opaque_sortInfo_i32_is(ctx, &S_sorted_is, S_sortInfo);
+				  	futhark_entry_radix_sort_i64_GFUR(ctx, &S_sortInfo, ft_S_buffs[0]);
+				  	futhark_free_i64_1d(ctx, ft_S_buffs[0]);
+				  	futhark_project_opaque_sortInfo_i64_ks(ctx, &S_sorted_ks, S_sortInfo);
+				  	futhark_project_opaque_sortInfo_i64_is(ctx, &S_sorted_is, S_sortInfo);
 				  	if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Sorted S's keys and projected fields.");
 
@@ -276,10 +276,10 @@ int main(int argc, char *argv[]) {
 				// 3.2 Perform Join
 
 				  	mylog(logfile, "Performing Inner Equi-Join (SMJ) on key columns...");
-				  	struct futhark_opaque_joinPairs_i32 *joinRes;
-					futhark_entry_innerSMJ_i32(ctx, &joinRes, R_sorted_ks, S_sorted_ks);
+				  	struct futhark_opaque_joinPairs_i64 *joinRes;
+					futhark_entry_innerSMJ_i64(ctx, &joinRes, R_sorted_ks, S_sorted_ks);
 
-					struct futhark_i32_1d *vs;
+					struct futhark_i64_1d *vs;
 					struct futhark_i64_1d *ix;
 					struct futhark_i64_1d *iy;
 
@@ -287,20 +287,20 @@ int main(int argc, char *argv[]) {
 						if(!async) futhark_context_sync(ctx);
 						mylog(logfile, "Expanding to Full Outer Join...");
 
-						struct futhark_opaque_joinPairs_i32 *outer_joinRes;
-						futhark_entry_fullOuterJoin_i32(ctx, &outer_joinRes, R_sorted_ks, S_sorted_ks, joinRes);
+						struct futhark_opaque_joinPairs_i64 *outer_joinRes;
+						futhark_entry_fullOuterJoin_i64(ctx, &outer_joinRes, R_sorted_ks, S_sorted_ks, joinRes);
 
-						futhark_free_opaque_joinPairs_i32(ctx,joinRes);
+						futhark_free_opaque_joinPairs_i64(ctx,joinRes);
 						joinRes = outer_joinRes;
 					}
 
-					futhark_project_opaque_joinPairs_i32_vs(ctx, &vs, joinRes);
-					futhark_project_opaque_joinPairs_i32_ix(ctx, &ix, joinRes);
-					futhark_project_opaque_joinPairs_i32_iy(ctx, &iy, joinRes);
+					futhark_project_opaque_joinPairs_i64_vs(ctx, &vs, joinRes);
+					futhark_project_opaque_joinPairs_i64_ix(ctx, &ix, joinRes);
+					futhark_project_opaque_joinPairs_i64_iy(ctx, &iy, joinRes);
 
-					futhark_free_i32_1d(ctx,R_sorted_ks);
-					futhark_free_i32_1d(ctx,S_sorted_ks);
-					futhark_free_opaque_joinPairs_i32(ctx,joinRes);
+					futhark_free_i64_1d(ctx,R_sorted_ks);
+					futhark_free_i64_1d(ctx,S_sorted_ks);
+					futhark_free_opaque_joinPairs_i64(ctx,joinRes);
 
 					if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Completed current Join cycle and projected fields.");
@@ -312,46 +312,46 @@ int main(int argc, char *argv[]) {
 				  	struct futhark_i64_1d *R_pL_is;
 				  	struct futhark_i64_1d *S_pL_is;
 
-				  	struct futhark_i32_1d *R_pL[NUM_PL];
-				  	struct futhark_i32_1d *S_pL[NUM_PL];
+				  	struct futhark_i64_1d *R_pL[NUM_PL];
+				  	struct futhark_i64_1d *S_pL[NUM_PL];
 
 				  	futhark_entry_gather_i64(ctx, &R_pL_is, R_sorted_is, ix);
 				  	for(int64_t col=0; col<NUM_PL; col++) {
-				  		futhark_entry_gather_i32(ctx, &R_pL[col], ft_R_buffs[col+1], R_pL_is);
+				  		futhark_entry_gather_i64(ctx, &R_pL[col], ft_R_buffs[col+1], R_pL_is);
 				  	}
 				  	if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Gathered R's payloads.");
 				  	
 				  	futhark_entry_gather_i64(ctx, &S_pL_is, S_sorted_is, iy);
 				  	for(int64_t col=0; col<NUM_PL; col++) {
-				  		futhark_entry_gather_i32(ctx, &S_pL[col], ft_S_buffs[col+1], S_pL_is);
-				  		futhark_free_i32_1d(ctx, ft_S_buffs[col+1]);
+				  		futhark_entry_gather_i64(ctx, &S_pL[col], ft_S_buffs[col+1], S_pL_is);
+				  		futhark_free_i64_1d(ctx, ft_S_buffs[col+1]);
 				  	}
 				  	if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Gathered S's payloads.");
 
 				// 3.4 Cleanup
-				futhark_free_i32_1d(ctx,vs);
+				futhark_free_i64_1d(ctx,vs);
 				futhark_free_i64_1d(ctx,ix);
 				futhark_free_i64_1d(ctx,iy);
 				
-				futhark_free_i32_1d(ctx, S_sorted_ks);
+				futhark_free_i64_1d(ctx, S_sorted_ks);
 				futhark_free_i64_1d(ctx, S_sorted_is);
 
 				futhark_free_i64_1d(ctx, R_pL_is);
 				futhark_free_i64_1d(ctx, S_pL_is);
 				for(int64_t col=0; col<NUM_PL; col++) {
-					futhark_free_i32_1d(ctx, R_pL[col]);
-					futhark_free_i32_1d(ctx, S_pL[col]);
+					futhark_free_i64_1d(ctx, R_pL[col]);
+					futhark_free_i64_1d(ctx, S_pL[col]);
 				}
 			}
 
 		// 4. Cleanup
 
-			futhark_free_i32_1d(ctx, R_sorted_ks);
+			futhark_free_i64_1d(ctx, R_sorted_ks);
 			futhark_free_i64_1d(ctx, R_sorted_is);
 			for(int64_t col=0; col<NUM_PL; col++) {
-		  		futhark_free_i32_1d(ctx, ft_R_buffs[col+1]);
+		  		futhark_free_i64_1d(ctx, ft_R_buffs[col+1]);
 		  	}
 		  	for(int64_t col=0; col<=NUM_PL; col++) {
 		  		free(R_buffs[col]);
