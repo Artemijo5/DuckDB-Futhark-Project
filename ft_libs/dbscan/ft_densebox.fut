@@ -67,7 +67,7 @@ module ft_densebox
 			|> V.to_array
 		-- Auxilliary point so that cell_width is correct
 		-- is appended to the end of the dataset
-		-- and stays there after partitioning
+		-- and is removed after partitioning
 		let maxs' = V.map2 (\mi sub ->
 			mi `plus` (sub `times` cell_width)
 		) mins sdv
@@ -91,21 +91,83 @@ module ft_densebox
 			|> scan (i64.max) (-1)
 		in (part_sz, isDense, part_ids)
 
-	def get_dense_box_neighbourhoods [np]
+	local def get_most_populated_dim [np]
+		(cell_ids : [np]i64)
+		(subdiv : [V.length]i64)
+	: i64 =
+		let subdiv_v = subdiv |> V.from_array
+		let prefix_v = subdiv |> exscan (*) 1 |> V.from_array
+		let as_vectors = cell_ids |> map (\cur_pid ->
+			prefix_v
+				|> V.map (\pref -> cur_pid / pref)
+				|> V.map2 (\sdv pid_suffix -> pid_suffix%sdv) subdiv_v
+		)
+		let distinct_per_dim = replicate V.length 0
+			|> seqmap 0 (\dim ->
+				let d_vals = as_vectors
+					|> map (V.get dim)
+				let d_min = i64.minimum d_vals
+				let d_vals' = d_vals |> map (\d_v -> d_v-d_min)
+				let d_max' = i64.maximum d_vals'
+				let num_vals = scatter (replicate (d_max' + 1) false)
+					d_vals' (replicate np true)
+					|> countFor (id)
+				in num_vals
+			)
+		in argmin (>) (==) 0 distinct_per_dim
+
+	def get_box_neighbourhoods [np]
 		(subdiv : [V.length]i64)
 		(cell_ids : [np]i64)
 		(part_sz : [np]i64)
-		(is_box_dense : [np]i64)
-	-- : ([](i64,i64,bool),[np]i64,[np]i64) =
-		-- TODO calculate
-		-- part_pairs (this_cell, neigh_cell, is_inner_neighbour)
-		-- part_pairs_is
-		-- part_pairs_sz
-	--	let adj_range = V.length |> f64.sqrt
-	--		|> f64.ceil |> i64.f64
-	--	let ajd_range_inner = V.length |> f64.sqrt
-	--		|> f64.floor |> i64.f64
-	= 0
+	: ([](i64,i64),[np]i64,[np]i64) =
+		let adj_range = V.length |> from_i64 |> sqrt
+			|> ceil |> to_i64
+		let most_popd_dim = get_most_populated_dim cell_ids subdiv
+		let subdiv_v = subdiv |> V.from_array
+		let prefix_v = subdiv |> exscan (*) 1 |> V.from_array
+		let as_vectors = cell_ids |> map (\cur_pid ->
+			prefix_v
+				|> V.map (\pref -> cur_pid / pref)
+				|> V.map2 (\sdv pid_suffix -> pid_suffix%sdv) subdiv_v
+		)
+		-- Sort by the most populated dim
+		let xs = as_vectors |> map (V.get most_popd_dim)
+		let num_buckets = 1 + (i64.maximum xs)	
+		let (xs', is') = bucket_sort 2 num_buckets xs (iota np)
+		-- 1st stage: SMJ xs' with xs'
+		-- check for neighbourhood only in one dimension
+		let x_matches = xs' |> bsearch_range
+			(\x1 x2 -> i64.abs (x1-x2) <= adj_range)
+			(\x1 x2 -> x2 - x1 <= adj_range)
+			(\x1 x2 -> x1 - x2 > adj_range)
+			(\x1 x2 -> x2 - x1 > adj_range)
+			(replicate np 0)
+			(replicate np np)
+			xs'
+			-- return to original ordering
+			|> scatter (replicate np (-1,0)) is'
+		let part_pairs = x_matches
+			|> zip (iota np)
+			|> expand (\(_,(_,cm)) -> cm)
+				(\(i1,(fm,_)) ind -> (i1, fm + ind))
+			|> map (\(i1,i2) -> (i1,is'[i2]))
+			-- filter for true neighbourhood
+			|> filter (\(i1,i2) ->
+				i1==i2 ||
+				let vec1 = as_vectors[i1]
+				let vec2 = as_vectors[i2]
+				in V.map2 (-) vec1 vec2
+					|> V.map (\diff -> diff**2)
+					|> V.reduce (+) 0
+					|> (\meas -> meas <= adj_range**2)
+			)
+		let part_pairs_sz = hist_lean (+) 0 np
+			(part_pairs |> map (.0))
+			(part_pairs |> map (\_ -> 1i64))
+		let part_pairs_is = part_pairs_sz
+			|> exscan (+) 0
+		in (part_pairs, part_pairs_is, part_pairs_sz)
 
 
 
