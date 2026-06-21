@@ -1,11 +1,14 @@
 // Benchmark sort & join for tables R_tbl, S_tbl using duckdb & futhark.
+// Assume that keys and payload data are the same type, both tables have same number of payload columns.
+// Assume R can be entirely read in one input, S might require multiple.
 
 // TODO currently assuming k and pL are i32
-// Change to allow i64... or make separate script with i64...
+// Make a separate script for i64
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "../../clibs/duckdb.h"
 
 #include "../../clibs/mylogger.h"
@@ -19,9 +22,12 @@
 #define S_name "S_tbl"
 
 #define default_R_size 8192
-#define default_S_size 16384
+#define default_S_size 32768
+#define default_S_buff 16384
 
 #define k_name "k"
+
+#define default_NUM_PL "p"
 
 #define default_ITER 1
 
@@ -36,6 +42,11 @@ int main(int argc, char *argv[]) {
 
     	int64_t R_size = default_R_size;
     	int64_t S_size = default_S_size;
+    	int64_t S_buff = default_S_buff;
+
+    	bool async = false;
+
+    	int64_t NUM_PL = default_NUM_PL;
 
 		char LOGFILE[1000] = default_LOGFILE;
 		char DBFILE[1000]  = default_DBFILE;
@@ -43,6 +54,9 @@ int main(int argc, char *argv[]) {
 		static struct option long_options[] = {
 			{"R_size", required_argument, 0, 'R'},
 			{"S_size", required_argument, 0, 'S'},
+			{"S_buff", required_argument, 0, 's'},
+			{"num_pL", required_argument, 0, 'p'},
+			{"async", no_argument, 0, 'a'},
 			{"iter",    required_argument, 0, 'I'},
 			{"logfile", required_argument, 0, 'L'},
 			{"db_file", required_argument, 0, 'f'},
@@ -51,7 +65,7 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"I:R:S:L:f:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"I:R:S:s:p:aL:f:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	      	case 'I':
@@ -60,8 +74,14 @@ int main(int argc, char *argv[]) {
 	      		R_size = atol(optarg); break;
 	      	case 'S':
 	      		S_size = atol(optarg); break;
+	      	case 's':
+	      		S_buff = atol(optarg); break;
+	      	case 'p':
+	      		NUM_PL = atol(optarg); break;
+	      	case 'a':
+	      		async = true; break;
 	        case 'L':
-	        	memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
+	        	memcpy(LOGFILE, optarg, strlen(optarg)+1); break;
 	        case 'f':
 	        	memcpy(DBFILE, optarg, strlen(optarg)+1); break;
 	      }
@@ -74,6 +94,9 @@ int main(int argc, char *argv[]) {
 	      perror("Failed to initialise logger.\n");
 	      return -1;
 	    }
+
+	   	if(async) mylog(logfile, "-- # ----- Asynchronous execution.");
+	   	else mylog(logfile, "-- # ----- Synchronized exection (context is blocked between routines).");
 
 	// make duckdb connection
 
@@ -128,175 +151,195 @@ int main(int argc, char *argv[]) {
 
 	for(int64_t cur_iter=0; cur_iter<ITER; cur_iter++) {
 		if(ITER>1) {
-			char iter_str[100];
+			char iter_str[200];
 			sprintf(iter_str, "#####------#####------#####------#####------#####------ Iteration #%ld", cur_iter);
 			mylog(logfile, iter_str);
 		}
 
-		// Allocate strings for the queries.
+		int32_t *R_buffs[1+NUM_PL]
+		int32_t *S_buffs[1+NUM_PL]
+		for(int64_t col=0; col<=NUM_PL; col++) {
+			R_buffs[col] = malloc(R_size*sizeof(int32_t));
+			S_buffs[col] = malloc(S_buff*sizeof(int32_t));
+		}
+		duckdb_result res_R, res_S;
 
-		  	char select_R[strlen(R_name) + 250];
-		  	char select_S[strlen(S_name) + 250];
-
-		  	char output_tbl[2*strlen(R_name)+2*strlen(S_name)+3*strlen(k_name)+250];
-
-		// Scan R table
-
-		  	duckdb_result res_R;
-		  	sprintf(select_R,"FROM %s_tmp;", R_name);
-		  	if(duckdb_query(con, select_R, &res_R) == DuckDBError) {
+		// 1. Perform queries to read tables.
+			char query_read_R[250 + strlen(R_name)];
+			sprintf(query_read_R, "SELECT * FROM %s;", R_name);
+			if(duckdb_query(con, select_R, &res_R) == DuckDBError) {
 		  		perror("Failed to perform SELECT query on R.\n");
 		  		perror(select_R);
 		  		return -1;
 		  	}
 		  	mylog(logfile, "Performed SELECT query on R.");
 
-		  	int64_t num_pL = duckdb_column_count(&res_R)-1; // For these scripts, R & S have the same pL.
-
-		  	duckdb_type k_type = DUCKDB_TYPE_INTEGER;
-		  	duckdb_type pL_type = DUCKDB_TYPE_INTEGER;
-		  	duckdb_logical_type k_ltype = duckdb_create_logical_type(k_type);
-		  	duckdb_logical_type pL_ltype = duckdb_create_logical_type(pL_type);
-
-		  	struct futhark_i32_2d *R_keyCol;
-		  	futhark_entry_mk_col_i32(ctx, &R_keyCol, R_size);
-		  	struct futhark_i32_2d *R_pL_cols[num_pL];
-		  	for(int64_t col=0; col<num_pL; col++) {
-		  		futhark_entry_mk_col_i32(ctx, &(R_pL_cols[col]), R_size);
-		  	}
-
-		  	mylog(logfile, "Now scanning R...");
-		  	// Read elements from R, construct key column & payload columns.
-		  	int64_t cur_row_R=0;
-		  	while(true) {
-		  		duckdb_data_chunk cnk = duckdb_fetch_chunk(res_R);
-		  		if(!cnk) {
-		  			mylog(logfile, "Result is exhausted.");
-		  			break;
-		  		}
-		  		int64_t this_sz = duckdb_data_chunk_get_size(cnk);
-
-		  		duckdb_vector vec1 = duckdb_data_chunk_get_vector(cnk,0);
-		  		int32_t *dat1 = (int32_t*)duckdb_vector_get_data(vec1);
-		  		struct futhark_i32_1d *ft_dat1 = futhark_new_i32_1d(ctx, dat1, this_sz);
-		  		// Due to consumption, need to rearrange pointers.
-				struct futhark_f64_1d *keyCol_tmp;
-				futhark_entry_update_col_i32(ctx, &keyCol_tmp, cur_row_R, ft_dat1, R_keyCol);
-				futhark_free_i32_1d(ctx, R_keyCol);
-				futhark_free_i32_1d(ctx, ft_dat1);
-				R_keyCol = keyCol_tmp;
-
-				for(int64_t col=1; col<num_pL+1; col++) {
-					duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
-			  		int32_t *dat = (int32_t*)duckdb_vector_get_data(vec);
-			  		struct futhark_i32_1d *ft_dat = futhark_new_i32_1d(ctx, dat, this_sz);
-			  		// Due to consumption, need to rearrange pointers.
-					struct futhark_f64_1d *col_tmp;
-					futhark_entry_update_col_i32(ctx, &col_tmp, cur_row_R, ft_dat, R_pL_cols[col+1]);
-					futhark_free_i32_1d(ctx, R_pL_cols[col+1]);
-					futhark_free_i32_1d(ctx, ft_dat);
-					R_pL_cols[col+1] = col_tmp;
-				}
-
-		  		duckdb_destroy_data_chunk(&cnk);
-		  		cur_row_R += this_sz;
-		  	}
-		  	duckdb_destroy_result(&res_R);
-
-		// Scan S table
-
-		  	duckdb_result res_S;
-		  	sprintf(select_S,"FROM %s_tmp;", S_name);
-		  	if(duckdb_query(con, select_S, &res_S) == DuckDBError) {
+			char query_read_S[1000 + strlen(S_name) + 2*strlen(R_name) + 4*strlen(k_name)];
+			sprintf(
+				query_read_S,
+				"SELECT * FROM %s WHERE %s >= (SELECT MIN(%s) FROM %s) AND %s <= (SELECT MAX(%s) FROM %S);",
+				S_name, k_name, k_name, R_name, k_name, R_name
+			);
+			if(duckdb_query(con, select_S, &res_S) == DuckDBError) {
 		  		perror("Failed to perform SELECT query on S.\n");
 		  		perror(select_S);
 		  		return -1;
 		  	}
-		  	mylog(logfile, "Performed SELECT query on S.");
+		  	mylog(logfile, "Performed SELECT query on S, using zonemap.");
 
-		  	struct futhark_i32_2d *S_keyCol;
-		  	futhark_entry_mk_col_i32(ctx, &S_keyCol, S_size);
-		  	struct futhark_i32_2d *S_pL_cols[num_pL];
-		  	for(int64_t col=0; col<num_pL; col++) {
-		  		futhark_entry_mk_col_i32(ctx, &(S_pL_cols[col]), S_size);
-		  	}
-
-		  	mylog(logfile, "Now scanning S...");
-		  	// Read elements from S, construct key column & payload columns.
-		  	int64_t cur_row_S=0;
+	  	// 2. Read and sort R
+		  	int64_t cur_row_R = 0;
+		  	mylog(logfile, "Now scannning R");
 		  	while(true) {
-		  		duckdb_data_chunk cnk = duckdb_fetch_chunk(res_S);
+		  		duckdb_data_chunk cnk = duckdb_fetch_chunk(res_R);
 		  		if(!cnk) {
-		  			mylog(logfile, "Result is exhausted.");
+		  			mylog(logfile, "Result is exhausted (R).");
 		  			break;
 		  		}
-		  		int64_t this_sz = duckdb_data_chunk_get_size(cnk);
+		  		int64_t this_rows = duckdb_data_chunk_get_size(cnk);
 
-		  		duckdb_vector vec1 = duckdb_data_chunk_get_vector(cnk,0);
-		  		int32_t *dat1 = (int32_t*)duckdb_vector_get_data(vec1);
-		  		struct futhark_i32_1d *ft_dat1 = futhark_new_i32_1d(ctx, dat1, this_sz);
-		  		// Due to consumption, need to rearrange pointers.
-				struct futhark_f64_1d *keyCol_tmp;
-				futhark_entry_update_col_i32(ctx, &keyCol_tmp, cur_row_S, ft_dat1, S_keyCol);
-				futhark_free_i32_1d(ctx, S_keyCol);
-				futhark_free_i32_1d(ctx, ft_dat1);
-				S_keyCol = keyCol_tmp;
+		  		for(int64_t col=0; col<=NUM_PL; col++) {
+		  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
+		  			int32_t *dat = duckdb_vector_get_data(cnk,dat);
+		  			memcpy(R_buffs[col] + cur_row_R, dat, this_rows*sizeof(int32_t));
+		  		}
 
-				for(int64_t col=1; col<num_pL+1; col++) {
-					duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
-			  		int32_t *dat = (int32_t*)duckdb_vector_get_data(vec);
-			  		struct futhark_i32_1d *ft_dat = futhark_new_i32_1d(ctx, dat, this_sz);
-			  		// Due to consumption, need to rearrange pointers.
-					struct futhark_f64_1d *col_tmp;
-					futhark_entry_update_col_i32(ctx, &col_tmp, cur_row_S, ft_dat, S_pL_cols[col+1]);
-					futhark_free_i32_1d(ctx, S_pL_cols[col+1]);
-					futhark_free_i32_1d(ctx, ft_dat);
-					S_pL_cols[col+1] = col_tmp;
-				}
-
+		  		cur_row_R += this_rows;
 		  		duckdb_destroy_data_chunk(&cnk);
-		  		cur_row_S += this_sz;
 		  	}
-		  	duckdb_destroy_result(&res_S);
+		  	duckdb_destroy_result(&res_R);
 
-		// Sort tables.
+		  	struct futhark_i32_1d *ft_R_buffs[1+NUM_PL];
+		  	for(int64_t col=0; col<=NUM_PL; col++) {
+		  		ft_R_buffs[col] = futhark_new_i32_1d(ctx, R_buffs[col], cur_row_R);
+		  	}
+		  	if(!async) futhark_context_sync(ctx);
+		  	mylog(logfile, "Wrapped R's data into futhark context.");
 
-		  	struct futhark_opaque_sortInfo_i32 *R_sortRes;
-		  	futhark_entry_radix_sort_i32_GFUR(ctx, &R_sortRes, R_keyCol);
-		  	futhark_free_i32_1d(ctx, R_keyCol);
-		  	struct futhark_i64_1d *sorted_R_is;
-		  	struct futhark_i32_1d *sorted_R_ks;
-		  	futhark_project_opaque_sortInfo_i32_is(ctx, &sorted_R_is, R_sortRes);
-		  	futhark_project_opaque_sortInfo_i32_ks(ctx, &sorted_R_ks, R_sortRes);
-		  	futhark_free_opaque_sortInfo_i32(ctx,R_sortRes);
-		  	mylog(logfile, "Sorted R.");
+		  	struct futhark_opaque_sortInfo_i32 *R_sortInfo;
+		  	struct futhark_i32_1d *R_sorted_ks;
+		  	struct futhark_i64_1d *R_sorted_is;
+		  	futhark_entry_radix_sort_i32_GFUR(ctx, &R_sortInfo, ft_R_buffs[0]);
+		  	futhark_free_i32_1d(ctx, ft_R_buffs[0]);
+		  	futhark_project_opaque_sortInfo_i32_ks(ctx, &R_sorted_ks, R_sortInfo);
+		  	futhark_project_opaque_sortInfo_i32_is(ctx, &R_sorted_is, R_sortInfo);
+		  	if(!async) futhark_context_sync(ctx);
+		  	mylog(logfile, "Sorted R's keys and projected fields.");
 
-		  	struct futhark_opaque_sortInfo_i32 *S_sortRes;
-		  	futhark_entry_radix_sort_i32_GFUR(ctx, &S_sortRes, S_keyCol);
-		  	futhark_free_i32_1d(ctx, S_keyCol);
-		  	struct futhark_i64_1d *sorted_S_is;
-		  	struct futhark_i32_1d *sorted_S_ks;
-		  	futhark_project_opaque_sortInfo_i32_is(ctx, &sorted_S_is, S_sortRes);
-		  	futhark_project_opaque_sortInfo_i32_ks(ctx, &sorted_S_ks, S_sortRes);
-		  	futhark_free_opaque_sortInfo_i32(ctx,S_sortRes);
-		  	mylog(logfile, "Sorted R.");
+		// 3. Iterate over S
+			bool is_S_exhausted = false;
+			mylog(logfile, "Now scannning S and performing the join...");
+			while(!is_S_exhausted) {
+				// 3.1 Read S until it fills the buffer & Sort S buffer
+					int64_t cur_row_S = 0;
+					mylog(logfile, "Starting new scan cycle...");
+					while(cur_row_S<S_buff && !is_S_exhausted) {
+						duckdb_data_chunk cnk = duckdb_fetch_chunk(res_S);
+				  		if(!cnk) {
+				  			mylog(logfile, "Result is exhausted (S).");
+				  			is_S_exhausted = true;
+				  			break;
+				  		}
+				  		int64_t this_rows = duckdb_data_chunk_get_size(cnk);
 
-		// Join sorted tables
+				  		for(int64_t col=0; col<=NUM_PL; col++) {
+				  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
+				  			int32_t *dat = duckdb_vector_get_data(cnk,dat);
+				  			memcpy(S_buffs[col] + cur_row_S, dat, this_rows*sizeof(int32_t));
+				  		}
 
-		  	struct futhark_opaque_joinPairs_i32 *joinRes;
-		  	futhark_entry_innerSMJ_i32(ctx, &joinRes, sorted_R_ks, sorted_S_ks);
-		  	futhark_free_i32_1d(ctx,sorted_R_ks);
-		  	futhark_free_i32_1d(ctx,sorted_S_ks);
-		  	mylog(logfile, "Join function returned.");
+				  		cur_row_S += this_rows;
+				  		duckdb_destroy_data_chunk(&cnk);
+					}
+					if(is_S_exhausted) duckdb_destroy_result(&res_S);
+					mylog(logfile, "Current scan cycle finished.");
 
-		  	// TODO continue from here...
+					struct futhark_i32_1d *ft_S_buffs[1+NUM_PL];
+				  	for(int64_t col=0; col<=NUM_PL; col++) {
+				  		ft_S_buffs[col] = futhark_new_i32_1d(ctx, S_buffs[col], cur_row_S);
+				  	}
+				  	if(!async) futhark_context_sync(ctx);
+				  	mylog(logfile, "Wrapped S buffer's data into futhark context.");
+
+				  	struct futhark_opaque_sortInfo_i32 *S_sortInfo;
+				  	struct futhark_i32_1d *S_sorted_ks;
+				  	struct futhark_i64_1d *S_sorted_is;
+				  	futhark_entry_radix_sort_i32_GFUR(ctx, &S_sortInfo, ft_S_buffs[0]);
+				  	futhark_free_i32_1d(ctx, ft_S_buffs[0]);
+				  	futhark_project_opaque_sortInfo_i32_ks(ctx, &S_sorted_ks, S_sortInfo);
+				  	futhark_project_opaque_sortInfo_i32_is(ctx, &S_sorted_is, S_sortInfo);
+				  	if(!async) futhark_context_sync(ctx);
+				  	mylog(logfile, "Sorted S's keys and projected fields.");
 
 
-		// Perform gather operations
+				// 3.2 Perform Join
+
+				  	mylog(logfile, "Performing Inner Equi-Join (SMJ) on key columns...");
+				  	struct futhark_opaque_joinPairs_i32 *joinRes;
+					futhark_entry_innerSMJ_i32(ctx, &joinRes, R_sorted_ks, S_sorted_ks);
+
+					struct futhark_i32_1d *vs;
+					struct futhark_i64_1d *ix;
+					struct futhark_i64_1d *iy;
+
+					futhark_project_opaque_joinPairs_i32_vs(ctx, &vs, joinRes);
+					futhark_project_opaque_joinPairs_i32_ix(ctx, &ix, joinRes);
+					futhark_project_opaque_joinPairs_i32_iy(ctx, &iy, joinRes);
+
+					futhark_free_i32_1d(ctx,R_sorted_ks);
+					futhark_free_i32_1d(ctx,S_sorted_ks);
+					futhark_free_opaque_joinPairs_i32(ctx,joinRes);
+
+					if(!async) futhark_context_sync(ctx);
+				  	mylog(logfile, "Performed Join and projected fields.");
 
 
-		// TODO Create output table
-		// and use appenders to output results
+				// 3.3 Gather Payloads
+				  	mylog(logfile, "Materializing payload data...");
+
+				  	struct futhark_i64_1d R_pL_is[NUM_PL];
+				  	struct futhark_i64_1d S_pL_is[NUM_PL];
+
+				  	struct futhark_i32_1d R_pL[NUM_PL];
+				  	struct futhark_i32_1d S_pL[NUM_PL];
+
+				  	futhark_entry_gather_i64(ctx, &R_pL_is, R_sorted_is, ix);
+				  	for(int64_t col=0; col<NUM_PL, col++) {
+				  		futhark_entry_gather_i32(ctx, &R_pL[col], ft_R_buffs[col+1], R_pL_is);
+				  	}
+				  	if(!async) futhark_context_sync(ctx);
+				  	mylog(logfile, "Gathered R's payloads.");
+				  	
+				  	futhark_entry_gather_i64(ctx, &S_pL_is, S_sorted_is, iy);
+				  	for(int64_t col=0; col<NUM_PL, col++) {
+				  		futhark_entry_gather_i32(ctx, &S_pL[col], ft_S_buffs[col+1], S_pL_is);
+				  		futhark_free_i32_1d(ctx, ft_S_buffs[col+1]);
+				  	}
+				  	if(!async) futhark_context_sync(ctx);
+				  	mylog(logfile, "Gathered S's payloads.");
+
+				// 3.4 Cleanup
+				futhark_free_i32_1d(ctx,vs);
+				futhark_free_i64_1d(ctx,ix);
+				futhark_free_i64_1d(ctx,iy);
+				
+				futhark_free_i32_1d(ctx, S_sorted_ks);
+				futhark_free_i32_1d(ctx, S_sorted_is);
+			}
+
+		// 4. Cleanup
+
+			futhark_free_i32_1d(ctx, R_sorted_ks);
+			futhark_free_i32_1d(ctx, R_sorted_is);
+			for(int64_t col=0; col<NUM_PL, col++) {
+		  		futhark_free_i32_1d(ctx, ft_R_buffs[col+1]);
+		  	}
+		  	for(int64_t col=0; col<=NUM_PL, col++) {
+		  		futhark_free_i32_1d(ctx, R_buffs);
+		  		futhark_free_i32_1d(ctx, S_buffs);
+		  	}
+
+		  	mylog(logfile, "Finished iteration and performed cleanup...");
 	}
 
 	// Cleanup

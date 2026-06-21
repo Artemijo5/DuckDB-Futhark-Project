@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
 	mylog(logfile, "#####------#####------#####------#####------#####------#####------#####------#####------#####------#####");
 	for(int64_t cur_iter=0; cur_iter<ITER; cur_iter++) {
 		if(ITER>1) {
-			char iter_str[100];
+			char iter_str[200];
 			sprintf(iter_str, "#####------#####------#####------#####------#####------ Iteration #%ld", cur_iter);
 			mylog(logfile, iter_str);
 		}
@@ -302,7 +302,7 @@ int main(int argc, char *argv[]) {
 	mylog(logfile, "#####------#####------#####------#####------#####------#####------#####------#####------#####------#####");
 	for(int64_t cur_iter=0; cur_iter<ITER; cur_iter++) {
 		if(ITER>1) {
-			char iter_str[100];
+			char iter_str[200];
 			sprintf(iter_str, "#####------#####------#####------#####------#####------ Iteration #%ld", cur_iter);
 			mylog(logfile, iter_str);
 		}

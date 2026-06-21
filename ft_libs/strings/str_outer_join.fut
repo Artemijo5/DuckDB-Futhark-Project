@@ -7,10 +7,10 @@ def inner_to_left_outer_str
 	(res : joinPairs_str)
 : joinPairs_str =
 	let n = length tR.idxs
-	let present_ix = scatter (replicate n false)
-		res.ix (res.ix |> map (\_ -> true))
+	let absent_ix = scatter (replicate n true)
+		res.ix (res.ix |> map (\_ -> false))
 	let (out_ix,out_iy) = iota n
-		|> filter (\i -> !present_ix[i])
+		|> filter (\i -> absent_ix[i])
 		|> map (\i -> (i,-1))
 		|> unzip
 	let out_vs = str_gather tR out_ix

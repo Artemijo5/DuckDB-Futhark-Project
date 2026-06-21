@@ -10,10 +10,10 @@ def inner_to_left_outer [n] 't
 	(tR : [n]t)
 	(res : joinPairs t)
 : joinPairs t =
-	let present_ix = scatter (replicate n false)
-		res.ix (res.ix |> map (\_ -> true))
+	let absent_ix = scatter (replicate n true)
+		res.ix (res.ix |> map (\_ -> false))
 	let (out_vs,out_ix,out_iy) = iota n
-		|> filter (\i -> !present_ix[i])
+		|> filter (\i -> absent_ix[i])
 		|> map (\i -> (tR[i],i,-1))
 		|> unzip3
 	in {vs = res.vs ++ out_vs, ix = res.ix ++ out_ix, iy = res.iy ++ out_iy}
