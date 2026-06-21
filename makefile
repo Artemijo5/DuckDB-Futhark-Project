@@ -85,7 +85,7 @@ Joins:
 	$(CC) c_tests/src/duckdb_futhark_simple_SMJ.c -o c_tests/duckdb_futhark_SMJ_i32.o $(CFLAGS) $(DEPS) ft_clibs/libjoin.so
 
 C-Joins:
-	#mkdir -p ft_clibs
-	#futhark c ft_libs/join_entry.fut -o ft_clibs/join_entry --library
-	#$(CC) c_tests/src/duckdb_futhark_IO.c -o c_tests/duckdb_futhark_IO.o $(CFLAGS) $(DEPS) ft_clibs/join_entry.c
+	mkdir -p ft_clibs
+	futhark c ft_libs/join_entry.fut -o ft_clibs/join_entry --library
+	$(CC) c_tests/src/duckdb_futhark_IO.c -o c_tests/duckdb_futhark_IO.o $(CFLAGS) $(DEPS) ft_clibs/join_entry.c
 	$(CC) c_tests/src/duckdb_futhark_simple_SMJ.c -o c_tests/duckdb_futhark_SMJ_i32.o $(CFLAGS) $(DEPS) ft_clibs/join_entry.c

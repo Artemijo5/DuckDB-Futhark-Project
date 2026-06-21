@@ -27,7 +27,7 @@
 
 #define k_name "k"
 
-#define default_NUM_PL "p"
+#define default_NUM_PL 2
 
 #define default_ITER 1
 
@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
     	int64_t S_buff = default_S_buff;
 
     	bool async = false;
+    	bool outer = false;
 
     	int64_t NUM_PL = default_NUM_PL;
 
@@ -57,6 +58,7 @@ int main(int argc, char *argv[]) {
 			{"S_buff", required_argument, 0, 's'},
 			{"num_pL", required_argument, 0, 'p'},
 			{"async", no_argument, 0, 'a'},
+			{"outer", no_argument, 0, 'o'},
 			{"iter",    required_argument, 0, 'I'},
 			{"logfile", required_argument, 0, 'L'},
 			{"db_file", required_argument, 0, 'f'},
@@ -65,7 +67,7 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"I:R:S:s:p:aL:f:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"I:R:S:s:p:aoL:f:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	      	case 'I':
@@ -80,6 +82,8 @@ int main(int argc, char *argv[]) {
 	      		NUM_PL = atol(optarg); break;
 	      	case 'a':
 	      		async = true; break;
+	      	case 'o':
+	      		outer = true; break;
 	        case 'L':
 	        	memcpy(LOGFILE, optarg, strlen(optarg)+1); break;
 	        case 'f':
@@ -130,6 +134,8 @@ int main(int argc, char *argv[]) {
 
 	  	mylog(logfile, "Set up futhark core.");
 
+	// Fetch tables into memory;
+
 	  	char fetch_R[2*strlen(R_name) + 250];
 		char fetch_S[2*strlen(S_name) + 250];
 
@@ -156,8 +162,8 @@ int main(int argc, char *argv[]) {
 			mylog(logfile, iter_str);
 		}
 
-		int32_t *R_buffs[1+NUM_PL]
-		int32_t *S_buffs[1+NUM_PL]
+		int32_t *R_buffs[1+NUM_PL];
+		int32_t *S_buffs[1+NUM_PL];
 		for(int64_t col=0; col<=NUM_PL; col++) {
 			R_buffs[col] = malloc(R_size*sizeof(int32_t));
 			S_buffs[col] = malloc(S_buff*sizeof(int32_t));
@@ -166,26 +172,22 @@ int main(int argc, char *argv[]) {
 
 		// 1. Perform queries to read tables.
 			char query_read_R[250 + strlen(R_name)];
-			sprintf(query_read_R, "SELECT * FROM %s;", R_name);
-			if(duckdb_query(con, select_R, &res_R) == DuckDBError) {
+			sprintf(query_read_R, "SELECT * FROM %s_tmp;", R_name);
+			if(duckdb_query(con, query_read_R, &res_R) == DuckDBError) {
 		  		perror("Failed to perform SELECT query on R.\n");
-		  		perror(select_R);
+		  		perror(query_read_R);
 		  		return -1;
 		  	}
 		  	mylog(logfile, "Performed SELECT query on R.");
 
-			char query_read_S[1000 + strlen(S_name) + 2*strlen(R_name) + 4*strlen(k_name)];
-			sprintf(
-				query_read_S,
-				"SELECT * FROM %s WHERE %s >= (SELECT MIN(%s) FROM %s) AND %s <= (SELECT MAX(%s) FROM %S);",
-				S_name, k_name, k_name, R_name, k_name, R_name
-			);
-			if(duckdb_query(con, select_S, &res_S) == DuckDBError) {
+			char query_read_S[250 + strlen(S_name)];
+			sprintf(query_read_S, "SELECT * FROM %s_tmp;", S_name);
+			if(duckdb_query(con, query_read_S, &res_S) == DuckDBError) {
 		  		perror("Failed to perform SELECT query on S.\n");
-		  		perror(select_S);
+		  		perror(query_read_S);
 		  		return -1;
 		  	}
-		  	mylog(logfile, "Performed SELECT query on S, using zonemap.");
+		  	mylog(logfile, "Performed SELECT query on S.");
 
 	  	// 2. Read and sort R
 		  	int64_t cur_row_R = 0;
@@ -200,7 +202,7 @@ int main(int argc, char *argv[]) {
 
 		  		for(int64_t col=0; col<=NUM_PL; col++) {
 		  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
-		  			int32_t *dat = duckdb_vector_get_data(cnk,dat);
+		  			int32_t *dat = duckdb_vector_get_data(vec);
 		  			memcpy(R_buffs[col] + cur_row_R, dat, this_rows*sizeof(int32_t));
 		  		}
 
@@ -244,7 +246,7 @@ int main(int argc, char *argv[]) {
 
 				  		for(int64_t col=0; col<=NUM_PL; col++) {
 				  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
-				  			int32_t *dat = duckdb_vector_get_data(cnk,dat);
+				  			int32_t *dat = duckdb_vector_get_data(vec);
 				  			memcpy(S_buffs[col] + cur_row_S, dat, this_rows*sizeof(int32_t));
 				  		}
 
@@ -282,6 +284,17 @@ int main(int argc, char *argv[]) {
 					struct futhark_i64_1d *ix;
 					struct futhark_i64_1d *iy;
 
+					if(outer) {
+						if(!async) futhark_context_sync(ctx);
+						mylog(logfile, "Expanding to Full Outer Join...");
+
+						struct futhark_opaque_joinPairs_i32 *outer_joinRes;
+						futhark_entry_fullOuterJoin_i32(ctx, &outer_joinRes, R_sorted_ks, S_sorted_ks, joinRes);
+
+						futhark_free_opaque_joinPairs_i32(ctx,joinRes);
+						joinRes = outer_joinRes;
+					}
+
 					futhark_project_opaque_joinPairs_i32_vs(ctx, &vs, joinRes);
 					futhark_project_opaque_joinPairs_i32_ix(ctx, &ix, joinRes);
 					futhark_project_opaque_joinPairs_i32_iy(ctx, &iy, joinRes);
@@ -291,27 +304,27 @@ int main(int argc, char *argv[]) {
 					futhark_free_opaque_joinPairs_i32(ctx,joinRes);
 
 					if(!async) futhark_context_sync(ctx);
-				  	mylog(logfile, "Performed Join and projected fields.");
+				  	mylog(logfile, "Completed current Join cycle and projected fields.");
 
 
 				// 3.3 Gather Payloads
 				  	mylog(logfile, "Materializing payload data...");
 
-				  	struct futhark_i64_1d R_pL_is[NUM_PL];
-				  	struct futhark_i64_1d S_pL_is[NUM_PL];
+				  	struct futhark_i64_1d *R_pL_is;
+				  	struct futhark_i64_1d *S_pL_is;
 
-				  	struct futhark_i32_1d R_pL[NUM_PL];
-				  	struct futhark_i32_1d S_pL[NUM_PL];
+				  	struct futhark_i32_1d *R_pL[NUM_PL];
+				  	struct futhark_i32_1d *S_pL[NUM_PL];
 
 				  	futhark_entry_gather_i64(ctx, &R_pL_is, R_sorted_is, ix);
-				  	for(int64_t col=0; col<NUM_PL, col++) {
+				  	for(int64_t col=0; col<NUM_PL; col++) {
 				  		futhark_entry_gather_i32(ctx, &R_pL[col], ft_R_buffs[col+1], R_pL_is);
 				  	}
 				  	if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Gathered R's payloads.");
 				  	
 				  	futhark_entry_gather_i64(ctx, &S_pL_is, S_sorted_is, iy);
-				  	for(int64_t col=0; col<NUM_PL, col++) {
+				  	for(int64_t col=0; col<NUM_PL; col++) {
 				  		futhark_entry_gather_i32(ctx, &S_pL[col], ft_S_buffs[col+1], S_pL_is);
 				  		futhark_free_i32_1d(ctx, ft_S_buffs[col+1]);
 				  	}
@@ -324,23 +337,31 @@ int main(int argc, char *argv[]) {
 				futhark_free_i64_1d(ctx,iy);
 				
 				futhark_free_i32_1d(ctx, S_sorted_ks);
-				futhark_free_i32_1d(ctx, S_sorted_is);
+				futhark_free_i64_1d(ctx, S_sorted_is);
+
+				futhark_free_i64_1d(ctx, R_pL_is);
+				futhark_free_i64_1d(ctx, S_pL_is);
+				for(int64_t col=0; col<NUM_PL; col++) {
+					futhark_free_i32_1d(ctx, R_pL[col]);
+					futhark_free_i32_1d(ctx, S_pL[col]);
+				}
 			}
 
 		// 4. Cleanup
 
 			futhark_free_i32_1d(ctx, R_sorted_ks);
-			futhark_free_i32_1d(ctx, R_sorted_is);
-			for(int64_t col=0; col<NUM_PL, col++) {
+			futhark_free_i64_1d(ctx, R_sorted_is);
+			for(int64_t col=0; col<NUM_PL; col++) {
 		  		futhark_free_i32_1d(ctx, ft_R_buffs[col+1]);
 		  	}
-		  	for(int64_t col=0; col<=NUM_PL, col++) {
-		  		futhark_free_i32_1d(ctx, R_buffs);
-		  		futhark_free_i32_1d(ctx, S_buffs);
+		  	for(int64_t col=0; col<=NUM_PL; col++) {
+		  		free(R_buffs[col]);
+		  		free(S_buffs[col]);
 		  	}
 
 		  	mylog(logfile, "Finished iteration and performed cleanup...");
 	}
+	mylog(logfile, "Completed duckdb-futhark SMJ.");
 
 	// Cleanup
 
