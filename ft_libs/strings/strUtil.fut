@@ -33,7 +33,7 @@ import "../lib/github.com/diku-dk/sorts/merge_sort"
 	def appendStrs (passLens : bool) (idxs_ : []i64) (contents : []u8) (strs : *strInfo)
 	: strInfo =
 		let prev_len = length strs.contents
-		let idxs = if passLens then exscan (+) 0 idxs_ else idxs_
+		let idxs = (if passLens then exscan (+) 0 idxs_ else idxs_)
 			|> map (\i -> i + prev_len)
 		in {contents = strs.contents ++ contents, idxs = strs.idxs ++ idxs}
 

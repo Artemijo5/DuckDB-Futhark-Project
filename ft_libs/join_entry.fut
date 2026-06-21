@@ -285,44 +285,64 @@ import "strings/ftHSMJ_str"
 
 
 import "joins/ft_outer_join"
+import "strings/str_outer_join"
 -- 8. Outer Join Wrappers
 
-	def leftOuterJoin_i32 [n]
+	entry leftOuterJoin_i32 [n]
 		(tR : [n]i32)
-		(res : joinPairs i32)
-	: joinPairs i32 = inner_to_left_outer
+		(res : joinPairs_i32)
+	: joinPairs_i32 = inner_to_left_outer
 		tR res
 
-	def rightOuterJoin_i32 [n]
+	entry rightOuterJoin_i32 [n]
 		(tS : [n]i32)
-		(res : joinPairs i32)
-	: joinPairs i32 = inner_to_right_outer
+		(res : joinPairs_i32)
+	: joinPairs_i32 = inner_to_right_outer
 		tS res
 
-	def fullOuterJoin_i32 [nR] [nS]
+	entry fullOuterJoin_i32 [nR] [nS]
 		(tR : [nR]i32)
 		(tS : [nS]i32)
-		(res : joinPairs i32)
-	: joinPairs i32 = inner_to_full_outer
+		(res : joinPairs_i32)
+	: joinPairs_i32 = inner_to_full_outer
 		tR tS res
 
-	def leftOuterJoin_i64 [n]
+	entry leftOuterJoin_i64 [n]
 		(tR : [n]i64)
-		(res : joinPairs i64)
-	: joinPairs i64 = inner_to_left_outer
+		(res : joinPairs_i64)
+	: joinPairs_i64 = inner_to_left_outer
 		tR res
 
-	def rightOuterJoin_i64 [n]
+	entry rightOuterJoin_i64 [n]
 		(tS : [n]i64)
-		(res : joinPairs i64)
-	: joinPairs i64 = inner_to_right_outer
+		(res : joinPairs_i64)
+	: joinPairs_i64 = inner_to_right_outer
 		tS res
 
-	def fullOuterJoin_i64 [nR] [nS]
+	entry fullOuterJoin_i64 [nR] [nS]
 		(tR : [nR]i64)
 		(tS : [nS]i64)
-		(res : joinPairs i64)
-	: joinPairs i64 = inner_to_full_outer
+		(res : joinPairs_i64)
+	: joinPairs_i64 = inner_to_full_outer
 		tR tS res
 
-	-- TODO wrapper for strings
+	entry inner_to_left_outer_str
+		(tR : strInfo)
+		(res : joinPairs_str)
+	: joinPairs_str = inner_to_left_outer_str
+		tR res
+
+	entry inner_to_right_outer_str
+		(tS : strInfo)
+		(res : joinPairs_str)
+	: joinPairs_str = inner_to_right_outer_str
+		tS res
+
+	entry inner_to_full_outer_str
+		(tR : strInfo)
+		(tS : strInfo)
+		(res : joinPairs_str)
+	: joinPairs_str = inner_to_full_outer_str
+		tR tS res
+
+	
