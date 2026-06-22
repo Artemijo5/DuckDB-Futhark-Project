@@ -153,8 +153,9 @@ module ft_densebox
 				(\(i1,(fm,_)) ind -> (i1, fm + ind))
 			|> map (\(i1,i2) -> (i1,is'[i2]))
 			-- filter for true neighbourhood
+			-- discard self-neighbourhood
 			|> filter (\(i1,i2) ->
-				i1==i2 ||
+				i1!=i2 &&
 				let vec1 = as_vectors[i1]
 				let vec2 = as_vectors[i2]
 				in V.map2 (-) vec1 vec2
@@ -162,13 +163,139 @@ module ft_densebox
 					|> V.reduce (+) 0
 					|> (\meas -> meas <= adj_range**2)
 			)
+		-- Sort part_pairs by their distance
+		-- so points will first check their closest neighbours
+		let part_pairs_dists = part_pairs
+			|> map (\(i1,i2) ->
+				let vec1 = as_vectors[i1]
+				let vec2 = as_vectors[i2]
+				in V.map2 (-) vec1 vec2
+					|> V.map (\diff -> diff**2)
+					|> V.reduce (+) 0
+			)
+		let part_pairs' = part_pairs
+			|> bucket_sort 2 np part_pairs_dists
+			|> (.1) |> unzip
+			|> (\(pp0,pp1) -> bucket_sort 2 np pp0 pp1)
+			|> (\(pp0,pp1) -> zip pp0 pp1)
 		let part_pairs_sz = hist_lean (+) 0 np
-			(part_pairs |> map (.0))
-			(part_pairs |> map (\_ -> 1i64))
+			(part_pairs' |> map (.0))
+			(part_pairs' |> map (\_ -> 1i64))
 		let part_pairs_is = part_pairs_sz
 			|> exscan (+) 0
-		in (part_pairs, part_pairs_is, part_pairs_sz)
+		in (part_pairs', part_pairs_is, part_pairs_sz)
 
+	def find_core_pts [n] [np]
+		(eps  : t)
+		(minPts : i64)
+		(pts  : [n](vector t))
+		(pids : [n]i64)
+		(part_is : [np]i64)
+		(part_sz : [np]i64)
+		(part_pairs : [](i64,i64))
+		(part_pairs_is : [np]i64)
+		(part_pairs_sz : [np]i64)
+	: [n]bool = 
+		-- Some cells may have less than minPts pts in their entire neighbourhood
+		-- dismiss those
+		let dismiss_pid = iota np
+			|> expand_outer_red
+				(\pid -> 1 + part_pairs_sz[pid])
+				(\pid ind ->
+					if ind=0 then part_sz[pid] else
+					let ind2 = ind-1
+					let pid2 = part_pairs[part_pairs_is[pid]+ind2].1
+					in part_sz[pid2]
+				)
+				(+) 0
+			|> map ( < minPts)
+		in iota n
+			|> zip3 pids pts
+			|> map (\pid1 pt1 i1 ->
+				if dismiss_pid[pid1] then false else
+				-- Points in the same cell are automatically neighbours
+				-- if in a dense cell, already core
+				-- otherwise, traverse all neighbouring points
+				-- until is core
+				let pairs_sz1 = part_pairs_sz[pid1]
+				let (_,num_neigh)
+					= loop (j, cur_neigh)
+					= (0,part_sz[pid1])
+				while j<pairs_sz1 && cur_neigh<minPts do
+					let pid2 = part_pairs[part_pairs_is[pid1]+j].1
+					let pt_count2 = part_sz[pid2]
+					let (_,num_neigh2)
+						= loop (k, cur_neigh2)
+						= (0,cur_neigh)
+					while k<pt_count2 && cur_neigh2<minPts do
+						let pt2 = pts[part_is[pid2]+k]
+						let is_neigh = D.check_neighbourhood eps pt1 pt2
+						in if is_neigh
+							then (k+1,cur_neigh2+1)
+							else (k+1,cur_neigh2)
+					in (j+1,num_neigh2)
+				in num_neigh>=minPts
+			)
+
+	-- Clusters are made on the basis of CELLS rather than pts
+	def mk_clusters [n] [np]
+		(eps  : t)
+		(pts  : [n](vector t))
+		(pids : [n]i64)
+		(is_core : [n]bool)
+		(part_pairs : [](i64,i64))
+	: [np]i64 =
+		-- Get core pt info
+		let (core_pts, core_pids, _) = zip3 pts pids is_core
+			|> filter (.2)
+			|> unzip3
+		let part_core_sz = hist_lean (+) 0 np
+			core_pids
+			(core_pids |> map (\_ -> 1i64))
+		let part_core_is = part_core_sz
+			|> exscan (+) 0
+		let has_cores = part_core_sz
+			|> map (>0)
+		-- Core pairs: both cells have at least one core-pt neighbourhood
+		let core_pairs = part_pairs
+			-- each pair only needs to be checked once
+			-- use the cell with most cores left
+			-- so that it's the outer part of the nested loop
+			|> filter (\(pid1,pid2) -> pid1<pid2
+				&& part_core_sz[pid1]>0
+				&& part_core_sz[pid2]>0
+			)
+			|> map (\(pid1,pid2) ->
+				if part_core_sz[pid1]<=part_core_sz[pid2]
+				then (pid1,pid2)
+				else (pid2,pid1)
+			)
+			|> map (\(pid1,pid2) ->
+				let (_,has_neigh)
+					= loop (j1, has_neigh1)
+					= (0,false)
+				while j1<part_core_sz[pid1] && !has_neigh1 do
+					let i1 = part_core_is[pid1]+j1
+					let pt1 = core_pts[i1]
+					let (_,inner_has_neigh)
+						= loop (j2,has_neigh2)
+						= (0,false)
+					while j2<part_core_sz[pid2] && !has_neigh2 do
+						let i2 = part_core_is[pid2]+j2
+						let pt2 = core_pts[i2]
+						let is_neigh = D.check_neighbourhood eps pt1 pt2
+						in (j2+1,is_neigh)
+					in (j1+1, inner_has_neigh)
+				in (pid1,pid2,has_neigh)
+			)
+			|> filter (.2)
+			|> map (\(pid1,pid2,_) -> (i64.min pid1 pid2, i64.max pid1 pid2))
+		in core_pairs
+			|> get_connected_subgraph_ids np
+			|> map2 (\hc i -> if hc then i else (-1)) has_cores
+			|> encode_subgraph_ids
+
+	-- TODO assign cluster ids, compile, test (...)
 
 
 }

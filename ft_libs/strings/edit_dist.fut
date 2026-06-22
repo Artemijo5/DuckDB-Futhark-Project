@@ -118,4 +118,35 @@ local def expand_outer_red [n] 't
 			in (new_v1, l_v0, next_j)
 		in final_v0 |> (last >-> (<= thresh))
 
-		-- TODO parallelilze Levenschtein (...)
+	def lev_dists_within
+		(char_cmp : u8 -> u8 -> i8)
+		(thresh : i64)
+		(strs1 : strInfo)
+		(strs2 : strInfo)
+	: []bool =
+		let n1 = length strs1.idxs
+		let n2 = length strs2.idxs
+		let lens1 = get_str_len i1 strs1
+		let lens2 = get_str_len i2 strs2
+		let v0 = iota (len2+1)
+		let v1 = replicate (len2+1) 0
+		let (final_v0,_,_) = loop (l_v0,l_v1,j) : ([len2+1]i64, [len2+1]i64, i64) = (v0,v1,0)
+		while j<len1 do
+			let l_v1' = (copy l_v1) with [0] = j+1
+			let leftSide = get_kth_char j i1 strs1
+			let new_v1 = loop inner_v1 = l_v1'
+				for i<len2 do
+					let rightSide = get_kth_char i i2 strs2
+					let ineq = char_cmp leftSide rightSide
+						|> (i8.abs >-> bool.i8)
+					let del_cost = l_v0[i+1] + 1
+					let ins_cost = inner_v1[i] + 1
+					let sub_cost = (if ineq
+						then l_v0[i] + 1
+						else l_v0[i])
+					let newval = i64.min sub_cost
+						(i64.min ins_cost del_cost)
+					in (copy inner_v1) with [i+1]=newval
+			let next_j = if all (>thresh) new_v1 then len1 else j+1
+			in (new_v1, l_v0, next_j)
+		in final_v0 |> (last >-> (<= thresh))
