@@ -21,11 +21,11 @@
 #define R_name "R_tbl"
 #define S_name "S_tbl"
 
-#define default_R_size 8192
-#define default_S_size 32768
-#define default_S_buff 16384
+#define default_R_size 50000
+#define default_S_size 70000
+#define default_S_buff 70000
 
-#define default_AVG_LEN 15
+#define default_AVG_LEN 9
 
 #define k_name "k"
 
@@ -34,7 +34,7 @@
 #define default_ITER 1
 
 #define default_LOGFILE "stdout"
-#define default_DBFILE "testdb.db"
+#define default_DBFILE "US_Baby_Names.db"
 
 int main(int argc, char *argv[]) {
 	// Parse command line arguments
@@ -260,9 +260,12 @@ int main(int argc, char *argv[]) {
 		  	struct futhark_opaque_strInfo *R_sorted_ks;
 		  	struct futhark_i64_1d *R_sorted_is;
 		  	futhark_entry_str_sort_indices(ctx, &R_sorted_is, false, R_superstring);
+		  	if(!async) futhark_context_sync(ctx);
+		  	mylog(logfile, "Sorted R buffer's string key indices.");
+		  	futhark_entry_str_gather(ctx, &R_sorted_ks, R_superstring, R_sorted_is);
 		  	futhark_free_opaque_strInfo(ctx, R_superstring);
 		  	if(!async) futhark_context_sync(ctx);
-		  	mylog(logfile, "Sorted R's string keys.");
+		  	mylog(logfile, "Performed gather operation for sorting R's keys..");	
 
 		// 3. Iterate over S
 			bool is_S_exhausted = false;
@@ -331,9 +334,12 @@ int main(int argc, char *argv[]) {
 				  	struct futhark_opaque_strInfo *S_sorted_ks;
 				  	struct futhark_i64_1d *S_sorted_is;
 				  	futhark_entry_str_sort_indices(ctx, &S_sorted_is, false, S_superstring);
+				  	if(!async) futhark_context_sync(ctx);
+				  	mylog(logfile, "Sorted S buffer's string key indices.");
+				  	futhark_entry_str_gather(ctx, &S_sorted_ks, S_superstring, S_sorted_is);
 				  	futhark_free_opaque_strInfo(ctx, S_superstring);
 				  	if(!async) futhark_context_sync(ctx);
-				  	mylog(logfile, "Sorted S buffer's string keys.");
+				  	mylog(logfile, "Performed gather operation for sorting S's keys..");		  	
 
 
 				// 3.2 Perform Join
@@ -360,9 +366,7 @@ int main(int argc, char *argv[]) {
 					futhark_project_opaque_joinPairs_str_strs(ctx, &vs, joinRes);
 					futhark_project_opaque_joinPairs_str_ix(ctx, &ix, joinRes);
 					futhark_project_opaque_joinPairs_str_iy(ctx, &iy, joinRes);
-
-					futhark_free_opaque_strInfo(ctx,R_sorted_ks);
-					futhark_free_opaque_strInfo(ctx,S_sorted_ks);
+					
 					futhark_free_opaque_joinPairs_str(ctx,joinRes);
 
 					if(!async) futhark_context_sync(ctx);

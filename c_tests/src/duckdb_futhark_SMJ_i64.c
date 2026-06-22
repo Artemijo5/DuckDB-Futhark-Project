@@ -298,8 +298,6 @@ int main(int argc, char *argv[]) {
 					futhark_project_opaque_joinPairs_i64_ix(ctx, &ix, joinRes);
 					futhark_project_opaque_joinPairs_i64_iy(ctx, &iy, joinRes);
 
-					futhark_free_i64_1d(ctx,R_sorted_ks);
-					futhark_free_i64_1d(ctx,S_sorted_ks);
 					futhark_free_opaque_joinPairs_i64(ctx,joinRes);
 
 					if(!async) futhark_context_sync(ctx);

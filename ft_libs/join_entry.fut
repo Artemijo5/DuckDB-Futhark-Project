@@ -30,6 +30,9 @@ import "tp_sort"
 	-- | Sorting information type (double)(GFUR).
 	type sortInfo_f64 [n] = sortInfo [n] f64
 
+	-- | Sorting information type (byteSeq)(GFUR).
+	type sortInfo_bsq [n] [b] = sortInfo [n] (byteSeq [b])
+
 	-- | Inner Equi-Join output for i32.
 	type~ joinPairs_i32 = joinPairs i32
 	-- | Inner Equi-Join output for i64.
@@ -220,6 +223,7 @@ import "strings/strUtil"
 	: strInfo = str_gather strs is
 
 import "strings/ftPHJ_str"
+import "strings/ftHSMJ_str"
 -- 6. String Sorting & Hashing
 
 	-- Have to use str_gather afterwards to get the actual sorted strs
@@ -244,8 +248,12 @@ import "strings/ftPHJ_str"
 		case_insens use_len len_divide compression
 		num_subdiv from_subdiv bytes strs
 
+	entry sort_hashes [n] [b] (xs : [n](byteSeq [b]))
+	: sortInfo_bsq [n] [b] =
+		let (xs,is) =  sort_hashed xs
+		in {ks = xs, is = is}
+
 import "strings/ftSMJ_str"
-import "strings/ftHSMJ_str"
 -- 7. String Equi-Joins
 
 	entry innerSMJ_str

@@ -85,6 +85,7 @@ Joins:
 	$(CC) c_tests/src/duckdb_futhark_simple_SMJ.c -o c_tests/duckdb_futhark_SMJ_i32.o $(CFLAGS) $(DEPS) ft_clibs/libjoin.so
 	$(CC) c_tests/src/duckdb_futhark_SMJ_i64.c -o c_tests/duckdb_futhark_SMJ_i64.o $(CFLAGS) $(DEPS) ft_clibs/libjoin.so
 	$(CC) c_tests/src/duckdb_futhark_SMJ_str.c -o c_tests/duckdb_futhark_SMJ_str.o $(CFLAGS) $(DEPS) ft_clibs/libjoin.so
+	$(CC) c_tests/src/duckdb_futhark_HSMJ_str.c -o c_tests/duckdb_futhark_HSMJ_str.o $(CFLAGS) $(DEPS) ft_clibs/libjoin.so
 
 C-Joins:
 	mkdir -p ft_clibs
@@ -93,3 +94,4 @@ C-Joins:
 	$(CC) c_tests/src/duckdb_futhark_simple_SMJ.c -o c_tests/duckdb_futhark_SMJ_i32.o $(CFLAGS) $(DEPS) ft_clibs/join_entry.c
 	$(CC) c_tests/src/duckdb_futhark_SMJ_i64.c -o c_tests/duckdb_futhark_SMJ_i64.o $(CFLAGS) $(DEPS) ft_clibs/join_entry.c
 	$(CC) c_tests/src/duckdb_futhark_SMJ_str.c -o c_tests/duckdb_futhark_SMJ_str.o $(CFLAGS) $(DEPS) ft_clibs/join_entry.c
+	$(CC) c_tests/src/duckdb_futhark_HSMJ_str.c -o c_tests/duckdb_futhark_HSMJ_str.o $(CFLAGS) $(DEPS) ft_clibs/join_entry.c
