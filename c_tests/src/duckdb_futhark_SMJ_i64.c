@@ -303,6 +303,9 @@ int main(int argc, char *argv[]) {
 					if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Completed current Join cycle and projected fields.");
 
+				  	// Print shape of ix to confirm correctness.
+				  	printf("\n\nOutput size: %ld\n\n\n", *(futhark_shape_i64_1d(ctx, ix)));
+
 
 				// 3.3 Gather Payloads
 				  	mylog(logfile, "Materializing payload data...");

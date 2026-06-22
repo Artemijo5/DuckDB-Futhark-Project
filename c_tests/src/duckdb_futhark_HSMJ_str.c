@@ -34,6 +34,8 @@
 
 #define default_ITER 1
 
+#define default_HASH_BYTES 4
+
 #define default_LOGFILE "stdout"
 #define default_DBFILE "US_Baby_Names.db"
 
@@ -54,6 +56,8 @@ int main(int argc, char *argv[]) {
 
     	int64_t NUM_PL = default_NUM_PL;
 
+    	int64_t HASH_BYTES = default_HASH_BYTES;
+
 		char LOGFILE[1000] = default_LOGFILE;
 		char DBFILE[1000]  = default_DBFILE;
 
@@ -63,6 +67,7 @@ int main(int argc, char *argv[]) {
 			{"S_buff", required_argument, 0, 's'},
 			{"num_pL", required_argument, 0, 'p'},
 			{"assume_strlen", required_argument, 0, 'l'},
+			{"hash_bytes", required_argument, 0, 'h'},
 			{"async", no_argument, 0, 'a'},
 			{"outer", no_argument, 0, 'o'},
 			{"iter",    required_argument, 0, 'I'},
@@ -73,7 +78,7 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"I:R:S:s:p:l:aoL:f:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"I:R:S:s:p:h:l:aoL:f:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	      	case 'I':
@@ -86,6 +91,8 @@ int main(int argc, char *argv[]) {
 	      		S_buff = atol(optarg); break;
 	      	case 'p':
 	      		NUM_PL = atol(optarg); break;
+	      	case 'h':
+	      		HASH_BYTES = atol(optarg); break;
 	      	case 'l':
 	      		AVG_LEN = atol(optarg); break;
 	      	case 'a':
@@ -242,6 +249,7 @@ int main(int argc, char *argv[]) {
 		  		duckdb_destroy_data_chunk(&cnk);
 		  	}
 		  	duckdb_destroy_result(&res_R);
+		  	cur_R_len -= 1;
 
 		  	struct futhark_opaque_strInfo *R_superstring;
 		  	struct futhark_u8_1d *delim = futhark_new_u8_1d(ctx, " ", 1);
@@ -259,7 +267,7 @@ int main(int argc, char *argv[]) {
 		  	mylog(logfile, "Wrapped R's payload data into futhark context.");
 
 		  	struct futhark_u8_2d *R_hashed_ks;
-		  	futhark_entry_str_hash(ctx, &R_hashed_ks, false, true, 1, 0, 1, 0, 4, R_superstring);
+		  	futhark_entry_str_hash(ctx, &R_hashed_ks, false, true, 1, 0, 1, 0, HASH_BYTES, R_superstring);
 		  	if(!async) futhark_context_sync(ctx);
 		  	mylog(logfile, "Hashed R's strings.");
 
@@ -301,14 +309,14 @@ int main(int argc, char *argv[]) {
 			  						S_contents+cur_S_len, "%.*s",
 			  						str.value.inlined.length, str.value.inlined.inlined
 			  					);
-			  					cur_S_len += sprintf(S_contents+cur_S_len," ");
 				  			} else {
 				  				cur_S_len += sprintf(
 			  						S_contents+cur_S_len, "%.*s",
 			  						str.value.pointer.length, str.value.pointer.ptr
 			  					);
-			  					cur_S_len += sprintf(S_contents+cur_S_len," ");
 				  			}
+				  			if(!(cur_row_S+this_rows>=S_buff || is_S_exhausted))
+				  				cur_S_len += sprintf(S_contents+cur_S_len," ");
 				  		}
 
 				  		for(int64_t col=0; col<NUM_PL; col++) {
@@ -338,7 +346,7 @@ int main(int argc, char *argv[]) {
 				  	mylog(logfile, "Wrapped S buffer's payload data into futhark context.");
 
 				  	struct futhark_u8_2d *S_hashed_ks;
-				  	futhark_entry_str_hash(ctx, &S_hashed_ks, false, true, 1, 1, 1, 0, 4, S_superstring);
+				  	futhark_entry_str_hash(ctx, &S_hashed_ks, false, true, 1, 0, 1, 0, HASH_BYTES, S_superstring);
 				  	if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Hashed S buffer's strings.");
 
@@ -380,6 +388,8 @@ int main(int argc, char *argv[]) {
 					if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Completed current Join cycle and projected fields.");
 
+				  	// Print shape of ix to confirm correctness.
+				  	printf("\n\nOutput size: %ld\n\n\n", *(futhark_shape_i64_1d(ctx, ix)));
 
 				// 3.3 Gather Payloads
 				  	mylog(logfile, "Materializing payload data...");

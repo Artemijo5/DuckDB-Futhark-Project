@@ -252,10 +252,14 @@ int main(int argc, char *argv[]) {
 				  		cur_row_S += this_rows;
 				  		duckdb_destroy_data_chunk(&cnk);
 					}
-					if(is_S_exhausted) duckdb_destroy_result(&res_S);
+					if(is_S_exhausted) {
+						duckdb_destroy_result(&res_S);
+						if(cur_row_S == 0) break;
+					}
 					mylog(logfile, "Current scan cycle finished.");
 
 					struct futhark_i32_1d *ft_S_buffs[1+NUM_PL];
+
 				  	for(int64_t col=0; col<=NUM_PL; col++) {
 				  		ft_S_buffs[col] = futhark_new_i32_1d(ctx, S_buffs[col], cur_row_S);
 				  	}
@@ -277,6 +281,7 @@ int main(int argc, char *argv[]) {
 
 				  	mylog(logfile, "Performing Inner Equi-Join (SMJ) on key columns...");
 				  	struct futhark_opaque_joinPairs_i32 *joinRes;
+					//futhark_entry_innerSMJ_i32(ctx, &joinRes, R_sorted_ks, S_sorted_ks);
 					futhark_entry_innerSMJ_i32(ctx, &joinRes, R_sorted_ks, S_sorted_ks);
 
 					struct futhark_i32_1d *vs;
@@ -295,6 +300,8 @@ int main(int argc, char *argv[]) {
 					}
 
 					futhark_project_opaque_joinPairs_i32_vs(ctx, &vs, joinRes);
+
+
 					futhark_project_opaque_joinPairs_i32_ix(ctx, &ix, joinRes);
 					futhark_project_opaque_joinPairs_i32_iy(ctx, &iy, joinRes);
 
@@ -303,6 +310,9 @@ int main(int argc, char *argv[]) {
 					if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Completed current Join cycle and projected fields.");
 
+				  	// Print shape of ix to confirm correctness.
+				  	const int64_t *out_sz = futhark_shape_i64_1d(ctx, ix);
+				  	printf("\n\nOutput size: %ld\n\n\n", *out_sz);
 
 				// 3.3 Gather Payloads
 				  	mylog(logfile, "Materializing payload data...");

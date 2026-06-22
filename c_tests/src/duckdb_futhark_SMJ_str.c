@@ -241,6 +241,7 @@ int main(int argc, char *argv[]) {
 		  		duckdb_destroy_data_chunk(&cnk);
 		  	}
 		  	duckdb_destroy_result(&res_R);
+		  	cur_R_len -= 1;
 
 		  	struct futhark_opaque_strInfo *R_superstring;
 		  	struct futhark_u8_1d *delim = futhark_new_u8_1d(ctx, " ", 1);
@@ -295,14 +296,15 @@ int main(int argc, char *argv[]) {
 			  						S_contents+cur_S_len, "%.*s",
 			  						str.value.inlined.length, str.value.inlined.inlined
 			  					);
-			  					cur_S_len += sprintf(S_contents+cur_S_len," ");
 				  			} else {
 				  				cur_S_len += sprintf(
 			  						S_contents+cur_S_len, "%.*s",
 			  						str.value.pointer.length, str.value.pointer.ptr
 			  					);
-			  					cur_S_len += sprintf(S_contents+cur_S_len," ");
+			  					
 				  			}
+				  			if(!(cur_row_S+this_rows>=S_buff || is_S_exhausted))
+				  				cur_S_len += sprintf(S_contents+cur_S_len," ");
 				  		}
 
 				  		for(int64_t col=0; col<NUM_PL; col++) {
@@ -368,6 +370,9 @@ int main(int argc, char *argv[]) {
 					futhark_project_opaque_joinPairs_str_iy(ctx, &iy, joinRes);
 					
 					futhark_free_opaque_joinPairs_str(ctx,joinRes);
+
+					// Print shape of ix to confirm correctness.
+				  	printf("\n\nOutput size: %ld\n\n\n", *(futhark_shape_i64_1d(ctx, ix)));
 
 					if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Completed current Join cycle and projected fields.");
