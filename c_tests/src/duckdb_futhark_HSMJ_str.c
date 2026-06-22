@@ -22,9 +22,9 @@
 #define R_name "R_tbl"
 #define S_name "S_tbl"
 
-#define default_R_size 50000
-#define default_S_size 70000
-#define default_S_buff 70000
+#define default_R_size 1000000
+#define default_S_size 1000000
+#define default_S_buff 1000000
 
 #define default_AVG_LEN 9
 
@@ -315,8 +315,7 @@ int main(int argc, char *argv[]) {
 			  						str.value.pointer.length, str.value.pointer.ptr
 			  					);
 				  			}
-				  			if(!(cur_row_S+this_rows>=S_buff || is_S_exhausted))
-				  				cur_S_len += sprintf(S_contents+cur_S_len," ");
+				  			cur_S_len += sprintf(S_contents+cur_S_len," ");
 				  		}
 
 				  		for(int64_t col=0; col<NUM_PL; col++) {
@@ -328,6 +327,7 @@ int main(int argc, char *argv[]) {
 				  		cur_row_S += this_rows;
 				  		duckdb_destroy_data_chunk(&cnk);
 					}
+					cur_S_len -= 1;
 					if(is_S_exhausted) duckdb_destroy_result(&res_S);
 					mylog(logfile, "Current scan cycle finished.");
 
@@ -377,8 +377,6 @@ int main(int argc, char *argv[]) {
 					struct futhark_i64_1d *ix;
 					struct futhark_i64_1d *iy;
 
-					// For Outer Join, would have to gather ix's, iy's (...)
-
 					futhark_project_opaque_joinPairs_str_strs(ctx, &vs, joinRes);
 					futhark_project_opaque_joinPairs_str_ix(ctx, &ix, joinRes);
 					futhark_project_opaque_joinPairs_str_iy(ctx, &iy, joinRes);
@@ -401,13 +399,19 @@ int main(int argc, char *argv[]) {
 				  	struct futhark_i32_1d *S_pL[NUM_PL];
 
 				  	futhark_entry_gather_i64(ctx, &R_pL_is, R_sorted_is, ix);
+				  	futhark_entry_gather_i64(ctx, &S_pL_is, S_sorted_is, iy);
+				  	if(!async) futhark_context_sync(ctx);
+				  	mylog(logfile, "Gathered intermediate indices.");
+
+				  	// TODO outer join should be done here (...)
+
 				  	for(int64_t col=0; col<NUM_PL; col++) {
 				  		futhark_entry_gather_i32(ctx, &R_pL[col], ft_R_buffs[col], R_pL_is);
 				  	}
 				  	if(!async) futhark_context_sync(ctx);
 				  	mylog(logfile, "Gathered R's payloads.");
 				  	
-				  	futhark_entry_gather_i64(ctx, &S_pL_is, S_sorted_is, iy);
+				  	
 				  	for(int64_t col=0; col<NUM_PL; col++) {
 				  		futhark_entry_gather_i32(ctx, &S_pL[col], ft_S_buffs[col], S_pL_is);
 				  		futhark_free_i32_1d(ctx, ft_S_buffs[col]);

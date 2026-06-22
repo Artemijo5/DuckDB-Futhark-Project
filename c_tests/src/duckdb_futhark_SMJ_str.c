@@ -21,9 +21,9 @@
 #define R_name "R_tbl"
 #define S_name "S_tbl"
 
-#define default_R_size 50000
-#define default_S_size 70000
-#define default_S_buff 70000
+#define default_R_size 1000000
+#define default_S_size 1000000
+#define default_S_buff 1000000
 
 #define default_AVG_LEN 9
 
@@ -303,9 +303,9 @@ int main(int argc, char *argv[]) {
 			  					);
 			  					
 				  			}
-				  			if(!(cur_row_S+this_rows>=S_buff || is_S_exhausted))
-				  				cur_S_len += sprintf(S_contents+cur_S_len," ");
+				  			cur_S_len += sprintf(S_contents+cur_S_len," ");
 				  		}
+
 
 				  		for(int64_t col=0; col<NUM_PL; col++) {
 				  			duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,1+col);
@@ -316,6 +316,7 @@ int main(int argc, char *argv[]) {
 				  		cur_row_S += this_rows;
 				  		duckdb_destroy_data_chunk(&cnk);
 					}
+					cur_S_len -= 1;
 					if(is_S_exhausted) duckdb_destroy_result(&res_S);
 					mylog(logfile, "Current scan cycle finished.");
 
