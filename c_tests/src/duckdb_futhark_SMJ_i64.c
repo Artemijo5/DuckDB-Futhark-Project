@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
 
     	bool async = false;
     	bool outer = false;
+    	bool skip_fetching = false;
 
     	int64_t NUM_PL = default_NUM_PL;
 
@@ -58,6 +59,7 @@ int main(int argc, char *argv[]) {
 			{"num_pL", required_argument, 0, 'p'},
 			{"async", no_argument, 0, 'a'},
 			{"outer", no_argument, 0, 'o'},
+			{"from_disk", no_argument, 0, 'F'},
 			{"iter",    required_argument, 0, 'I'},
 			{"logfile", required_argument, 0, 'L'},
 			{"db_file", required_argument, 0, 'f'},
@@ -66,7 +68,7 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"I:R:S:s:p:aoL:f:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"I:R:S:s:p:aoFL:f:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	      	case 'I':
@@ -83,6 +85,8 @@ int main(int argc, char *argv[]) {
 	      		async = true; break;
 	      	case 'o':
 	      		outer = true; break;
+	      	case 'F':
+	      		skip_fetching = true; break;
 	        case 'L':
 	        	memcpy(LOGFILE, optarg, strlen(optarg)+1); break;
 	        case 'f':
@@ -135,24 +139,26 @@ int main(int argc, char *argv[]) {
 
 	// Fetch tables into memory;
 
-	  	char fetch_R[2*strlen(R_name) + 250];
-		char fetch_S[2*strlen(S_name) + 250];
+	  	if(!skip_fetching) {
+		  	char fetch_R[2*strlen(R_name) + 250];
+			char fetch_S[2*strlen(S_name) + 250];
 
-		sprintf(fetch_R,"CREATE OR REPLACE TEMP TABLE %s_tmp AS (FROM %s LIMIT %ld);", R_name, R_name, R_size);
-	  	if(duckdb_query(con, fetch_R, NULL) == DuckDBError) {
-	  		perror("Failed to fetch R into memory.\n");
-	  		perror(fetch_R);
-	  		return -1;
-	  	}
+			sprintf(fetch_R,"CREATE OR REPLACE TEMP TABLE %s_tmp AS (FROM %s LIMIT %ld);", R_name, R_name, R_size);
+		  	if(duckdb_query(con, fetch_R, NULL) == DuckDBError) {
+		  		perror("Failed to fetch R into memory.\n");
+		  		perror(fetch_R);
+		  		return -1;
+		  	}
 
-	  	sprintf(fetch_S,"CREATE OR REPLACE TEMP TABLE %s_tmp AS (FROM %s LIMIT %ld);", S_name, S_name, S_size);
-	  	if(duckdb_query(con, fetch_S, NULL) == DuckDBError) {
-	  		perror("Failed to fetch S into memory.\n");
-	  		perror(fetch_S);
-	  		return -1;
-	  	}
+		  	sprintf(fetch_S,"CREATE OR REPLACE TEMP TABLE %s_tmp AS (FROM %s LIMIT %ld);", S_name, S_name, S_size);
+		  	if(duckdb_query(con, fetch_S, NULL) == DuckDBError) {
+		  		perror("Failed to fetch S into memory.\n");
+		  		perror(fetch_S);
+		  		return -1;
+		  	}
 
-	  	mylog(logfile, "Fetched tables into memory.");
+		  	mylog(logfile, "Fetched tables into memory.");
+	 	}
 
 	for(int64_t cur_iter=0; cur_iter<ITER; cur_iter++) {
 		if(ITER>1) {
@@ -171,7 +177,10 @@ int main(int argc, char *argv[]) {
 
 		// 1. Perform queries to read tables.
 			char query_read_R[250 + strlen(R_name)];
-			sprintf(query_read_R, "SELECT * FROM %s_tmp;", R_name);
+			if(!skip_fetching)
+				sprintf(query_read_R, "SELECT * FROM %s_tmp;", R_name);
+			else
+				sprintf(query_read_R, "SELECT * FROM %s LIMIT %ld;", R_name, R_size);
 			if(duckdb_query(con, query_read_R, &res_R) == DuckDBError) {
 		  		perror("Failed to perform SELECT query on R.\n");
 		  		perror(query_read_R);
@@ -180,7 +189,10 @@ int main(int argc, char *argv[]) {
 		  	mylog(logfile, "Performed SELECT query on R.");
 
 			char query_read_S[250 + strlen(S_name)];
-			sprintf(query_read_S, "SELECT * FROM %s_tmp;", S_name);
+			if(!skip_fetching)
+				sprintf(query_read_S, "SELECT * FROM %s_tmp;", S_name);
+			else
+				sprintf(query_read_S, "SELECT * FROM %s LIMIT %ld;", S_name, S_size);
 			if(duckdb_query(con, query_read_S, &res_S) == DuckDBError) {
 		  		perror("Failed to perform SELECT query on S.\n");
 		  		perror(query_read_S);

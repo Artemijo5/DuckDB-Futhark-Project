@@ -119,7 +119,6 @@ module ft_densebox
 	def get_box_neighbourhoods [np]
 		(subdiv : [V.length]i64)
 		(cell_ids : [np]i64)
-		(part_sz : [np]i64)
 	: ([](i64,i64),[np]i64,[np]i64) =
 		let adj_range = V.length |> from_i64 |> sqrt
 			|> ceil |> to_i64
@@ -202,16 +201,14 @@ module ft_densebox
 			|> expand_outer_red
 				(\pid -> 1 + part_pairs_sz[pid])
 				(\pid ind ->
-					if ind=0 then part_sz[pid] else
+					if ind==0 then part_sz[pid] else
 					let ind2 = ind-1
 					let pid2 = part_pairs[part_pairs_is[pid]+ind2].1
 					in part_sz[pid2]
 				)
 				(+) 0
 			|> map ( < minPts)
-		in iota n
-			|> zip3 pids pts
-			|> map (\pid1 pt1 i1 ->
+		in map2 (\pid1 pt1 ->
 				if dismiss_pid[pid1] then false else
 				-- Points in the same cell are automatically neighbours
 				-- if in a dense cell, already core
@@ -235,7 +232,7 @@ module ft_densebox
 							else (k+1,cur_neigh2)
 					in (j+1,num_neigh2)
 				in num_neigh>=minPts
-			)
+			) pids pts
 
 	-- Clusters are made on the basis of CELLS rather than pts
 	def mk_clusters [n] [np]
@@ -244,6 +241,7 @@ module ft_densebox
 		(pids : [n]i64)
 		(is_core : [n]bool)
 		(part_pairs : [](i64,i64))
+		(_ : [np]i64) -- sth to contain np
 	: [np]i64 =
 		-- Get core pt info
 		let (core_pts, core_pids, _) = zip3 pts pids is_core
@@ -295,7 +293,66 @@ module ft_densebox
 			|> map2 (\hc i -> if hc then i else (-1)) has_cores
 			|> encode_subgraph_ids
 
-	-- TODO assign cluster ids, compile, test (...)
-
+	def assign_cluster_ids [n] [np]
+		(eps  : t)
+		(pts  : [n](vector t))
+		(is_core : [n]bool)
+		(pids : [n]i64)
+		(part_pairs : [](i64,i64))
+		(part_cids : [np]i64)
+	: [n]i64 =
+		-- Get core pt info
+		let (core_pts, core_pids, _) = zip3 pts pids is_core
+			|> filter (.2)
+			|> unzip3
+		let part_core_sz = hist_lean (+) 0 np
+			core_pids
+			(core_pids |> map (\_ -> 1i64))
+		let part_core_is = part_core_sz
+			|> exscan (+) 0
+		-- 1. Assign id's to pts in core parts
+		let init_cid = pids
+			|> map (\i -> part_cids[i])
+		-- 2. Assign to the rest
+		let candidate_borders = iota n
+			|> filter (\i ->
+				part_cids[pids[i]] < 0
+			)
+		-- keep only border parts' pairs (ie 1 part not core, 1 part core)
+		let border_pairs = part_pairs
+			|> filter (\(pid1,pid2) ->
+				part_cids[pid1]<0 && part_cids[pid2]>=0
+			)
+		let border_pairs_sz = hist_lean (+) 0 np
+			(border_pairs |> map (.0))
+			(border_pairs |> map (\_ -> 1i64))
+		let border_pairs_is = border_pairs_sz
+			|> exscan (+) 0
+		-- for each candidate border point
+		-- do a loop until 1 core neighbour is found
+		-- and take its cid
+		let border_ids = candidate_borders
+			|> map (\i1 ->
+				let pid1 = pids[i1]
+				let pt1 = pts[i1]
+				let (_,has_neigh)
+					= loop (j, cur_neigh)
+					= (0,-1)
+				while j<border_pairs_sz[pid1] && cur_neigh<0 do
+					let pid2 = border_pairs[border_pairs_is[pid1]+j].1
+					let (_,has_neigh2)
+						= loop (j2, cur_neigh2)
+						= (0, -1)
+					while j2<part_core_sz[pid2] && cur_neigh2<0 do
+						let i2 = part_core_is[pid2]+j2
+						let pt2 = core_pts[i2]
+						let is_neigh = D.check_neighbourhood eps pt1 pt2
+						in if is_neigh
+							then (j2+1,part_cids[pid2])
+							else (j2+1,-1)
+					in (j+1,has_neigh2)
+				in has_neigh
+			)
+		in scatter (copy init_cid) candidate_borders border_ids
 
 }

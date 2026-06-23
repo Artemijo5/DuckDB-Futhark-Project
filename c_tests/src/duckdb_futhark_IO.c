@@ -40,8 +40,11 @@ int main(int argc, char *argv[]) {
 		char LOGFILE[1000] = default_LOGFILE;
 		char DBFILE[1000]  = default_DBFILE;
 
+		bool skip_fetching = false;
+
 		static struct option long_options[] = {
 			{"R_size", required_argument, 0, 'R'},
+			{"from_disk", no_argument, 0, 'F'},
 			{"iter",    required_argument, 0, 'I'},
 			{"logfile", required_argument, 0, 'L'},
 			{"db_file", required_argument, 0, 'f'},
@@ -50,13 +53,15 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"I:R:S:L:f:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"I:R:FS:L:f:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	      	case 'I':
 	      		ITER = atol(optarg); break;
 	      	case 'R':
 	      		R_size = atol(optarg); break;
+	      	case 'F':
+	      		skip_fetching = true; break;
 	        case 'L':
 	        	memcpy(LOGFILE, optarg, strlen(optarg)+1); break; 
 	        case 'f':
@@ -108,13 +113,14 @@ int main(int argc, char *argv[]) {
 
 	  	char fetch_R[2*strlen(R_name) + 250];
 
-		sprintf(fetch_R,"CREATE OR REPLACE TEMP TABLE %s_tmp AS (FROM %s LIMIT %ld);", R_name, R_name, R_size);
-	  	if(duckdb_query(con, fetch_R, NULL) == DuckDBError) {
-	  		perror("Failed to fetch R into memory.\n");
-	  		perror(fetch_R);
-	  		return -1;
+	  	if(!skip_fetching) {
+			sprintf(fetch_R,"CREATE OR REPLACE TEMP TABLE %s_tmp AS (FROM %s LIMIT %ld);", R_name, R_name, R_size);
+		  	if(duckdb_query(con, fetch_R, NULL) == DuckDBError) {
+		  		perror("Failed to fetch R into memory.\n");
+		  		perror(fetch_R);
+		  		return -1;
+		  	}
 	  	}
-
 	  	mylog(logfile, "Fetched table into memory.");
 
 	mylog(logfile, "#####------#####------#####------#####------#####------#####------#####------#####------#####     Mode 1");
@@ -136,7 +142,10 @@ int main(int argc, char *argv[]) {
 		// Scan R table
 
 		  	duckdb_result res_R;
-		  	sprintf(select_R,"FROM %s_tmp;", R_name);
+		  	if(!skip_fetching) 
+		  		sprintf(select_R,"FROM %s_tmp;", R_name);
+		  	else
+		  		sprintf(select_R,"FROM %s LIMIT %ld;", R_name, R_size);
 		  	if(duckdb_query(con, select_R, &res_R) == DuckDBError) {
 		  		perror("Failed to perform SELECT query on R.\n");
 		  		perror(select_R);
@@ -316,7 +325,10 @@ int main(int argc, char *argv[]) {
 		// Scan R table
 
 		  	duckdb_result res_R;
-		  	sprintf(select_R,"FROM %s_tmp;", R_name);
+		  	if(!skip_fetching) 
+		  		sprintf(select_R,"FROM %s_tmp;", R_name);
+		  	else
+		  		sprintf(select_R,"FROM %s LIMIT %ld;", R_name, R_size);
 		  	if(duckdb_query(con, select_R, &res_R) == DuckDBError) {
 		  		perror("Failed to perform SELECT query on R.\n");
 		  		perror(select_R);
