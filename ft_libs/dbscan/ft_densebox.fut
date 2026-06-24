@@ -385,4 +385,34 @@ module ft_densebox
 			)
 		in scatter (copy init_cid) candidate_borders border_ids
 
+	def do_dbscan [n]
+		(eps  : t)
+		(minPts : i64)
+		(pts  : [n](vector t))
+	: ([n]bool, [n]i64) =
+		let (
+			subdiv, pts',
+			_, part_is, cell_ids, og_is
+		)
+			= partition_dataset eps pts
+		let (part_sz,_,pids) = get_part_info minPts part_is pts'
+		let (part_pairs, part_pairs_is, part_pairs_sz)
+			= get_box_neighbourhoods subdiv cell_ids
+		let is_core = find_core_pts
+			eps minPts
+			pts' pids
+			part_is part_sz
+			part_pairs
+			part_pairs_is part_pairs_sz
+		let part_cids = mk_clusters eps
+			pts pids is_core
+			part_pairs
+			cell_ids
+		let clust_ids = assign_cluster_ids eps
+			pts is_core pids
+			part_pairs part_cids
+		let is_core' = scatter (replicate n false) og_is is_core
+		let clust_ids' = scatter (replicate n (-1)) og_is clust_ids
+		in (is_core', clust_ids')
+
 }
