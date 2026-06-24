@@ -146,22 +146,52 @@ module ft_densebox
 			xs'
 			-- return to original ordering
 			|> scatter (replicate np (-1,0)) is'
+		-- to avoid exploding memory in intermediate materialization
+		-- do sequential loop over candidate matches
 		let part_pairs = x_matches
-			|> zip (iota np)
-			|> expand (\(_,(_,cm)) -> cm)
-				(\(i1,(fm,_)) ind -> (i1, fm + ind))
-			|> map (\(i1,i2) -> (i1,is'[i2]))
-			-- filter for true neighbourhood
-			-- discard self-neighbourhood
-			|> filter (\(i1,i2) ->
-				i1!=i2 &&
+			|> zip is'
+			-- 1st loop to find 1st true match & number of true matches
+			|> map (\(i1,(fm,cm)) ->
 				let vec1 = as_vectors[i1]
-				let vec2 = as_vectors[i2]
-				in V.map2 (-) vec1 vec2
-					|> V.map (\diff -> diff**2)
-					|> V.reduce (+) 0
-					|> (\meas -> meas <= adj_range**2)
+				let (_,first_match,num_matches)
+					= loop (j,tfm,tcm)
+					= (fm,-1,0)
+				while j<(fm+cm) do
+					let i2 = is'[j]
+					let vec2 = as_vectors[i2]
+					let is_neigh = V.map2 (-) vec1 vec2
+						|> V.map (\diff -> diff**2)
+						|> V.reduce (+) 0
+						|> (\meas -> meas <= adj_range**2)
+					in 
+						if !is_neigh
+							then (j+1,tfm,tcm)
+						else if tcm==0
+							then (j+1,i2,tcm+1)
+						else
+							(j+1,tfm,tcm+1)
+				in (i1, first_match, num_matches)
 			)
+			-- materialize
+			|> expand
+				(\(_,_,cm) -> cm)
+				(\(i1,fm,_) k ->
+					let vec1 = as_vectors[i1]
+					let (foundAt,_)
+						= loop (j,matches_so_far)
+						= (fm-1,0)
+					while matches_so_far<=k do
+						let i2 = is'[j+1]
+						let vec2 = as_vectors[i2]
+						let is_neigh = V.map2 (-) vec1 vec2
+							|> V.map (\diff -> diff**2)
+							|> V.reduce (+) 0
+							|> (\meas -> meas <= adj_range**2)
+						in if is_neigh
+							then (j+1,matches_so_far+1)
+							else (j+1,matches_so_far)
+					in (i1,foundAt)
+				)
 		-- Sort part_pairs by their distance
 		-- so points will first check their closest neighbours
 		let part_pairs_dists = part_pairs
