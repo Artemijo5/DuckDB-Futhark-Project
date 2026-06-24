@@ -167,7 +167,7 @@ module ft_densebox
 						if !is_neigh
 							then (j+1,tfm,tcm)
 						else if tcm==0
-							then (j+1,i2,tcm+1)
+							then (j+1,j,tcm+1)
 						else
 							(j+1,tfm,tcm+1)
 				in (i1, first_match, num_matches)
@@ -177,11 +177,12 @@ module ft_densebox
 				(\(_,_,cm) -> cm)
 				(\(i1,fm,_) k ->
 					let vec1 = as_vectors[i1]
+					in if k==0 then (i1,is'[fm]) else
 					let (foundAt,_)
 						= loop (j,matches_so_far)
-						= (fm-1,0)
-					while matches_so_far<=k do
-						let i2 = is'[j+1]
+						= (fm,0)
+					while matches_so_far<k do
+						let i2 = is'[j]
 						let vec2 = as_vectors[i2]
 						let is_neigh = V.map2 (-) vec1 vec2
 							|> V.map (\diff -> diff**2)
@@ -190,8 +191,10 @@ module ft_densebox
 						in if is_neigh
 							then (j+1,matches_so_far+1)
 							else (j+1,matches_so_far)
-					in (i1,foundAt)
+					in (i1,foundAt-1)
 				)
+			-- filter out self-neighbourhoods
+			|> filter (\(i1,i2) -> i1!=i2)
 		-- Sort part_pairs by their distance
 		-- so points will first check their closest neighbours
 		let part_pairs_dists = part_pairs
@@ -392,7 +395,7 @@ module ft_densebox
 	: ([n]bool, [n]i64) =
 		let (
 			subdiv, pts',
-			_, part_is, cell_ids, og_is
+			bbounds, part_is, cell_ids, og_is
 		)
 			= partition_dataset eps pts
 		let (part_sz,_,pids) = get_part_info minPts part_is pts'
@@ -411,6 +414,9 @@ module ft_densebox
 		let clust_ids = assign_cluster_ids eps
 			pts is_core pids
 			part_pairs part_cids
+		let neighs = part_pairs
+			|> map (\(i1,i2) -> (bbounds[i1].0, bbounds[i2].0))
+			|> trace
 		let is_core' = scatter (replicate n false) og_is is_core
 		let clust_ids' = scatter (replicate n (-1)) og_is clust_ids
 		in (is_core', clust_ids')

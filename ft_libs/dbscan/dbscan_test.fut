@@ -5,6 +5,7 @@ import "ft_distance"
 import "ft_undir_graph"
 import "dbscan"
 import "ft_dclust"
+import "ft_densebox"
 -- import "ft_dclust_alt"
 --import "ft_dclust_single"
 
@@ -14,6 +15,7 @@ module dist2 = euclidean_d vector_2 f64
 
 module dbscan2 = ft_dbscan vector_2 f64 dist2
 module dclust2 = ft_dclust vector_2 f64 dist2
+module dnsbox2 = ft_densebox vector_2 f64 dist2
 
 -- 40 pts in 4 quadrants
 -- partition using kd index
@@ -49,6 +51,10 @@ def test1_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
 	let sdv = replicate vector_2.length subdiv
 	in dclust2.do_dclust 10000 seed_count sdv eps minPts vs
 
+def test1_dnsbox (eps : f64) (minPts : i64) =
+	let vs = (copy pts1) |> map (sized vector_2.length >-> vector_2.from_array)
+	in dnsbox2.do_dbscan eps minPts vs
+
 -- eps=2, minPts=3
 def pts2 : [][2]f64 = [
 --[-100,-100],
@@ -68,6 +74,10 @@ def test2_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
 	let vs = (copy pts2) |> map (sized vector_2.length >-> vector_2.from_array)
 	let sdv = replicate vector_2.length subdiv
 	in dclust2.do_dclust 10000 seed_count sdv eps minPts vs
+
+def test2_dnsbox (eps : f64) (minPts : i64) =
+	let vs = (copy pts2) |> map (sized vector_2.length >-> vector_2.from_array)
+	in dnsbox2.do_dbscan eps minPts vs
 
 def pts3 : [][2]f64 = [
 	[4.482,8.931],
@@ -92,6 +102,10 @@ def test3_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
 	let sdv = replicate vector_2.length subdiv
 	in dclust2.do_dclust 10000 seed_count sdv eps minPts vs
 
+def test3_dnsbox (eps : f64) (minPts : i64) =
+	let vs = (copy pts3) |> map (sized vector_2.length >-> vector_2.from_array)
+	in dnsbox2.do_dbscan eps minPts vs
+
 
 def pts4 : [][2]f64 = [
 	[6,0],
@@ -115,3 +129,8 @@ def test4_dclust =
 	let vs = (copy pts4) |> map (sized vector_2.length >-> vector_2.from_array)
 	let sdv = replicate vector_2.length 3
 	in dclust2.do_dclust 10000 4 sdv 0.5 5 vs
+
+def test4_dnsbox =
+	let vs = (copy pts4) |> map (sized vector_2.length >-> vector_2.from_array)
+	let sdv = replicate vector_2.length 3
+	in dnsbox2.do_dbscan 0.5 5 vs
