@@ -119,7 +119,7 @@ module ft_densebox
 
 	-- TODO rewrite this one (...)
 	def get_box_neighbourhoods [np]
-		(extPar : i64)
+		(wsize : i64)
 		(subdiv : [V.length]i64)
 		(cell_ids : [np]i64)
 	: ([](i64,i64),[np]i64,[np]i64) =
@@ -153,9 +153,9 @@ module ft_densebox
 		-- do sequential loop over candidate matches
 		let part_pairs : [](i64,i64)
 			= loop cur_pairs = []
-		for j in (0..512..<((np+512)/512)) do
-			let this_pairs = x_matches[j*512 : i64.min ((j+1)*512) np]
-				|> zip ((j*512)..<(i64.min ((j+1)*512) np))
+		for j in (0..wsize..<((np+wsize)/wsize)) do
+			let this_pairs = x_matches[j*wsize : i64.min ((j+1)*wsize) np]
+				|> zip ((j*wsize)..<(i64.min ((j+1)*wsize) np))
 				|> expand
 					(\(_,(_,cm)) -> cm)
 					(\(i1,(fm,_)) k ->
@@ -367,19 +367,19 @@ module ft_densebox
 		in scatter (copy init_cid) candidate_borders border_ids
 
 	def do_dbscan [n]
-		(extPar : i64)
+		(wsize : i64)
 		(eps  : t)
 		(minPts : i64)
 		(pts  : [n](vector t))
 	: ([n]bool, [n]i64) =
 		let (
 			subdiv, pts',
-			bbounds, part_is, cell_ids, og_is
+			_, part_is, cell_ids, og_is
 		)
 			= partition_dataset eps pts
 		let (part_sz,_,pids) = get_part_info minPts part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
-			= get_box_neighbourhoods extPar subdiv cell_ids
+			= get_box_neighbourhoods wsize subdiv cell_ids
 		let is_core = find_core_pts
 			eps minPts
 			pts' pids
