@@ -61,8 +61,9 @@ module ft_densebox
 		let maxs = perDim |> seqmap zero (maximum) |> V.from_array
 		let ranges = V.map2 (minus) maxs mins
 		let sdv = V.map (\r -> r `over` cell_width) ranges
+			|> V.map (ceil)
 		let sdv' = sdv
-			|> V.map (ceil >-> to_i64)
+			|> V.map (to_i64)
 			|> V.map2 (i64.max) (V.replicate 1i64)
 			|> V.to_array
 		-- Auxilliary point so that cell_width is correct
@@ -116,7 +117,9 @@ module ft_densebox
 			)
 		in argmin (>) (==) 0 distinct_per_dim
 
+	-- TODO rewrite this one (...)
 	def get_box_neighbourhoods [np]
+		(extPar : i64)
 		(subdiv : [V.length]i64)
 		(cell_ids : [np]i64)
 	: ([](i64,i64),[np]i64,[np]i64) =
@@ -148,53 +151,26 @@ module ft_densebox
 			|> scatter (replicate np (-1,0)) is'
 		-- to avoid exploding memory in intermediate materialization
 		-- do sequential loop over candidate matches
-		let part_pairs = x_matches
-			|> zip is'
-			-- 1st loop to find 1st true match & number of true matches
-			|> map (\(i1,(fm,cm)) ->
-				let vec1 = as_vectors[i1]
-				let (_,first_match,num_matches)
-					= loop (j,tfm,tcm)
-					= (fm,-1,0)
-				while j<(fm+cm) do
-					let i2 = is'[j]
+		let part_pairs : [](i64,i64)
+			= loop cur_pairs = []
+		for j in (0..512..<((np+512)/512)) do
+			let this_pairs = x_matches[j*512 : i64.min ((j+1)*512) np]
+				|> zip ((j*512)..<(i64.min ((j+1)*512) np))
+				|> expand
+					(\(_,(_,cm)) -> cm)
+					(\(i1,(fm,_)) k ->
+						(i1, is'[fm+k])
+					)
+				|> filter (\(i1,i2) ->
+					if i1==i2 then false else
+					let vec1 = as_vectors[i1]
 					let vec2 = as_vectors[i2]
-					let is_neigh = V.map2 (-) vec1 vec2
+					in V.map2 (-) vec1 vec2
 						|> V.map (\diff -> diff**2)
 						|> V.reduce (+) 0
 						|> (\meas -> meas <= adj_range**2)
-					in 
-						if !is_neigh
-							then (j+1,tfm,tcm)
-						else if tcm==0
-							then (j+1,j,tcm+1)
-						else
-							(j+1,tfm,tcm+1)
-				in (i1, first_match, num_matches)
-			)
-			-- materialize
-			|> expand
-				(\(_,_,cm) -> cm)
-				(\(i1,fm,_) k ->
-					let vec1 = as_vectors[i1]
-					in if k==0 then (i1,is'[fm]) else
-					let (foundAt,_)
-						= loop (j,matches_so_far)
-						= (fm,0)
-					while matches_so_far<k do
-						let i2 = is'[j]
-						let vec2 = as_vectors[i2]
-						let is_neigh = V.map2 (-) vec1 vec2
-							|> V.map (\diff -> diff**2)
-							|> V.reduce (+) 0
-							|> (\meas -> meas <= adj_range**2)
-						in if is_neigh
-							then (j+1,matches_so_far+1)
-							else (j+1,matches_so_far)
-					in (i1,foundAt-1)
 				)
-			-- filter out self-neighbourhoods
-			|> filter (\(i1,i2) -> i1!=i2)
+			in cur_pairs ++ this_pairs
 		-- Sort part_pairs by their distance
 		-- so points will first check their closest neighbours
 		let part_pairs_dists = part_pairs
@@ -210,6 +186,8 @@ module ft_densebox
 			|> (.1) |> unzip
 			|> (\(pp0,pp1) -> bucket_sort 2 np pp0 pp1)
 			|> (\(pp0,pp1) -> zip pp0 pp1)
+		let _ = part_pairs'
+			|> map (\(i1,i2) -> (as_vectors[i1],as_vectors[i2]))
 		let part_pairs_sz = hist_lean (+) 0 np
 			(part_pairs' |> map (.0))
 			(part_pairs' |> map (\_ -> 1i64))
@@ -389,6 +367,7 @@ module ft_densebox
 		in scatter (copy init_cid) candidate_borders border_ids
 
 	def do_dbscan [n]
+		(extPar : i64)
 		(eps  : t)
 		(minPts : i64)
 		(pts  : [n](vector t))
@@ -398,9 +377,9 @@ module ft_densebox
 			bbounds, part_is, cell_ids, og_is
 		)
 			= partition_dataset eps pts
-		let (part_sz,_,pids) = get_part_info minPts part_is pts'
+		let (part_sz,_,pids) = get_part_info minPts part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
-			= get_box_neighbourhoods subdiv cell_ids
+			= get_box_neighbourhoods extPar subdiv cell_ids
 		let is_core = find_core_pts
 			eps minPts
 			pts' pids
@@ -408,17 +387,25 @@ module ft_densebox
 			part_pairs
 			part_pairs_is part_pairs_sz
 		let part_cids = mk_clusters eps
-			pts pids is_core
+			pts' pids is_core
 			part_pairs
 			cell_ids
 		let clust_ids = assign_cluster_ids eps
-			pts is_core pids
+			pts' is_core pids
 			part_pairs part_cids
-		let neighs = part_pairs
-			|> map (\(i1,i2) -> (bbounds[i1].0, bbounds[i2].0))
-			|> trace
 		let is_core' = scatter (replicate n false) og_is is_core
 		let clust_ids' = scatter (replicate n (-1)) og_is clust_ids
 		in (is_core', clust_ids')
 
 }
+
+-- Test section
+
+import "dbscan"
+
+module vector_2 = cat_vector vector_1 vector_1
+
+module dist2 = euclidean_d vector_2 f64
+
+module dbscan2 = ft_dbscan vector_2 f64 dist2
+module dnsbox2 = ft_densebox vector_2 f64 dist2
