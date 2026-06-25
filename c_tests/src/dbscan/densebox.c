@@ -6,22 +6,21 @@
 #include "../../../clibs/duckdb.h"
 
 #include "../../../clibs/mylogger.h"
-#include "../../../ft_clibs/dclust_entry.h"
+#include "../../../ft_clibs/densebox_entry.h"
 
 #include <unistd.h>
 #include <getopt.h>
 
 #define default_INPUT_FILENAME  "2d.txt"
-#define default_OUTPUT_FILENAME "futhark_dclust_2d.csv"
+#define default_OUTPUT_FILENAME "futhark_densebox.csv"
 
 #define default_DATASET_SIZE 10
 
 #define CHUNK_SIZE duckdb_vector_size()
-#define EXTPAR 2048
-#define default_SEED_COUNT 1024
-#define default_SUBDIV 100
 
-#define DIM 2
+#define default_DIM 2
+
+#define default_WSIZE 2048
 #define default_EPS 0.5
 #define default_MIN_PTS 3
 
@@ -37,9 +36,9 @@ int main(int argc, char *argv[]) {
 
 		int64_t DATASET_SIZE = default_DATASET_SIZE;
 
-		int64_t SEED_COUNT = default_SEED_COUNT;
-		int64_t SUBDIV = default_SUBDIV;
+		int64_t DIM = default_DIM;
 
+		int64_t WSIZE = default_WSIZE;
 		double EPS  = default_EPS;
 		int64_t MIN_PTS = default_MIN_PTS;
 
@@ -51,8 +50,8 @@ int main(int argc, char *argv[]) {
 			{"input", required_argument, 0, 'i'},
 			{"output", required_argument, 0, 'o'},
 			{"dataset_size", required_argument, 0, 's'},
-			{"seed_count", required_argument, 0, 'c'},
-			{"subdiv", required_argument, 0, 'd'},
+			{"dim", required_argument, 0, 'd'},
+			{"wsize", required_argument, 0, 'w'},
 			{"eps", required_argument, 0, 'e'},
 			{"min_pts", required_argument, 0, 'm'},
 			{"iter", required_argument, 0, 'I'},
@@ -62,7 +61,7 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"i:o:s:c:d:e:m:I:L:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"i:o:s:d:w:e:m:I:L:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	        case 'i':
@@ -71,10 +70,10 @@ int main(int argc, char *argv[]) {
 	        	memcpy(OUTPUT_FILENAME, optarg, strlen(optarg)+1); break; 
 	        case 's':
 	        	DATASET_SIZE = atol(optarg); break;
-	        case 'c':
-	        	SEED_COUNT = atol(optarg); break;
 	        case 'd':
-	        	SUBDIV = atol(optarg); break;
+	        	DIM = atol(optarg); break;
+	        case 'w':
+	        	WSIZE = atol(optarg); break;
 	        case 'e':
 	        	EPS = atof(optarg); break;
 	        case 'm':
@@ -86,12 +85,36 @@ int main(int argc, char *argv[]) {
 	      }
 	    }
 
+
+
 	// init logger
 
-		FILE* logfile = loginit(LOGFILE, "Starting futhark-DClust test program.");
+		FILE* logfile = loginit(LOGFILE, "Starting futhark-densebox DBSCAN test program.");
 	    if(LOGFILE && !logfile) {
 	      perror("Failed to initialise logger.\n");
 	      return -1;
+	    }
+
+	    switch(DIM) {
+	    	case 2:
+	    		mylog(logfile, "DBSCAN on 2-D data.");
+	    		break;
+	    	case 3:
+	    		mylog(logfile, "DBSCAN on 3-D data.");
+	    		break;
+	    	case 4:
+	    		mylog(logfile, "DBSCAN on 4-D data.");
+	    		break;
+	    	case 5:
+	    		mylog(logfile, "DBSCAN on 5-D data.");
+	    		break;
+	    	case 7:
+	    		mylog(logfile, "DBSCAN on 7-D data.");
+	    		break;
+	    	default:
+	    		mylog(logfile, "Invalid dimensionality: only 2D, 3D, 4D, 5D, 7D are supported.");
+	    		logclose(logfile);
+	    		return -1;
 	    }
 
 	// TODO log parameters
@@ -138,9 +161,15 @@ int main(int argc, char *argv[]) {
 		// Query to read data from input file.
 
 			duckdb_result res;
-			char query_str[300 + strlen(INPUT_FILENAME)];
-			sprintf(query_str,
-				"SELECT (#1)::DOUBLE, (#2)::DOUBLE FROM read_csv('%s') LIMIT %ld;",
+
+			char query_str[1000 + strlen(INPUT_FILENAME)];
+
+			int query_str_len = sprintf(query_str, "SELECT (#1)::DOUBLE");
+			for (int64_t col=1; col<DIM; col++) {
+				query_str_len += sprintf(query_str+query_str_len, ", (#%ld)::DOUBLE", col+1);
+			}
+			sprintf(query_str+query_str_len,
+				" FROM read_csv('%s') LIMIT %ld;",
 				INPUT_FILENAME, DATASET_SIZE
 			);
 			if(duckdb_query(con, query_str, &res) == DuckDBError) {
@@ -150,15 +179,12 @@ int main(int argc, char *argv[]) {
 			}
 			mylog(logfile, "Executed duckdb query to read input data.");
 
-		// Init futhark arrays
+		// Init arrays
 
-			struct futhark_f64_1d *col1;
-			struct futhark_f64_1d *col2;
-
-			futhark_entry_init_column_f64(ctx, &col1, DATASET_SIZE);
-			futhark_entry_init_column_f64(ctx, &col2, DATASET_SIZE);
-
-			mylog(logfile, "Initialized empty columns in the futhark core.");
+			double *xss[DIM];
+			for(int64_t col=0; col<DIM; col++) {
+				xss[col] = malloc(DATASET_SIZE*sizeof(double));
+			}
 
 		// Read duckdb chunks and copy into arrays
 
@@ -173,53 +199,26 @@ int main(int argc, char *argv[]) {
 
 				int64_t this_rows = duckdb_data_chunk_get_size(cnk);
 
-				duckdb_vector vec1 = duckdb_data_chunk_get_vector(cnk,0);
-				duckdb_vector vec2 = duckdb_data_chunk_get_vector(cnk,1);
-
-				double *dat1 = (double*)duckdb_vector_get_data(vec1);
-				double *dat2 = (double*)duckdb_vector_get_data(vec2);
-
-				struct futhark_f64_1d *ft_dat1 = futhark_new_f64_1d(ctx, dat1, this_rows);
-				struct futhark_f64_1d *ft_dat2 = futhark_new_f64_1d(ctx, dat2, this_rows);
-
-				// Due to consumption, need to rearrange pointers.
-				struct futhark_f64_1d *col1_tmp;
-				struct futhark_f64_1d *col2_tmp;
-
-				futhark_entry_write_column_f64(ctx, &col1_tmp, num_rows, ft_dat1, col1);
-				futhark_entry_write_column_f64(ctx, &col2_tmp, num_rows, ft_dat2, col2);
-
-				futhark_free_f64_1d(ctx, col1);
-				futhark_free_f64_1d(ctx, col2);
-
-				futhark_free_f64_1d(ctx, ft_dat1);
-				futhark_free_f64_1d(ctx, ft_dat2);
-
-				col1 = col1_tmp;
-				col2 = col2_tmp;
-
+				for(int64_t col=0; col<DIM; col++) {
+					duckdb_vector vec = duckdb_data_chunk_get_vector(cnk,col);
+					double *dat = (double *)duckdb_vector_get_data(vec);
+					memcpy(xss[col] + num_rows, dat, this_rows*sizeof(double));
+				}
 				num_rows += this_rows;
-				duckdb_destroy_data_chunk(&cnk);
 			}
 			duckdb_destroy_result(&res);
 
-		// Crop arrays if necessary
+		// Wrap into futhark context
 
-			if(num_rows < DATASET_SIZE) {
-				struct futhark_f64_1d *col1_tmp;
-				struct futhark_f64_1d *col2_tmp;
-
-				futhark_entry_crop_column_f64(ctx, &col1_tmp, 0, num_rows, col1);
-				futhark_entry_crop_column_f64(ctx, &col2_tmp, 0, num_rows, col2);
-
-				futhark_free_f64_1d(ctx, col1);
-				futhark_free_f64_1d(ctx, col2);
-
-				col1 = col1_tmp;
-				col2 = col2_tmp;
-
-				mylog(logfile, "Cropped columns to actual dataset size.");
+			struct futhark_f64_1d *ft_xss[DIM];
+			for(int64_t col=0; col<DIM; col++) {
+				ft_xss[col] = futhark_new_f64_1d(ctx, xss[col], num_rows);
 			}
+			mylog(logfile, "Wrapped data into futhark context.");
+			for(int64_t col=0; col<DIM; col++) {
+				free(xss[col]);
+			}
+
 
 		// Do dbscan
 
@@ -228,21 +227,104 @@ int main(int argc, char *argv[]) {
 			futhark_context_sync(ctx);
 			mylog(logfile, "Synced futhark context.");
 
-			mylog(logfile, "Performing D-Clust...");
+			mylog(logfile, "Performing Densebox dbscan ...");
 
-			futhark_entry_do_dclust_2d_f64(ctx, &dbscan_res,
-				SEED_COUNT, SUBDIV, EPS, MIN_PTS,
-				col1, col2
-			);
+			if(DIM==2) {
+				struct futhark_opaque_indexed_data_2d_f64 *idx_dat;
+				futhark_entry_densebox_index_dataset_2d_f64(ctx, &idx_dat, WSIZE, EPS, ft_xss[0], ft_xss[1]);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished Indexing.");
+
+				int64_t num_parts;
+				futhark_project_opaque_indexed_data_2d_f64_parts_No(ctx, &num_parts, idx_dat);
+				printf("\n#partitions: %ld\n\n", num_parts);
+
+				futhark_entry_densebox_do_dbscan_2d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_free_opaque_indexed_data_2d_f64(ctx, idx_dat);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished DBSCAN on 2D data.");
+
+			}
+			else if(DIM==3) {
+
+				struct futhark_opaque_indexed_data_3d_f64 *idx_dat;
+				futhark_entry_densebox_index_dataset_3d_f64(ctx, &idx_dat, WSIZE, EPS,
+					ft_xss[0], ft_xss[1], ft_xss[2]);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished Indexing.");
+
+				int64_t num_parts;
+				futhark_project_opaque_indexed_data_3d_f64_parts_No(ctx, &num_parts, idx_dat);
+				printf("\n#partitions: %ld\n\n", num_parts);
+
+				futhark_entry_densebox_do_dbscan_3d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_free_opaque_indexed_data_3d_f64(ctx, idx_dat);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished DBSCAN on 3D data.");
+
+			}
+			else if(DIM==4) {
+
+				struct futhark_opaque_indexed_data_4d_f64 *idx_dat;
+				futhark_entry_densebox_index_dataset_4d_f64(ctx, &idx_dat, WSIZE, EPS,
+					ft_xss[0], ft_xss[1], ft_xss[2], ft_xss[3]);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished Indexing.");
+
+				int64_t num_parts;
+				futhark_project_opaque_indexed_data_4d_f64_parts_No(ctx, &num_parts, idx_dat);
+				printf("\n#partitions: %ld\n\n", num_parts);
+
+				futhark_entry_densebox_do_dbscan_4d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_free_opaque_indexed_data_4d_f64(ctx, idx_dat);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished DBSCAN on 4D data.");
+
+			}
+			else if(DIM==5) {
+
+				struct futhark_opaque_indexed_data_5d_f64 *idx_dat;
+				futhark_entry_densebox_index_dataset_5d_f64(ctx, &idx_dat, WSIZE, EPS,
+					ft_xss[0], ft_xss[1], ft_xss[2], ft_xss[3], ft_xss[4]);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished Indexing.");
+
+				int64_t num_parts;
+				futhark_project_opaque_indexed_data_5d_f64_parts_No(ctx, &num_parts, idx_dat);
+				printf("\n#partitions: %ld\n\n", num_parts);
+
+				futhark_entry_densebox_do_dbscan_5d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_free_opaque_indexed_data_5d_f64(ctx, idx_dat);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished DBSCAN on 5D data.");
+
+			}
+			else {
+
+				struct futhark_opaque_indexed_data_7d_f64 *idx_dat;
+				futhark_entry_densebox_index_dataset_7d_f64(ctx, &idx_dat, WSIZE, EPS,
+					ft_xss[0], ft_xss[1], ft_xss[2], ft_xss[3], ft_xss[4], ft_xss[5], ft_xss[6]);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished Indexing.");
+
+				int64_t num_parts;
+				futhark_project_opaque_indexed_data_7d_f64_parts_No(ctx, &num_parts, idx_dat);
+				printf("\n#partitions: %ld\n\n", num_parts);
+
+				futhark_entry_densebox_do_dbscan_7d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_free_opaque_indexed_data_7d_f64(ctx, idx_dat);
+				futhark_context_sync(ctx);
+				mylog(logfile, "Finished DBSCAN on 7D data.");
+
+			}
 
 			futhark_context_sync(ctx);
 			mylog(logfile, "Synced futhark context.");
 
 			
-			futhark_free_f64_1d(ctx, col1);
-			futhark_free_f64_1d(ctx, col2);
-
-			mylog(logfile, "D-Clust completed.");
+			for(int64_t col=0; col<DIM; col++) {
+				futhark_free_f64_1d(ctx, ft_xss[col]);
+			}
 
 			// See if any errors occured.
 			char *ft_error_msg = futhark_context_get_error(ctx);

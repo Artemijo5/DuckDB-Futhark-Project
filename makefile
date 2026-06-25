@@ -12,20 +12,12 @@ DenseBox:
 	mkdir -p ft_clibs
 	futhark cuda ft_libs/dbscan/densebox_entry.fut -o ft_clibs/densebox_entry --library
 	$(CC) ft_clibs/dense_entry.c -o ft_clibs/libdensebox.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
-	#$(CC) c_tests/src/dbscan/futhark_densebox_2d.c -o c_tests/densebox_2d.o $(CFLAGS) $(DEPS) ft_clibs/libdensebox.so -lm
-	#$(CC) c_tests/src/dbscan/futhark_densebox_3d.c -o c_tests/densebox_3d.o $(CFLAGS) $(DEPS) ft_clibs/libdensebox.so -lm
-	#$(CC) c_tests/src/dbscan/futhark_densebox_4d.c -o c_tests/densebox_4d.o $(CFLAGS) $(DEPS) ft_clibs/libdensebox.so -lm
-	#$(CC) c_tests/src/dbscan/futhark_densebox_5d.c -o c_tests/densebox_5d.o $(CFLAGS) $(DEPS) ft_clibs/libdensebox.so -lm
-	#$(CC) c_tests/src/dbscan/futhark_densebox_7d.c -o c_tests/densebox_7d.o $(CFLAGS) $(DEPS) ft_clibs/libdensebox.so -lm
+	$(CC) c_tests/src/dbscan/futhark_densebox.c -o c_tests/densebox.o $(CFLAGS) $(DEPS) ft_clibs/libdensebox.so -lm
 
 C-DenseBox:
 	mkdir -p ft_clibs
-	futhark c ft_libs/dbscan/densebox_entry.fut -o ft_clibs/densebox_entry --library
-	#$(CC) c_tests/src/dbscan/futhark_densebox_2d.c -o c_tests/densebox_2d.o $(CFLAGS) $(DEPS) ft_clibs/dbscan_entry.c -lm
-	#$(CC) c_tests/src/dbscan/futhark_densebox_3d.c -o c_tests/densebox_3d.o $(CFLAGS) $(DEPS) ft_clibs/dbscan_entry.c -lm
-	#$(CC) c_tests/src/dbscan/futhark_densebox_4d.c -o c_tests/densebox_4d.o $(CFLAGS) $(DEPS) ft_clibs/dbscan_entry.c -lm
-	#$(CC) c_tests/src/dbscan/futhark_densebox_5d.c -o c_tests/densebox_5d.o $(CFLAGS) $(DEPS) ft_clibs/dbscan_entry.c -lm
-	#$(CC) c_tests/src/dbscan/futhark_densebox_7d.c -o c_tests/densebox_7d.o $(CFLAGS) $(DEPS) ft_clibs/dbscan_entry.c -lm
+	#futhark c ft_libs/dbscan/densebox_entry.fut -o ft_clibs/densebox_entry --library
+	$(CC) c_tests/src/dbscan/densebox.c -o c_tests/densebox.o $(CFLAGS) $(DEPS) ft_clibs/densebox_entry.c -lm
 
 DBSCAN:
 	mkdir -p ft_clibs

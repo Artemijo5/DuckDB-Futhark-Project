@@ -3,7 +3,8 @@ import "../lib/github.com/athas/vector/vector"
 import "ft_distance"
 import "ft_undir_graph"
 
--- DBSCAN implementation based on G-DBSCAN
+-- "naive" DBSCAN implementation
+-- computing all pairwise distances
 
 module ft_dbscan
 	(V : vector)
