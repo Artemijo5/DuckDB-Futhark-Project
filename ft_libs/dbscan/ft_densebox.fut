@@ -151,11 +151,14 @@ module ft_densebox
 			|> scatter (replicate np (-1,0)) is'
 		-- to avoid exploding memory in intermediate materialization
 		-- do sequential loop over candidate matches
+		let num_iter = (np + wsize - 1)/wsize
 		let part_pairs : [](i64,i64)
 			= loop cur_pairs = []
-		for j in (0..wsize..<((np+wsize)/wsize)) do
-			let this_pairs = x_matches[j*wsize : i64.min ((j+1)*wsize) np]
-				|> zip ((j*wsize)..<(i64.min ((j+1)*wsize) np))
+		for j<num_iter do
+			let inf = j*wsize
+			let sup = i64.min (inf+wsize) np
+			let this_pairs = x_matches[inf:sup]
+				|> zip (inf..<sup)
 				|> expand
 					(\(_,(_,cm)) -> cm)
 					(\(i1,(fm,_)) k ->

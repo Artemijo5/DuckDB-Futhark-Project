@@ -16,7 +16,7 @@ DenseBox:
 
 C-DenseBox:
 	mkdir -p ft_clibs
-	#futhark c ft_libs/dbscan/densebox_entry.fut -o ft_clibs/densebox_entry --library
+	futhark c ft_libs/dbscan/densebox_entry.fut -o ft_clibs/densebox_entry --library
 	$(CC) c_tests/src/dbscan/densebox.c -o c_tests/densebox.o $(CFLAGS) $(DEPS) ft_clibs/densebox_entry.c -lm
 
 DBSCAN:
