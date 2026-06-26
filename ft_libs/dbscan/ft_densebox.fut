@@ -151,12 +151,27 @@ module ft_densebox
 			|> scatter (replicate np (-1,0)) is'
 		-- to avoid exploding memory in intermediate materialization
 		-- do sequential loop over candidate matches
-		let num_iter = (np + wsize - 1)/wsize
+		--
+		-- for load-balanced windows
+		-- find segments containing about the square of window_size each
+		let prefix_cm = x_matches
+			|> map (.1)
+			|> map (\cm -> (f64.i64 cm) / (f64.i64 (wsize**2)))
+			|> exscan (+) 0.0
+			|> map (f64.floor)
+			|> map (i64.f64)
+		let window_boundaries = prefix_cm
+			|> group_boundaries (!=)
+			|> zip (iota np)
+			|> filter (.1)
+			|> map (.0)
+		let num_iter = length window_boundaries
+		let window_boundaries' = window_boundaries ++ [np]
 		let part_pairs : [](i64,i64)
 			= loop cur_pairs = []
 		for j<num_iter do
-			let inf = j*wsize
-			let sup = i64.min (inf+wsize) np
+			let inf = window_boundaries'[j]
+			let sup = window_boundaries'[j+1]
 			let this_pairs = x_matches[inf:sup]
 				|> zip (inf..<sup)
 				|> expand
