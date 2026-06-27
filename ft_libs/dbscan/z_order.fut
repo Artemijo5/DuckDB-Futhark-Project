@@ -11,11 +11,12 @@ module z_order (V : vector) = {
 	def interleave
 		(vec : V.vector i64)
 	: V.vector i64 =
+		if false then
 		let msb = vec |> V.map (i64.clz) |> V.map ((i32.-) i64.num_bits)
 			|> V.reduce (i32.max) (-1)
 			|> i64.i32
 		in loop vec1 = V.replicate 0i64
-		for j<msb*V.length do
+		for j<(1+msb)*V.length do
 			let pos_from = j%V.length
 			let pos_to = j/V.length
 			let bit_from = i32.i64 (j/msb)
@@ -24,7 +25,8 @@ module z_order (V : vector) = {
 				|> i64.get_bit bit_from
 			let with_bit_set = i64.set_bit bit_to
 				(V.get pos_to vec1) got_bit
-			in V.set pos_from with_bit_set vec1
+			in V.set pos_to with_bit_set vec1
+		else vec
 
 	def order_by_z_curve [n] 't
 		(z_vecs : [n](V.vector i64))
