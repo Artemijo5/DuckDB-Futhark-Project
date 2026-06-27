@@ -117,7 +117,12 @@ module ft_densebox
 			)
 		in argmin (>) (==) 0 distinct_per_dim
 
-	-- TODO rewrite this one (...)
+	local def v_all 'a (p: a -> bool) (vec: V.vector a) : bool
+	= vec |> V.map p |> V.reduce (&&) true
+
+	local def v_any 'a (p: a -> bool) (vec: V.vector a) : bool
+	= vec |> V.map p |> V.reduce (||) false
+
 	def get_box_neighbourhoods [np]
 		(wsize : i64)
 		(subdiv : [V.length]i64)
@@ -151,16 +156,12 @@ module ft_densebox
 			|> scatter (replicate np (-1,0)) is'
 		-- to avoid exploding memory in intermediate materialization
 		-- do sequential loop over candidate matches
-		--
-		-- for load-balanced windows
-		-- find segments containing about the square of window_size each
-		let prefix_cm = x_matches
+		let match_pref = x_matches
 			|> map (.1)
 			|> map (\cm -> (f64.i64 cm) / (f64.i64 (wsize**2)))
-			|> exscan (+) 0.0
-			|> map (f64.floor)
-			|> map (i64.f64)
-		let window_boundaries = prefix_cm
+			|> exscan (+) 0
+			|> map (f64.floor >-> i64.f64)
+		let window_boundaries = match_pref
 			|> group_boundaries (!=)
 			|> zip (iota np)
 			|> filter (.1)
@@ -183,10 +184,10 @@ module ft_densebox
 					if i1==i2 then false else
 					let vec1 = as_vectors[i1]
 					let vec2 = as_vectors[i2]
-					in V.map2 (-) vec1 vec2
-						|> V.map (\diff -> diff**2)
-						|> V.reduce (+) 0
-						|> (\meas -> meas <= adj_range**2)
+					let diffs = V.map2 (-) vec1 vec2
+						|> V.map (i64.abs)
+					in v_all (<= adj_range) diffs
+					&& v_any (<  adj_range) diffs
 				)
 			in cur_pairs ++ this_pairs
 		-- Sort part_pairs by their distance
@@ -200,12 +201,10 @@ module ft_densebox
 					|> V.reduce (+) 0
 			)
 		let part_pairs' = part_pairs
-			|> bucket_sort 2 np part_pairs_dists
+			|> bucket_sort 2 (V.length*(adj_range**2)) part_pairs_dists
 			|> (.1) |> unzip
 			|> (\(pp0,pp1) -> bucket_sort 2 np pp0 pp1)
 			|> (\(pp0,pp1) -> zip pp0 pp1)
-		let _ = part_pairs'
-			|> map (\(i1,i2) -> (as_vectors[i1],as_vectors[i2]))
 		let part_pairs_sz = hist_lean (+) 0 np
 			(part_pairs' |> map (.0))
 			(part_pairs' |> map (\_ -> 1i64))
@@ -223,7 +222,7 @@ module ft_densebox
 		(part_pairs : [](i64,i64))
 		(part_pairs_is : [np]i64)
 		(part_pairs_sz : [np]i64)
-	: [n]bool = 
+	: [n]bool =
 		-- Some cells may have less than minPts pts in their entire neighbourhood
 		-- dismiss those
 		let dismiss_pid = iota np
@@ -237,8 +236,9 @@ module ft_densebox
 				)
 				(+) 0
 			|> map ( < minPts)
-		in map2 (\pid1 pt1 ->
+			in map2 (\pid1 pt1 ->
 				if dismiss_pid[pid1] then false else
+				if part_sz[pid1]>=minPts then true else
 				-- Points in the same cell are automatically neighbours
 				-- if in a dense cell, already core
 				-- otherwise, traverse all neighbouring points

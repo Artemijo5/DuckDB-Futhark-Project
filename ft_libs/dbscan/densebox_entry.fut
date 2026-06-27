@@ -66,7 +66,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			_, part_is, cell_ids, og_is
 		)
 			= densebox2_f64.partition_dataset eps pts
-		let (part_sz,_,pids) = densebox2_f64.get_part_info 1 part_is pts
+		let (part_sz,_,pids) = densebox2_f64.get_part_info 8 part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
 			= densebox2_f64.get_box_neighbourhoods
 			window_size subdiv cell_ids

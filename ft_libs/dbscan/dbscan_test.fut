@@ -53,7 +53,7 @@ def test1_dclust (seed_count : i64) (subdiv : i64) (eps : f64) (minPts : i64) =
 
 def test1_dnsbox (eps : f64) (minPts : i64) =
 	let vs = (copy pts1) |> map (sized vector_2.length >-> vector_2.from_array)
-	in dnsbox2.do_dbscan 2 eps minPts vs
+	in dnsbox2.do_dbscan 3 eps minPts vs
 
 -- eps=2, minPts=3
 def pts2 : [][2]f64 = [
@@ -133,4 +133,4 @@ def test4_dclust =
 def test4_dnsbox =
 	let vs = (copy pts4) |> map (sized vector_2.length >-> vector_2.from_array)
 	let sdv = replicate vector_2.length 3
-	in dnsbox2.do_dbscan 2 0.5 5 vs
+	in dnsbox2.do_dbscan 5 0.5 5 vs
