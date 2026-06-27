@@ -1,7 +1,8 @@
 # Benchmarks with showcase specifications except default ones (and PORTO with 640K points).
+# From CUDA-DClust+ paper.
 
 data_loc=$1
-num_runs=10
+num_runs=5
 num_cells=10000
 
 # 1 - tests for EPS --------------------------------------------------------------
