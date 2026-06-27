@@ -2,11 +2,7 @@ import "../ftbasics"
 import "../lib/github.com/athas/vector/vector"
 import "../lib/github.com/diku-dk/sorts/merge_sort"
 
--- Implementation of basic (min/max) spatial index structures.
--- 1. Uniform Grid Partitioning
--- 2. Array Index based on kd-Tree
--- The indices subdivide space into non-overlapping min/max rectangles.
--- Partitions are defined by min & max values for each dimension.
+-- Implementatin for Cartesian Grid
 
 -- | Abstract module type to implement spatial index structures.
 -- Partitions are represented by min/max points.
@@ -17,19 +13,16 @@ module type spatial_index = {
 	-- | Create the index using index_spec.
 	-- Returns a tuple containing:
 	-- 1. the dataset sorted by index-based partitions.
-	-- 2. partition boundaries
+	-- 2. partition positions (eg in a grid)
 	-- 3. starting index of each partition in the sorted dataset
 	-- 4. numerical id of each partition (eg on grid index, encodes cell's position)
 	-- 5. transformed row indices
 	val index_dataset [dim] [n] : [dim]i64 -> [n](vector t)
-		-> ([n](vector t), [](vector t, vector t), []i64, []i64, [n]i64)
-
-	-- | Obtain the indices of all points of a selected partition.
-	val fetch_partition [np] [n] : [np]i64 -> [n](vector t) -> i64 -> []i64
+		-> ([n](vector t), [](vector i64), []i64, []i64, [n]i64)
 }
 
 -- Regular grid subdivisions.
-module grid_index (V : vector) (N : numeric)
+module grid_index (V : vector) (N : real)
 : spatial_index with t = N.t with vector 'a = V.vector a = {
 	type t = N.t
 	type vector 'a = V.vector a
@@ -45,6 +38,8 @@ module grid_index (V : vector) (N : numeric)
 	local def from_i64 = (N.i64)
 
 	local def zero = from_i64 0i64
+
+	local def floor = N.floor
 
 	local def minimum = N.minimum
 	local def maximum = N.maximum
@@ -91,153 +86,38 @@ module grid_index (V : vector) (N : numeric)
 
 	-- idxSpec : [V.length]i64, represents #subdivisions per dimension
 	def index_dataset idxSpec xs =
-		let np = idxSpec |> reduce (*) 1
+		--let np = idxSpec |> reduce (*) 1
 		let idx_vec = V.from_array (idxSpec |> sized V.length)
 		let dimPrefix = idxSpec |> exscan (*) 1
 			|> sized V.length |> V.from_array
 		let (mins, ranges) = xs |> get_mins_ranges
+		let cell_widths = V.map2 (over)
+			ranges
+			(V.map (from_i64) idx_vec)
+		let vecs = xs
+			|> map (\x -> V.map2 (over) (V.map2 (minus) x mins) cell_widths)
+			|> map (V.map (floor >-> to_i64))
 		let pids = xs |> map (get_partition_id mins ranges idx_vec dimPrefix)
-		let (pids', xs', is') = xs |> indices |> zip xs
-			|> bucket_sort 2 np pids
-			|> (\(ps, xis) -> let (xis1,xis2) = unzip xis in (ps,xis1,xis2))
-		let pids_is = pids' |> group_boundaries (!=)
-			|> zip (indices pids')
+		-- Use vecs to sort cells
+		-- originally was using pids
+		-- but those might result in overflow for high dimensionality
+		-- (still useful to calculate for low dimensionality datasets)
+		let (is',vecs')
+			= loop (is1,vecs1)
+			= (indices xs,vecs)
+			for j<V.length do
+				zip is1 vecs1
+				|> bucket_sort 2 (1+idxSpec[j]) (vecs1 |> map (V.get j))
+				|> (.1)
+				|> unzip
+		let pids' = is' |> map (\i -> pids[i])
+		let xs' = is' |> map (\i -> xs[i])
+		let pids_is = vecs'
+			|> group_boundaries (\vec1 vec2 -> V.map2 (!=) vec1 vec2 |> V.reduce (||) false)
+			|> zip (indices vecs')
 			|> filter (.1) |> map (.0)
 		let pids_ids = pids_is |> map (\i -> pids'[i])
-		let partBounds = pids_ids
-			|> map (get_partitionBoundaries mins ranges idx_vec dimPrefix)
-		in (xs', partBounds, pids_is, pids_ids, is')
-
-	def fetch_partition partIs xs i =
-		let inf = partIs[i]
-		let sup = if i==(length partIs)-1 then (length xs) else partIs[i+1]
-		in (inf..<sup)
+		let as_vectors = pids_is |> map (\i -> vecs'[i])
+		in (xs', as_vectors, pids_is, pids_ids, is')
 }
 
--- min/max kd-tree -based index.
--- (essentially holds only the last level of the kd-tree as an array)
-module kd_index (V : vector) (N : numeric)
-: spatial_index with t = N.t with vector 'a = V.vector a = {
-	type t = N.t
-	type vector 'a = V.vector a
-
-	local def minus = (N.-)
-	local def plus  = (N.+)
-
-	local def leq = (N.<=)
-	local def lt  = (N.<)
-
-	local def from_i64 = (N.i64)
-
-	local def zero = from_i64 0i64
-	local def lowest = N.lowest
-	local def highest = N.highest
-
-	local def min = N.min
-	local def max = N.max
-	local def minimum = N.minimum
-	local def maximum = N.maximum
-
-	local def get_mins_maxs (xs : [](vector t)) : (vector t, vector t) =
-		let perDim = iota (V.length) |> map (\i -> xs |> map (V.get i))
-		let mins = perDim |> seqmap zero (minimum) |> V.from_array
-		let maxs = perDim |> seqmap zero (maximum) |> V.from_array
-		in (mins, maxs)
-
-	-- idxSpec : [1]i64, represents levels of kd tree
-	def index_dataset [n] idxSpec (xs : [n](vector t)) =
-		-- kd_depth = min idxSpec (ceil log2 n)
-		let kd_depth = n
-			|> i64.clz
-			|> (i32.-) (if n&(n-1)==0 then 64 else 65)
-			|> i64.i32
-			|> i64.min (head idxSpec)
-		-- sort by median of the next dimension each level
-		let (min_pt, max_pt) = xs |> get_mins_maxs
-		-- TODO can get rid of empty partitions within the loop
-		-- although that is unlikely to happen (only when an entire partition >= median)
-		let (fxs, fis, _, fmins, fmaxs, fsizes) =
-			loop (pts, is, pids, part_mins, part_maxs, part_sizes)
-			: ([n](vector t), [n]i64, [n]i64, [](vector t), [](vector t), []i64)
-			= (xs, iota n, replicate n 0, [min_pt], [max_pt], [n])
-			for j < kd_depth do
-				let curDim = j % V.length
-				let (old_pids, pts', is') = zip3 pids pts is
-					|> merge_sort_by_key
-						(\(pid,x,_) -> (pid, V.get curDim x))
-						(\(pid1,x1) (pid2,x2) -> pid1<pid2 ||
-							(pid1==pid2 && (x1 `leq` x2))
-						)
-					|> unzip3
-				let part_is = part_sizes |> exscan (+) 0
-				let median_vals = part_is
-					|> map2 (\pSize pInd ->
-						pInd + pSize/2
-					) part_sizes
-					|> map (\i -> V.get curDim (pts'[i64.min i (n-1)]))
-				let new_pids = pts'
-					|> zip old_pids
-					|> map (\(pid,x) -> if ((V.get curDim x) `lt` median_vals[pid]) then 2*pid else 2*pid+1)
-				let new_minVals = hist (min) highest (2*(length part_sizes)) new_pids (pts' |> map (V.get curDim))
-				let new_part_mins = indices part_mins
-					|> map (\i -> iota 2 |> map (\j -> 2*i+j))
-					|> flatten
-					|> map (\i -> V.set curDim new_minVals[i] part_mins[i/2])
-				let new_maxVals = hist (max) lowest  (2*(length part_sizes)) new_pids (pts' |> map (V.get curDim))
-				let new_part_maxs = indices part_maxs
-					|> map (\i -> iota 2 |> map (\j -> 2*i+j))
-					|> flatten
-					|> map (\i -> V.set curDim new_maxVals[i] part_maxs[i/2])
-				let new_part_sizes = hist (+) 0 (2*(length part_sizes))
-					new_pids
-					(replicate n 1)
-			in (pts', is', new_pids, new_part_mins, new_part_maxs, new_part_sizes)
-		-- filter out empty partitions
-		let np = length fmins
-		let (fmins', fmaxs', fsizes') = zip3
-			(fmins |> sized np)
-			(fmaxs |> sized np)
-			(fsizes |> sized np)
-			|> filter (\(_,_,sz) -> sz>0)
-			|> unzip3
-		let np' = length fmins'
-		let fparts = zip (fmins' |> sized np') (fmaxs' |> sized np')
-		in (fxs, fparts, fsizes' |> exscan (+) 0, indices fparts, fis)
-
-	def fetch_partition partIs xs i =
-		let inf = partIs[i]
-		let sup = if i==(length partIs)-1 then (length xs) else partIs[i+1]
-		in (inf..<sup)
-}
-
--- Don't subdivide space.
-module non_index (V : vector) (N : numeric)
-: spatial_index with t = N.t with vector 'a = V.vector a = {
-	type t = N.t
-	type vector 'a = V.vector a
-
-	local def minus = (N.-)
-	local def plus  = (N.+)
-
-	local def leq = (N.<=)
-	local def lt  = (N.<)
-
-	local def from_i64 = (N.i64)
-
-	local def zero = from_i64 0i64
-
-	local def minimum = N.minimum
-	local def maximum = N.maximum
-
-	local def get_mins_maxs (xs : [](vector t)) : (vector t, vector t) =
-		let perDim = iota (V.length) |> map (\i -> xs |> map (V.get i))
-		let mins = perDim |> seqmap zero (minimum) |> V.from_array
-		let maxs = perDim |> seqmap zero (maximum) |> V.from_array
-		in (mins, maxs)
-
-	def index_dataset _ xs =
-		(xs, [get_mins_maxs xs], [0i64], [0i64], indices xs)
-
-	def fetch_partition _ xs _ =
-		indices xs
-}

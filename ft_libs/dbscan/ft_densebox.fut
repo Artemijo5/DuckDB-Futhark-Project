@@ -8,6 +8,8 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
+import "z_order"
+
 -- Wrapper for expand_outer_reduce
 -- handling the case of 1 point.
 local def expand_outer_red [n] 't
@@ -29,6 +31,8 @@ module ft_densebox
 
 	module I = grid_index V F
 
+	module Z = z_order V
+
 	local def zero = F.i32 0i32
 
 	local def over  = (F./)
@@ -43,10 +47,17 @@ module ft_densebox
 	local def from_i64 = F.i64
 
 	local def ceil = F.ceil
+	local def floor = F.floor
 
 	local def min = F.min
 	local def minimum = F.minimum
 	local def maximum = F.maximum
+
+	local def v_all 'a (p: a -> bool) (vec: V.vector a) : bool
+	= vec |> V.map p |> V.reduce (&&) true
+
+	local def v_any 'a (p: a -> bool) (vec: V.vector a) : bool
+	= vec |> V.map p |> V.reduce (||) false
 
 	-- | Partition dataset with a regular grid using given subdivisions per dimension,
 	-- also ensuring that in no dimension is the grid thinner than eps.
@@ -72,11 +83,31 @@ module ft_densebox
 		let maxs' = V.map2 (\mi sub ->
 			mi `plus` (sub `times` cell_width)
 		) mins sdv
-		let (pts', bounds, part_is, cell_ids, og_is) = I.index_dataset sdv' (pts ++ [maxs'])
-		let np = length part_is
-		in (sdv', pts'[0:n],
-			bounds |> sized np, part_is |> sized np, cell_ids |> sized np,
-			og_is[0:n]
+		let (pts', vecs1, part_is1, _, og_is) = I.index_dataset sdv' (pts ++ [maxs'])
+		let pts1 = pts'[0:n]
+		let og_is1 = og_is[0:n]
+		-- Use Z-Order Curve
+		let vecs_by_pt = scatter (replicate n (-1)) part_is1 (indices part_is1)
+			|> scan (i64.max) (-1)
+			|> map (\i -> vecs1[i])
+		let (vecs_by_pt', is2) = vecs_by_pt
+			|> trace
+			|> map (Z.interleave)
+			|> trace
+			|> Z.order_by_z_curve
+			|> trace
+		let part_is2 = vecs_by_pt'
+			|> group_boundaries (\v1 v2 -> V.map2 (!=) v1 v2 |> v_any (id))
+			|> zip (iota n)
+			|> filter (.1) |> map (.0)
+		let vecs2 = part_is2 |> map (\i -> vecs_by_pt'[i])
+		let pts2 = is2 |> map (\i -> pts1[i])
+		let og_is2 = is2 |> map (\i -> og_is[i])
+		in (
+			pts2,
+			vecs2,
+			part_is2,
+			og_is2
 		)
 
 	def get_part_info [n] [np]
@@ -93,16 +124,8 @@ module ft_densebox
 		in (part_sz, isDense, part_ids)
 
 	local def get_most_populated_dim [np]
-		(cell_ids : [np]i64)
-		(subdiv : [V.length]i64)
+		(as_vectors : [np](vector i64))
 	: i64 =
-		let subdiv_v = subdiv |> V.from_array
-		let prefix_v = subdiv |> exscan (*) 1 |> V.from_array
-		let as_vectors = cell_ids |> map (\cur_pid ->
-			prefix_v
-				|> V.map (\pref -> cur_pid / pref)
-				|> V.map2 (\sdv pid_suffix -> pid_suffix%sdv) subdiv_v
-		)
 		let distinct_per_dim = replicate V.length 0
 			|> seqmap 0 (\dim ->
 				let d_vals = as_vectors
@@ -117,27 +140,13 @@ module ft_densebox
 			)
 		in argmin (>) (==) 0 distinct_per_dim
 
-	local def v_all 'a (p: a -> bool) (vec: V.vector a) : bool
-	= vec |> V.map p |> V.reduce (&&) true
-
-	local def v_any 'a (p: a -> bool) (vec: V.vector a) : bool
-	= vec |> V.map p |> V.reduce (||) false
-
 	def get_box_neighbourhoods [np]
 		(wsize : i64)
-		(subdiv : [V.length]i64)
-		(cell_ids : [np]i64)
+		(as_vectors : [np](vector i64))
 	: ([](i64,i64),[np]i64,[np]i64) =
 		let adj_range = V.length |> from_i64 |> sqrt
 			|> ceil |> to_i64
-		let most_popd_dim = get_most_populated_dim cell_ids subdiv
-		let subdiv_v = subdiv |> V.from_array
-		let prefix_v = subdiv |> exscan (*) 1 |> V.from_array
-		let as_vectors = cell_ids |> map (\cur_pid ->
-			prefix_v
-				|> V.map (\pref -> cur_pid / pref)
-				|> V.map2 (\sdv pid_suffix -> pid_suffix%sdv) subdiv_v
-		)
+		let most_popd_dim = get_most_populated_dim as_vectors
 		-- Sort by the most populated dim
 		let xs = as_vectors |> map (V.get most_popd_dim)
 		let num_buckets = 1 + (i64.maximum xs)	
@@ -190,20 +199,10 @@ module ft_densebox
 					&& v_any (<  adj_range) diffs
 				)
 			in cur_pairs ++ this_pairs
-		-- Sort part_pairs by their distance
-		-- so points will first check their closest neighbours
-		let part_pairs_dists = part_pairs
-			|> map (\(i1,i2) ->
-				let vec1 = as_vectors[i1]
-				let vec2 = as_vectors[i2]
-				in V.map2 (-) vec1 vec2
-					|> V.map (\diff -> diff**2)
-					|> V.reduce (+) 0
-			)
 		let part_pairs' = part_pairs
-			|> bucket_sort 2 (V.length*(adj_range**2)) part_pairs_dists
-			|> (.1) |> unzip
-			|> (\(pp0,pp1) -> bucket_sort 2 np pp0 pp1)
+			|> unzip
+			|> (\(pp0,pp1) -> bucket_sort 2 np pp1 pp0)
+			|> (\(pp1,pp0) -> bucket_sort 2 np pp0 pp1)
 			|> (\(pp0,pp1) -> zip pp0 pp1)
 		let part_pairs_sz = hist_lean (+) 0 np
 			(part_pairs' |> map (.0))
@@ -391,13 +390,13 @@ module ft_densebox
 		(pts  : [n](vector t))
 	: ([n]bool, [n]i64) =
 		let (
-			subdiv, pts',
-			_, part_is, cell_ids, og_is
+			pts',
+			cell_vecs, part_is, og_is
 		)
 			= partition_dataset eps pts
 		let (part_sz,_,pids) = get_part_info minPts part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
-			= get_box_neighbourhoods wsize subdiv cell_ids
+			= get_box_neighbourhoods wsize cell_vecs
 		let is_core = find_core_pts
 			eps minPts
 			pts' pids
@@ -407,7 +406,7 @@ module ft_densebox
 		let part_cids = mk_clusters eps
 			pts' pids is_core
 			part_pairs
-			cell_ids
+			part_is
 		let clust_ids = assign_cluster_ids eps
 			pts' is_core pids
 			part_pairs part_cids
