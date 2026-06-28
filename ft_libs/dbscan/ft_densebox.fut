@@ -90,17 +90,18 @@ module ft_densebox
 		let vecs_by_pt = scatter (replicate n (-1)) part_is1 (indices part_is1)
 			|> scan (i64.max) (-1)
 			|> map (\i -> vecs1[i])
-		let (vecs_by_pt', is2) = vecs_by_pt
+		let (z_vecs_by_pt, is2) = vecs_by_pt
 			|> trace
-			|> map (Z.interleave)
+			|> Z.interleave
 			|> trace
 			|> Z.order_by_z_curve
 			|> trace
-		let part_is2 = vecs_by_pt'
+		let part_is2 = z_vecs_by_pt
 			|> group_boundaries (\v1 v2 -> V.map2 (!=) v1 v2 |> v_any (id))
 			|> zip (iota n)
 			|> filter (.1) |> map (.0)
-		let vecs2 = part_is2 |> map (\i -> vecs_by_pt'[i])
+		let vecs2 = part_is2 |> map (\i -> is2[i])
+			|> map (\i -> vecs_by_pt[i])
 		let pts2 = is2 |> map (\i -> pts1[i])
 		let og_is2 = is2 |> map (\i -> og_is[i])
 		in (

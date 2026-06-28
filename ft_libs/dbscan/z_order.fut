@@ -8,14 +8,11 @@ import "../lib/github.com/diku-dk/sorts/radix_sort"
 module z_order (V : vector) = {
 	type vector 'a = V.vector a
 
-	def interleave
+	def do_interleave
+		(msb : i64)
 		(vec : V.vector i64)
 	: V.vector i64 =
-		if false then
-		let msb = vec |> V.map (i64.clz) |> V.map ((i32.-) i64.num_bits)
-			|> V.reduce (i32.max) (-1)
-			|> i64.i32
-		in loop vec1 = V.replicate 0i64
+		loop vec1 = V.replicate 0i64
 		for j<(1+msb)*V.length do
 			let pos_from = j%V.length
 			let pos_to = j/V.length
@@ -26,7 +23,16 @@ module z_order (V : vector) = {
 			let with_bit_set = i64.set_bit bit_to
 				(V.get pos_to vec1) got_bit
 			in V.set pos_to with_bit_set vec1
-		else vec
+
+	def interleave [n]
+		(vecs : [n](V.vector i64))
+	: [n](V.vector i64) =
+		let msb = vecs
+			|> map (\v -> v |> V.map (i64.clz) |> V.reduce (i32.min) 65)
+			|> i32.minimum
+			|> (i32.-) i64.num_bits
+			|> i64.i32
+		in vecs |> map (do_interleave msb)
 
 	def order_by_z_curve [n] 't
 		(z_vecs : [n](V.vector i64))
