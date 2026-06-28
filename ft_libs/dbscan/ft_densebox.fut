@@ -289,43 +289,28 @@ module ft_densebox
 				&& part_core_sz[pid1]>0
 				&& part_core_sz[pid2]>0
 			)
-			|> map (\(pid1,pid2) ->
-				if part_core_sz[pid1]>=part_core_sz[pid2]
-				then (pid1,pid2)
-				else (pid2,pid1)
-			)
 			-- nested loop
-			-- pigeon-holed to potentially avoid scanning one entire cell first
-			-- TODO testing on small pointsets & Spatial 2D dataset
-			-- suggests loop is correct
-			-- but might want to confirm theoretically as well?
+			-- NOTE tried pigeon-holing loop, but that doubled the runtime
 			|> map (\(pid1,pid2) ->
-				let sz1 = part_core_sz[pid1]
-				let sz2 = part_core_sz[pid2]
-				let outer_loop_iter = sz1 + sz2 - 1
-				let (_,has_neigh) =
-					loop (j1,has_neigh1)
+				let (_,has_neigh)
+					= loop (j1, has_neigh1)
 					= (0,false)
-				while j1<outer_loop_iter && !has_neigh1 do
-					let pid1_start = i64.min (sz1-1) j1
-					let pid2_start = i64.max 0 (j1-sz1+1)
-					let inner_loop_iter = i64.min
-						(1 + pid1_start)
-						(sz2 - pid2_start)
-					let (_,inner_neigh) =
-						loop (j2,has_neigh2)
+				while j1<part_core_sz[pid1] && !has_neigh1 do
+					let i1 = part_core_is[pid1]+j1
+					let pt1 = core_pts[i1]
+					let (_,inner_has_neigh)
+						= loop (j2,has_neigh2)
 						= (0,false)
-					while j2<inner_loop_iter && !has_neigh2 do
-						let i1 = part_core_is[pid1] + pid1_start - j2
-						let i2 = part_core_is[pid2] + pid2_start + j2
-						let pt1 = core_pts[i1]
+					while j2<part_core_sz[pid2] && !has_neigh2 do
+						let i2 = part_core_is[pid2]+j2
 						let pt2 = core_pts[i2]
-						in (j2+1, D.check_neighbourhood eps pt1 pt2)
-					in (j1+1, inner_neigh)
+						let is_neigh = D.check_neighbourhood eps pt1 pt2
+						in (j2+1,is_neigh)
+					in (j1+1, inner_has_neigh)
 				in (pid1,pid2,has_neigh)
 			)
 			|> filter (.2)
-			|> map (\(pid1,pid2,_) -> (i64.min pid1 pid2, i64.max pid1 pid2))
+			|> map (\(pid1,pid2,_) -> (pid1, pid2))
 		in core_pairs
 			|> get_connected_subgraph_ids np
 			|> map2 (\hc i -> if hc then i else (-1)) has_cores

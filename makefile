@@ -11,8 +11,8 @@ CUDAFLAGS=-lcuda -lcudart -lnvrtc
 DenseBox:
 	mkdir -p ft_clibs
 	futhark cuda ft_libs/dbscan/densebox_entry.fut -o ft_clibs/densebox_entry --library
-	$(CC) ft_clibs/dense_entry.c -o ft_clibs/libdensebox.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
-	$(CC) c_tests/src/dbscan/futhark_densebox.c -o c_tests/densebox.o $(CFLAGS) $(DEPS) ft_clibs/libdensebox.so -lm
+	$(CC) ft_clibs/densebox_entry.c -o ft_clibs/libdensebox.so $(CFLAGS) $(CUDAFLAGS) $(LIBFLAGS)
+	$(CC) c_tests/src/dbscan/densebox.c -o c_tests/densebox.o $(CFLAGS) $(DEPS) ft_clibs/libdensebox.so -lm
 
 C-DenseBox:
 	mkdir -p ft_clibs
