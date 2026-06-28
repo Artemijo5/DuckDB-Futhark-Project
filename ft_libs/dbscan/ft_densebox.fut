@@ -86,24 +86,23 @@ module ft_densebox
 		let (pts', vecs1, part_is1, _, og_is) = I.index_dataset sdv' (pts ++ [maxs'])
 		let pts1 = pts'[0:n]
 		let og_is1 = og_is[0:n]
-		-- Use Z-Order Curve
-		let vecs_by_pt = scatter (replicate n (-1)) part_is1 (indices part_is1)
-			|> scan (i64.max) (-1)
-			|> map (\i -> vecs1[i])
-		let (z_vecs_by_pt, is2) = vecs_by_pt
-			|> trace
+		let z_vecs = vecs1
 			|> Z.interleave
-			|> trace
+		-- Use Z-Order Curve
+		let pids_by_pt = scatter (replicate n (-1)) part_is1 (indices part_is1)
+			|> scan (i64.max) (-1)
+		let vecs_by_pt = pids_by_pt |> map (\i -> vecs1[i])
+		let z_vecs_by_pt = pids_by_pt |> map (\i -> z_vecs[i])
+		let (z_vecs_by_pt', is2) = z_vecs_by_pt
 			|> Z.order_by_z_curve
-			|> trace
-		let part_is2 = z_vecs_by_pt
+		let part_is2 = z_vecs_by_pt'
 			|> group_boundaries (\v1 v2 -> V.map2 (!=) v1 v2 |> v_any (id))
 			|> zip (iota n)
 			|> filter (.1) |> map (.0)
 		let vecs2 = part_is2 |> map (\i -> is2[i])
 			|> map (\i -> vecs_by_pt[i])
 		let pts2 = is2 |> map (\i -> pts1[i])
-		let og_is2 = is2 |> map (\i -> og_is[i])
+		let og_is2 = is2 |> map (\i -> og_is1[i])
 		in (
 			pts2,
 			vecs2,
@@ -293,11 +292,6 @@ module ft_densebox
 				&& part_core_sz[pid2]>0
 			)
 			|> map (\(pid1,pid2) ->
-				if part_core_sz[pid1]<=part_core_sz[pid2]
-				then (pid1,pid2)
-				else (pid2,pid1)
-			)
-			|> map (\(pid1,pid2) ->
 				let (_,has_neigh)
 					= loop (j1, has_neigh1)
 					= (0,false)
@@ -316,7 +310,7 @@ module ft_densebox
 				in (pid1,pid2,has_neigh)
 			)
 			|> filter (.2)
-			|> map (\(pid1,pid2,_) -> (i64.min pid1 pid2, i64.max pid1 pid2))
+			|> map (\(pid1,pid2,_) -> (pid1,pid2))
 		in core_pairs
 			|> get_connected_subgraph_ids np
 			|> map2 (\hc i -> if hc then i else (-1)) has_cores

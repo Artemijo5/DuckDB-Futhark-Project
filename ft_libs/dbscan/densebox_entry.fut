@@ -45,7 +45,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		xs2 : [n]f64,
 		pids : [n]i64,
 		og_is : [n]i64,
-		subdiv : [vector_2.length]i64,
 		parts_No : i64,
 		part_is  : []i64,
 		part_sz  : []i64,
@@ -62,21 +61,20 @@ entry crop_column_f64 = col_f64.crop_keyCol
 	: indexed_data_2d_f64 [n] =
 		let pts = cols_to_vectors_2d xs1 xs2
 		let (
-			subdiv, pts',
-			_, part_is, cell_ids, og_is
+			pts',
+			cell_vecs, part_is, og_is
 		)
 			= densebox2_f64.partition_dataset eps pts
-		let (part_sz,_,pids) = densebox2_f64.get_part_info 8 part_is pts
+		let (part_sz,_,pids) = densebox2_f64.get_part_info 1 part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
 			= densebox2_f64.get_box_neighbourhoods
-			window_size subdiv cell_ids
+			window_size cell_vecs
 		let (xs1',xs2') = vectors_to_cols_2d pts'
 		in {
 			xs1 = xs1',
 			xs2 = xs2',
 			pids = pids,
 			og_is = og_is,
-			subdiv = subdiv,
 			parts_No = length part_is,
 			part_is = part_is,
 			part_sz = part_sz,
@@ -134,7 +132,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		xs3 : [n]f64,
 		pids : [n]i64,
 		og_is : [n]i64,
-		subdiv : [vector_3.length]i64,
 		parts_No : i64,
 		part_is  : []i64,
 		part_sz  : []i64,
@@ -152,14 +149,14 @@ entry crop_column_f64 = col_f64.crop_keyCol
 	: indexed_data_3d_f64 [n] =
 		let pts = cols_to_vectors_3d xs1 xs2 xs3
 		let (
-			subdiv, pts',
-			_, part_is, cell_ids, og_is
+			pts',
+			cell_vecs, part_is, og_is
 		)
 			= densebox3_f64.partition_dataset eps pts
 		let (part_sz,_,pids) = densebox3_f64.get_part_info 1 part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
 			= densebox3_f64.get_box_neighbourhoods
-			window_size subdiv cell_ids
+			window_size cell_vecs
 		let (xs1',xs2',xs3') = vectors_to_cols_3d pts'
 		in {
 			xs1 = xs1',
@@ -167,7 +164,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			xs3 = xs3',
 			pids = pids,
 			og_is = og_is,
-			subdiv = subdiv,
 			parts_No = length part_is,
 			part_is = part_is,
 			part_sz = part_sz,
@@ -231,7 +227,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		xs4 : [n]f64,
 		pids : [n]i64,
 		og_is : [n]i64,
-		subdiv : [vector_4.length]i64,
 		parts_No : i64,
 		part_is  : []i64,
 		part_sz  : []i64,
@@ -250,14 +245,14 @@ entry crop_column_f64 = col_f64.crop_keyCol
 	: indexed_data_4d_f64 [n] =
 		let pts = cols_to_vectors_4d xs1 xs2 xs3 xs4
 		let (
-			subdiv, pts',
-			_, part_is, cell_ids, og_is
+			pts',
+			cell_vecs, part_is, og_is
 		)
 			= densebox4_f64.partition_dataset eps pts
 		let (part_sz,_,pids) = densebox4_f64.get_part_info 1 part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
 			= densebox4_f64.get_box_neighbourhoods
-			window_size subdiv cell_ids
+			window_size cell_vecs
 		let (xs1',xs2',xs3',xs4') = vectors_to_cols_4d pts'
 		in {
 			xs1 = xs1',
@@ -266,7 +261,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			xs4 = xs4',
 			pids = pids,
 			og_is = og_is,
-			subdiv = subdiv,
 			parts_No = length part_is,
 			part_is = part_is,
 			part_sz = part_sz,
@@ -335,7 +329,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		xs5 : [n]f64,
 		pids : [n]i64,
 		og_is : [n]i64,
-		subdiv : [vector_5.length]i64,
 		parts_No : i64,
 		part_is  : []i64,
 		part_sz  : []i64,
@@ -356,14 +349,14 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		let pts = cols_to_vectors_5d 
 			xs1 xs2 xs3 xs4 xs5
 		let (
-			subdiv, pts',
-			_, part_is, cell_ids, og_is
+			pts',
+			cell_vecs, part_is, og_is
 		)
 			= densebox5_f64.partition_dataset eps pts
 		let (part_sz,_,pids) = densebox5_f64.get_part_info 1 part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
 			= densebox5_f64.get_box_neighbourhoods
-			window_size subdiv cell_ids
+			window_size cell_vecs
 		let (xs1',xs2',xs3',xs4',xs5') = vectors_to_cols_5d pts'
 		in {
 			xs1 = xs1',
@@ -373,7 +366,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			xs5 = xs5',
 			pids = pids,
 			og_is = og_is,
-			subdiv = subdiv,
 			parts_No = length part_is,
 			part_is = part_is,
 			part_sz = part_sz,
@@ -452,7 +444,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		xs7 : [n]f64,
 		pids : [n]i64,
 		og_is : [n]i64,
-		subdiv : [vector_7.length]i64,
 		parts_No : i64,
 		part_is  : []i64,
 		part_sz  : []i64,
@@ -475,14 +466,14 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		let pts = cols_to_vectors_7d 
 			xs1 xs2 xs3 xs4 xs5 xs6 xs7
 		let (
-			subdiv, pts',
-			_, part_is, cell_ids, og_is
+			pts',
+			cell_vecs, part_is, og_is
 		)
 			= densebox7_f64.partition_dataset eps pts
 		let (part_sz,_,pids) = densebox7_f64.get_part_info 1 part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
 			= densebox7_f64.get_box_neighbourhoods
-			window_size subdiv cell_ids
+			window_size cell_vecs
 		let (xs1',xs2',xs3',xs4',xs5',xs6',xs7')
 			= vectors_to_cols_7d pts'
 		in {
@@ -495,7 +486,6 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			xs7 = xs7',
 			pids = pids,
 			og_is = og_is,
-			subdiv = subdiv,
 			parts_No = length part_is,
 			part_is = part_is,
 			part_sz = part_sz,

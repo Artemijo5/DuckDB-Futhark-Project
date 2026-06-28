@@ -15,9 +15,9 @@ module z_order (V : vector) = {
 		loop vec1 = V.replicate 0i64
 		for j<(1+msb)*V.length do
 			let pos_from = j%V.length
-			let pos_to = j/V.length
-			let bit_from = i32.i64 (j/msb)
-			let bit_to = i32.i64 (j%msb)
+			let pos_to = j/(1+msb)
+			let bit_from = i32.i64 (j/V.length)
+			let bit_to = i32.i64 (j%(1+msb))
 			let got_bit = V.get pos_from vec
 				|> i64.get_bit bit_from
 			let with_bit_set = i64.set_bit bit_to
