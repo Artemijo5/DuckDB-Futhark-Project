@@ -289,28 +289,49 @@ module ft_densebox
 				&& part_core_sz[pid1]>0
 				&& part_core_sz[pid2]>0
 			)
-			-- nested loop
-			-- NOTE tried pigeon-holing loop, but that doubled the runtime
 			|> map (\(pid1,pid2) ->
-				let (_,has_neigh)
-					= loop (j1, has_neigh1)
-					= (0,false)
-				while j1<part_core_sz[pid1] && !has_neigh1 do
-					let i1 = part_core_is[pid1]+j1
-					let pt1 = core_pts[i1]
-					let (_,inner_has_neigh)
-						= loop (j2,has_neigh2)
-						= (0,false)
-					while j2<part_core_sz[pid2] && !has_neigh2 do
-						let i2 = part_core_is[pid2]+j2
-						let pt2 = core_pts[i2]
-						let is_neigh = D.check_neighbourhood eps pt1 pt2
-						in (j2+1,is_neigh)
-					in (j1+1, inner_has_neigh)
-				in (pid1,pid2,has_neigh)
+				if part_core_sz[pid1]<=part_core_sz[pid2]
+				then (pid1,pid2)
+				else (pid2,pid1)
 			)
+			|> expand_outer_red
+				(\(pid1,_) -> part_core_sz[pid1])
+				(\(pid1,pid2) ind1 ->
+					let i1 = part_core_is[pid1] + ind1
+					let pt1 = core_pts[i1]
+					let (_,has_neigh1)
+						= loop (ind2,has_neigh2)
+						= (0,false)
+					while ind2<part_core_sz[pid2] && !has_neigh2 do
+						let i2 = part_core_is[pid2] + ind2
+						let pt2 = core_pts[i2]
+						in (ind2+1, D.check_neighbourhood eps pt1 pt2)
+					in (pid1,pid2,has_neigh1)
+				)
+				(\(pid1,pid2,h1) (pid11,pid22,h2) ->
+					(i64.max pid1 pid11,i64.max pid2 pid22,h1 || h2)
+				)
+				(-1,-1,false)
+		--	|> map (\(pid1,pid2) ->
+		--		let (_,has_neigh)
+		--			= loop (j1, has_neigh1)
+		--			= (0,false)
+		--		while j1<part_core_sz[pid1] && !has_neigh1 do
+		--			let i1 = part_core_is[pid1]+j1
+		--			let pt1 = core_pts[i1]
+		--			let (_,inner_has_neigh)
+		--				= loop (j2,has_neigh2)
+		--				= (0,false)
+		--			while j2<part_core_sz[pid2] && !has_neigh2 do
+		--				let i2 = part_core_is[pid2]+j2
+		--				let pt2 = core_pts[i2]
+		--				let is_neigh = D.check_neighbourhood eps pt1 pt2
+		--				in (j2+1,is_neigh)
+		--			in (j1+1, inner_has_neigh)
+		--		in (pid1,pid2,has_neigh)
+		--	)
 			|> filter (.2)
-			|> map (\(pid1,pid2,_) -> (pid1, pid2))
+			|> map (\(pid1,pid2,_) -> (i64.min pid1 pid2,i64.max pid1 pid2))
 		in core_pairs
 			|> get_connected_subgraph_ids np
 			|> map2 (\hc i -> if hc then i else (-1)) has_cores
