@@ -84,6 +84,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		}
 
 	entry densebox_do_dbscan_2d_f64 [n]
+		(wsize : i64)
 		(eps : f64)
 		(minPts : i64)
 		(dat : indexed_data_2d_f64 [n])
@@ -97,7 +98,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			dat.part_pairs
 			(dat.part_pairs_is |> sized dat.parts_No)
 			(dat.part_pairs_sz |> sized dat.parts_No)
-		let part_cids = densebox2_f64.mk_clusters eps
+		let part_cids = densebox2_f64.mk_clusters wsize eps
 			pts dat.pids is_core
 			dat.part_pairs
 			dat.part_is
@@ -173,6 +174,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		}
 
 	entry densebox_do_dbscan_3d_f64 [n]
+		(wsize : i64)
 		(eps : f64)
 		(minPts : i64)
 		(dat : indexed_data_3d_f64 [n])
@@ -186,7 +188,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			dat.part_pairs
 			(dat.part_pairs_is |> sized dat.parts_No)
 			(dat.part_pairs_sz |> sized dat.parts_No)
-		let part_cids = densebox3_f64.mk_clusters eps
+		let part_cids = densebox3_f64.mk_clusters wsize eps
 			pts dat.pids is_core
 			dat.part_pairs
 			dat.part_is
@@ -270,6 +272,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		}
 
 	entry densebox_do_dbscan_4d_f64 [n]
+		(wsize : i64)
 		(eps : f64)
 		(minPts : i64)
 		(dat : indexed_data_4d_f64 [n])
@@ -284,7 +287,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			dat.part_pairs
 			(dat.part_pairs_is |> sized dat.parts_No)
 			(dat.part_pairs_sz |> sized dat.parts_No)
-		let part_cids = densebox4_f64.mk_clusters eps
+		let part_cids = densebox4_f64.mk_clusters wsize eps
 			pts dat.pids is_core
 			dat.part_pairs
 			dat.part_is
@@ -375,6 +378,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		}
 
 	entry densebox_do_dbscan_5d_f64 [n]
+		(wsize : i64)
 		(eps : f64)
 		(minPts : i64)
 		(dat : indexed_data_5d_f64 [n])
@@ -389,7 +393,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			dat.part_pairs
 			(dat.part_pairs_is |> sized dat.parts_No)
 			(dat.part_pairs_sz |> sized dat.parts_No)
-		let part_cids = densebox5_f64.mk_clusters eps
+		let part_cids = densebox5_f64.mk_clusters wsize eps
 			pts dat.pids is_core
 			dat.part_pairs
 			dat.part_is
@@ -495,6 +499,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 		}
 
 	entry densebox_do_dbscan_7d_f64 [n]
+		(wsize : i64)
 		(eps : f64)
 		(minPts : i64)
 		(dat : indexed_data_7d_f64 [n])
@@ -510,7 +515,7 @@ entry crop_column_f64 = col_f64.crop_keyCol
 			dat.part_pairs
 			(dat.part_pairs_is |> sized dat.parts_No)
 			(dat.part_pairs_sz |> sized dat.parts_No)
-		let part_cids = densebox7_f64.mk_clusters eps
+		let part_cids = densebox7_f64.mk_clusters wsize eps
 			pts dat.pids is_core
 			dat.part_pairs
 			dat.part_is

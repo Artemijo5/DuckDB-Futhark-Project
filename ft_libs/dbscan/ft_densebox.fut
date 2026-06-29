@@ -264,6 +264,7 @@ module ft_densebox
 
 	-- Clusters are made on the basis of CELLS rather than pts
 	def mk_clusters [n] [np]
+		(wsize : i64)
 		(eps  : t)
 		(pts  : [n](vector t))
 		(pids : [n]i64)
@@ -294,47 +295,57 @@ module ft_densebox
 				then (pid1,pid2)
 				else (pid2,pid1)
 			)
-			|> expand_outer_red
-				(\(pid1,_) -> part_core_sz[pid1])
-				(\(pid1,pid2) ind1 ->
-					let i1 = part_core_is[pid1] + ind1
-					let pt1 = core_pts[i1]
-					let (_,has_neigh1)
-						= loop (ind2,has_neigh2)
-						= (0,false)
-					while ind2<part_core_sz[pid2] && !has_neigh2 do
-						let i2 = part_core_is[pid2] + ind2
-						let pt2 = core_pts[i2]
-						in (ind2+1, D.check_neighbourhood eps pt1 pt2)
-					in (pid1,pid2,has_neigh1)
-				)
-				(\(pid1,pid2,h1) (pid11,pid22,h2) ->
-					(i64.max pid1 pid11,i64.max pid2 pid22,h1 || h2)
-				)
-				(-1,-1,false)
-		--	|> map (\(pid1,pid2) ->
-		--		let (_,has_neigh)
-		--			= loop (j1, has_neigh1)
-		--			= (0,false)
-		--		while j1<part_core_sz[pid1] && !has_neigh1 do
-		--			let i1 = part_core_is[pid1]+j1
-		--			let pt1 = core_pts[i1]
-		--			let (_,inner_has_neigh)
-		--				= loop (j2,has_neigh2)
-		--				= (0,false)
-		--			while j2<part_core_sz[pid2] && !has_neigh2 do
-		--				let i2 = part_core_is[pid2]+j2
-		--				let pt2 = core_pts[i2]
-		--				let is_neigh = D.check_neighbourhood eps pt1 pt2
-		--				in (j2+1,is_neigh)
-		--			in (j1+1, inner_has_neigh)
-		--		in (pid1,pid2,has_neigh)
-		--	)
-			|> filter (.2)
-			|> map (\(pid1,pid2,_) -> (i64.min pid1 pid2,i64.max pid1 pid2))
-		in core_pairs
-			|> get_connected_subgraph_ids np
-			|> map2 (\hc i -> if hc then i else (-1)) has_cores
+		-- windowed access
+		let window_is_ = core_pairs
+			|> map (\(p1,_) -> part_core_sz[p1])
+			|> exscan (+) 0
+			|> map (\v -> v / (wsize**2))
+			|> group_boundaries (!=)
+			|> zip (indices core_pairs)
+			|> filter (.1)
+			|> map (.0)
+		let num_iter = length window_is_
+		let window_is = window_is_ ++ [length core_pairs]
+		-- initialize cid
+		let init_cid = iota np
+			|> map2
+				(\hc i -> if hc then i else (-1))
+				has_cores
+		let final_cid =
+			loop cid = init_cid
+		for j<num_iter do
+			let inf = window_is[j]
+			let sup = window_is[j+1]
+			let this_connections = core_pairs[inf:sup]
+				-- filter out if already found to have the same cid
+				|> filter (\(pid1,pid2) -> cid[pid1] != cid[pid2])
+				-- expand pid1 to its points, iterate over pid2's points
+				-- reduce to find if there is at least 1 match
+				|> expand_outer_red
+					(\(pid1,_) -> part_core_sz[pid1])
+					(\(pid1,pid2) ind1 ->
+						let i1 = part_core_is[pid1] + ind1
+						let pt1 = core_pts[i1]
+						let (_,has_neigh1)
+							= loop (ind2,has_neigh2)
+							= (0,false)
+						while ind2<part_core_sz[pid2] && !has_neigh2 do
+							let i2 = part_core_is[pid2] + ind2
+							let pt2 = core_pts[i2]
+							in (ind2+1, D.check_neighbourhood eps pt1 pt2)
+						in (pid1,pid2,has_neigh1)
+					)
+					(\(pid1,pid2,h1) (pid11,pid22,h2) ->
+						(i64.max pid1 pid11,i64.max pid2 pid22,h1 || h2)
+					)
+					(-1,-1,false)
+
+				|> filter (.2)
+				|> map (\(pid1,pid2,_) -> (i64.min cid[pid1] cid[pid2],i64.max cid[pid1] cid[pid2]))
+			let this_cid = this_connections
+				|> get_connected_subgraph_ids np
+			in this_cid |> map (\i -> if cid[i]<0 then cid[i] else this_cid[cid[i]])
+		in final_cid
 			|> encode_subgraph_ids
 
 	def assign_cluster_ids [n] [np]
@@ -400,7 +411,8 @@ module ft_densebox
 		in scatter (copy init_cid) candidate_borders border_ids
 
 	def do_dbscan [n]
-		(wsize : i64)
+		(wsize1 : i64)
+		(wsize2 : i64)
 		(eps  : t)
 		(minPts : i64)
 		(pts  : [n](vector t))
@@ -412,14 +424,14 @@ module ft_densebox
 			= partition_dataset eps pts
 		let (part_sz,_,pids) = get_part_info minPts part_is pts
 		let (part_pairs, part_pairs_is, part_pairs_sz)
-			= get_box_neighbourhoods wsize cell_vecs
+			= get_box_neighbourhoods wsize1 cell_vecs
 		let is_core = find_core_pts
 			eps minPts
 			pts' pids
 			part_is part_sz
 			part_pairs
 			part_pairs_is part_pairs_sz
-		let part_cids = mk_clusters eps
+		let part_cids = mk_clusters wsize2 eps
 			pts' pids is_core
 			part_pairs
 			part_is

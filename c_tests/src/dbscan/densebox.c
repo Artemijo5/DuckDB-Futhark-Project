@@ -20,7 +20,8 @@
 
 #define default_DIM 2
 
-#define default_WSIZE 2048
+#define default_WSIZE1 2048
+#define default_WSIZE2 2048
 #define default_EPS 0.5
 #define default_MIN_PTS 3
 
@@ -38,7 +39,8 @@ int main(int argc, char *argv[]) {
 
 		int64_t DIM = default_DIM;
 
-		int64_t WSIZE = default_WSIZE;
+		int64_t WSIZE1 = default_WSIZE1;
+		int64_t WSIZE2 = default_WSIZE2;
 		double EPS  = default_EPS;
 		int64_t MIN_PTS = default_MIN_PTS;
 
@@ -51,7 +53,8 @@ int main(int argc, char *argv[]) {
 			{"output", required_argument, 0, 'o'},
 			{"dataset_size", required_argument, 0, 's'},
 			{"dim", required_argument, 0, 'd'},
-			{"wsize", required_argument, 0, 'w'},
+			{"wsize_index", required_argument, 0, 'w'},
+			{"wsize_clust", required_argument, 0, 'W'},
 			{"eps", required_argument, 0, 'e'},
 			{"min_pts", required_argument, 0, 'm'},
 			{"iter", required_argument, 0, 'I'},
@@ -61,7 +64,7 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"i:o:s:d:w:e:m:I:L:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"i:o:s:d:w:W:e:m:I:L:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	        case 'i':
@@ -73,7 +76,9 @@ int main(int argc, char *argv[]) {
 	        case 'd':
 	        	DIM = atol(optarg); break;
 	        case 'w':
-	        	WSIZE = atol(optarg); break;
+	        	WSIZE1 = atol(optarg); break;
+	        case 'W':
+	        	WSIZE2 = atol(optarg); break;
 	        case 'e':
 	        	EPS = atof(optarg); break;
 	        case 'm':
@@ -231,7 +236,7 @@ int main(int argc, char *argv[]) {
 
 			if(DIM==2) {
 				struct futhark_opaque_indexed_data_2d_f64 *idx_dat;
-				futhark_entry_densebox_index_dataset_2d_f64(ctx, &idx_dat, WSIZE, EPS, ft_xss[0], ft_xss[1]);
+				futhark_entry_densebox_index_dataset_2d_f64(ctx, &idx_dat, WSIZE1, EPS, ft_xss[0], ft_xss[1]);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished Indexing.");
 
@@ -239,7 +244,7 @@ int main(int argc, char *argv[]) {
 				futhark_project_opaque_indexed_data_2d_f64_parts_No(ctx, &num_parts, idx_dat);
 				printf("\n#partitions: %ld\n\n", num_parts);
 
-				futhark_entry_densebox_do_dbscan_2d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_entry_densebox_do_dbscan_2d_f64(ctx, &dbscan_res, WSIZE2, EPS, MIN_PTS, idx_dat);
 				futhark_free_opaque_indexed_data_2d_f64(ctx, idx_dat);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished DBSCAN on 2D data.");
@@ -248,7 +253,7 @@ int main(int argc, char *argv[]) {
 			else if(DIM==3) {
 
 				struct futhark_opaque_indexed_data_3d_f64 *idx_dat;
-				futhark_entry_densebox_index_dataset_3d_f64(ctx, &idx_dat, WSIZE, EPS,
+				futhark_entry_densebox_index_dataset_3d_f64(ctx, &idx_dat, WSIZE1, EPS,
 					ft_xss[0], ft_xss[1], ft_xss[2]);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished Indexing.");
@@ -257,7 +262,7 @@ int main(int argc, char *argv[]) {
 				futhark_project_opaque_indexed_data_3d_f64_parts_No(ctx, &num_parts, idx_dat);
 				printf("\n#partitions: %ld\n\n", num_parts);
 
-				futhark_entry_densebox_do_dbscan_3d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_entry_densebox_do_dbscan_3d_f64(ctx, &dbscan_res, WSIZE2, EPS, MIN_PTS, idx_dat);
 				futhark_free_opaque_indexed_data_3d_f64(ctx, idx_dat);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished DBSCAN on 3D data.");
@@ -266,7 +271,7 @@ int main(int argc, char *argv[]) {
 			else if(DIM==4) {
 
 				struct futhark_opaque_indexed_data_4d_f64 *idx_dat;
-				futhark_entry_densebox_index_dataset_4d_f64(ctx, &idx_dat, WSIZE, EPS,
+				futhark_entry_densebox_index_dataset_4d_f64(ctx, &idx_dat, WSIZE1, EPS,
 					ft_xss[0], ft_xss[1], ft_xss[2], ft_xss[3]);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished Indexing.");
@@ -275,7 +280,7 @@ int main(int argc, char *argv[]) {
 				futhark_project_opaque_indexed_data_4d_f64_parts_No(ctx, &num_parts, idx_dat);
 				printf("\n#partitions: %ld\n\n", num_parts);
 
-				futhark_entry_densebox_do_dbscan_4d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_entry_densebox_do_dbscan_4d_f64(ctx, &dbscan_res, WSIZE2, EPS, MIN_PTS, idx_dat);
 				futhark_free_opaque_indexed_data_4d_f64(ctx, idx_dat);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished DBSCAN on 4D data.");
@@ -284,7 +289,7 @@ int main(int argc, char *argv[]) {
 			else if(DIM==5) {
 
 				struct futhark_opaque_indexed_data_5d_f64 *idx_dat;
-				futhark_entry_densebox_index_dataset_5d_f64(ctx, &idx_dat, WSIZE, EPS,
+				futhark_entry_densebox_index_dataset_5d_f64(ctx, &idx_dat, WSIZE1, EPS,
 					ft_xss[0], ft_xss[1], ft_xss[2], ft_xss[3], ft_xss[4]);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished Indexing.");
@@ -293,7 +298,7 @@ int main(int argc, char *argv[]) {
 				futhark_project_opaque_indexed_data_5d_f64_parts_No(ctx, &num_parts, idx_dat);
 				printf("\n#partitions: %ld\n\n", num_parts);
 
-				futhark_entry_densebox_do_dbscan_5d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_entry_densebox_do_dbscan_5d_f64(ctx, &dbscan_res, WSIZE2, EPS, MIN_PTS, idx_dat);
 				futhark_free_opaque_indexed_data_5d_f64(ctx, idx_dat);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished DBSCAN on 5D data.");
@@ -302,7 +307,7 @@ int main(int argc, char *argv[]) {
 			else {
 
 				struct futhark_opaque_indexed_data_7d_f64 *idx_dat;
-				futhark_entry_densebox_index_dataset_7d_f64(ctx, &idx_dat, WSIZE, EPS,
+				futhark_entry_densebox_index_dataset_7d_f64(ctx, &idx_dat, WSIZE1, EPS,
 					ft_xss[0], ft_xss[1], ft_xss[2], ft_xss[3], ft_xss[4], ft_xss[5], ft_xss[6]);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished Indexing.");
@@ -311,7 +316,7 @@ int main(int argc, char *argv[]) {
 				futhark_project_opaque_indexed_data_7d_f64_parts_No(ctx, &num_parts, idx_dat);
 				printf("\n#partitions: %ld\n\n", num_parts);
 
-				futhark_entry_densebox_do_dbscan_7d_f64(ctx, &dbscan_res, EPS, MIN_PTS, idx_dat);
+				futhark_entry_densebox_do_dbscan_7d_f64(ctx, &dbscan_res, WSIZE2, EPS, MIN_PTS, idx_dat);
 				futhark_free_opaque_indexed_data_7d_f64(ctx, idx_dat);
 				futhark_context_sync(ctx);
 				mylog(logfile, "Finished DBSCAN on 7D data.");
