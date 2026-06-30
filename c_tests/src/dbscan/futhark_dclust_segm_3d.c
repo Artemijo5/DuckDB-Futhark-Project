@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
 		double EPS  = default_EPS;
 		int64_t MIN_PTS = default_MIN_PTS;
 
+		bool do_sampling = false;
 		int64_t ITER = default_ITER;
 
 		char LOGFILE[1000] = default_LOGFILE;
@@ -56,13 +57,14 @@ int main(int argc, char *argv[]) {
 			{"eps", required_argument, 0, 'e'},
 			{"min_pts", required_argument, 0, 'm'},
 			{"iter", required_argument, 0, 'I'},
+			{"do_sampling", no_argument, 0, 'R'},
 			{"logfile", required_argument, 0, 'L'},
 			{0, 0, 0, 0}
 		};
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"i:o:s:c:d:e:m:I:L:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"i:o:s:c:d:e:m:I:RL:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
 	        case 'i':
@@ -81,6 +83,8 @@ int main(int argc, char *argv[]) {
 	        	MIN_PTS = atol(optarg); break;
 	        case 'I':
 	        	ITER = atol(optarg); break;
+	        case 'R':
+	        	do_sampling = true; break;
 	        case 'L':
 	        	memcpy(LOGFILE, optarg, strlen(optarg)+1); break;
 	      }
@@ -139,10 +143,19 @@ int main(int argc, char *argv[]) {
 
 			duckdb_result res;
 			char query_str[300 + strlen(INPUT_FILENAME)];
-			sprintf(query_str,
-				"SELECT (#1)::DOUBLE, (#2)::DOUBLE, (#3)::DOUBLE FROM read_csv('%s') LIMIT %ld;",
-				INPUT_FILENAME, DATASET_SIZE
-			);
+
+			if(!do_sampling)
+				sprintf(query_str,
+					"SELECT (#1)::DOUBLE, (#2)::DOUBLE, (#3)::DOUBLE FROM read_csv('%s') LIMIT %ld;",
+					INPUT_FILENAME, DATASET_SIZE
+				);
+			else
+				sprintf(query_str,
+					"SELECT (#1)::DOUBLE, (#2)::DOUBLE, (#3)::DOUBLE FROM read_csv('%s') \
+					USING SAMPLE reservoir(%ld ROWS);",
+					INPUT_FILENAME, DATASET_SIZE
+				);
+
 			if(duckdb_query(con, query_str, &res) == DuckDBError) {
 				perror("Failed to execute query to read data.\n");
 				perror(query_str);
