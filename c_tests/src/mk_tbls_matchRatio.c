@@ -14,10 +14,12 @@
 #define S_name "S_tbl"
 
 #define default_R_size 8192
-#define default_S_size 16384
+#define default_S_size 8192
 
 #define default_R_vals 8192
 #define default_S_vals 8192
+
+#define default_matchRatio 0.5
 
 #define default_k_type "INTEGER"
 #define default_pL_type "INTEGER"
@@ -42,12 +44,15 @@ int main(int argc, char *argv[]) {
 		char k_type[50]  = default_k_type;
 		char pL_type[50] = default_pL_type;
 
+		double matchRatio = default_matchRatio;
+
 		int64_t num_pL = default_num_pL;
 
 		char LOGFILE[1000] = default_LOGFILE;
 		char DBFILE[1000]  = default_DBFILE;
 
 		static struct option long_options[] = {
+			{"matchRatio", required_argument, 0, 'm'},
 			{"R_size", required_argument, 0, 'R'},
 			{"S_size", required_argument, 0, 'S'},
 			{"R_vals", required_argument, 0, 'r'},
@@ -62,9 +67,11 @@ int main(int argc, char *argv[]) {
 
     	char ch;
 	    while(
-	    	(ch = getopt_long_only(argc,argv,"R:S:r:s:k:p:P:L:f:",long_options,NULL)) != -1
+	    	(ch = getopt_long_only(argc,argv,"m:R:S:r:s:k:p:P:L:f:",long_options,NULL)) != -1
 	    ) {
 	      switch(ch) {
+	      	case 'm':
+	      		matchRatio = atof(optarg); break;
 	        case 'R':
 	        	R_size = atol(optarg); break;
 	        case 'S':
@@ -88,7 +95,7 @@ int main(int argc, char *argv[]) {
 
 	// init logger
 
-		FILE* logfile = loginit(LOGFILE, "Starting program to create tables for join.");
+		FILE* logfile = loginit(LOGFILE, "Starting program to create tables for matchRatio join.");
 	    if(LOGFILE && !logfile) {
 	      perror("Failed to initialise logger.\n");
 	      return -1;
@@ -123,7 +130,7 @@ int main(int argc, char *argv[]) {
 	  	char query_mk_S[strlen(k_name)+strlen(k_type)+num_pL*(strlen(pL_name)+strlen(pL_type)+5)+strlen(S_name)+500];
 
 	  	char query_load_R[2*strlen(R_name)+500+25*num_pL];
-	  	char query_load_S[2*strlen(R_name)+500+25*num_pL];
+	  	char query_load_S[2*strlen(R_name)+1500+25*num_pL];
 
   	// -- -- -- Create empty tables.
 
@@ -154,13 +161,15 @@ int main(int argc, char *argv[]) {
 
   	// -- -- -- Add keys.
 
-  		int len_R2 = sprintf(query_load_R, "INSERT INTO %s \n(SELECT i %% %ld", R_name, R_vals);
+  		int len_R2 = sprintf(query_load_R, "INSERT INTO %s \n(SELECT 2 * (i %% %ld)", R_name, R_vals);
   		for(int64_t i=0; i<num_pL; i++) {
   			len_R2 += sprintf(query_load_R+len_R2,", 255*random()");
   		}
   		sprintf(query_load_R+len_R2," FROM range(%ld) t(i) ORDER BY random());", R_size);
 
-  		int len_S2 = sprintf(query_load_S, "INSERT INTO %s \n(SELECT i %% %ld", S_name, S_vals);
+  		int len_S2 = sprintf(query_load_S,
+  			"INSERT INTO %s \n(SELECT CASE WHEN random()<=%f THEN 2 * (i %% %ld) ELSE 2* i %% %ld + 1 END",
+  			S_name, matchRatio, S_vals, S_vals);
   		for(int64_t i=0; i<num_pL; i++) {
   			len_S2 += sprintf(query_load_S+len_S2,", 255*random()");
   		}
