@@ -51,39 +51,6 @@ module grid_index (V : vector) (N : real)
 		let ranges = V.map2 (minus) maxs mins
 		in (mins, ranges)
 
-	local def get_partition_id
-		(mins : vector t)
-		(ranges : vector t)
-		(idx_vec : vector i64)
-		(dimPrefix : vector i64)
-		(x : vector t)
-	: i64 = x
-		|> V.map2 (\mi xi -> xi `minus` mi) mins
-		|> V.map2 (\pD xi -> xi `times` (from_i64 pD)) idx_vec
-		|> V.map2 (\rg xi -> xi `over` rg) ranges
-		|> V.map (to_i64)
-		|> V.map2 (i64.min) (idx_vec |> V.map (\pD -> pD - 1))
-		|> V.map2 (*) dimPrefix
-		|> V.reduce (+) 0
-
-	local def get_partitionBoundaries
-		(mins : vector t)
-		(ranges : vector t)
-		(idx_vec : vector i64)
-		(dimPrefix : vector i64)
-		(pid : i64)
-	: (vector t, vector t) =
-		let pid_byDim = dimPrefix
-			|> V.map2 (\spec pref -> (pid / pref) % spec) idx_vec
-			|> V.map (from_i64)
-		let step_byDim = idx_vec
-			|> V.map (from_i64)
-			|> V.map2 (over) ranges
-		let stepsTaken = V.map2 (times) pid_byDim step_byDim
-		let part_min = V.map2 (plus) mins stepsTaken
-		let part_max = V.map2 (plus) part_min step_byDim
-		in (part_min, part_max)
-
 	-- idxSpec : [V.length]i64, represents #subdivisions per dimension
 	def index_dataset idxSpec xs =
 		--let np = idxSpec |> reduce (*) 1
@@ -97,7 +64,7 @@ module grid_index (V : vector) (N : real)
 		let vecs = xs
 			|> map (\x -> V.map2 (over) (V.map2 (minus) x mins) cell_widths)
 			|> map (V.map (floor >-> to_i64))
-		let pids = xs |> map (get_partition_id mins ranges idx_vec dimPrefix)
+			|> map (V.map2 (i64.min) (V.map (\i -> i-1) idx_vec))
 		-- Use vecs to sort cells
 		-- originally was using pids
 		-- but those might result in overflow for high dimensionality
@@ -107,17 +74,18 @@ module grid_index (V : vector) (N : real)
 			= (indices xs,vecs)
 			for j<V.length do
 				zip is1 vecs1
-				|> bucket_sort 2 (1+idxSpec[j]) (vecs1 |> map (V.get j))
+				|> bucket_sort 2 (2+idxSpec[j]) (vecs1 |> map (V.get j))
 				|> (.1)
 				|> unzip
-		let pids' = is' |> map (\i -> pids[i])
 		let xs' = is' |> map (\i -> xs[i])
 		let pids_is = vecs'
 			|> group_boundaries (\vec1 vec2 -> V.map2 (!=) vec1 vec2 |> V.reduce (||) false)
 			|> zip (indices vecs')
 			|> filter (.1) |> map (.0)
-		let pids_ids = pids_is |> map (\i -> pids'[i])
 		let as_vectors = pids_is |> map (\i -> vecs'[i])
+		let pids_ids = as_vectors
+			|> map (\v -> V.map2 (*) v dimPrefix)
+			|> map (\v -> V.reduce (+) 0 v)
 		in (xs', as_vectors, pids_is, pids_ids, is')
 }
 

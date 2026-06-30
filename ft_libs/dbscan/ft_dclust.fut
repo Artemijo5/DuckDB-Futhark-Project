@@ -6,6 +6,8 @@ import "ft_spindex"
 import "ft_distance"
 import "ft_undir_graph"
 
+import "z_order"
+
 -- Wrapper for expand_outer_reduce
 -- handling the case of 1 point.
 local def expand_outer_red [n] 't
@@ -35,6 +37,7 @@ module ft_dclust
 	type vector 'a = V.vector a
 
 	module I = grid_index V F
+	module Z = z_order V
 
 	local def zero = F.i32 0i32
 
@@ -54,12 +57,15 @@ module ft_dclust
 	local def minimum = F.minimum
 	local def maximum = F.maximum
 
+	local def v_any 'a (p: a -> bool) (vec: V.vector a) : bool
+	= vec |> V.map p |> V.reduce (||) false
+
 	-- | Partition dataset with a regular grid using given subdivisions per dimension,
 	-- also ensuring that in no dimension is the grid thinner than eps.
-	def partition_dataset
+	def partition_dataset [n]
 		(eps : t)
 		(sdv : [V.length]i64) -- subdivisions per dimension
-		(pts : [](vector t))
+		(pts : [n](vector t))
 	=
 		-- get min & max values per dimension
 		let perDim = iota (V.length) |> map (\i -> pts |> map (V.get i))
@@ -71,9 +77,26 @@ module ft_dclust
 			|> V.map (to_i64)
 			|> V.map2 (i64.max) (V.replicate 1i64)
 			|> V.to_array
-		let (pts', _, part_is, cell_ids, og_is) = I.index_dataset sdv' pts
+		let (pts', vecs, part_is, cell_ids, og_is) = I.index_dataset sdv' pts
 		let np = length part_is
-		in (sdv', pts', part_is |> sized np, cell_ids |> sized np, og_is)
+		-- Order by Z-order curve
+		let pids_by_pt = scatter (replicate n (-1)) part_is (indices part_is)
+			|> scan (i64.max) (-1)
+		let z_vecs = vecs
+			|> Z.interleave
+		let z_vecs_by_pt = pids_by_pt
+			|> map (\i -> z_vecs[i])
+		let (z_vecs_by_pt', is2) = z_vecs_by_pt
+			|> Z.order_by_z_curve
+		let part_is2 = z_vecs_by_pt'
+			|> group_boundaries (\v1 v2 -> V.map2 (!=) v1 v2 |> v_any (id))
+			|> zip (iota n)
+			|> filter (.1) |> map (.0)
+		let cell_ids2 = part_is2 |> map (\i -> pids_by_pt[is2[i]])
+			|> map (\i -> cell_ids[i])
+		let pts2 = is2 |> map (\i -> pts'[i])
+		let og_is2 = is2 |> map (\i -> og_is[i])
+		in (sdv', pts2, part_is2 |> sized np, cell_ids2 |> sized np, og_is2)
 
 	-- | Get pairs of adjacent partitions
 	-- Specifically returns pairs (i,j) with i<=j.
@@ -87,6 +110,8 @@ module ft_dclust
 		(part_sz : [np]i64)
 		(cell_ids : [np]i64)
 	: [](i64, i64) =
+		let (cell_ids',is') = (iota np)
+			|> bucket_sort 2 (1 + (i64.maximum cell_ids)) cell_ids
 		let subdiv_v = subdiv |> V.from_array
 		let prefix_v = subdiv |> exscan (*) 1 |> V.from_array
 		let adj_cube_increments = iota (3**V.length)
@@ -140,11 +165,12 @@ module ft_dclust
 			|> bsearch_first (==) (>)
 				(cell_pairs1 |> map (\_ -> 0))
 				(cell_pairs1 |> map (\_ -> np))
-				cell_ids
+				cell_ids'
+			|> map (\i -> if i<0 then (-1) else is'[i])
 		-- Connect to cell ids and filter out:
 		-- 1. absent cells (will be found as pid2 < 0)
 		-- 2. if !bidir, pairs where pid1>pid2
-		let cell_pairs = zip (cell_pairs1 |> map (.0)) (cell_to_pid)
+		let cell_pairs = zip (cell_pairs1 |> map (.0)) cell_to_pid
 			|> filter (\(pid1,pid2) -> (pid1<=pid2 || bidir) && pid2>=0)
 		in cell_pairs
 		
