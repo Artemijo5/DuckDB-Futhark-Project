@@ -19,6 +19,8 @@ plan to separate into distinct Futhark extnesions
 - c_tests: contains C scripts calling Futhark kernels in conjunction with DuckDB loading
 - c_libs: libraries used by scripts in c_tests
 
+Currently gnore shell scripts in top directory (were used to run benchmarks on specific datasets).
+
 -----------------------------------------
 Preparation:
 - add the files from duckdb's [Linux C installation page](https://duckdb.org/docs/installation/?version=stable&environment=cplusplus&platform=linux&download_method=direct&architecture=x86_64) to `clibs/`
