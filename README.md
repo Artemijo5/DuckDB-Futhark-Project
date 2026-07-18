@@ -7,8 +7,17 @@ supervised by prof. Vasileios Samoladas
 
 Technical University of Crete, Department of Electrical and Computer Engineering
 
+# NOTICE
 
-(NOTE: currently in process of refactoring)
+code for thesis implementations and evaluation
+
+plan to separate into distinct Futhark extnesions
+
+-----------------------------------------
+
+- ft_libs: contains futhark libraries
+- c_tests: contains C scripts calling Futhark kernels in conjunction with DuckDB loading
+- c_libs: libraries used by scripts in c_tests
 
 -----------------------------------------
 Preparation:
@@ -19,21 +28,18 @@ Preparation:
 -----------------------------------------
 To use:
 1. `source set_path` to set LD_LIBRARY_PATH
-2. compile futhark libraries (`make CUDA-LIB`, or `make C-LIB` for sequential compilation)
-3. build the desired benchmark (located in `benchmarks/src/`, see makefile for options)
-4. run the desired benchmark from a terminal in the project directory
+2. compile futhark libraries (see options in `makefile`)
+3. to run a script in c_tests, compile with gcc and link manually with referenced libraries (TODO add makefile options)
 Also check the futhark benchmarks in ft_libs/bench (WIP)
 -----------------------------------------
 Current implementations:
-- SMJ and PHJ
-- String Equi-Joins
-- DBSCAN (based on G-DBSCAN with index acceleration)
-- Skyline (WIP)
+- Sort-Merge Join, Partitioned Hash Join based on https://arxiv.org/abs/2312.00720 and references
+- String-processing functions
+- DBSCAN implementations based on https://dl.acm.org/doi/10.1145/3605573.3605594, https://github.com/l3lackcurtains/fast-cuda-gpu-dbscan
 -----------------------------------------
 The purpose of this project is to implement some GPU-based relational algorithms using the futhark programming language, identifying techniques for functional GPU database programming and evaluating performance.
 
 Currently, see benchmarks in ft_libs/bench
 -----------------------------------------
-Main tools used:
 - [DuckDB](https://duckdb.org/) is an in-process OLAP database. In this project, it is invoked through its [C API](https://duckdb.org/docs/stable/clients/c/overview).
 - [Futhark](https://futhark-lang.org/index.html) is a functional progamming language that can be compiled to sequential C code or parallel CUDA or OpenCL code. Futhark functions are invoked through a functional core from C code.
