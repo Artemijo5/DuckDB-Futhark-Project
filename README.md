@@ -11,8 +11,13 @@ Technical University of Crete, Department of Electrical and Computer Engineering
 
 code for thesis implementations and evaluation
 
-plan to separate into distinct Futhark extnesions
-
+plan to separate into distinct Futhark extensions for
+- basic routines
+- SMJ
+- Strings
+- spatial indexing
+- DBSCAN
+- (possibly) Skyline computation
 -----------------------------------------
 
 - ft_libs: contains futhark libraries
